@@ -6,15 +6,10 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.cover.CoverTiered;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.item.DebugScannerItem;
-import muramasa.antimatter.item.ItemBasic;
-import muramasa.antimatter.item.ItemBattery;
-import muramasa.antimatter.item.ItemCover;
-import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.item.*;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.MaterialItem;
@@ -22,13 +17,10 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.recipe.RecipeMap;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -39,11 +31,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ToolItem;
 import net.minecraft.potion.Effect;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
@@ -112,6 +102,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     protected void processTranslations(String domain, String locale) {
         if (!locale.startsWith("en")) return;
         AntimatterAPI.all(ItemBasic.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(ItemFluidCell.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(DebugScannerItem.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemCover.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
@@ -161,7 +152,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
 
         AntimatterAPI.all(RecipeMap.class, t -> {
             String id = "jei.category." + t.getId();
-            add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.','_'),2));
+            add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.','_'),3));
         });
         customTranslations();
     }
@@ -172,6 +163,8 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         add("generic.amp", "Amperage");
         add("generic.tier", "Tier");
         add("generic.voltage", "Voltage");
+        //Is this loss?
+        add("generic.loss", "Loss (per block)");
         add("message.discharge.on", "Discharge enabled");
         add("message.discharge.off", "Discharge disabled");
         add("item.charge", "Energy");

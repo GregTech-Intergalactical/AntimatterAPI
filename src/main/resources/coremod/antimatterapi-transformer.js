@@ -32,6 +32,32 @@ function initializeCoreMod() {
 
             }
 
+        },
+        "ClientWorld#notifyBlockUpdate": {
+            target: {
+
+                type: "METHOD",
+                class: "net.minecraft.client.world.ClientWorld",
+                methodName: "func_184138_a",
+                methodDesc: "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;I)V"
+
+            },
+
+            transformer: function(node) {
+
+                node.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC,
+                    "muramasa/antimatter/AntimatterAPI",
+                    "onNotifyBlockUpdateClient",
+                    "(Lnet/minecraft/client/world/ClientWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;)V"));
+                node.instructions.insert(new IntInsnNode(Opcodes.ALOAD, 3));
+                node.instructions.insert(new IntInsnNode(Opcodes.ALOAD, 2));
+                node.instructions.insert(new IntInsnNode(Opcodes.ALOAD, 1));
+                node.instructions.insert(new IntInsnNode(Opcodes.ALOAD, 0));
+
+                return node;
+
+            }
+
         }
     }
 

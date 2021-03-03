@@ -91,6 +91,7 @@ public class BlockCable extends BlockPipe<Cable<?>> {
 
         tooltip.add(new TranslationTextComponent("generic.amp").appendText(": ").appendText(TextFormatting.GREEN + "" + this.type.getAmps(this.size)));
         tooltip.add(new TranslationTextComponent("generic.voltage").appendText(": ").appendText(TextFormatting.BLUE + "" + this.type.getTier().getVoltage()));
+        tooltip.add(new TranslationTextComponent("generic.loss").appendText(": ").appendText(TextFormatting.BLUE + "" + this.type.getLoss()));
     }
 
     //    @Override

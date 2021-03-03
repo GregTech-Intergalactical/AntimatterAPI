@@ -118,16 +118,19 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
         if (tickingRecipe || activeRecipe == null) return;
         tickingRecipe = true;
+        MachineState state;
         switch (tile.getMachineState()) {
-            case IDLE:
-            case POWER_LOSS:
-                break;
             case ACTIVE:
-            case OUTPUT_FULL:
                 tile.setMachineState(tickRecipe());
                 break;
+            case IDLE:
+                break;
+            case POWER_LOSS:
+                break;
+            case OUTPUT_FULL:
+                break;
             default:
-                MachineState state = tickRecipe();
+                state = tickRecipe();
                 if (state != ACTIVE) {
                     tile.setMachineState(IDLE);
                 } else {
@@ -187,6 +190,21 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
     }
 
+    protected MachineState recipeFinish() {
+        addOutputs();
+        if (this.generator) {
+            currentProgress = 0;
+            return ACTIVE;
+        }
+        if (!canRecipeContinue()) {
+            this.resetRecipe();
+            return IDLE;
+        } else {
+            activateRecipe(true);
+            return ACTIVE;
+        }
+    }
+
     protected MachineState tickRecipe() {
         if (this.activeRecipe == null) {
             System.out.println("Check Recipe when active recipe is null");
@@ -196,20 +214,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 setClientProgress(0);
                 return OUTPUT_FULL;
             }
-            addOutputs();
-            if (this.generator) {
-                currentProgress = 0;
-                return ACTIVE;
-            }
-            if (!canRecipeContinue()) {
-                this.resetRecipe();
-                return IDLE;
-            } else {
-                activateRecipe(true);
-                return ACTIVE;
-            }
+            return recipeFinish();
         }
         else {
+            tile.onRecipePreTick();
             if (!consumeResourceForRecipe()) {
                 if ((currentProgress == 0 && tile.getMachineState() == IDLE) || generator) {
                     //Cannot start a recipe :(
@@ -225,6 +233,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             if (currentProgress == 0 && !consumedResources) this.consumeInputs();
             this.currentProgress++;
             setClientProgress();
+            tile.onRecipePostTick();
             return ACTIVE;
         }
     }
@@ -251,7 +260,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     protected boolean validateRecipe(Recipe r) {
         int voltage = this.generator ? tile.energyHandler.map(EnergyHandler::getOutputVoltage).orElse(0) : tile.getMaxInputVoltage();
         boolean ok = voltage >= r.getPower()/ r.getAmps();
-        ok &= canOutput();
         return ok;
     }
 
@@ -278,6 +286,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     activeRecipe = null;
                     return;
                 }
+                if (!canOutput()) {
+                    activeRecipe = null;
+                    tile.setMachineState(IDLE);
+                    return;
+                }
                 if (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) {
                     return;
                 }
@@ -287,7 +300,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             }
             setClientProgress(0);
         }
-        tile.setMachineState(IDLE);
     }
 
     @Nullable
@@ -317,7 +329,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     protected boolean canRecipeContinue() {
-        return tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false) || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
+        return canOutput() && tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false) || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
     }
     /*
       Helper to consume resources for a generator.
@@ -361,12 +373,19 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
+        if (tickingRecipe) return;
         if (event instanceof ContentEvent) {
             switch ((ContentEvent) event) {
                 case FLUID_INPUT_CHANGED:
                 case FLUID_OUTPUT_CHANGED:
                 case ITEM_INPUT_CHANGED:
                 case ITEM_OUTPUT_CHANGED:
+                    if (tile.getMachineState() == OUTPUT_FULL && canOutput()) {
+                        tickingRecipe = true;
+                        tile.setMachineState(recipeFinish());
+                        tickingRecipe = false;
+                        return;
+                    }
                     if (tile.getMachineState().allowRecipeCheck()) {
                         this.checkRecipe();
                     }

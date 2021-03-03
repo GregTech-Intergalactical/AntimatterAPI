@@ -32,8 +32,8 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawTooltipInArea(container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
-
+        if (container.getTile().has(MachineFlag.RECIPE))
+            drawTooltipInArea(container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
     }
 
     @Override
@@ -41,8 +41,10 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
         super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         drawProgress(partialTicks, mouseX, mouseY);
         //Draw error.
-        if (container.getTile().getMachineState() == MachineState.POWER_LOSS) {
-            drawTexture(gui, guiLeft + (xSize / 2) - 4, guiTop + 45, xSize, 55, 8, 8);
+        if (container.getTile().has(MachineFlag.RECIPE)) {
+            if (container.getTile().getMachineState() == MachineState.POWER_LOSS) {
+                drawTexture(gui, guiLeft + (xSize / 2) - 4, guiTop + 45, xSize, 55, 8, 8);
+            }
         }
     }
 

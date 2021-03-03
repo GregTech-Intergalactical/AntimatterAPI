@@ -21,7 +21,9 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -32,8 +34,10 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -102,6 +106,15 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             this.energyHandler.ifPresent(MachineEnergyHandler::init);
             this.recipeHandler.ifPresent(MachineRecipeHandler::init);
         }
+    }
+    //Called before a recipe ticks.
+    public void onRecipePreTick() {
+        //NOOP
+    }
+
+    //Called after a recipe ticks.
+    public void onRecipePostTick() {
+        //NOOP
     }
 
     public void ofState(@Nonnull BlockState state) {
@@ -256,6 +269,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
                 .withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
 
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
+        BlockPos cPos = StructureCache.get(this.getWorld(), pos);
+        if (cPos != null) {
+            TileEntityMultiMachine mTile = (TileEntityMultiMachine) world.getTileEntity(cPos);
+            builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,mTile.getMachineType().getBaseTexture(mTile.getMachineTier()));
+        }
 
         return builder.build();
     }

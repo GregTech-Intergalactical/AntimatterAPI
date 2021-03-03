@@ -50,22 +50,6 @@ public class MachineBakedModel extends CoveredBakedModel {
         return quads;
     }
 
-    @Nonnull
-    @Override
-    public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
-        data = super.getModelData(world, pos, state, data);
-        TileEntity tile = world.getTileEntity(pos);
-        if (!(tile instanceof TileEntityMachine)) return data;
-        TileEntityMachine machine = (TileEntityMachine) tile;
-
-        BlockPos cPos = StructureCache.get(machine.getWorld(), pos);
-        if (cPos == null) return data;
-        TileEntityMultiMachine mTile = (TileEntityMultiMachine) world.getTileEntity(cPos);
-
-        data.setData(AntimatterProperties.MULTI_MACHINE_TEXTURE,mTile.getMachineType().getBaseTexture(mTile.getMachineTier()));
-        return data;
-    }
-
     @Override
     protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         List<BakedQuad> quads = super.attachQuadsForSide(state, side, rand, data);

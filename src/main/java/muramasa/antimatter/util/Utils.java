@@ -1120,6 +1120,15 @@ public class Utils {
         return new Recipe(Collections.emptyList(), new ItemStack[0], new FluidStack[0], new FluidStack[0], duration, euT, 0, amps);
     }
 
+    /**
+     * Returns a fluid powered recipe, that is, essentially a recipe for generators.
+     * @param input fluid inputs.
+     * @param output fluid outputs (e.g. water)
+     * @param duration how long to generate power for
+     * @param euT eu/T generated.
+     * @param amps amps outputted.
+     * @return recipe.
+     */
     public static Recipe getFluidPoweredRecipe(FluidStack[] input, FluidStack[] output, int duration, long euT, int amps) {
         return new Recipe(Collections.emptyList(), new ItemStack[0], input, output, duration, euT, 0, amps);
     }

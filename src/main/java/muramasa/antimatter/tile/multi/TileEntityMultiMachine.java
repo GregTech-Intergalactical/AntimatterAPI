@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
@@ -22,6 +23,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -43,6 +45,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     protected Optional<StructureResult> result = Optional.empty();
 
+    //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
         this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyHolder.of(() -> new MultiMachineItemHandler(this)) : LazyHolder.empty();
@@ -70,30 +73,40 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     }
 
     public boolean checkStructure() {
-        if (!isServerSide()) return false;
         Structure structure = getMachineType().getStructure(getMachineTier());
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             this.result = Optional.of(result);
-            if (onStructureFormed()) {
-                StructureCache.add(world, pos, result.positions);
-                this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> c.onStructureFormed(this))));
-                //Handlers.
-                this.itemHandler.ifPresent(handle -> {
-                    ((MultiMachineItemHandler)handle).onStructureBuild();
-                });
-                this.energyHandler.ifPresent(handle -> {
-                    ((MultiMachineEnergyHandler)handle).onStructureBuild();
-                });
-                this.fluidHandler.ifPresent(handle -> {
-                    ((MultiMachineFluidHandler)handle).onStructureBuild();
-                });
-                setMachineState(MachineState.IDLE);
-                System.out.println("[Structure Debug] Valid Structure");
-                this.recipeHandler.ifPresent(t -> {
-                    if (t.hasRecipe()) setMachineState(MachineState.NO_POWER);
-                });
+            StructureCache.add(world, pos, result.positions);
+            if (isServerSide()) {
+                if (onStructureFormed()) {
+                    this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+                        c.onStructureFormed(this);
+                    })));
+                    //Handlers.
+                    this.itemHandler.ifPresent(handle -> {
+                        ((MultiMachineItemHandler)handle).onStructureBuild();
+                    });
+                    this.energyHandler.ifPresent(handle -> {
+                        ((MultiMachineEnergyHandler)handle).onStructureBuild();
+                    });
+                    this.fluidHandler.ifPresent(handle -> {
+                        ((MultiMachineFluidHandler)handle).onStructureBuild();
+                    });
+                    setMachineState(MachineState.IDLE);
+                    System.out.println("[Structure Debug] Valid Structure");
+                    this.recipeHandler.ifPresent(t -> {
+                        if (t.hasRecipe()) setMachineState(MachineState.NO_POWER);
+                    });
+                    sidedSync(true);
+                    return true;
+                }
+            } else {
+                this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+                    c.getTile().requestModelDataUpdate();
+                })));
+                sidedSync(true);
                 return true;
             }
         }
@@ -114,16 +127,31 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     public void invalidateStructure() {
         if (removed) return;
         StructureCache.remove(this.getWorld(), getPos());
-        result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
-            c.onStructureInvalidated(this);
-        })));
-        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
-        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
-        this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler)handle).invalidate());
-        result = Optional.empty();
-        resetMachine();
-        System.out.println("INVALIDATED STRUCTURE");
-        onStructureInvalidated();
+        if (isServerSide()) {
+            result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+                c.onStructureInvalidated(this);
+            })));
+            this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
+            this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
+            this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler)handle).invalidate());
+            result = Optional.empty();
+            resetMachine();
+            System.out.println("INVALIDATED STRUCTURE");
+            onStructureInvalidated();
+        } else {
+            this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+                c.getTile().requestModelDataUpdate();
+            })));
+            result = Optional.empty();
+        }
+    }
+
+    @Override
+    public void onServerUpdate() {
+        super.onServerUpdate();
+        if (!result.isPresent() && world != null && world.getGameTime() % 200 == 0) {
+            checkStructure();
+        }
     }
 
     /** Returns a list of Components **/
@@ -293,7 +321,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     @Override
     public int getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents("hatch_energy");
-        return hatches.size() >= 1 ? hatches.get(0).getEnergyHandler().map(EnergyHandler::getInputVoltage).orElse(Ref.V[0]) : Ref.V[0];
+        return hatches.size() >= 1 ? hatches.stream().mapToInt(t -> t.getEnergyHandler().map(eh -> eh.getInputAmperage()*eh.getInputVoltage()).orElse(0)).sum() : Ref.V[0];
     }
 
     @Override

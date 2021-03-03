@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,7 +20,7 @@ import javax.annotation.Nullable;
 @Mod.EventBusSubscriber
 public class StructureCache {
 
-    private static final Int2ObjectMap<DimensionEntry> LOOKUP = new Int2ObjectOpenHashMap<>();
+    private static final Long2ObjectMap<DimensionEntry> LOOKUP = new Long2ObjectOpenHashMap<>();
 
     static {
         AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState) -> {
@@ -33,6 +34,7 @@ public class StructureCache {
             }
         });
     }
+
 
     public static boolean has(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(getDimId(world));
@@ -57,9 +59,10 @@ public class StructureCache {
         entry.remove(pos);
         Antimatter.LOGGER.info("Removed Structure to Store!");
     }
-
-    private static int getDimId(IWorld world) {
-        return world.getDimension().getType().getId();
+    //just to switch between server & client. You can use two maps but y tho
+    private static long getDimId(IWorld world) {
+        int offset = world instanceof ServerWorld ? 1 : 0;
+        return (((long)world.getDimension().getType().getId()) << 32) | (offset & 0xffffffffL);
     }
 
     private static void invalidateController(IWorld world, BlockPos pos) {
@@ -70,7 +73,7 @@ public class StructureCache {
 
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
-        LOOKUP.remove(e.getWorld().getDimension().getType().getId());
+        LOOKUP.remove(getDimId(e.getWorld()));
     }
 
 //    @SubscribeEvent

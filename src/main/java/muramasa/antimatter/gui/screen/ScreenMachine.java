@@ -3,11 +3,14 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.capability.fluid.FluidTanks;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.slot.SlotFakeFluid;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.SwitchWidjet;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
@@ -18,16 +21,23 @@ import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.client.settings.KeyBindingMap;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static muramasa.antimatter.gui.SlotType.FL_IN;
 import static muramasa.antimatter.gui.SlotType.FL_OUT;
@@ -85,7 +95,26 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         }
     }
 
-
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+            return true;
+        }
+        InputMappings.Input input = InputMappings.getInputByCode(keyCode, scanCode);
+        Slot slot = getSlotUnderMouse();
+        //TODO: Properly do this.
+        if (!(input.getTranslationKey().equals("key.keyboard.u") || input.getTranslationKey().equals("key.keyboard.r"))) return false;
+        if (slot instanceof SlotFakeFluid) {
+            SlotFakeFluid fl = (SlotFakeFluid) slot;
+            container.getTile().fluidHandler.ifPresent(t -> {
+                FluidStack stack = t.getFluidInTank(fl.getSlotIndex());
+                if (!stack.isEmpty()) {
+                    AntimatterJEIPlugin.uses(stack,input.getTranslationKey().equals("key.keyboard.u"));
+                }
+            });
+        }
+        return false;
+    }
 
     public void renderFluid(FluidStack fluid, SlotData slot, int mouseX, int mouseY) {
         int x = slot.getX();
@@ -109,16 +138,15 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
 
         if (this.isSlotSelected(slot.getX(), slot.getY(), mouseX, mouseY)) {
             RenderSystem.disableDepthTest();
-            int j1 = x;
-            int k1 = y;
             RenderSystem.colorMask(true, true, true, false);
             int slotColor = -2130706433;
-            this.fillGradient(j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
+            this.fillGradient(x, y, x + 16, y + 16, slotColor, slotColor);
             RenderSystem.colorMask(true, true, true, true);
             RenderSystem.enableDepthTest();
             List<String> str = new ArrayList<>();
             str.add(fluid.getDisplayName().getFormattedText());
-            str.add("Amount: " + fluid.getAmount());
+            str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").applyTextStyle(TextFormatting.GRAY).getFormattedText());
+            AntimatterJEIPlugin.addModDescriptor(str, fluid);
             this.renderTooltip(str, mouseX-guiLeft,mouseY-guiTop);
         }
     }

@@ -80,7 +80,7 @@ public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMult
     @Nullable
     @Override
     public FluidTanks getOutputTanks() {
-        return new FluidTanks(Arrays.stream(outputs).filter(t -> t.getInputTanks() != null).flatMap(t -> Arrays.stream(t.getInputTanks().getBackingTanks())).collect(Collectors.toList()));
+        return new FluidTanks(Arrays.stream(outputs).filter(t -> t.getOutputTanks() != null).flatMap(t -> Arrays.stream(t.getOutputTanks().getBackingTanks())).collect(Collectors.toList()));
     }
 
     @Override

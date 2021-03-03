@@ -6,6 +6,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.helpers.IJeiHelpers;
+import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
@@ -48,6 +50,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     private static IJeiRuntime runtime;
+    private static IJeiHelpers helpers;
     private static Object2ObjectMap<String, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
 
     public AntimatterJEIPlugin() {
@@ -63,6 +66,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         REGISTRY.put(map.getId(), new RegistryValue(map,map.getGui() == null ? gui : map.getGui(),tier,itemModel));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
+
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
@@ -72,7 +76,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         RecipeMapCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
-
+        if (helpers == null) helpers = registry.getJeiHelpers();
         Set<String> registeredMachineCats = new ObjectOpenHashSet<>();
 
         REGISTRY.forEach((id, tuple) -> {
@@ -81,6 +85,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        if (helpers == null) helpers = registration.getJeiHelpers();
         REGISTRY.forEach((id, tuple) -> {
             registration.addRecipes(tuple.map.getRecipes(true), new ResourceLocation(Ref.ID, id));
         });
@@ -95,5 +100,29 @@ public class AntimatterJEIPlugin implements IModPlugin {
             }
             runtime.getRecipesGui().showCategories(list);
         }
+    }
+    //To perform a JEI lookup for fluid. Use defines direction.
+    public static void uses(FluidStack val, boolean USE) {
+        IFocus.Mode mode = !USE ? IFocus.Mode.OUTPUT : IFocus.Mode.INPUT;
+        runtime.getRecipesGui().show(new IFocus<Object>() {
+            @Override
+            public Object getValue() {
+                return val;
+            }
+
+            @Override
+            public Mode getMode() {
+                return mode;
+            }
+        });
+    }
+
+    public static IJeiRuntime getRuntime() {
+        return runtime;
+    }
+
+    public static <T> void addModDescriptor(List<String> tooltip, T t) {
+        String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(t).getDisplayModId(t));
+        tooltip.add(text);
     }
 }

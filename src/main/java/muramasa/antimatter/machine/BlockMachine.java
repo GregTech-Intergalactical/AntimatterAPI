@@ -129,6 +129,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     if (type == WRENCH || type == ELECTRIC_WRENCH) {
                         boolean ok = player.isCrouching() ? tile.setFacing(Utils.getInteractSide(hit)) : tile.setOutputFacing(Utils.getInteractSide(hit));
                         return ok ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        //TODO: Disbling machines isnt working.
                     } else if (type == HAMMER) {
                         tile.toggleMachine();
                         // TODO: Replace by new TranslationTextComponent()

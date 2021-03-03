@@ -167,7 +167,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     public int fillCell(int cellSlot, int maxFill) {
         if (fillingCell) return 0;
         fillingCell = true;
-        if (this.tanks.containsKey(FluidDirection.INPUT)) {
+        if (getInputTanks() != null) {
             tile.itemHandler.ifPresent(ih -> {
                 if (ih.getCellInputHandler() == null) return;
                 ItemStack cell = ih.getCellInputHandler().getStackInSlot(cellSlot);
@@ -206,7 +206,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     public int fill(FluidStack stack, IFluidHandler.FluidAction action) {
         FluidTanks input = getInputTanks();
         if (input != null && !empty(input)) {
-            return this.tanks.get(FluidDirection.INPUT).fill(stack, action);
+            return getInputTanks().fill(stack, action);
         }
         return 0;
     }
@@ -216,23 +216,23 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     public int fillOutput(FluidStack stack, IFluidHandler.FluidAction action) {
-        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
-            return this.tanks.get(FluidDirection.OUTPUT).fill(stack, action);
+        if (getOutputTanks() != null) {
+            return getOutputTanks().fill(stack, action);
         }
         return 0;
     }
     @Nonnull
     public FluidStack drain(FluidStack stack, IFluidHandler.FluidAction action) {
-        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
-            return this.tanks.get(FluidDirection.OUTPUT).drain(stack, action);
+        if (getOutputTanks() != null) {
+            return getOutputTanks().drain(stack, action);
         }
         return FluidStack.EMPTY;
     }
 
     @Nonnull
     public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
-        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
-            return this.tanks.get(FluidDirection.OUTPUT).drain(maxDrain, action);
+        if (getOutputTanks() != null) {
+            return getOutputTanks().drain(maxDrain, action);
         }
         return FluidStack.EMPTY;
     }
@@ -293,7 +293,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     public int getSpaceForOutputs(FluidStack[] outputs) {
         int matchCount = 0;
-        if (this.tanks.containsKey(FluidDirection.OUTPUT)) {
+        if (getOutputTanks() != null) {
             for (FluidStack output : outputs) {
                 if (fillOutput(output, SIMULATE) == output.getAmount()) {
                     matchCount++;
@@ -304,7 +304,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     public void addOutputs(FluidStack... fluids) {
-        if (!this.tanks.containsKey(FluidDirection.OUTPUT)) {
+        if (getOutputTanks() == null) {
             return;
         }
         if (fluids != null) {
@@ -315,7 +315,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
     @Nonnull
     public List<FluidStack> consumeAndReturnInputs(List<FluidStack> inputs) {
-        if (!this.tanks.containsKey(FluidDirection.INPUT)) {
+        if (getInputTanks() == null) {
             return Collections.emptyList();
         }
         List<FluidStack> notConsumed = new ObjectArrayList<>();
@@ -336,7 +336,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     public FluidStack[] exportAndReturnOutputs(FluidStack... outputs) {
-        if (!this.tanks.containsKey(FluidDirection.OUTPUT)) {
+        if (getOutputTanks() == null) {
             return new FluidStack[0];
         }
         List<FluidStack> notExported = new ObjectArrayList<>();
@@ -388,7 +388,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     @Nullable
     @Override
     public FluidData<FluidStack> extract(int tank, int amount, boolean simulate) {
-        if (!this.tanks.containsKey(FluidDirection.OUTPUT)) {
+        if (getOutputTanks() == null) {
             return null;
         }
         FluidTank t = getOutputTanks().getTank(tank);
@@ -435,12 +435,12 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public boolean canOutput() {
-        return this.tanks.containsKey(FluidDirection.OUTPUT);
+        return getOutputTanks() != null;
     }
 
     @Override
     public boolean canInput() {
-        return this.tanks.containsKey(FluidDirection.INPUT);
+        return getInputTanks() != null;
     }
 
     @Override

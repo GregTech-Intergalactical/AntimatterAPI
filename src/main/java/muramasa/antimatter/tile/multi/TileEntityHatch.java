@@ -4,6 +4,7 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -20,8 +21,7 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
-import static muramasa.antimatter.Data.COVERDYNAMO;
-import static muramasa.antimatter.Data.COVERENERGY;
+import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
@@ -33,9 +33,6 @@ TileEntityHatch extends TileEntityMachine implements IComponent {
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
-       // this.itemHandler = type.has(ITEM) ? LazyHolder.of(() -> new MachineItemHandler<>(this)) : LazyHolder.empty();
-      //  this.fluidHandler = type.has(FLUID) ? LazyHolder.of(() -> new MachineFluidHandler<>(this)) : LazyHolder.empty();
-        //T tile, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut
         this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<TileEntityHatch>(this, 0,getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
                 type.getOutputCover() == COVERENERGY ? 2 : 0,type.getOutputCover() == COVERDYNAMO ? 1 : 0){
             @Override
@@ -91,6 +88,14 @@ TileEntityHatch extends TileEntityMachine implements IComponent {
                 }
             });
         }
+    }
+
+    @Override
+    public void onFirstTick() {
+        super.onFirstTick();
+        coverHandler.ifPresent(t -> {
+            COVEROUTPUT.setEjects(t.get(t.getOutputFacing()), has(FLUID), has(ITEM));
+        });
     }
 
     @Nonnull
