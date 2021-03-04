@@ -166,9 +166,9 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         if (!(block instanceof ITextureProvider) || tex.length < 13) return this;
          model(SIMPLE, ((ITextureProvider) block).getTextures());
 
-        //Single (1)
-         config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
-         config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
+        //Single (1)                          B        T        N        S        W        E
+         config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[14], tex[14], tex[14], tex[14]));
+         config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[16], tex[16], tex[16], tex[16]));
          config(4, SIMPLE, c -> c.tex(tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]));
          config(8, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]));
          config(16, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[0], tex[12]));
