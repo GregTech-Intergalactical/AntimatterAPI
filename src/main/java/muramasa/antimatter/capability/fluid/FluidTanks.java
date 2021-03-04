@@ -165,7 +165,7 @@ public class FluidTanks implements IFluidHandler {
     public FluidStack drain(int maxDrain, FluidAction action) {
         for (int i = 0; i < getTanks(); i++) {
             FluidTank tank = getTank(i);
-            FluidStack stack = tank.drain(maxDrain, FluidAction.SIMULATE);
+            FluidStack stack = tank.drain(maxDrain, action);
             if (!stack.isEmpty()) {
                 return stack;
             }

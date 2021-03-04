@@ -1,10 +1,8 @@
 package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.gui.event.IGuiEvent;
@@ -23,7 +21,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -97,21 +94,25 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
                     setMachineState(MachineState.IDLE);
                     System.out.println("[Structure Debug] Valid Structure");
                     this.recipeHandler.ifPresent(t -> {
-                        if (t.hasRecipe()) setMachineState(MachineState.NO_POWER);
+                        if (t.hasRecipe())
+                            setMachineState(MachineState.NO_POWER);
+                        else {
+                            t.checkRecipe();
+                        }
                     });
                     sidedSync(true);
                     return true;
                 }
             } else {
                 this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
-                    c.getTile().requestModelDataUpdate();
+                    Utils.markTileForRenderUpdate(c.getTile());
                 })));
                 sidedSync(true);
                 return true;
             }
+        } else {
+            invalidateStructure();
         }
-        this.result = Optional.empty();
-        System.out.println("[Structure Debug] Invalid Structure" + result.getError());
         return false;
     }
 
@@ -126,6 +127,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
 
     public void invalidateStructure() {
         if (removed) return;
+        if (!result.isPresent()) return;
         StructureCache.remove(this.getWorld(), getPos());
         if (isServerSide()) {
             result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
@@ -136,11 +138,10 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
             this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler)handle).invalidate());
             result = Optional.empty();
             resetMachine();
-            System.out.println("INVALIDATED STRUCTURE");
             onStructureInvalidated();
         } else {
             this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
-                c.getTile().requestModelDataUpdate();
+                Utils.markTileForRenderUpdate(c.getTile());
             })));
             result = Optional.empty();
         }
@@ -150,7 +151,8 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     public void onServerUpdate() {
         super.onServerUpdate();
         if (!result.isPresent() && world != null && world.getGameTime() % 200 == 0) {
-            checkStructure();
+            //Uncomment to periodically check structure.
+           // checkStructure();
         }
     }
 

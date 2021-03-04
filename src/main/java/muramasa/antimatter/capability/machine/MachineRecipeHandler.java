@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static muramasa.antimatter.machine.MachineState.*;
-
+//TODO: This needs some look into, a bit of spaghetti code sadly.
 public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler {
 
     protected final T tile;
@@ -267,7 +267,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return itemInputs.size() > 0 || fluidInputs.size() > 0;
     }
 
-    protected void checkRecipe() {
+    public void checkRecipe() {
         if (activeRecipe != null) {
             return;
         }
@@ -276,7 +276,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]));
             if (activeRecipe == null) return;
             activateRecipe(false);
-            tile.setMachineState(ACTIVE);
+            if (canOutput()) tile.setMachineState(ACTIVE);
             return;
         }
         if (tile.getMachineState().allowRecipeCheck()) {
@@ -329,7 +329,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     protected boolean canRecipeContinue() {
-        return canOutput() && tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false) || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
+        return canOutput() && (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0])));
     }
     /*
       Helper to consume resources for a generator.

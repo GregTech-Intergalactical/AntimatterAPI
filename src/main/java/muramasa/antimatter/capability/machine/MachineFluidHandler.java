@@ -38,7 +38,6 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     protected final int[] priority = new int[]{0, 0, 0, 0, 0, 0}; // TODO
 
     protected int capacity, pressure;
-    protected ITickingController controller;
     //To protect against callbacks into fillingCell.
     //TODO: Protect against these callback thingys. Dunno how.
     private boolean fillingCell = false;
@@ -91,13 +90,6 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         registerNet();
     }
 
-    public void onUpdate() {
-        if (controller != null) {
-            controller.tick();
-        }
-        fillCell(0, 1000);
-    }
-
     public void onRemove() {
         deregisterNet();
     }
@@ -106,6 +98,10 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         if (tile.isServerSide()) {
             refreshNet();
         }
+    }
+
+    public void onUpdate() {
+
     }
 
     public int getTanks() {
@@ -163,7 +159,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         if (getOutputTanks() != null) list.addAll(Arrays.asList(getOutputTanks().getBackingTanks()));
         return new FluidTanks(list);
     }
-
+    //TODO: Not every tick!
     public int fillCell(int cellSlot, int maxFill) {
         if (fillingCell) return 0;
         fillingCell = true;
@@ -171,6 +167,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
             tile.itemHandler.ifPresent(ih -> {
                 if (ih.getCellInputHandler() == null) return;
                 ItemStack cell = ih.getCellInputHandler().getStackInSlot(cellSlot);
+                if (cell.isEmpty()) return;
                 ItemStack toActOn = cell.copy();
                 toActOn.setCount(1);
                 toActOn.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(cfh -> {
@@ -229,6 +226,20 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return FluidStack.EMPTY;
     }
 
+    /**
+     * Drains from the input tanks rather than output tanks. Useful for recipes.
+     * @param stack stack to drain.
+     * @param action execute/simulate
+     * @return the drained stack
+     */
+    @Nonnull
+    public FluidStack drainInput(FluidStack stack, IFluidHandler.FluidAction action) {
+        if (getInputTanks() != null) {
+            return getInputTanks().drain(stack, action);
+        }
+        return FluidStack.EMPTY;
+    }
+
     @Nonnull
     public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
         if (getOutputTanks() != null) {
@@ -247,19 +258,23 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return true;
     }
 
+    protected void tryFillCell(int slot, int maxFill) {
+        if (tile.itemHandler.map(MachineItemHandler::getCellCount).orElse(0) > 0) {
+            fillCell(slot, maxFill);
+        }
+    }
+
     @Override
     public void onMachineEvent(IMachineEvent event, Object ...data) {
         if (event instanceof ContentEvent) {
             switch ((ContentEvent)event) {
                 case ITEM_CELL_CHANGED:
-                    if (tile.itemHandler.map(MachineItemHandler::getCellCount).orElse(0) > 0 && data[0] instanceof Integer) {
-                        fillCell((Integer) data[0], 1000);
-                    }
+                    if (data[0] instanceof Integer) tryFillCell((Integer) data[0], 1000);
                     break;
                 case FLUID_INPUT_CHANGED:
-                    this.markDirty();
                 case FLUID_OUTPUT_CHANGED:
                     this.markDirty();
+                    if (data[0] instanceof Integer) tryFillCell((Integer) data[0], 1000);
                     break;
             }
         }
@@ -322,7 +337,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         FluidStack result;
         if (inputs != null) {
             for (FluidStack input : inputs) {
-                result = drain(input, EXECUTE);
+                result = drainInput(input, EXECUTE);
                 if (result != FluidStack.EMPTY) {
                     if (result.getAmount() != input.getAmount()) { //Fluid was partially consumed
                         notConsumed.add(Utils.ca(input.getAmount() - result.getAmount(), input));
@@ -391,14 +406,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         if (getOutputTanks() == null) {
             return null;
         }
-        FluidTank t = getOutputTanks().getTank(tank);
-        /*
-        if (fluid.getAmount() > amount) {
-            fluid = fluid.copy();
-            fluid.setAmount(amount);
-        }
-         */
-        FluidStack drained = t.drain(amount, simulate ? SIMULATE : EXECUTE);
+        FluidStack drained = getOutputTanks().drain(amount, simulate ? SIMULATE : EXECUTE);
         return drained.isEmpty() ? null : new FluidData<>(drained, drained.getAmount(), drained.getFluid().getAttributes().getTemperature(), drained.getFluid().getAttributes().isGaseous());
     }
 

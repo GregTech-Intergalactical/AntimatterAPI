@@ -22,6 +22,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.ingredient.StackListIngredient;
 import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
@@ -98,9 +99,11 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                         recipe.tagsToRender.putIfAbsent(inputs.size(), rl);
                     }
                 }
+                if (ing instanceof StackListIngredient) {
+                    recipe.infoToRender.putIfAbsent(inputs.size(), ing.getMatchingStacks().length);
+                }
                 inputs.add(ing);
             }
-            //ingredients.setInputIngredients(inputs);
             ingredients.setInputLists(VanillaTypes.ITEM,inputs.stream().map(t -> Arrays.asList(t.getMatchingStacks())).collect(Collectors.toList()));
         }
         if (recipe.hasOutputItems()) {
@@ -194,11 +197,14 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         }
 
         final int finalInputItems = inputItems;
-//        final int finalInputFluids = inputFluids;
         itemGroup.addTooltipCallback((index, input, stack, tooltip) -> {
             ResourceLocation rl;
             if ((rl = recipe.tagsToRender.get(index)) != null) {
                 tooltip.add(TextFormatting.GOLD + "Accepts any " + rl);
+            }
+            int i;
+            if ((i = recipe.infoToRender.get(index)) != 0) {
+                tooltip.add(TextFormatting.GOLD + "Accepts " + i + " different items.");
             }
 
             if (input && (Utils.hasNoConsumeTag(stack) || stack.getCount() == 0)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process.");

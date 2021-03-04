@@ -22,6 +22,7 @@ public class ButtonOverlay {
     public static ButtonOverlay A_LEFT = new ButtonOverlay("a_left", 16, 32, 16, 16);
     public static ButtonOverlay A_RIGHT = new ButtonOverlay("a_right", 32, 32, 16, 16);
     public static ButtonOverlay ARROW_RIGHT = new ButtonOverlay("arrow_right", 48, 32, 16, 16);
+    public static ButtonOverlay INPUT_OUTPUT = new ButtonOverlay("in_out", 81, 1, 14, 14);
 
     protected String id;
     protected int x, y, w, h;

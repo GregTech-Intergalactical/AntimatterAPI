@@ -26,8 +26,7 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
 //TODO: HATCH SHOULD NOT HAVE TWO OUTPUTS!
-public class
-TileEntityHatch extends TileEntityMachine implements IComponent {
+public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     private final LazyOptional<HatchComponentHandler> componentHandler = LazyOptional.of(() -> new HatchComponentHandler(this));
 
@@ -65,6 +64,7 @@ TileEntityHatch extends TileEntityMachine implements IComponent {
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
+        if (isClientSide()) return;
         super.onMachineEvent(event,data);
         if (event instanceof ContentEvent) {
             componentHandler.map(ComponentHandler::getFirstController).orElse(Optional.empty()).ifPresent(controller -> {
@@ -73,6 +73,7 @@ TileEntityHatch extends TileEntityMachine implements IComponent {
                     case ITEM_OUTPUT_CHANGED:
                     case ITEM_CELL_CHANGED:
                     case FLUID_INPUT_CHANGED:
+                    case FLUID_OUTPUT_CHANGED:
                         controller.onMachineEvent(event, data);
                         break;
                 }

@@ -40,7 +40,6 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     protected final int[] priority = new int[]{0, 0, 0, 0, 0, 0}; // TODO
 
-    protected ITickingController controller;
 
     public MachineItemHandler(T tile) {
         this.tile = tile;
@@ -81,10 +80,8 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         this.inventories.forEach((f, i) -> i.deserializeNBT(nbt.getCompound(f.name())));
     }
 
-    public void onServerUpdate() {
-        if (controller != null) {
-            controller.tick();
-        }
+    public void onUpdate() {
+
     }
 
     public void onRemove() {

@@ -112,6 +112,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        ActionResultType ty = onBlockActivatedBoth(state, world, pos, player, hand, hit);
+        if (ty.isSuccessOrConsume()) return ty;
         if (!world.isRemote) {
             TileEntityMachine tile = (TileEntityMachine)world.getTileEntity(pos);
             if (tile != null) {
@@ -127,8 +129,10 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     }
                     //Handle tool types.
                     if (type == WRENCH || type == ELECTRIC_WRENCH) {
-                        boolean ok = player.isCrouching() ? tile.setFacing(Utils.getInteractSide(hit)) : tile.setOutputFacing(Utils.getInteractSide(hit));
-                        return ok ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        if (!player.isCrouching()) {
+                            boolean ok = tile.setOutputFacing(Utils.getInteractSide(hit));
+                            return ok ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        }
                         //TODO: Disbling machines isnt working.
                     } else if (type == HAMMER) {
                         tile.toggleMachine();
@@ -166,6 +170,20 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             }
         }
         return ActionResultType.CONSUME;
+    }
+    //This is also a hack. Since the game relies on multiblock checks being done on both sides this method is split out.
+    protected ActionResultType onBlockActivatedBoth(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        TileEntityMachine tile = (TileEntityMachine)world.getTileEntity(pos);
+        if (tile != null) {
+            AntimatterToolType type = Utils.getToolType(player);
+            if (type == WRENCH || type == ELECTRIC_WRENCH) {
+                if (player.isCrouching()) {
+                    boolean ok = tile.setFacing(Utils.getInteractSide(hit));
+                    return ok ? ActionResultType.CONSUME : ActionResultType.PASS;
+                }
+            }
+        }
+        return ActionResultType.PASS;
     }
 
     @Override

@@ -4,7 +4,7 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
-import muramasa.antimatter.gui.widget.SwitchWidjet;
+import muramasa.antimatter.gui.widget.SwitchWidget;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.network.packets.GuiEventPacket;
 import net.minecraft.entity.player.PlayerInventory;
@@ -37,12 +37,12 @@ public class ScreenSteamMachine<T extends ContainerMachine> extends ScreenMachin
     protected void init() {
         super.init();
         if (container.getTile().has(MachineFlag.ITEM)) {
-            addButton(new SwitchWidjet(gui, guiLeft + 26, guiTop + 63, 16, 16, ITEM, (b, s) -> {
+            addButton(new SwitchWidget(gui, guiLeft + 26, guiTop + 63, 16, 16, ITEM, (b, s) -> {
                 Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
             },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.get(t.getOutputFacing()))).orElse(false)));
         }
         if (container.getTile().has(MachineFlag.FLUID)) {
-            addButton(new SwitchWidjet(gui, guiLeft + 8, guiTop + 63, 16, 16, FLUID, (b, s) -> {
+            addButton(new SwitchWidget(gui, guiLeft + 8, guiTop + 63, 16, 16, FLUID, (b, s) -> {
                 Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
             },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false)));
         }

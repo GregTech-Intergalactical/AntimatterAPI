@@ -185,6 +185,11 @@ public class Utils {
         return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
 
+    public static boolean hasIgnoreNbtTag(ItemStack stack) {
+        return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_IGNORE_NBT);
+    }
+
+
     public static boolean getNoConsumeTag(ItemStack stack) {
         return stack.getTag().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }

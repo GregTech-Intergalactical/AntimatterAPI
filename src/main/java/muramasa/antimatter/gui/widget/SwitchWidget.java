@@ -10,16 +10,16 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class SwitchWidjet extends AbstractButton {
+public class SwitchWidget extends AbstractButton {
 
     private ResourceLocation res;
     private ButtonBody on, off;
     private ButtonOverlay body;
     private boolean state;
 
-    protected final SwitchWidjet.ISwitchable onSwitch;
+    protected final SwitchWidget.ISwitchable onSwitch;
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
+    public SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
         super(x, y, w, h, "");
         this.res = res;
         this.on = on;
@@ -27,7 +27,7 @@ public class SwitchWidjet extends AbstractButton {
         this.onSwitch = onSwitch;
     }
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
+    public SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
         super(x, y, w, h, "");
         this.res = res;
         this.body = body;
@@ -35,7 +35,7 @@ public class SwitchWidjet extends AbstractButton {
         this.state = defaultState;
     }
 
-    public SwitchWidjet(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {
+    public SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {
         super(x, y, w, h, text);
         this.res = res;
         this.body = body;
@@ -80,6 +80,6 @@ public class SwitchWidjet extends AbstractButton {
 
     @OnlyIn(Dist.CLIENT)
     public interface ISwitchable {
-        void onSwitch(SwitchWidjet button, boolean state);
+        void onSwitch(SwitchWidget button, boolean state);
     }
 }

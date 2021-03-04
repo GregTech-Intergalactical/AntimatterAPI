@@ -3,6 +3,7 @@ package muramasa.antimatter.recipe.ingredient;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -19,10 +20,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class AntimatterIngredient extends Ingredient {
-    public int count;
+
+    //The ingredient count, required number.
+    public final int count;
     protected boolean nonConsume = false;
-    //Tags ot be filtered out from lookup.
-    protected static final Set<String> CUSTOM_TAGS = ImmutableSet.of(Ref.KEY_STACK_NO_CONSUME);
+    protected boolean ignoreNbt = false;
+    //Tags to be filtered out from lookup.
+    protected static final Set<String> CUSTOM_TAGS = ImmutableSet.of(Ref.KEY_STACK_NO_CONSUME, Ref.KEY_STACK_IGNORE_NBT);
 
     protected AntimatterIngredient(Stream<? extends IItemList> itemLists, int count) {
         super(itemLists);
@@ -33,6 +37,10 @@ public abstract class AntimatterIngredient extends Ingredient {
         }
     }
 
+    /**
+     * Whether to not consume the item during recipe tick.
+     * @return this
+     */
     public AntimatterIngredient setNonConsume() {
         nonConsume = true;
         for (ItemStack stack : getMatchingStacks()) {
@@ -41,12 +49,37 @@ public abstract class AntimatterIngredient extends Ingredient {
         return this;
     }
 
+    /**
+     * Whether to ignore nbt in the lookup, to allow any.
+     * @return this
+     */
+    public AntimatterIngredient setIgnoreNbt() {
+        ignoreNbt = true;
+        for (ItemStack stack : getMatchingStacks()) {
+            stack.getOrCreateTag().putBoolean(Ref.KEY_STACK_IGNORE_NBT,true);
+        }
+        return this;
+    }
+
     public boolean noConsume() {
         return nonConsume;
     }
+    public boolean ignoreNbt() {
+        return ignoreNbt;
+    }
 
+    /**
+     * See if this AMIngredient has the tag.
+     * @param tag the tag.
+     * @return whether it contains it.
+     */
     public abstract boolean testTag(ResourceLocation tag);
 
+    /**
+     * Hashes an itemstack.
+     * @param item the stack.
+     * @return a hash.
+     */
     public static int itemHash(ItemStack item) {
         if (item == null) return itemHash(ItemStack.EMPTY);
         boolean nbt = item.hasTag();
@@ -60,6 +93,11 @@ public abstract class AntimatterIngredient extends Ingredient {
         return (int) (tempHash ^ (tempHash >>> 32));
     }
 
+    /**
+     * Filters out tags that are static, not used for lookup.
+     * @param nbt Compound to filter.
+     * @return copied, filtered compound.
+     */
     protected static CompoundNBT filterTags(CompoundNBT nbt) {
         if (nbt == null) return new CompoundNBT();
         CompoundNBT newNbt = nbt.copy();
@@ -82,32 +120,32 @@ public abstract class AntimatterIngredient extends Ingredient {
     public static List<AntimatterIngredient> fromStacksList(List<ItemStack> stacks) {
         return stacks.stream().map(AntimatterIngredient::fromStack).collect(Collectors.toList());
     }
-    /*
-    public static AntimatterIngredient fromStacks(ItemStack... stacks) {
+
+    public static AntimatterIngredient fromStacks(int count, ItemStack... stacks) {
         if (stacks == null || stacks.length == 0) throw new RuntimeException("Invalid input to AntimatterIngredient fromStacks");
-        AntimatterIngredient ing = new AntimatterIngredient(Arrays.stream(stacks).map(SingleItemList::new), stacks[0].getCount());
-        ing.multipleItems = Arrays.stream(stacks).map(AntimatterIngredient::fromStack).collect(Collectors.toSet());
-        return ing;
-    }*/
+        return new StackListIngredient(Arrays.stream(stacks).map(SingleItemList::new), count);
+    }
 
     public static AntimatterIngredient fromTag(Tag<Item> tagIn, int count) {
         return new TagIngredient(Stream.of(new TagList(tagIn)), count,tagIn);
     }
 
-    //UTILITY FUNCTIONS
+
+
+    /** UTILITY FUNCTIONS **/
+
     public static AntimatterIngredient of(Tag<Item> tagIn, int count) {
         return fromTag(tagIn,count);
     }
-
     public static AntimatterIngredient of(ItemStack stack) {
         return fromStack(stack);
     }
     public static AntimatterIngredient of(Item item, int count) {
         return fromStack(new ItemStack(item,count));
     }
-    //DEFAULT BEHAVIOUR: 1-1, not MANY-1. Use specific method for that.
-    public static List<AntimatterIngredient> of(ItemStack... stack) {
-        return fromStacksList(stack);
+
+    public static AntimatterIngredient of(int count, ItemStack... stacks) {
+        return fromStacks(count, stacks);
     }
 
     @Override
@@ -125,6 +163,7 @@ public abstract class AntimatterIngredient extends Ingredient {
     }
 
     private static boolean compareStacks(ItemStack stackA, ItemStack stackB) {
+        if (Utils.hasIgnoreNbtTag(stackA) || Utils.hasIgnoreNbtTag(stackB)) return stackA.getItem() == stackB.getItem();
         if (stackA.getItem() != stackB.getItem()) {
             return false;
         } else if (stackA.getTag() == null && stackB.getTag() != null) {

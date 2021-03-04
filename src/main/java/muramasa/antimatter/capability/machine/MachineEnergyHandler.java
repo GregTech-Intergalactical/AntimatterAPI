@@ -19,7 +19,6 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     protected final T tile;
 
-    protected ITickingController controller;
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
 
     public MachineEnergyHandler(T tile, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
@@ -41,10 +40,8 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         registerNet();
     }
 
-    public void onServerUpdate() {
-        if (controller != null) {
-            controller.tick();
-        }
+    public void onUpdate() {
+
     }
 
     public void onRemove() {

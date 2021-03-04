@@ -70,13 +70,14 @@ public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMult
         }
     }
 
+    //TODO: Remove gettanks() != null as this is called twice.
     @Nullable
     @Override
     public FluidTanks getInputTanks() {
         //Input tanks output into the machine.
         return new FluidTanks(Arrays.stream(inputs).filter(t -> t.getInputTanks() != null).flatMap(t -> Arrays.stream(t.getInputTanks().getBackingTanks())).collect(Collectors.toList()));
     }
-
+    //TODO: Remove gettanks() != null as this is called twice.
     @Nullable
     @Override
     public FluidTanks getOutputTanks() {
