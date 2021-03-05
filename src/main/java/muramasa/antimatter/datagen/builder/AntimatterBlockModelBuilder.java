@@ -166,13 +166,24 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         if (!(block instanceof ITextureProvider) || tex.length < 13) return this;
          model(SIMPLE, ((ITextureProvider) block).getTextures());
 
-        //Single (1)                          B        T        N        S        W        E
-         config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[14], tex[14], tex[14], tex[14]));
-         config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[16], tex[16], tex[16], tex[16]));
-         config(4, SIMPLE, c -> c.tex(tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]));
-         config(8, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]));
-         config(16, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[0], tex[12]));
-         config(32, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[12], tex[0]));
+        //Single (1)
+         if (tex.length < 17){
+             config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
+             config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
+             config(4, SIMPLE, c -> c.tex(tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]));
+             config(8, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]));
+             config(16, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[0], tex[12]));
+             config(32, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[12], tex[0]));
+         } else {
+             // 13 = facing right, 14 = facing down, 15 = facing left, 16 = facing up
+             config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[14], tex[14], tex[14], tex[14]));
+             config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[16], tex[16], tex[16], tex[16]));
+             config(4, SIMPLE, c -> c.tex(tex[14], tex[16], tex[0], tex[12], tex[15], tex[13]));
+             config(8, SIMPLE, c -> c.tex(tex[16], tex[14], tex[12], tex[0], tex[13], tex[15]));
+             config(16, SIMPLE, c -> c.tex(tex[15], tex[15], tex[13], tex[15], tex[0], tex[12]));
+             config(32, SIMPLE, c -> c.tex(tex[13], tex[13], tex[15], tex[13], tex[12], tex[0]));
+         }
+
 
         //Lines (2)
          config(3, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
@@ -188,10 +199,10 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
          config(18, SIMPLE, c -> c.tex(tex[0], tex[12], tex[11], tex[10], tex[12], tex[1]));
          config(33, SIMPLE, c -> c.tex(tex[12], tex[0], tex[9], tex[8], tex[1], tex[12]));
          config(34, SIMPLE, c -> c.tex(tex[0], tex[12], tex[10], tex[11], tex[1], tex[10]));
-         config(20, SIMPLE, c -> c.tex(tex[10], tex[10], tex[0], tex[0], tex[0], tex[0]));
-         config(24, SIMPLE, c -> c.tex(tex[9], tex[9], tex[0], tex[0], tex[0], tex[0]));
-         config(36, SIMPLE, c -> c.tex(tex[11], tex[11], tex[0], tex[0], tex[0], tex[0]));
-         config(40, SIMPLE, c -> c.tex(tex[8], tex[8], tex[0], tex[0], tex[0], tex[0]));
+         config(20, SIMPLE, c -> c.tex(tex[9], tex[11], tex[0], tex[0], tex[0], tex[0]));
+         config(24, SIMPLE, c -> c.tex(tex[11], tex[9], tex[0], tex[0], tex[0], tex[0]));
+         config(36, SIMPLE, c -> c.tex(tex[8], tex[10], tex[0], tex[0], tex[0], tex[0]));
+         config(40, SIMPLE, c -> c.tex(tex[10], tex[8], tex[0], tex[0], tex[0], tex[0]));
 
         //Side (3)
          config(7, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[1], tex[4], tex[2]));
