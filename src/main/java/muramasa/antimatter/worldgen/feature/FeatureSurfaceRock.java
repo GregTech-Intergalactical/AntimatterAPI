@@ -10,10 +10,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
@@ -29,7 +28,7 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
     public static final Object2ObjectOpenHashMap<ChunkPos, List<Tuple<BlockPos, Material>>> ROCKS = new Object2ObjectOpenHashMap<>();
 
     public FeatureSurfaceRock() {
-        super(NoFeatureConfig::deserialize, FeatureSurfaceRock.class);
+        super(NoFeatureConfig.field_236558_a_, FeatureSurfaceRock.class);
     }
 
     @Override
@@ -40,7 +39,7 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+          //  biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 
@@ -49,8 +48,9 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
         return "feature_surface_rocks";
     }
 
+
     @Override
-    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
         List<Tuple<BlockPos, Material>> rocks = ROCKS.remove(world.getChunk(pos).getPos());
         if (rocks == null) return false;
         StoneType stoneType;

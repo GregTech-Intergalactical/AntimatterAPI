@@ -15,7 +15,7 @@ public class CommonHandler implements IProxyHandler {
 
     @SuppressWarnings("unused")
     public static void setup(FMLCommonSetupEvent e) {
-        AntimatterWorldGenerator.init();
+        e.enqueueWork(AntimatterWorldGenerator::init);
         AntimatterCaps.register();
     }
 

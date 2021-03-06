@@ -1,5 +1,6 @@
 package muramasa.antimatter.integration.jei.category;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -31,6 +32,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -58,7 +60,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     public RecipeMapCategory(RecipeMap<?> map, GuiData gui, Tier defaultTier, String blockItemModel) {
         id = map.getId();
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
-        title = map.getDisplayName().getFormattedText();
+        title = map.getDisplayName().getString();
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.getDir().getUV();
         background = guiHelper.drawableBuilder(gui.getTexture(guiTier,"machine"), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
         progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier,"machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
@@ -124,10 +126,10 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     }
 
     @Override
-    public void draw(@Nonnull Recipe recipe, double mouseX, double mouseY) {
+    public void draw(Recipe recipe, MatrixStack stack, double mouseX, double mouseY) {
         if (progressBar != null)
-            progressBar.draw(gui.getDir().getPos().x + gui.getArea().x, gui.getDir().getPos().y + gui.getArea().y);
-        infoRenderer.render(recipe, Minecraft.getInstance().fontRenderer, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z/2);
+            progressBar.draw(stack, gui.getDir().getPos().x + gui.getArea().x, gui.getDir().getPos().y + gui.getArea().y);
+        infoRenderer.render(stack, recipe, Minecraft.getInstance().fontRenderer, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z/2);
     }
 
     @Override
@@ -200,23 +202,23 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         itemGroup.addTooltipCallback((index, input, stack, tooltip) -> {
             ResourceLocation rl;
             if ((rl = recipe.tagsToRender.get(index)) != null) {
-                tooltip.add(TextFormatting.GOLD + "Accepts any " + rl);
+                tooltip.add(new StringTextComponent("Accepts any " + rl).mergeStyle(TextFormatting.GOLD));
             }
             int i;
             if ((i = recipe.infoToRender.get(index)) != 0) {
-                tooltip.add(TextFormatting.GOLD + "Accepts " + i + " different items.");
+                tooltip.add(new StringTextComponent("Accepts " + i + " different items.").mergeStyle(TextFormatting.GOLD));
             }
 
-            if (input && (Utils.hasNoConsumeTag(stack) || stack.getCount() == 0)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process.");
+            if (input && (Utils.hasNoConsumeTag(stack) || stack.getCount() == 0)) tooltip.add(new StringTextComponent("Does not get consumed in the process.").mergeStyle(TextFormatting.WHITE));
             if (recipe.hasChances() && !input) {
                 int chanceIndex = index - finalInputItems;
                 if (recipe.getChances()[chanceIndex] < 100) {
-                    tooltip.add(TextFormatting.WHITE + "Chance: " + recipe.getChances()[chanceIndex] + "%");
+                    tooltip.add(new StringTextComponent("Chance: " + recipe.getChances()[chanceIndex] + "%").mergeStyle(TextFormatting.WHITE));
                 }
             }
         });
         fluidGroup.addTooltipCallback((index, input, stack, tooltip) -> {
-            if (input && Utils.hasNoConsumeTag(stack)) tooltip.add(TextFormatting.WHITE + "Does not get consumed in the process");
+            if (input && Utils.hasNoConsumeTag(stack)) tooltip.add(new StringTextComponent("Does not get consumed in the process").mergeStyle(TextFormatting.WHITE));
             //TODO add fluid chances to recipe
 //            if (wrapper.recipe.hasChances() && !input) {
 //                int chanceIndex = index - finalInputFluids;

@@ -1,34 +1,41 @@
 package muramasa.antimatter.datagen.providers.dummy;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.ExistingFileHelperOverride;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import net.minecraft.block.Block;
 import net.minecraft.data.*;
 import net.minecraft.item.Item;
-import net.minecraft.tags.TagCollection;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.ITagCollection;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DummyTagProviders {
 
-    public static final IDataProvider[] DUMMY_PROVIDERS = { new ForgeItemTagsProviderOverride(), new ForgeBlockTagsProviderOverride() };
+    private static final BlockTagsProvider BLOCK = new ForgeBlockTagsProviderOverride();
+    private static final ItemTagsProvider ITEM = new ForgeItemTagsProviderOverride();
+    public static final IDataProvider[] DUMMY_PROVIDERS = { BLOCK, ITEM };
 
     public static class ForgeItemTagsProviderOverride extends ForgeItemTagsProvider {
 
         public ForgeItemTagsProviderOverride() {
-            super(Ref.BACKGROUND_GEN);
+            super(Ref.BACKGROUND_GEN, BLOCK, new ExistingFileHelperOverride());
         }
 
         @Override
         public void act(DirectoryCache cache) {
+            Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
             this.tagToBuilder.clear();
-            this.registerTags();
-            TagCollection<Item> collection = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
-            collection.registerAll(this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(m -> m.getKey().getId(), Map.Entry::getValue)));
-            this.setCollection(collection);
+            registerTags();
+            b.forEach(tagToBuilder::put);
         }
 
     }
@@ -36,16 +43,15 @@ public class DummyTagProviders {
     public static class ForgeBlockTagsProviderOverride extends ForgeBlockTagsProvider {
 
         public ForgeBlockTagsProviderOverride() {
-            super(Ref.BACKGROUND_GEN);
+            super(Ref.BACKGROUND_GEN, new ExistingFileHelperOverride());
         }
 
         @Override
         public void act(DirectoryCache cache) {
+            Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
             this.tagToBuilder.clear();
-            this.registerTags();
-            TagCollection<Block> collection = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
-            collection.registerAll(this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(m -> m.getKey().getId(), Map.Entry::getValue)));
-            this.setCollection(collection);
+            registerTags();
+            b.forEach(tagToBuilder::put);
         }
     }
 }

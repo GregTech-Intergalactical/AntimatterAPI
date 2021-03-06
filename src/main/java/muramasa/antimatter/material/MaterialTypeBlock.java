@@ -10,6 +10,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 
 import java.util.Arrays;
@@ -27,7 +28,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
     }
 
 
-    public Tag<Item> getMaterialTag(Material m) {
+    public ITag.INamedTag<Item> getMaterialTag(Material m) {
         return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 

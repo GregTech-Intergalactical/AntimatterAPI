@@ -412,7 +412,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     public void deserializeNBT(CompoundNBT nbt) {
         tanks.forEach((k,v) -> {
-            v.deserializeNBT(nbt.getList(k.name(),Constants.NBT.TAG_COMPOUND));
+            v.deserializeNBT(nbt.getList(k.toString(),Constants.NBT.TAG_COMPOUND));
         });
     }
 

@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
@@ -75,9 +76,9 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (player.isShiftKeyDown() && !world.isRemote()) {
+        if (Screen.hasShiftDown() && !world.isRemote()) {
             boolean newMode = chargeModeSwitch(stack);
-            player.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"));
+            player.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"), player.getUniqueID());
             return ActionResult.resultSuccess(stack);
         }
         return ActionResult.resultPass(stack);
@@ -100,7 +101,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
             tooltip.add(new TranslationTextComponent("item.reusable"));
         }
         long energy = ItemEnergyHandler.getEnergyFromStack(stack);
-        tooltip.add(new TranslationTextComponent("item.charge").appendText(": ").appendSibling(new StringTextComponent(energy + "/" + cap).applyTextStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).appendText(" (" + tier.getId().toUpperCase() + ")"));
+        tooltip.add(new TranslationTextComponent("item.charge").appendString(": ").append(new StringTextComponent(energy + "/" + cap).mergeStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).appendString(" (" + tier.getId().toUpperCase() + ")"));
         super.addInformation(stack, worldIn, tooltip, flag);
     }
 }

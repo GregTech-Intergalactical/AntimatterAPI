@@ -6,6 +6,7 @@ import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.SwitchWidget;
 import muramasa.antimatter.network.packets.GuiEventPacket;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.tileentity.TileEntity;
@@ -43,7 +44,7 @@ public class ButtonType {
 
     private static ButtonWidget.IPressable getPressable(IGuiHandler handler, PlayerInventory inv, ButtonData button) {
         return b -> {
-            int shiftHold = inv.player.isShiftKeyDown() ? 1 : 0;
+            int shiftHold = Screen.hasShiftDown() ? 1 : 0;
             handler.onGuiEvent(GuiEvent.EXTRA_BUTTON, button.getId(), shiftHold);
             Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.EXTRA_BUTTON, ((TileEntity) handler).getPos(), button.getId(), shiftHold));
         };
@@ -51,7 +52,7 @@ public class ButtonType {
 
     private static SwitchWidget.ISwitchable getSwitchable(IGuiHandler handler, PlayerInventory inv, ButtonData button) {
         return (b, s) -> {
-            int shiftHold = inv.player.isShiftKeyDown() ? 1 : 0;
+            int shiftHold = Screen.hasShiftDown() ? 1 : 0;
             handler.onGuiEvent(GuiEvent.EXTRA_SWITCH, button.getId(), shiftHold, s ? 1 : 0);
             Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.EXTRA_SWITCH, ((TileEntity) handler).getPos(), button.getId(), shiftHold, s ? 1 : 0));
         };

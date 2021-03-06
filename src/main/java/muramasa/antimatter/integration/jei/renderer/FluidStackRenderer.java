@@ -1,25 +1,27 @@
 package muramasa.antimatter.integration.jei.renderer;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import muramasa.antimatter.client.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
+public class FluidStackRenderer /*implements IIngredientRenderer<FluidStack>*/ {
 
     public FluidStackRenderer() {
 
     }
-
+/*
     @Override
-    public void render(int xPosition, int yPosition, @Nullable FluidStack fluidStack) {
+    public void render(MatrixStack stack, int xPosition, int yPosition, @Nullable FluidStack fluidStack) {
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
 
@@ -39,11 +41,11 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
     }
 
     @Override
-    public List<String> getTooltip(FluidStack fluidStack, ITooltipFlag tooltipFlag) {
+    public List<ITextComponent> getTooltip(FluidStack fluidStack, ITooltipFlag tooltipFlag) {
         return getFluidTooltip(fluidStack);
     }
 
-    public static List<String> getFluidTooltip(FluidStack fluidStack) {
+    public static List<ITextComponent> getFluidTooltip(FluidStack fluidStack) {
         List<String> tooltip = new ObjectArrayList<>();
         //tooltip.add(fluidStack.getFluid().getLocalizedName(fluidStack));
         tooltip.add(TextFormatting.BLUE + "Amount: " + fluidStack.getAmount());
@@ -56,5 +58,5 @@ public class FluidStackRenderer implements IIngredientRenderer<FluidStack> {
             tooltip.add(TextFormatting.GREEN + "State: " + (fluidStack.getFluid().getAttributes().isGaseous() ? "Gas" : "Liquid"));
         //}
         return tooltip;
-    }
+    }*/
 }

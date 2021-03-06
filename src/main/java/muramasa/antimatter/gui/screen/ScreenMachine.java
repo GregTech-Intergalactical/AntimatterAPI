@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.ButtonData;
@@ -15,9 +16,11 @@ import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
@@ -26,6 +29,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static muramasa.antimatter.gui.SlotType.FL_IN;
 import static muramasa.antimatter.gui.SlotType.FL_OUT;
@@ -45,8 +49,8 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         if (container.getTile().isClientSide()) container.getTile().recipeHandler.ifPresent(rh -> rh.setClientProgress(0));
     }
 
-    protected void drawTitle(int mouseX, int mouseY) {
-        Minecraft.getInstance().fontRenderer.drawString(name, getCenteredStringX(name), 4, 0x404040);
+    protected void drawTitle(MatrixStack stack, int mouseX, int mouseY) {
+        Minecraft.getInstance().fontRenderer.drawString(stack, name, getCenteredStringX(name), 4, 0x404040);
     }
 
 
@@ -61,10 +65,10 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        drawTitle(mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
+        drawTitle(stack, mouseX, mouseY);
         if (container.getTile().has(MachineFlag.RECIPE)) {
-            drawTooltipInArea("Show Recipes", mouseX, mouseY, (xSize / 2) - 10, 24, 20, 14);
+            drawTooltipInArea(stack,"Show Recipes", mouseX, mouseY, (xSize / 2) - 10, 24, 20, 14);
         }
         if (container.getTile().has(MachineFlag.FLUID)) {
             //TODO
@@ -72,12 +76,12 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
                 int[] index = new int[]{0};
                 FluidStack[] inputs = t.getInputs();
                 container.getTile().getMachineType().getGui().getSlots(FL_IN).forEach(sl -> {
-                    renderFluid(inputs[index[0]++], sl,mouseX,mouseY);
+                    renderFluid(stack, inputs[index[0]++], sl,mouseX,mouseY);
                 });
                 index[0] = 0;
                 FluidStack[] outputs = t.getOutputs();
                 container.getTile().getMachineType().getGui().getSlots(FL_OUT).forEach(sl -> {
-                    renderFluid(outputs[index[0]++], sl, mouseX,mouseY);
+                    renderFluid(stack, outputs[index[0]++], sl, mouseX,mouseY);
                 });
             });
         }
@@ -104,7 +108,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         return false;
     }
 
-    public void renderFluid(FluidStack fluid, SlotData slot, int mouseX, int mouseY) {
+    public void renderFluid(MatrixStack stack, FluidStack fluid, SlotData slot, int mouseX, int mouseY) {
         int x = slot.getX();
         int y = slot.getY();
         if (fluid.isEmpty()) return;
@@ -119,7 +123,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         float g = (color >> 8 & 0xFF) / 255.0F;
         float b = (color & 0xFF) / 255.0F;
         RenderSystem.color4f(r,g,b,0.6f);
-        blit(/*guiLeft +*/ x, /*guiTop +*/ y, 0, 16, 16, sprite);
+        blit(stack,/*guiLeft +*/ x, /*guiTop +*/ y, 0, 16, 16, sprite);
         RenderSystem.color4f(1,1,1,1);
         RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
@@ -128,14 +132,14 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
             RenderSystem.disableDepthTest();
             RenderSystem.colorMask(true, true, true, false);
             int slotColor = -2130706433;
-            this.fillGradient(x, y, x + 16, y + 16, slotColor, slotColor);
+            this.fillGradient(stack, x, y, x + 16, y + 16, slotColor, slotColor);
             RenderSystem.colorMask(true, true, true, true);
             RenderSystem.enableDepthTest();
             List<String> str = new ArrayList<>();
-            str.add(fluid.getDisplayName().getFormattedText());
-            str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").applyTextStyle(TextFormatting.GRAY).getFormattedText());
+            str.add(fluid.getDisplayName().getString());
+            str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY).getString());
             AntimatterJEIPlugin.addModDescriptor(str, fluid);
-            this.renderTooltip(str, mouseX-guiLeft,mouseY-guiTop);
+            this.renderTooltip(stack, str.stream().map(t -> IReorderingProcessor.fromString(t, Style.EMPTY)).collect(Collectors.toList()), mouseX-guiLeft,mouseY-guiTop);
         }
     }
 
@@ -143,19 +147,19 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         return this.isPointInRegion(x, y, 16, 16, mouseX, mouseY);
     }
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        super.render(mouseX, mouseY, partialTicks);
-        container.getTile().drawInfo(Minecraft.getInstance().fontRenderer, guiLeft, guiTop);
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+        super.render(stack, mouseX, mouseY, partialTicks);
+        container.getTile().drawInfo(stack, Minecraft.getInstance().fontRenderer, guiLeft, guiTop);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        drawTexture(gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+        drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 
-    protected void drawProgress(float partialTicks, int mouseX, int mouseY) {
+    protected void drawProgress(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         int progressTime = (int) (20 * container.getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F));
-        drawTexture(gui, guiLeft + (xSize / 2) - 10, guiTop + 24, xSize, 0, progressTime, 18);
+        drawTexture(stack, gui, guiLeft + (xSize / 2) - 10, guiTop + 24, xSize, 0, progressTime, 18);
     }
 
     @Override

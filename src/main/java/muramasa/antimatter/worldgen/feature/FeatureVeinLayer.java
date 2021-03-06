@@ -5,10 +5,9 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
@@ -21,7 +20,7 @@ import java.util.Random;
 public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
 
     public FeatureVeinLayer() {
-        super(NoFeatureConfig::deserialize, WorldGenVeinLayer.class);
+        super(NoFeatureConfig.field_236558_a_, WorldGenVeinLayer.class);
     }
 
     @Override
@@ -37,12 +36,12 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+            //biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 
     @Override
-    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
         int chunkX = pos.getX() >> 4;
         int chunkZ = pos.getZ() >> 4;
         for (Tuple<Integer, Integer> seed : getVeinSeeds(chunkX, chunkZ)) {

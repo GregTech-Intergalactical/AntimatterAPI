@@ -21,7 +21,7 @@ import net.minecraft.world.gen.ChunkGenerator;
 import java.util.List;
 
 public class WorldGenAsteroid extends WorldGenBase {
-
+/*
     private static int mSize = 100;
 
     private static boolean endAsteroids = true;
@@ -37,8 +37,8 @@ public class WorldGenAsteroid extends WorldGenBase {
     private static BlockState END_STONE_STATE = null;
     private static BlockState GRANITE_RED_STATE = null;
 
-    public WorldGenAsteroid(String id, int... dimensions) {
-        super(id, WorldGenAsteroid.class, dimensions);
+    public WorldGenAsteroid(String id, R... dimensions) {
+        super(id, WorldGenAsteroid.class, null);//dimensions);
     }
 
     @Override
@@ -142,5 +142,5 @@ public class WorldGenAsteroid extends WorldGenBase {
             }
         }
         return true;
-    }
+    }*/
 }

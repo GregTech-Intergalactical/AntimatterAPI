@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
@@ -19,25 +20,25 @@ public class ScreenHatch<T extends ContainerMachine> extends ScreenMachine<T> {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
         List<SlotData> list = container.getTile().getMachineType().getGui().getSlots(container.getTile().getMachineTier());
         for (SlotData slot : list) {
             if (slot.getType() == SlotType.IT_IN || slot.getType() == SlotType.IT_OUT) {
-                drawTexture(gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 0, 18, 18);
+                drawTexture(stack, gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 0, 18, 18);
             } else if (slot.getType() == SlotType.FL_IN) {
-                drawTexture(gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 90, 18, 18);
+                drawTexture(stack, gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 90, 18, 18);
             } else if (slot.getType() == SlotType.FL_OUT) {
-                drawTexture(gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 108, 18, 18);
+                drawTexture(stack, gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 108, 18, 18);
             }
         }
         if (container.getTile().getMachineType().has(MachineFlag.FLUID)) {
-            drawTexture(gui, guiLeft + 8, guiTop + 21, xSize, 36, 18, 54);
+            drawTexture(stack, gui, guiLeft + 8, guiTop + 21, xSize, 36, 18, 54);
         }
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(stack, mouseX, mouseY);
     }
 }

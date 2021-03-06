@@ -23,6 +23,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -32,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -201,7 +203,7 @@ public final class AntimatterAPI {
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar instanceof Antimatter) INTERNAL_REGISTRAR = registrar;
         else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterRegistration::onRegister);
+        FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {
@@ -213,7 +215,7 @@ public final class AntimatterAPI {
     }
 
     public static Item getReplacement(MaterialType<?> type, Material material, String... namespaces) {
-        Tag<Item> tag = Utils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
+        ITag.INamedTag<Item> tag = Utils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
         return getReplacement(null, tag, namespaces);
     }
 
@@ -225,15 +227,15 @@ public final class AntimatterAPI {
      * @param namespaces    Namespaces of the tags to check against, by default this only checks against 'minecraft' if no namespaces are defined
      * @return originalItem if there's nothing found, null if there is no originalItem, or an replacement
      */
-    public static Item getReplacement(@Nullable Item originalItem, Tag<Item> tag, String... namespaces) {
+    public static Item getReplacement(@Nullable Item originalItem, ITag.INamedTag<Item> tag, String... namespaces) {
         if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
-        if (REPLACEMENTS.containsKey(tag.getId().getPath().hashCode())) return REPLACEMENTS.get(tag.getId().getPath().hashCode());
+        if (REPLACEMENTS.containsKey(tag.getName().getPath().hashCode())) return REPLACEMENTS.get(tag.getName().getPath().hashCode());
         if (replacementsFound) return originalItem;
         Set<String> checks = Sets.newHashSet(namespaces);
         if (checks.isEmpty()) checks.add("minecraft");
         return tag.getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
             .findAny().map(i -> {
-                REPLACEMENTS.put(tag.getId().getPath().hashCode(), i);
+                REPLACEMENTS.put(tag.getName().getPath().hashCode(), i);
                 return i;
             }).orElse(originalItem);
     }

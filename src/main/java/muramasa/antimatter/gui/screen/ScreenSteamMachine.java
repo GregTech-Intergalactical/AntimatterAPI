@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.container.ContainerMachine;
@@ -22,15 +23,15 @@ public class ScreenSteamMachine<T extends ContainerMachine> extends ScreenMachin
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        drawTooltipInArea(container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
+    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(stack,mouseX, mouseY);
+        drawTooltipInArea(stack, container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        drawProgress(partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
+        drawProgress(stack, partialTicks, mouseX, mouseY);
     }
 
     @Override

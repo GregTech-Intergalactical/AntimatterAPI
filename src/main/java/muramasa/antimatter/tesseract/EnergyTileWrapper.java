@@ -30,7 +30,7 @@ public class EnergyTileWrapper implements IGTNode, ITileWrapper {
         if (capability.isPresent()) {
             EnergyTileWrapper node = new EnergyTileWrapper(tile, capability.orElse(null));
             capability.addListener(o -> node.onRemove(null));
-            Tesseract.GT_ENERGY.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            Tesseract.GT_ENERGY.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), node);
             return node;
         }
         return null;
@@ -40,7 +40,7 @@ public class EnergyTileWrapper implements IGTNode, ITileWrapper {
     public void onRemove(@Nullable Direction side) {
         if (side == null) {
             if (tile.isRemoved()) {
-                Tesseract.GT_ENERGY.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+                Tesseract.GT_ENERGY.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
                 removed = true;
             } else {
                 // What if tile is recreate cap ?

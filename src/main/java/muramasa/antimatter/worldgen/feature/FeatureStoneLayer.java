@@ -9,10 +9,9 @@ import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
@@ -26,7 +25,7 @@ import java.util.Random;
 public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
     public FeatureStoneLayer() {
-        super(NoFeatureConfig::deserialize, WorldGenStoneLayer.class);
+        super(NoFeatureConfig.field_236558_a_, WorldGenStoneLayer.class);
     }
 
     @Override
@@ -42,13 +41,13 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+           // biome.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 
     @Override
-    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        List<WorldGenStoneLayer> stones = AntimatterWorldGenerator.all(WorldGenStoneLayer.class, world.getDimension().getType().getId());
+    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+        List<WorldGenStoneLayer> stones = AntimatterWorldGenerator.all(WorldGenStoneLayer.class, world.getWorld().getDimensionKey());
         WorldGenStoneLayer[] layers = new WorldGenStoneLayer[7];
         NoiseGenerator noise = new NoiseGenerator(world);
         int stonesSize = stones.size(), stonesMax = stonesSize - 1;

@@ -49,8 +49,8 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 Block currentBlock = ctx.getWorld().getBlockState(actualPos).getBlock();
                 // if (!(currentBlock instanceof BlockStorage) || ((BlockStorage) currentBlock).getType() != MaterialType.FRAME) return ctx; // Change to Block#isIn
                 if (!currentBlock.isIn(Data.FRAME.getTag())) return ctx;
-                BlockPos.Mutable mutablePos = new BlockPos.Mutable(actualPos);
-                while (ctx.getWorld().getMaxHeight() > mutablePos.getY()) {
+                BlockPos.Mutable mutablePos = new BlockPos.Mutable(actualPos.getX(), actualPos.getY(), actualPos.getZ());
+                while (ctx.getWorld().getHeight() > mutablePos.getY()) {
                     if (ctx.getWorld().getBlockState(mutablePos.move(Direction.UP)).isReplaceable(ctx)) {
                         ctx.getPlayer().swingArm(ctx.getHand());
                         ctx.getWorld().setBlockState(mutablePos, ((BlockItem) ctx.getItem().getItem()).getBlock().getDefaultState());
@@ -61,7 +61,6 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 }
                 return ctx;
             }
-
         };
 
     }
@@ -119,11 +118,6 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     @Override
     public PushReaction getPushReaction(BlockState state) {
         return type == Data.FRAME ? PushReaction.DESTROY : PushReaction.NORMAL;
-    }
-
-    @Override
-    public boolean isBeaconBase(BlockState state, IWorldReader world, BlockPos pos, BlockPos beacon) {
-        return type == Data.BLOCK;
     }
 
     //    @Override

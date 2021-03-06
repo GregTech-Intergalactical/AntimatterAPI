@@ -117,7 +117,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     }
 
     public static Block.Properties getOreProperties(Block.Properties properties) {
-        if (AntimatterConfig.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.notSolid().lightValue(15);
+        if (AntimatterConfig.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.notSolid().setLightLevel(b -> 15);
         return properties;
     }
 }

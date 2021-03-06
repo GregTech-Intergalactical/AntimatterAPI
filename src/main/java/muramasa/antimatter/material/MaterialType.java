@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 
 import java.util.LinkedHashSet;
@@ -16,7 +17,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     protected int unitValue, layers;
     protected boolean generating = true, blockType, visible;
     protected Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
-    protected Map<MaterialType<?>, Tag<?>> tagMap = new Object2ObjectOpenHashMap<>();
+    protected Map<MaterialType<?>, ITag.INamedTag<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {
@@ -52,8 +53,8 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         return layers;
     }
 
-    public <T> Tag<T> getTag() {
-        return (Tag<T>) tagMap.get(this);
+    public <T> ITag.INamedTag<T> getTag() {
+        return (ITag.INamedTag<T>) tagMap.get(this);
     }
 
     public MaterialType<T> set(T getter) {

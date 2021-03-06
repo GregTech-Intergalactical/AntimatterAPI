@@ -74,8 +74,8 @@ public class AntimatterBakedModel<T> implements IDynamicBakedModel {
     }
 
     @Override
-    public boolean func_230044_c_() {
-        return bakedModel == null || bakedModel.func_230044_c_();
+    public boolean isSideLit() {
+        return bakedModel == null || bakedModel.isSideLit();
     }
 
     @Override

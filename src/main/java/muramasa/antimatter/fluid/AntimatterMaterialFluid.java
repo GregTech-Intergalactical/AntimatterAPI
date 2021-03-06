@@ -60,6 +60,6 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static Block.Properties prepareProperties(MaterialType<?> type) {
-        return getDefaultBlockProperties().lightValue(type == Data.PLASMA ? 15 : 0);
+        return getDefaultBlockProperties().setLightLevel(s -> type == Data.PLASMA ? 15 : 0);
     }
 }

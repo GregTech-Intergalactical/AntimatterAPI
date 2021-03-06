@@ -58,7 +58,7 @@ public class RecipeFluids {
         if (fluids != null && fluids.size() > 0) {
             builder.append("\nInput Fluids: { ");
             for (FluidWrapper fluid : fluids) {
-                builder.append(fluid.fluid.getDisplayName().getFormattedText()).append(" x").append(fluid.fluid.getAmount());
+                builder.append(fluid.fluid.getDisplayName()).append(" x").append(fluid.fluid.getAmount());
                 builder.append(", ");
             }
             builder.append(" }\n");

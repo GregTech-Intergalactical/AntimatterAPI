@@ -3,13 +3,15 @@ package muramasa.antimatter.worldgen.object;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.world.World;
 
 public class WorldGenOreSmall extends WorldGenBase<WorldGenOreSmall> {
 
     private int minY, maxY, amount;
     private Material material;
 
-    public WorldGenOreSmall(String id, int minY, int maxY, int amount, Material material, int... dims) {
+    public WorldGenOreSmall(String id, int minY, int maxY, int amount, Material material, RegistryKey<World>... dims) {
         super(id, WorldGenOreSmall.class, dims);
         this.minY = minY;
         this.maxY = maxY;
@@ -17,7 +19,7 @@ public class WorldGenOreSmall extends WorldGenBase<WorldGenOreSmall> {
         this.material = material;
     }
 
-    public WorldGenOreSmall(int minY, int maxY, int amount, Material material, int... dims) {
+    public WorldGenOreSmall(int minY, int maxY, int amount, Material material, RegistryKey<World>... dims) {
         this(material.getId(), minY, maxY, amount, material, dims);
     }
 

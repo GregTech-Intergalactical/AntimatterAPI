@@ -6,7 +6,9 @@ import it.unimi.dsi.fastutil.longs.*;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -25,7 +27,7 @@ public class StructureCache {
     static {
         AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState) -> {
             if (oldState == newState) return;  // TODO: better checks?
-            StructureCache.DimensionEntry entry = LOOKUP.get(world.dimension.getType().getId());
+            StructureCache.DimensionEntry entry = LOOKUP.get(world.getDimensionKey().getLocation().hashCode());
             if (entry == null) return;
             BlockPos controllerPos = entry.get(pos);
             if (controllerPos != null) {
@@ -61,8 +63,13 @@ public class StructureCache {
     }
     //just to switch between server & client. You can use two maps but y tho
     private static long getDimId(IWorld world) {
+        RegistryKey<World> w;
+        if (world instanceof ClientWorld)
+            w = ((ClientWorld) world).getDimensionKey();
+        else
+            w = ((ServerWorld)world).getDimensionKey();
         int offset = world instanceof ServerWorld ? 1 : 0;
-        return (((long)world.getDimension().getType().getId()) << 32) | (offset & 0xffffffffL);
+        return (((long)w.getLocation().hashCode()) << 32) | (offset & 0xffffffffL);
     }
 
     private static void invalidateController(IWorld world, BlockPos pos) {

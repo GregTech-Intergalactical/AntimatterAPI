@@ -13,12 +13,14 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public final class AntimatterRegistration {
 
+    @SubscribeEvent
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void onRegister(final RegistryEvent.Register<?> e) {
         final String domain = ModLoadingContext.get().getActiveNamespace();

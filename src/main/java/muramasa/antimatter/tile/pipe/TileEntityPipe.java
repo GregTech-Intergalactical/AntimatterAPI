@@ -13,6 +13,7 @@ import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -162,8 +163,8 @@ public class TileEntityPipe extends TileEntityTickable {
     }
 
     @Override
-    public void read(CompoundNBT tag) {
-        super.read(tag); //TODO get tile data tag
+    public void read(BlockState state, CompoundNBT tag) {
+        super.read(state, tag); //TODO get tile data tag
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
         interaction = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
         byte oldConnection = connection;

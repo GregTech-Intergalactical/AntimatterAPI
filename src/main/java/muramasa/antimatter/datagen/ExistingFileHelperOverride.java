@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.*;
 
@@ -42,5 +42,15 @@ public class ExistingFileHelperOverride extends ExistingFileHelper {
     @Override
     public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) {
         return loc.getNamespace().equals(Ref.ID) || excludedDomains.contains(loc.getNamespace()) || GLOBAL_EXCLUDED_DOMAINS.contains(loc.getNamespace()) || super.exists(loc, type, pathSuffix, pathPrefix);
+    }
+
+    @Override
+    public boolean exists(ResourceLocation loc, ResourcePackType packType) {
+        return loc.getNamespace().equals(Ref.ID) || excludedDomains.contains(loc.getNamespace()) || GLOBAL_EXCLUDED_DOMAINS.contains(loc.getNamespace()) || super.exists(loc,packType);
+    }
+
+    @Override
+    public boolean exists(ResourceLocation loc, IResourceType type) {
+       return loc.getNamespace().equals(Ref.ID) || excludedDomains.contains(loc.getNamespace()) || GLOBAL_EXCLUDED_DOMAINS.contains(loc.getNamespace()) || super.exists(loc, type);
     }
 }

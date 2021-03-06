@@ -7,10 +7,9 @@ import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.object.WorldGenOreSmall;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
@@ -23,7 +22,7 @@ import java.util.Random;
 public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
 
     public FeatureOreSmall() {
-        super(NoFeatureConfig::deserialize, WorldGenOreSmall.class);
+        super(NoFeatureConfig.field_236558_a_, WorldGenOreSmall.class);
     }
 
     @Override
@@ -39,13 +38,14 @@ public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+         //   biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 
+
     @Override
-    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        List<WorldGenOreSmall> ores = AntimatterWorldGenerator.all(WorldGenOreSmall.class, world.getDimension().getType().getId());
+    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+        List<WorldGenOreSmall> ores = AntimatterWorldGenerator.all(WorldGenOreSmall.class, world.getWorld().getDimensionKey());
         BlockPos.Mutable mut = new BlockPos.Mutable();
         int amount;
         BlockState existing;

@@ -37,7 +37,7 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
         BlockState state = c.getWorld().getBlockState(c.getPos());
         BlockState stripped = STRIPPING_MAP.get(state);
         if (stripped != null) {
-            if (state.has(RotatedPillarBlock.AXIS) && stripped.has(RotatedPillarBlock.AXIS)) {
+            if (state.hasProperty(RotatedPillarBlock.AXIS) && stripped.hasProperty(RotatedPillarBlock.AXIS)) {
                 stripped = stripped.with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
             }
             c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);

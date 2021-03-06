@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.NonNullList;
@@ -66,13 +67,13 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
     public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (!getMaterial().getChemicalFormula().isEmpty()) {
             if (Screen.hasShiftDown()) {
-                tooltip.add(new StringTextComponent(getMaterial().getChemicalFormula()).applyTextStyle(TextFormatting.DARK_AQUA));
+                tooltip.add(new StringTextComponent(getMaterial().getChemicalFormula()).mergeStyle(TextFormatting.DARK_AQUA));
             } else {
-                tooltip.add(new StringTextComponent("Hold Shift to show formula").applyTextStyle(TextFormatting.AQUA).applyTextStyle(TextFormatting.ITALIC));
+                tooltip.add(new StringTextComponent("Hold Shift to show formula").mergeStyle(TextFormatting.AQUA).mergeStyle(TextFormatting.ITALIC));
             }
         }
         if (type == Data.ROCK) {
-            tooltip.add(new TranslationTextComponent("gti.tooltip.occurrence").appendSibling(material.getDisplayName().applyTextStyle(TextFormatting.YELLOW)));
+            tooltip.add(new TranslationTextComponent("gti.tooltip.occurrence").append(new StringTextComponent(material.getDisplayName().getString()).mergeStyle(TextFormatting.YELLOW)));
         }
     }
 
@@ -97,7 +98,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
         return ActionResultType.FAIL;
     }
 
-    public Tag<Item> getTag() {
+    public ITag.INamedTag<Item> getTag() {
         return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(type), "/", material.getId()));
     }
 

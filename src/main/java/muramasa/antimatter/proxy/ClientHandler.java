@@ -31,6 +31,7 @@ public class ClientHandler implements IProxyHandler {
     public ClientHandler() {
         if (Minecraft.getInstance() != null) { //Null with runData
             Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
+            Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.SERVER_PACK_FINDER);
             AntimatterModelManager.init();
             AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
         }

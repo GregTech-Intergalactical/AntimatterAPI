@@ -19,7 +19,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILightReader;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public class CoveredBakedModel extends AttachableBakedModel {
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull ILightReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
+    public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile == null) return super.getModelData(world, pos, state, data);
         tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).ifPresent(t -> data.setData(AntimatterProperties.MACHINE_TILE,(TileEntityMachine)tile));//map(h -> h.getAll()).orElse(CoverInstance.EMPTY_COVER_ARRAY);

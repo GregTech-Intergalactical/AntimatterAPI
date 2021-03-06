@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -103,7 +104,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
         });
     }
 
-    public static Tag<Item> getTag() {
+    public static ITag.INamedTag<Item> getTag() {
         return Utils.getItemTag(new ResourceLocation(Ref.ID, "cell"));
     }
 

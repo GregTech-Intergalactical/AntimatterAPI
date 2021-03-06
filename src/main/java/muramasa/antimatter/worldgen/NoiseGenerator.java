@@ -1,6 +1,8 @@
 package muramasa.antimatter.worldgen;
 
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.server.ServerWorld;
 
 public class NoiseGenerator {
     public int mSeed = 42;
@@ -11,7 +13,7 @@ public class NoiseGenerator {
     public NoiseGenerator(long aSeed) {
         mSeed = (int)aSeed;
     }
-    public NoiseGenerator(IWorld aWorld) {
+    public NoiseGenerator(ISeedReader aWorld) {
         mSeed = (int)aWorld.getSeed();
     }
     public NoiseGenerator setFrequency(float aFrequency) {

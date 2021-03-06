@@ -6,15 +6,15 @@ import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 
 import java.util.function.Function;
@@ -37,13 +37,13 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
 
     @Override
     public ActionResultType onDrawHighlight(PlayerEntity player, DrawHighlightEvent ev) {
-        Vec3d lookPos = player.getEyePosition(ev.getPartialTicks()), rotation = player.getLook(ev.getPartialTicks()), realLookPos = lookPos.add(rotation.x * INTERACT_DISTANCE, rotation.y * INTERACT_DISTANCE, rotation.z * INTERACT_DISTANCE);
+        Vector3d lookPos = player.getEyePosition(ev.getPartialTicks()), rotation = player.getLook(ev.getPartialTicks()), realLookPos = lookPos.add(rotation.x * INTERACT_DISTANCE, rotation.y * INTERACT_DISTANCE, rotation.z * INTERACT_DISTANCE);
         BlockRayTraceResult result = player.getEntityWorld().rayTraceBlocks(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
         BlockState state = player.getEntityWorld().getBlockState(result.getPos());
         if (!validator.apply(state.getBlock())) return ActionResultType.PASS;
 
         //Build up view & matrix.
-        Vec3d viewPosition = ev.getInfo().getProjectedView();
+        Vector3d viewPosition = ev.getInfo().getProjectedView();
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
         IVertexBuilder builderLines = ev.getBuffers().getBuffer(RenderType.LINES);
 

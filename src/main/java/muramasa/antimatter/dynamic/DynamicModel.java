@@ -37,18 +37,18 @@ public class DynamicModel extends AntimatterModel {
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         IBakedModel baked = super.bake(owner, bakery, getter, transform, overrides, loc);
         if (baked instanceof DynamicBakedModel) ((DynamicBakedModel) baked).particle(((DynamicBakedModel) baked).getBakedDefault().getParticleTexture(EmptyModelData.INSTANCE));
         return baked;
     }
 
     @Override
-    public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+    public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         return new DynamicBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
     }
 
-    public Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> getBakedConfigs(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+    public Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> getBakedConfigs(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs = AntimatterModelManager.getStaticConfigMap(staticMapId);
         modelConfigs.forEach((k, v) -> {
             IBakedModel[] baked = new IBakedModel[v.length];
@@ -61,8 +61,8 @@ public class DynamicModel extends AntimatterModel {
     }
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
-        Set<Material> textures = new ObjectOpenHashSet<>();
+    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
+        Set<RenderMaterial> textures = new ObjectOpenHashSet<>();
         modelConfigs.values().forEach(v -> Arrays.stream(v).forEach(m -> textures.addAll(m.getTextures(owner, getter, errors))));
         textures.addAll(modelDefault.getTextures(owner, getter, errors));
         return textures;

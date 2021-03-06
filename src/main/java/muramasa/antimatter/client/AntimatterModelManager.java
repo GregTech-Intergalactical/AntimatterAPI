@@ -38,7 +38,7 @@ public class AntimatterModelManager {
         public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
             return new DynamicModel((DynamicModel) super.read(context, json)) {
                 @Override
-                public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+                public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
                     return new MachineBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };
@@ -49,7 +49,7 @@ public class AntimatterModelManager {
         public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
             return new DynamicModel((DynamicModel) super.read(context, json)) {
                 @Override
-                public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+                public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
                     return new PipeBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };

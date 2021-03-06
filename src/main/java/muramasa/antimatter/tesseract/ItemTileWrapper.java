@@ -41,7 +41,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
         if (capability.isPresent()) {
             ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
             capability.addListener(o -> node.onRemove(null));
-            Tesseract.ITEM.registerNode(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong(), node);
+            Tesseract.ITEM.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), node);
             return node;
         }
         return null;
@@ -51,7 +51,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     public void onRemove(@Nullable Direction side) {
         if (side == null) {
             if (tile.isRemoved()) {
-                Tesseract.ITEM.remove(tile.getWorld().getDimension().getType().getId(), tile.getPos().toLong());
+                Tesseract.ITEM.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
                 removed = true;
             } else {
                 // What if tile is recreate cap ?

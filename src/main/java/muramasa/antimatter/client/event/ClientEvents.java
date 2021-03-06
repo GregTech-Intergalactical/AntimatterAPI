@@ -29,6 +29,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -72,7 +74,7 @@ public class ClientEvents {
         BlockPos currentPos = event.getTarget().getPos();
         BlockState state = world.getBlockState(currentPos);
         if (state.isAir(world, currentPos) || !Utils.isToolEffective(item, state)) return;
-        Vec3d viewPosition = event.getInfo().getProjectedView();
+        Vector3d viewPosition = event.getInfo().getProjectedView();
         Entity entity = event.getInfo().getRenderViewEntity();
         IVertexBuilder builderLines = event.getBuffers().getBuffer(RenderType.LINES);
         MatrixStack matrix = event.getMatrix();
@@ -97,7 +99,7 @@ public class ClientEvents {
                 matrix.translate(modX, modY, modZ);
                 if (partialDamage == -1)
                     return; // Not sure why this happens, but it certainly is an edge-case, if we made it so it returns 0 every time it hit -1, the animation will have a delay
-                IVertexBuilder builderBreak = new MatrixApplyingVertexBuilder(event.getBuffers().getBuffer(ModelBakery.DESTROY_RENDER_TYPES.get(partialDamage)), matrix.getLast());
+                IVertexBuilder builderBreak = new MatrixApplyingVertexBuilder(event.getBuffers().getBuffer(ModelBakery.DESTROY_RENDER_TYPES.get(partialDamage)), matrix.getLast().getMatrix(), matrix.getLast().getNormal());
                 MC.getBlockRendererDispatcher().renderBlockDamage(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak);
                 // MC.getBlockRendererDispatcher().renderModel(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak, ModelDataManager.getModelData(world, nextPos));
                 matrix.pop();
@@ -124,7 +126,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
         if (!MC.gameSettings.showDebugInfo || MC.objectMouseOver == null || MC.objectMouseOver.getType() != RayTraceResult.Type.BLOCK) return;
-        World world = ServerLifecycleHooks.getCurrentServer().getWorld(MC.world.dimension.getType());
+        World world = ServerLifecycleHooks.getCurrentServer().getWorld(MC.world.getDimensionKey());
         BlockPos pos = new BlockPos(MC.objectMouseOver.getHitVec());
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof IInfoProvider) {
@@ -149,9 +151,9 @@ public class ClientEvents {
             Collection<ResourceLocation> tags = ItemTags.getCollection().getOwningTags(e.getItemStack().getItem());
             if (!tags.isEmpty()) {
                 List<ITextComponent> list = e.getToolTip();
-                list.add(new StringTextComponent("Tags:").applyTextStyle(TextFormatting.DARK_GRAY));
+                list.add(new StringTextComponent("Tags:").mergeStyle(TextFormatting.DARK_GRAY));
                 for (ResourceLocation loc : tags) {
-                    list.add(new StringTextComponent(loc.toString()).applyTextStyle(TextFormatting.DARK_GRAY));
+                    list.add(new StringTextComponent(loc.toString()).mergeStyle(TextFormatting.DARK_GRAY));
                 }
             }
         }

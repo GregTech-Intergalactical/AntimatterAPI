@@ -3,6 +3,7 @@ package muramasa.antimatter.recipe.ingredient;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 
@@ -10,20 +11,20 @@ import javax.annotation.Nullable;
 import java.util.stream.Stream;
 
 public class TagIngredient extends AntimatterIngredient{
-    protected Tag<Item> tag;
+    protected ITag.INamedTag<Item> tag;
 
-    protected TagIngredient(Stream<? extends IItemList> itemLists, int count, Tag<Item> tag) {
+    protected TagIngredient(Stream<? extends IItemList> itemLists, int count, ITag.INamedTag<Item> tag) {
         super(itemLists,count);
         this.tag = tag;
     }
 
     public ResourceLocation getTag() {
-        return tag.getId();
+        return tag.getName();
     }
 
     @Override
     public boolean test(@Nullable ItemStack p_test_1_) {
-        return (p_test_1_ != null && p_test_1_.getItem().getTags().contains(tag.getId()) && p_test_1_.getCount() <= count) || super.test(p_test_1_);
+        return (p_test_1_ != null && p_test_1_.getItem().getTags().contains(tag.getName()) && p_test_1_.getCount() <= count) || super.test(p_test_1_);
     }
 
     @Override
@@ -34,11 +35,11 @@ public class TagIngredient extends AntimatterIngredient{
             return false;
         }
         if (o instanceof TagIngredient) {
-            return ((TagIngredient)o).tag.getId().equals(this.tag.getId()) && this.count >= ((TagIngredient)o).count;
+            return ((TagIngredient)o).tag.getName().equals(this.tag.getName()) && this.count >= ((TagIngredient)o).count;
         }
         if (o instanceof Ingredient) {
             for (ItemStack stack : ((Ingredient)o).getMatchingStacks()) {
-                if (stack.getItem().getTags().contains(tag.getId())) {
+                if (stack.getItem().getTags().contains(tag.getName())) {
                     return this.count >= stack.getCount();
                 }
             }
@@ -48,11 +49,11 @@ public class TagIngredient extends AntimatterIngredient{
 
     @Override
     public int hashCode() {
-        return tag == null ? 0 : tag.getId().hashCode();
+        return tag == null ? 0 : tag.getName().hashCode();
     }
 
     @Override
     public boolean testTag(ResourceLocation tag) {
-        return tag.equals(this.tag.getId());
+        return tag.equals(this.tag.getName());
     }
 }

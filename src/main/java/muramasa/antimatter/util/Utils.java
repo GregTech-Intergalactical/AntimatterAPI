@@ -22,6 +22,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.model.ModelRotation;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -34,18 +35,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
@@ -391,7 +393,7 @@ public class Utils {
      * Creates a new {@link EnterBlockTrigger} for use with recipe unlock criteria.
      */
     public static EnterBlockTrigger.Instance enteredBlock(Block blockIn) {
-        return new EnterBlockTrigger.Instance(blockIn, StatePropertiesPredicate.EMPTY);
+        return new EnterBlockTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, blockIn, StatePropertiesPredicate.EMPTY);
     }
 
     /**
@@ -412,7 +414,7 @@ public class Utils {
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
      */
     public static InventoryChangeTrigger.Instance hasItem(ItemPredicate... predicates) {
-        return new InventoryChangeTrigger.Instance(UNBOUNDED, UNBOUNDED, UNBOUNDED, predicates);
+        return new InventoryChangeTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND,UNBOUNDED, UNBOUNDED, UNBOUNDED, predicates);
     }
 
 //    @Nullable
@@ -604,7 +606,7 @@ public class Utils {
     final static double INTERACTION_OFFSET = 0.25;
 
     public static Direction getInteractSide(BlockRayTraceResult res) {
-        Vec3d vec = res.getHitVec();
+        Vector3d vec = res.getHitVec();
         return getInteractSide(res.getFace(), (float)vec.x - res.getPos().getX(), (float)vec.y - res.getPos().getY(), (float)vec.z - res.getPos().getZ());
     }
 
@@ -774,17 +776,16 @@ public class Utils {
      * @return true if block is successfully broken, false if not
      */
     public static boolean breakBlock(World world, @Nullable PlayerEntity player, ItemStack stack, BlockPos pos, int damage) {
+        if (world.isRemote) return false;
         BlockState state = world.getBlockState(pos);
-        int exp = 0;
-        if (!world.isRemote) {
-            ServerPlayerEntity serverPlayer = ((ServerPlayerEntity) player);
-            exp = ForgeHooks.onBlockBreakEvent(world, serverPlayer.interactionManager.getGameType(), serverPlayer, pos);
-        }
+        ServerPlayerEntity serverPlayer = ((ServerPlayerEntity) player);
+        int exp = ForgeHooks.onBlockBreakEvent(world, serverPlayer.interactionManager.getGameType(), serverPlayer, pos);
+
         if (exp == -1) return false;
         stack.damageItem(state.getBlockHardness(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
         boolean destroyed = world.removeBlock(pos, false);// world.func_225521_a_(pos, !player.isCreative(), player);
         if (destroyed && state.canHarvestBlock(world, pos, player)) state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
-        if (exp > 0) state.getBlock().dropXpOnBlockBreak(world, pos, exp);
+        if (exp > 0) state.getBlock().dropXpOnBlockBreak((ServerWorld) world, pos, exp);
         return destroyed;
     }
 
@@ -818,7 +819,7 @@ public class Utils {
      */
     public static boolean treeLogging(@Nonnull IAntimatterTool tool, @Nonnull ItemStack stack, @Nonnull BlockPos start, @Nonnull PlayerEntity player, @Nonnull World world) {
         if (!AntimatterConfig.GAMEPLAY.SMARTER_TREE_DETECTION) {
-            BlockPos.Mutable tempPos = new BlockPos.Mutable(start);
+            BlockPos.Mutable tempPos = new BlockPos.Mutable(start.getX(), start.getY(), start.getZ());
             for (int y = start.getY() + 1; y < start.getY() + AntimatterConfig.GAMEPLAY.AXE_TIMBER_MAX; y++) {
                 if (stack.getDamage() < 2) return false;
                 tempPos.move(Direction.UP);
@@ -884,7 +885,7 @@ public class Utils {
      * @return set of BlockPos in the specified range
      */
     public static ImmutableSet<BlockPos> getBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, int column, int row, int depth) {
-        Vec3d lookPos = player.getEyePosition(1), rotation = player.getLook(1), realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
+        Vector3d lookPos = player.getEyePosition(1), rotation = player.getLook(1), realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
         BlockRayTraceResult result = world.rayTraceBlocks(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
         Direction playerDirection = player.getHorizontalFacing();
         Direction.Axis playerAxis = playerDirection.getAxis(), faceAxis = result.getFace().getAxis();
@@ -1018,8 +1019,8 @@ public class Utils {
      * @param tag a ItemTag, preferably already created
      * @return BlockTag variant of the ItemTag
      */
-    public static Tag<Block> itemToBlockTag(Tag<Item> tag) {
-        return new BlockTags.Wrapper(tag.getId());
+    public static ITag.INamedTag<Block> itemToBlockTag(ITag.INamedTag<Item> tag) {
+        return BlockTags.makeWrapperTag(tag.getName().toString());
     }
 
     /**
@@ -1027,23 +1028,23 @@ public class Utils {
      * @param tag a BlockTag, preferably already created
      * @return ItemTag variant of the BlockTag
      */
-    public static Tag<Item> blockToItemTag(Tag<Block> tag) {
-        return new ItemTags.Wrapper(tag.getId());
+    public static ITag.INamedTag<Item> blockToItemTag(ITag.INamedTag<Block> tag) {
+        return ItemTags.makeWrapperTag(tag.getName().toString());
     }
 
     /**
      * @param loc ResourceLocation of a BlockTag, can be new or old
      * @return BlockTag
      */
-    public static Tag<Block> getBlockTag(ResourceLocation loc) {
-        return new BlockTags.Wrapper(loc);
+    public static ITag.INamedTag<Block> getBlockTag(ResourceLocation loc) {
+        return BlockTags.makeWrapperTag(loc.toString());
     }
 
     /**
      * @param name name of a BlockTag, can be new or old, has the namespace "forge" attached
      * @return BlockTag
      */
-    public static Tag<Block> getForgeBlockTag(String name) {
+    public static ITag.INamedTag<Block> getForgeBlockTag(String name) {
         return getBlockTag(new ResourceLocation("forge", name));
     }
 
@@ -1051,15 +1052,15 @@ public class Utils {
      * @param loc ResourceLocation of a ItemTag, can be new or old
      * @return ItemTag
      */
-    public static Tag<Item> getItemTag(ResourceLocation loc) {
-        return new ItemTags.Wrapper(loc);
+    public static ITag.INamedTag<Item> getItemTag(ResourceLocation loc) {
+        return ItemTags.makeWrapperTag(loc.toString());
     }
 
     /**
      * @param name name of a ItemTag, can be new or old, has the namespace "forge" attached
      * @return ItemTag
      */
-    public static Tag<Item> getForgeItemTag(String name) {
+    public static ITag.INamedTag<Item> getForgeItemTag(String name) {
         // TODO: Change "wood" -> "wooden", forge recognises "wooden"
         return getItemTag(new ResourceLocation("forge", name));
     }
@@ -1068,8 +1069,8 @@ public class Utils {
      * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
      * @return FluidTag
      */
-    public static Tag<Fluid> getForgeFluidTag(String name) {
-        return new FluidTags.Wrapper(new ResourceLocation("forge", name));
+    public static ITag.INamedTag<Fluid> getForgeFluidTag(String name) {
+        return FluidTags.makeWrapperTag(new ResourceLocation("forge", name).toString());
     }
 
     /**
@@ -1081,6 +1082,14 @@ public class Utils {
     public static void dropItemInWorldAtTile(TileEntity tile, Item item, Direction dir) {
         ItemEntity entity = new ItemEntity(tile.getWorld(), tile.getPos().getX()+dir.getXOffset(),tile.getPos().getY()+dir.getYOffset(),tile.getPos().getZ()+dir.getZOffset(), new ItemStack(item,1));
         tile.getWorld().addEntity(entity);
+    }
+
+    @Nonnull
+    public static RegistryKey<World> getRegistryKey(@Nonnull IWorld world) {
+        if (world instanceof ClientWorld) return ((ClientWorld)world).getDimensionKey();
+        if (world instanceof ServerWorld) return ((ServerWorld)world).getDimensionKey();
+
+        throw new RuntimeException("Error, invalid world passed to getRegistryKey");
     }
 
     public static String[] getLocalizedMaterialType(MaterialType<?> type) {

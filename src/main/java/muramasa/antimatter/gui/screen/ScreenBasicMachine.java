@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.container.ContainerMachine;
@@ -28,20 +29,20 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(stack, mouseX, mouseY);
         if (container.getTile().has(MachineFlag.RECIPE))
-            drawTooltipInArea(container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
+            drawTooltipInArea(stack, container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        drawProgress(partialTicks, mouseX, mouseY);
+    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
+        drawProgress(stack, partialTicks, mouseX, mouseY);
         //Draw error.
         if (container.getTile().has(MachineFlag.RECIPE)) {
             if (container.getTile().getMachineState() == MachineState.POWER_LOSS) {
-                drawTexture(gui, guiLeft + (xSize / 2) - 4, guiTop + 45, xSize, 55, 8, 8);
+                drawTexture(stack, gui, guiLeft + (xSize / 2) - 4, guiTop + 45, xSize, 55, 8, 8);
             }
         }
     }

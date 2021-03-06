@@ -5,6 +5,7 @@ import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
@@ -38,7 +39,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         return AntimatterIngredient.fromStack(new ItemStack(get(material), count));
     }
 
-    public Tag<Item> getMaterialTag(Material m) {
+    public ITag.INamedTag<Item> getMaterialTag(Material m) {
         return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 

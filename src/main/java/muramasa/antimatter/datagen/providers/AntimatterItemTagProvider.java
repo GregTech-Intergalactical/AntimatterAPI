@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.providers;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.item.ItemFluidCell;
@@ -11,16 +12,18 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
+import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollection;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.extensions.IForgeTagBuilder;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,8 +36,8 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
     private final String providerDomain, providerName;
     private final boolean replace;
 
-    public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
-        super(gen);
+    public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, BlockTagsProvider p, ExistingFileHelperOverride fh) {
+        super(gen, p, fh);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
@@ -42,13 +45,16 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
 
     @Override
     public void run() {
+        Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        TagCollection<Item> tags = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
-        Map<ResourceLocation, Tag.Builder<Item>> map = this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(k -> k.getKey().getId(), Map.Entry::getValue));
-        tags.registerAll(map);
-        tags.getTagMap().forEach((k, v) -> DynamicResourcePack.addTag("items", k, v.serialize(this.registry::getKey)));
-        this.setCollection(tags);
+        //TagCollection<Item> tags = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
+      //  Map<ResourceLocation, Tag.Builder<Item>> map = this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(k -> k.getKey().getId(), Map.Entry::getValue));
+       // tags.registerAll(map);
+       // tags.getTagMap().forEach((k, v) -> DynamicResourcePack.addTag("items", k, v.serialize(this.registry::getKey)));
+       // this.setCollection(tags);
+        tagToBuilder.forEach((k, v) -> DynamicResourcePack.addTag("items", k, v.serialize()));
+        b.forEach(tagToBuilder::put);
     }
 
     @Override
@@ -62,7 +68,7 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
     }
 
     protected void processTags(String domain) {
-        Tag<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
+        ITag.INamedTag<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
         this.copy(Tags.Blocks.ORES, Tags.Items.ORES);
         this.copy(Tags.Blocks.STONE, Tags.Items.STONE);
         this.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
@@ -87,15 +93,15 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
             this.copy(getForgeBlockTag(name), getForgeItemTag(name));
         });
         AntimatterAPI.all(MaterialItem.class, domain, item -> {
-            this.getBuilder(item.getType().getTag()).add(item).replace(replace);
-            this.getBuilder(item.getTag()).add(item).replace(replace).replace(replace);
-            if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
+            this.getOrCreateBuilder(item.getType().getTag()).add(item).replace(replace);
+            this.getOrCreateBuilder(item.getTag()).add(item).replace(replace).replace(replace);
+            //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
         });
         AntimatterAPI.all(IAntimatterTool.class, domain, tool -> {
-            this.getBuilder(tool.getType().getTag()).add(tool.getItem()).replace(replace);
-            this.getBuilder(tool.getType().getForgeTag()).add(tool.getItem()).replace(replace);
+            this.getOrCreateBuilder(tool.getType().getTag()).add(tool.getItem()).replace(replace);
+            this.getOrCreateBuilder(tool.getType().getForgeTag()).add(tool.getItem()).replace(replace);
         });
-        this.getBuilder(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
+        this.getOrCreateBuilder(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
     }
 
     @Override

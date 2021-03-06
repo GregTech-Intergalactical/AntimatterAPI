@@ -78,7 +78,7 @@ public class WorldGenHelper {
 
     /** Raw version of setOre, will only place the passed state if the existing state is a registered stone **/
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
-        if (!existing.isReplaceableOreGen(world, pos, ORE_PREDICATE)) return false;
+        if (!ORE_PREDICATE.test(existing)) return false;
         return setState(world, pos, replacement);
     }
 
@@ -105,11 +105,11 @@ public class WorldGenHelper {
 
     /** **/
     public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
-        if (!existing.isReplaceableOreGen(world, pos, STONE_PREDICATE)) return false;
+        if (!STONE_PREDICATE.test(existing)) return false;
         return setState(world, pos, replacement);
     }
 
     public static BlockState waterLogState(BlockState state) {
-        return state.has(BlockStateProperties.WATERLOGGED) ? state.with(BlockStateProperties.WATERLOGGED, true) : state;
+        return state.hasProperty(BlockStateProperties.WATERLOGGED) ? state.with(BlockStateProperties.WATERLOGGED, true) : state;
     }
 }

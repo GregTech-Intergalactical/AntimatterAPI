@@ -8,6 +8,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 
@@ -126,7 +127,7 @@ public abstract class AntimatterIngredient extends Ingredient {
         return new StackListIngredient(Arrays.stream(stacks).map(SingleItemList::new), count);
     }
 
-    public static AntimatterIngredient fromTag(Tag<Item> tagIn, int count) {
+    public static AntimatterIngredient fromTag(ITag.INamedTag<Item> tagIn, int count) {
         return new TagIngredient(Stream.of(new TagList(tagIn)), count,tagIn);
     }
 
@@ -134,7 +135,7 @@ public abstract class AntimatterIngredient extends Ingredient {
 
     /** UTILITY FUNCTIONS **/
 
-    public static AntimatterIngredient of(Tag<Item> tagIn, int count) {
+    public static AntimatterIngredient of(ITag.INamedTag<Item> tagIn, int count) {
         return fromTag(tagIn,count);
     }
     public static AntimatterIngredient of(ItemStack stack) {

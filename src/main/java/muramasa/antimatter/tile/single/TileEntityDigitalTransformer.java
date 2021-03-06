@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.single;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineState;
@@ -89,12 +90,12 @@ public class TileEntityDigitalTransformer extends TileEntityTransformer {
     }
 
     @Override
-    public void drawInfo(FontRenderer renderer, int left, int top) {
+    public void drawInfo(MatrixStack stack, FontRenderer renderer, int left, int top) {
         // TODO: Replace by new TranslationTextComponent()
-        renderer.drawString("Control Panel", left + 43, top + 21, 16448255);
-        renderer.drawString("VOLT: " + voltage, left + 43, top + 40, 16448255);
-        renderer.drawString("TIER: " + Tier.getTier(voltage < 0 ? -voltage : voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);
-        renderer.drawString("AMP: " + amperage, left + 43, top + 56, 16448255);
-        renderer.drawString("SUM: " + (long)(amperage * voltage), left + 43, top + 64, 16448255);
+        renderer.drawString(stack,"Control Panel", left + 43, top + 21, 16448255);
+        renderer.drawString(stack,"VOLT: " + voltage, left + 43, top + 40, 16448255);
+        renderer.drawString(stack,"TIER: " + Tier.getTier(voltage < 0 ? -voltage : voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);
+        renderer.drawString(stack,"AMP: " + amperage, left + 43, top + 56, 16448255);
+        renderer.drawString(stack,"SUM: " + (long)(amperage * voltage), left + 43, top + 64, 16448255);
     }
 }

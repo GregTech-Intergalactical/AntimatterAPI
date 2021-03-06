@@ -7,10 +7,9 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.ISeedReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationSettings;
 import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
@@ -26,7 +25,7 @@ public class FeatureOre extends AntimatterFeature<NoFeatureConfig> {
     public static final Object2ObjectOpenHashMap<ChunkPos, List<Triple<BlockPos, Material, Boolean>>> ORES = new Object2ObjectOpenHashMap<>();
 
     public FeatureOre() {
-        super(NoFeatureConfig::deserialize, FeatureOre.class);
+        super(NoFeatureConfig.field_236558_a_, FeatureOre.class);
     }
 
     @Override
@@ -37,7 +36,7 @@ public class FeatureOre extends AntimatterFeature<NoFeatureConfig> {
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-            biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+           // biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 
@@ -46,8 +45,9 @@ public class FeatureOre extends AntimatterFeature<NoFeatureConfig> {
         return "feature_ore";
     }
 
+
     @Override
-    public boolean place(IWorld world, ChunkGenerator<? extends GenerationSettings> generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
         List<Triple<BlockPos, Material, Boolean>> ores = ORES.remove(world.getChunk(pos).getPos());
         if (ores == null) return false;
         for (Triple<BlockPos, Material, Boolean> o : ores) {

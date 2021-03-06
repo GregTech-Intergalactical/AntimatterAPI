@@ -7,6 +7,8 @@ import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.StoneLayerOre;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -21,30 +23,30 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
     private BlockState stoneState;
     private StoneLayerOre[] ores = new StoneLayerOre[0];
 
-    protected WorldGenStoneLayer(BlockState state, int... dims) {
+    protected WorldGenStoneLayer(BlockState state, RegistryKey<World>... dims) {
         super("world_gen_stone_layer", WorldGenStoneLayer.class, dims);
         if (state == null) throw new IllegalStateException("WorldGenStoneLayer has been passed a null stone block state!");
         this.stoneState = state;
     }
 
-    protected WorldGenStoneLayer(Block block, int... dims) {
+    protected WorldGenStoneLayer(Block block, RegistryKey<World>... dims) {
         this(block.getDefaultState(), dims);
     }
 
-    protected WorldGenStoneLayer(StoneType stoneType, int... dims) {
+    protected WorldGenStoneLayer(StoneType stoneType, RegistryKey<World>... dims) {
         this(stoneType.getState(), dims);
         this.stoneType = stoneType;
     }
 
-    public static List<WorldGenStoneLayer> add(Block block, int weight, int... dims) {
+    public static List<WorldGenStoneLayer> add(Block block, int weight, RegistryKey<World>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.getDefaultState(), dims)).collect(Collectors.toList());
     }
 
-    public static List<WorldGenStoneLayer> add(BlockState state, int weight, int... dims) {
+    public static List<WorldGenStoneLayer> add(BlockState state, int weight, RegistryKey<World>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(state, dims)).collect(Collectors.toList());
     }
 
-    public static List<WorldGenStoneLayer> add(StoneType stoneType, int weight, int... dims) {
+    public static List<WorldGenStoneLayer> add(StoneType stoneType, int weight, RegistryKey<World>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(stoneType, dims)).collect(Collectors.toList());
     }
 

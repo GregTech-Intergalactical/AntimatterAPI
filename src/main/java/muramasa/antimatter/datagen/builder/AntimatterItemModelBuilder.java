@@ -6,8 +6,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.List;
 import java.util.Map;

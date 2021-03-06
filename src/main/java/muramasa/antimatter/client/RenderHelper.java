@@ -1,5 +1,6 @@
 package muramasa.antimatter.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -44,7 +45,8 @@ public class RenderHelper {
 //        return Minecraft.getInstance().getTextureMap().getSprite(fluid.getAttributes().getStillTexture());
 //    }
 
-    public static void drawFluid(Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
+
+    public static void drawFluid(MatrixStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
         if (stack == null) return;
         Fluid fluid = stack.getFluid();
         if (fluid == null) return;
@@ -60,7 +62,7 @@ public class RenderHelper {
         RenderSystem.translatef(0, 0, 200);
         if (stack.getAmount() >= 2000) {
             String amount = stack.getAmount() / 1000 + "";
-            mc.fontRenderer.drawStringWithShadow(amount, posX + (16 - mc.fontRenderer.getStringWidth(amount) + 1), posY + 9, 0xFFFFFF);
+            mc.fontRenderer.drawStringWithShadow(mstack, amount, posX + (16 - mc.fontRenderer.getStringWidth(amount) + 1), posY + 9, 0xFFFFFF);
         }
         RenderSystem.popMatrix();
     }

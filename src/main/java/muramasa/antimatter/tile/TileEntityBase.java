@@ -7,6 +7,8 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,8 +38,8 @@ public abstract class TileEntityBase extends TileEntity {
         return !world.isRemote;
     }
 
-    public int getDimension() {
-        return world.getDimension().getType().getId();
+    public RegistryKey<World> getDimension() {
+        return world.getDimensionKey();
     }
 
     //TODO pass constant StringBuilder
@@ -66,7 +68,7 @@ public abstract class TileEntityBase extends TileEntity {
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
-        handleUpdateTag(pkt.getNbtCompound());
+        handleUpdateTag(getBlockState(),pkt.getNbtCompound());
         sidedSync(true);
     }
 

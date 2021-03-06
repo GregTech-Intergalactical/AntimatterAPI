@@ -3,21 +3,17 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
-        maven { 
-            url 'http://dvs1.progwml6.com/files/maven' 
-        }
-        maven {
-            url 'https://plugins.gradle.org/m2/'
-        }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true
     }
 }
 
 repositories {
     maven { url 'http://dvs1.progwml6.com/files/maven' }
+    maven { url = "https://www.cursemaven.com" }
 }
+
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -142,6 +138,10 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
+    /** KUBEJS STUFF **/
+  //  implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
+ //   implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
+ //   implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
 }
 
 
