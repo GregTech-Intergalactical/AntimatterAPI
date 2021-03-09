@@ -46,10 +46,13 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     private final String providerDomain, providerName;
     protected final List<ICraftingLoader> craftingLoaders = new ObjectArrayList<>();
 
+    private static final List<AntimatterRecipeProvider> PROVIDERS = new ObjectArrayList<>();
+
     public AntimatterRecipeProvider(String providerDomain, String providerName, DataGenerator gen) {
         super(gen);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
+        PROVIDERS.add(this);
     }
 
     @Override
@@ -67,6 +70,17 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     @Override
     public Dist getSide() {
         return Dist.DEDICATED_SERVER;
+    }
+
+    public static void runRecipes() {
+        Set<ResourceLocation> set = Sets.newHashSet();
+        PROVIDERS.forEach(t -> {
+            t.registerRecipes(recipe -> {
+                if (!set.add(recipe.getID())) return;
+                else DynamicResourcePack.addRecipe(recipe);
+            });
+        });
+
     }
 
     @Override

@@ -5,6 +5,7 @@
   "refmap": "antimatter.refmap.json",
   "mixins": [
     "ClientBlockUpdateMixin",
+    "DynamicPackMixin",
     "ServerBlockUpdateMixin"
   ],
   "minVersion": "0.8"

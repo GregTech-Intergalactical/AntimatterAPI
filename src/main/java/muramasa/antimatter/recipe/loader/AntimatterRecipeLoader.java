@@ -3,6 +3,7 @@ package muramasa.antimatter.recipe.loader;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeMap;
 import net.minecraft.client.Minecraft;
@@ -44,6 +45,7 @@ public class AntimatterRecipeLoader implements IRecipeRegistrate {
     private void load() {
         if (!(vanillaLoaded && customLoaded)) return;
         AntimatterAPI.all(RecipeMap.class, RecipeMap::compile);
+        AntimatterRecipeProvider.runRecipes();
     }
 
     public void loadRecipes() {
