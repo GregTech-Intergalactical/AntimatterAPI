@@ -3,16 +3,25 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
+        maven {
+            name = 'sponge'
+            url = 'https://repo.spongepowered.org/maven'
+        }
+        maven {
+            name = 'forge'
+            url = 'https://files.minecraftforge.net/maven'
+        }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
 repositories {
     maven { url 'http://dvs1.progwml6.com/files/maven' }
     maven { url = "https://www.cursemaven.com" }
-}
+} 
 
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -40,15 +49,6 @@ sourceSets {
     }
 }
 
-
-configurations {
-    deobf
-    embed
-    implementation.extendsFrom(embed)
-    compile.extendsFrom(embed)
-}
-
-
 // Deobfuscated jar; development purposes.
 task deobfJar(type: Jar) {
     from sourceSets.main.output
@@ -73,11 +73,13 @@ minecraft {
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN'
+            property 'forge.logging.markers', ''
+            property 'fml.earlyprogresswindow', 'false'
+            //property 'mixin.env.disableRefMap', 'true'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
+            arg "-mixin.config=antimatter.mixins.json"
             mods {
                 antimatter {
                     source sourceSets.main
@@ -87,13 +89,17 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN'
+            property 'forge.logging.markers', ''
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+            //property 'mixin.env.disableRefMap', 'true'
 
+            // Disable GUI by default, the IDE console can be used to enter commands
+            arg '-nogui'
+            arg "-mixin.config=antimatter.mixins.json"
             mods {
                 antimatter {
                     source sourceSets.main
@@ -105,11 +111,14 @@ minecraft {
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN'
+            property 'forge.logging.markers', ''
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            property 'fml.earlyprogresswindow', 'false'
+            //property 'mixin.env.disableRefMap', 'true'
 
+            arg "-mixin.config=antimatter.mixins.json"
             args '--mod', 'antimatter', '--all', '--output', project.file('src/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
 
             mods {
@@ -120,6 +129,8 @@ minecraft {
         }
     }
 }
+
+
 
 
 // Sources jar; development purposes.
@@ -134,10 +145,10 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation project(path: ':tesseract')
+    implementation project(path: ':tesseract') 
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-
+    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
     /** KUBEJS STUFF **/
   //  implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
  //   implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
@@ -165,6 +176,21 @@ publishing {
         }
     }
 }
+apply plugin: 'org.spongepowered.mixin'
+
+mixin {
+    add sourceSets.main, "antimatter.refmap.json"
+}
+
+jar {
+    manifest {
+        attributes([
+                // Existing properties here
+                "MixinConfigs": "antimatter.mixins.json"
+        ])
+    }
+}
+
 
 jar {
     zip64 true
