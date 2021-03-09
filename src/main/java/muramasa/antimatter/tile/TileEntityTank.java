@@ -4,7 +4,10 @@ import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.LazyHolder;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityTank extends TileEntityMachine {
@@ -16,6 +19,16 @@ public class TileEntityTank extends TileEntityMachine {
             @Override
             public FluidTanks getOutputTanks() {
                 return super.getInputTanks();
+            }
+
+            @Override
+            protected FluidTank getTank(int tank) {
+                return getInputTanks().getTank(tank);
+            }
+
+            @Override
+            public FluidTanks getTanks(int tank) {
+                return getInputTanks();
             }
         });
     }
