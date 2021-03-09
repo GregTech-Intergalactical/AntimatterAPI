@@ -1,9 +1,11 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
@@ -61,7 +63,10 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         AntimatterAPI.all(Item.class, domain).forEach(i -> AntimatterModelManager.onItemModelBuild(i, this));
         AntimatterAPI.all(Block.class, domain).forEach(b -> AntimatterModelManager.onItemModelBuild(b, this));
         AntimatterAPI.all(IAntimatterTool.class, domain).forEach(t -> tex(t.getItem(), "item/handheld", t.getTextures()));
-        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> antimatterTex(f.getContainerItem(), "forge", "item/bucket").bucketProperties(f.getFluid()));
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> {
+            antimatterTex(f.getContainerItem(), "forge", "item/bucket").bucketProperties(f.getFluid());
+            antimatterTex(f.getFluidBlock(), AntimatterBlockModelBuilder.getSimple()).tex(a -> a.put("all", f.getAttributes().getFlowingTexture().toString()));
+        });
     }
 
     public ItemModelBuilder getBuilder(IItemProvider item) {
@@ -99,5 +104,9 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
 
     public AntimatterItemModelBuilder antimatterTex(IItemProvider item, String namespace, String path) {
         return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(namespace, path)));
+    }
+
+    public AntimatterItemModelBuilder antimatterTex(IItemProvider item, String resource) {
+        return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(resource)));
     }
 }

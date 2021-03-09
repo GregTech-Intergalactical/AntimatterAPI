@@ -143,7 +143,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     }
 
     // Used to set connection between pipes on which block was placed
-    public void onBlockPlacedTo(World world, BlockPos pos, Direction face) {
+    public boolean onBlockPlacedTo(World world, BlockPos pos, Direction face) {
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
             TileEntity neighbor = world.getTileEntity(pos.offset(face.getOpposite()));
@@ -153,6 +153,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                 if (!pipe.canConnect(face.getIndex())) {
                     pipe.setConnection(face);
                 }
+                return true;
             } else if (neighbor != null) {
                 AntimatterCaps.getCustomEnergyHandler(neighbor).ifPresent(cap -> {
                     if (cap.canInput() || cap.canOutput()) {
@@ -161,6 +162,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                 });
             }
         }
+        return false;
     }
 
     @Override // Used to clear connection for sides where neighbor was removed

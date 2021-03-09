@@ -1,14 +1,18 @@
 package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IEnergyHandler;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
@@ -70,6 +74,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
+import java.util.function.Function;
 
 import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.UNBOUNDED;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
@@ -406,7 +411,7 @@ public class Utils {
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having an item within the given tag.
      */
-    public static InventoryChangeTrigger.Instance hasItem(Tag<Item> tagIn) {
+    public static InventoryChangeTrigger.Instance hasItem(ITag<Item> tagIn) {
         return hasItem(ItemPredicate.Builder.create().tag(tagIn).build());
     }
 
@@ -1020,7 +1025,7 @@ public class Utils {
      * @return BlockTag variant of the ItemTag
      */
     public static ITag.INamedTag<Block> itemToBlockTag(ITag.INamedTag<Item> tag) {
-        return BlockTags.makeWrapperTag(tag.getName().toString());
+        return createTag(tag.getName(), Block.class, BlockTags::makeWrapperTag);
     }
 
     /**
@@ -1029,7 +1034,7 @@ public class Utils {
      * @return ItemTag variant of the BlockTag
      */
     public static ITag.INamedTag<Item> blockToItemTag(ITag.INamedTag<Block> tag) {
-        return ItemTags.makeWrapperTag(tag.getName().toString());
+        return createTag(tag.getName(), Item.class, ItemTags::makeWrapperTag);
     }
 
     /**
@@ -1037,7 +1042,23 @@ public class Utils {
      * @return BlockTag
      */
     public static ITag.INamedTag<Block> getBlockTag(ResourceLocation loc) {
-        return BlockTags.makeWrapperTag(loc.toString());
+       return createTag(loc, Block.class, BlockTags::makeWrapperTag);
+    }
+
+    protected static final Map<Class, List<ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
+
+    protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
+        ITag.INamedTag<T> tag = fn.apply(loc.toString());
+        TAG_MAP.compute(clazz, (k,v) -> {
+            if (v == null) v = new ObjectArrayList<>();
+            v.add(tag);
+            return v;
+        });
+        return tag;
+    }
+
+    public static List<ITag.INamedTag> getTags(Class clazz) {
+        return TAG_MAP.getOrDefault(clazz, Collections.emptyList());
     }
 
     /**
@@ -1053,7 +1074,7 @@ public class Utils {
      * @return ItemTag
      */
     public static ITag.INamedTag<Item> getItemTag(ResourceLocation loc) {
-        return ItemTags.makeWrapperTag(loc.toString());
+        return createTag(loc, Item.class, ItemTags::makeWrapperTag);
     }
 
     /**
@@ -1070,7 +1091,7 @@ public class Utils {
      * @return FluidTag
      */
     public static ITag.INamedTag<Fluid> getForgeFluidTag(String name) {
-        return FluidTags.makeWrapperTag(new ResourceLocation("forge", name).toString());
+        return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::makeWrapperTag);
     }
 
     /**

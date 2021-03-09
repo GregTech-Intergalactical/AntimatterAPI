@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "muramasa.antimatter.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "antimatter.refmap.json",
+  "mixins": [
+    "ClientBlockUpdateMixin",
+    "ServerBlockUpdateMixin"
+  ],
+  "minVersion": "0.8"
+}

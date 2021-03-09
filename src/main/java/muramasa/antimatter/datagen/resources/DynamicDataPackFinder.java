@@ -46,13 +46,10 @@ public class DynamicDataPackFinder implements IPackFinder {
         e.getServer().getResourcePacks().addPackFinder(Ref.SERVER_PACK_FINDER);
         e.getServer().getResourcePacks().getEnabledPacks().forEach(p -> Antimatter.LOGGER.info(p.getName() + " is being loaded into the server..."));
     }
-    @SubscribeEvent
-    public static void addGenerator(FMLCommonSetupEvent e) {
-        AntimatterAPI.runDataProvidersDynamically();
-    }
 
     @Override
     public void findPacks(Consumer<ResourcePackInfo> infoConsumer, ResourcePackInfo.IFactory infoFactory) {
+     //   AntimatterAPI.runDataProvidersDynamically();
         DynamicResourcePack dynamicPack = new DynamicResourcePack(name, AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet()));
         //TODO: not sure here
         ResourcePackInfo genericPackInfo = ResourcePackInfo.createResourcePack(id, true, () -> dynamicPack, infoFactory, ResourcePackInfo.Priority.TOP, IPackNameDecorator.BUILTIN);

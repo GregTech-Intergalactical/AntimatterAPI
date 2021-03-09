@@ -197,7 +197,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
      */
     public List<ItemStack> consumeInputs(Recipe recipe, boolean simulate) {
         Set<Integer> skipSlots = new HashSet<>();
-        List<AntimatterIngredient> items = recipe.getInputItems();
+        List<AntimatterIngredient> items = recipe.compileInput();
         if (items == null) return Collections.emptyList();
         List<ItemStack> consumedItems = new ObjectArrayList<>();
 

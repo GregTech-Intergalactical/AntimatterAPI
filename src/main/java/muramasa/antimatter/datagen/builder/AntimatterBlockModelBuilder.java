@@ -127,6 +127,14 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return o;
     }
 
+    public static String getSimple() {
+        return SIMPLE;
+    }
+
+    public static String getLayered() {
+        return LAYERED;
+    }
+
     public AntimatterBlockModelBuilder staticConfigId(String mapId) {
         loader(AntimatterModelManager.LOADER_DYNAMIC);
         return property("staticConfigId", mapId);

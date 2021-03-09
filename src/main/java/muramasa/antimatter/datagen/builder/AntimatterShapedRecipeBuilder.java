@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
@@ -63,7 +64,7 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Adds a key to the recipe pattern.
      */
-    public AntimatterShapedRecipeBuilder key(Character symbol, Tag<Item> tag) {
+    public AntimatterShapedRecipeBuilder key(Character symbol, ITag<Item> tag) {
         return this.key(symbol, Ingredient.fromTag(tag));
     }
 

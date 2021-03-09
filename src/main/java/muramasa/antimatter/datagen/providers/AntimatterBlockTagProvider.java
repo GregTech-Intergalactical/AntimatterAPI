@@ -9,8 +9,10 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.tags.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
@@ -45,9 +47,7 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        //TagCollectionReader<Block> blocks = new TagCollectionReader<>(Registry.BLOCK::getOptional, "tags/blocks", "block");
-        
-       // blocks.buildTagCollectionFromMap(tagToBuilder).getIDTagMap().forEach((k, v) -> DynamicResourcePack.addTag("blocks", k, v.(this.registry::getKey)));
+        Utils.getTags(Block.class).forEach(t -> DynamicResourcePack.addTag("blocks", t.getName(), getOrCreateBuilder(t).getInternalBuilder().serialize()));
         tagToBuilder.forEach((k, v) -> DynamicResourcePack.addTag("blocks", k, v.serialize()));
         b.forEach(tagToBuilder::put);
     }
@@ -63,20 +63,20 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
     }
 
     protected void processTags(String domain) {
-        AntimatterAPI.all(BlockOre.class, o -> {
+        AntimatterAPI.all(BlockOre.class,domain, o -> {
             this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
             if (o.getOreType() == Data.ORE) this.getOrCreateBuilder(Tags.Blocks.ORES).add(o);
         });
-        AntimatterAPI.all(BlockStone.class, domain, s -> {
+        AntimatterAPI.all(BlockStone.class,domain, s -> {
             this.getOrCreateBuilder(Tags.Blocks.STONE).add(s);
             this.getOrCreateBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s).replace(replace);
         });
-        AntimatterAPI.all(BlockOreStone.class, domain, s -> {
+        AntimatterAPI.all(BlockOreStone.class,domain, s -> {
             // String id = getConventionalMaterialType(MaterialType.ORE_STONE);
             this.getOrCreateBuilder(Tags.Blocks.ORES).add(s);
             // this.getBuilder(getForgeBlockTag(id)).add(s);
         });
-        AntimatterAPI.all(BlockStorage.class, domain, block -> {
+        AntimatterAPI.all(BlockStorage.class,domain, block -> {
             this.getOrCreateBuilder(block.getType().getTag()).add(block).replace(replace);
             String name = String.join("", block.getType().getTag().getName().getPath(), "/", block.getMaterial().getId());
             this.getOrCreateBuilder(getForgeBlockTag(name)).add(block);

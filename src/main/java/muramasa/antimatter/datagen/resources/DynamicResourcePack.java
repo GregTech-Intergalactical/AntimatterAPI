@@ -50,6 +50,8 @@ public class DynamicResourcePack implements IResourcePack {
 
     public DynamicResourcePack(String name, Collection<String> domains) {
         this.name = name;
+        //TODO!
+        domains.add("gti");
         CLIENT_DOMAINS.addAll(domains);
         SERVER_DOMAINS.addAll(domains);
     }

@@ -12,8 +12,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.LazyValue;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 public class MaterialTypeBlock<T> extends MaterialType<T> {
 
@@ -68,7 +70,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
             return asStack(1);
         }
 
-        public AntimatterIngredient asIngredient() {
+        public LazyValue<AntimatterIngredient> asIngredient() {
             return AntimatterIngredient.of(asStack(1));
         }
     }

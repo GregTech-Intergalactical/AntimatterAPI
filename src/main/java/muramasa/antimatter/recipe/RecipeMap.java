@@ -158,6 +158,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     private int ingredientCounter = 0;
 
+    private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
+
     //Data allows you to set related data to the map, e.g. which tier the gui displays.
     public RecipeMap(String categoryId, B builder, Object... data) {
         this.id = "gt.recipe_map." + categoryId;
@@ -237,11 +239,15 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
     }
 
+    void add(Recipe recipe) {
+        RECIPES_TO_COMPILE.add(recipe);
+    }
+
     /**
      * Adds a recipe to this map. If the recipe is empty or collides with another recipe it is not added.
      * @param recipe the recipe to add.
      */
-    void add(Recipe recipe) {
+    void compileRecipe(Recipe recipe) {
         if (recipe == null) return;
         this.ingredientCounter = 0;
         Branch map = LOOKUP;
@@ -261,7 +267,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         //Default path
         } else if(recipe.getInputItems().size() > 0 || (recipe.getInputFluids() != null && recipe.getInputFluids().length > 0)) {
             //Any items are invalid?
-            for (AntimatterIngredient ai : recipe.getInputItems()) {
+            List<AntimatterIngredient> ing = recipe.compileInput();
+            for (AntimatterIngredient ai : ing) {
                 if (ai.getMatchingStacks().length == 0) {
                     Utils.onInvalidData("RECIPE WITH EMPTY INGREDIENT");
                     return;
@@ -275,12 +282,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     }
                 }
             }
-            Recipe r = recurseItemTreeFind(new RecipeFluids(recipe.getInputFluids(), recipe.getTags()), recipe.getInputItems().stream().map(t -> new IngredientWrapper(getNextIngredientCount(), t)).toArray(IngredientWrapper[]::new), map);
+            Recipe r = recurseItemTreeFind(new RecipeFluids(recipe.getInputFluids(), recipe.getTags()), ing.stream().map(t -> new IngredientWrapper(getNextIngredientCount(), t)).toArray(IngredientWrapper[]::new), map);
             if (r != null) {
                 Utils.onInvalidData("RECIPE COLLISION! (Map: " + this.id + ")");
                 return;
             }
-            recurseItemTreeAdd(recipe, recipe.getInputItems(), map, 0, 0);
+            recurseItemTreeAdd(recipe, ing, map, 0, 0);
         } else {
             Utils.onInvalidData("EMPTY RECIPE - NOT ADDED");
         }
@@ -306,7 +313,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             //have to build a path for each stack.
             int id = getNextIngredientCount();
             for (ItemStack stack : current.getMatchingStacks()) {
-                AntimatterIngredient ing = AntimatterIngredient.of(stack);
+                AntimatterIngredient ing = AntimatterIngredient.of(stack).getValue();
                 r = map.NODES.compute(new IngredientWrapper(id, ing), (k,v) -> callback(k,v, recipe, ingredients,count));
                 if (count == ingredients.size() - 1) continue;
                 if (r.left().isPresent()) {
@@ -495,8 +502,13 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return find(tier.getVoltage(), itemHandler, fluidHandler);
     }
 
-    public void reset() {
+    protected void reset() {
         this.LOOKUP.NODES.clear();
+    }
+
+    public void compile() {
+        reset();
+        RECIPES_TO_COMPILE.forEach(this::compileRecipe);
     }
 
 }

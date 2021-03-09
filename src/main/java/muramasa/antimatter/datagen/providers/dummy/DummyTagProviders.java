@@ -6,8 +6,10 @@ import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import net.minecraft.block.Block;
 import net.minecraft.data.*;
 import net.minecraft.item.Item;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
@@ -35,7 +37,9 @@ public class DummyTagProviders {
             Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
             this.tagToBuilder.clear();
             registerTags();
+            tagToBuilder.forEach((a,bb) -> ItemTags.makeWrapperTag(a.toString()));
             b.forEach(tagToBuilder::put);
+
         }
 
     }
@@ -51,6 +55,7 @@ public class DummyTagProviders {
             Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
             this.tagToBuilder.clear();
             registerTags();
+            tagToBuilder.forEach((a,bb) -> BlockTags.makeWrapperTag(a.toString()));
             b.forEach(tagToBuilder::put);
         }
     }

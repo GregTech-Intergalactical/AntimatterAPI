@@ -169,7 +169,7 @@ public class TileEntityPipe extends TileEntityTickable {
         interaction = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
         byte oldConnection = connection;
         connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
-        if (connection != oldConnection && (world == null ? false : world.isRemote)) {
+        if (connection != oldConnection && (world != null && world.isRemote)) {
             Utils.markTileForRenderUpdate(this);
         }
     }

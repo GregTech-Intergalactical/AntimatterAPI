@@ -1,5 +1,8 @@
 package muramasa.antimatter.proxy;
 
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.recipe.loader.AntimatterRecipeLoader;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
@@ -9,7 +12,9 @@ public class ServerHandler implements IProxyHandler {
     public ServerHandler() { }
 
     @SuppressWarnings("unused")
-    public static void setup(FMLDedicatedServerSetupEvent e) { }
+    public static void setup(FMLDedicatedServerSetupEvent e) {
+
+    }
 
     @Override
     public World getClientWorld() {

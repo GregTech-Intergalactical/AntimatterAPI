@@ -4,15 +4,17 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.LazyValue;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class RecipeBuilder {
 
     private RecipeMap recipeMap;
     private ItemStack[] itemsOutput;
-    private List<AntimatterIngredient> ingredientInput;
+    private List<LazyValue<AntimatterIngredient>> ingredientInput;
     private FluidStack[] fluidsInput, fluidsOutput;
     private int[] chances;
     private int duration, special;
@@ -34,14 +36,7 @@ public class RecipeBuilder {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
         }
-        if (ingredientInput != null) {
-            for (AntimatterIngredient ai : ingredientInput) {
-                if (ai.getMatchingStacks().length == 0) {
-                    Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT ITEMS INVALID!");
-                    return Utils.getEmptyRecipe();
-                }
-            }
-        }
+
         if (/*AntimatterConfig.RECIPE.ENABLE_RECIPE_UNIFICATION && */itemsOutput != null) {
             for (int i = 0; i < itemsOutput.length; i++) {
                 itemsOutput[i] = Unifier.get(itemsOutput[i]);
@@ -90,12 +85,12 @@ public class RecipeBuilder {
         return add(duration, 0, 0);
     }
 
-    public RecipeBuilder ii(AntimatterIngredient... stacks) {
+    public RecipeBuilder ii(LazyValue<AntimatterIngredient>... stacks) {
         ingredientInput = Arrays.asList(stacks);
         return this;
     }
 
-    public RecipeBuilder ii(List<AntimatterIngredient> stacks) {
+    public RecipeBuilder ii(List<LazyValue<AntimatterIngredient>> stacks) {
         ingredientInput = stacks;
         return this;
     }

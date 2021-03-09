@@ -14,8 +14,11 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.loader.AntimatterRecipeLoader;
+import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.*;
+import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -28,6 +31,8 @@ import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IItemProvider;
+import net.minecraft.util.LazyValue;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -45,6 +50,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.STEAM;
@@ -58,7 +64,8 @@ public final class AntimatterAPI {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
-    private static final AntimatterRecipeLoader RECIPE_LOADER = new AntimatterRecipeLoader();
+    private static AntimatterRecipeLoader RECIPE_LOADER = new AntimatterRecipeLoader();
+
 
     private static final Int2ObjectMap<Item> REPLACEMENTS = new Int2ObjectOpenHashMap<>();
     private static boolean replacementsFound = false;
@@ -142,7 +149,6 @@ public final class AntimatterAPI {
             e.printStackTrace();
         }
     }
-
     // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to run first
     public static void runDataProvidersDynamically() {
         replacementsFound = true;
@@ -194,6 +200,10 @@ public final class AntimatterAPI {
         INTERNAL_REGISTRAR.onRegistrationEvent(event);
         all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event));
         if (CALLBACKS.containsKey(event)) CALLBACKS.get(event).forEach(Runnable::run);
+        if (event == RegistrationEvent.DATA_READY) {
+            AntimatterAPI.RECIPE_LOADER.loadRecipes();
+            AntimatterAPI.runDataProvidersDynamically();
+        }
     }
 
     public static void runOnEvent(RegistrationEvent event, Runnable runnable) {
@@ -214,9 +224,10 @@ public final class AntimatterAPI {
         return getRegistrar(id).map(IAntimatterRegistrar::isEnabled).orElse(false);
     }
 
-    public static Item getReplacement(MaterialType<?> type, Material material, String... namespaces) {
-        ITag.INamedTag<Item> tag = Utils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
-        return getReplacement(null, tag, namespaces);
+    public static LazyValue<AntimatterIngredient> getReplacement(MaterialType<?> type, Material material, String... namespaces) {
+      //  ITag.INamedTag<Item> tag = Utils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
+      //  return getReplacement(null, tag, namespaces);
+        return null;
     }
 
     /**
@@ -227,17 +238,19 @@ public final class AntimatterAPI {
      * @param namespaces    Namespaces of the tags to check against, by default this only checks against 'minecraft' if no namespaces are defined
      * @return originalItem if there's nothing found, null if there is no originalItem, or an replacement
      */
-    public static Item getReplacement(@Nullable Item originalItem, ITag.INamedTag<Item> tag, String... namespaces) {
-        if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
+    public static LazyValue<AntimatterIngredient> getReplacement(@Nullable Item originalItem, ITag.INamedTag<Item> tag, String... namespaces) {
+        //TODO: This is broken for now.
+        return null;
+        /*if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
         if (REPLACEMENTS.containsKey(tag.getName().getPath().hashCode())) return REPLACEMENTS.get(tag.getName().getPath().hashCode());
-        if (replacementsFound) return originalItem;
+        if (replacementsFound) return AntimatterIngredient.of(originalItem);
         Set<String> checks = Sets.newHashSet(namespaces);
         if (checks.isEmpty()) checks.add("minecraft");
-        return tag.getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
-            .findAny().map(i -> {
-                REPLACEMENTS.put(tag.getName().getPath().hashCode(), i);
-                return i;
-            }).orElse(originalItem);
+        return AntimatterIngredient.of(() -> Objects.requireNonNull(tag.getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
+                .findAny().map(i -> {
+                    REPLACEMENTS.put(tag.getName().getPath().hashCode(), i);
+                    return i;
+                }).orElse(originalItem)), 1);*/
     }
 
 
@@ -265,7 +278,7 @@ public final class AntimatterAPI {
         return result;
     }
 
-    public static AntimatterRecipeLoader getRecipeRegistrate() {
+    public static IRecipeRegistrate getRecipeRegistrate() {
         return RECIPE_LOADER;
     }
 

@@ -13,9 +13,11 @@ import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class RecipeHelper {
 
@@ -137,8 +139,8 @@ public class RecipeHelper {
         ).build(DynamicResourcePack::addRecipe, new ResourceLocation(Ref.ID, input.toString() + "_" + output.getItem().toString()));
     }
 
-    public static void addSmelting(AntimatterIngredient input, ItemStack output) {
-        addSmelting(input,output, InventoryChangeTrigger.Instance.forItems(input.getMatchingStacks()[0].getItem()));
+    public static void addSmelting(LazyValue<AntimatterIngredient> input, ItemStack output) {
+       // addSmelting(input,output, InventoryChangeTrigger.Instance.forItems(input.getMatchingStacks()[0].getItem()));
     }
 
     public static void removeSmelting(ItemStack output) {

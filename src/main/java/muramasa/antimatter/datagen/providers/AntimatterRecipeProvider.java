@@ -55,10 +55,13 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     @Override
     public void run() {
         Set<ResourceLocation> set = Sets.newHashSet();
-        this.registerRecipes(recipe -> {
-            if (!set.add(recipe.getID())) throw new IllegalStateException("Duplicate recipe " + recipe.getID());
-            else DynamicResourcePack.addRecipe(recipe);
-        });
+        //TODO: Figure out when we can add recipes :S
+        if (this.getSide() == Dist.DEDICATED_SERVER) {
+            this.registerRecipes(recipe -> {
+                if (!set.add(recipe.getID())) throw new IllegalStateException("Duplicate recipe " + recipe.getID());
+                else DynamicResourcePack.addRecipe(recipe);
+            });
+        }
     }
 
     @Override
@@ -80,9 +83,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             Item ingot = INGOT.get(o.getMaterial());
             ITag.INamedTag<Item> oreTag = Utils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
             ITag.INamedTag<Item> ingotTag = Utils.getForgeItemTag("ingots/".concat(o.getMaterial().getId()));
-            CookingRecipeBuilder.blastingRecipe(Ingredient.fromTag(oreTag), ingot, 2.0F, 200)
-                    .addCriterion("has_material_" + o.getMaterial().getId(), this.hasItem(ingotTag))
-                    .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot")));
+           // CookingRecipeBuilder.blastingRecipe(Ingredient.fromTag(oreTag), ingot, 2.0F, 200)
+         //           .addCriterion("has_material_" + o.getMaterial().getId(), this.hasItem(ingotTag))
+         //           .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot")));
         });
         //        RegistrationHelper.getMaterialsForDomain(Ref.ID).stream().filter(m -> m.has(DUST)).forEach(mat -> {
 //            Item dust = DUST.get(mat);
@@ -140,7 +143,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                 int colourValue = colour.getMapColor().colorValue;
                 ItemStack crowbarStack = CROWBAR.getToolStack(main, NULL);
                 crowbarStack.getChildTag(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, colourValue);
-                addStackRecipe(consumer, Ref.ID, CROWBAR.getId() + "_" + main.getId() + "_" + colour.name(), "antimatter_crowbars",
+                addStackRecipe(consumer, Ref.ID, CROWBAR.getId() + "_" + main.getId() + "_" + colour.toString(), "antimatter_crowbars",
                         "has_material_" + main.getId(), rodTrigger, crowbarStack, of('H', HAMMER.getTag(), 'C', colour.getTag(), 'R', mainRodTag, 'F', FILE.getTag()), "HCR", "CRC", "RCF");
             }
 
@@ -217,8 +220,8 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             try {
                 if (input instanceof IItemProvider) {
                     builder.addIngredient(((IItemProvider)input));
-                } else if (input instanceof Tag) {
-                    builder.addIngredient((Tag<Item>)input);
+                } else if (input instanceof ITag) {
+                    builder.addIngredient((ITag<Item>)input);
                 } else if (input instanceof Ingredient) {
                     builder.addIngredient((Ingredient) input);
                 }
@@ -256,9 +259,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             if (entry.getValue() instanceof IItemProvider) {
                 incompleteBuilder = incompleteBuilder.key(entry.getKey(), (IItemProvider) entry.getValue());
             }
-            else if (entry.getValue() instanceof Tag) {
+            else if (entry.getValue() instanceof ITag) {
                 try {
-                    incompleteBuilder = incompleteBuilder.key(entry.getKey(), (Tag<Item>) entry.getValue());
+                    incompleteBuilder = incompleteBuilder.key(entry.getKey(), (ITag<Item>) entry.getValue());
                 }
                 catch (ClassCastException e) {
                     Utils.onInvalidData("Tag inputs only allow Item Tags!");
@@ -278,5 +281,13 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     @Override
     public String getName() {
         return providerName;
+    }
+
+    public static InventoryChangeTrigger.Instance hasItem(ITag<Item> tag) {
+        return RecipeProvider.hasItem(tag);
+    }
+
+    public static InventoryChangeTrigger.Instance hasItem(IItemProvider stack) {
+        return RecipeProvider.hasItem(stack);
     }
 }

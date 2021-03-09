@@ -146,6 +146,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                     }
                     //Has gui?
+                    if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true).success).orElse(false)) {
+                        return ActionResultType.SUCCESS;
+                    }
                     if (getType().has(MachineFlag.GUI) ) {
                         NetworkHooks.openGui((ServerPlayerEntity) player, tile, extra -> {
                             extra.writeBlockPos(pos);
@@ -162,9 +165,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         return ActionResultType.SUCCESS;
                     }
                     //Otherwise, interact with fluids
-                    if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true).success).orElse(false)) {
-                        return ActionResultType.SUCCESS;
-                    }
                     return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.onInteract(player, hand, hit.getFace(), Utils.getToolType(player))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                 }
             }

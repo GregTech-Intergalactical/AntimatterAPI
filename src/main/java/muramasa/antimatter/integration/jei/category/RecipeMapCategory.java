@@ -94,7 +94,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     public void setIngredients(Recipe recipe, IIngredients ingredients) {
         if (recipe.hasInputItems()) {
             List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
-            for (AntimatterIngredient ing : recipe.getInputItems()) {
+            for (AntimatterIngredient ing : recipe.compileInput()) {
                 if (ing instanceof TagIngredient) {
                     ResourceLocation rl = ((TagIngredient) ing).getTag();
                     if (rl != null) {

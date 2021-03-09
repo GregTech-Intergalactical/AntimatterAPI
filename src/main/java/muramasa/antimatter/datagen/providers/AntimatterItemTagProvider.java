@@ -11,11 +11,13 @@ import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -48,11 +50,7 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        //TagCollection<Item> tags = new TagCollection<>(f -> Optional.empty(), "", false, "generated");
-      //  Map<ResourceLocation, Tag.Builder<Item>> map = this.tagToBuilder.entrySet().stream().collect(Collectors.toMap(k -> k.getKey().getId(), Map.Entry::getValue));
-       // tags.registerAll(map);
-       // tags.getTagMap().forEach((k, v) -> DynamicResourcePack.addTag("items", k, v.serialize(this.registry::getKey)));
-       // this.setCollection(tags);
+        Utils.getTags(Item.class).forEach(t -> DynamicResourcePack.addTag("items", t.getName(), getOrCreateBuilder(t).getInternalBuilder().serialize()));
         tagToBuilder.forEach((k, v) -> DynamicResourcePack.addTag("items", k, v.serialize()));
         b.forEach(tagToBuilder::put);
     }
@@ -74,7 +72,7 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
         this.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
         this.copy(blockTag, blockToItemTag(blockTag));
         this.copy(frameTag, blockToItemTag(frameTag));
-        AntimatterAPI.all(BlockOre.class, o -> {
+        AntimatterAPI.all(BlockOre.class, domain, o -> {
             if (o.getOreType() == ORE_SMALL) return;
             String name = String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
             this.copy(getForgeBlockTag(name), getForgeItemTag(name));
@@ -92,12 +90,12 @@ public class AntimatterItemTagProvider extends ForgeItemTagsProvider implements 
             String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
             this.copy(getForgeBlockTag(name), getForgeItemTag(name));
         });
-        AntimatterAPI.all(MaterialItem.class, domain, item -> {
+        AntimatterAPI.all(MaterialItem.class,domain, item -> {
             this.getOrCreateBuilder(item.getType().getTag()).add(item).replace(replace);
             this.getOrCreateBuilder(item.getTag()).add(item).replace(replace).replace(replace);
             //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
         });
-        AntimatterAPI.all(IAntimatterTool.class, domain, tool -> {
+        AntimatterAPI.all(IAntimatterTool.class,domain, tool -> {
             this.getOrCreateBuilder(tool.getType().getTag()).add(tool.getItem()).replace(replace);
             this.getOrCreateBuilder(tool.getType().getForgeTag()).add(tool.getItem()).replace(replace);
         });

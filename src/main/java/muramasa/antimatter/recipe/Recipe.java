@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -16,11 +17,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class Recipe {
     private final ItemStack[] itemsOutput;
     @Nonnull
-    private final List<AntimatterIngredient> itemsInput;
+    private final List<LazyValue<AntimatterIngredient>> itemsInput;
 
     private final FluidStack[] fluidsInput;
     private final FluidStack[] fluidsOutput;
@@ -38,7 +41,7 @@ public class Recipe {
     public final Int2IntMap infoToRender = new Int2IntOpenHashMap();
 
 
-    public Recipe(@Nonnull List<AntimatterIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
+    public Recipe(@Nonnull List<LazyValue<AntimatterIngredient>> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = stacksInput;
         this.itemsOutput = stacksOutput;
         this.duration = duration;
@@ -87,8 +90,13 @@ public class Recipe {
     }
 
     @Nullable
-    public List<AntimatterIngredient> getInputItems() {
+    public List<LazyValue<AntimatterIngredient>> getInputItems() {
         return hasInputItems() ? itemsInput : null;
+    }
+
+    @Nullable
+    public List<AntimatterIngredient> compileInput() {
+        return hasInputItems() ? itemsInput.stream().map(LazyValue::getValue).collect(Collectors.toList()) : null;
     }
 
     @Nullable
@@ -158,7 +166,7 @@ public class Recipe {
         if (itemsInput.size() > 0) {
             builder.append("\nInput Items: { ");
             for (int i = 0; i < itemsInput.size(); i++) {
-                builder.append(itemsInput.get(i).getMatchingStacks()[0].getDisplayName()).append(" x").append(itemsInput.get(i).getMatchingStacks()[0].getCount());
+                builder.append(itemsInput.get(i).getValue().getMatchingStacks()[0].getDisplayName()).append(" x").append(itemsInput.get(i).getValue().getMatchingStacks()[0].getCount());
                 if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");

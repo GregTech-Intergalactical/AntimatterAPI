@@ -38,7 +38,7 @@ public class AntimatterCaps {
 
     public static <T extends ICapabilityProvider> LazyOptional<EnergyHandler> getCustomEnergyHandler(T type) {
         //TODO
-        return LazyOptional.of(() -> type.getCapability(CapabilityEnergy.ENERGY).filter(IEnergyHandler.class::isInstance).map(t -> (EnergyHandler)t).get());
+        return LazyOptional.empty(); //LazyOptional.of(() -> type.getCapability(CapabilityEnergy.ENERGY).filter(IEnergyHandler.class::isInstance).map(t -> (EnergyHandler)t).get());
     }
 
     public static void register() {

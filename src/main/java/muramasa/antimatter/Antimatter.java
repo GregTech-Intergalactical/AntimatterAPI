@@ -41,7 +41,6 @@ public class Antimatter extends AntimatterMod {
     public Antimatter() {
         super();
         INSTANCE = this;
-
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to change in new Forge
 
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -56,8 +55,8 @@ public class Antimatter extends AntimatterMod {
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::serverSetup);
-        eventBus.addListener(DynamicDataPackFinder::addGenerator);
         MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterTextureStitcher::onTextureStitch);
 
         final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
@@ -67,23 +66,22 @@ public class Antimatter extends AntimatterMod {
             p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g, new ExistingFileHelperOverride());
             return p[0];
         });
-        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"), false, g, p[0], new ExistingFileHelperOverride()));
+        AntimatterAPI.addProvider(Ref.ID, g ->
+                new AntimatterItemTagProvider(Ref.ID,Ref.NAME.concat(" Item Tags"), false, g, p[0], new ExistingFileHelperOverride()));
+        AntimatterAPI.init();
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup(e);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterTextureStitcher::onTextureStitch);
         AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
-        AntimatterAPI.init();
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
-        DynamicDataPackFinder.addGenerator(e);
         //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
         //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
     }

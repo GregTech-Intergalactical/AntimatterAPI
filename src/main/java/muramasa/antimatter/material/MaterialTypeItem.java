@@ -7,6 +7,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.IItemProvider;
+import net.minecraft.util.LazyValue;
+
+import java.util.function.Supplier;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
 
@@ -20,13 +24,13 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public Item get(Material material) {
-        Item replacement = AntimatterAPI.getReplacement(this, material);
+        LazyValue<AntimatterIngredient> replacement = AntimatterAPI.getReplacement(this, material);
         if (replacement == null) {
             if (!allowItemGen(material))
                 Utils.onInvalidData(String.join("", "GET ERROR - DOES NOT GENERATE: T(", id, ") M(", material.getId(), ")"));
             else return AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
         }
-        return replacement;
+        return null;
     }
 
     public ItemStack get(Material material, int count) {
@@ -34,20 +38,20 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         return new ItemStack(get(material), count);
     }
 
-    public AntimatterIngredient getIngredient(Material material, int count) {
+    public LazyValue<AntimatterIngredient> getIngredient(Material material, int count) {
         if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
-        return AntimatterIngredient.fromStack(new ItemStack(get(material), count));
+        return AntimatterIngredient.fromStack(new LazyValue<>(() -> new ItemStack(get(material), count)));
     }
 
     public ITag.INamedTag<Item> getMaterialTag(Material m) {
         return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
-    public AntimatterIngredient getMaterialIngredient(Material m, int count) {
+    public LazyValue<AntimatterIngredient> getMaterialIngredient(Material m, int count) {
         return AntimatterIngredient.of(Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId())),count);
     }
 
-    public AntimatterIngredient getMaterialIngredient(Material m) {
+    public LazyValue<AntimatterIngredient> getMaterialIngredient(Material m) {
         return getMaterialIngredient(m,1);
     }
 }
