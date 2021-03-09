@@ -22,6 +22,8 @@ import muramasa.antimatter.recipe.RecipeMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.LinkedList;
@@ -121,8 +123,8 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return runtime;
     }
 
-    public static <T> void addModDescriptor(List<String> tooltip, T t) {
+    public static <T> void addModDescriptor(List<ITextComponent> tooltip, T t) {
         String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(t).getDisplayModId(t));
-        tooltip.add(text);
+        tooltip.add(new StringTextComponent(text));
     }
 }

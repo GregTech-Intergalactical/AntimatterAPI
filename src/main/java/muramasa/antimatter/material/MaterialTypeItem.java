@@ -34,6 +34,8 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         return null;
     }
 
+
+    //TODO THIS DOESNT WORK
     /**
      * Forces these tags to not generate, assuming they have a replacement.
      * @param tags

@@ -10,26 +10,24 @@ import muramasa.antimatter.gui.slot.SlotFakeFluid;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.machine.MachineFlag;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import static muramasa.antimatter.gui.SlotType.FL_IN;
 import static muramasa.antimatter.gui.SlotType.FL_OUT;
@@ -135,12 +133,17 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
             this.fillGradient(stack, x, y, x + 16, y + 16, slotColor, slotColor);
             RenderSystem.colorMask(true, true, true, true);
             RenderSystem.enableDepthTest();
-            List<String> str = new ArrayList<>();
-            str.add(fluid.getDisplayName().getString());
-            str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY).getString());
+            List<ITextComponent> str = new ArrayList<>();
+            str.add(new StringTextComponent(fluid.getDisplayName().getString()));
+            str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
             AntimatterJEIPlugin.addModDescriptor(str, fluid);
-            this.renderTooltip(stack, str.stream().map(t -> IReorderingProcessor.fromString(t, Style.EMPTY)).collect(Collectors.toList()), mouseX-guiLeft,mouseY-guiTop);
+            drawText(str, mouseX-guiLeft, mouseY-guiTop, minecraft.fontRenderer, stack);
         }
+    }
+    //@Nonnull final ItemStack stack, MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font
+    protected void drawText(List<? extends ITextProperties> textLines, int x, int y, FontRenderer font, MatrixStack matrixStack) {
+        Minecraft minecraft = Minecraft.getInstance();
+        GuiUtils.drawHoveringText(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getMainWindow().getScaledWidth(), minecraft.getMainWindow().getScaledHeight(), -1, font);
     }
 
     private boolean isSlotSelected(int x, int y, double mouseX, double mouseY) {
