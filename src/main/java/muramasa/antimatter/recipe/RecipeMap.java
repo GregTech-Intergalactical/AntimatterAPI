@@ -22,9 +22,13 @@ import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -270,8 +274,16 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             List<AntimatterIngredient> ing = recipe.compileInput();
             for (AntimatterIngredient ai : ing) {
                 if (ai.getMatchingStacks().length == 0) {
-                    Utils.onInvalidData("RECIPE WITH EMPTY INGREDIENT");
+                    //Utils.onInvalidData("RECIPE WITH EMPTY INGREDIENT");
                     return;
+                }
+                if (ai.getMatchingStacks().length == 1) {
+                    ItemStack stack = ai.getMatchingStacks()[0];
+                    //If the tag is empty.
+                    if (stack.getItem() == Items.BARRIER) {
+                        //Utils.onInvalidData("RECIPE WITH EMPTY INGREDIENT");
+                        return;
+                    }
                 }
             }
             if (recipe.hasOutputItems()) {

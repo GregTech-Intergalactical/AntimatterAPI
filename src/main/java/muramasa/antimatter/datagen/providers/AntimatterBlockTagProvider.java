@@ -65,6 +65,7 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
     protected void processTags(String domain) {
         AntimatterAPI.all(BlockOre.class,domain, o -> {
             this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
+            this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
             if (o.getOreType() == Data.ORE) this.getOrCreateBuilder(Tags.Blocks.ORES).add(o);
         });
         AntimatterAPI.all(BlockStone.class,domain, s -> {

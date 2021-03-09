@@ -10,6 +10,7 @@ import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.LazyValue;
 
+import java.util.Arrays;
 import java.util.function.Supplier;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
@@ -20,7 +21,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public boolean allowItemGen(Material material) {
-        return allowGen(material) && !blockType && AntimatterAPI.getReplacement(this, material) == null;
+        return !OVERRIDES.contains(material) && allowGen(material) && !blockType && AntimatterAPI.getReplacement(this, material) == null;
     }
 
     public Item get(Material material) {
@@ -31,6 +32,14 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
             else return AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
         }
         return null;
+    }
+
+    /**
+     * Forces these tags to not generate, assuming they have a replacement.
+     * @param tags
+     */
+    public void forceOverride(Material... tags) {
+        OVERRIDES.addAll(Arrays.asList(tags));
     }
 
     public ItemStack get(Material material, int count) {
