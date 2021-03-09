@@ -56,12 +56,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     public void run() {
         Set<ResourceLocation> set = Sets.newHashSet();
         //TODO: Figure out when we can add recipes :S
-        if (this.getSide() == Dist.DEDICATED_SERVER) {
-            this.registerRecipes(recipe -> {
-                if (!set.add(recipe.getID())) throw new IllegalStateException("Duplicate recipe " + recipe.getID());
-                else DynamicResourcePack.addRecipe(recipe);
-            });
-        }
+     //   if (this.getSide() == Dist.DEDICATED_SERVER) {
+           // this.registerRecipes(recipe -> {
+        //        if (!set.add(recipe.getID())) throw new IllegalStateException("Duplicate recipe " + recipe.getID());
+        //        else DynamicResourcePack.addRecipe(recipe);
+       //     });
+      //  }
     }
 
     @Override
