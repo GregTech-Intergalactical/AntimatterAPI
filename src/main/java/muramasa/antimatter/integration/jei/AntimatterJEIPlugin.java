@@ -12,6 +12,7 @@ import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.GuiData;
@@ -124,5 +125,24 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public static <T> void addModDescriptor(List<String> tooltip, T t) {
         String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(t).getDisplayModId(t));
         tooltip.add(text);
+    }
+
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        REGISTRY.forEach((id, tuple) -> {
+            Machine<?> machine = Machine.get(tuple.machine);
+            if (machine != Data.MACHINE_INVALID){
+                machine.getTiers().forEach(t -> {
+                    ItemStack stack = new ItemStack(machine.getItem(t));
+                    if (!stack.isEmpty()){
+                        registration.addRecipeCatalyst(stack, new ResourceLocation(Ref.ID, id));
+                    } else {
+                        Antimatter.LOGGER.error("machine " + tuple.machine + " has an empty item. Did you do the machine correctly?");
+                    }
+                });
+            } else {
+                Antimatter.LOGGER.error("machine " + tuple.machine + " does not exist");
+            }
+        });
     }
 }
