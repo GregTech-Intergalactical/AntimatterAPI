@@ -32,6 +32,8 @@ public class AntimatterFluid implements IAntimatterObject, IRegistryEntryProvide
     public static final ResourceLocation OVERLAY_TEXTURE = new ResourceLocation("block/water_overlay");
     public static final ResourceLocation LIQUID_STILL_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/still");
     public static final ResourceLocation LIQUID_FLOW_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/flow");
+    public static final ResourceLocation LIQUID_HOT_STILL_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/hot_still");
+    public static final ResourceLocation LIQUID_HOT_FLOW_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/hot_flow");
     public static final ResourceLocation GAS_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/gas");
     public static final ResourceLocation GAS_FLOW_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/gas"); // _flow
     public static final ResourceLocation PLASMA_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/plasma");
@@ -150,6 +152,13 @@ public class AntimatterFluid implements IAntimatterObject, IRegistryEntryProvide
     }
 
     protected static FluidAttributes.Builder getDefaultAttributesBuilder() {
+        return getDefaultAttributesBuilder(false);
+    }
+
+    protected static FluidAttributes.Builder getDefaultAttributesBuilder(boolean hot) {
+        if (hot) {
+            return FluidAttributes.builder(LIQUID_HOT_STILL_TEXTURE, LIQUID_HOT_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE);
+        }
         return FluidAttributes.builder(LIQUID_STILL_TEXTURE, LIQUID_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE);
     }
 }

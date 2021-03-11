@@ -53,7 +53,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
                     .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000);
         }
         else {
-            return getDefaultAttributesBuilder().color((155 << 24) | (material.getRGB() & 0x00ffffff))
+            return getDefaultAttributesBuilder(material.getLiquidTemperature() >= 400).color((155 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(1000).density(1000).temperature(material.getLiquidTemperature());
         }
