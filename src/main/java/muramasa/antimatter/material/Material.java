@@ -147,7 +147,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
         asDust(meltingPoint, tags);
-        flags(INGOT, NUGGET, BLOCK, LIQUID); //TODO: Shall we generate blocks for every solid?
+        flags(INGOT, NUGGET, BLOCK).asFluid(); //TODO: Shall we generate blocks for every solid?
         this.blastFurnaceTemp = blastFurnaceTemp;
         this.needsBlastFurnace = blastFurnaceTemp >= 1000;
         if (blastFurnaceTemp > 1750) {
@@ -187,9 +187,13 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material asFluid(int fuelPower) {
+        return asFluid(fuelPower, Math.max(meltingPoint, 295));
+    }
+
+    public Material asFluid(int fuelPower, int temp) {
         flags(LIQUID);
         this.fuelPower = fuelPower;
-        this.liquidTemperature = Math.max(meltingPoint, 295);
+        this.liquidTemperature = temp;
         return this;
     }
 
@@ -198,8 +202,12 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material asGas(int fuelPower) {
+        return asGas(fuelPower,  Math.max(meltingPoint, 295));
+    }
+
+    public Material asGas(int fuelPower, int temp) {
         flags(GAS);
-        this.gasTemperature = Math.max(meltingPoint, 295);
+        this.gasTemperature = temp;
         this.fuelPower = fuelPower;
         return this;
     }
