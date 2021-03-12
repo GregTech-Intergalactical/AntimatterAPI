@@ -228,10 +228,17 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                         "has_material_" + main.getId(), rodTrigger, SCREWDRIVER.getToolStack(main, handle),
                         of('M', mainRodTag, 'R', rodTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), " FM", " MH", "R  ");
 
-                addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
-                        "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
-                        b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
-                                .put('S', SCREWDRIVER.getTag()).put('W', getForgeItemTag("screws/" + main.getId())), "PFP", "HPS", "RWR");
+                if (main.has(SCREW)){
+                    addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
+                            "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
+                            b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                                    .put('S', SCREWDRIVER.getTag()).put('W', getForgeItemTag("screws/" + main.getId())), "PFP", "HPS", "RWR");
+                } else {
+                    addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
+                            "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
+                            b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                                    .put('S', SCREWDRIVER.getTag()), "PFP", "HPS", "R R");
+                }
             }
         });
     }
