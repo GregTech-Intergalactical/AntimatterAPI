@@ -184,19 +184,24 @@ jar {
     manifest {
         attributes([
                 // Existing properties here
-                "MixinConfigs": "antimatter.mixins.json"
+                "MixinConfigs": "antimatter.mixins.json",
+                "Specification-Title": "Antimatter",
+                "Specification-Vendor": "AntimatterTeam",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "0.0.1",
+                "Implementation-Vendor" :"AntimatterTeam",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
 
-jar {
+/*jar {
     zip64 true
-}
+}*/
 
 artifacts {
     archives sourcesJar
     archives deobfJar
 }
-
-//jar.finalizedBy deobfJar

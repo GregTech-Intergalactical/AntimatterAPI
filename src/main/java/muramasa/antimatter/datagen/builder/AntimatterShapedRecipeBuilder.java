@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class AntimatterShapedRecipeBuilder {
 
@@ -103,8 +104,8 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Adds a criterion needed to unlock the recipe.
      */
-    public AntimatterShapedRecipeBuilder addCriterion(String name, ICriterionInstance criterion) {
-        this.advBuilder.withCriterion(name, criterion);
+    public AntimatterShapedRecipeBuilder addCriterion(String name, Supplier<ICriterionInstance> criterion) {
+        this.advBuilder.withCriterion(name, criterion.get());
         return this;
     }
 

@@ -58,7 +58,7 @@ public final class AntimatterRegistration {
             //TODO better solution for this
             if (domain.equals(Ref.ID)) CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
         } else if (e.getRegistry() == ForgeRegistries.FEATURES) {
-            AntimatterAPI.all(AntimatterFeature.class, ForgeRegistries.FEATURES::register);
+            AntimatterAPI.all(AntimatterFeature.class, domain, ForgeRegistries.FEATURES::register);
         }
     }
 

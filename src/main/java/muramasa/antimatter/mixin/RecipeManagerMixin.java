@@ -14,7 +14,7 @@ import java.util.Map;
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
 
-    @Inject(method = "getRecipes(Lnet/minecraft/item/crafting/IRecipeType;)Ljava/util/Map;", at = @At("RETURN"), cancellable = true, remap = false)
+    @Inject(method = "getRecipes(Lnet/minecraft/item/crafting/IRecipeType;)Ljava/util/Map;", at = @At("RETURN"), cancellable = true/*, remap = false*/)
     private void handleGetRecipe(IRecipeType recipeTypeIn, CallbackInfoReturnable<Map<ResourceLocation, IRecipe>> cir) {
         Map<ResourceLocation, IRecipe> map = AntimatterRecipeProvider.handleGetRecipe(recipeTypeIn, cir.getReturnValue());
         if (map.size() != cir.getReturnValue().size()) cir.setReturnValue(map);
