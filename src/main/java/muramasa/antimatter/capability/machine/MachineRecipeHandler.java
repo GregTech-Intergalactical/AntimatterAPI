@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.IIntArray;
-import net.minecraft.util.IntArray;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fluids.FluidStack;
@@ -35,9 +34,38 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     protected final boolean generator;
     /**
      * Indices:
-     * 0 -> Progress of recipe
+     * 1 -> Progress of recipe
      */
-    protected final IIntArray GUI_SYNC_DATA = new IntArray(1);
+    protected final IIntArray GUI_SYNC_DATA = new IIntArray() {
+
+        @Override
+        public int get(int index) {
+            switch (index) {
+                case 0:
+                    return MachineRecipeHandler.this.currentProgress;
+                case 1:
+                    return MachineRecipeHandler.this.maxProgress;
+            }
+            return 0;
+        }
+
+        @Override
+        public void set(int index, int value) {
+            switch (index) {
+                case 0:
+                    MachineRecipeHandler.this.currentProgress = value;
+                    break;
+                case 1:
+                    MachineRecipeHandler.this.maxProgress = value;
+                    break;
+            }
+        }
+
+        @Override
+        public int size() {
+            return 2;
+        }
+    };
 
     protected Recipe activeRecipe;
     protected boolean consumedResources;
@@ -68,10 +96,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return GUI_SYNC_DATA;
     }
 
-    public void setClientProgress() {
-        setClientProgress(Float.floatToRawIntBits(this.currentProgress / (float) this.maxProgress));
-    }
-
     public void getInfo(List<String> builder) {
         if (activeRecipe != null) {
             if (tile.getMachineState() != ACTIVE) {
@@ -87,13 +111,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return activeRecipe != null;
     }
 
-    public void setClientProgress(int value) {
-        this.GUI_SYNC_DATA.set(0, value);
-    }
-
     @OnlyIn(Dist.CLIENT)
     public float getClientProgress() {
-        return Float.intBitsToFloat(this.GUI_SYNC_DATA.get(0));
+        return ((float) currentProgress / (float) maxProgress);
     }
 
     @Override
@@ -211,7 +231,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             return tile.getMachineState();
         } else if (this.currentProgress == this.maxProgress) {
             if (!canOutput()) {
-                setClientProgress(0);
                 return OUTPUT_FULL;
             }
             return recipeFinish();
@@ -232,7 +251,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             }
             if (currentProgress == 0 && !consumedResources) this.consumeInputs();
             this.currentProgress++;
-            setClientProgress();
             tile.onRecipePostTick();
             return ACTIVE;
         }
@@ -240,7 +258,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     private void recipeFailure() {
         currentProgress = 0;
-        setClientProgress(0);
     }
 
     public boolean consumeResourceForRecipe() {
@@ -298,7 +315,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 tile.setMachineState(ACTIVE);
                 return;
             }
-            setClientProgress(0);
         }
     }
 
@@ -368,7 +384,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         this.consumedResources = false;
         this.currentProgress = 0;
         this.overclock = 0;
-        setClientProgress(0);
     }
 
     @Override

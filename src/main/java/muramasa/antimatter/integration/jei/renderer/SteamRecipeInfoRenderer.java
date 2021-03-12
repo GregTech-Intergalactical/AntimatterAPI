@@ -1,10 +1,8 @@
 package muramasa.antimatter.integration.jei.renderer;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraftforge.fluids.FluidStack;
 
 public class SteamRecipeInfoRenderer implements IRecipeInfoRenderer {
 

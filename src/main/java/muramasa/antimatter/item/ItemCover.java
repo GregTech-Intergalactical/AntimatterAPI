@@ -1,21 +1,10 @@
 package muramasa.antimatter.item;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverTiered;
 import muramasa.antimatter.machine.Tier;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraftforge.common.util.LazyOptional;
 
-import javax.annotation.Nonnull;
 import java.util.Objects;
 
 public class ItemCover extends ItemBasic<ItemCover> {

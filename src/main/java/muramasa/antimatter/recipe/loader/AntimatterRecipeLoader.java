@@ -4,15 +4,10 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
-import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeMap;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import java.util.Collection;
 import java.util.List;
 
 public class AntimatterRecipeLoader implements IRecipeRegistrate {
@@ -43,9 +38,13 @@ public class AntimatterRecipeLoader implements IRecipeRegistrate {
     }
 
     private void load() {
-        if (!(vanillaLoaded && customLoaded)) return;
+        if (!(customLoaded) && vanillaLoaded) return;
+        long time = System.currentTimeMillis();
         AntimatterAPI.all(RecipeMap.class, RecipeMap::compile);
+        Antimatter.LOGGER.info("Time to compile all AM recipes: " + (System.currentTimeMillis()-time) + " ms");
+        time = System.currentTimeMillis();
         AntimatterRecipeProvider.runRecipes();
+        Antimatter.LOGGER.info("Time to compile all (crafting) AM recipes: " + (System.currentTimeMillis()-time) + " ms");
     }
 
     public void loadRecipes() {
@@ -54,10 +53,7 @@ public class AntimatterRecipeLoader implements IRecipeRegistrate {
         long time = System.currentTimeMillis();
         loaders.forEach(IRecipeLoader::init);
         Antimatter.LOGGER.info("Time to load all AM recipes: " + (System.currentTimeMillis()-time) + " ms");
-        long recipes = AntimatterAPI.all(RecipeMap.class).stream().mapToLong(rm -> {
-            Collection<Recipe> rs = rm.getRecipes(false);
-            return rs == null ? 0 : rs.size();
-        }).sum();
+        long recipes = AntimatterAPI.all(RecipeMap.class).stream().mapToLong(RecipeMap::uncompiledSize).sum();
         Antimatter.LOGGER.info("Total recipes " + recipes);
     }
 }

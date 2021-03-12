@@ -8,7 +8,9 @@ import muramasa.antimatter.util.int3;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.RegistryObject;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class StructureBuilder {
 

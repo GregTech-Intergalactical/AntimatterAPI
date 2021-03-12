@@ -3,10 +3,16 @@
   "package": "muramasa.antimatter.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "antimatter.refmap.json",
-  "mixins": [
+  "client": [
     "ClientBlockUpdateMixin",
-    "DynamicPackMixin",
-    "ServerBlockUpdateMixin"
+    "DynamicPackMixin"
+  ],
+  "server": [
+    "ServerBlockUpdateMixin",
+    "ServerDynamicPackMixin"
+  ],
+  "mixins": [
+    "RecipeManagerMixin"
   ],
   "minVersion": "0.8"
 }

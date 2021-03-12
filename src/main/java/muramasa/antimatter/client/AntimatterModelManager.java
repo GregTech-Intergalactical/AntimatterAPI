@@ -9,14 +9,15 @@ import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
 import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
-import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
@@ -39,7 +40,9 @@ public class AntimatterModelManager {
             return new DynamicModel((DynamicModel) super.read(context, json)) {
                 @Override
                 public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-                    return new MachineBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                    MachineBakedModel model = new MachineBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                    if (json.has("particle")) model.particle(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(json.get("particle").getAsString()))));
+                    return model;
                 }
             };
         }

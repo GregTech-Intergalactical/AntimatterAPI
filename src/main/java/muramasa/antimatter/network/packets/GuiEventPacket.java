@@ -1,7 +1,7 @@
 package muramasa.antimatter.network.packets;
 
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;

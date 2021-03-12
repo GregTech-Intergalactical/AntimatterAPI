@@ -2,7 +2,6 @@ package muramasa.antimatter.integration.jei.renderer;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.recipe.Recipe;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
 public interface IRecipeInfoRenderer {

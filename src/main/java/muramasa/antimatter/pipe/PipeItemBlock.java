@@ -2,7 +2,6 @@ package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.block.AntimatterItemBlock;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 
 import javax.annotation.Nonnull;

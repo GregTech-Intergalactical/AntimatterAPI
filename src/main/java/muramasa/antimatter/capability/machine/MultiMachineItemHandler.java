@@ -1,11 +1,8 @@
 package muramasa.antimatter.capability.machine;
 
-import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 

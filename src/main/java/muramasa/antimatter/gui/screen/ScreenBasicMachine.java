@@ -15,8 +15,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
-import static muramasa.antimatter.gui.ButtonBody.OFF;
-import static muramasa.antimatter.gui.ButtonBody.ON;
 
 public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachine<T> {
 

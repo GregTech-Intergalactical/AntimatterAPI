@@ -1,14 +1,11 @@
 package muramasa.antimatter.gui.slot;
 
 import muramasa.antimatter.machine.event.ContentEvent;
-import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-
-import javax.annotation.Nonnull;
 
 public class SlotOutput extends SlotItemHandler {
     protected TileEntityMachine tile;

@@ -6,7 +6,6 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 
 import java.util.LinkedHashSet;
 import java.util.Map;

@@ -12,8 +12,8 @@ import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.item.*;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
@@ -32,7 +32,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
@@ -47,7 +46,6 @@ import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.util.Utils.*;
-import static muramasa.antimatter.util.Utils.lowerUnderscoreToUpperSpaced;
 
 public class AntimatterLanguageProvider implements IDataProvider, IAntimatterProvider {
 

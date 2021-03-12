@@ -1,6 +1,8 @@
 package muramasa.antimatter.datagen.providers;
 
-import com.google.common.collect.Maps;
+import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStone;
@@ -11,32 +13,28 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.tags.*;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static muramasa.antimatter.util.Utils.*;
 
-public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implements IAntimatterProvider {
+public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAntimatterProvider {
 
     private final String providerDomain, providerName;
     private final boolean replace;
 
+    public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
+
     public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, ExistingFileHelper helper) {
-        super(gen, helper);
+        super(gen, "antimatter", helper);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
@@ -47,10 +45,16 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        Utils.getTags(Block.class).forEach(t -> DynamicResourcePack.addTag("blocks", t.getName(), getOrCreateBuilder(t).getInternalBuilder().serialize()));
-        tagToBuilder.forEach((k, v) -> DynamicResourcePack.addTag("blocks", k, v.serialize()));
+        Utils.getTags(Block.class).forEach(t -> addTag("blocks", t.getName(), getOrCreateBuilder(t).getInternalBuilder()));
+        tagToBuilder.forEach((k, v) -> addTag("blocks", k, v));
         b.forEach(tagToBuilder::put);
     }
+
+    @Override
+    public Types staticDynamic() {
+        return Types.DYNAMIC;
+    }
+
 
     @Override
     public Dist getSide() {
@@ -70,7 +74,7 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
         });
         AntimatterAPI.all(BlockStone.class,domain, s -> {
             this.getOrCreateBuilder(Tags.Blocks.STONE).add(s);
-            this.getOrCreateBuilder(getBlockTag(new ResourceLocation(domain, "blocks/".concat(s.getId())))).add(s).replace(replace);
+            this.getOrCreateBuilder(getBlockTag(new ResourceLocation("antimatter", "blocks/".concat(s.getId())))).add(s).replace(replace);
         });
         AntimatterAPI.all(BlockOreStone.class,domain, s -> {
             // String id = getConventionalMaterialType(MaterialType.ORE_STONE);
@@ -90,4 +94,30 @@ public class AntimatterBlockTagProvider extends ForgeBlockTagsProvider implement
         return providerName;
     }
 
+    // Must append 's' in the identifier
+    public void addTag(String identifier, ResourceLocation loc, JsonObject obj) {
+        TAGS.put(getTagLoc(identifier, loc), obj);
+    }
+
+    // Must append 's' in the identifier
+    // Appends data to the tag.
+    public void addTag(String identifier, ResourceLocation loc, ITag.Builder obj) {
+        JsonObject json = TAGS.get(getTagLoc(identifier, loc));
+        //if no tag just put this one in.
+        if (json == null)  {
+            addTag(identifier, loc, obj.serialize());
+        } else {
+            obj = obj.deserialize(json, "Antimatter - Dynamic Data");
+            TAGS.put(getTagLoc(identifier, loc), obj.serialize());
+        }
+    }
+
+    public static ResourceLocation getTagLoc(String identifier, ResourceLocation tagId) {
+        return new ResourceLocation(tagId.getNamespace(), String.join("", "tags/", identifier, "/", tagId.getPath(), ".json"));
+    }
+
+    @Override
+    public void onCompletion() {
+        TAGS.forEach(DynamicResourcePack::addTag);
+    }
 }

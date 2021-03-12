@@ -4,13 +4,15 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import net.minecraft.block.Block;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,6 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 public final class AntimatterRegistration {
+    public static Dist side;
 
     @SubscribeEvent
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -47,13 +50,15 @@ public final class AntimatterRegistration {
                 ((IForgeRegistry) e.getRegistry()).registerAll(f.getFluid(), f.getFlowingFluid());
             });
         } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {
-            AntimatterAPI.all(MenuHandler.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h.getContainerType()));
+            AntimatterAPI.all(ContainerType.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h));
         } else if (e.getRegistry() == ForgeRegistries.SOUND_EVENTS) {
             //TODO better solution for this
             if (domain.equals(Ref.ID)) ((IForgeRegistry) e.getRegistry()).registerAll(Ref.DRILL, Ref.WRENCH);
         } else if (e.getRegistry() == ForgeRegistries.RECIPE_SERIALIZERS) {
             //TODO better solution for this
             if (domain.equals(Ref.ID)) CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
+        } else if (e.getRegistry() == ForgeRegistries.FEATURES) {
+            AntimatterAPI.all(AntimatterFeature.class, ForgeRegistries.FEATURES::register);
         }
     }
 

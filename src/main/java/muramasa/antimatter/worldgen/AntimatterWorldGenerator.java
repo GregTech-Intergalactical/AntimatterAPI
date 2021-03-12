@@ -3,10 +3,9 @@ package muramasa.antimatter.worldgen;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
-import muramasa.antimatter.worldgen.feature.AntimatterFeature;
+import muramasa.antimatter.worldgen.feature.*;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -18,18 +17,21 @@ import net.minecraft.world.gen.feature.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class AntimatterWorldGenerator {
 
     public static void init() {
-        Antimatter.LOGGER.info("AntimatterAPI WorldGen Initialization Stage...");
-        AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
-        AntimatterAPI.all(AntimatterFeature.class, ForgeRegistries.FEATURES::register);
+        new FeatureVeinLayer();
+        new FeatureOre();
+        new FeatureOreSmall();
+        //new FeatureStoneLayer();
+        new FeatureSurfaceRock();
         //if (!AntimatterConfig.WORLD.VANILLA_STONE_GEN) removeStoneFeatures();
        // if (!AntimatterConfig.WORLD.VANILLA_ORE_GEN) removeOreFeatures();
         AntimatterAPI.runLaterCommon(() -> {
@@ -50,6 +52,11 @@ public class AntimatterWorldGenerator {
          */
     }
 
+    public static void setup() {
+        Antimatter.LOGGER.info("AntimatterAPI WorldGen Initialization Stage...");
+        AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
+    }
+
     public static void register(Class<?> c, WorldGenBase<?> base) {
         AntimatterFeature<?> feature = AntimatterAPI.get(AntimatterFeature.class, c.getName());
         if (feature != null) base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
@@ -57,7 +64,7 @@ public class AntimatterWorldGenerator {
 
     public static <T> List<T> all(Class<T> c, RegistryKey<World> dim) {
         AntimatterFeature<?> feat = AntimatterAPI.get(AntimatterFeature.class, c.getName());
-        return feat != null ? feat.getRegistry().computeIfAbsent(dim, k -> new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
+        return feat != null ? feat.getRegistry().computeIfAbsent(dim.getLocation(), k -> new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
     private static void removeStoneFeatures(BiomeGenerationSettingsBuilder builder) {
@@ -106,18 +113,27 @@ public class AntimatterWorldGenerator {
      */
     public static boolean isDecoratedFeatureDisabled(@Nonnull ConfiguredFeature<?, ?> configuredFeature, @Nonnull Feature<?> featureToRemove, @Nonnull BlockState state) {
         if (configuredFeature.config instanceof DecoratedFeatureConfig) {
-            DecoratedFeatureConfig config = (DecoratedFeatureConfig) configuredFeature.config;
-            Feature<?> feature = config.feature.get().feature;
-            if (feature == featureToRemove) {
-                IFeatureConfig featureConfig = config.feature.get().config;
-                if (featureConfig instanceof OreFeatureConfig) {
-                    BlockState configState = ((OreFeatureConfig) featureConfig).state;
-                    return state == configState;
+            IFeatureConfig config = configuredFeature.config;
+            Feature<?> feature = null;
+            while(config instanceof DecoratedFeatureConfig) {
+                feature = ((DecoratedFeatureConfig)config).feature.get().feature;
+                config = ((DecoratedFeatureConfig)config).feature.get().config;
+                if (!(feature instanceof DecoratedFeature)) {
+                    break;
                 }
-                if (featureConfig instanceof BlockStateFeatureConfig) {
-                    BlockState configState = ((BlockStateFeatureConfig) featureConfig).state; // Constructor BlockState var
-                    return state == configState;
-                }
+            }
+            if (feature == null) return false;
+            if (feature instanceof OreFeature && featureToRemove == Feature.ORE) {
+                OreFeatureConfig conf = (OreFeatureConfig) config;
+                BlockState configState = conf.state;
+                //TODO: state or not?
+                return state.getBlock() == configState.getBlock();
+
+            }
+            //TODO: should this also be ore or not?
+            if (config instanceof BlockStateFeatureConfig && featureToRemove == Feature.ORE) {
+                BlockState configState = ((BlockStateFeatureConfig) config).state; // Constructor BlockState var
+                return state == configState;
             }
         }
         return false;

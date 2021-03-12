@@ -2,10 +2,11 @@ package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.client.AntimatterTextureStitcher;
+import muramasa.antimatter.client.ScreenSetup;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
@@ -23,23 +24,33 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 public class ClientHandler implements IProxyHandler {
 
     @SuppressWarnings("ConstantConditions")
     public ClientHandler() {
         if (Minecraft.getInstance() != null) { //Null with runData
-            Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
-            Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.SERVER_PACK_FINDER);
+            //Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
+            //Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.SERVER_PACK_FINDER);
             AntimatterModelManager.init();
             AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
         }
+        /* Client event listeners. */
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        eventBus.addListener(ClientHandler::onItemColorHandler);
+        eventBus.addListener(ClientHandler::onBlockColorHandler);
+        eventBus.addListener(ClientHandler::onModelRegistry);
+        eventBus.addListener(AntimatterTextureStitcher::onTextureStitch);
     }
 
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
-        AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), h));
+        /* Register screens. */
+        AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), ScreenSetup.get(h))));
+        /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
             AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockMultiMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));

@@ -9,7 +9,6 @@ import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,7 +16,6 @@ import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class RecipeHelper {
 

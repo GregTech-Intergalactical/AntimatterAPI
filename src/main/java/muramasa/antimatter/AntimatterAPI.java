@@ -1,12 +1,12 @@
 package muramasa.antimatter;
 
-import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.providers.dummy.DummyTagProviders;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.machine.Tier;
@@ -18,30 +18,27 @@ import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.loader.AntimatterRecipeLoader;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.*;
-import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.IItemProvider;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 
@@ -50,11 +47,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.STEAM;
-import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 
 public final class AntimatterAPI {
 
@@ -136,7 +131,7 @@ public final class AntimatterAPI {
     }
 
     public static void onProviderInit(String domain, DataGenerator gen, Dist side) {
-        PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen)).filter(p -> p.getSide().equals(side)).forEach(gen::addProvider);
+        PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen)).filter(p -> p.getSide().equals(side) && p.staticDynamic().isStatic()).forEach(gen::addProvider);
     }
 
     public static void runBackgroundProviders() {
@@ -152,11 +147,16 @@ public final class AntimatterAPI {
     // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to run first
     public static void runDataProvidersDynamically() {
         replacementsFound = true;
-        PROVIDERS.forEach((k, v) -> v.stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER)).forEach(AntimatterAPI::runProvider));
+        List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER) && p.staticDynamic().isDynamic())).collect(Collectors.toList());
+        providers.forEach(IAntimatterProvider::run);
+        providers.forEach(IAntimatterProvider::onCompletion);
+        DynamicResourcePack.markComplete();
     }
 
     public static void runAssetProvidersDynamically() {
-        PROVIDERS.forEach((k, v) -> v.parallelStream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.CLIENT)).forEach(AntimatterAPI::runProvider));
+        List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.CLIENT) && p.staticDynamic().isDynamic())).collect(Collectors.toList());
+        providers.parallelStream().forEach(IAntimatterProvider::run);
+        providers.forEach(IAntimatterProvider::onCompletion);
     }
 
     private static void runProvider(IAntimatterProvider provider) {
@@ -193,12 +193,13 @@ public final class AntimatterAPI {
     /** Registrar Section **/
 
     public static void onRegistration(RegistrationEvent event) {
+        Dist side = (FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer()) ? Dist.DEDICATED_SERVER : Dist.CLIENT;
         if (!REGISTRATION_EVENTS_HANDLED.add(event)) {
             if (ModLoadingContext.get().getActiveNamespace().equals(Ref.ID)) return;
             throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
         }
-        INTERNAL_REGISTRAR.onRegistrationEvent(event);
-        all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event));
+        INTERNAL_REGISTRAR.onRegistrationEvent(event, side);
+        all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event, side));
         if (CALLBACKS.containsKey(event)) CALLBACKS.get(event).forEach(Runnable::run);
         if (event == RegistrationEvent.DATA_READY) {
             AntimatterAPI.RECIPE_LOADER.loadRecipes();
@@ -291,14 +292,9 @@ public final class AntimatterAPI {
      * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
      */
     @SuppressWarnings("unused")
-    public static void onNotifyBlockUpdate(ServerWorld world, BlockPos pos, BlockState oldState, BlockState newState) {
+    public static void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState) {
         BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState));
     }
-
-    public static void onNotifyBlockUpdateClient(ClientWorld world, BlockPos pos, BlockState oldState, BlockState newState) {
-        BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState));
-    }
-
 
     public interface IBlockUpdateEvent {
 

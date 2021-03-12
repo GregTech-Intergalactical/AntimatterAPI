@@ -12,9 +12,8 @@ import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
-import net.minecraft.resources.data.PackMetadataSection;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 
@@ -35,13 +34,17 @@ import java.util.stream.Collectors;
 @ParametersAreNonnullByDefault
 public class DynamicResourcePack implements IResourcePack {
 
+    //To ensure that the resource pack is not duplicated when running e.g. singleplayer.
+
     protected static final ObjectSet<String> CLIENT_DOMAINS = new ObjectOpenHashSet<>();
     protected static final ObjectSet<String> SERVER_DOMAINS = new ObjectOpenHashSet<>();
     protected static final Object2ObjectMap<ResourceLocation, String> ASSETS = new Object2ObjectOpenHashMap<>();
     protected static final Object2ObjectMap<ResourceLocation, JsonObject> LANG = new Object2ObjectOpenHashMap<>();
     protected static final Object2ObjectMap<ResourceLocation, JsonObject> DATA = new Object2ObjectOpenHashMap<>();
 
-    private final String name;
+    protected static boolean TAGS_DONE = false;
+
+    private static String name = null;
 
     static {
         CLIENT_DOMAINS.add(Ref.ID);
@@ -49,9 +52,9 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public DynamicResourcePack(String name, Collection<String> domains) {
-        this.name = name;
+        DynamicResourcePack.name = name;
         //TODO!
-        domains.add("gti");
+        //domains.add("gti");
         CLIENT_DOMAINS.addAll(domains);
         SERVER_DOMAINS.addAll(domains);
     }
@@ -81,10 +84,22 @@ public class DynamicResourcePack implements IResourcePack {
         DATA.put(getAdvancementLoc(loc), obj);
     }
 
-    // Must append 's' in the identifier
-    public static void addTag(String identifier, ResourceLocation loc, JsonObject obj) {
-        DATA.put(getTagLoc(identifier, loc), obj);
+
+    public static void addTag(ResourceLocation loc, JsonObject obj) {
+        if (TAGS_DONE) return;
+        DATA.compute(loc, (k,v) -> {
+            if (v == null) return obj;
+            ITag.Builder builder = ITag.Builder.create();
+            builder = builder.deserialize(obj, name);
+            builder = builder.deserialize(v, name);
+            return builder.serialize();
+        });
     }
+
+    public static void markComplete() {
+        TAGS_DONE = true;
+    }
+
 
     @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {

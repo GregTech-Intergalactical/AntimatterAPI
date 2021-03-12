@@ -2,10 +2,10 @@ package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
-import muramasa.antimatter.capability.machine.*;
+import muramasa.antimatter.capability.machine.HatchComponentHandler;
+import muramasa.antimatter.capability.machine.MachineCoverHandler;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.cover.Cover;
-import muramasa.antimatter.cover.CoverOutput;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -23,7 +23,6 @@ import java.util.Optional;
 
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
-import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
 //TODO: HATCH SHOULD NOT HAVE TWO OUTPUTS!
 public class TileEntityHatch extends TileEntityMachine implements IComponent {

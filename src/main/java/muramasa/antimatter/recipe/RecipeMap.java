@@ -1,8 +1,6 @@
 package muramasa.antimatter.recipe;
 
 import com.mojang.datafixers.util.Either;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -22,14 +20,9 @@ import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -39,7 +32,6 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -161,6 +153,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private Tier guiTier;
 
     private int ingredientCounter = 0;
+    private static final RecipeFluids EMPTY_FLUIDS = new RecipeFluids(new FluidStack[0], Collections.emptySet());
 
     private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
 
@@ -234,6 +227,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return LOOKUP.getRecipes(filterHidden).collect(Collectors.toSet());
     }
 
+    public int uncompiledSize() {
+        return RECIPES_TO_COMPILE.size();
+    }
     //Adds a recipe to a map of fluids -> recipe. This just adds the recipe and errors if one is present.
     void addRecipeToMap(Map<RecipeFluids, Recipe> map, Recipe recipe) {
         RecipeFluids input = new RecipeFluids(recipe);
@@ -429,7 +425,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private Recipe getRecipe(@Nonnull RecipeFluids input, @Nonnull IngredientWrapper[] items, int index, int count, long skip, @Nonnull Either<Map<RecipeFluids, Recipe>, Branch> next, Set<Integer> visited) {
         return next.map(recipeMap -> {
             Recipe r = recipeMap.get(input);
-            return r == null ? recipeMap.get(null) : r;
+            return r == null ? recipeMap.get(EMPTY_FLUIDS) : r;
         }, branch -> {
             //Here, loop over all other items that are not currently part of the chain.
             //If we are at max index, loop back to 0.

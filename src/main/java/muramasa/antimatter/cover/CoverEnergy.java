@@ -1,12 +1,9 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import tesseract.api.IRefreshable;
-import tesseract.api.gt.IGTNode;
 
 public class CoverEnergy extends Cover implements IRefreshableCover{
 

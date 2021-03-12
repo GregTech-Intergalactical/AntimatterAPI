@@ -7,8 +7,8 @@ import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Tuple;
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static muramasa.antimatter.util.Dir.*;

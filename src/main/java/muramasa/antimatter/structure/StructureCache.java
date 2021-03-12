@@ -1,16 +1,12 @@
 package muramasa.antimatter.structure;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.world.WorldEvent;
@@ -55,24 +51,20 @@ public class StructureCache {
         Antimatter.LOGGER.info("Added Structure to Store!");
     }
 
-    public static void remove(IWorld world, BlockPos pos) {
+    public static void remove(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(getDimId(world));
         if (entry == null) return;
         entry.remove(pos);
         Antimatter.LOGGER.info("Removed Structure to Store!");
     }
     //just to switch between server & client. You can use two maps but y tho
-    private static long getDimId(IWorld world) {
-        RegistryKey<World> w;
-        if (world instanceof ClientWorld)
-            w = ((ClientWorld) world).getDimensionKey();
-        else
-            w = ((ServerWorld)world).getDimensionKey();
+    private static long getDimId(World world) {
+        RegistryKey<World> w = world.getDimensionKey();
         int offset = world instanceof ServerWorld ? 1 : 0;
         return (((long)w.getLocation().hashCode()) << 32) | (offset & 0xffffffffL);
     }
 
-    private static void invalidateController(IWorld world, BlockPos pos) {
+    private static void invalidateController(World world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).invalidateStructure();
         remove(world, pos);
@@ -80,7 +72,7 @@ public class StructureCache {
 
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
-        LOOKUP.remove(getDimId(e.getWorld()));
+        LOOKUP.remove(getDimId((World)e.getWorld()));
     }
 
 //    @SubscribeEvent

@@ -5,11 +5,7 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.resources.IPackFinder;
 import net.minecraft.resources.IPackNameDecorator;
 import net.minecraft.resources.ResourcePackInfo;
-import net.minecraft.resources.data.PackMetadataSection;
-import net.minecraft.util.SharedConstants;
-import net.minecraft.util.text.StringTextComponent;
 
-import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 

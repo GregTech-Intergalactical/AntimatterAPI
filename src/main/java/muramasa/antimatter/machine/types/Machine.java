@@ -251,7 +251,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public void setGUI(MenuHandler<?, ?> menuHandler) {
+    public void setGUI(MenuHandler<?> menuHandler) {
         guiData = new GuiData(this, menuHandler);
 
         registerJei();

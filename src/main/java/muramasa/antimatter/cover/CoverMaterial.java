@@ -2,10 +2,6 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-
-import java.util.List;
 
 public abstract class CoverMaterial extends Cover {
 

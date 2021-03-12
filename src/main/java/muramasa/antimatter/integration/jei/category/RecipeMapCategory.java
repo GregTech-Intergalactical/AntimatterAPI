@@ -20,9 +20,9 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.StackListIngredient;
 import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import muramasa.antimatter.util.Utils;
@@ -37,12 +37,10 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-//import mezz.jei.plugins.vanilla.ingredients.fluid.FluidStackRenderer;
-
 
 public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 

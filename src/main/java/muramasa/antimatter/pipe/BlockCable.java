@@ -4,7 +4,6 @@ package muramasa.antimatter.pipe;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.Cable;
-import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

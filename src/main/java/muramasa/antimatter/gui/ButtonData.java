@@ -1,7 +1,5 @@
 package muramasa.antimatter.gui;
 
-import javax.swing.*;
-
 public class ButtonData {
 
     private int id;

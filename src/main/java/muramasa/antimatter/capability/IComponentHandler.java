@@ -7,7 +7,6 @@ import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Optional;

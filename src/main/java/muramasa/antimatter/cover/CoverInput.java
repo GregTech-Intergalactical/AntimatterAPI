@@ -1,7 +1,5 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.machine.event.IMachineEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;

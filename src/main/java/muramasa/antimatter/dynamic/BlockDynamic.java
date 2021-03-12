@@ -61,7 +61,8 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
 //        return VoxelShapes.fullCube();
 
         //TODO this is awful, but I'm too sick to figure out why modelIndex is different here vs ModelConfigRandom.getQuads
-        r.setSeed(getPositionRandom(null, pos));
+        //TODO: I commented this because otherwise it wont load
+        //r.setSeed(getPositionRandom(null, pos));
         int modelIndex = config.getModelIndex();
         int index = 0;
         if (shapes.size() > 0) {
@@ -80,7 +81,7 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
         info.add("Config: " + Arrays.toString(getConfig(state, world, new BlockPos.Mutable(pos.getX(), pos.getY(), pos.getZ()), pos).getConfig()));
         info.add("Model Index: " + config.getModelIndex());
-        r.setSeed(getPositionRandom(null, pos));
+        //r.setSeed(getPositionRandom(null, pos));
         info.add("Rand Index: " + (shapes.size() > 1 ? r.nextInt(shapes.size()) : -1));
         return info;
     }

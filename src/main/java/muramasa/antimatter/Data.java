@@ -1,17 +1,13 @@
 package muramasa.antimatter;
 
 import com.google.common.collect.ImmutableMap;
-import com.mojang.datafixers.util.Either;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
-import muramasa.antimatter.client.ModelUtils;
-import muramasa.antimatter.client.dynamic.DynamicTextureProvider;
 import muramasa.antimatter.cover.*;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.container.*;
-import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.machine.BlockMachine;
@@ -30,24 +26,16 @@ import muramasa.antimatter.tool.MaterialSword;
 import muramasa.antimatter.tool.behaviour.*;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.UseAction;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.SimpleModelTransform;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -205,108 +193,62 @@ public class Data {
     public static CoverStack<?> COVER_EMPTY = new CoverStack<>(COVERNONE);
     public static CoverStack<?> COVER_OUTPUT = new CoverStack<>(COVEROUTPUT);
 
-    /**
-     * Dynamic texture implementations.
-     **/
-    public static final DynamicTextureProvider<Cover, Cover.DynamicKey> COVER_DYNAMIC_TEXTURER = new DynamicTextureProvider<Cover, Cover.DynamicKey>(t -> {
-        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), Utils.getModelRotation(t.currentDir), t.source.getModel(t.currentDir, Direction.NORTH));/*new SimpleModelTransform(new TransformationMatrix(null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true), null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true)))/Ä,c);*/
-        return b.getQuads(t.state, null, t.rand, t.data);
-    }, t -> {
-        t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
-        t.source.setTextures((name, texture) -> t.model.textures.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
-    });
 
-    public static final DynamicTextureProvider<TileEntityMachine, TileEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<TileEntityMachine, TileEntityMachine.DynamicKey>(t -> {
-        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), new SimpleModelTransform(Utils.getModelRotationCover(t.state.get(BlockStateProperties.HORIZONTAL_FACING)).getRotation().inverse()), new ResourceLocation(t.source.getId()));
-        assert b != null;
-        return b.getQuads(t.state, null, t.rand, t.data);
-    }, t -> {
-        t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE))));
-        t.model.textures.put("overlay", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_TYPE).getOverlayTextures(t.data.getData(AntimatterProperties.MACHINE_STATE))[
-                Direction.rotateFace(Utils.getModelRotation(t.source.getBlockState().get(BlockStateProperties.HORIZONTAL_FACING)).getRotation().inverse().getMatrix(), t.dir).getIndex()])));
-    });
-
-    public static MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine, ScreenBasicMachine<ContainerMachine>>(Ref.ID, "container_basic") {
+    public static MenuHandlerMachine<ContainerMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_basic") {
         @Nullable
         @Override
         public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine) tile, playerInv, this, windowId) : null;
         }
-
-        @Override
-        @ParametersAreNonnullByDefault
-        public ScreenBasicMachine<ContainerMachine> create(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenBasicMachine<>(container, inv, name);
-        }
     };
 
-    public static MenuHandlerMachine<ContainerMachine, ScreenSteamMachine<ContainerMachine>> STEAM_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine, ScreenSteamMachine<ContainerMachine>>(Ref.ID, "container_steam") {
+    public static MenuHandlerMachine<ContainerMachine> STEAM_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_steam") {
         @Nullable
         @Override
         public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine) tile, playerInv, this, windowId) : null;
         }
-
-        @Override
-        @ParametersAreNonnullByDefault
-        public ScreenSteamMachine<ContainerMachine> create(ContainerMachine container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenSteamMachine<>(container, inv, name);
-        }
     };
 
-    public static MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover, ScreenCover<ContainerCover>>(Ref.ID, "container_cover") {
+    public static MenuHandlerCover<ContainerCover> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
         @Override
         public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return new ContainerCover((CoverStack<?>) tile, playerInv, this, windowId);
         }
-
-        @Override
-        @ParametersAreNonnullByDefault
-        public ScreenCover<ContainerCover> create(ContainerCover container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenCover<>(container, inv, name);
-        }
     };
 
-    public static MenuHandlerMachine<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>> MULTI_MENU_HANDLER = new MenuHandlerMachine<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>>(Ref.ID, "container_multi") {
+    public static MenuHandlerMachine<ContainerMultiMachine> MULTI_MENU_HANDLER = new MenuHandlerMachine<ContainerMultiMachine>(Ref.ID, "container_multi") {
         @Override
         public ContainerMultiMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine) tile, playerInv, this, windowId) : null;
         }
-
-        @Override
-        @ParametersAreNonnullByDefault
-        public ScreenMultiMachine<ContainerMultiMachine> create(ContainerMultiMachine container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenMultiMachine<>(container, inv, name);
-        }
     };
 
-    public static MenuHandlerMachine<ContainerHatch, ScreenHatch<ContainerHatch>> HATCH_MENU_HANDLER = new MenuHandlerMachine<ContainerHatch, ScreenHatch<ContainerHatch>>(Ref.ID, "container_hatch") {
+    public static MenuHandlerMachine<ContainerHatch> HATCH_MENU_HANDLER = new MenuHandlerMachine<ContainerHatch>(Ref.ID, "container_hatch") {
         @Override
         public ContainerHatch getMenu(Object tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityHatch ? new ContainerHatch((TileEntityHatch) tile, playerInv, this, windowId) : null;
         }
-
-        @Override
-        @ParametersAreNonnullByDefault
-        public ScreenHatch<ContainerHatch> create(ContainerHatch container, PlayerInventory inv, ITextComponent name) {
-            return new ScreenHatch<>(container, inv, name);
-        }
     };
 
-    public static void init() {
+    public static void init(Dist side) {
         AXE.addBehaviour(BehaviourLogStripping.INSTANCE, BehaviourTreeFelling.INSTANCE);
         CHAINSAW.addBehaviour(BehaviourTreeFelling.INSTANCE, BehaviourLogStripping.INSTANCE, new BehaviourAOEBreak(1, 1, 1));
         DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1));
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
-        WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE, new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
-        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
-        CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
-        WIRE_CUTTER.addBehaviour(new BehaviourConnection(b -> b instanceof BlockPipe));
         for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
             if (type.getToolTypes().contains("shovel")) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
             if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
+        if (side == Dist.CLIENT) clientBehaviours();
+    }
+
+    private static void clientBehaviours() {
+        WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE, new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
+        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
+        WIRE_CUTTER.addBehaviour(new BehaviourConnection(b -> b instanceof BlockPipe));
+        CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
     }
 }

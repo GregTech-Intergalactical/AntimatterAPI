@@ -5,7 +5,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
@@ -31,9 +30,11 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -51,6 +52,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -62,7 +64,6 @@ import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.Data.COVER_EMPTY;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static net.minecraft.util.Direction.*;
 
@@ -160,7 +161,10 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                                     extra.writeBoolean(cov.shouldOutputItems(cover));
                                 }
                             });
-                            tile.fluidHandler.ifPresent(fh -> FluidStackPacket.encode(new FluidStackPacket(tile.getPos(),fh.getInputs(), fh.getOutputs()), extra));
+                            if (tile.fluidHandler.isPresent())
+                                tile.fluidHandler.ifPresent(fh -> FluidStackPacket.encode(new FluidStackPacket(tile.getPos(),fh.getInputs(), fh.getOutputs()), extra));
+                            else
+                                FluidStackPacket.encode(new FluidStackPacket(tile.getPos(), new FluidStack[0], new FluidStack[0]), extra);
                         });
                         return ActionResultType.SUCCESS;
                     }
@@ -211,6 +215,24 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 //            });
 //        }
 //    }
+
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+        return super.getDrops(state, builder);
+    }
+
+    @Override
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.isIn(newState.getBlock())) {
+            if (worldIn.isRemote) return;
+            TileEntity tile = worldIn.getTileEntity(pos);
+            if (tile == null) return;
+            TileEntityMachine machine = (TileEntityMachine) tile;
+            machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, machine.getPos().getX(), machine.getPos().getY(), machine.getPos().getZ(), stack)));
+        }
+        super.onReplaced(state, worldIn, pos, newState, isMoving);
+    }
 
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
@@ -287,6 +309,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         buildModelsForState(builder, MachineState.IDLE);
         buildModelsForState(builder, MachineState.ACTIVE);
         builder.loader(AntimatterModelManager.LOADER_MACHINE);
+        builder.property("particle", getType().getBaseTexture(tier).toString());
         prov.state(block, builder);
     }
 

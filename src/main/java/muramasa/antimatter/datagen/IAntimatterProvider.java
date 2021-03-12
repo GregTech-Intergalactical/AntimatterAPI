@@ -13,4 +13,29 @@ public interface IAntimatterProvider extends IDataProvider {
      * Return {@link Dist#DEDICATED_SERVER} for providers that should only run on servers
      */
     Dist getSide();
+
+    /**
+     * @return Whether to only run this provider during dynamic data generation.
+     */
+    default Types staticDynamic() {
+        return Types.STATIC_AND_DYNAMIC;
+    }
+
+    enum Types {
+        DYNAMIC,
+        STATIC,
+        STATIC_AND_DYNAMIC;
+
+        public boolean isStatic() {
+            return this == STATIC || this == STATIC_AND_DYNAMIC;
+        }
+
+        public boolean isDynamic() {
+            return this == STATIC_AND_DYNAMIC || this == DYNAMIC;
+        }
+    }
+
+    default void onCompletion() {
+
+    }
 }

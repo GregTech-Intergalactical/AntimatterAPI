@@ -3,7 +3,6 @@ package muramasa.antimatter.client.model;
 import com.mojang.datafixers.util.Pair;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.client.ModelUtils;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;

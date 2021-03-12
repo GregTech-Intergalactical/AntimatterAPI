@@ -48,6 +48,7 @@ public class BlockMultiMachine extends BlockMachine {
         buildModelsForState(builder, MachineState.ACTIVE);
         buildModelsForState(builder, MachineState.INVALID_STRUCTURE);
         builder.loader(AntimatterModelManager.LOADER_MACHINE);
+        builder.property("particle", getType().getBaseTexture(tier).toString());
         prov.state(block, builder);
     }
 

@@ -21,7 +21,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.Tesseract;
-import tesseract.api.ITickingController;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.ItemData;
 import tesseract.util.Dir;
@@ -29,6 +28,7 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -82,6 +82,16 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     public void onUpdate() {
 
+    }
+
+    public List<ItemStack> getAllItems() {
+        return inventories.values().stream().flatMap(t -> {
+            List<ItemStack> stacks = new ObjectArrayList<>(t.getSlots());
+            for (int i = 0; i < t.getSlots(); i++) {
+                stacks.add(t.getStackInSlot(i).copy());
+            }
+            return stacks.stream();
+        }).collect(Collectors.toList());
     }
 
     public void onRemove() {

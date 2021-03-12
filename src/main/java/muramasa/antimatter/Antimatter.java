@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
@@ -11,8 +10,8 @@ import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
@@ -42,65 +41,59 @@ public class Antimatter extends AntimatterMod {
         super();
         INSTANCE = this;
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to change in new Forge
-
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
 
-        eventBus.addListener(ClientHandler::onItemColorHandler);
-        eventBus.addListener(ClientHandler::onBlockColorHandler);
-        eventBus.addListener(ClientHandler::onModelRegistry);
-
+        /* Lifecycle events */
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::serverSetup);
-        MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(AntimatterTextureStitcher::onTextureStitch);
 
+        providers();
+        AntimatterAPI.init();
+        AntimatterWorldGenerator.init();
+    }
+
+    private void providers() {
         final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
-       // AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" Localization"), "en_us", g));
         AntimatterAPI.addProvider(Ref.ID, g -> {
             p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g, new ExistingFileHelperOverride());
             return p[0];
         });
         AntimatterAPI.addProvider(Ref.ID, g ->
                 new AntimatterItemTagProvider(Ref.ID,Ref.NAME.concat(" Item Tags"), false, g, p[0], new ExistingFileHelperOverride()));
-        AntimatterAPI.init();
+        AntimatterAPI.addProvider(Ref.ID, g ->
+                new AntimatterRecipeProvider(Ref.ID,Ref.NAME.concat(" Recipes"), g));
+        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockLootProvider(Ref.ID,Ref.NAME.concat( " Loot generator"),g));
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup(e);
         AntimatterAPI.runAssetProvidersDynamically();
+        AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
-        AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
-        //if (ModList.get().isLoaded(Ref.MOD_CT)) GregTechAPI.addRegistrar(new GregTechTweaker());
-        //if (ModList.get().isLoaded(Ref.MOD_TOP)) TheOneProbePlugin.init();
     }
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
         ServerHandler.setup(e);
+        AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
         AntimatterAPI.getServerDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
     }
 
     @Override
-    public void onRegistrationEvent(RegistrationEvent event) {
-        switch (event) {
-            case DATA_INIT:
-                Data.init();
-                break;
-//            case DATA_READY:
-//                AntimatterAPI.registerCover(Data.COVER_EMPTY);
-//                AntimatterAPI.registerCover(Data.COVER_OUTPUT);
-//                break;
+    public void onRegistrationEvent(RegistrationEvent event, Dist side) {
+        if (event == RegistrationEvent.DATA_INIT) {
+            Data.init(side);
         }
     }
 }

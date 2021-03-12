@@ -11,11 +11,9 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.LazyValue;
 
 import java.util.Arrays;
-import java.util.function.Supplier;
 
 public class MaterialTypeBlock<T> extends MaterialType<T> {
 

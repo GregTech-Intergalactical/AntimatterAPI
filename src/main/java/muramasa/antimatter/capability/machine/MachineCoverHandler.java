@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability.machine;
 
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
@@ -14,14 +13,11 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import tesseract.api.IRefreshable;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.Data.COVERNONE;
 
 public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandler<T> implements IMachineHandler {
 

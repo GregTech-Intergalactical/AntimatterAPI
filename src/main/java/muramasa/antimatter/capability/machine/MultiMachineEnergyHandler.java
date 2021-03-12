@@ -4,14 +4,9 @@ import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.util.Utils;
-import net.minecraft.nbt.CompoundNBT;
 import tesseract.api.gt.IGTNode;
-import tesseract.util.Dir;
 
 import java.util.Arrays;
-
-import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
 public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMultiMachine> {
 

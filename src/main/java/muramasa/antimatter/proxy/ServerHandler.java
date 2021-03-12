@@ -1,8 +1,5 @@
 package muramasa.antimatter.proxy;
 
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.recipe.loader.AntimatterRecipeLoader;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;

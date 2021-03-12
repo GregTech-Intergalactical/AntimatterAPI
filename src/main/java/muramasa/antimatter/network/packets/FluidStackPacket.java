@@ -8,12 +8,10 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 
@@ -94,6 +92,7 @@ public class FluidStackPacket {
     }
 
     public void executePacket() {
+        if (inputFluids == null && outputFluids == null) return;
         TileEntity tile = Utils.getTile(Minecraft.getInstance().world, this.pos);
         if (tile instanceof TileEntityMachine) {
             TileEntityMachine machine = (TileEntityMachine) tile;

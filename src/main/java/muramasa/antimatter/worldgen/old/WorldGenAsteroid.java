@@ -1,24 +1,6 @@
 package muramasa.antimatter.worldgen.old;
 
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockStone;
-import muramasa.antimatter.util.XSTR;
-import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
-import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.AbstractChunkProvider;
-import net.minecraft.world.gen.ChunkGenerator;
-
-import java.util.List;
 
 public class WorldGenAsteroid extends WorldGenBase {
 /*

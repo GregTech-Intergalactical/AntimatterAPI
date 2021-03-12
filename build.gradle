@@ -71,12 +71,10 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', ''
+            property 'forge.logging.markers', 'DEBUG'
             property 'fml.earlyprogresswindow', 'false'
             //property 'mixin.env.disableRefMap', 'true'
-
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             arg "-mixin.config=antimatter.mixins.json"
@@ -90,7 +88,7 @@ minecraft {
         server {
             workingDirectory project.file('run')
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', ''
+            property 'forge.logging.markers', 'DEBUG'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -111,7 +109,7 @@ minecraft {
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', ''
+            property 'forge.logging.markers', 'DEBUG'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'

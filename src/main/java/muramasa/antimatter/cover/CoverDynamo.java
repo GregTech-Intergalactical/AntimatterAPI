@@ -1,7 +1,6 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;

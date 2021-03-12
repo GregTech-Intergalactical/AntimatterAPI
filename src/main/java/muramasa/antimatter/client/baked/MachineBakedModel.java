@@ -2,7 +2,6 @@ package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.machine.BlockMachine;
@@ -19,7 +18,8 @@ import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 public class MachineBakedModel extends CoveredBakedModel {
 
@@ -37,7 +37,7 @@ public class MachineBakedModel extends CoveredBakedModel {
                 CoverStack<TileEntityMachine> c = covers == null ? null : covers.get(side);
                 if (c == null || c.skipRender()) {
                     TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, state.get(BlockStateProperties.HORIZONTAL_FACING), data.getData(AntimatterProperties.MACHINE_STATE));
-                    quads = t.multiTexturer.getQuads(quads, state, t, key, side.getIndex(), data);
+                    quads = t.multiTexturer.get().getQuads(quads, state, t, key, side.getIndex(), data);
                     assert quads.size() == 0 || quads.get(0).getFace() == side;
                 }
             }
@@ -50,6 +50,5 @@ public class MachineBakedModel extends CoveredBakedModel {
         List<BakedQuad> quads = super.attachQuadsForSide(state, side, rand, data);
         return attachMultiQuads(quads,state,side,rand,data);
     }
-
 
 }

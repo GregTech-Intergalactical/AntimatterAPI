@@ -19,7 +19,10 @@ import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.GuiUtils;
@@ -44,7 +47,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         this.container = container;
         this.name = name.getString();
         gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
-        if (container.getTile().isClientSide()) container.getTile().recipeHandler.ifPresent(rh -> rh.setClientProgress(0));
+        //if (container.getTile().isClientSide()) container.getTile().recipeHandler.ifPresent(rh -> rh.setClientProgress(0));
     }
 
     protected void drawTitle(MatrixStack stack, int mouseX, int mouseY) {

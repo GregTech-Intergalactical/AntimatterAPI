@@ -12,11 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockModelProvider;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
-import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.*;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
@@ -47,6 +43,11 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     @Override
     protected void registerStatesAndModels() {
         processBlocks(providerDomain);
+    }
+
+    @Override
+    public Types staticDynamic() {
+        return Types.STATIC;
     }
 
     @Override

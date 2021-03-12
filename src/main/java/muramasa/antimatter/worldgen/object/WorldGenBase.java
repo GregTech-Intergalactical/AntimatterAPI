@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
@@ -16,7 +17,7 @@ public class WorldGenBase<T extends WorldGenBase<?>> {
 
     private String id;
     private boolean enabled = true;
-    private Set<RegistryKey<World>> dimensions;
+    private Set<ResourceLocation> dimensions;
     private boolean custom;
 
     public WorldGenBase() {
@@ -25,7 +26,7 @@ public class WorldGenBase<T extends WorldGenBase<?>> {
 
     public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, RegistryKey<World>... dimensions) {
         this.id = id;
-        this.dimensions = Arrays.stream(dimensions).collect(Collectors.toCollection(ObjectOpenHashSet::new));
+        this.dimensions = Arrays.stream(dimensions).map(RegistryKey::getLocation).collect(Collectors.toCollection(ObjectOpenHashSet::new));
         AntimatterWorldGenerator.register(c, this);
     }
 
@@ -37,7 +38,7 @@ public class WorldGenBase<T extends WorldGenBase<?>> {
         return enabled;
     }
 
-    public Set<RegistryKey<World>> getDims() {
+    public Set<ResourceLocation> getDims() {
         return dimensions;
     }
 

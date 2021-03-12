@@ -2,27 +2,27 @@ package muramasa.antimatter.datagen.providers;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
-import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.criterion.InventoryChangeTrigger;
-import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.data.*;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,33 +38,43 @@ import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.material.MaterialTag.GRINDABLE;
 import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
 import static muramasa.antimatter.util.Utils.*;
 
+//Only extending RecipeProvider for static purposes.
 public class AntimatterRecipeProvider extends RecipeProvider implements IAntimatterProvider {
 
     private final String providerDomain, providerName;
     protected final List<ICraftingLoader> craftingLoaders = new ObjectArrayList<>();
-
-    private static final List<AntimatterRecipeProvider> PROVIDERS = new ObjectArrayList<>();
+    private static final Map<String, AntimatterRecipeProvider> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterRecipeProvider(String providerDomain, String providerName, DataGenerator gen) {
         super(gen);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
-        PROVIDERS.add(this);
+        PROVIDERS.put(providerDomain,this);
+    }
+
+    @Override
+    public void act(DirectoryCache cache) {
+
     }
 
     @Override
     public void run() {
-        Set<ResourceLocation> set = Sets.newHashSet();
-        //TODO: Figure out when we can add recipes :S
-     //   if (this.getSide() == Dist.DEDICATED_SERVER) {
-           // this.registerRecipes(recipe -> {
-        //        if (!set.add(recipe.getID())) throw new IllegalStateException("Duplicate recipe " + recipe.getID());
-        //        else DynamicResourcePack.addRecipe(recipe);
-       //     });
-      //  }
+        /*Set<ResourceLocation> set = Sets.newHashSet();
+
+        registerRecipes(recipe -> {
+            if (set.add(recipe.getID())) {
+                DynamicResourcePack.addRecipe(recipe);
+            }
+        });*/
+    }
+
+    @Override
+    public Types staticDynamic() {
+        return Types.DYNAMIC;
     }
 
     @Override
@@ -72,15 +82,36 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         return Dist.DEDICATED_SERVER;
     }
 
+    private static Map<IRecipeType<?>, Map<ResourceLocation, IRecipe>> MAP = new Object2ObjectOpenHashMap<>();
+
+    private static Map<IRecipeType<?>, Map<ResourceLocation, IRecipe>> CACHE = new Object2ObjectOpenHashMap<>();
+
     public static void runRecipes() {
         Set<ResourceLocation> set = Sets.newHashSet();
-        PROVIDERS.forEach(t -> {
-            t.registerRecipes(recipe -> {
-                if (!set.add(recipe.getID())) return;
-                else DynamicResourcePack.addRecipe(recipe);
-            });
-        });
+        //Iterate all providers.
+        PROVIDERS.forEach((id,t) -> t.registerRecipes(recipe -> {
+           // ResourceLocation loc = ForgeRegistries.RECIPE_SERIALIZERS.getKey(recipe.getSerializer());
+            if (set.add(recipe.getID())) {
+                //recipe.getID();
+                IRecipe<?> r = recipe.getSerializer().read(recipe.getID(), recipe.getRecipeJson());
+                MAP.compute(r.getType(),(k,v) -> {
+                    if (v == null) v = new Object2ObjectOpenHashMap<>();
+                    v.put(recipe.getID(), r);
+                    return v;
+                });
+                //DynamicResourcePack.addRecipe(recipe);
+                ///AntimatterJEIPlugin.getRuntime().getRecipeManager().addRecipe(recipe, loc);
+            }
+        }));
+    }
 
+    public static Map<ResourceLocation, IRecipe> handleGetRecipe(IRecipeType recipeTypeIn, Map<ResourceLocation, IRecipe> cir) {
+        return CACHE.computeIfAbsent(recipeTypeIn, b -> {
+            Map<ResourceLocation, IRecipe> stored = MAP.get(recipeTypeIn);
+            if (stored == null || stored.size() == 0) return cir;
+            stored.putAll(cir);
+            return stored;
+        });
     }
 
     @Override
@@ -97,48 +128,48 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             Item ingot = INGOT.get(o.getMaterial());
             ITag.INamedTag<Item> oreTag = Utils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
             ITag.INamedTag<Item> ingotTag = Utils.getForgeItemTag("ingots/".concat(o.getMaterial().getId()));
-           // CookingRecipeBuilder.blastingRecipe(Ingredient.fromTag(oreTag), ingot, 2.0F, 200)
-         //           .addCriterion("has_material_" + o.getMaterial().getId(), this.hasItem(ingotTag))
-         //           .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot")));
+            CookingRecipeBuilder.blastingRecipe(Ingredient.fromTag(oreTag), ingot, 2.0F, 200)
+                    .addCriterion("has_material_" + o.getMaterial().getId(), this.hasItem(ingotTag))
+                    .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot")));
         });
-        //        RegistrationHelper.getMaterialsForDomain(Ref.ID).stream().filter(m -> m.has(DUST)).forEach(mat -> {
-//            Item dust = DUST.get(mat);
-//            if (mat.has(ROCK)) {
-//                Tag<Item> rockTag = getForgeItemTag("rocks/".concat(mat.getId()));
-//                Item rock = ROCK.get(mat);
-//                Item smallDust = DUST_SMALL.get(mat);
-//                ShapelessRecipeBuilder.shapelessRecipe(dust)
-//                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(rockTag)
-//                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(rockTag)
-//                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(MORTAR.getTag())
-//                        .addCriterion("has_rock_" + mat.getId(), this.hasItem(rockTag))
-//                        .setGroup("rocks_grind_to_dust").build(consumer, sigh(rock.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
-//
-//                ShapelessRecipeBuilder.shapelessRecipe(smallDust)
-//                        .addIngredient(rockTag).addIngredient(rockTag)
-//                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(MORTAR.getTag())
-//                        .addCriterion("has_rock_" + mat.getId(), this.hasItem(getForgeItemTag("rocks/".concat(mat.getId()))))
-//                        .setGroup("rocks_grind_to_small_dust").build(consumer, sigh(rock.getRegistryName().getPath() + "_grind_to_" + smallDust.getRegistryName().getPath()));
-//            }
-//            if (mat.has(INGOT, GRINDABLE)) {
-//                Item ingot = INGOT.get(mat);
-//                Tag<Item> ingotTag = getForgeItemTag("ingots/".concat(mat.getId()));
-//                ShapelessRecipeBuilder.shapelessRecipe(dust).addIngredient(ingotTag).addIngredient(MORTAR.getTag())
-//                        .addCriterion("has_ingot_" + mat.getId(), this.hasItem(getForgeItemTag("ingots/".concat(mat.getId()))))
-//                        .setGroup("ingots_grind_to_dust")
-//                        .build(consumer, sigh(ingot.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
-//            }
-//        });
+        AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> m.has(DUST)).forEach(mat -> {
+            Item dust = DUST.get(mat);
+            if (mat.has(ROCK)) {
+                ITag.INamedTag<Item> rockTag = getForgeItemTag("rocks/".concat(mat.getId()));
+                Item rock = ROCK.get(mat);
+                Item smallDust = DUST_SMALL.get(mat);
+                ShapelessRecipeBuilder.shapelessRecipe(dust)
+                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(rockTag)
+                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(rockTag)
+                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(MORTAR.getTag())
+                        .addCriterion("has_rock_" + mat.getId(), this.hasItem(rockTag))
+                        .setGroup("rocks_grind_to_dust").build(consumer, fixLoc(providerDomain, rock.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
+
+                ShapelessRecipeBuilder.shapelessRecipe(smallDust)
+                        .addIngredient(rockTag).addIngredient(rockTag)
+                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(MORTAR.getTag())
+                        .addCriterion("has_rock_" + mat.getId(), this.hasItem(getForgeItemTag("rocks/".concat(mat.getId()))))
+                        .setGroup("rocks_grind_to_small_dust").build(consumer, fixLoc(providerDomain, rock.getRegistryName().getPath() + "_grind_to_" + smallDust.getRegistryName().getPath()));
+            }
+            if (mat.has(INGOT, GRINDABLE)) {
+                Item ingot = INGOT.get(mat);
+                ITag.INamedTag<Item> ingotTag = getForgeItemTag("ingots/".concat(mat.getId()));
+                ShapelessRecipeBuilder.shapelessRecipe(dust).addIngredient(ingotTag).addIngredient(MORTAR.getTag())
+                        .addCriterion("has_ingot_" + mat.getId(), this.hasItem(getForgeItemTag("ingots/".concat(mat.getId()))))
+                        .setGroup("ingots_grind_to_dust")
+                        .build(consumer, fixLoc(providerDomain,ingot.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
+            }
+        });
     }
 
     protected void registerToolRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
-        List<Material> mainMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(TOOLS))).collect(Collectors.toList());
+        List<Material> mainMats = AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(TOOLS))).collect(Collectors.toList());
         List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.isHandle())).collect(Collectors.toList());
 
         handleMats.forEach(handle -> AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
             ITag.INamedTag<Item> ingotTag = getForgeItemTag("ingots/" + rubber.getId()), rodTag = getForgeItemTag("rods/" + handle.getId());
             addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_" + handle.getId() + "_" + rubber.getId(), "antimatter_plungers",
-                    "has_material_" + rubber.getId(), this.hasItem(ingotTag), PLUNGER.getToolStack(handle, rubber),
+                    "has_material_" + rubber.getId(), hasItem(ingotTag), PLUNGER.getToolStack(handle, rubber),
                     of('W', WIRE_CUTTER.getTag(), 'I', ingotTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WIS", " RI", "R F");
         }));
 

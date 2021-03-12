@@ -1,19 +1,17 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.capability.*;
+import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.IEnergyHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraftforge.common.capabilities.Capability;
 import tesseract.Tesseract;
-import tesseract.api.ITickingController;
 import tesseract.util.Dir;
 
 import java.util.List;
-
-import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
 public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHandler implements IMachineHandler{
 
@@ -48,6 +46,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         if (tile.isServerSide()) {
             deregisterNet();
         }
+    }
+
+    @Override
+    public boolean canInput(Dir direction) {
+        return super.canInput(direction) && tile.getFacing().getIndex() != direction.getIndex();
     }
 
     @Override

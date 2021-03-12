@@ -6,7 +6,9 @@ import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Set;
 
 /** Workaround until I figure out how to reference external resources from another mod for data gen **/
 public class ExistingFileHelperOverride extends ExistingFileHelper {

@@ -2,9 +2,11 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
+import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -25,7 +27,7 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     public static final CoverStack<?>[] EMPTY_COVER_ARRAY = new CoverStack[0];
 
     /** The dyntexturer for covers. **/
-    public final DynamicTexturer<Cover, Cover.DynamicKey> coverTexturer = new DynamicTexturer<>(Data.COVER_DYNAMIC_TEXTURER);
+    public LazyHolder<DynamicTexturer<Cover, Cover.DynamicKey>> coverTexturer;
 
 
     private Cover cover;
@@ -36,6 +38,8 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
         this.cover = Objects.requireNonNull(cover);
         this.tile = tile;
         this.nbt = new CompoundNBT();
+        //Lazy way to ensure it is only called on client lol
+        coverTexturer = LazyHolder.of(() -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
     }
 
     //This allows you to instantiate a non-stateful cover, like COVER_EMPTY.

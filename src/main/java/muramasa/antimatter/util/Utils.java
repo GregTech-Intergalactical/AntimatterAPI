@@ -1,22 +1,19 @@
 package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -26,7 +23,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.model.ModelRotation;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -39,19 +35,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tags.*;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
@@ -546,67 +547,10 @@ public class Utils {
         }
     }
 
-    //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
-    //TODO Possibly something to do with ModelUtils.FACING_TO_MATRIX having incorrect matrices?
-    public static Direction rotateFacingAlt(Direction toRotate, Direction rotateBy) {
-        Direction result = toRotate;
-        if (toRotate.getAxis() == Direction.Axis.Y || rotateBy.getAxis() == Direction.Axis.Y) return result;
-        /** S-W-N-E **/
-        if (rotateBy.getHorizontalIndex() < Direction.NORTH.getHorizontalIndex()) {
-            //Rotate CCW
-            int dif = rotateBy.getHorizontalIndex() - Direction.NORTH.getHorizontalIndex();
-//            System.out.println("Difccw: " + dif);
-            for (int i = 0; i < Math.abs(dif); i++) {
-                result = result.rotateYCCW();
-            }
-        } else {
-            //Rotate CW
-            int dif = Direction.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
-//            System.out.println("Difcw: " + dif);
-            for (int i = 0; i < Math.abs(dif); i++) {
-                result = result.rotateY();
-            }
-        }
-//        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
-        //return rotateBy == Direction.EAST || rotateBy == Direction.WEST ? toRotate.getOpposite() : toRotate;
-        return result;
-    }
-
-    //TODO this is pretty awful, but I can't seem to figure out why EAST and WEST sides are inverted
-    //TODO Possibly something to do with ModelUtils.FACING_TO_MATRIX having incorrect matrices?
-    public static Direction rotateFacing(Direction toRotate, Direction rotateBy) {
-        Direction result = toRotate;
-        if (toRotate.getAxis() == Direction.Axis.Y || rotateBy.getAxis() == Direction.Axis.Y) return result;
-        /** S-W-N-E **/
-        if (rotateBy.getHorizontalIndex() < Direction.NORTH.getHorizontalIndex()) {
-            //Rotate CCW
-            int dif = rotateBy.getHorizontalIndex() - Direction.NORTH.getHorizontalIndex();
-//            System.out.println("Difccw: " + dif);
-            for (int i = 0; i < Math.abs(dif); i++) {
-                result = result.rotateYCCW();
-            }
-        } else {
-            //Rotate CW
-            int dif = Direction.NORTH.getHorizontalIndex() - rotateBy.getHorizontalIndex();
-//            System.out.println("Difcw: " + dif);
-            for (int i = 0; i < Math.abs(dif); i++) {
-                result = result.rotateY();
-            }
-        }
-//        System.out.println("to: " + toRotate + " - by: " + rotateBy + " - res: " + toRotate);
-        return /*rotateBy == Direction.EAST || rotateBy == Direction.WEST ? result.getOpposite() :*/ result;
-    }
-
-
     public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy){
-        ModelRotation r = Utils.getModelRotationCover(rotateBy);
-        return r.getRotation().rotateTransform(toRotate);
+        RotationHelper.ModelRotation r = Utils.getModelRotationCover(rotateBy);
+        return r.getRotation().rotateFace(toRotate);
     }
-
-    //TODO replace with doRaytrace in block?
-    //TODO optimize...
-
-    //TODO: combine constant here with BehaviourConnection?
 
     final static double INTERACTION_OFFSET = 0.25;
 
@@ -707,7 +651,7 @@ public class Utils {
         return set;
     }
 
-
+    //So confusing, right? I barely even know anymore but so far it works. 90 and 270 are swapped.
     public static ModelRotation getModelRotation(Direction dir) {
         switch (dir) {
             case DOWN:
@@ -728,7 +672,27 @@ public class Utils {
     //All these getRotations, coverRotateFacings. Honestly look into them. I just made
     //something that works but it is really confusing... Some values here are inverted but it works? This is used
     //for multitexturer while getModelRotation is used for all else.
-    public static ModelRotation getModelRotationCover(Direction dir) {
+    public static RotationHelper.ModelRotation getModelRotationCover(Direction dir) {
+        switch (dir) {
+            case DOWN:
+                return RotationHelper.getModelRotation(90,0);
+            case UP:
+                return RotationHelper.getModelRotation(-90,0);
+            case NORTH:
+                return RotationHelper.getModelRotation(0,0);
+            case SOUTH:
+                return RotationHelper.getModelRotation(0,180);
+            case EAST:
+                return RotationHelper.getModelRotation(0,270);
+            case WEST:
+                return RotationHelper.getModelRotation(0,90);
+        }
+        return null;
+    }
+
+    //Returns client safe version.
+    @OnlyIn(Dist.CLIENT)
+    public static ModelRotation getModelRotationCoverClient(Direction dir) {
         switch (dir) {
             case DOWN:
                 return ModelRotation.getModelRotation(90,0);
@@ -1045,20 +1009,25 @@ public class Utils {
        return createTag(loc, Block.class, BlockTags::makeWrapperTag);
     }
 
-    protected static final Map<Class, List<ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
+    /* TAG RELATED AREA.  */
+
+    //TODO: Move to another package maybe?
+
+    //A list of all registered tags for all Antimatter mods.
+    protected static final Map<Class, Set<ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
 
     protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
         ITag.INamedTag<T> tag = fn.apply(loc.toString());
         TAG_MAP.compute(clazz, (k,v) -> {
-            if (v == null) v = new ObjectArrayList<>();
+            if (v == null) v = new ObjectOpenHashSet<>();
             v.add(tag);
             return v;
         });
         return tag;
     }
 
-    public static List<ITag.INamedTag> getTags(Class clazz) {
-        return TAG_MAP.getOrDefault(clazz, Collections.emptyList());
+    public static Set<ITag.INamedTag> getTags(Class clazz) {
+        return TAG_MAP.getOrDefault(clazz, Collections.emptySet());
     }
 
     /**
@@ -1103,14 +1072,6 @@ public class Utils {
     public static void dropItemInWorldAtTile(TileEntity tile, Item item, Direction dir) {
         ItemEntity entity = new ItemEntity(tile.getWorld(), tile.getPos().getX()+dir.getXOffset(),tile.getPos().getY()+dir.getYOffset(),tile.getPos().getZ()+dir.getZOffset(), new ItemStack(item,1));
         tile.getWorld().addEntity(entity);
-    }
-
-    @Nonnull
-    public static RegistryKey<World> getRegistryKey(@Nonnull IWorld world) {
-        if (world instanceof ClientWorld) return ((ClientWorld)world).getDimensionKey();
-        if (world instanceof ServerWorld) return ((ServerWorld)world).getDimensionKey();
-
-        throw new RuntimeException("Error, invalid world passed to getRegistryKey");
     }
 
     public static String[] getLocalizedMaterialType(MaterialType<?> type) {

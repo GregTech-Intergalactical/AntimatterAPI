@@ -25,7 +25,10 @@ import net.minecraft.enchantment.UnbreakingEnchantment;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
+import net.minecraft.item.IItemTier;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.IItemProvider;
@@ -194,7 +197,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             }
             amount -= j;
         }
-        if (amount > 0) stack.setDamage(stack.getDamage() - amount);
+        if (amount > 0) stack.setDamage(stack.getDamage()+amount);
         return stack;
     }
 

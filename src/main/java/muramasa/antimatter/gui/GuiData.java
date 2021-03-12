@@ -1,6 +1,9 @@
 package muramasa.antimatter.gui;
 
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
@@ -22,7 +25,7 @@ public class GuiData {
     private static final String ANY = "any";
 
     protected ResourceLocation loc;
-    protected MenuHandler<?, ?> menuHandler;
+    protected MenuHandler<?> menuHandler;
 
     protected Tier highestTier = Tier.LV;
     protected boolean enablePlayerSlots = true;
@@ -39,17 +42,17 @@ public class GuiData {
         this.loc = new ResourceLocation(domain, id);
     }
 
-    public GuiData(String domain, String id, MenuHandler<?, ?> menuHandler) {
+    public GuiData(String domain, String id, MenuHandler<?> menuHandler) {
         this(domain, id);
         this.menuHandler = menuHandler;
     }
 
-    public GuiData(IAntimatterObject type, MenuHandler<?, ?> menuHandler) {
+    public GuiData(IAntimatterObject type, MenuHandler<?> menuHandler) {
         this(type.getDomain(), type.getId());
         this.menuHandler = menuHandler;
     }
 
-    public MenuHandler<?, ?> getMenuHandler() {
+    public MenuHandler<?> getMenuHandler() {
         return this.menuHandler;
     }
 

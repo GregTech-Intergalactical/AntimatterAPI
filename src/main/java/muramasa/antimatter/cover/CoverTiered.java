@@ -2,6 +2,7 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machine.Tier;
+
 import java.util.Arrays;
 
 //A cover that is tiered, e.g. a Conveyor or Pump.

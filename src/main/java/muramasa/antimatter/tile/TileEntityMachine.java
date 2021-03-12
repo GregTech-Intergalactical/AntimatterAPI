@@ -4,9 +4,12 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.*;
+import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
+import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverStack;
@@ -34,7 +37,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -47,9 +49,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
-import static muramasa.antimatter.capability.AntimatterCaps.*;
+import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
+import static muramasa.antimatter.capability.AntimatterCaps.ENERGY_HANDLER_CAPABILITY;
 import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -76,8 +78,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public LazyHolder<MachineCoverHandler<TileEntityMachine>> coverHandler;
 
     /** Texture related areas. **/
-    public final DynamicTexturer<TileEntityMachine, DynamicKey> multiTexturer = new DynamicTexturer<>(Data.TILE_DYNAMIC_TEXTURER);
-    protected Optional<Texture> multiTexture = Optional.empty();
+    public LazyHolder<DynamicTexturer<TileEntityMachine, DynamicKey>> multiTexturer;
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
@@ -88,6 +89,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<>(this, type.amps(),type.has(GENERATOR))) : LazyHolder.empty();
         this.recipeHandler = type.has(RECIPE) ? LazyHolder.of(() -> new MachineRecipeHandler<>(this)) : LazyHolder.empty();
         this.coverHandler = type.has(COVERABLE) ? LazyHolder.of(() -> new MachineCoverHandler<>(this)) : LazyHolder.empty();
+        //lazy way to only runn on client.
+        multiTexturer = LazyHolder.of(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER));
     }
 
     public void setOpenContainer(ContainerMachine c) {

@@ -2,21 +2,16 @@ package muramasa.antimatter.gui;
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 
 //An arbitrary menu handler for e.g. guiclass.
-public abstract class MenuHandler<T extends Container, U extends Screen & IHasContainer<T>> implements IAntimatterObject, ScreenManager.IScreenFactory<T, U> {
+public abstract class MenuHandler<T extends Container> implements IAntimatterObject {
 
     protected ResourceLocation loc;
     private ContainerType<T> containerType;
@@ -24,6 +19,8 @@ public abstract class MenuHandler<T extends Container, U extends Screen & IHasCo
     public MenuHandler(String domain, String id) {
         loc = new ResourceLocation(domain, id);
         AntimatterAPI.register(MenuHandler.class, this);
+        ContainerType<?> type = getContainerType();
+        AntimatterAPI.register(ContainerType.class, type.getRegistryName().toString(), type);
     }
 
     @Override
@@ -38,10 +35,6 @@ public abstract class MenuHandler<T extends Container, U extends Screen & IHasCo
 
     @MethodsReturnNonnullByDefault
     public abstract T getMenu(Object tile, PlayerInventory playerInv, int windowId);
-
-    @ParametersAreNonnullByDefault
-    @Override //Overridden to give proper names
-    public abstract U create(T container, PlayerInventory inv, ITextComponent name);
 
     @MethodsReturnNonnullByDefault
     public ContainerType<T> getContainerType() {

@@ -1,5 +1,6 @@
 package muramasa.antimatter.registration;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModLoadingContext;
 
 public interface IAntimatterRegistrar extends IAntimatterObject {
@@ -14,6 +15,6 @@ public interface IAntimatterRegistrar extends IAntimatterObject {
         return !getId().equals("minecraft");
     }
 
-    void onRegistrationEvent(RegistrationEvent event);
+    void onRegistrationEvent(RegistrationEvent event, Dist side);
 
 }

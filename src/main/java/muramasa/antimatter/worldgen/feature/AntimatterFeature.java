@@ -7,21 +7,20 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class AntimatterFeature<F extends IFeatureConfig> extends Feature<F> implements IAntimatterObject {
 
-    Object2ObjectMap<RegistryKey<World>,List<WorldGenBase<?>>> REGISTRY = new Object2ObjectOpenHashMap<>();
+    Object2ObjectMap<ResourceLocation,List<WorldGenBase<?>>> REGISTRY = new Object2ObjectOpenHashMap<>();
 
-    public AntimatterFeature(Codec<F> codec, @Nullable Class<?> c) {
+    public AntimatterFeature(Codec<F> codec, Class<?> c) {
         super(codec);
-        AntimatterAPI.register(AntimatterFeature.class, this);
+        AntimatterAPI.register(AntimatterFeature.class, c.getName(), this);
+        this.setRegistryName(new ResourceLocation(getDomain(),getId()));
     }
 
 
@@ -33,7 +32,7 @@ public abstract class AntimatterFeature<F extends IFeatureConfig> extends Featur
 
     public abstract void init();
 
-    public Object2ObjectMap<RegistryKey<World>,List<WorldGenBase<?>>> getRegistry() {
+    public Object2ObjectMap<ResourceLocation,List<WorldGenBase<?>>> getRegistry() {
         return REGISTRY;
     }
 }

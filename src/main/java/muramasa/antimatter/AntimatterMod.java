@@ -10,8 +10,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public abstract class AntimatterMod implements IAntimatterRegistrar {
 
     public AntimatterMod() {
-        AntimatterAPI.addRegistrar(this);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, this::onGatherData);
+        AntimatterAPI.addRegistrar(this);
     }
 
     public void onGatherData(GatherDataEvent e) {

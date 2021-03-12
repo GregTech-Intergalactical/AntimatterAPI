@@ -1,19 +1,5 @@
 package muramasa.antimatter.integration.jei.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import mezz.jei.api.ingredients.IIngredientRenderer;
-import muramasa.antimatter.client.RenderHelper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.FluidStack;
-
-import javax.annotation.Nullable;
-import java.util.List;
-
 public class FluidStackRenderer /*implements IIngredientRenderer<FluidStack>*/ {
 
     public FluidStackRenderer() {

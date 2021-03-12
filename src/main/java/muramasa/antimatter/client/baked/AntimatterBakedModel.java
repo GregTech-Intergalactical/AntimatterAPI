@@ -33,10 +33,11 @@ public class AntimatterBakedModel<T> implements IDynamicBakedModel {
         this.bakedModel = bakedModel;
     }
 
-    public T particle(TextureAtlasSprite particle) {
-        this.particle = particle;
+    public T particle(TextureAtlasSprite p) {
+        if (particle == null) this.particle = p;
         return (T) this;
     }
+
 
     public T onlyGeneralQuads() {
         this.onlyGeneralQuads = true;
@@ -84,6 +85,11 @@ public class AntimatterBakedModel<T> implements IDynamicBakedModel {
     }
 
     @Override
+    public TextureAtlasSprite getParticleTexture() {
+        return getParticleTexture(EmptyModelData.INSTANCE);
+    }
+
+    @Override
     public ItemCameraTransforms getItemCameraTransforms() {
         return bakedModel != null ? bakedModel.getItemCameraTransforms() : ItemCameraTransforms.DEFAULT;
     }
@@ -96,11 +102,6 @@ public class AntimatterBakedModel<T> implements IDynamicBakedModel {
     @Override
     public ItemOverrideList getOverrides() {
         return bakedModel != null ? bakedModel.getOverrides() : ItemOverrideList.EMPTY;
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return getParticleTexture(EmptyModelData.INSTANCE);
     }
 
     @Override

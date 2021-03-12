@@ -1,8 +1,6 @@
 package muramasa.antimatter.worldgen;
 
 import net.minecraft.world.ISeedReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.server.ServerWorld;
 
 public class NoiseGenerator {
     public int mSeed = 42;

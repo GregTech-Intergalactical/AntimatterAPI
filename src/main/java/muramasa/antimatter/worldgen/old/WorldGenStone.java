@@ -1,20 +1,6 @@
 package muramasa.antimatter.worldgen.old;
 
-import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.block.BlockStone;
-import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.util.XSTR;
-import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.AbstractChunkProvider;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.server.ServerWorld;
 
 public class WorldGenStone extends WorldGenBase<WorldGenStone> {
 /*
