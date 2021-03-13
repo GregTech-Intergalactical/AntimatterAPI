@@ -50,12 +50,6 @@ sourceSets {
     }
 }
 
-// Deobfuscated jar; development purposes.
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier "deobf"
-}
-
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -130,14 +124,6 @@ minecraft {
 }
 
 
-
-
-// Sources jar; development purposes.
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier "sources"
-}
-
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And       it's patches will be applied.
@@ -148,9 +134,9 @@ dependencies {
     if (findProject(':tesseract') != null) {
         implementation project(':tesseract')
     } else {
-        implementation fg.deobf(project.dependencies.create("com.github.gregtech-intergalactical:TesseractAPI:${tesseract_version}") {
+        implementation fg.deobf("com.github.gregtech-intergalactical:TesseractAPI:${tesseract_version}") {
             transitive = false
-        })
+        }
     }
 
     //JEI
@@ -177,8 +163,7 @@ publishing {
     publications {
         forge(MavenPublication) {
             //artifactId = archivesBaseName
-            artifact deobfJar
-            artifact sourcesJar
+            artifact jar
         }
     }
     repositories {
@@ -212,9 +197,4 @@ jar {
 
 jar {
     zip64 true
-}
-
-artifacts {
-    archives sourcesJar
-    archives deobfJar
 }
