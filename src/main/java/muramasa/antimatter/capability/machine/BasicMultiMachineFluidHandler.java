@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
 import net.minecraftforge.fluids.FluidStack;
@@ -15,9 +16,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class BasicMultiMachineFluidHandler extends MachineFluidHandler<TileEntityMultiMachine> {
+public class BasicMultiMachineFluidHandler extends MachineFluidHandler<TileEntityBasicMultiMachine> {
 
     MachineFluidHandler<?>[] inputs = new MachineFluidHandler[0];
     MachineFluidHandler<?>[] outputs = new MachineFluidHandler[0];
@@ -27,13 +29,19 @@ public class BasicMultiMachineFluidHandler extends MachineFluidHandler<TileEntit
     protected int INPUT_END;
     protected Int2ObjectMap<MachineFluidHandler<?>> OUTPUT_TO_HANDLER = new Int2ObjectOpenHashMap<>();
     protected Object2IntMap<MachineFluidHandler<?>> OUTPUT_START = new Object2IntOpenHashMap<>();
+    protected MachineFluidHandler<?> DUMMY_INPUT;
+    protected MachineFluidHandler<?> DUMMY_OUTPUT;
 
-    public BasicMultiMachineFluidHandler(TileEntityMultiMachine tile) {
+    public BasicMultiMachineFluidHandler(TileEntityBasicMultiMachine tile) {
         super(tile);
+        DUMMY_INPUT = new DummyInputHandler(tile);
+        DUMMY_OUTPUT = new DummyOutputHandler(tile);
     }
 
     protected void cacheInputs() {
-        inputs = tile.getComponents("hatch_fluid_input").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        List<MachineFluidHandler<?>> list = tile.getComponents("hatch_fluid_input").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).collect(Collectors.toList());
+        list.add(DUMMY_INPUT);
+        inputs = list.toArray(new MachineFluidHandler<?>[0]);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         INPUT_TO_HANDLER.clear();
         INPUT_START.clear();
@@ -45,16 +53,13 @@ public class BasicMultiMachineFluidHandler extends MachineFluidHandler<TileEntit
             }
             i += input.getTanks();
         }
-        for (int j = 0; j < this.tanks.get(FluidDirection.INPUT).getTanks(); j++) {
-            INPUT_TO_HANDLER.put(j+i, this);
-            if (j == 0) INPUT_START.put(this,i);
-        }
-        i += this.tanks.get(FluidDirection.INPUT).getTanks();
         INPUT_END = i;
     }
 
     protected void cacheOutputs() {
-        outputs = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        List<MachineFluidHandler<?>> list = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).collect(Collectors.toList());
+        list.add(DUMMY_OUTPUT);
+        outputs = list.toArray(new MachineFluidHandler<?>[0]);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         OUTPUT_TO_HANDLER.clear();
         OUTPUT_START.clear();
@@ -66,11 +71,6 @@ public class BasicMultiMachineFluidHandler extends MachineFluidHandler<TileEntit
             }
             i += output.getTanks();
         }
-        for (int j = 0; j < this.tanks.get(FluidDirection.OUTPUT).getTanks(); j++) {
-            OUTPUT_TO_HANDLER.put(j+i, this);
-            if (j == 0) OUTPUT_START.put(this,i);
-        }
-        i += this.tanks.get(FluidDirection.INPUT).getTanks();
     }
 
     //TODO: Remove gettanks() != null as this is called twice.
@@ -107,5 +107,27 @@ public class BasicMultiMachineFluidHandler extends MachineFluidHandler<TileEntit
     public void onStructureBuild() {
         cacheInputs();
         cacheOutputs();
+    }
+
+    public static class DummyInputHandler  extends MachineFluidHandler<TileEntityBasicMultiMachine> {
+        public DummyInputHandler(TileEntityBasicMultiMachine tile) {
+            super(tile);
+        }
+
+        @Override
+        public int getTanks() {
+            return tanks.get(FluidDirection.INPUT).getTanks();
+        }
+    }
+
+    public static class DummyOutputHandler  extends MachineFluidHandler<TileEntityBasicMultiMachine> {
+        public DummyOutputHandler(TileEntityBasicMultiMachine tile) {
+            super(tile);
+        }
+
+        @Override
+        public int getTanks() {
+            return tanks.get(FluidDirection.OUTPUT).getTanks();
+        }
     }
 }
