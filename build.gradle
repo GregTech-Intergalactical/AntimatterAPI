@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
         maven {
@@ -19,9 +18,11 @@ buildscript {
 }
 
 repositories {
+    //JEI
     maven { url 'http://dvs1.progwml6.com/files/maven' }
-    maven { url = "https://www.cursemaven.com" }
-} 
+    //GT.
+    maven { url 'https://jitpack.io' }
+}
 
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -143,10 +144,22 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation project(path: ':tesseract') 
+    //GT
+    if (findProject(':tesseract') != null) {
+        implementation project(':tesseract')
+    } else {
+        implementation fg.deobf(project.dependencies.create("com.github.gregtech-intergalactical:TesseractAPI:${tesseract_version}") {
+            transitive = false
+        })
+    }
+
+    //JEI
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+
+    //MIXIN
     annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+
     /** KUBEJS STUFF **/
   //  implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
  //   implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
@@ -174,6 +187,8 @@ publishing {
         }
     }
 }
+
+//MIXIN
 apply plugin: 'org.spongepowered.mixin'
 
 mixin {
@@ -183,11 +198,10 @@ mixin {
 jar {
     manifest {
         attributes([
-                // Existing properties here
                 "MixinConfigs": "antimatter.mixins.json",
                 "Specification-Title": "Antimatter",
                 "Specification-Vendor": "AntimatterTeam",
-                "Specification-Version": "1", // We are version 1 of ourselves
+                "Specification-Version": "1",
                 "Implementation-Title": project.name,
                 "Implementation-Version": "0.0.1",
                 "Implementation-Vendor" :"AntimatterTeam",
@@ -196,10 +210,9 @@ jar {
     }
 }
 
-
-/*jar {
+jar {
     zip64 true
-}*/
+}
 
 artifacts {
     archives sourcesJar

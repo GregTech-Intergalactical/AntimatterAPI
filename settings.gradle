@@ -1,3 +1,5 @@
-include 'tesseract'
-
-project(':tesseract').setProjectDir(new File("tesseract"))
+def tesseract = new File( 'tesseract')
+if (tesseract.exists()) {
+    include 'tesseract'
+    project(':tesseract').setProjectDir(new File("tesseract"))
+}
