@@ -10,6 +10,7 @@ import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 
 import java.util.List;
 
@@ -35,4 +36,6 @@ public abstract class AntimatterFeature<F extends IFeatureConfig> extends Featur
     public Object2ObjectMap<ResourceLocation,List<WorldGenBase<?>>> getRegistry() {
         return REGISTRY;
     }
+
+    public abstract void build(BiomeGenerationSettingsBuilder event);
 }

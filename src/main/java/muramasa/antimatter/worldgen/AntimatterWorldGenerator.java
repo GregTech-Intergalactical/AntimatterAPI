@@ -10,6 +10,7 @@ import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
@@ -22,9 +23,21 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class AntimatterWorldGenerator {
+
+    protected static class GenHandler {
+        public final Consumer<BiomeLoadingEvent> consumer;
+        public final Predicate<Biome.Category> validator;
+
+        public GenHandler(Consumer<BiomeLoadingEvent> consumer, Predicate<Biome.Category> validator) {
+            this.consumer = consumer;
+            this.validator = validator;
+        }
+    }
 
     public static void init() {
         new FeatureVeinLayer();
@@ -60,6 +73,10 @@ public class AntimatterWorldGenerator {
     public static void register(Class<?> c, WorldGenBase<?> base) {
         AntimatterFeature<?> feature = AntimatterAPI.get(AntimatterFeature.class, c.getName());
         if (feature != null) base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
+    }
+
+    public static void register(Consumer<BiomeLoadingEvent> consumer, String id, Predicate<Biome.Category> validator) {
+        AntimatterAPI.register(GenHandler.class, id, new GenHandler(consumer, validator));
     }
 
     public static <T> List<T> all(Class<T> c, RegistryKey<World> dim) {
@@ -142,8 +159,13 @@ public class AntimatterWorldGenerator {
 
     public static void reloadEvent(BiomeLoadingEvent event) {
         AntimatterAPI.all(AntimatterFeature.class, t -> {
-            event.getGeneration()
-                    .withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, t.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
+            t.build(event.getGeneration());
+        });
+        AntimatterAPI.all(GenHandler.class, t -> {
+            if (event.getName() == null) return;
+            if (t.validator.test(event.getCategory())) {
+                t.consumer.accept(event);
+            }
         });
         handleFeatureRemoval(event);
     }

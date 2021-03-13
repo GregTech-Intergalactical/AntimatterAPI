@@ -22,6 +22,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -128,7 +129,8 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
         if (!MC.gameSettings.showDebugInfo || MC.objectMouseOver == null || MC.objectMouseOver.getType() != RayTraceResult.Type.BLOCK) return;
-        World world = ServerLifecycleHooks.getCurrentServer().getWorld(MC.world.getDimensionKey());
+        World world = Minecraft.getInstance().world;
+        if (world == null) return;
         BlockPos pos = new BlockPos(MC.objectMouseOver.getHitVec());
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof IInfoProvider) {

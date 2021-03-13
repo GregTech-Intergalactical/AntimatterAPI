@@ -77,6 +77,11 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         if (!data.isEmpty()) save(cache, data, this.gen.getOutputFolder().resolve(String.join("", "assets/", providerDomain, "/lang/", locale, ".json")));
     }
 
+    @Override
+    public Types staticDynamic() {
+        return Types.STATIC;
+    }
+
     // Forge implementation
     @SuppressWarnings("all")
     private void save(DirectoryCache cache, Object object, Path target) throws IOException {
@@ -110,8 +115,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         });
         AntimatterAPI.all(Material.class, domain).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
         AntimatterAPI.all(BlockOre.class, domain, o -> {
-            if (o.getOreType() == ORE) add(o, String.join("", getLocalizedType(o.getMaterial()), " ", getLocalizedType(o.getStoneType()), " Ore"));
-            else add(o, String.join("", "Small ", getLocalizedType(o.getMaterial()), " ", getLocalizedType(o.getStoneType()), " Ore"));
+            if (o.getOreType() == ORE)
+                add(o, String.join("", getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
+            else add(o, String.join("", "Small ",getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
         });
 
         AntimatterAPI.all(IAntimatterTool.class, t -> {
