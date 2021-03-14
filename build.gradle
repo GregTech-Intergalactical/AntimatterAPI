@@ -24,15 +24,14 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 
-
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 //apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.0.1'
+version = '0.1'
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'antimatter'
+archivesBaseName = 'AntimatterAPI'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 //Print out JVM information so that we know what version is running. Extreamly useful for people to know when helping you.
@@ -159,6 +158,14 @@ dependencies {
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 //publish.dependsOn('reobfJar')
 
+afterEvaluate { project ->
+    project.tasks.publishToMavenLocal {
+        onlyIf {
+            return rootProject.name == "${modid}"
+        }
+    }
+}
+
 publishing {
     publications {
         forge(MavenPublication) {
@@ -172,7 +179,6 @@ publishing {
         }
     }
 }
-
 //MIXIN
 apply plugin: 'org.spongepowered.mixin'
 
