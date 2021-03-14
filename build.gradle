@@ -133,7 +133,7 @@ dependencies {
     if (findProject(':tesseract') != null) {
         implementation project(':tesseract')
     } else {
-        implementation fg.deobf("com.github.gregtech-intergalactical:TesseractAPI:${tesseract_version}") {
+        implementation ("com.github.gregtech-intergalactical:TesseractAPI:${tesseract_version}") {
             transitive = false
         }
     }
