@@ -49,6 +49,25 @@ sourceSets {
     }
 }
 
+def shouldCheckEnv() {
+    return findProject(':TesseractAPI') != null
+}
+
+def getEnv() {
+    String s = "antimatter%%${project.file('build/resources/main')}" + getPathSeparator() + "antimatter%%${project.file('build/classes/java/main')}"
+    if (findProject(':TesseractAPI') != null) {
+        s += getPathSeparator() + "tesseract%%${project(':TesseractAPI').file('build/resources/main')}" + getPathSeparator() + "tesseract%%${project(':TesseractAPI').file('build/classes/java/main')}"
+    }
+    return s
+}
+import org.apache.tools.ant.taskdefs.condition.Os
+def getPathSeparator() {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        return ";"
+    }
+    return ":"
+}
+
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -68,10 +87,14 @@ minecraft {
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'DEBUG'
             property 'fml.earlyprogresswindow', 'false'
+            property 'mixin.env.disableRefMap', 'true'
             //property 'mixin.env.disableRefMap', 'true'
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             arg "-mixin.config=antimatter.mixins.json"
+            if (shouldCheckEnv()) {
+                 environment 'MOD_CLASSES', getEnv()
+            }
             mods {
                 antimatter {
                     source sourceSets.main
@@ -83,7 +106,7 @@ minecraft {
             workingDirectory project.file('run')
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'DEBUG'
-
+            property 'mixin.env.disableRefMap', 'true'
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
@@ -92,6 +115,9 @@ minecraft {
             // Disable GUI by default, the IDE console can be used to enter commands
             arg '-nogui'
             arg "-mixin.config=antimatter.mixins.json"
+            if (shouldCheckEnv()) {
+                 environment 'MOD_CLASSES', getEnv()
+            }
             mods {
                 antimatter {
                     source sourceSets.main
@@ -101,7 +127,7 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-
+            property 'mixin.env.disableRefMap', 'true'
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'DEBUG'
 
@@ -111,6 +137,9 @@ minecraft {
             //property 'mixin.env.disableRefMap', 'true'
 
             arg "-mixin.config=antimatter.mixins.json"
+            if (shouldCheckEnv()) {
+                 environment 'MOD_CLASSES', getEnv()
+            }
             args '--mod', 'antimatter', '--all', '--output', project.file('src/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
 
             mods {
@@ -130,12 +159,12 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     //GT
-    if (findProject(':tesseract') != null) {
-        implementation project(':tesseract')
+    if (findProject(':TesseractAPI') != null) {
+        implementation project(':TesseractAPI')
     } else {
-        implementation fg.deobf("com.github.gregtech-intergalactical:TesseractAPI:${tesseract_version}") {
-            //transitive = false
-        }
+        //Ensure there is a local mod version!
+        runtimeOnly fg.deobf("com.github.GregTech-Intergalactical:TesseractAPI:${tesseract_version}")
+        compileOnly ("com.github.GregTech-Intergalactical:TesseractAPI:${tesseract_version}")
     }
 
     //JEI
