@@ -10,7 +10,9 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -51,5 +53,10 @@ public class FeatureOre extends AntimatterFeature<NoFeatureConfig> {
             WorldGenHelper.setOre(world, o.getLeft(), world.getBlockState(o.getLeft()), o.getMiddle(), o.getRight() ? Data.ORE : Data.ORE_SMALL);
         }
         return true;
+    }
+
+    @Override
+    public void build(BiomeGenerationSettingsBuilder event) {
+        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, this.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
     }
 }

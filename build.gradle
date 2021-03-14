@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
         maven {
@@ -19,19 +18,20 @@ buildscript {
 }
 
 repositories {
+    //JEI
     maven { url 'http://dvs1.progwml6.com/files/maven' }
-    maven { url = "https://www.cursemaven.com" }
-} 
-
+    //GT.
+    maven { url 'https://jitpack.io' }
+}
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 //apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.0.1'
+version = '0.1'
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'antimatter'
+archivesBaseName = 'AntimatterAPI'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 //Print out JVM information so that we know what version is running. Extreamly useful for people to know when helping you.
@@ -47,12 +47,6 @@ sourceSets {
             exclude '.cache'
         }
     }
-}
-
-// Deobfuscated jar; development purposes.
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier "deobf"
 }
 
 minecraft {
@@ -129,24 +123,28 @@ minecraft {
 }
 
 
-
-
-// Sources jar; development purposes.
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    classifier "sources"
-}
-
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And       it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation project(path: ':tesseract') 
+    //GT
+    if (findProject(':tesseract') != null) {
+        implementation project(':tesseract')
+    } else {
+        implementation fg.deobf("com.github.gregtech-intergalactical:TesseractAPI:${tesseract_version}") {
+            //transitive = false
+        }
+    }
+
+    //JEI
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+
+    //MIXIN
     annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+
     /** KUBEJS STUFF **/
   //  implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
  //   implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
@@ -160,12 +158,19 @@ dependencies {
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 //publish.dependsOn('reobfJar')
 
+afterEvaluate { project ->
+    project.tasks.publishToMavenLocal {
+        onlyIf {
+            return rootProject.name == "${modid}"
+        }
+    }
+}
+
 publishing {
     publications {
         forge(MavenPublication) {
             //artifactId = archivesBaseName
-            artifact deobfJar
-            artifact sourcesJar
+            artifact jar
         }
     }
     repositories {
@@ -174,6 +179,7 @@ publishing {
         }
     }
 }
+//MIXIN
 apply plugin: 'org.spongepowered.mixin'
 
 mixin {
@@ -183,11 +189,10 @@ mixin {
 jar {
     manifest {
         attributes([
-                // Existing properties here
                 "MixinConfigs": "antimatter.mixins.json",
                 "Specification-Title": "Antimatter",
                 "Specification-Vendor": "AntimatterTeam",
-                "Specification-Version": "1", // We are version 1 of ourselves
+                "Specification-Version": "1",
                 "Implementation-Title": project.name,
                 "Implementation-Version": "0.0.1",
                 "Implementation-Vendor" :"AntimatterTeam",
@@ -196,12 +201,6 @@ jar {
     }
 }
 
-
-/*jar {
+jar {
     zip64 true
-}*/
-
-artifacts {
-    archives sourcesJar
-    archives deobfJar
 }

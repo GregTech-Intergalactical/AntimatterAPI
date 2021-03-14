@@ -198,19 +198,19 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                 final ITag.INamedTag<Item> rodTag = getForgeItemTag("rods/" + handleId);
 
                 addStackRecipe(consumer, Ref.ID, PICKAXE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_pickaxes",
-                        "has_material_" + main.getId(), ingotTrigger, PICKAXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "III", " R ", " R ");
+                        "has_material_" + main.getId(), ingotTrigger, PICKAXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag, 'P', plateTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PII", "FRH", " R ");
 
                 addStackRecipe(consumer, Ref.ID, AXE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_axes",
-                        "has_material_" + main.getId(), ingotTrigger, AXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", "IR ", " R ");
+                        "has_material_" + main.getId(), ingotTrigger, AXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag, 'P', plateTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), "IIH", "PR ", "FR ");
 
                 addStackRecipe(consumer, Ref.ID, HOE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_hoes",
-                        "has_material_" + main.getId(), ingotTrigger, HOE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", " R ", " R ");
+                        "has_material_" + main.getId(), ingotTrigger, HOE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag, 'P', plateTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PIH", "FR ", " R ");
 
                 addStackRecipe(consumer, Ref.ID, SHOVEL.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_shovels",
-                        "has_material_" + main.getId(), ingotTrigger, SHOVEL.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "I", "R", "R");
+                        "has_material_" + main.getId(), ingotTrigger, SHOVEL.getToolStack(main, handle), of('R', rodTag, 'P', plateTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FPH", " R ", " R ");
 
                 addStackRecipe(consumer, Ref.ID, SWORD.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_swords",
-                        "has_material_" + main.getId(), ingotTrigger, SWORD.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "I", "I", "R");
+                        "has_material_" + main.getId(), ingotTrigger, SWORD.getToolStack(main, handle), of('R', rodTag, 'P', plateTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), " P ", "FPH", " R ");
 
                 addStackRecipe(consumer, Ref.ID, HAMMER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_hammers",
                         "has_material_" + main.getId(), ingotTrigger, HAMMER.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag), "II ", "IIR", "II ");
@@ -228,10 +228,17 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                         "has_material_" + main.getId(), rodTrigger, SCREWDRIVER.getToolStack(main, handle),
                         of('M', mainRodTag, 'R', rodTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), " FM", " MH", "R  ");
 
-                addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
-                        "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
-                        b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
-                                .put('S', SCREWDRIVER.getTag()).put('W', getForgeItemTag("screws/" + main.getId())), "PFP", "HPS", "RWR");
+                if (main.has(SCREW)){
+                    addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
+                            "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
+                            b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                                    .put('S', SCREWDRIVER.getTag()).put('W', getForgeItemTag("screws/" + main.getId())), "PFP", "HPS", "RWR");
+                } else {
+                    addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
+                            "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
+                            b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                                    .put('S', SCREWDRIVER.getTag()), "PFP", "HPS", "R R");
+                }
             }
         });
     }

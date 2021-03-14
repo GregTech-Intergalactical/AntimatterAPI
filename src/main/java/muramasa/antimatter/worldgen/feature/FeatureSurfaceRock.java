@@ -13,7 +13,9 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
@@ -35,9 +37,7 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void init() {
-        for (Biome biome : ForgeRegistries.BIOMES) {
-          //  biome.addFeature(GenerationStage.Decoration.TOP_LAYER_MODIFICATION, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
-        }
+
     }
 
     @Override
@@ -59,5 +59,10 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
             WorldGenHelper.setState(world, r.getA(), rockState);
         }
         return true;
+    }
+
+    @Override
+    public void build(BiomeGenerationSettingsBuilder event) {
+        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, this.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
     }
 }

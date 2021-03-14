@@ -1097,6 +1097,21 @@ public class Utils {
         return StringUtils.capitalize(id);
     }
 
+    public static String getLocalizeStoneType(StoneType type) {
+        if (type.getId().contains("stone_")) return getLocalizedType(new IAntimatterObject() {
+            @Override
+            public String getId() {
+                return type.getId().replace("stone_", "");
+            }
+
+            @Override
+            public String getDomain() {
+                return type.getDomain();
+            }
+        });
+        return getLocalizedType(type);
+    }
+
     @Nullable
     public static AntimatterToolType getToolType(PlayerEntity player) {
         ItemStack stack = player.getHeldItemMainhand();

@@ -1,3 +1,6 @@
-include 'tesseract'
-
-project(':tesseract').setProjectDir(new File("tesseract"))
+rootProject.name = "${modid}"
+def tesseract = new File( 'TesseractAPI')
+if (tesseract.exists()) {
+    include 'TesseractAPI'
+    project(':TesseractAPI').setProjectDir(new File("TesseractAPI"))
+}
