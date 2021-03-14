@@ -134,7 +134,7 @@ dependencies {
         implementation project(':tesseract')
     } else {
         implementation fg.deobf("com.github.gregtech-intergalactical:TesseractAPI:${tesseract_version}") {
-            transitive = false
+            //transitive = false
         }
     }
 
