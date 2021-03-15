@@ -122,9 +122,11 @@ public abstract class AntimatterIngredient extends Ingredient {
     public static LazyValue<AntimatterIngredient> fromItem(int count, IItemProvider provider, Consumer<AntimatterIngredient> builder) {
         return fromStack(new LazyValue<>(() -> new ItemStack(provider, count)), builder);
     }
+    @SafeVarargs
     public static LazyValue<AntimatterIngredient> fromStacks(int count, LazyValue<ItemStack>... stacks) {
         return fromStacks(count, a -> {}, stacks);
     }
+    @SafeVarargs
     public static LazyValue<AntimatterIngredient> fromStacks(int count, Consumer<AntimatterIngredient> builder, LazyValue<ItemStack>... stacks) {
         if (stacks == null || stacks.length == 0) throw new RuntimeException("Invalid input to AntimatterIngredient fromStacks");
         return new LazyValue<>(() -> {
@@ -160,9 +162,13 @@ public abstract class AntimatterIngredient extends Ingredient {
     public static LazyValue<AntimatterIngredient> of(LazyValue<ItemStack> item) {
         return fromStack(item);
     }
-
+    @SafeVarargs
     public static LazyValue<AntimatterIngredient> of(int count, LazyValue<ItemStack>... stacks) {
         return fromStacks(count, stacks);
+    }
+    @SuppressWarnings("unchecked")
+    public static LazyValue<AntimatterIngredient> of(int count, ItemStack... stacks) {
+        return fromStacks(count, Arrays.stream(stacks).map(t -> new LazyValue<>(() -> t)).toArray(LazyValue[]::new));
     }
 
     @Override
