@@ -15,7 +15,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
     protected String id;
     protected int unitValue, layers;
-    protected boolean generating = true, blockType, visible;
+    protected boolean generating = true, blockType, visible, splitName;
     protected Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
     protected Map<MaterialType<?>, ITag.INamedTag<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
@@ -27,6 +27,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         this.unitValue = unitValue;
         this.layers = layers;
         this.tagMap.put(this, Utils.getForgeItemTag(Utils.getConventionalMaterialType(this)));
+        splitName = true;
         register(MaterialType.class, getId());
     }
 
@@ -38,6 +39,11 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     public MaterialType<T> blockType() {
         blockType = true;
         this.tagMap.put(this, Utils.getForgeBlockTag(Utils.getConventionalMaterialType(this)));
+        return this;
+    }
+
+    public MaterialType<T> unSplitName(){
+        splitName = false;
         return this;
     }
 
@@ -78,6 +84,10 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
     public boolean allowGen(Material material) {
         return generating && materials.contains(material);
+    }
+
+    public boolean isSplitName() {
+        return splitName;
     }
 
     @Override

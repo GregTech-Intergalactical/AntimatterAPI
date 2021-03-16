@@ -149,8 +149,10 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             else if (type == CRUSHED_CENTRIFUGED) add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
             else {
                 String[] split = getLocalizedMaterialType(type);
-                if (split.length > 1) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
-                else add(item, String.join("",  getLocalizedType(item.getMaterial())," ", split[0]));
+                if (split.length > 1) {
+                    if (type.isSplitName()) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
+                    else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[1], " ", split[0]));
+                } else add(item, String.join("",  getLocalizedType(item.getMaterial())," ", split[0]));
             }
         });
 
