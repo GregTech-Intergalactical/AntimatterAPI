@@ -987,7 +987,7 @@ public class Utils {
     public static String getConventionalMaterialType(MaterialType<?> type) {
         String id = type.getId();
         int index = id.indexOf("_");
-        if (index != -1) {
+        if (index != -1 && type.isSplitName()) {
             id = String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
             if (id.contains("crushed")) id = StringUtils.replace(id, "crushed", "crushed_ore");
             return id;
