@@ -8,11 +8,11 @@
     "DynamicPackMixin"
   ],
   "server": [
-    "ServerBlockUpdateMixin",
     "ServerDynamicPackMixin"
   ],
   "mixins": [
-    "RecipeManagerMixin"
+    "RecipeManagerMixin",
+    "ServerBlockUpdateMixin"
   ],
   "minVersion": "0.8"
 }

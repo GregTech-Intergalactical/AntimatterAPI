@@ -14,7 +14,6 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.*;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;

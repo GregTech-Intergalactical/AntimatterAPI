@@ -27,6 +27,7 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -37,10 +38,14 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -268,17 +273,29 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public IModelData getModelData() {
         ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType());
-        builder.withInitial(AntimatterProperties.MACHINE_TEXTURE,getMachineType().getBaseTexture(getMachineTier()))
-                .withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
+        builder.withInitial(AntimatterProperties.MACHINE_TEXTURE,a -> {
+            Texture[] tex = getMachineType().getBaseTexture(getMachineTier());
+            if (tex.length == 1) return tex[0];
+            return tex[a.getIndex()];
+        }).withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
 
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
         BlockPos cPos = StructureCache.get(this.getWorld(), pos);
         if (cPos != null) {
             TileEntityMultiMachine mTile = (TileEntityMultiMachine) world.getTileEntity(cPos);
-            builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,mTile.getMachineType().getBaseTexture(mTile.getMachineTier()));
+            builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,a -> {
+                Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
+                if (tex.length == 1) return tex[0];
+                return tex[a.getIndex()];
+            });
         }
 
         return builder.build();
+    }
+
+    public ActionResultType onInteract(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit, @Nullable AntimatterToolType type) {
+        //DEFAULT
+        return ActionResultType.PASS;
     }
 
     @Nonnull

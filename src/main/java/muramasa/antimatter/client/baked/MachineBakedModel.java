@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 public class MachineBakedModel extends CoveredBakedModel {
 
@@ -30,8 +31,9 @@ public class MachineBakedModel extends CoveredBakedModel {
     public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads,BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         BlockMachine bm = (BlockMachine) state.getBlock();
         if (data.hasProperty(AntimatterProperties.MACHINE_TEXTURE)) {
-            Texture tex = data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE);
-            if (tex != null) {
+            Function<Direction, Texture> fn = data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE);
+            if (fn != null) {
+                Texture tex = fn.apply(side);
                 TileEntityMachine t = data.getData(AntimatterProperties.MACHINE_TILE);
                 MachineCoverHandler<TileEntityMachine> covers = t.coverHandler.orElse(null);
                 CoverStack<TileEntityMachine> c = covers == null ? null : covers.get(side);

@@ -118,9 +118,11 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         if (!world.isRemote) {
             TileEntityMachine tile = (TileEntityMachine)world.getTileEntity(pos);
             if (tile != null) {
-                AntimatterCaps.getCustomEnergyHandler(tile).ifPresent(e -> System.out.println(e.getEnergy()));
                 ItemStack stack = player.getHeldItem(hand);
                 AntimatterToolType type = Utils.getToolType(player);
+                ty = tile.onInteract(state,world,pos,player,hand,hit, type);
+                if (ty.isSuccessOrConsume()) return ty;
+                AntimatterCaps.getCustomEnergyHandler(tile).ifPresent(e -> System.out.println(e.getEnergy()));
                 if (hand == Hand.MAIN_HAND) {
                     if (player.getHeldItem(hand).getItem() instanceof ItemCover) {
                         boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,hit.getFace()).map(i -> i.placeCover(player,hit.getFace(),stack,((ItemCover) stack.getItem()).getCover())).orElse(false);
@@ -296,7 +298,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier));
+        ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier)[0]);
         Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE);
         for (int s = 0; s < 6; s++) {
             b.texture("overlay" + Ref.DIRS[s].getString(), overlays[s]);
@@ -309,7 +311,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         buildModelsForState(builder, MachineState.IDLE);
         buildModelsForState(builder, MachineState.ACTIVE);
         builder.loader(AntimatterModelManager.LOADER_MACHINE);
-        builder.property("particle", getType().getBaseTexture(tier).toString());
+        builder.property("particle", getType().getBaseTexture(tier)[0].toString());
         prov.state(block, builder);
     }
 
@@ -317,7 +319,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         Texture[] overlays = type.getOverlayTextures(state);
         for (Direction f : Arrays.asList(NORTH, WEST, SOUTH, EAST)) {
             for (Direction o : Ref.DIRS) {
-                builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier), "overlay", overlays[o.getIndex()])).rot(f)));
+                builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.getIndex()])).rot(f)));
             }
         }
     }

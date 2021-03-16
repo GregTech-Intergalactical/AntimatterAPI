@@ -164,6 +164,10 @@ public abstract class AntimatterIngredient extends Ingredient {
     public static LazyValue<AntimatterIngredient> of(int count, LazyValue<ItemStack>... stacks) {
         return fromStacks(count, stacks);
     }
+    //In case it is safe.
+    public static LazyValue<AntimatterIngredient> of(int count, ItemStack... stacks) {
+        return fromStacks(count, Arrays.stream(stacks).map(t -> new LazyValue<>(() -> t)).toArray(LazyValue[]::new));
+    }
 
     @Override
     public String toString() {
