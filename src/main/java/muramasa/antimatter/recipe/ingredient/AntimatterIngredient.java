@@ -84,7 +84,7 @@ public abstract class AntimatterIngredient extends Ingredient {
         boolean nbt = item.hasTag();
         long tempHash = 1;
 
-        tempHash = 31 * tempHash + item.getItem().getRegistryName().toString().hashCode();
+        tempHash = 31 * tempHash + item.getItem().getRegistryName().hashCode();
         if (nbt && item.getTag() != null) {
             CompoundNBT newNbt = filterTags(item.getTag());
             if (!newNbt.isEmpty()) tempHash = 31 * tempHash + newNbt.hashCode();

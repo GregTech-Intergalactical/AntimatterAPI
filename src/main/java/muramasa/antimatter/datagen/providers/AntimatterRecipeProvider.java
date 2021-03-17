@@ -11,6 +11,7 @@ import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
@@ -45,7 +46,7 @@ import static muramasa.antimatter.util.Utils.*;
 //Only extending RecipeProvider for static purposes.
 public class AntimatterRecipeProvider extends RecipeProvider implements IAntimatterProvider {
 
-    private final String providerDomain, providerName;
+    protected final String providerDomain, providerName;
     protected final List<ICraftingLoader> craftingLoaders = new ObjectArrayList<>();
     private static final Map<String, AntimatterRecipeProvider> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
@@ -86,32 +87,14 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
     private static Map<IRecipeType<?>, Map<ResourceLocation, IRecipe>> CACHE = new Object2ObjectOpenHashMap<>();
 
-    public static void runRecipes() {
+    public static void runRecipes(Consumer<IRecipe<?>> rec) {
         Set<ResourceLocation> set = Sets.newHashSet();
-        //Iterate all providers.
-        PROVIDERS.forEach((id,t) -> t.registerRecipes(recipe -> {
-           // ResourceLocation loc = ForgeRegistries.RECIPE_SERIALIZERS.getKey(recipe.getSerializer());
-            if (set.add(recipe.getID())) {
-                //recipe.getID();
-                IRecipe<?> r = recipe.getSerializer().read(recipe.getID(), recipe.getRecipeJson());
-                MAP.compute(r.getType(),(k,v) -> {
-                    if (v == null) v = new Object2ObjectOpenHashMap<>();
-                    v.put(recipe.getID(), r);
-                    return v;
-                });
-                //DynamicResourcePack.addRecipe(recipe);
-                ///AntimatterJEIPlugin.getRuntime().getRecipeManager().addRecipe(recipe, loc);
+        PROVIDERS.forEach((id,t) -> t.registerRecipes(c -> {
+            if (set.add(c.getID())) {
+                IRecipe<?> r = c.getSerializer().read(c.getID(), c.getRecipeJson());
+                rec.accept(r);
             }
         }));
-    }
-
-    public static Map<ResourceLocation, IRecipe> handleGetRecipe(IRecipeType recipeTypeIn, Map<ResourceLocation, IRecipe> cir) {
-        return CACHE.computeIfAbsent(recipeTypeIn, b -> {
-            Map<ResourceLocation, IRecipe> stored = MAP.get(recipeTypeIn);
-            if (stored == null || stored.size() == 0) return cir;
-            stored.putAll(cir);
-            return stored;
-        });
     }
 
     @Override

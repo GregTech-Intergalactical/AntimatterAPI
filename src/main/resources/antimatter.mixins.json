@@ -12,7 +12,8 @@
   ],
   "mixins": [
     "RecipeManagerMixin",
-    "ServerBlockUpdateMixin"
+    "ServerBlockUpdateMixin",
+    "TagUpdateMixin"
   ],
   "minVersion": "0.8"
 }

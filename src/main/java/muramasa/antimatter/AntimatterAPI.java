@@ -280,7 +280,7 @@ public final class AntimatterAPI {
     }
 
     public static IRecipeRegistrate getRecipeRegistrate() {
-        return RECIPE_LOADER;
+        return RECIPE_LOADER::add;
     }
 
     public static void registerBlockUpdateHandler(IBlockUpdateEvent handler) {
