@@ -62,7 +62,7 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
     }
 
     @Override
-    public void onUpdate(Direction side, Cover cover) {
+    public void onUpdate(Direction side, ICover cover) {
         covers[side.getIndex()] = new CoverStack(cover, this.tile);
     }
 

@@ -5,8 +5,9 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.PipeSize;
@@ -142,8 +143,8 @@ public class TileEntityPipe extends TileEntityTickable {
         sidedSync(true);
     }
 
-    public Cover[] getValidCovers() {
-        return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
+    public ICover[] getValidCovers() {
+        return AntimatterAPI.all(ICover.class).toArray(new ICover[0]);
     }
 
     public CoverStack<?>[] getAllCovers() {

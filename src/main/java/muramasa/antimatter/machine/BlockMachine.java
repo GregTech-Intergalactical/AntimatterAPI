@@ -7,6 +7,7 @@ import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -124,8 +125,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 if (ty.isSuccessOrConsume()) return ty;
                 AntimatterCaps.getCustomEnergyHandler(tile).ifPresent(e -> System.out.println(e.getEnergy()));
                 if (hand == Hand.MAIN_HAND) {
-                    if (player.getHeldItem(hand).getItem() instanceof ItemCover) {
-                        boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,hit.getFace()).map(i -> i.placeCover(player,hit.getFace(),stack,((ItemCover) stack.getItem()).getCover())).orElse(false);
+                    if (player.getHeldItem(hand).getItem() instanceof IHaveCover) {
+                        boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,hit.getFace()).map(i -> i.placeCover(player,hit.getFace(),stack,((IHaveCover) stack.getItem()).getCover())).orElse(false);
                         if (ok) {
                             return ActionResultType.SUCCESS;
                         }
@@ -143,11 +144,15 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")), player.getUniqueID());
                         return ActionResultType.SUCCESS;
                     } else if (type == CROWBAR) {
-                        return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, hit.getFace())).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, hit.getFace(), true)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                     } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
                         CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(COVER_EMPTY);
-                        return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
-                    }
+                        if (!player.isCrouching()) {
+                            return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        } else {
+                            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        }
+                     }
                     //Has gui?
                     if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true).success).orElse(false)) {
                         return ActionResultType.SUCCESS;
@@ -157,7 +162,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                             extra.writeBlockPos(pos);
                             tile.coverHandler.ifPresent(ch -> {
                                 CoverStack<?> cover = ch.get(ch.getOutputFacing());
-                                if (cover.getCover().isEqual(COVEROUTPUT)) {
+                                if (cover != null && cover.getCover().isEqual(COVEROUTPUT)) {
                                     CoverOutput cov = (CoverOutput) cover.getCover();
                                     extra.writeBoolean(cov.shouldOutputFluids(cover));
                                     extra.writeBoolean(cov.shouldOutputItems(cover));
@@ -227,11 +232,13 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.isIn(newState.getBlock())) {
-            if (worldIn.isRemote) return;
-            TileEntity tile = worldIn.getTileEntity(pos);
-            if (tile == null) return;
-            TileEntityMachine machine = (TileEntityMachine) tile;
-            machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, machine.getPos().getX(), machine.getPos().getY(), machine.getPos().getZ(), stack)));
+            if (!worldIn.isRemote) {
+                TileEntity tile = worldIn.getTileEntity(pos);
+                if (tile == null) return;
+                TileEntityMachine machine = (TileEntityMachine) tile;
+                machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, machine.getPos().getX(), machine.getPos().getY(), machine.getPos().getZ(), stack)));
+                machine.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, machine.getPos().getX(), machine.getPos().getY(), machine.getPos().getZ(), stack)));
+            }
         }
         super.onReplaced(state, worldIn, pos, newState, isMoving);
     }

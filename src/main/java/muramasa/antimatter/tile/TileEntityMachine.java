@@ -11,8 +11,9 @@ import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.IGuiEvent;
@@ -45,6 +46,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -138,6 +140,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
         this.recipeHandler.ifPresent(MachineRecipeHandler::onServerUpdate);
+
+        double d = Ref.RNG.nextDouble();
+        if (d > 0.96D && this.world.isRainingAt(new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ()))) {
+            if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false))
+                Utils.createExplosion(this.world, pos, 6.0F, Explosion.Mode.DESTROY);
+        }
     }
 
     @Override
@@ -261,8 +269,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         }
     }
 
-    public Cover[] getValidCovers() { //TODO fix me
-        return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
+    public ICover[] getValidCovers() { //TODO fix me
+        return AntimatterAPI.all(ICover.class).toArray(new ICover[0]);
     }
 
     public CoverStack<?> getCover(Direction side) {
@@ -313,6 +321,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        if (coverHandler.map(t -> t.blocksCapability(cap, side)).orElse(false)) return super.getCapability(cap, side);
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return side == null ? itemHandler.map(MachineItemHandler::getOutputHandler).transform().cast() : itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.transform().cast();
         else if (cap == ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.transform().cast();

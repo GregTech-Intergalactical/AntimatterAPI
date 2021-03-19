@@ -3,19 +3,24 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IRefreshableCover;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVERNONE;
 
@@ -43,7 +48,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
         if (dir == null) return false;
         //get this machines output cover type.
         //We cannot call onPlace etc since it stores tile related data, but still need to refresh network.
-        Cover cover = getTile().getMachineType().getOutputCover();
+        ICover cover = getTile().getMachineType().getOutputCover();
         if (side == dir) return true;
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
         if (!get(side).isEmpty()) return false;
@@ -63,7 +68,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
     }
 
     @Override
-    public boolean set(Direction side, @Nonnull Cover newCover) {
+    public boolean set(Direction side, @Nonnull ICover newCover) {
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
 
         boolean ok = super.set(side, newCover);
@@ -84,10 +89,10 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
     }
 
     @Override
-    public boolean isValid(@Nonnull Direction side, @Nonnull Cover replacement) {
+    public boolean isValid(@Nonnull Direction side, @Nonnull ICover replacement) {
         if (!validCovers.contains(replacement.getId())) return false;
         if (side == getOutputFacing()) return false;
-        return (get(side).isEmpty() && !replacement.isEmpty()) || super.isValid(side, replacement);
+        return (get(side).isEmpty() && !(replacement == COVERNONE)) || super.isValid(side, replacement);
     }
 
     @Override
@@ -95,4 +100,23 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
         return getTile().getFacing();
     }
 
+    /**
+     * Returns a list of item stacks to be dropped upon machine removal.
+     * @return list.
+     */
+    public List<ItemStack> getDrops() {
+        return this.covers.values().stream().filter(t -> !t.getCover().getDroppedStack().isEmpty()).map(t ->
+            t.getCover().getDroppedStack()).collect(Collectors.toList());
+    }
+
+    /**
+     * Checks whether a cover would block capability on this side.
+     * @param side side to check
+     * @return a boolean whether or not capability was blocked.
+     */
+    public <T> boolean blocksCapability(Capability<T> capability,Direction side) {
+        CoverStack<?> stack = get(side);
+        if (stack.isEmpty()) return false;
+        return stack.getCover().blocksCapability(stack, capability, side);
+    }
 }

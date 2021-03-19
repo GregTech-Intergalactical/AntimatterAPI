@@ -7,7 +7,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.BaseCover;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
@@ -56,7 +57,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
-    protected Cover[] DEFAULT_COVERS = new Cover[]{COVERNONE,COVERNONE,COVERNONE,COVEROUTPUT,COVERNONE,COVERNONE};
+    protected ICover[] DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,COVEROUTPUT,COVERNONE,COVERNONE};
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -79,7 +80,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /** Behaviours **/
     protected boolean allowFrontCovers = false;
-    protected Cover outputCover = COVEROUTPUT;
+    protected ICover outputCover = COVEROUTPUT;
     //TODO get valid covers
 
     public Machine(String domain, String id, Object... data) {
@@ -99,11 +100,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public void setOutputCover(Cover cover) {
+    public void setOutputCover(ICover cover) {
         this.outputCover = cover;
     }
 
-    public Cover getOutputCover() {
+    public ICover getOutputCover() {
         return outputCover;
     }
 
@@ -111,16 +112,27 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return allowFrontCovers;
     }
 
-    public T covers(Cover... covers) {
+    /**
+     * Allows you to configure default covers.
+     * @param covers if null, set n
+     * @return
+     */
+    public T covers(ICover... covers) {
+        if (covers == null) {
+            setOutputCover(COVERNONE);
+            this.DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,COVERNONE,COVERNONE,COVERNONE};
+            return (T) this;
+        }
         if (covers.length == 1) {
-            this.DEFAULT_COVERS = new Cover[]{covers[0],covers[0],covers[0],covers[0],covers[0],covers[0]};
+            setOutputCover(covers[0]);
+            this.DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,covers[0],COVERNONE,COVERNONE};
         } else {
             this.DEFAULT_COVERS = covers;
         }
         return (T) this;
     }
 
-    public Cover defaultCover(Direction dir) {
+    public ICover defaultCover(Direction dir) {
         return DEFAULT_COVERS[dir.getIndex()];
     }
 
@@ -163,9 +175,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             if (o instanceof IOverlayTexturer) overlayTextures = (IOverlayTexturer) o;
             if (o instanceof ITextureHandler) baseTexture = (ITextureHandler) o;
             if (o instanceof ItemGroup) group = (ItemGroup) o;
-            if (o instanceof Cover) {
-                covers(COVERNONE,COVERNONE,((Cover)o),COVERNONE,COVERNONE,COVERNONE);
-                setOutputCover((Cover) o);
+            if (o instanceof ICover) {
+                covers(COVERNONE,COVERNONE,((ICover)o),COVERNONE,COVERNONE,COVERNONE);
+                setOutputCover((ICover) o);
             }
             //if (data[i] instanceof ITextureHandler) baseData = ((ITextureHandler) data[i]);
         }

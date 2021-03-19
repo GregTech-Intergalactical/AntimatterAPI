@@ -40,7 +40,7 @@ public class MultiMachine extends Machine<MultiMachine> {
     protected static Object[] getData(String domain, Object[] data) {
         ArrayList<Object> arrayList = new ArrayList<>(Arrays.asList(data));
         //Register a multi texture handler.
-        arrayList.add((ITextureHandler) (type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + type.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
+        arrayList.add((ITextureHandler) (type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
         return arrayList.toArray(new Object[0]);
     }
 

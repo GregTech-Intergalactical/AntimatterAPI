@@ -145,9 +145,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
                         Antimatter.LOGGER.error("machine " + tuple.machine + " has an empty item. Did you do the machine correctly?");
                     }
                 });
-            } else {
-                Antimatter.LOGGER.error("machine " + tuple.machine + " does not exist");
-            }
+            } //else {
+          //      Antimatter.LOGGER.error("machine " + tuple.machine + " does not exist");
+         //   }
         });
     }
 }

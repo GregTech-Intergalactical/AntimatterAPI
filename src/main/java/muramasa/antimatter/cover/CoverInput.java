@@ -7,7 +7,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.api.IRefreshable;
 
 //Behaves like CoverOutput in terms of refresh but no event handler.
-public class CoverInput extends Cover implements IRefreshableCover{
+public class CoverInput extends BaseCover implements IRefreshableCover{
 
     public CoverInput() {
         register();
@@ -19,19 +19,13 @@ public class CoverInput extends Cover implements IRefreshableCover{
 
     @Override
     public ResourceLocation getModel(Direction dir, Direction facing) {
-        return getBasicModel();
+        return getBasicDepthModel();
     }
 
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
         refresh(instance);
-    }
-
-    @Override
-    public void onRemove(CoverStack<?> instance, Direction side) {
-        super.onRemove(instance,side);
-   //     refresh(instance);
     }
 
     public void refresh(CoverStack<?> instance) {

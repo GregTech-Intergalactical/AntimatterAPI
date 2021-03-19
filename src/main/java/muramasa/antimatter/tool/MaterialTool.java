@@ -39,8 +39,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
-import static muramasa.antimatter.Data.WRENCH;
+import static muramasa.antimatter.Data.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -109,7 +108,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, PlayerEntity player) {
         AntimatterToolType type = Utils.getToolType(player);
-        return (type == WRENCH || type == ELECTRIC_WRENCH) && (world.getBlockState(pos).getBlock() instanceof BlockDynamic);
+        return (type == WRENCH || type == ELECTRIC_WRENCH || type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && (world.getBlockState(pos).getBlock() instanceof BlockDynamic);
     }
 
     /*

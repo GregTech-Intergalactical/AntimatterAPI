@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -132,5 +133,23 @@ public class RenderHelper {
         int r = (rgb >> 16) & 0xFF;
         int b = rgb & 0xFF;
         return (rgb & 0xFF00FF00) | (b << 16) | r;
+    }
+
+    /**
+     * Colors a quad, defaults to using vertex format block.
+     */
+    public static void colorQuad(BakedQuad quad, int rgb) {
+        colorQuad(quad, DefaultVertexFormats.BLOCK.getIntegerSize(), DefaultVertexFormats.BLOCK.getOffset(1)/4, rgb);
+    }
+
+    public static void colorQuad(BakedQuad quad, int size, int offset, int rgb) {
+        int[] vertices = quad.getVertexData();
+        for (int i = 0; i < 4; i++) {
+            vertices[offset + size * i] = convertRGB2ABGR(rgb);
+        }
+    }
+
+    public static int convertRGB2ABGR(int colour) {
+        return 0xFF << 24 | ((colour & 0xFF) << 16) | ((colour >> 8) & 0xFF) << 8 | (colour >> 16) & 0xFF;
     }
 }

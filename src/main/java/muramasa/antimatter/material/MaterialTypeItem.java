@@ -9,12 +9,26 @@ import net.minecraft.tags.ITag;
 import net.minecraft.util.LazyValue;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
+
+    public interface ItemSupplier {
+        MaterialItem supply(String domain, MaterialType<?> type, Material material);
+    }
+
+    private final ItemSupplier itemSupplier;
 
     public MaterialTypeItem(String id, int layers, boolean visible, int unitValue) {
         super(id, layers, visible, unitValue);
         AntimatterAPI.register(MaterialTypeItem.class, id, this);
+        this.itemSupplier = MaterialItem::new;
+    }
+
+    public MaterialTypeItem(String id, int layers, boolean visible, int unitValue, ItemSupplier itemSupplier) {
+        super(id, layers, visible, unitValue);
+        AntimatterAPI.register(MaterialTypeItem.class, id, this);
+        this.itemSupplier = itemSupplier;
     }
 
     public boolean allowItemGen(Material material) {
@@ -29,6 +43,10 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
             else return AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
         }
         return null;
+    }
+
+    public ItemSupplier getSupplier() {
+        return itemSupplier;
     }
 
 

@@ -5,7 +5,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.BaseCover;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.ITileWrapper;
 import net.minecraft.tileentity.TileEntity;
@@ -31,7 +32,7 @@ public class PipeCache {
         LOOKUP.remove(e.getWorld().getDimensionType());
     }
 
-    public static void update(PipeType<?> type, IWorldReader world, Direction direction, TileEntity target, Cover cover) {
+    public static void update(PipeType<?> type, IWorldReader world, Direction direction, TileEntity target, ICover cover) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world.getDimensionType(), e -> new DimensionEntry());
         entry.update(type, direction, target, cover);
     }
@@ -48,7 +49,7 @@ public class PipeCache {
         public DimensionEntry() {
         }
 
-        public void update(PipeType<?> type, Direction direction, TileEntity target, Cover cover) {
+        public void update(PipeType<?> type, Direction direction, TileEntity target, ICover cover) {
             get(type, target).onUpdate(direction.getOpposite(), cover);
         }
 

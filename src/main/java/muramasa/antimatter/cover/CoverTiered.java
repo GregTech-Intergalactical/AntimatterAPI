@@ -6,7 +6,7 @@ import muramasa.antimatter.machine.Tier;
 import java.util.Arrays;
 
 //A cover that is tiered, e.g. a Conveyor or Pump.
-public abstract class CoverTiered extends Cover {
+public abstract class CoverTiered extends BaseCover {
 
     protected Tier tier;
 
@@ -18,12 +18,13 @@ public abstract class CoverTiered extends Cover {
     protected void register() {
         Arrays.stream(Tier.getStandard()).forEach(t -> {
             CoverTiered tier = getTiered(t);
-            AntimatterAPI.register(Cover.class, tier.getId(), tier);
+            AntimatterAPI.register(ICover.class, tier.getId(), tier);
             AntimatterAPI.register(getClass(), tier.getId(), tier);
         });
     }
 
     protected CoverTiered(Tier tier) {
+        super();
         this.tier = tier;
     }
 
