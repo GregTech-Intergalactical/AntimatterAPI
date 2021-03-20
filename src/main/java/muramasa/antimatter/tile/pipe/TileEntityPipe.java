@@ -12,6 +12,7 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
@@ -26,7 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class TileEntityPipe extends TileEntityTickable {
+public class TileEntityPipe extends TileEntityBase {
 
     /** Pipe Data **/
     protected PipeType<?> type;
@@ -35,8 +36,8 @@ public class TileEntityPipe extends TileEntityTickable {
     /** Capabilities **/
     public final LazyOptional<PipeCoverHandler<?>> coverHandler;
 
-    /** Tesseract **/
-    private Direction direction; // when cap not initialized yet, it will help to store preset direction
+    ///** Tesseract **/
+    //private Direction direction; // when cap not initialized yet, it will help to store preset direction
 
     /** Connection data **/
     private byte connection, interaction;
@@ -47,19 +48,9 @@ public class TileEntityPipe extends TileEntityTickable {
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
     }
 
+    //TODO: what does this do
     @Override
-    public void onFirstTick() {
-        // Work when direction was set before handler initialization
-        // setConnection() might be called from the BlockPipe when tick not called yet.
-        if (direction != null) {
-            setConnection(direction);
-            direction = null;
-        }
-        handleFirstTick();
-    }
-
-    public void handleFirstTick() {
-        super.onLoad();
+    public void onLoad() {
         CoverStack<?>[] covers = this.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRS) {
@@ -184,37 +175,11 @@ public class TileEntityPipe extends TileEntityTickable {
         return tag;
     }
 
-    /*
-    @Override
-    public CompoundNBT getCapabilityTag(String cap) {
-        if (coverHandler.equals(cap)) return coverHandler.getOrCreateTag(Ref.KEY_PIPE_TILE_COVER);
-        else if (interactHandler.equals(cap)) return interactHandler.getOrCreateTag(Ref.KEY_PIPE_TILE_CONFIG);
-        return new CompoundNBT();
-    }
-
-    @Override
-    public void read(CompoundNBT tag) {
-        super.read(tag);
-        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_PIPE_TILE_COVER));
-        if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.read(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG));
-    }
-
-    @Nonnull
-    @Override
-    public CompoundNBT write(CompoundNBT tag) {
-        super.write(tag); //TODO get tile data tag
-        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serialize()));
-        interactHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_CONFIG, h.serialize()));
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT tag = super.getUpdateTag();
+        this.write(tag);
         return tag;
     }
-
-    @Override
-    public void update(CompoundNBT tag) {
-        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
-        if (tag.contains(Ref.KEY_PIPE_TILE_CONFIG)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_PIPE_TILE_CONFIG)));
-        refreshConnection();
-    }
-     */
 
     @Override
     public List<String> getInfo() {

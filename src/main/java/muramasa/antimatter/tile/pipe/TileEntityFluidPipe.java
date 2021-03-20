@@ -12,10 +12,16 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
         super(type);
     }
 
-    @Override
+   /* @Override
     public void onFirstTick() {
         super.onFirstTick();
         if (isServerSide()) Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
+    }*/
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (isServerSide()) Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this);
     }
 
     @Override

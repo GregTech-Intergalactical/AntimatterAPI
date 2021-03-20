@@ -4,6 +4,7 @@ import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.LazyHolder;
@@ -14,6 +15,7 @@ import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
 public class TileEntityGenerator extends TileEntityMachine {
+
     public TileEntityGenerator(Machine<?> type) {
         super(type);
 
@@ -36,4 +38,8 @@ public class TileEntityGenerator extends TileEntityMachine {
             }
         });
     };
+    @Override
+    public Tier getPowerLevel() {
+        return Tier.getMax();
+    }
 }

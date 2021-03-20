@@ -180,7 +180,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
             for (int i = 0; i < chargeables.getSlots(); i++) {
                 ItemStack item = chargeables.getStackInSlot(i);
                 if (!item.isEmpty()) {
-                    AntimatterCaps.getCustomEnergyHandler(item).ifPresent(list::add);
+                    item.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(list::add);
                 }
             }
         }
@@ -257,6 +257,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     /** Helpers **/
     public boolean canOutputsFit(ItemStack[] a) {
+        if (a == null) return true;
         IItemHandlerModifiable outputHandler = getOutputHandler();
         boolean[] results = new boolean[a.length];
         for (int i = 0; i < a.length; i++) {

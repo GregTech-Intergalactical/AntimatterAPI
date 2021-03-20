@@ -72,11 +72,12 @@ public abstract class TileEntityBase extends TileEntity {
         sidedSync(true);
     }
 
-    @Nonnull
+    //TODO: implications of this.
+    /*@Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT tag = super.getUpdateTag();
         this.write(tag);
         return tag;
-    }
+    }*/
 }

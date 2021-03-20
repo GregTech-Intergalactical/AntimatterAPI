@@ -53,6 +53,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -123,7 +124,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 AntimatterToolType type = Utils.getToolType(player);
                 ty = tile.onInteract(state,world,pos,player,hand,hit, type);
                 if (ty.isSuccessOrConsume()) return ty;
-                AntimatterCaps.getCustomEnergyHandler(tile).ifPresent(e -> System.out.println(e.getEnergy()));
                 if (hand == Hand.MAIN_HAND) {
                     if (player.getHeldItem(hand).getItem() instanceof IHaveCover) {
                         boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,hit.getFace()).map(i -> i.placeCover(player,hit.getFace(),stack,((IHaveCover) stack.getItem()).getCover())).orElse(false);
@@ -154,7 +154,13 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         }
                      }
                     //Has gui?
-                    if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true).success).orElse(false)) {
+                    if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> {
+                        FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true);
+                        if (res.isSuccess() && !player.isCreative()) {
+                            player.setHeldItem(hand, res.result);
+                        }
+                        return res.isSuccess();
+                    }).orElse(false)) {
                         return ActionResultType.SUCCESS;
                     }
                     if (getType().has(MachineFlag.GUI) ) {

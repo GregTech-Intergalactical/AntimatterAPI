@@ -11,7 +11,7 @@ import static muramasa.antimatter.machine.MachineFlag.CONFIGURABLE;
 public class GeneratorMachine extends Machine<BasicMachine> {
     public GeneratorMachine(String domain, String id, Object... data) {
         super(domain, id,data);
-        addFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE);
+        addFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE,GENERATOR);
         setTile(() -> new TileEntityGenerator(this));
         setGUI(Data.BASIC_MENU_HANDLER);
         covers(COVERDYNAMO);

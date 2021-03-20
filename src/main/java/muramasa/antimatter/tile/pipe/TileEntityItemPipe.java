@@ -13,8 +13,8 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
     }
 
     @Override
-    public void onFirstTick() {
-        super.onFirstTick();
+    public void onLoad() {
+        super.onLoad();
         if (isServerSide()) Tesseract.ITEM.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
     }
 

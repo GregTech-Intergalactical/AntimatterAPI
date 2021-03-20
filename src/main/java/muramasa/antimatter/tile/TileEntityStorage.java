@@ -21,7 +21,8 @@ public abstract class TileEntityStorage extends TileEntityMachine {
         this.itemHandler = LazyHolder.of(() -> new MachineItemHandler<TileEntityStorage>(this) {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
-                if (event == ContentEvent.ENERGY_SLOT_CHANGED) scheduleAmperageCheck();
+                if (event == ContentEvent.ENERGY_SLOT_CHANGED)
+                    calculateAmperage();
             }
         });
         this.energyHandler = LazyHolder.of(() -> new MachineEnergyHandler<TileEntityStorage>(this, 0L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
@@ -67,10 +68,10 @@ public abstract class TileEntityStorage extends TileEntityMachine {
 
     @Override
     public void onServerUpdate() {
-        if (checkAmps) {
-            calculateAmperage();
-            checkAmps = false;
-        }
+      //  if (checkAmps) {
+      //      calculateAmperage();
+      //      checkAmps = false;
+      //  }
         super.onServerUpdate();
     }
 

@@ -120,6 +120,27 @@ public class Recipe {
         return null;
     }
 
+    /**
+     * Returns a list of items not bound by chances.
+     * @return list of items.
+     */
+    public ItemStack[] getFlatOutputItems() {
+        if (hasOutputItems()) {
+            ItemStack[] outputs = itemsOutput.clone();
+            if (chances != null) {
+                List<ItemStack> evaluated = new ObjectArrayList<>();
+                for (int i = 0; i < outputs.length; i++) {
+                    if (chances[i] < 100) continue;
+                    evaluated.add(outputs[i]);
+                }
+                outputs = evaluated.toArray(new ItemStack[0]);
+            }
+            return outputs;
+        }
+        return null;
+    }
+
+
     @Nullable
     public FluidStack[] getInputFluids() {
         return hasInputFluids() ? fluidsInput.clone() : null;
