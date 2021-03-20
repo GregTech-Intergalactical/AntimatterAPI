@@ -24,7 +24,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -40,6 +43,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
+import net.minecraft.block.IWaterLoggable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,8 +52,9 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WIRE_CUTTER;
 import static muramasa.antimatter.Data.WRENCH;
+import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
+public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider, IWaterLoggable {
 
     protected T type;
     protected PipeSize size;
@@ -63,6 +68,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         this.type = type;
         this.size = size;
         AntimatterAPI.register(BlockPipe.class, getId(), this);
+        setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));
     }
 
     public T getType() {
@@ -386,5 +392,15 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         info.add("Pipe Material: " + getType().getMaterial().getId());
         info.add("Pipe Size: " + getSize().getId());
         return info;
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(WATERLOGGED);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 }
