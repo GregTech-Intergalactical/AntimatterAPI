@@ -11,10 +11,8 @@ import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
-import muramasa.antimatter.integration.jei.renderer.RecipeInfoRenderer;
+import muramasa.antimatter.integration.jei.renderer.InfoRenderers;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.proxy.ClientHandler;
-import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.StackIngredient;
 import muramasa.antimatter.recipe.ingredient.StackListIngredient;
@@ -28,16 +26,11 @@ import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.resources.DataPackRegistries;
-import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.DistExecutor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -164,7 +157,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     private final String id;
     private final B builder;
-    private IRecipeInfoRenderer infoRenderer = RecipeInfoRenderer.INSTANCE;
+    private IRecipeInfoRenderer infoRenderer = InfoRenderers.DEFAULT_RENDERER;
     @Nullable
     private GuiData GUI;
     //Root branch.
@@ -378,6 +371,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             }
             if (r.left().isPresent()) {
                 Utils.onInvalidData("COLLISION DETECTED!");
+                map.NODES.remove(wr);
                 return false;
             }
             //should always be present but this gives no warning.

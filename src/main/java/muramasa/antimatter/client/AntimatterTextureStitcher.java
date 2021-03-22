@@ -2,7 +2,6 @@ package muramasa.antimatter.client;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.ICover;
 import net.minecraft.util.ResourceLocation;

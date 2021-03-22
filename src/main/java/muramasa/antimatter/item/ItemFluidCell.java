@@ -7,6 +7,7 @@ import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.fluid.Fluid;
@@ -24,6 +25,8 @@ import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -31,7 +34,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nullable;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
@@ -88,13 +93,17 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
         if (worldIn == null) return;
         stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(x -> {
             FluidStack fluid = x.getFluidInTank(0);
-            if (!fluid.isEmpty()) tooltip.add(new StringTextComponent(fluid.getDisplayName() + " - " + fluid.getAmount()));
+            if (!fluid.isEmpty()) {
+                TextComponent fluidname = (TextComponent) fluid.getDisplayName();
+                fluidname.appendString(": ").append(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
+                tooltip.add(fluidname);
+            }
             tooltip.add(new StringTextComponent("Max Temp: " + ((ItemFluidCell) stack.getItem()).getMaxTemp() + "K"));
         });
     }
 
     public static ITag.INamedTag<Item> getTag() {
-        return Utils.getItemTag(new ResourceLocation(Ref.ID, "cell"));
+        return TagUtils.getItemTag(new ResourceLocation(Ref.ID, "cell"));
     }
 
     public ItemStack fill(Fluid fluid) {

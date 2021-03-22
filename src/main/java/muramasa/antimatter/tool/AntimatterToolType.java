@@ -10,6 +10,7 @@ import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -84,8 +85,8 @@ public class AntimatterToolType implements IAntimatterObject {
         this.baseAttackSpeed = baseAttackSpeed;
         this.overlayLayers = 1;
         this.itemGroup = Ref.TAB_TOOLS;
-        this.tag = Utils.getItemTag(new ResourceLocation(Ref.ID, id));
-        this.forgeTag = Utils.getForgeItemTag("tools/".concat(id));
+        this.tag = TagUtils.getItemTag(new ResourceLocation(Ref.ID, id));
+        this.forgeTag = TagUtils.getForgeItemTag("tools/".concat(id));
         this.useAction = UseAction.NONE;
         this.toolClass = MaterialTool.class;
         this.TOOL_TYPE = ToolType.get(id);
@@ -181,8 +182,8 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     public AntimatterToolType setTag(ResourceLocation loc) {
-        this.tag = Utils.getItemTag(loc);
-        this.forgeTag = Utils.getForgeItemTag(loc.getNamespace());
+        this.tag = TagUtils.getItemTag(loc);
+        this.forgeTag = TagUtils.getForgeItemTag(loc.getNamespace());
         return this;
     }
 
@@ -364,7 +365,6 @@ public class AntimatterToolType implements IAntimatterObject {
     public ITag.INamedTag<Item> getTag() {
         return tag;
     }
-
     public ITag.INamedTag<Item> getForgeTag() {
         return forgeTag;
     }

@@ -3,7 +3,6 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IRefreshableCover;

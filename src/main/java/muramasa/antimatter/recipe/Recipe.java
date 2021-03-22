@@ -8,9 +8,14 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -19,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Recipe {
+public class Recipe implements IRecipe<IInventory> {
     private final ItemStack[] itemsOutput;
     @Nonnull
     private final List<LazyValue<AntimatterIngredient>> itemsInput;
@@ -33,12 +38,14 @@ public class Recipe {
     private int[] chances;
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
+    public ResourceLocation id;
 
     //For jei, have to put here instead of RecipeMapCategory.
     public final Int2ObjectMap<ResourceLocation> tagsToRender = new Int2ObjectOpenHashMap<>();
     //for stack lists
     public final Int2IntMap infoToRender = new Int2IntOpenHashMap();
 
+    public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter:machine_recipe");
 
     public Recipe(@Nonnull List<LazyValue<AntimatterIngredient>> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = stacksInput;
@@ -225,5 +232,41 @@ public class Recipe {
         }
         builder.append("Special: ").append(special).append("\n");
         return builder.toString();
+    }
+
+    @Override
+    public boolean matches(IInventory inv, World worldIn) {
+        return false;
+    }
+
+    @Override
+    public ItemStack getCraftingResult(IInventory inv) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean canFit(int width, int height) {
+        return false;
+    }
+
+    @Override
+    public ItemStack getRecipeOutput() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public ResourceLocation getId() {
+        return id != null ? id : new ResourceLocation(Ref.ID, "default");
+    }
+
+    @Override
+    public IRecipeSerializer<?> getSerializer() {
+        return null;
+    }
+
+    @Nonnull
+    @Override
+    public IRecipeType<?> getType() {
+        return Recipe.RECIPE_TYPE;
     }
 }

@@ -7,7 +7,6 @@ import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.ScreenSetup;
-import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.gui.container.ContainerCover;

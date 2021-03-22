@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tags.ITag;
 
@@ -26,7 +27,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         this.visible = visible;
         this.unitValue = unitValue;
         this.layers = layers;
-        this.tagMap.put(this, Utils.getForgeItemTag(Utils.getConventionalMaterialType(this)));
+        this.tagMap.put(this, TagUtils.getForgeItemTag(Utils.getConventionalMaterialType(this)));
         register(MaterialType.class, getId());
     }
 
@@ -37,7 +38,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
     public MaterialType<T> blockType() {
         blockType = true;
-        this.tagMap.put(this, Utils.getForgeBlockTag(Utils.getConventionalMaterialType(this)));
+        this.tagMap.put(this, TagUtils.getForgeBlockTag(Utils.getConventionalMaterialType(this)));
         return this;
     }
 

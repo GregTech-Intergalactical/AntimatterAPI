@@ -8,7 +8,7 @@ import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.util.Utils;
+import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.tags.ITag;
@@ -18,6 +18,8 @@ import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static muramasa.antimatter.util.TagUtils.getForgeFluidTag;
 
 public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implements IAntimatterProvider {
 
@@ -38,7 +40,7 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        Utils.getTags(Fluid.class).forEach(t -> addTag("fluids", t.getName(), getOrCreateBuilder(t).getInternalBuilder()));
+        TagUtils.getTags(Fluid.class).forEach(t -> addTag("fluids", t.getName(), getOrCreateBuilder(t).getInternalBuilder()));
         tagToBuilder.forEach((k, v) -> addTag("fluids", k, v));
         b.forEach(tagToBuilder::put);
     }
@@ -61,7 +63,7 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
 
     protected void processTags(String domain) {
         AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f ->
-                getOrCreateBuilder(Utils.getForgeFluidTag(f.getId()))
+                getOrCreateBuilder(getForgeFluidTag(f.getId()))
                         .add(f.getFluid(), f.getFlowingFluid())
                         .replace(replace));
     }

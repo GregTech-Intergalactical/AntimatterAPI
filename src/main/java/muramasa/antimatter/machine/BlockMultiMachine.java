@@ -16,8 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-
 import static muramasa.antimatter.Data.HAMMER;
 
 public class BlockMultiMachine extends BlockMachine {

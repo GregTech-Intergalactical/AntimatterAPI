@@ -1,9 +1,10 @@
 package muramasa.antimatter.recipe;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.*;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.LazyValue;
 
 import java.util.List;

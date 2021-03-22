@@ -8,6 +8,7 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -98,7 +99,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
     }
 
     public ITag.INamedTag<Item> getTag() {
-        return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(type), "/", material.getId()));
+        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(type), "/", material.getId()));
     }
 
     public static boolean hasType(ItemStack stack, MaterialType<?> type) {

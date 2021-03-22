@@ -11,7 +11,6 @@ import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
-import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
@@ -25,6 +24,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
@@ -125,6 +125,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     //Called after a recipe ticks.
     public void onRecipePostTick() {
         //NOOP
+    }
+
+    //Called after a recipe ticks.
+    public boolean onRecipeFound(Recipe r) {
+        return true;
     }
 
     public void ofState(@Nonnull BlockState state) {

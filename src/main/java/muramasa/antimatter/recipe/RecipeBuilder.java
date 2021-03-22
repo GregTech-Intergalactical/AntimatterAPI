@@ -15,15 +15,15 @@ import java.util.Set;
 public class RecipeBuilder {
 
     private RecipeMap recipeMap;
-    private ItemStack[] itemsOutput;
-    private List<LazyValue<AntimatterIngredient>> ingredientInput;
-    private FluidStack[] fluidsInput, fluidsOutput;
-    private int[] chances;
-    private int duration, special;
-    private long power;
-    private int amps;
-    private boolean hidden;
-    private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
+    protected ItemStack[] itemsOutput;
+    protected List<LazyValue<AntimatterIngredient>> ingredientInput;
+    protected FluidStack[] fluidsInput, fluidsOutput;
+    protected int[] chances;
+    protected int duration, special;
+    protected long power;
+    protected int amps;
+    protected boolean hidden;
+    protected Set<RecipeTag> tags = new ObjectOpenHashSet<>();
 
     public Recipe add() {
         Recipe r = build(duration, power, special, amps);

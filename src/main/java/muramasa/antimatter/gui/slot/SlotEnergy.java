@@ -3,7 +3,6 @@ package muramasa.antimatter.gui.slot;
 import muramasa.antimatter.capability.AntimatterCaps;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 

@@ -1,7 +1,6 @@
 package muramasa.antimatter.item;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverTiered;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;

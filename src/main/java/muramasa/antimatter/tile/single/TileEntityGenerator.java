@@ -2,7 +2,6 @@ package muramasa.antimatter.tile.single;
 
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;

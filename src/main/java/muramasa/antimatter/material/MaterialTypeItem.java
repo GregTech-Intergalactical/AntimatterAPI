@@ -2,6 +2,7 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -9,7 +10,6 @@ import net.minecraft.tags.ITag;
 import net.minecraft.util.LazyValue;
 
 import java.util.Arrays;
-import java.util.function.Supplier;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
 
@@ -70,11 +70,11 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public ITag.INamedTag<Item> getMaterialTag(Material m) {
-        return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
     public LazyValue<AntimatterIngredient> getMaterialIngredient(Material m, int count) {
-        return AntimatterIngredient.of(Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId())),count);
+        return AntimatterIngredient.of(getMaterialTag(m),count);
     }
 
     public LazyValue<AntimatterIngredient> getMaterialIngredient(Material m) {

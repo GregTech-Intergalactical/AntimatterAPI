@@ -1,10 +1,12 @@
 package muramasa.antimatter;
 
+import com.google.common.collect.Sets;
+import com.google.gson.JsonElement;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.datagen.providers.dummy.DummyTagProviders;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.gui.GuiData;
@@ -15,25 +17,21 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
-import muramasa.antimatter.recipe.loader.AntimatterRecipeLoader;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.*;
-import muramasa.antimatter.util.Utils;
+import muramasa.antimatter.util.TagUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.LazyValue;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
@@ -50,6 +48,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.STEAM;
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 
 public final class AntimatterAPI {
 
@@ -59,7 +58,6 @@ public final class AntimatterAPI {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
-    private static AntimatterRecipeLoader RECIPE_LOADER = new AntimatterRecipeLoader();
 
 
     private static final Int2ObjectMap<Item> REPLACEMENTS = new Int2ObjectOpenHashMap<>();
@@ -68,7 +66,7 @@ public final class AntimatterAPI {
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
     public static void init() {
-        MinecraftForge.EVENT_BUS.register(RECIPE_LOADER);
+
     }
 
     /** Internal Registry Section **/
@@ -202,9 +200,23 @@ public final class AntimatterAPI {
         all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event, side));
         if (CALLBACKS.containsKey(event)) CALLBACKS.get(event).forEach(Runnable::run);
         if (event == RegistrationEvent.DATA_READY) {
-            AntimatterAPI.RECIPE_LOADER.loadRecipes();
-            AntimatterAPI.runDataProvidersDynamically();
+            onDataReady();
         }
+    }
+
+    private static void onDataReady() {
+        AntimatterAPI.all(ModRegistrar.class, t -> {
+            for (String mod : t.modIds()) {
+                if (!isModLoaded(mod)) return;
+            }
+            t.antimatterRecipes(getRecipeRegistrate());
+        });
+        AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class, IRecipeRegistrate.IRecipeLoader::init);
+        AntimatterAPI.runDataProvidersDynamically();
+    }
+
+    public static boolean isModLoaded(String mod) {
+        return ModList.get().isLoaded(mod);
     }
 
     public static void runOnEvent(RegistrationEvent event, Runnable runnable) {
@@ -226,9 +238,8 @@ public final class AntimatterAPI {
     }
 
     public static LazyValue<AntimatterIngredient> getReplacement(MaterialType<?> type, Material material, String... namespaces) {
-      //  ITag.INamedTag<Item> tag = Utils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
-      //  return getReplacement(null, tag, namespaces);
-        return null;
+       ITag.INamedTag<Item> tag = TagUtils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
+       return getReplacement(null, tag, namespaces);
     }
 
     /**
@@ -241,19 +252,47 @@ public final class AntimatterAPI {
      */
     public static LazyValue<AntimatterIngredient> getReplacement(@Nullable Item originalItem, ITag.INamedTag<Item> tag, String... namespaces) {
         //TODO: This is broken for now.
-        return null;
-        /*if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
-        if (REPLACEMENTS.containsKey(tag.getName().getPath().hashCode())) return REPLACEMENTS.get(tag.getName().getPath().hashCode());
-        if (replacementsFound) return AntimatterIngredient.of(originalItem);
+        if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
+        if (true) return null;
+        if (REPLACEMENTS.containsKey(tag.getName().getPath().hashCode())) return AntimatterIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
+        if (replacementsFound) return AntimatterIngredient.of(originalItem,1);
         Set<String> checks = Sets.newHashSet(namespaces);
         if (checks.isEmpty()) checks.add("minecraft");
-        return AntimatterIngredient.of(() -> Objects.requireNonNull(tag.getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
+        return AntimatterIngredient.of(() -> Objects.requireNonNull(TagUtils.nc(tag).getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
                 .findAny().map(i -> {
                     REPLACEMENTS.put(tag.getName().getPath().hashCode(), i);
                     return i;
-                }).orElse(originalItem)), 1);*/
+                }).orElse(originalItem)), 1);
     }
 
+    /**
+     * Collects all antimatter registered recipes, pushing them to @rec.
+     * @param rec consumer for IFinishedRecipe.
+     */
+    public static void collectRecipes(Consumer<IFinishedRecipe> rec) {
+        Set<ResourceLocation> set = Sets.newHashSet();
+        List<AntimatterRecipeProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p instanceof AntimatterRecipeProvider).map(t -> (AntimatterRecipeProvider)t)).collect(Collectors.toList());
+        providers.forEach(prov -> prov.registerRecipes(recipe -> {
+            if (set.add(recipe.getID())) {
+                rec.accept(recipe);
+            }
+        }));
+    }
+
+    /**
+     * MIXIN METHOD: Called when recipe manager builds recipe maps.
+     * @param objectIn the recipes.
+     */
+    public static void onRecipeManagerBuild(Map<ResourceLocation, JsonElement> objectIn) {
+        Antimatter.LOGGER.info("Recipe manager head executing.");
+        AntimatterAPI.collectRecipes(rec -> objectIn.put(rec.getID(), rec.getRecipeJson()));
+        AntimatterAPI.all(ModRegistrar.class, t -> {
+            for (String mod : t.modIds()) {
+                if (!AntimatterAPI.isModLoaded(mod)) return;
+            }
+            t.craftingRecipes(new AntimatterRecipeProvider("Antimatter", "Custom recipes",Ref.BACKGROUND_GEN));
+        });
+    }
 
     /** JEI Registry Section **/
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, String model) {
@@ -273,7 +312,7 @@ public final class AntimatterAPI {
     }
 
     public static IRecipeRegistrate getRecipeRegistrate() {
-        return RECIPE_LOADER::add;
+        return recipe -> AntimatterAPI.register(IRecipeRegistrate.IRecipeLoader.class, recipe.getClass().getName(), recipe);
     }
 
     public static void registerBlockUpdateHandler(IBlockUpdateEvent handler) {

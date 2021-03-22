@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability;
 
-import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;

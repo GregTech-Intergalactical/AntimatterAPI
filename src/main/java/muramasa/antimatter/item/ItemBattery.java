@@ -2,7 +2,6 @@ package muramasa.antimatter.item;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;

@@ -40,7 +40,11 @@ public class ComponentElement extends StructureElement {
         if (state.getBlock() instanceof IAntimatterObject) {
             for (int i = 0; i < objects.length; i++) {
                 if (objects[i].getId().equals(((IAntimatterObject) state.getBlock()).getId())) {
-                    result.addState(((IAntimatterObject) state.getBlock()).getId(), pos, state);
+                    if (!elementId.isEmpty()) {
+                        result.addState(elementId, pos, state);
+                    } else {
+                        result.addState(((IAntimatterObject) state.getBlock()).getId(), pos, state);
+                    }
                     return true;
                 }
             }

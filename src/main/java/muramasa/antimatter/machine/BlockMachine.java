@@ -13,7 +13,6 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.dynamic.ModelConfig;
-import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.registration.IAntimatterObject;
