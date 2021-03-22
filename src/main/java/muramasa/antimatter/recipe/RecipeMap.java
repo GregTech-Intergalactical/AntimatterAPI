@@ -12,6 +12,7 @@ import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jei.renderer.InfoRenderers;
+import muramasa.antimatter.integration.jei.renderer.InternalInfoRenderers;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.StackIngredient;
@@ -26,11 +27,15 @@ import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -157,7 +162,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     private final String id;
     private final B builder;
-    private IRecipeInfoRenderer infoRenderer = InfoRenderers.DEFAULT_RENDERER;
+    private LazyValue<IRecipeInfoRenderer> infoRenderer;
     @Nullable
     private GuiData GUI;
     //Root branch.
@@ -186,8 +191,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     @Nonnull
+    @OnlyIn(Dist.CLIENT)
     public IRecipeInfoRenderer getInfoRenderer() {
-        return infoRenderer;
+        return infoRenderer.getValue();
     }
 
     int getNextIngredientCount() {
@@ -199,8 +205,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             if (obj instanceof Tier) {
                 guiTier = (Tier) obj;
             }
-            if (obj instanceof IRecipeInfoRenderer) {
-                this.infoRenderer = (IRecipeInfoRenderer) obj;
+            if (!FMLEnvironment.dist.isDedicatedServer() && obj instanceof LazyValue) {
+                this.infoRenderer = (LazyValue) obj;
             }
             if (obj instanceof GuiData) {
                 this.GUI = (GuiData) obj;
@@ -208,6 +214,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             if (obj instanceof Proxy) {
                 this.PROXY = (Proxy) obj;
             }
+        }
+        if (!FMLEnvironment.dist.isDedicatedServer() && infoRenderer == null) {
+            infoRenderer = InfoRenderers.DEFAULT_RENDERER;
         }
     }
     @Nullable

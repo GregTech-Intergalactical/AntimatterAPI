@@ -115,6 +115,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return ((float) currentProgress / (float) maxProgress);
     }
 
+    @OnlyIn(Dist.CLIENT)
+    public void setClientProgress(int progress) {
+        this.currentProgress = progress;
+    }
+
     @Override
     public void init() {
         checkRecipe();
