@@ -20,11 +20,16 @@ import muramasa.antimatter.tile.pipe.TileEntityCable;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -48,8 +53,9 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WIRE_CUTTER;
 import static muramasa.antimatter.Data.WRENCH;
+import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider {
+public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider, IWaterLoggable {
 
     protected T type;
     protected PipeSize size;
@@ -59,10 +65,15 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     protected Texture[] faces = new Texture[] {new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
 
     public BlockPipe(String prefix, T type, PipeSize size) {
-        super(type.getDomain(), prefix + "_" + type.getMaterial().getId() + "_" + size.getId(), Block.Properties.create(net.minecraft.block.material.Material.IRON));
+        this(prefix, type, size, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(1.0f, 3.0f));
+    }
+
+    public BlockPipe(String prefix, T type, PipeSize size, AbstractBlock.Properties properties) {
+        super(type.getDomain(), prefix + "_" + type.getMaterial().getId() + "_" + size.getId(), properties);
         this.type = type;
         this.size = size;
         AntimatterAPI.register(BlockPipe.class, getId(), this);
+        setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));
     }
 
     public T getType() {
@@ -93,6 +104,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public AntimatterItemBlock getItemBlock() {
         return new PipeItemBlock(this);
     }
+
 
 //    @Override
 //    public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos) {
@@ -154,7 +166,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                 }
                 return true;
             } else if (neighbor != null) {
-                AntimatterCaps.getCustomEnergyHandler(neighbor).ifPresent(cap -> {
+                neighbor.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(cap -> {
                     if (cap.canInput() || cap.canOutput()) {
                         tile.setConnection(face.getOpposite());
                     }
@@ -386,5 +398,15 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         info.add("Pipe Material: " + getType().getMaterial().getId());
         info.add("Pipe Size: " + getSize().getId());
         return info;
+    }
+
+    @Override
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(WATERLOGGED);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 }

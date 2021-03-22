@@ -11,7 +11,8 @@ import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
-import muramasa.antimatter.integration.jei.renderer.RecipeInfoRenderer;
+import muramasa.antimatter.integration.jei.renderer.InfoRenderers;
+import muramasa.antimatter.integration.jei.renderer.InternalInfoRenderers;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.StackIngredient;
@@ -23,11 +24,18 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -127,6 +135,16 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
     }
 
+    public static class Proxy {
+        public final IRecipeType loc;
+        public final Function<IRecipe, Recipe> handler;
+
+        public Proxy(IRecipeType loc, Function<IRecipe, Recipe> handler) {
+            this.loc = loc;
+            this.handler = handler;
+        }
+    }
+
 
     protected static class Branch {
 
@@ -144,7 +162,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     private final String id;
     private final B builder;
-    private IRecipeInfoRenderer infoRenderer = RecipeInfoRenderer.INSTANCE;
+    private LazyValue<IRecipeInfoRenderer> infoRenderer;
     @Nullable
     private GuiData GUI;
     //Root branch.
@@ -156,6 +174,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private static final RecipeFluids EMPTY_FLUIDS = new RecipeFluids(new FluidStack[0], Collections.emptySet());
 
     private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
+    private Proxy PROXY;
 
     //Data allows you to set related data to the map, e.g. which tier the gui displays.
     public RecipeMap(String categoryId, B builder, Object... data) {
@@ -172,8 +191,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     @Nonnull
+    @OnlyIn(Dist.CLIENT)
     public IRecipeInfoRenderer getInfoRenderer() {
-        return infoRenderer;
+        return infoRenderer.getValue();
     }
 
     int getNextIngredientCount() {
@@ -185,12 +205,18 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             if (obj instanceof Tier) {
                 guiTier = (Tier) obj;
             }
-            if (obj instanceof IRecipeInfoRenderer) {
-                this.infoRenderer = (IRecipeInfoRenderer) obj;
+            if (!FMLEnvironment.dist.isDedicatedServer() && obj instanceof LazyValue) {
+                this.infoRenderer = (LazyValue) obj;
             }
             if (obj instanceof GuiData) {
                 this.GUI = (GuiData) obj;
             }
+            if (obj instanceof Proxy) {
+                this.PROXY = (Proxy) obj;
+            }
+        }
+        if (!FMLEnvironment.dist.isDedicatedServer() && infoRenderer == null) {
+            infoRenderer = InfoRenderers.DEFAULT_RENDERER;
         }
     }
     @Nullable
@@ -253,6 +279,10 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         Branch map = LOOKUP;
         if (!recipe.hasInputItems() || recipe.getInputItems().size() == 0) {
             //If a recipe doesn't have items it maps to the null key.
+            if (!recipe.hasInputFluids()) return;
+            FluidStack[] fluids = recipe.getInputFluids();
+            fluids = fluids == null ? null : Arrays.stream(fluids).filter(t -> !t.isEmpty() || !(t.getFluid() == Fluids.EMPTY)).toArray(FluidStack[]::new);
+            if (fluids == null || fluids.length == 0 || fluids[0].isEmpty()) return;
             map.NODES.compute(null, (k, v) -> {
                 if (v == null) {
                     v = Either.left(new Object2ObjectOpenHashMap<>());
@@ -320,33 +350,43 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         if (current instanceof StackListIngredient) {
             //have to build a path for each stack.
             int id = getNextIngredientCount();
+            List<IngredientWrapper> wrappers = new ObjectArrayList<>();
             for (ItemStack stack : current.getMatchingStacks()) {
                 AntimatterIngredient ing = AntimatterIngredient.of(stack).getValue();
-                r = map.NODES.compute(new IngredientWrapper(id, ing), (k,v) -> callback(k,v, recipe, ingredients,count));
+                IngredientWrapper wr = new IngredientWrapper(id, ing);
+                r = map.NODES.compute(wr, (k,v) -> callback(k,v, recipe, ingredients,count));
+                wrappers.add(wr);
                 if (count == ingredients.size() - 1) continue;
                 if (r.left().isPresent()) {
                     Utils.onInvalidData("COLLISION DETECTED!");
+                    wrappers.forEach(map.NODES::remove);
                     return false;
                 }
                 //should always be present but this gives no warning.
                 if (r.right().map(m -> !recurseItemTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1)).orElse(false)) {
-                    map.NODES.remove(new IngredientWrapper(id, ing));
+                    wrappers.forEach(map.NODES::remove);
+                    return false;
                 }
             }
             if (count == ingredients.size() - 1) return true;
         } else {
-            r = map.NODES.compute(new IngredientWrapper(getNextIngredientCount(), current), (k,v) -> callback(k,v,recipe,ingredients,count));
+            IngredientWrapper wr = new IngredientWrapper(getNextIngredientCount(), current);
+            r = map.NODES.compute(wr, (k,v) -> callback(k,v,recipe,ingredients,count));
             //Success. We are at the end, so we added recipe.
             if (count == ingredients.size() - 1) return true;
-            if (r == null) return true;
-
+            if (r == null) {
+                map.NODES.remove(wr);
+                return false;
+            }
             if (r.left().isPresent()) {
                 Utils.onInvalidData("COLLISION DETECTED!");
+                map.NODES.remove(wr);
                 return false;
             }
             //should always be present but this gives no warning.
             if (r.right().map(m -> !recurseItemTreeAdd(recipe, ingredients, m, (index + 1) % ingredients.size(), count + 1)).orElse(false)) {
-                map.NODES.remove(new IngredientWrapper(getNextIngredientCount(), current));
+                map.NODES.remove(wr);
+                return false;
             }
         }
         return true;
@@ -363,7 +403,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             } else if (v.left().isPresent()) {
                 rec = v.left().get();
             } else {
-                Utils.onInvalidData("COULD NOT ADD RECIPE!");
+                Utils.onInvalidData("Recipe collision, unable to add leaf. This means that a recipe is a subset of another.");
                 return null;
             }
             addRecipeToMap(rec, recipe);
@@ -448,7 +488,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     //In the case of split stacks, merge the items, 2 aluminium dust in separate stacks -> 1 stack with additive count.
-    private ItemStack[] uniqueItems(ItemStack[] input) {
+    public static ItemStack[] uniqueItems(ItemStack[] input) {
         List<ItemStack> list = new ObjectArrayList<>();
         loop:
         for (ItemStack item : input) {
@@ -514,9 +554,16 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         this.LOOKUP.NODES.clear();
     }
 
-    public void compile() {
+    public void compile(RecipeManager reg) {
         reset();
         RECIPES_TO_COMPILE.forEach(this::compileRecipe);
+        if (PROXY != null) {
+            reset();
+            List<IRecipe<?>> recipes = reg.getRecipesForType(PROXY.loc);
+            recipes.stream().forEach(recipe -> {
+                Recipe r = PROXY.handler.apply(recipe);
+                if (r != null) compileRecipe(r);
+            });
+        }
     }
-
 }

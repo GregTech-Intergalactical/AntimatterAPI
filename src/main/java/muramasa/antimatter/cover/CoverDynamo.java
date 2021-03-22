@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import tesseract.api.IRefreshable;
 import tesseract.api.gt.IGTNode;
 
-public class CoverDynamo extends Cover implements IRefreshableCover {
+public class CoverDynamo extends BaseCover implements IRefreshableCover {
 
     public CoverDynamo(String id) {
         super(id);

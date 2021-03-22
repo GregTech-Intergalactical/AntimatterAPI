@@ -1,12 +1,10 @@
 package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -16,7 +14,6 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
@@ -26,12 +23,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 public class CoveredBakedModel extends AttachableBakedModel {
-
-    protected static Object2ObjectMap<ResourceLocation, Map<Texture,List<BakedQuad>[]>> MODEL_CACHE = new Object2ObjectOpenHashMap<>();
 
     public CoveredBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
         super(bakedTuple);
@@ -55,10 +49,10 @@ public class CoveredBakedModel extends AttachableBakedModel {
         if (!data.hasProperty(AntimatterProperties.MACHINE_TILE)) return quads;
         MachineCoverHandler<TileEntityMachine> covers = data.getData(AntimatterProperties.MACHINE_TILE).coverHandler.orElse(null);
         if (covers == null) return quads;
-        Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE) ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE) : data.getData(AntimatterProperties.MACHINE_TEXTURE);
+        Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE) ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(side) : data.getData(AntimatterProperties.MACHINE_TEXTURE).apply(side);
         CoverStack<?> c = covers.get(side);
         if (c.isEmpty()) return quads;
-        quads = c.coverTexturer.get().getQuads(quads,state,c.getCover(),new Cover.DynamicKey(state.get(BlockStateProperties.HORIZONTAL_FACING), tex), side.getIndex(), data);
+        quads = c.coverTexturer.get().getQuads(quads,state,c.getCover(),new BaseCover.DynamicKey(state.get(BlockStateProperties.HORIZONTAL_FACING), tex), side.getIndex(), data);
         return quads;
     }
 }

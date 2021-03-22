@@ -9,6 +9,11 @@ import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.ScreenSetup;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.gui.container.ContainerCover;
+import muramasa.antimatter.gui.container.ContainerHatch;
+import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.container.ContainerMultiMachine;
+import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
@@ -44,6 +49,11 @@ public class ClientHandler implements IProxyHandler {
         eventBus.addListener(ClientHandler::onBlockColorHandler);
         eventBus.addListener(ClientHandler::onModelRegistry);
         eventBus.addListener(AntimatterTextureStitcher::onTextureStitch);
+        ScreenSetup.<ContainerMachine, ScreenBasicMachine<ContainerMachine>>setScreenMapping(Data.BASIC_MENU_HANDLER, ScreenBasicMachine::new);
+        ScreenSetup.<ContainerCover, ScreenCover<ContainerCover>>setScreenMapping(Data.COVER_MENU_HANDLER, ScreenCover::new);
+        ScreenSetup.<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>>setScreenMapping(Data.MULTI_MENU_HANDLER, ScreenMultiMachine::new);
+        ScreenSetup.<ContainerHatch, ScreenHatch<ContainerHatch>>setScreenMapping(Data.HATCH_MENU_HANDLER, ScreenHatch::new);
+        ScreenSetup.<ContainerMachine, ScreenSteamMachine<ContainerMachine>>setScreenMapping(Data.STEAM_MENU_HANDLER, ScreenSteamMachine::new);
     }
 
     @SuppressWarnings({"unchecked", "unused"})

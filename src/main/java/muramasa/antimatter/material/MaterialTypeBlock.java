@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -29,7 +30,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
 
 
     public ITag.INamedTag<Item> getMaterialTag(Material m) {
-        return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
     public interface IBlockGetter {

@@ -76,12 +76,12 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
             container.getTile().fluidHandler.ifPresent(t -> {
                 int[] index = new int[]{0};
                 FluidStack[] inputs = t.getInputs();
-                container.getTile().getMachineType().getGui().getSlots(FL_IN).forEach(sl -> {
+                container.getTile().getMachineType().getGui().getSlots(FL_IN, this.container.getTile().getMachineTier()).forEach(sl -> {
                     renderFluid(stack, inputs[index[0]++], sl,mouseX,mouseY);
                 });
                 index[0] = 0;
                 FluidStack[] outputs = t.getOutputs();
-                container.getTile().getMachineType().getGui().getSlots(FL_OUT).forEach(sl -> {
+                container.getTile().getMachineType().getGui().getSlots(FL_OUT, this.container.getTile().getMachineTier()).forEach(sl -> {
                     renderFluid(stack, outputs[index[0]++], sl, mouseX,mouseY);
                 });
             });
@@ -155,7 +155,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         super.render(stack, mouseX, mouseY, partialTicks);
-        container.getTile().drawInfo(stack, Minecraft.getInstance().fontRenderer, guiLeft, guiTop);
+        //container.getTile().drawInfo(stack, Minecraft.getInstance().fontRenderer, guiLeft, guiTop);
     }
 
     @Override

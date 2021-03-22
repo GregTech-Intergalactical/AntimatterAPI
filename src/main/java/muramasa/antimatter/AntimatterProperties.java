@@ -6,7 +6,10 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.data.ModelProperty;
+
+import java.util.function.Function;
 
 public class AntimatterProperties {
 
@@ -17,8 +20,8 @@ public class AntimatterProperties {
     public static final ModelProperty<Machine<?>> MACHINE_TYPE = new ModelProperty<>();
     public static final ModelProperty<MachineState> MACHINE_STATE = new ModelProperty<>();
     //TODO: Probably converge these two into one somehow.
-    public static final ModelProperty<Texture> MACHINE_TEXTURE = new ModelProperty<>();
-    public static final ModelProperty<Texture> MULTI_MACHINE_TEXTURE = new ModelProperty<>();
+    public static final ModelProperty<Function<Direction, Texture>> MACHINE_TEXTURE = new ModelProperty<>();
+    public static final ModelProperty<Function<Direction, Texture>> MULTI_MACHINE_TEXTURE = new ModelProperty<>();
     public static final ModelProperty<TileEntityMachine> MACHINE_TILE = new ModelProperty<>();
 
     /** Block Pipe Properties **/

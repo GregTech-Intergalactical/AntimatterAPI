@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability;
 
-import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -17,7 +17,7 @@ import java.util.function.Function;
 public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializable<CompoundNBT> {
 
     /** Getters/Setters **/
-    boolean set(Direction side, Cover cover);
+    boolean set(Direction side, ICover cover);
 
     CoverStack<T> get(Direction side);
 
@@ -40,11 +40,13 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type);
 
     /** Helpers **/
-    boolean placeCover(PlayerEntity player, Direction side, ItemStack stack, Cover cover);
+    boolean placeCover(PlayerEntity player, Direction side, ItemStack stack, ICover cover);
 
-    boolean removeCover(PlayerEntity player, Direction side);
+    boolean removeCover(PlayerEntity player, Direction side, boolean drop);
 
-    boolean hasCover(Direction side, Cover cover);
+    boolean hasCover(Direction side, ICover cover);
 
-    boolean isValid(Direction side, Cover replacement);
+    boolean isValid(Direction side, ICover replacement);
+
+    boolean moveCover(PlayerEntity entity, Direction oldSide, Direction newSide);
 }

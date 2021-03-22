@@ -12,9 +12,6 @@ import javax.annotation.Nullable;
 
 public class AntimatterCaps {
 
-    @CapabilityInject(IInteractHandler.class)
-    public static final Capability<IInteractHandler> INTERACTABLE_HANDLER_CAPABILITY;
-
     @CapabilityInject(ICoverHandler.class)
     public static final Capability<ICoverHandler> COVERABLE_HANDLER_CAPABILITY;
 
@@ -28,7 +25,6 @@ public class AntimatterCaps {
     public static final Capability<?> RECIPE_HANDLER_CAPABILITY;
 
     static {
-        INTERACTABLE_HANDLER_CAPABILITY = null; // Fixme: REMOVE
         COVERABLE_HANDLER_CAPABILITY = null;
         COMPONENT_HANDLER_CAPABILITY = null; // Fixme: Optimize
         RECIPE_HANDLER_CAPABILITY = null; // Fixme: REMOVE
@@ -54,19 +50,6 @@ public class AntimatterCaps {
 
             }
         }, () -> new EnergyHandler(0,0,0,0,0,0));
-
-        CapabilityManager.INSTANCE.register(IInteractHandler.class, new Capability.IStorage<IInteractHandler>() {
-            @Nullable
-            @Override
-            public INBT writeNBT(Capability<IInteractHandler> capability, IInteractHandler instance, Direction side) {
-                return null;
-            }
-
-            @Override
-            public void readNBT(Capability<IInteractHandler> capability, IInteractHandler instance, Direction side, INBT nbt) {
-
-            }
-        }, () -> new InteractHandler(null));
 
         CapabilityManager.INSTANCE.register(ICoverHandler.class, new Capability.IStorage<ICoverHandler>() {
             @Nullable

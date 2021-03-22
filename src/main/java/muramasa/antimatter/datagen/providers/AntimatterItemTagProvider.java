@@ -15,7 +15,7 @@ import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.util.Utils;
+import muramasa.antimatter.util.TagUtils;
 import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
@@ -30,7 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.util.Utils.*;
+import static muramasa.antimatter.util.TagUtils.*;
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
+import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
 public class AntimatterItemTagProvider extends ItemTagsProvider implements IAntimatterProvider {
 
@@ -51,7 +53,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        Utils.getTags(Item.class).forEach(t -> addTag("items", t.getName(), getOrCreateBuilder(t).getInternalBuilder()));
+        TagUtils.getTags(Item.class).forEach(t -> addTag("items", t.getName(), getOrCreateBuilder(t).getInternalBuilder()));
         tagToBuilder.forEach((k, v) -> addTag("items", k, v));
         b.forEach(tagToBuilder::put);
     }

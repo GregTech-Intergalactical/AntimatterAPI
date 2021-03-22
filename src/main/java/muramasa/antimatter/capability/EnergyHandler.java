@@ -124,12 +124,14 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public int getEnergyStored() {
-        return this.energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.energy;
+        long energy = getEnergy();
+        return energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) energy;
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return this.capacity > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.capacity;
+        long capacity = getCapacity();
+        return capacity > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) capacity;
     }
 
     @Override

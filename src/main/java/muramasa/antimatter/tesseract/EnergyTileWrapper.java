@@ -1,7 +1,7 @@
 package muramasa.antimatter.tesseract;
 
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.ICover;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
@@ -49,7 +49,7 @@ public class EnergyTileWrapper implements IGTNode, ITileWrapper {
     }
 
     @Override
-    public void onUpdate(Direction side, Cover cover) {
+    public void onUpdate(Direction side, ICover cover) {
 
     }
 

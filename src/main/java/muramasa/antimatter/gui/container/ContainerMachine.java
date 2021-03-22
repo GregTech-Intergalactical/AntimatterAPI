@@ -28,8 +28,11 @@ public abstract class ContainerMachine extends AntimatterContainer {
         this.tile = tile;
         addSlots(tile);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
-        // tile.setClientProgress(0);
         tile.recipeHandler.ifPresent(r -> trackIntArray(r.getProgressData()));
+        //Ugly hack but syncing is broken otherwise.
+        if (!(playerInv.player instanceof ServerPlayerEntity)) {
+            tile.recipeHandler.ifPresent(t -> t.setClientProgress(0));
+        }
         tile.setOpenContainer(this);
     }
 

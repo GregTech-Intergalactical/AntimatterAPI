@@ -2,7 +2,7 @@ package muramasa.antimatter.item;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.gui.screen.Screen;
@@ -41,7 +41,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (this.isInGroup(group)) {
             ItemStack stack = new ItemStack(this);
-            AntimatterCaps.getCustomEnergyHandler(stack).ifPresent(e -> e.insert(this.cap, false));
+            stack.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(e -> e.insert(this.cap, false));
             items.add(new ItemStack(this));
             items.add(stack);
         }
@@ -55,7 +55,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack) {
-        return AntimatterCaps.getCustomEnergyHandler(stack).map(EnergyHandler::getEnergy).orElse(0L) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
+        return stack.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         if (tag == null) {
             return 1D;
         }
-        return 1D - AntimatterCaps.getCustomEnergyHandler(stack).map(EnergyHandler::getEnergy).orElse(0L) / (double) cap;
+        return 1D - stack.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap;
     }
 
     @Override

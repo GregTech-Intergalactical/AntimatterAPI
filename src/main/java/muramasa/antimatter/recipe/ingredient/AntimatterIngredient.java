@@ -2,12 +2,14 @@ package muramasa.antimatter.recipe.ingredient;
 
 import com.google.common.collect.ImmutableSet;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
@@ -84,7 +86,7 @@ public abstract class AntimatterIngredient extends Ingredient {
         boolean nbt = item.hasTag();
         long tempHash = 1;
 
-        tempHash = 31 * tempHash + item.getItem().getRegistryName().toString().hashCode();
+        tempHash = 31 * tempHash + item.getItem().getRegistryName().hashCode();
         if (nbt && item.getTag() != null) {
             CompoundNBT newNbt = filterTags(item.getTag());
             if (!newNbt.isEmpty()) tempHash = 31 * tempHash + newNbt.hashCode();
@@ -122,9 +124,11 @@ public abstract class AntimatterIngredient extends Ingredient {
     public static LazyValue<AntimatterIngredient> fromItem(int count, IItemProvider provider, Consumer<AntimatterIngredient> builder) {
         return fromStack(new LazyValue<>(() -> new ItemStack(provider, count)), builder);
     }
+    @SafeVarargs
     public static LazyValue<AntimatterIngredient> fromStacks(int count, LazyValue<ItemStack>... stacks) {
         return fromStacks(count, a -> {}, stacks);
     }
+    @SafeVarargs
     public static LazyValue<AntimatterIngredient> fromStacks(int count, Consumer<AntimatterIngredient> builder, LazyValue<ItemStack>... stacks) {
         if (stacks == null || stacks.length == 0) throw new RuntimeException("Invalid input to AntimatterIngredient fromStacks");
         return new LazyValue<>(() -> {
@@ -133,25 +137,33 @@ public abstract class AntimatterIngredient extends Ingredient {
             return stk;
         });
     }
-    public static LazyValue<AntimatterIngredient> fromTag(ITag.INamedTag<Item> tagIn, int count, Consumer<AntimatterIngredient> builder) {
+    public static LazyValue<AntimatterIngredient> fromTag(ResourceLocation tagIn, int count, Consumer<AntimatterIngredient> builder) {
+        ensureRegisteredTag(tagIn);
         return new LazyValue<>(() -> {
-            TagIngredient tag = new TagIngredient(Stream.of(new TagList(tagIn)), count,tagIn);
-            builder.accept(tag);
-            return tag;
+            ITag<Item> tag = collectTag(tagIn);
+            TagIngredient ing = new TagIngredient(Stream.of(new TagList(tag)), count,tagIn);
+            builder.accept(ing);
+            return ing;
         });
     }
-    public static LazyValue<AntimatterIngredient> fromTag(ITag.INamedTag<Item> tagIn, int count) {
+    public static LazyValue<AntimatterIngredient> fromTag(ResourceLocation tagIn, int count) {
         return fromTag(tagIn, count, a -> {});
     }
 
 
     /** UTILITY FUNCTIONS **/
 
-    public static LazyValue<AntimatterIngredient> of(ITag.INamedTag<Item> tagIn, int count) {
+    public static LazyValue<AntimatterIngredient> of(ResourceLocation tagIn, int count) {
         return fromTag(tagIn,count);
+    }
+    public static LazyValue<AntimatterIngredient> of(ITag.INamedTag<Item> tagIn, int count) {
+        return fromTag(tagIn.getName(),count);
     }
     public static LazyValue<AntimatterIngredient> of(IItemProvider item, int count) {
         return fromStack(new LazyValue<>(() -> new ItemStack(item, count)));
+    }
+    public static LazyValue<AntimatterIngredient> of(IItemProvider item) {
+        return of(item, 1);
     }
     public static LazyValue<AntimatterIngredient> of(ItemStack stack) {
         return fromStack(new LazyValue<>(() -> stack));
@@ -160,9 +172,13 @@ public abstract class AntimatterIngredient extends Ingredient {
     public static LazyValue<AntimatterIngredient> of(LazyValue<ItemStack> item) {
         return fromStack(item);
     }
-
+    @SafeVarargs
     public static LazyValue<AntimatterIngredient> of(int count, LazyValue<ItemStack>... stacks) {
         return fromStacks(count, stacks);
+    }
+    @SuppressWarnings("unchecked")
+    public static LazyValue<AntimatterIngredient> of(int count, ItemStack... stacks) {
+        return fromStacks(count, Arrays.stream(stacks).map(t -> new LazyValue<>(() -> t)).toArray(LazyValue[]::new));
     }
 
     @Override
@@ -188,5 +204,13 @@ public abstract class AntimatterIngredient extends Ingredient {
         } else {
             return (stackA.getTag() == null || filterTags(stackA.getTag()).equals(filterTags(stackB.getTag()))) && stackA.areCapsCompatible(stackB);
         }
+    }
+
+    private static void ensureRegisteredTag(ResourceLocation loc) {
+        TagUtils.getItemTag(loc);
+    }
+
+    private static ITag<Item> collectTag(ResourceLocation loc) {
+        return TagCollectionManager.getManager().getItemTags().get(loc);
     }
 }

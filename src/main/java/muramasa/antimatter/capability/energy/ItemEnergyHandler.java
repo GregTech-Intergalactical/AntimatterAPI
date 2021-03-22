@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.energy;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -8,7 +9,6 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -82,6 +82,6 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == CapabilityEnergy.ENERGY ? handler.cast() : LazyOptional.empty();
+        return cap == AntimatterCaps.ENERGY_HANDLER_CAPABILITY ? handler.cast() : LazyOptional.empty();
     }
 }

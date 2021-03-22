@@ -4,7 +4,6 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
@@ -26,7 +25,6 @@ import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.DyeColor;
@@ -36,13 +34,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
@@ -75,7 +70,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
-import java.util.function.Function;
 
 import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.UNBOUNDED;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
@@ -981,86 +975,6 @@ public class Utils {
         }
         else if (id.contains("crushed")) return StringUtils.replace(id, "crushed", "crushed_ores");
         return id.charAt(id.length() - 1) == 's' ? id.concat("es") : id.concat("s");
-    }
-
-    /**
-     * Redirects an ItemTag to a BlockTag
-     * @param tag a ItemTag, preferably already created
-     * @return BlockTag variant of the ItemTag
-     */
-    public static ITag.INamedTag<Block> itemToBlockTag(ITag.INamedTag<Item> tag) {
-        return createTag(tag.getName(), Block.class, BlockTags::makeWrapperTag);
-    }
-
-    /**
-     * Redirects an BlockTag to a ItemTag
-     * @param tag a BlockTag, preferably already created
-     * @return ItemTag variant of the BlockTag
-     */
-    public static ITag.INamedTag<Item> blockToItemTag(ITag.INamedTag<Block> tag) {
-        return createTag(tag.getName(), Item.class, ItemTags::makeWrapperTag);
-    }
-
-    /**
-     * @param loc ResourceLocation of a BlockTag, can be new or old
-     * @return BlockTag
-     */
-    public static ITag.INamedTag<Block> getBlockTag(ResourceLocation loc) {
-       return createTag(loc, Block.class, BlockTags::makeWrapperTag);
-    }
-
-    /* TAG RELATED AREA.  */
-
-    //TODO: Move to another package maybe?
-
-    //A list of all registered tags for all Antimatter mods.
-    protected static final Map<Class, Set<ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
-
-    protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
-        ITag.INamedTag<T> tag = fn.apply(loc.toString());
-        TAG_MAP.compute(clazz, (k,v) -> {
-            if (v == null) v = new ObjectOpenHashSet<>();
-            v.add(tag);
-            return v;
-        });
-        return tag;
-    }
-
-    public static Set<ITag.INamedTag> getTags(Class clazz) {
-        return TAG_MAP.getOrDefault(clazz, Collections.emptySet());
-    }
-
-    /**
-     * @param name name of a BlockTag, can be new or old, has the namespace "forge" attached
-     * @return BlockTag
-     */
-    public static ITag.INamedTag<Block> getForgeBlockTag(String name) {
-        return getBlockTag(new ResourceLocation("forge", name));
-    }
-
-    /**
-     * @param loc ResourceLocation of a ItemTag, can be new or old
-     * @return ItemTag
-     */
-    public static ITag.INamedTag<Item> getItemTag(ResourceLocation loc) {
-        return createTag(loc, Item.class, ItemTags::makeWrapperTag);
-    }
-
-    /**
-     * @param name name of a ItemTag, can be new or old, has the namespace "forge" attached
-     * @return ItemTag
-     */
-    public static ITag.INamedTag<Item> getForgeItemTag(String name) {
-        // TODO: Change "wood" -> "wooden", forge recognises "wooden"
-        return getItemTag(new ResourceLocation("forge", name));
-    }
-
-    /**
-     * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
-     * @return FluidTag
-     */
-    public static ITag.INamedTag<Fluid> getForgeFluidTag(String name) {
-        return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::makeWrapperTag);
     }
 
     /**

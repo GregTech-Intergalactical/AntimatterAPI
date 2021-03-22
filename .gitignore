@@ -22,3 +22,5 @@ eclipse
 run/
 *.db
 src/generated/
+
+TesseractAPI

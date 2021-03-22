@@ -1,8 +1,6 @@
 package muramasa.antimatter.datagen.providers;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -12,15 +10,13 @@ import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.criterion.InventoryChangeTrigger;
 import net.minecraft.data.*;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.IItemProvider;
@@ -31,7 +27,6 @@ import net.minecraftforge.common.crafting.ConditionalRecipe;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -41,20 +36,23 @@ import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.GRINDABLE;
 import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
-import static muramasa.antimatter.util.Utils.*;
+import static muramasa.antimatter.util.TagUtils.getForgeItemTag;
+import static muramasa.antimatter.util.TagUtils.nc;
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
+import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
 //Only extending RecipeProvider for static purposes.
 public class AntimatterRecipeProvider extends RecipeProvider implements IAntimatterProvider {
 
-    private final String providerDomain, providerName;
+    protected final String providerDomain, providerName;
     protected final List<ICraftingLoader> craftingLoaders = new ObjectArrayList<>();
-    private static final Map<String, AntimatterRecipeProvider> PROVIDERS = new Object2ObjectOpenHashMap<>();
+
+    public static AntimatterRecipeProvider DEFAULT;
 
     public AntimatterRecipeProvider(String providerDomain, String providerName, DataGenerator gen) {
         super(gen);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
-        PROVIDERS.put(providerDomain,this);
     }
 
     @Override
@@ -64,18 +62,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
     @Override
     public void run() {
-        /*Set<ResourceLocation> set = Sets.newHashSet();
 
-        registerRecipes(recipe -> {
-            if (set.add(recipe.getID())) {
-                DynamicResourcePack.addRecipe(recipe);
-            }
-        });*/
     }
 
     @Override
     public Types staticDynamic() {
-        return Types.DYNAMIC;
+        return Types.FAKE;
     }
 
     @Override
@@ -83,40 +75,8 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         return Dist.DEDICATED_SERVER;
     }
 
-    private static Map<IRecipeType<?>, Map<ResourceLocation, IRecipe>> MAP = new Object2ObjectOpenHashMap<>();
-
-    private static Map<IRecipeType<?>, Map<ResourceLocation, IRecipe>> CACHE = new Object2ObjectOpenHashMap<>();
-
-    public static void runRecipes() {
-        Set<ResourceLocation> set = Sets.newHashSet();
-        //Iterate all providers.
-        PROVIDERS.forEach((id,t) -> t.registerRecipes(recipe -> {
-           // ResourceLocation loc = ForgeRegistries.RECIPE_SERIALIZERS.getKey(recipe.getSerializer());
-            if (set.add(recipe.getID())) {
-                //recipe.getID();
-                IRecipe<?> r = recipe.getSerializer().read(recipe.getID(), recipe.getRecipeJson());
-                MAP.compute(r.getType(),(k,v) -> {
-                    if (v == null) v = new Object2ObjectOpenHashMap<>();
-                    v.put(recipe.getID(), r);
-                    return v;
-                });
-                //DynamicResourcePack.addRecipe(recipe);
-                ///AntimatterJEIPlugin.getRuntime().getRecipeManager().addRecipe(recipe, loc);
-            }
-        }));
-    }
-
-    public static Map<ResourceLocation, IRecipe> handleGetRecipe(IRecipeType recipeTypeIn, Map<ResourceLocation, IRecipe> cir) {
-        return CACHE.computeIfAbsent(recipeTypeIn, b -> {
-            Map<ResourceLocation, IRecipe> stored = MAP.get(recipeTypeIn);
-            if (stored == null || stored.size() == 0) return cir;
-            stored.putAll(cir);
-            return stored;
-        });
-    }
-
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
+    public void registerRecipes(Consumer<IFinishedRecipe> consumer) {
         registerMaterialRecipes(consumer, providerDomain);
         registerToolRecipes(consumer, providerDomain);
         craftingLoaders.forEach(cl -> cl.loadRecipes(consumer,this));
@@ -127,36 +87,36 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             if (o.getOreType() != ORE) return;
             if (!o.getMaterial().has(INGOT)) return;
             Item ingot = INGOT.get(o.getMaterial());
-            ITag.INamedTag<Item> oreTag = Utils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
-            ITag.INamedTag<Item> ingotTag = Utils.getForgeItemTag("ingots/".concat(o.getMaterial().getId()));
-            CookingRecipeBuilder.blastingRecipe(Ingredient.fromTag(oreTag), ingot, 2.0F, 200)
-                    .addCriterion("has_material_" + o.getMaterial().getId(), this.hasItem(ingotTag))
+            ITag.INamedTag<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
+            ITag.INamedTag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(o.getMaterial().getId()));
+            CookingRecipeBuilder.blastingRecipe(Ingredient.fromTag(nc(oreTag)), ingot, 2.0F, 200)
+                    .addCriterion("has_material_" + o.getMaterial().getId(), hasItem(ingotTag))
                     .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot")));
         });
         AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> m.has(DUST)).forEach(mat -> {
             Item dust = DUST.get(mat);
             if (mat.has(ROCK)) {
-                ITag.INamedTag<Item> rockTag = getForgeItemTag("rocks/".concat(mat.getId()));
+                ITag<Item> rockTag = nc(TagUtils.getForgeItemTag("rocks/".concat(mat.getId())));
                 Item rock = ROCK.get(mat);
                 Item smallDust = DUST_SMALL.get(mat);
                 ShapelessRecipeBuilder.shapelessRecipe(dust)
                         .addIngredient(rockTag).addIngredient(rockTag).addIngredient(rockTag)
                         .addIngredient(rockTag).addIngredient(rockTag).addIngredient(rockTag)
-                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(MORTAR.getTag())
+                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(nc(MORTAR.getTag()))
                         .addCriterion("has_rock_" + mat.getId(), this.hasItem(rockTag))
                         .setGroup("rocks_grind_to_dust").build(consumer, fixLoc(providerDomain, rock.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
 
                 ShapelessRecipeBuilder.shapelessRecipe(smallDust)
                         .addIngredient(rockTag).addIngredient(rockTag)
-                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(MORTAR.getTag())
+                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(nc(MORTAR.getTag()))
                         .addCriterion("has_rock_" + mat.getId(), this.hasItem(getForgeItemTag("rocks/".concat(mat.getId()))))
                         .setGroup("rocks_grind_to_small_dust").build(consumer, fixLoc(providerDomain, rock.getRegistryName().getPath() + "_grind_to_" + smallDust.getRegistryName().getPath()));
             }
             if (mat.has(INGOT, GRINDABLE)) {
                 Item ingot = INGOT.get(mat);
-                ITag.INamedTag<Item> ingotTag = getForgeItemTag("ingots/".concat(mat.getId()));
-                ShapelessRecipeBuilder.shapelessRecipe(dust).addIngredient(ingotTag).addIngredient(MORTAR.getTag())
-                        .addCriterion("has_ingot_" + mat.getId(), this.hasItem(getForgeItemTag("ingots/".concat(mat.getId()))))
+                ITag<Item> ingotTag = nc(TagUtils.getForgeItemTag("ingots/".concat(mat.getId())));
+                ShapelessRecipeBuilder.shapelessRecipe(dust).addIngredient(ingotTag).addIngredient(nc(MORTAR.getTag()))
+                        .addCriterion("has_ingot_" + mat.getId(), this.hasItem(nc(TagUtils.getForgeItemTag("ingots/".concat(mat.getId())))))
                         .setGroup("ingots_grind_to_dust")
                         .build(consumer, fixLoc(providerDomain,ingot.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
             }
@@ -168,7 +128,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.isHandle())).collect(Collectors.toList());
 
         handleMats.forEach(handle -> AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
-            ITag.INamedTag<Item> ingotTag = getForgeItemTag("ingots/" + rubber.getId()), rodTag = getForgeItemTag("rods/" + handle.getId());
+            ITag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/" + rubber.getId()), rodTag = TagUtils.getForgeItemTag("rods/" + handle.getId());
             addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_" + handle.getId() + "_" + rubber.getId(), "antimatter_plungers",
                     "has_material_" + rubber.getId(), hasSafeItem(ingotTag), PLUNGER.getToolStack(handle, rubber),
                     of('W', WIRE_CUTTER.getTag(), 'I', ingotTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WIS", " RI", "R F");
@@ -176,7 +136,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
         mainMats.forEach(main -> {
             if (!main.has(INGOT)) return; // TODO: For time being
-            final ITag.INamedTag<Item> ingotTag = getForgeItemTag("ingots/" + main.getId()), plateTag = getForgeItemTag("plates/" + main.getId()), mainRodTag = getForgeItemTag("rods/" + main.getId());
+            final ITag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/" + main.getId()), plateTag = TagUtils.getForgeItemTag("plates/" + main.getId()), mainRodTag = TagUtils.getForgeItemTag("rods/" + main.getId());
             final Supplier<ICriterionInstance> ingotTrigger = this.hasSafeItem(ingotTag), plateTrigger = this.hasSafeItem(plateTag), rodTrigger = this.hasSafeItem(mainRodTag);
 
             addStackRecipe(consumer, Ref.ID, WRENCH.getId() + "_" + main.getId(), "antimatter_wrenches",
@@ -195,7 +155,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
             for (Material handle : handleMats) {
                 String handleId = handle.getId().equals("wood") ? "wooden" : handle.getId();
-                final ITag.INamedTag<Item> rodTag = getForgeItemTag("rods/" + handleId);
+                final ITag<Item> rodTag = TagUtils.getForgeItemTag("rods/" + handleId);
 
                 addStackRecipe(consumer, Ref.ID, PICKAXE.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_pickaxes",
                         "has_material_" + main.getId(), ingotTrigger, PICKAXE.getToolStack(main, handle), of('I', ingotTag, 'R', rodTag, 'P', plateTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PII", "FRH", " R ");
@@ -274,7 +234,11 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                 if (input instanceof IItemProvider) {
                     builder.addIngredient(((IItemProvider)input));
                 } else if (input instanceof ITag) {
-                    builder.addIngredient((ITag<Item>)input);
+                    if (input instanceof ITag.INamedTag) {
+                        builder.addIngredient(nc(TagUtils.getItemTag(((ITag.INamedTag)input).getName())));
+                    } else {
+                        builder.addIngredient((ITag<Item>)input);
+                    }
                 } else if (input instanceof Ingredient) {
                     builder.addIngredient((Ingredient) input);
                 }
@@ -314,7 +278,13 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             }
             else if (entry.getValue() instanceof ITag) {
                 try {
-                    incompleteBuilder = incompleteBuilder.key(entry.getKey(), (ITag<Item>) entry.getValue());
+                    //Wrap the tag using tag manager.
+                    if (entry.getValue() instanceof ITag.INamedTag) {
+                        ITag.INamedTag<Item> tag = (ITag.INamedTag<Item>) entry.getValue();
+                        incompleteBuilder = incompleteBuilder.key(entry.getKey(), nc(tag));
+                    } else {
+                        incompleteBuilder = incompleteBuilder.key(entry.getKey(), (ITag<Item>) entry.getValue());
+                    }
                 }
                 catch (ClassCastException e) {
                     Utils.onInvalidData("Tag inputs only allow Item Tags!");

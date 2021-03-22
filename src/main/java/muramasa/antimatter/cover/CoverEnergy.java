@@ -5,7 +5,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import tesseract.api.IRefreshable;
 
-public class CoverEnergy extends Cover implements IRefreshableCover{
+public class CoverEnergy extends BaseCover implements IRefreshableCover{
 
     public CoverEnergy() {
         super();
