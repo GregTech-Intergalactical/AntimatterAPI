@@ -111,15 +111,34 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return inventories.get(ITEM_INPUT);
     }
 
+    //USED FOR SLOTS in gui.
+    public IItemHandlerModifiable getInputGuiHandler() {
+        return inventories.get(ITEM_INPUT);
+    }
+
     public IItemHandlerModifiable getOutputHandler() {
         return inventories.get(ITEM_OUTPUT);
     }
+    //USED FOR SLOTS in gui. CombinedInvWrapper doesn't like the gui.
+    public IItemHandlerModifiable getOutputGuiHandler() {
+        return inventories.get(ITEM_OUTPUT);
+    }
+
 
     public IItemHandlerModifiable getCellInputHandler() {
         return inventories.get(CELL_INPUT);
     }
 
+    public IItemHandlerModifiable getCellInputGuiHandler() {
+        return inventories.get(CELL_INPUT);
+    }
+
+
     public IItemHandlerModifiable getCellOutputHandler() {
+        return inventories.get(CELL_OUTPUT);
+    }
+
+    public IItemHandlerModifiable getCellOutputGuiHandler() {
         return inventories.get(CELL_OUTPUT);
     }
 

@@ -6,7 +6,9 @@ import muramasa.antimatter.util.LazyHolder;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 public class MultiMachineItemHandler extends MachineItemHandler<TileEntityMultiMachine> {
@@ -20,15 +22,7 @@ public class MultiMachineItemHandler extends MachineItemHandler<TileEntityMultiM
 
     @Override
     public IItemHandlerModifiable getInputHandler() {
-        if (inputs.isPresent()) return inputs.get();
-        IItemHandlerModifiable[] handlers = tile.getComponents("hatch_item_input").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getInputHandler)).map(LazyHolder::get).toArray(IItemHandlerModifiable[]::new);//this::allocateExtraSize);
-       // handlers[handlers.length-1] = this.inputWrapper;
-        inputs = Optional.of(new CombinedInvWrapper(handlers));
-        return inputs.get();
-    }
-
-    private IItemHandlerModifiable[] allocateExtraSize(int size) {
-        return new IItemHandlerModifiable[size+1];
+        return inputs.orElseGet(this::calculateInputs);
     }
 
     public void invalidate() {
@@ -37,22 +31,24 @@ public class MultiMachineItemHandler extends MachineItemHandler<TileEntityMultiM
     }
 
     public void onStructureBuild() {
-        IItemHandlerModifiable[] handlers = tile.getComponents("hatch_item_input").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getInputHandler)).map(LazyHolder::get).toArray(IItemHandlerModifiable[]::new);//this::allocateExtraSize);
-       // handlers[handlers.length-1] = this.inputWrapper;
-        inputs = Optional.of(new CombinedInvWrapper(handlers));
-
-        IItemHandlerModifiable[] h = tile.getComponents("hatch_item_output").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getOutputHandler)).map(LazyHolder::get).toArray(IItemHandlerModifiable[]::new);//this::allocateExtraSize);
-        //h[handlers.length-1] = this.outputWrapper;
-        outputs = Optional.of(new CombinedInvWrapper(h));
+        inputs = Optional.of(calculateInputs());
+        outputs = Optional.of(calculateOutputs());
     }
 
+    private IItemHandlerModifiable calculateInputs() {
+        List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_input").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getInputHandler)).map(LazyHolder::get).collect(Collectors.toList());//this::allocateExtraSize);
+        handlers.add(super.getInputHandler());
+        return new CombinedInvWrapper(handlers.toArray(new IItemHandlerModifiable[0]));
+    }
+
+    private IItemHandlerModifiable calculateOutputs() {
+        List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_output").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getOutputHandler)).map(LazyHolder::get).collect(Collectors.toList());//this::allocateExtraSize);
+        handlers.add(super.getOutputHandler());
+        return new CombinedInvWrapper(handlers.toArray(new IItemHandlerModifiable[0]));
+    }
 
     @Override
     public IItemHandlerModifiable getOutputHandler() {
-        if (outputs.isPresent()) return outputs.get();
-        IItemHandlerModifiable[] handlers = tile.getComponents("output").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getOutputHandler)).map(LazyHolder::get).toArray(IItemHandlerModifiable[]::new);//this::allocateExtraSize);
-        //handlers[handlers.length-1] = this.outputWrapper;
-        outputs = Optional.of(new CombinedInvWrapper(handlers));
-        return outputs.get();
+        return outputs.orElseGet(this::calculateOutputs);
     }
 }

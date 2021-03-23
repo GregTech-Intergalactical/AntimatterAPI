@@ -115,7 +115,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             if (i.has(MachineFlag.BASIC)) {
                 tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), lowerUnderscoreToUpperSpacedRotated( i.getId() + "_" + t.getId())));
             }  else {
-               add("machine." + i.getId(), lowerUnderscoreToUpperSpacedRotated( i.getId()));
+               add("machine." + i.getId(), lowerUnderscoreToUpperSpaced( i.getId()));
             }
         });
         AntimatterAPI.all(Material.class, domain).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));

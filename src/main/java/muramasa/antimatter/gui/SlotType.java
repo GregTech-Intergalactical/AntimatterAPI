@@ -10,12 +10,12 @@ import java.util.Optional;
 
 public class SlotType {
 
-    public static SlotType IT_IN = new SlotType("item_in", (t, i, d) -> Optional.of(new SlotInput(t,t.itemHandler.map(MachineItemHandler::getInputHandler).orElse(null), i, d.getX(), d.getY())));
-    public static SlotType IT_OUT = new SlotType("item_out", (t, i, d) -> Optional.of(new SlotOutput(t,t.itemHandler.map(MachineItemHandler::getOutputHandler).orElse(null), i, d.getX(), d.getY())));
+    public static SlotType IT_IN = new SlotType("item_in", (t, i, d) -> Optional.of(new SlotInput(t,t.itemHandler.map(MachineItemHandler::getInputGuiHandler).orElse(null), i, d.getX(), d.getY())));
+    public static SlotType IT_OUT = new SlotType("item_out", (t, i, d) -> Optional.of(new SlotOutput(t,t.itemHandler.map(MachineItemHandler::getOutputGuiHandler).orElse(null), i, d.getX(), d.getY())));
     public static SlotType FL_IN = new SlotType("fluid_in", (t, i, d) -> Optional.of(new SlotFakeFluid(t, MachineFluidHandler.FluidDirection.INPUT,i, d.getX(), d.getY())));
     public static SlotType FL_OUT = new SlotType("fluid_out", (t, i, d) -> Optional.of(new SlotFakeFluid(t,MachineFluidHandler.FluidDirection.OUTPUT, i, d.getX(), d.getY())));
-    public static SlotType CELL_IN = new SlotType("cell_in", (t, i, d) -> Optional.of(new SlotCell(t.itemHandler.map(MachineItemHandler::getCellInputHandler).orElse(null), i, d.getX(), d.getY())));
-    public static SlotType CELL_OUT = new SlotType("cell_out", (t, i, d) -> Optional.of(new SlotCell(t.itemHandler.map(MachineItemHandler::getCellOutputHandler).orElse(null), i, d.getX(), d.getY())));
+    public static SlotType CELL_IN = new SlotType("cell_in", (t, i, d) -> Optional.of(new SlotCell(t.itemHandler.map(MachineItemHandler::getCellInputGuiHandler).orElse(null), i, d.getX(), d.getY())));
+    public static SlotType CELL_OUT = new SlotType("cell_out", (t, i, d) -> Optional.of(new SlotCell(t.itemHandler.map(MachineItemHandler::getCellOutputGuiHandler).orElse(null), i, d.getX(), d.getY())));
     public static SlotType ENERGY = new SlotType("energy", (t, i, d) -> Optional.of(new SlotEnergy(t.itemHandler.map(MachineItemHandler::getChargeHandler).orElse(null), i, d.getX(), d.getY())));
 
     protected String id;

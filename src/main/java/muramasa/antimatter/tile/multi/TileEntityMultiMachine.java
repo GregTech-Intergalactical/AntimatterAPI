@@ -93,7 +93,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
                     });
                     setMachineState(MachineState.IDLE);
                     System.out.println("[Structure Debug] Valid Structure");
-                    this.recipeHandler.ifPresent(t -> {
+                    if (hadFirstTick()) this.recipeHandler.ifPresent(t -> {
                         if (t.hasRecipe())
                             setMachineState(MachineState.NO_POWER);
                         else {

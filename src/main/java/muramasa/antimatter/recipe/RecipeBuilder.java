@@ -27,8 +27,12 @@ public class RecipeBuilder {
 
     public Recipe add() {
         Recipe r = build(duration, power, special, amps);
-        recipeMap.add(r);
+        addToMap(r);
         return r;
+    }
+
+    protected void addToMap(Recipe r) {
+        recipeMap.add(r);
     }
 
     /**

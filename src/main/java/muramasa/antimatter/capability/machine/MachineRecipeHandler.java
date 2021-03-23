@@ -283,18 +283,20 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public boolean consumeResourceForRecipe() {
-        if (tile.energyHandler.isPresent()) {
-            if (!generator) {
-                long power = getPower();
-                if (tile.energyHandler.get().extract(power, true) >= power) {
-                    tile.energyHandler.get().extract(power, false);
-                    return true;
+        if (activeRecipe.getPower() > 0) {
+            if (tile.energyHandler.isPresent()) {
+                if (!generator) {
+                    long power = getPower();
+                    if (tile.energyHandler.get().extract(power, true) >= power) {
+                        tile.energyHandler.get().extract(power, false);
+                        return true;
+                    }
+                } else {
+                    return consumeGeneratorResources();
                 }
-            } else {
-                return consumeGeneratorResources();
             }
         }
-        return false;
+        return true;
     }
 
     protected boolean validateRecipe(Recipe r) {

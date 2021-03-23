@@ -14,6 +14,7 @@ import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jei.renderer.InfoRenderers;
 import muramasa.antimatter.integration.jei.renderer.InternalInfoRenderers;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.StackIngredient;
 import muramasa.antimatter.recipe.ingredient.StackListIngredient;
@@ -58,7 +59,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         public IngredientWrapper(int id, @Nonnull ItemStack stack) {
             this.source = stack;
             this.id = id;
-            this.tags = stack.getItem().getTags();//stack.getItem().getTags().stream().map(t -> AntimatterIngredient.fromTag(new ItemTags.Wrapper(t), stack.getCount())).toArray(AntimatterIngredient[]::new);
+            this.tags = stack.getItem().getTags();
         }
 
         public IngredientWrapper(int id, AntimatterIngredient ingredient) {
