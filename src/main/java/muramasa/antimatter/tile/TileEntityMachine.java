@@ -238,8 +238,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(getFacing().getOpposite());
     }
 
-    public boolean setOutputFacing(Direction side) {
-        return coverHandler.map(h -> h.setOutputFacing(side)).orElse(false);
+    public boolean setOutputFacing(PlayerEntity player, Direction side) {
+        return coverHandler.map(h -> h.setOutputFacing(player, side)).orElse(false);
     }
 
     public MachineState getMachineState() {

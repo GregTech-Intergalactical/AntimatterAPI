@@ -42,7 +42,15 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
     /** Helpers **/
     boolean placeCover(PlayerEntity player, Direction side, ItemStack stack, ICover cover);
 
-    boolean removeCover(PlayerEntity player, Direction side, boolean drop);
+    /**
+     * Removes a cover.
+     * @param player entity.
+     * @param side which side to remove.
+     * @param drop whether to drop the cover.
+     * @param validateRemoval whether or not to validate if the cover can be removed. (see Output)
+     * @return
+     */
+    boolean removeCover(PlayerEntity player, Direction side, boolean drop, boolean validateRemoval);
 
     boolean hasCover(Direction side, ICover cover);
 

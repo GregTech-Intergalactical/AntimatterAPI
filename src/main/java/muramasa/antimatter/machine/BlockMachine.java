@@ -133,7 +133,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     //Handle tool types.
                     if (type == WRENCH || type == ELECTRIC_WRENCH) {
                         if (!player.isCrouching()) {
-                            boolean ok = tile.setOutputFacing(Utils.getInteractSide(hit));
+                            boolean ok = tile.setOutputFacing(player, Utils.getInteractSide(hit));
                             return ok ? ActionResultType.SUCCESS : ActionResultType.PASS;
                         }
                         //TODO: Disbling machines isnt working.
@@ -143,7 +143,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")), player.getUniqueID());
                         return ActionResultType.SUCCESS;
                     } else if (type == CROWBAR) {
-                        return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, hit.getFace(), true)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, hit.getFace(), true, true)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                     } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
                         CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(COVER_EMPTY);
                         if (!player.isCrouching()) {
@@ -180,7 +180,6 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         });
                         return ActionResultType.SUCCESS;
                     }
-                    //Otherwise, interact with fluids
                     return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.onInteract(player, hand, hit.getFace(), Utils.getToolType(player))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                 }
             }

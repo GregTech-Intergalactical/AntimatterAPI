@@ -5,7 +5,6 @@ import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.cover.IRefreshableCover;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -17,6 +16,7 @@ import net.minecraft.util.Hand;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,44 +41,27 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
         return lookupSingle(getTile().getMachineType().getOutputCover().getClass());
     }
 
-    public boolean setOutputFacing(Direction side) {
+    public boolean setOutputFacing(PlayerEntity entity, Direction side) {
         Direction dir = getOutputFacing();
-        //dir == null means no output cover.
         if (dir == null) return false;
-        //get this machines output cover type.
-        //We cannot call onPlace etc since it stores tile related data, but still need to refresh network.
-        ICover cover = getTile().getMachineType().getOutputCover();
         if (side == dir) return true;
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
-        if (!get(side).isEmpty()) return false;
-        CoverStack<T> stack = get(dir);
-        covers.put(dir, new CoverStack<T>(COVERNONE, getTile()));
-        covers.put(side, stack);
-        buildLookup(COVERNONE,cover, side);
-        buildLookup(cover,COVERNONE, dir);
-        if (cover instanceof IRefreshableCover) {
-            ((IRefreshableCover)cover).refresh(stack);
-        }
-        if (this.getTile().getWorld() != null) {
-            sync();
-            getTile().sidedSync(true);
-        }
-        return true;
+        return moveCover(entity, dir, side);
     }
 
     @Override
-    public boolean set(Direction side, @Nonnull ICover newCover) {
+    public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack) {
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
-
-        boolean ok = super.set(side, newCover);
-        if (ok) {
-            getTile().sidedSync(true);
-        }
-        return ok;
+        return super.set(side, old, stack);
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nonnull AntimatterToolType type) {
+    protected boolean canRemoveCover(ICover cover) {
+        return !getTile().getMachineType().getOutputCover().isEqual(cover);
+    }
+
+    @Override
+    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
         return super.onInteract(player, hand, side, type);
     }
 
@@ -113,7 +96,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
      * @param side side to check
      * @return a boolean whether or not capability was blocked.
      */
-    public <T> boolean blocksCapability(Capability<T> capability,Direction side) {
+    public <U> boolean blocksCapability(Capability<U> capability, Direction side) {
         CoverStack<?> stack = get(side);
         if (stack.isEmpty()) return false;
         return stack.getCover().blocksCapability(stack, capability, side);
