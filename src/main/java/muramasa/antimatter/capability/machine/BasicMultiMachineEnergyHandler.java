@@ -18,8 +18,8 @@ public class BasicMultiMachineEnergyHandler extends MachineEnergyHandler<TileEnt
 
     protected long cachedCapacity;
 
-    public BasicMultiMachineEnergyHandler(TileEntityMachine tile, int amps, boolean generator) {
-        super((TileEntityBasicMultiMachine)tile, amps, generator);
+    public BasicMultiMachineEnergyHandler(TileEntityBasicMultiMachine tile, int amps, boolean generator) {
+        super(tile, amps, generator);
     }
 
     public void onStructureBuild() {

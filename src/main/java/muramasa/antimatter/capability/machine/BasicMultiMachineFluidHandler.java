@@ -7,15 +7,12 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,8 +31,8 @@ public class BasicMultiMachineFluidHandler extends MachineFluidHandler<TileEntit
 
     public BasicMultiMachineFluidHandler(TileEntityBasicMultiMachine tile) {
         super(tile);
-        DUMMY_INPUT = new DummyInputHandler(tile);
-        DUMMY_OUTPUT = new DummyOutputHandler(tile);
+        DUMMY_INPUT = new MultiMachineFluidHandler.DummyInputHandler(tile);
+        DUMMY_OUTPUT = new MultiMachineFluidHandler.DummyOutputHandler(tile);
     }
 
     protected void cacheInputs() {
@@ -109,25 +106,4 @@ public class BasicMultiMachineFluidHandler extends MachineFluidHandler<TileEntit
         cacheOutputs();
     }
 
-    public static class DummyInputHandler  extends MachineFluidHandler<TileEntityBasicMultiMachine> {
-        public DummyInputHandler(TileEntityBasicMultiMachine tile) {
-            super(tile);
-        }
-
-        @Override
-        public int getTanks() {
-            return tanks.get(FluidDirection.INPUT).getTanks();
-        }
-    }
-
-    public static class DummyOutputHandler  extends MachineFluidHandler<TileEntityBasicMultiMachine> {
-        public DummyOutputHandler(TileEntityBasicMultiMachine tile) {
-            super(tile);
-        }
-
-        @Override
-        public int getTanks() {
-            return tanks.get(FluidDirection.OUTPUT).getTanks();
-        }
-    }
 }

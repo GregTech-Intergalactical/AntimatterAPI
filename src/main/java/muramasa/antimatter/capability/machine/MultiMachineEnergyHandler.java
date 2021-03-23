@@ -3,6 +3,7 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import tesseract.api.gt.IGTNode;
 
@@ -114,6 +115,9 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
     }
 
     public Tier getAccumulatedPower() {
+        if (tile instanceof TileEntityBasicMultiMachine){
+            return tile.getMachineTier();
+        }
         if (inputs == null) return Tier.ULV;
         return Tier.getTier((int)(Arrays.stream(inputs).mapToLong(t -> (long) t.getInputVoltage() *t.getInputAmperage()).sum()));
     }

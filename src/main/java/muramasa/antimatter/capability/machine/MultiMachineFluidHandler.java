@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
 import net.minecraftforge.fluids.FluidStack;
@@ -15,6 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMultiMachine> {
@@ -31,14 +33,25 @@ public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMult
     protected Object2IntMap<MachineFluidHandler<?>> OUTPUT_START = new Object2IntOpenHashMap<>();
 
     protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
+    protected MachineFluidHandler<?> DUMMY_INPUT;
+    protected MachineFluidHandler<?> DUMMY_OUTPUT;
 
     public MultiMachineFluidHandler(TileEntityMultiMachine tile) {
         super(tile);
         EMPTY = new FluidTanks(new FluidTank(0));
+        if (tile instanceof TileEntityBasicMultiMachine){
+            DUMMY_INPUT = new DummyInputHandler((TileEntityBasicMultiMachine) tile);
+            DUMMY_OUTPUT = new DummyOutputHandler((TileEntityBasicMultiMachine) tile);
+        }
+
     }
 
     protected void cacheInputs() {
-        inputs = tile.getComponents("hatch_fluid_input").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        List<MachineFluidHandler<?>> list = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).collect(Collectors.toList());
+        if (tile instanceof TileEntityBasicMultiMachine) {
+            list.add(DUMMY_INPUT);
+        }
+        inputs = list.toArray(new MachineFluidHandler<?>[0]);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         INPUT_TO_HANDLER.clear();
         INPUT_START.clear();
@@ -54,7 +67,11 @@ public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMult
     }
 
     protected void cacheOutputs() {
-        outputs = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        List<MachineFluidHandler<?>> list = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).collect(Collectors.toList());
+        if (tile instanceof TileEntityBasicMultiMachine) {
+            list.add(DUMMY_OUTPUT);
+        }
+        outputs = list.toArray(new MachineFluidHandler<?>[0]);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         OUTPUT_TO_HANDLER.clear();
         OUTPUT_START.clear();
@@ -102,5 +119,27 @@ public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMult
     public void onStructureBuild() {
         cacheInputs();
         cacheOutputs();
+    }
+
+    public static class DummyInputHandler  extends MachineFluidHandler<TileEntityBasicMultiMachine> {
+        public DummyInputHandler(TileEntityBasicMultiMachine tile) {
+            super(tile);
+        }
+
+        @Override
+        public int getTanks() {
+            return tanks.get(FluidDirection.INPUT).getTanks();
+        }
+    }
+
+    public static class DummyOutputHandler  extends MachineFluidHandler<TileEntityBasicMultiMachine> {
+        public DummyOutputHandler(TileEntityBasicMultiMachine tile) {
+            super(tile);
+        }
+
+        @Override
+        public int getTanks() {
+            return tanks.get(FluidDirection.OUTPUT).getTanks();
+        }
     }
 }
