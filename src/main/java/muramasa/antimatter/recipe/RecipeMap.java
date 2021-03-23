@@ -354,7 +354,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             int id = getNextIngredientCount();
             List<IngredientWrapper> wrappers = new ObjectArrayList<>();
             for (ItemStack stack : current.getMatchingStacks()) {
-                AntimatterIngredient ing = AntimatterIngredient.of(stack).getValue();
+                AntimatterIngredient ing = AntimatterIngredient.of(stack).get();
                 IngredientWrapper wr = new IngredientWrapper(id, ing);
                 r = map.NODES.compute(wr, (k,v) -> callback(k,v, recipe, ingredients,count));
                 wrappers.add(wr);

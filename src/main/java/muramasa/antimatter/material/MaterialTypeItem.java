@@ -2,6 +2,7 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
@@ -36,7 +37,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public Item get(Material material) {
-        LazyValue<AntimatterIngredient> replacement = AntimatterAPI.getReplacement(this, material);
+        RecipeIngredient replacement = AntimatterAPI.getReplacement(this, material);
         if (replacement == null) {
             if (!allowItemGen(material))
                 Utils.onInvalidData(String.join("", "GET ERROR - DOES NOT GENERATE: T(", id, ") M(", material.getId(), ")"));
@@ -64,7 +65,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         return new ItemStack(get(material), count);
     }
 
-    public LazyValue<AntimatterIngredient> getIngredient(Material material, int count) {
+    public RecipeIngredient getIngredient(Material material, int count) {
         if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
         return AntimatterIngredient.fromStack(new LazyValue<>(() -> new ItemStack(get(material), count)));
     }
@@ -73,11 +74,11 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
-    public LazyValue<AntimatterIngredient> getMaterialIngredient(Material m, int count) {
+    public RecipeIngredient getMaterialIngredient(Material m, int count) {
         return AntimatterIngredient.of(getMaterialTag(m),count);
     }
 
-    public LazyValue<AntimatterIngredient> getMaterialIngredient(Material m) {
+    public RecipeIngredient getMaterialIngredient(Material m) {
         return getMaterialIngredient(m,1);
     }
 }

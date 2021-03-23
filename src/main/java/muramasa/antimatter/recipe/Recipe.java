@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 public class Recipe implements IRecipe<IInventory> {
     private final ItemStack[] itemsOutput;
     @Nonnull
-    private final List<LazyValue<AntimatterIngredient>> itemsInput;
+    private final List<RecipeIngredient> itemsInput;
 
     private final FluidStack[] fluidsInput;
     private final FluidStack[] fluidsOutput;
@@ -47,7 +48,7 @@ public class Recipe implements IRecipe<IInventory> {
 
     public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter:machine_recipe");
 
-    public Recipe(@Nonnull List<LazyValue<AntimatterIngredient>> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
+    public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = stacksInput;
         this.itemsOutput = stacksOutput;
         this.duration = duration;
@@ -96,13 +97,13 @@ public class Recipe implements IRecipe<IInventory> {
     }
 
     @Nullable
-    public List<LazyValue<AntimatterIngredient>> getInputItems() {
+    public List<RecipeIngredient> getInputItems() {
         return hasInputItems() ? itemsInput : null;
     }
 
     @Nullable
     public List<AntimatterIngredient> compileInput() {
-        return hasInputItems() ? itemsInput.stream().map(LazyValue::getValue).collect(Collectors.toList()) : null;
+        return hasInputItems() ? itemsInput.stream().map(RecipeIngredient::get).collect(Collectors.toList()) : null;
     }
 
     @Nullable
@@ -193,7 +194,7 @@ public class Recipe implements IRecipe<IInventory> {
         if (itemsInput.size() > 0) {
             builder.append("\nInput Items: { ");
             for (int i = 0; i < itemsInput.size(); i++) {
-                builder.append(itemsInput.get(i).getValue().getMatchingStacks()[0].getDisplayName()).append(" x").append(itemsInput.get(i).getValue().getMatchingStacks()[0].getCount());
+                builder.append(itemsInput.get(i).get().getMatchingStacks()[0].getDisplayName()).append(" x").append(itemsInput.get(i).get().getMatchingStacks()[0].getCount());
                 if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");

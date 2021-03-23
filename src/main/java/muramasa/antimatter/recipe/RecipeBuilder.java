@@ -2,6 +2,7 @@ package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.LazyValue;
@@ -16,7 +17,7 @@ public class RecipeBuilder {
 
     private RecipeMap recipeMap;
     protected ItemStack[] itemsOutput;
-    protected List<LazyValue<AntimatterIngredient>> ingredientInput;
+    protected List<RecipeIngredient> ingredientInput;
     protected FluidStack[] fluidsInput, fluidsOutput;
     protected int[] chances;
     protected int duration, special;
@@ -99,12 +100,12 @@ public class RecipeBuilder {
         return add(duration, 0, 0);
     }
 
-    public RecipeBuilder ii(LazyValue<AntimatterIngredient>... stacks) {
+    public RecipeBuilder ii(RecipeIngredient... stacks) {
         ingredientInput = Arrays.asList(stacks);
         return this;
     }
 
-    public RecipeBuilder ii(List<LazyValue<AntimatterIngredient>> stacks) {
+    public RecipeBuilder ii(List<RecipeIngredient> stacks) {
         ingredientInput = stacks;
         return this;
     }

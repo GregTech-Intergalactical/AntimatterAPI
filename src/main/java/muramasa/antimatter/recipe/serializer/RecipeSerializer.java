@@ -9,6 +9,7 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
@@ -46,13 +47,13 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
             if (json.has("fluid_out")) {
                 fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(this::getStack).toArray(FluidStack[]::new);
             }
-            List<LazyValue<AntimatterIngredient>> list = new ObjectArrayList<>();
+            List<RecipeIngredient> list = new ObjectArrayList<>();
             if (json.has("item_in")) {
                 JsonArray array = json.getAsJsonArray("item_in");
                 for (JsonElement element : array) {
                     Ingredient i = CraftingHelper.getIngredient(element);
                     if (i instanceof AntimatterIngredient) {
-                        list.add(new LazyValue<>(() -> (AntimatterIngredient) i));
+                        list.add(new RecipeIngredient(() -> (AntimatterIngredient) i));
                     } else {{
                         list.add(AntimatterIngredient.of(i.getMatchingStacks()[0].getCount(),i.getMatchingStacks()));
                     }}

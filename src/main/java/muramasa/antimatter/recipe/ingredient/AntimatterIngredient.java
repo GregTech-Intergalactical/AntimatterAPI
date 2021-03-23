@@ -107,77 +107,77 @@ public abstract class AntimatterIngredient extends Ingredient {
     }
 
     //Creates a single antimatteringredient from a single stack.
-    public static LazyValue<AntimatterIngredient> fromStack(LazyValue<ItemStack> provider, Consumer<AntimatterIngredient> builder) {
-        return new LazyValue<>(() -> {
+    public static RecipeIngredient fromStack(LazyValue<ItemStack> provider, Consumer<AntimatterIngredient> builder) {
+        return new RecipeIngredient(() -> {
             ItemStack stack = provider.getValue();
             StackIngredient ing = new StackIngredient(Stream.of(new SingleItemList(stack)), stack.getCount());
             builder.accept(ing);
             return ing;
         });
     }
-    public static LazyValue<AntimatterIngredient> fromStack(LazyValue<ItemStack> provider) {
+    public static RecipeIngredient fromStack(LazyValue<ItemStack> provider) {
         return fromStack(provider, a -> {});
     }
-    public static LazyValue<AntimatterIngredient> fromItem(int count, IItemProvider provider) {
+    public static RecipeIngredient fromItem(int count, IItemProvider provider) {
         return fromItem(count,provider, a -> {});
     }
-    public static LazyValue<AntimatterIngredient> fromItem(int count, IItemProvider provider, Consumer<AntimatterIngredient> builder) {
+    public static RecipeIngredient fromItem(int count, IItemProvider provider, Consumer<AntimatterIngredient> builder) {
         return fromStack(new LazyValue<>(() -> new ItemStack(provider, count)), builder);
     }
     @SafeVarargs
-    public static LazyValue<AntimatterIngredient> fromStacks(int count, LazyValue<ItemStack>... stacks) {
+    public static RecipeIngredient fromStacks(int count, LazyValue<ItemStack>... stacks) {
         return fromStacks(count, a -> {}, stacks);
     }
     @SafeVarargs
-    public static LazyValue<AntimatterIngredient> fromStacks(int count, Consumer<AntimatterIngredient> builder, LazyValue<ItemStack>... stacks) {
+    public static RecipeIngredient fromStacks(int count, Consumer<AntimatterIngredient> builder, LazyValue<ItemStack>... stacks) {
         if (stacks == null || stacks.length == 0) throw new RuntimeException("Invalid input to AntimatterIngredient fromStacks");
-        return new LazyValue<>(() -> {
+        return new RecipeIngredient(() -> {
             StackListIngredient stk = new StackListIngredient(Arrays.stream(stacks).map(t -> new SingleItemList(t.getValue())), count);
             builder.accept(stk);
             return stk;
         });
     }
-    public static LazyValue<AntimatterIngredient> fromTag(ResourceLocation tagIn, int count, Consumer<AntimatterIngredient> builder) {
+    public static RecipeIngredient fromTag(ResourceLocation tagIn, int count, Consumer<AntimatterIngredient> builder) {
         ensureRegisteredTag(tagIn);
-        return new LazyValue<>(() -> {
+        return new RecipeIngredient(() -> {
             ITag<Item> tag = collectTag(tagIn);
             TagIngredient ing = new TagIngredient(Stream.of(new TagList(tag)), count,tagIn);
             builder.accept(ing);
             return ing;
         });
     }
-    public static LazyValue<AntimatterIngredient> fromTag(ResourceLocation tagIn, int count) {
+    public static RecipeIngredient fromTag(ResourceLocation tagIn, int count) {
         return fromTag(tagIn, count, a -> {});
     }
 
 
     /** UTILITY FUNCTIONS **/
 
-    public static LazyValue<AntimatterIngredient> of(ResourceLocation tagIn, int count) {
+    public static RecipeIngredient of(ResourceLocation tagIn, int count) {
         return fromTag(tagIn,count);
     }
-    public static LazyValue<AntimatterIngredient> of(ITag.INamedTag<Item> tagIn, int count) {
+    public static RecipeIngredient of(ITag.INamedTag<Item> tagIn, int count) {
         return fromTag(tagIn.getName(),count);
     }
-    public static LazyValue<AntimatterIngredient> of(IItemProvider item, int count) {
+    public static RecipeIngredient of(IItemProvider item, int count) {
         return fromStack(new LazyValue<>(() -> new ItemStack(item, count)));
     }
-    public static LazyValue<AntimatterIngredient> of(IItemProvider item) {
+    public static RecipeIngredient of(IItemProvider item) {
         return of(item, 1);
     }
-    public static LazyValue<AntimatterIngredient> of(ItemStack stack) {
+    public static RecipeIngredient of(ItemStack stack) {
         return fromStack(new LazyValue<>(() -> stack));
     }
 
-    public static LazyValue<AntimatterIngredient> of(LazyValue<ItemStack> item) {
+    public static RecipeIngredient of(LazyValue<ItemStack> item) {
         return fromStack(item);
     }
     @SafeVarargs
-    public static LazyValue<AntimatterIngredient> of(int count, LazyValue<ItemStack>... stacks) {
+    public static RecipeIngredient of(int count, LazyValue<ItemStack>... stacks) {
         return fromStacks(count, stacks);
     }
     @SuppressWarnings("unchecked")
-    public static LazyValue<AntimatterIngredient> of(int count, ItemStack... stacks) {
+    public static RecipeIngredient of(int count, ItemStack... stacks) {
         return fromStacks(count, Arrays.stream(stacks).map(t -> new LazyValue<>(() -> t)).toArray(LazyValue[]::new));
     }
 

@@ -17,6 +17,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.*;
 import muramasa.antimatter.util.TagUtils;
@@ -237,7 +238,7 @@ public final class AntimatterAPI {
         return getRegistrar(id).map(IAntimatterRegistrar::isEnabled).orElse(false);
     }
 
-    public static LazyValue<AntimatterIngredient> getReplacement(MaterialType<?> type, Material material, String... namespaces) {
+    public static RecipeIngredient getReplacement(MaterialType<?> type, Material material, String... namespaces) {
        ITag.INamedTag<Item> tag = TagUtils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
        return getReplacement(null, tag, namespaces);
     }
@@ -250,7 +251,7 @@ public final class AntimatterAPI {
      * @param namespaces    Namespaces of the tags to check against, by default this only checks against 'minecraft' if no namespaces are defined
      * @return originalItem if there's nothing found, null if there is no originalItem, or an replacement
      */
-    public static LazyValue<AntimatterIngredient> getReplacement(@Nullable Item originalItem, ITag.INamedTag<Item> tag, String... namespaces) {
+    public static RecipeIngredient getReplacement(@Nullable Item originalItem, ITag.INamedTag<Item> tag, String... namespaces) {
         //TODO: This is broken for now.
         if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
         if (true) return null;
