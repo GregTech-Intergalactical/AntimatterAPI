@@ -40,6 +40,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -137,9 +138,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     public static class Proxy {
         public final IRecipeType loc;
-        public final Function<IRecipe, Recipe> handler;
+        public final BiFunction<IRecipe, RecipeBuilder, Recipe> handler;
 
-        public Proxy(IRecipeType loc, Function<IRecipe, Recipe> handler) {
+        public Proxy(IRecipeType loc, BiFunction<IRecipe, RecipeBuilder, Recipe> handler) {
             this.loc = loc;
             this.handler = handler;
         }
@@ -540,14 +541,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     @Nullable
-    public Recipe find(long tier, LazyHolder<MachineItemHandler<?>> itemHandler, LazyHolder<MachineFluidHandler<?>> fluidHandler) {
-        Recipe r = find(itemHandler.map(MachineItemHandler::getInputs).orElse(new ItemStack[0]), fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
-        return r != null && r.getPower() <= tier ? r : null;
-    }
-
-    @Nullable
-    public Recipe find(Tier tier, LazyHolder<MachineItemHandler<?>> itemHandler, LazyHolder<MachineFluidHandler<?>> fluidHandler) {
-        return find(tier.getVoltage(), itemHandler, fluidHandler);
+    public Recipe find(LazyHolder<MachineItemHandler<?>> itemHandler, LazyHolder<MachineFluidHandler<?>> fluidHandler) {
+        return find(itemHandler.map(MachineItemHandler::getInputs).orElse(new ItemStack[0]), fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0]));
     }
 
     protected void reset() {
@@ -561,7 +556,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             reset();
             List<IRecipe<?>> recipes = reg.getRecipesForType(PROXY.loc);
             recipes.stream().forEach(recipe -> {
-                Recipe r = PROXY.handler.apply(recipe);
+                Recipe r = PROXY.handler.apply(recipe, RB());
                 if (r != null) compileRecipe(r);
             });
         }

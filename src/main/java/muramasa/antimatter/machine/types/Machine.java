@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVERNONE;
 import static muramasa.antimatter.Data.COVEROUTPUT;
+import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider {
@@ -222,7 +223,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public ITextComponent getDisplayName(Tier tier) {
-        return new TranslationTextComponent("machine." + id + "." + tier.getId());
+        if (has(BASIC)) {
+            return new TranslationTextComponent("machine." + id + "." + tier.getId());
+        } else {
+            return new TranslationTextComponent("machine." + id);
+        }
     }
 
     public double getMachineEfficiency() {

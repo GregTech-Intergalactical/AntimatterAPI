@@ -8,19 +8,22 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.LazyValue;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class RecipeProxies {
 
-    private static Function<IRecipe, Recipe> DEFAULT_PROXY = t -> {
-        List<Ingredient> ingredients = t.getIngredients();
-        Ingredient input = ingredients.get(0);
-        ItemStack[] stacks = input.getMatchingStacks();
-        LazyValue<AntimatterIngredient> ing = stacks.length == 1 ? AntimatterIngredient.of(stacks[0]) : AntimatterIngredient.of(1, input.getMatchingStacks());
-        return new RecipeBuilder().ii(ing)
-                .io(t.getRecipeOutput()).build(60, 8,0, 1);
-    };
-/*
+    private static final BiFunction<IRecipe, RecipeBuilder, Recipe> getDefault(int power, int duration) {
+        return (t, b) -> {
+            List<Ingredient> ingredients = t.getIngredients();
+            Ingredient input = ingredients.get(0);
+            ItemStack[] stacks = input.getMatchingStacks();
+            LazyValue<AntimatterIngredient> ing = stacks.length == 1 ? AntimatterIngredient.of(stacks[0]) : AntimatterIngredient.of(1, input.getMatchingStacks());
+            return b.ii(ing)
+                    .io(t.getRecipeOutput()).build(duration, power, 0, 1);
+        };
+    }
+    /*
     private static Function<IRecipe, Recipe> CRAFTING = t -> {
         if (t instanceof ShapedRecipe) return null;
         List<Ingredient> ingredients = t.getIngredients();
@@ -45,8 +48,8 @@ public class RecipeProxies {
                 .io(t.getRecipeOutput()).build(60, 8,0, 1);
     };
 */
-    public static RecipeMap.Proxy FURNACE_PROXY = new RecipeMap.Proxy(IRecipeType.SMELTING, DEFAULT_PROXY);
-    public static RecipeMap.Proxy BLASTING_PROXY = new RecipeMap.Proxy(IRecipeType.BLASTING, DEFAULT_PROXY);
-    public static RecipeMap.Proxy SMOKING_PROXY = new RecipeMap.Proxy(IRecipeType.SMOKING, DEFAULT_PROXY);
+    public static BiFunction<Integer, Integer, RecipeMap.Proxy> FURNACE_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.SMELTING, getDefault(power,duration));
+    public static BiFunction<Integer, Integer, RecipeMap.Proxy> BLASTING_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.BLASTING, getDefault(power, duration));
+    public static BiFunction<Integer, Integer, RecipeMap.Proxy> SMOKING_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.SMOKING, getDefault(power, duration));
     //public static RecipeMap.Proxy CRAFTING_PROXY = new RecipeMap.Proxy(IRecipeType.CRAFTING, CRAFTING);
 }

@@ -166,7 +166,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public Recipe findRecipe() {
-        return tile.getMachineType().getRecipeMap().find(tile.getPowerLevel(), tile.itemHandler, tile.fluidHandler);
+        return tile.getMachineType().getRecipeMap().find(tile.itemHandler, tile.fluidHandler);
     }
 
     protected int getOverclock() {
@@ -298,7 +298,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     protected boolean validateRecipe(Recipe r) {
-        int voltage = this.generator ? Tier.getMax().getVoltage() : tile.getMaxInputVoltage();
+        int voltage = this.generator ? Tier.getMax().getVoltage() : tile.getMachineType().amps()*tile.getMaxInputVoltage();
         return voltage >= r.getPower()/ r.getAmps();
     }
 
@@ -413,6 +413,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 case FLUID_OUTPUT_CHANGED:
                 case ITEM_INPUT_CHANGED:
                 case ITEM_OUTPUT_CHANGED:
+                    if (tile.getMachineState() == ACTIVE)
+                        break;
                     if (tile.getMachineState() == OUTPUT_FULL && canOutput()) {
                         tickingRecipe = true;
                         tile.setMachineState(recipeFinish());
