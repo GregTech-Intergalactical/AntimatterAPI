@@ -13,7 +13,7 @@ public class FluidWrapper {
 
     public FluidWrapper(FluidStack fluid, Set<RecipeTag> tags) {
         this.fluid = fluid;
-        count = true;//fluid.getAmount() > 1;
+        count = false;//true;//fluid.getAmount() > 1;
         nbt = fluid.hasTag() && !tags.contains(RecipeTag.IGNORE_NBT);
         long tempHash = 1; //long hash used to handle many inputs with nbt hashes
         tempHash = 31 * tempHash + fluid.getFluid().getRegistryName().hashCode(); //TODO validate? potentially not persistent on relaunches?

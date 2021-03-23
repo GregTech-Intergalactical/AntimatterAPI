@@ -27,7 +27,7 @@ public class StackIngredient extends AntimatterIngredient {
     @Override
     public boolean test(@Nullable ItemStack p_test_1_) {
         if (p_test_1_ == null) return false;
-        return AntimatterIngredient.compareItems(stack,p_test_1_) && count <= p_test_1_.getCount();
+        return AntimatterIngredient.compareItems(stack,p_test_1_);
     }
 
     public ItemStack getStack() {

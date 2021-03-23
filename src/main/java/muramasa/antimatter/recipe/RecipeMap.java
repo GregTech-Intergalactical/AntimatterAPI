@@ -12,9 +12,7 @@ import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jei.renderer.InfoRenderers;
-import muramasa.antimatter.integration.jei.renderer.InternalInfoRenderers;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.StackIngredient;
 import muramasa.antimatter.recipe.ingredient.StackListIngredient;
@@ -106,7 +104,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         @Override
         public boolean equals(Object o) {
             if (!(o instanceof IngredientWrapper)) return false;
-            return testIngredient(((IngredientWrapper) o).ing) && this.count() >= ((IngredientWrapper) o).count();
+            return testIngredient(((IngredientWrapper) o).ing);
         }
 
         public int count() {
@@ -356,7 +354,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             for (ItemStack stack : current.getMatchingStacks()) {
                 AntimatterIngredient ing = AntimatterIngredient.of(stack).get();
                 IngredientWrapper wr = new IngredientWrapper(id, ing);
-                r = map.NODES.compute(wr, (k,v) -> callback(k,v, recipe, ingredients,count));
+                r = map.NODES.compute(wr, (k,v) -> callback(v, recipe, ingredients,count));
                 wrappers.add(wr);
                 if (count == ingredients.size() - 1) continue;
                 if (r.left().isPresent()) {
@@ -373,7 +371,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             if (count == ingredients.size() - 1) return true;
         } else {
             IngredientWrapper wr = new IngredientWrapper(getNextIngredientCount(), current);
-            r = map.NODES.compute(wr, (k,v) -> callback(k,v,recipe,ingredients,count));
+            r = map.NODES.compute(wr, (k,v) -> callback(v,recipe,ingredients,count));
             //Success. We are at the end, so we added recipe.
             if (count == ingredients.size() - 1) return true;
             if (r == null) {
@@ -394,7 +392,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return true;
     }
 
-    protected Either<Map<RecipeFluids, Recipe>, Branch> callback(IngredientWrapper k, Either<Map<RecipeFluids, Recipe>, Branch> v, Recipe recipe, List<AntimatterIngredient> ingredients, int count) {
+    protected Either<Map<RecipeFluids, Recipe>, Branch> callback(Either<Map<RecipeFluids, Recipe>, Branch> v, Recipe recipe, List<AntimatterIngredient> ingredients, int count) {
         //Reached the end, so add the recipe. Create a leaf.
         if (count == ingredients.size() - 1) {
             Map<RecipeFluids, Recipe> rec;
@@ -448,7 +446,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         IngredientWrapper wr = items[index];
         if (visited.contains(wr.id)) return null;
         visited.add(index);
-        Recipe r =  wr.computePaths(map, b -> getRecipe(input,items,index,count,skip,b, visited));
+        Recipe r = wr.computePaths(map, b -> getRecipe(input,items,index,count,skip,b, visited));
         if (r == null) visited.remove(index);
         return r;
     }
@@ -508,7 +506,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     @Nullable
     public Recipe find(@Nullable ItemStack[] items, @Nullable FluidStack[] fluids) {
-        long current = System.nanoTime();
+        //long current = System.nanoTime();
         //First, check if items and fluids are valid.
         if ((items == null || items.length == 0) && (fluids == null || fluids.length == 0)) return null;
         if (((items != null && items.length > 0) && !Utils.areItemsValid(items)) /*|| ((fluids != null && fluids.length > 0) && !Utils.areFluidsValid(fluids))*/)
@@ -533,10 +531,10 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 return null;
             }
         } else {
-            current = System.nanoTime() - current;
+            //current = System.nanoTime() - current;
             ingredientCounter = 0;
             Recipe r = recurseItemTreeFind(new RecipeFluids(fluids, null), Arrays.stream(uniqueItems(items)).map(t -> new IngredientWrapper(getNextIngredientCount(), t)).toArray(IngredientWrapper[]::new), rootMap);
-            Antimatter.LOGGER.info("Time to lookup (µs): " + (current / 1000));
+            //Antimatter.LOGGER.info("Time to lookup (µs): " + (current / 1000));
             return r;
         }
     }

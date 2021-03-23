@@ -32,12 +32,12 @@ public class TagIngredient extends AntimatterIngredient{
             return false;
         }
         if (o instanceof TagIngredient) {
-            return ((TagIngredient)o).tag.equals(this.tag) && this.count >= ((TagIngredient)o).count;
+            return ((TagIngredient)o).tag.equals(this.tag);
         }
         if (o instanceof Ingredient) {
             for (ItemStack stack : ((Ingredient)o).getMatchingStacks()) {
                 if (stack.getItem().getTags().contains(tag)) {
-                    return this.count >= stack.getCount();
+                    return true;
                 }
             }
         }
