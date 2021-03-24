@@ -28,6 +28,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
@@ -408,5 +409,11 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Override
     public FluidState getFluidState(BlockState state) {
         return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+    }
+
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        FluidState fluidstate = context.getWorld().getFluidState(context.getPos());
+        BlockState state = super.getStateForPlacement(context);
+        return fluidstate.isEmpty() ? state : state.with(WATERLOGGED, true);
     }
 }

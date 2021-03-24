@@ -9,6 +9,7 @@ import muramasa.antimatter.gui.widget.SwitchWidget;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.network.packets.GuiEventPacket;
+import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -49,26 +50,30 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
     protected void init() {
         super.init();
         ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
-        if (container.getTile().has(MachineFlag.ITEM)) {
-            item = new SwitchWidget(gui, guiLeft + 35, guiTop + 63, 16, 16, ITEM, (b, s) -> {
-                Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
-            }, container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.get(t.getOutputFacing()))).orElse(false));
-        }
-        if (container.getTile().has(MachineFlag.FLUID)) {
-            fluid = new SwitchWidget(gui, guiLeft + 53, guiTop + 63, 16, 16, FLUID, (b, s) -> {
-                Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
-            },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
-        }
-        if (item != null || fluid != null) {
-            addButton(new SwitchWidget(loc, guiLeft + 9, guiTop + 64, 14, 14, ButtonOverlay.INPUT_OUTPUT , (b, s) -> {
-                if (s) {
-                    if (item != null) addButton(item);
-                    if (fluid != null) addButton(fluid);
-                } else {
-                    if (item != null) removeButton(item);
-                    if (fluid != null) removeButton(fluid);
-                }
-            }, false));
+        boolean shouldDrawIO = this.getClass() == ScreenBasicMachine.class && container.getTile().getClass() == TileEntityMachine.class
+                && container.getTile().getMachineTier().getVoltage() > 0;
+        if (shouldDrawIO) {
+            if (container.getTile().has(MachineFlag.ITEM)) {
+                item = new SwitchWidget(gui, guiLeft + 35, guiTop + 63, 16, 16, ITEM, (b, s) -> {
+                    Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
+                }, container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.get(t.getOutputFacing()))).orElse(false));
+            }
+            if (container.getTile().has(MachineFlag.FLUID)) {
+                fluid = new SwitchWidget(gui, guiLeft + 53, guiTop + 63, 16, 16, FLUID, (b, s) -> {
+                    Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
+                },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
+            }
+            if (item != null || fluid != null) {
+                addButton(new SwitchWidget(loc, guiLeft + 9, guiTop + 64, 14, 14, ButtonOverlay.INPUT_OUTPUT , (b, s) -> {
+                    if (s) {
+                        if (item != null) addButton(item);
+                        if (fluid != null) addButton(fluid);
+                    } else {
+                        if (item != null) removeButton(item);
+                        if (fluid != null) removeButton(fluid);
+                    }
+                }, false));
+            }
         }
     }
 }
