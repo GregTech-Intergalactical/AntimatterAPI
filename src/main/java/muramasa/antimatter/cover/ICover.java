@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
@@ -109,22 +110,24 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
     class DynamicKey {
         public final Direction facing;
         public final Texture machineTexture;
+        public final String coverId;
 
-        public DynamicKey(Direction facing, Texture tex) {
+        public DynamicKey(Direction facing, Texture tex, String cover) {
             this.facing = facing;
             this.machineTexture = tex;
+            this.coverId = cover;
         }
 
         @Override
         public int hashCode() {
-            return facing.hashCode() + machineTexture.hashCode();
+            return facing.hashCode() + machineTexture.hashCode() + coverId.hashCode();
         }
 
         @Override
         public boolean equals(Object o) {
             if (o instanceof DynamicKey) {
                 BaseCover.DynamicKey k = (DynamicKey) o;
-                return k.facing == this.facing && k.machineTexture.equals(this.machineTexture);
+                return k.facing == this.facing && k.machineTexture.equals(this.machineTexture) && coverId.equals(k.coverId);
             } else {
                 return false;
             }

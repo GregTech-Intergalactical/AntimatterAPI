@@ -48,7 +48,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     @Override
     public void run() {
         registerModels();
-        generatedModels.forEach(DynamicResourcePack::addItem);
+        //generatedModels.forEach(DynamicResourcePack::addItem);
     }
 
     @Override
