@@ -52,7 +52,7 @@ public class CoveredBakedModel extends AttachableBakedModel {
         Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE) ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(side) : data.getData(AntimatterProperties.MACHINE_TEXTURE).apply(side);
         CoverStack<?> c = covers.get(side);
         if (c.isEmpty()) return quads;
-        quads = c.coverTexturer.get().getQuads(quads,state,c.getCover(),new BaseCover.DynamicKey(state.get(BlockStateProperties.HORIZONTAL_FACING), tex), side.getIndex(), data);
+        quads = covers.getTexturer(side).getQuads(quads,state,c.getCover(),new BaseCover.DynamicKey(state.get(BlockStateProperties.HORIZONTAL_FACING), tex), side.getIndex(), data);
         return quads;
     }
 }

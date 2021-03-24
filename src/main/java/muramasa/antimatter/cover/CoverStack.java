@@ -25,9 +25,6 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
 
     public static final CoverStack<?>[] EMPTY_COVER_ARRAY = new CoverStack[0];
 
-    /** The dyntexturer for covers. **/
-    public LazyHolder<DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
-
 
     private ICover cover;
     private CompoundNBT nbt;
@@ -38,7 +35,6 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
         this.tile = tile;
         this.nbt = new CompoundNBT();
         //Lazy way to ensure it is only called on client lol
-        coverTexturer = LazyHolder.of(() -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
     }
 
     //This allows you to instantiate a non-stateful cover, like COVER_EMPTY.

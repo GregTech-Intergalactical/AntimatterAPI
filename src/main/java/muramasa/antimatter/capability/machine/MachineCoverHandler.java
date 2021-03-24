@@ -3,28 +3,35 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.client.dynamic.DynamicTexturer;
+import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVERNONE;
 
 public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandler<T> implements IMachineHandler {
-
+    public Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
     public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
         Arrays.stream(Ref.DIRS).forEach(d -> {
@@ -35,6 +42,11 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
             covers.put(d, cover);
             buildLookup(COVERNONE, cover.getCover(), d);
         });
+        coverTexturer = new HashMap<>(6);//LazyHolder.of(() -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
+    }
+    @OnlyIn(Dist.CLIENT)
+    public DynamicTexturer<ICover, ICover.DynamicKey> getTexturer(Direction dir) {
+        return coverTexturer.computeIfAbsent(dir, d -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
     }
 
     public Direction getOutputFacing() {
