@@ -59,9 +59,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack) {
         covers.put(side, stack); //Emplace newCover, calls onPlace!
+        buildLookup(old.getCover(),stack.getCover(), side);
         old.onRemove(side);
         stack.onPlace(side);
-        buildLookup(old.getCover(),stack.getCover(), side);
         if (tile.getWorld() != null) {
             sync();
         }

@@ -290,6 +290,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     if (tile.energyHandler.get().extract(power, true) >= power) {
                         tile.energyHandler.get().extract(power, false);
                         return true;
+                    } else {
+                        return false;
                     }
                 } else {
                     return consumeGeneratorResources();

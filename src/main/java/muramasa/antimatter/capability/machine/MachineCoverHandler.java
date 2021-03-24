@@ -41,6 +41,10 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
         return lookupSingle(getTile().getMachineType().getOutputCover().getClass());
     }
 
+    public CoverStack<T> getOutputCover() {
+        return get(lookupSingle(getTile().getMachineType().getOutputCover().getClass()));
+    }
+
     public boolean setOutputFacing(PlayerEntity entity, Direction side) {
         Direction dir = getOutputFacing();
         if (dir == null) return false;

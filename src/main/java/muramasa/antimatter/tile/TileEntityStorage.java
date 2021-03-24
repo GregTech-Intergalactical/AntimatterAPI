@@ -58,10 +58,14 @@ public abstract class TileEntityStorage extends TileEntityMachine {
                 // Check all items that match the given voltage, and allow either input/output.
                 int out = h.getChargeableItems().stream().filter(item -> (item.getOutputVoltage() == 0 || item.getOutputVoltage() == e.getOutputVoltage())).mapToInt(IEnergyHandler::getOutputAmperage).sum();
                 int in = h.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == e.getInputVoltage())).mapToInt(IEnergyHandler::getInputAmperage).sum();
-
+                int oldOut = e.getOutputAmperage();
+                int oldIn = e.getInputAmperage();
                 // 2 amps per battery input.
                 e.setInputAmperage(2 * in);
                 e.setOutputAmperage(out);
+                if (oldOut != out || oldIn != in) {
+                    e.refreshNet();
+                }
             });
         });
     }

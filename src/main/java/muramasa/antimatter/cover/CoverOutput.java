@@ -60,9 +60,6 @@ public class CoverOutput extends CoverInput {
         return instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_FLUID);
     }
 
-    public void refresh(CoverStack<?> instance) {
-        super.refresh(instance);
-    }
     //TODO: Not even sure if needed.
     @OnlyIn(Dist.CLIENT)
     public void setEjects(CoverStack<?> instance, boolean fluid,boolean item) {

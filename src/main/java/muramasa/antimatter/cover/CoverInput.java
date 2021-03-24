@@ -7,7 +7,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.api.IRefreshable;
 
 //Behaves like CoverOutput in terms of refresh but no event handler.
-public class CoverInput extends BaseCover implements IRefreshableCover{
+public class CoverInput extends BaseCover{
 
     public CoverInput() {
         register();

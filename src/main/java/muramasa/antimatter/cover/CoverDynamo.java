@@ -7,7 +7,7 @@ import net.minecraft.util.ResourceLocation;
 import tesseract.api.IRefreshable;
 import tesseract.api.gt.IGTNode;
 
-public class CoverDynamo extends BaseCover implements IRefreshableCover {
+public class CoverDynamo extends BaseCover {
 
     public CoverDynamo(String id) {
         super(id);
@@ -19,26 +19,18 @@ public class CoverDynamo extends BaseCover implements IRefreshableCover {
     }
 
     @Override
-    public ResourceLocation getModel(Direction dir, Direction facing) {
-        return getBasicModel();
+    protected String getRenderId() {
+        return "dynamo";
     }
 
-    @Override
-    public void onRemove(CoverStack<?> instance, Direction side) {
-        super.onRemove(instance,side);
-    //    instance.getTile().getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(IGTNode::refreshNet);
-    }
+    //@Override
+    //public ResourceLocation getModel(Direction dir, Direction facing) {
+    //    return getBasicModel();
+    //}
 
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
         instance.getTile().getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(IGTNode::refreshNet);
-    }
-
-    @Override
-    public void refresh(CoverStack<?> instance) {
-        if (instance.getTile() instanceof TileEntityMachine) {
-            ((TileEntityMachine)instance.getTile()).energyHandler.ifPresent(IRefreshable::refreshNet);
-        }
     }
 }
