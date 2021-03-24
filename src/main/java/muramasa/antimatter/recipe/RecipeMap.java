@@ -552,7 +552,6 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         reset();
         RECIPES_TO_COMPILE.forEach(this::compileRecipe);
         if (PROXY != null) {
-            reset();
             List<IRecipe<?>> recipes = reg.getRecipesForType(PROXY.loc);
             recipes.stream().forEach(recipe -> {
                 Recipe r = PROXY.handler.apply(recipe, RB());
