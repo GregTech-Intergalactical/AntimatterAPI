@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
@@ -11,6 +12,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -466,7 +468,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public boolean connects(Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
+        return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
     }
 
     @Override

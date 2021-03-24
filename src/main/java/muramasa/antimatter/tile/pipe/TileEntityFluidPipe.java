@@ -2,6 +2,10 @@ package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.util.Dir;
@@ -22,6 +26,11 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
     public void onLoad() {
         super.onLoad();
         if (isServerSide()) Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this);
+    }
+
+    @Override
+    public boolean validateTile(TileEntity tile, Direction side) {
+        return tile instanceof TileEntityFluidPipe || tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side).isPresent();
     }
 
     @Override

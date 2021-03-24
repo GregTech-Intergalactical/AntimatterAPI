@@ -46,10 +46,10 @@ public class TileEntityPipe extends TileEntityBase {
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
     }
 
-    //TODO: what does this do
+    //TODO: what does this do. disabled for now.
     @Override
     public void onLoad() {
-        CoverStack<?>[] covers = this.getAllCovers();
+        /*CoverStack<?>[] covers = this.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRS) {
             if (Connectivity.has(interaction, side.getIndex())) {
@@ -60,7 +60,11 @@ public class TileEntityPipe extends TileEntityBase {
                     interaction = Connectivity.clear(interaction, side.getIndex());
                 }
             }
-        }
+        }*/
+    }
+
+    public boolean validateTile(TileEntity tile, Direction side) {
+        return false;
     }
 
     @Override

@@ -145,7 +145,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if (tile != null) {
             for (Direction side : Ref.DIRS) {
                 TileEntityPipe neighbor = getTilePipe(worldIn, pos.offset(side));
-                if (neighbor != null) {
+                if (neighbor != null && tile.validateTile(neighbor, side.getOpposite())) {
                     if (neighbor.canConnect(side.getOpposite().getIndex())) {
                         tile.setConnection(side);
                     }
@@ -159,19 +159,17 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
             TileEntity neighbor = world.getTileEntity(pos.offset(face.getOpposite()));
-            if (neighbor instanceof TileEntityPipe) {
-                TileEntityPipe pipe = (TileEntityPipe) neighbor;
-                tile.setConnection(face.getOpposite());
-                if (!pipe.canConnect(face.getIndex())) {
-                    pipe.setConnection(face);
-                }
-                return true;
-            } else if (neighbor != null) {
-                neighbor.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(cap -> {
-                    if (cap.canInput() || cap.canOutput()) {
-                        tile.setConnection(face.getOpposite());
+            if (neighbor != null) {
+                if (tile.validateTile(neighbor, face.getOpposite())) {
+                    tile.setConnection(face.getOpposite());
+                    if (neighbor instanceof TileEntityPipe) {
+                        TileEntityPipe pipe = (TileEntityPipe) neighbor;
+                        if (!pipe.canConnect(face.getIndex())) {
+                            pipe.setConnection(face);
+                        }
                     }
-                });
+                    return true;
+                }
             }
         }
         return false;
@@ -222,24 +220,28 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if (type == getTool(tile) && hand == Hand.MAIN_HAND) {
             boolean isTarget = false;
             TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
-            if (target instanceof TileEntityPipe) {
-                ((TileEntityPipe) target).toggleConnection(side.getOpposite());
-            } else {
-                isTarget = tile.isServerSide() && Utils.isForeignTile(target); // Check that entity is not GT one
-            }
-            tile.toggleConnection(side);
+            if (target != null) {
+                if (tile.validateTile(target, side.getOpposite())) {
+                    if (target instanceof TileEntityPipe) {
+                        ((TileEntityPipe) target).toggleConnection(side.getOpposite());
+                    } else {
+                        isTarget = tile.isServerSide() && Utils.isForeignTile(target);
+                    }
+                    tile.toggleConnection(side);
 
-            // If some target in front of, then create wrapper
-            if (isTarget) {
-                if (tile.canConnect(side.getIndex())) {
-                    tile.setInteract(side);
-                    PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
-                } else {
-                    tile.clearInteract(side);
-                    PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
+                    // If some target in front of, then create wrapper
+                    if (isTarget) {
+                        if (tile.canConnect(side.getIndex())) {
+                            tile.setInteract(side);
+                            PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
+                        } else {
+                            tile.clearInteract(side);
+                            PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
+                        }
+                    }
+                    return ActionResultType.SUCCESS;
                 }
             }
-            return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;
     }

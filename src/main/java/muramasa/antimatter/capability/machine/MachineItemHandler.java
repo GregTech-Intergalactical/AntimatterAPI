@@ -18,6 +18,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.Tesseract;
@@ -425,7 +427,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     @Override
     public boolean connects(Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
+        return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
     }
 
     private int getFirstValidSlot(Object item) {

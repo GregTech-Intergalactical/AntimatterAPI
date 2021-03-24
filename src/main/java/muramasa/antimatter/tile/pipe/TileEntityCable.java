@@ -1,7 +1,10 @@
 package muramasa.antimatter.tile.pipe;
 
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import tesseract.Tesseract;
 import tesseract.api.gt.IGTCable;
 import tesseract.util.Dir;
@@ -31,6 +34,11 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     public void onRemove() {
         if (isServerSide()) Tesseract.GT_ENERGY.remove(getDimension(), pos.toLong());
         super.onRemove();
+    }
+
+    @Override
+    public boolean validateTile(TileEntity tile, Direction side) {
+        return tile instanceof TileEntityCable || tile.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY, side).isPresent();
     }
 
     @Override

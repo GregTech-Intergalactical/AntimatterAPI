@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
@@ -8,6 +9,7 @@ import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.util.Direction;
 import tesseract.Tesseract;
 import tesseract.util.Dir;
 
@@ -112,7 +114,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     @Override
     public boolean connects(Dir direction) {
         // TODO: Finish connections when covers will be ready
-        return tile.getFacing().getIndex() != direction.getIndex()/* && tile.getCover(Ref.DIRECTIONS[direction.getIndex()]).isEqual(Data.COVER_EMPTY)*/;
+        return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
     }
 
     @Override

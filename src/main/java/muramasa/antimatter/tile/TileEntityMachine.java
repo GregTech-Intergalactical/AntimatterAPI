@@ -325,14 +325,24 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
+    public void refreshCaps() {
+        energyHandler.ifPresent(EnergyHandler::refreshNet);
+        fluidHandler.ifPresent(MachineFluidHandler::refreshNet);
+        itemHandler.ifPresent(MachineItemHandler::refreshNet);
+    }
+
+    public <T> boolean blocksCapability(@Nonnull Capability<T> cap, Direction side) {
+        return coverHandler.map(t -> t.blocksCapability(cap, side)).orElse(false);
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (coverHandler.map(t -> t.blocksCapability(cap, side)).orElse(false)) return super.getCapability(cap, side);
+        if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
+        if (blocksCapability(cap, side)) return LazyOptional.empty();
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return side == null ? itemHandler.map(MachineItemHandler::getOutputHandler).transform().cast() : itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.transform().cast();
         else if (cap == ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.transform().cast();
-        else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
         return super.getCapability(cap, side);
     }
 
