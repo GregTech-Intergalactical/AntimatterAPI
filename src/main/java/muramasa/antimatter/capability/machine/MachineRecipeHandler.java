@@ -352,7 +352,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             });
         }
         if (activeRecipe.hasInputFluids()) {
-            tile.fluidHandler.ifPresent(h -> this.fluidInputs = h.consumeAndReturnInputs(Arrays.asList(activeRecipe.getInputFluids())));
+            tile.fluidHandler.ifPresent(h -> {
+                h.consumeAndReturnInputs(Arrays.asList(activeRecipe.getInputFluids()));
+                this.fluidInputs = Arrays.asList(activeRecipe.getInputFluids());
+            });
         }
         consumedResources = true;
     }
