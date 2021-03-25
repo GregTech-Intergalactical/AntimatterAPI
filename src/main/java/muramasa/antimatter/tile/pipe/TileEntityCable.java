@@ -5,9 +5,14 @@ import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.Tesseract;
 import tesseract.api.gt.IGTCable;
 import tesseract.util.Dir;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityCable extends TileEntityPipe implements IGTCable {
 

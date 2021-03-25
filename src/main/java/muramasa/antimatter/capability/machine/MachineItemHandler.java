@@ -35,7 +35,7 @@ import java.util.stream.IntStream;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, INBTSerializable<CompoundNBT> {
+public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode, IMachineHandler, INBTSerializable<CompoundNBT> {
 
     protected final T tile;
     protected final EnumMap<MachineFlag, TrackedItemHandler<T>> inventories = new EnumMap<>(MachineFlag.class); // Use SlotType instead of MachineFlag?
@@ -359,8 +359,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     /** Tesseract IItemNode Implementations **/
     @Override
-    public int insert(ItemData data, boolean simulate) {
-        ItemStack stack = (ItemStack) data.getStack();
+    public int insert(ItemStack stack, boolean simulate) {
         IItemHandlerModifiable inputHandler = getInputHandler();
         int slot = getFirstValidSlot(stack.getItem());
         if (slot != -1) {
@@ -374,9 +373,9 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     @Nullable
     @Override
-    public ItemData<ItemStack> extract(int slot, int amount, boolean simulate) {
+    public ItemStack extract(int slot, int amount, boolean simulate) {
         ItemStack stack = getOutputHandler().extractItem(slot, amount, simulate);
-        return stack.isEmpty() ? null : new ItemData<>(slot, stack);
+        return stack;
     }
 
     @Nonnull

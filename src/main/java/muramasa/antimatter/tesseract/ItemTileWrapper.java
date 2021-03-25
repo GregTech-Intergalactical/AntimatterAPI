@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
+public class ItemTileWrapper implements IItemNode, ITileWrapper {
 
     private TileEntity tile;
     private boolean removed;
@@ -72,8 +72,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
     }
 
     @Override
-    public int insert(ItemData data, boolean simulate) {
-        ItemStack stack = (ItemStack) data.getStack();
+    public int insert(ItemStack stack, boolean simulate) {
         int slot = getFirstValidSlot(stack.getItem());
         if (slot == -1) {
             return 0;
@@ -90,9 +89,9 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
 
     @Nullable
     @Override
-    public ItemData<ItemStack> extract(int slot, int amount, boolean simulate) {
+    public ItemStack extract(int slot, int amount, boolean simulate) {
         ItemStack stack = handler.extractItem(slot, amount, simulate);
-        return stack.isEmpty() ? null : new ItemData<>(slot, stack);
+        return stack;
     }
 
     @Nonnull
@@ -146,7 +145,7 @@ public class ItemTileWrapper implements IItemNode<ItemStack>, ITileWrapper {
 
     @Override
     public boolean canOutput(Dir direction) {
-        return covers[direction.getIndex()].getCover() instanceof CoverOutput;
+        return true;
     }
 
     @Override
