@@ -167,6 +167,8 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                         if (!pipe.canConnect(face.getIndex())) {
                             pipe.setConnection(face);
                         }
+                    } else {
+                        tile.setInteract(face.getOpposite());
                     }
                     return true;
                 }
@@ -184,13 +186,14 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                 // Check if the block is actually air or there was another reason for change.
                 if (pos.offset(side).equals(neighbor) && isAir(world.getBlockState(neighbor), world, pos)) {
                     tile.clearConnection(side);
+                    tile.clearInteract(side);
                     return;
                 }
             }
         }
     }
 
-    @Override // Used to catch new placed neighbors near pipe which enable connection
+    /*@Override // Used to catch new placed neighbors near pipe which enable connection
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos from, boolean isMoving) {
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
@@ -204,7 +207,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                 }
             }
         }
-    }
+    }*/
 
     private AntimatterToolType getTool(TileEntity tile) {
         return tile instanceof TileEntityCable ? WIRE_CUTTER : WRENCH;
@@ -217,28 +220,27 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         AntimatterToolType type = Utils.getToolType(player);
         Direction side = Utils.getInteractSide(hit);
 
-        if (type == getTool(tile) && hand == Hand.MAIN_HAND) {
-            boolean isTarget = false;
+        if (!world.isRemote && type == getTool(tile) && hand == Hand.MAIN_HAND) {
             TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
             if (target != null) {
                 if (tile.validateTile(target, side.getOpposite())) {
                     if (target instanceof TileEntityPipe) {
                         ((TileEntityPipe) target).toggleConnection(side.getOpposite());
                     } else {
-                        isTarget = tile.isServerSide() && Utils.isForeignTile(target);
+                        tile.toggleInteract(side);
                     }
                     tile.toggleConnection(side);
 
                     // If some target in front of, then create wrapper
-                    if (isTarget) {
+                    /*if (isTarget) {
                         if (tile.canConnect(side.getIndex())) {
                             tile.setInteract(side);
-                            PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
+                            //PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
                         } else {
                             tile.clearInteract(side);
-                            PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
+                            //PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
                         }
-                    }
+                    }*/
                     return ActionResultType.SUCCESS;
                 }
             }

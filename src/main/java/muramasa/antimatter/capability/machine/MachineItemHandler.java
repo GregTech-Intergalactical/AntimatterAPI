@@ -67,7 +67,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     @Override
     public void init() {
-        registerNet();
+        ///registerNet();
     }
 
     @Override
@@ -98,7 +98,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     public void onRemove() {
         if (tile.isServerSide()) {
-            deregisterNet();
+        //    deregisterNet();
         }
     }
 
@@ -361,7 +361,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     @Override
     public int insert(ItemStack stack, boolean simulate) {
         IItemHandlerModifiable inputHandler = getInputHandler();
-        int slot = getFirstValidSlot(stack.getItem());
+        int slot = getFirstValidSlot(stack);
         if (slot != -1) {
             ItemStack inserted = inputHandler.insertItem(slot, stack, simulate);
             if (!inserted.isEmpty()) {
@@ -414,11 +414,11 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     @Override
     public boolean canOutput(Dir direction) {
-        return tile.getOutputFacing().getIndex() == direction.getIndex();
+        return tile.getOutputFacing().getIndex() != direction.getIndex();
     }
 
     @Override
-    public boolean canInput(Object item, Dir direction) {
+    public boolean canInput(ItemStack item, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return getFirstValidSlot(item) != -1;
@@ -429,7 +429,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
     }
 
-    private int getFirstValidSlot(Object item) {
+    private int getFirstValidSlot(ItemStack item) {
         int slot = -1;
         IItemHandlerModifiable inputHandler = getInputHandler();
         for (int i = 0; i < inputHandler.getSlots(); i++) {
@@ -437,7 +437,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
             if (stack.isEmpty()) {
                 slot = i;
             } else {
-                if (stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()) {
+                if (stack.getItem().equals(item.getItem()) && stack.getMaxStackSize() > stack.getCount()) {
                     return i;
                 }
             }
@@ -454,6 +454,6 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     @Override
     public void registerNet() {
         if (tile.getWorld() == null) return;
-        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), () -> this);
     }
 }

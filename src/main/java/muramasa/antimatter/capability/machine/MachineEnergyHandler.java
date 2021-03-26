@@ -128,7 +128,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     @Override
     public void registerNet() {
         if (tile.getWorld() == null) return;
-        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), () -> this);
     }
 
     @Override

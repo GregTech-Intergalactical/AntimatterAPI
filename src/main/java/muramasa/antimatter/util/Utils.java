@@ -304,9 +304,9 @@ public class Utils {
         }
     }
 
-    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile, boolean once) {
-        LazyOptional<IItemHandler> from = fromTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-        LazyOptional<IItemHandler> to = toTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile, Direction side, boolean once) {
+        LazyOptional<IItemHandler> from = fromTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+        LazyOptional<IItemHandler> to = toTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
         from.ifPresent(first -> {
             to.ifPresent(second -> {
                 transferItems(first,second, once);

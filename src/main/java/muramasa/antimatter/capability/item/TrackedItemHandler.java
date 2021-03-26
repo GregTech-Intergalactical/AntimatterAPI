@@ -28,5 +28,4 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
         tile.markDirty();
         tile.onMachineEvent(contentEvent, slot);
     }
-
 }

@@ -1,19 +1,26 @@
 package muramasa.antimatter.tesseract;
 
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.cover.ICover;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.gt.IGTNode;
 import tesseract.util.Dir;
 
 import javax.annotation.Nullable;
+import java.util.function.Supplier;
 
-public class EnergyTileWrapper implements IGTNode, ITileWrapper {
+public class EnergyTileWrapper implements IGTNode {
 
     private TileEntity tile;
     private boolean removed;
@@ -25,18 +32,25 @@ public class EnergyTileWrapper implements IGTNode, ITileWrapper {
     }
 
     @Nullable
-    public static EnergyTileWrapper of(TileEntity tile) {
-        LazyOptional<IEnergyStorage> capability = tile.getCapability(CapabilityEnergy.ENERGY);
-        if (capability.isPresent()) {
-            EnergyTileWrapper node = new EnergyTileWrapper(tile, capability.orElse(null));
-            capability.addListener(o -> node.onRemove(null));
-            Tesseract.GT_ENERGY.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), node);
-            return node;
-        }
-        return null;
+    public static void of(World world, BlockPos pos, Supplier<TileEntity> supplier) {
+        Tesseract.GT_ENERGY.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
+            TileEntity tile = supplier.get();
+            LazyOptional<IEnergyHandler> capability = tile.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY);
+            if (capability.isPresent()) {
+                return capability.resolve().get();
+            } else {
+                LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY);
+                if (cap.isPresent()) {
+                    EnergyTileWrapper node = new EnergyTileWrapper(tile, cap.orElse(null));
+                    capability.addListener(o -> node.onRemove(null));
+                    Tesseract.GT_ENERGY.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), () -> node);
+                    return node;
+                }
+            }
+            return null;
+        });
     }
 
-    @Override
     public void onRemove(@Nullable Direction side) {
         if (side == null) {
             if (tile.isRemoved()) {
@@ -46,16 +60,6 @@ public class EnergyTileWrapper implements IGTNode, ITileWrapper {
                 // What if tile is recreate cap ?
             }
         }
-    }
-
-    @Override
-    public void onUpdate(Direction side, ICover cover) {
-
-    }
-
-    @Override
-    public boolean isRemoved() {
-        return removed;
     }
 
     @Override

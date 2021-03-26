@@ -2,13 +2,23 @@ package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
+import muramasa.antimatter.tesseract.FluidTileWrapper;
+import muramasa.antimatter.tesseract.ItemTileWrapper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
+import tesseract.api.capability.TesseractFluidCapability;
+import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.util.Dir;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
 
@@ -43,9 +53,29 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
     }
 
     @Override
+    public void cacheNode(BlockPos pos, boolean remove) {
+        if (!remove)
+            FluidTileWrapper.of(getWorld(), pos, () -> world.getTileEntity(pos));
+        else {
+            Tesseract.FLUID.remove(getWorld().getDimensionKey(), pos.toLong());
+        }
+    }
+
+    @Override
     public void onRemove() {
         if (isServerSide()) Tesseract.FLUID.remove(getDimension(), pos.toLong());
         super.onRemove();
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (side == null) return LazyOptional.empty();
+        if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return LazyOptional.of(() -> new TesseractFluidCapability(this, side)).cast();
+        }
+        return LazyOptional.empty();
     }
 
     @Override

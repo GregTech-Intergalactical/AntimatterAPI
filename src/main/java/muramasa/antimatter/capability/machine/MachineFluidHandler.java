@@ -32,7 +32,7 @@ import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, IFluidHandler {
+public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode, IMachineHandler, IFluidHandler {
 
     protected final T tile;
     protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
@@ -117,9 +117,13 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     protected FluidTank getTank(int tank) {
         if (getInputTanks() == null) {
-            if (getOutputTanks() != null) return getOutputTanks().getTank(tank);
+            if (getOutputTanks() != null)
+                return getOutputTanks().getTank(tank);
         } else if (getInputTanks() != null && getOutputTanks() != null){
-            if (tank > getInputTanks().getTanks()) return getOutputTanks().getTank(offsetTank(tank));
+            if (tank >= getInputTanks().getTanks())
+                return getOutputTanks().getTank(offsetTank(tank));
+            else
+                return getInputTanks().getTank(tank);
         } else if (getOutputTanks() == null && getInputTanks() != null) {
             return getInputTanks().getTank(tank);
         }
@@ -138,8 +142,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     protected int offsetTank(int tank) {
-        if (getInputTanks() != null && tank > getInputTanks().getTanks()) return tank;
-        if (getInputTanks() != null) return tank - getInputTanks().getTanks();
+        if (getInputTanks() != null && tank >= getInputTanks().getTanks()) return tank - getInputTanks().getTanks();
         return tank;
     }
 
@@ -397,18 +400,18 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     /** Tesseract IFluidNode Implementations **/
     @Override
-    public int insert(FluidData data, boolean simulate) {
-        return fill((FluidStack) data.getStack(), simulate ? SIMULATE : EXECUTE);
+    public int insert(FluidStack data, boolean simulate) {
+        return fill(data, simulate ? SIMULATE : EXECUTE);
     }
 
     @Nullable
     @Override
-    public FluidData<FluidStack> extract(int tank, int amount, boolean simulate) {
+    public FluidStack extract(int tank, int amount, boolean simulate) {
         if (getOutputTanks() == null) {
             return null;
         }
         FluidStack drained = getOutputTanks().drain(amount, simulate ? SIMULATE : EXECUTE);
-        return drained.isEmpty() ? null : new FluidData<>(drained, drained.getAmount(), drained.getFluid().getAttributes().getTemperature(), drained.getFluid().getAttributes().isGaseous());
+        return drained;//drained.isEmpty() ? null : new FluidData<>(drained, drained.getAmount(), drained.getFluid().getAttributes().getTemperature(), drained.getFluid().getAttributes().isGaseous());
     }
 
     public void deserializeNBT(CompoundNBT nbt) {
@@ -459,7 +462,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     // TODO needed? Weird semantics
     @Override
-    public boolean canInput(Object fluid, Dir direction) {
+    public boolean canInput(FluidStack fluid, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return true;
@@ -474,7 +477,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     @Override
     public void registerNet() {
         if (tile.getWorld() == null) return;
-        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), () -> this);
     }
 
     @Override

@@ -8,6 +8,8 @@ import muramasa.antimatter.cover.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -19,8 +21,9 @@ import tesseract.util.Dir;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
+import java.util.function.Supplier;
 
-public class ItemTileWrapper implements IItemNode, ITileWrapper {
+public class ItemTileWrapper implements IItemNode {
 
     private TileEntity tile;
     private boolean removed;
@@ -36,18 +39,28 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
     }
 
     @Nullable
-    public static ItemTileWrapper of(TileEntity tile) {
-        LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+    public static ItemTileWrapper of(World world, BlockPos pos, Supplier<TileEntity> supplier) {
+        Tesseract.ITEM.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
+            TileEntity tile = supplier.get();
+            LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            if (capability.isPresent()) {
+                ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
+                capability.addListener(o -> node.onRemove(null));
+                //Tesseract.ITEM.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), () -> node);
+                return node;
+            }
+            throw new RuntimeException("invalid capability");
+        });
+        /*LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
         if (capability.isPresent()) {
             ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
             capability.addListener(o -> node.onRemove(null));
-            Tesseract.ITEM.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), node);
+            Tesseract.ITEM.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), () -> node);
             return node;
-        }
+        }*/
         return null;
     }
 
-    @Override
     public void onRemove(@Nullable Direction side) {
         if (side == null) {
             if (tile.isRemoved()) {
@@ -62,18 +75,8 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
     }
 
     @Override
-    public void onUpdate(Direction side, ICover cover) {
-        covers[side.getIndex()] = new CoverStack(cover, this.tile);
-    }
-
-    @Override
-    public boolean isRemoved() {
-        return removed;
-    }
-
-    @Override
     public int insert(ItemStack stack, boolean simulate) {
-        int slot = getFirstValidSlot(stack.getItem());
+        int slot = getFirstValidSlot(stack);
         if (slot == -1) {
             return 0;
         }
@@ -149,7 +152,7 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
     }
 
     @Override
-    public boolean canInput(Object item, Dir direction) {
+    public boolean canInput(ItemStack item, Dir direction) {
         return isItemAvailable(item, direction.getIndex()) && getFirstValidSlot(item) != -1;
     }
 
@@ -158,21 +161,21 @@ public class ItemTileWrapper implements IItemNode, ITileWrapper {
         return true;
     }
 
-    private boolean isItemAvailable(Object item, int dir) {
+    private boolean isItemAvailable(ItemStack item, int dir) {
         if (covers[dir].getCover() instanceof CoverTintable) return false;
         Set<?> filtered = getFiltered(dir);
         return filtered.isEmpty() || filtered.contains(item);
     }
 
     // Fast way to find available slot for item
-    private int getFirstValidSlot(Object item) {
+    private int getFirstValidSlot(ItemStack item) {
         int slot = -1;
         for (int i = 0; i < handler.getSlots(); i++) {
             ItemStack stack = handler.getStackInSlot(i);
             if (stack.isEmpty() && slot == -1) {
                 slot = i;
             } else {
-                if (stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()){
+                if (stack.getItem().equals(item.getItem()) && stack.getMaxStackSize() > stack.getCount()){
                     return i;
                 }
             }
