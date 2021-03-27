@@ -368,14 +368,19 @@ public class Utils {
     public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
         for (int i = 0; i < to.getTanks(); i++) {
             //if (i >= from.getTanks()) break;
-            FluidStack toInsert;
-            if (cap > 0) {
-                FluidStack fluid = from.getFluidInTank(i).copy();
-                int toDrain = Math.min(cap, fluid.getAmount());
-                fluid.setAmount(toDrain);
-                toInsert = from.drain(fluid, SIMULATE);
-            } else {
-                toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+            FluidStack toInsert = FluidStack.EMPTY;
+            for (int j = 0; j < from.getTanks(); j++) {
+                if (cap > 0) {
+                    FluidStack fluid = from.getFluidInTank(i).copy();
+                    int toDrain = Math.min(cap, fluid.getAmount());
+                    fluid.setAmount(toDrain);
+                    toInsert = from.drain(fluid, SIMULATE);
+                } else {
+                    toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+                }
+                if (toInsert != FluidStack.EMPTY) {
+                    break;
+                }
             }
             int filled = to.fill(toInsert, SIMULATE);
             if (filled > 0) {
