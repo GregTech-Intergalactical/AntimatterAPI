@@ -371,12 +371,12 @@ public class Utils {
             FluidStack toInsert = FluidStack.EMPTY;
             for (int j = 0; j < from.getTanks(); j++) {
                 if (cap > 0) {
-                    FluidStack fluid = from.getFluidInTank(i).copy();
+                    FluidStack fluid = from.getFluidInTank(j).copy();
                     int toDrain = Math.min(cap, fluid.getAmount());
                     fluid.setAmount(toDrain);
                     toInsert = from.drain(fluid, SIMULATE);
                 } else {
-                    toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
+                    toInsert = from.drain(from.getFluidInTank(j), SIMULATE);
                 }
                 if (toInsert != FluidStack.EMPTY) {
                     break;
