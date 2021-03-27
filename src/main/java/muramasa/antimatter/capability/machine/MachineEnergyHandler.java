@@ -1,16 +1,21 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.Utils;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
 import tesseract.Tesseract;
+import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.util.Dir;
 
 import java.util.List;
@@ -37,16 +42,35 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     @Override
     public void init() {
         cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).orElse(cachedItems);
-        registerNet();
+        //registerNet();
     }
 
-    public void onUpdate() {
+    @Override
+    protected void onOverVolt() {
+        super.onOverVolt();
+        Utils.createExplosion(tile.getWorld(), tile.getPos(), 4.0F, Explosion.Mode.BREAK);
+    }
 
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+        cachedItems.forEach(t -> t.getState().onTick());
+        for (Direction dir : Ref.DIRS) {
+            if (canOutput(Dir.VALUES[dir.getIndex()])) {
+                if (!getState().extract(true, 1, 0)) {
+                    break;
+                }
+                TileEntity tile = this.tile.getWorld().getTileEntity(this.tile.getPos().offset(dir));
+                if (tile != null) {
+                    tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite()).ifPresent(eh -> Utils.transferEnergy(this, eh));
+                }
+            }
+        }
     }
 
     public void onRemove() {
         if (tile.isServerSide()) {
-            deregisterNet();
+           // deregisterNet();
         }
     }
 
@@ -114,7 +138,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     @Override
     public boolean connects(Dir direction) {
         // TODO: Finish connections when covers will be ready
-        return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
+        return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
     }
 
     @Override
@@ -126,14 +150,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     @Override
-    public void registerNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.GT_ENERGY.registerNode(tile.getDimension(), tile.getPos().toLong(), () -> this);
-    }
-
-    @Override
-    public void deregisterNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.GT_ENERGY.remove(tile.getDimension(), tile.getPos().toLong());
+    public void refreshNet() {
+        Tesseract.GT_ENERGY.refreshNode(this.tile.getDimension(), this.tile.getPos().toLong());
     }
 }

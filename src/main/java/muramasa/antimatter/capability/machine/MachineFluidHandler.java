@@ -88,11 +88,11 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public void init() {
-        registerNet();
+
     }
 
     public void onRemove() {
-        deregisterNet();
+
     }
 
     public void onReset() {
@@ -475,15 +475,8 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     @Override
-    public void registerNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), () -> this);
-    }
-
-    @Override
-    public void deregisterNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
+    public void refreshNet() {
+        Tesseract.FLUID.refreshNode(this.tile.getDimension(), this.tile.getPos().toLong());
     }
 
     public enum FluidDirection {

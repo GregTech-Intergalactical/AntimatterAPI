@@ -8,7 +8,6 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
@@ -61,6 +60,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -330,8 +330,17 @@ public class Utils {
      * @param to the handler to insert
      * @return the number of amps inserted.
      */
-    public static int transferEnergy(IEnergyHandler from, IEnergyHandler to, int maxAmps) {
-        return transferEnergyWithLoss(from,to,0, maxAmps);
+    public static long transferEnergy(IEnergyHandler from, IEnergyHandler to) {
+        long extracted = from.extract(from.getOutputVoltage(), true);
+        if (extracted > 0) {
+            long inputted = to.insert(extracted, true);
+            if (inputted > 0) {
+                from.extract(inputted, false);
+                to.insert(inputted, false);
+                return inputted;
+            }
+        }
+        return 0;
     }
 
     /**

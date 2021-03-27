@@ -1,10 +1,8 @@
 package muramasa.antimatter.tile.pipe;
 
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.EnergyTileWrapper;
-import muramasa.antimatter.tesseract.ItemTileWrapper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -12,6 +10,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
+import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.gt.IGTCable;
 import tesseract.util.Dir;
@@ -57,7 +56,18 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
 
     @Override
     public boolean validateTile(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityCable || tile.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY, side).isPresent();
+        return tile instanceof TileEntityCable || tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side).isPresent();
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (side == null) return LazyOptional.empty();
+        if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
+        if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY) {
+            return LazyOptional.of(() -> new TesseractGTCapability(this, side)).cast();
+        }
+        return LazyOptional.empty();
     }
 
     @Override

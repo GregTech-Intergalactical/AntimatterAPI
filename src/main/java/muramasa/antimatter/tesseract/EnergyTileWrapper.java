@@ -1,9 +1,6 @@
 package muramasa.antimatter.tesseract;
 
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IEnergyHandler;
-import muramasa.antimatter.cover.ICover;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -11,9 +8,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
+import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.GTConsumer;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;
 import tesseract.util.Dir;
 
@@ -25,6 +23,8 @@ public class EnergyTileWrapper implements IGTNode {
     private TileEntity tile;
     private boolean removed;
     private IEnergyStorage storage;
+
+    private final GTConsumer.State state = new GTConsumer.State(this);
     
     private EnergyTileWrapper(TileEntity tile, IEnergyStorage storage) {
         this.tile = tile;
@@ -35,7 +35,7 @@ public class EnergyTileWrapper implements IGTNode {
     public static void of(World world, BlockPos pos, Supplier<TileEntity> supplier) {
         Tesseract.GT_ENERGY.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
-            LazyOptional<IEnergyHandler> capability = tile.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY);
+            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
             if (capability.isPresent()) {
                 return capability.resolve().get();
             } else {
@@ -120,6 +120,11 @@ public class EnergyTileWrapper implements IGTNode {
     @Override
     public boolean canOutput(Dir direction) {
         return false;
+    }
+
+    @Override
+    public GTConsumer.State getState() {
+        return null;
     }
 
     @Override

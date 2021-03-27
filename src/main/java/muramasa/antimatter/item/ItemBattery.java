@@ -1,8 +1,6 @@
 package muramasa.antimatter.item;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.gui.screen.Screen;
@@ -20,6 +18,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -41,7 +41,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (this.isInGroup(group)) {
             ItemStack stack = new ItemStack(this);
-            stack.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(e -> e.insert(this.cap, false));
+            stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).ifPresent(e -> e.insert(this.cap, false));
             items.add(new ItemStack(this));
             items.add(stack);
         }
@@ -50,12 +50,12 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT tag) {
-        return new ItemEnergyHandler(stack, 0, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 1 : 0, 1);
+        return new ItemEnergyHandler(stack, 0, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);
     }
 
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack) {
-        return stack.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
+        return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         if (tag == null) {
             return 1D;
         }
-        return 1D - stack.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap;
+        return 1D - stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap;
     }
 
     @Override

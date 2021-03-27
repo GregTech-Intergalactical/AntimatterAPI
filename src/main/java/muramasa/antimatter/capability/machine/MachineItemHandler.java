@@ -3,8 +3,6 @@ package muramasa.antimatter.capability.machine;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotType;
@@ -18,13 +16,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.Tesseract;
+import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.item.IItemNode;
-import tesseract.api.item.ItemData;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
@@ -201,7 +199,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
             for (int i = 0; i < chargeables.getSlots(); i++) {
                 ItemStack item = chargeables.getStackInSlot(i);
                 if (!item.isEmpty()) {
-                    item.getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(list::add);
+                    item.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).ifPresent(list::add);
                 }
             }
         }
@@ -446,14 +444,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
     }
 
     @Override
-    public void deregisterNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
-    }
-
-    @Override
-    public void registerNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), () -> this);
+    public void refreshNet() {
+        Tesseract.ITEM.refreshNode(this.tile.getDimension(), this.tile.getPos().toLong());
     }
 }
