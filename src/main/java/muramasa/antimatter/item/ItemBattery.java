@@ -50,7 +50,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT tag) {
-        return new ItemEnergyHandler(stack, 0, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);
+        return new ItemEnergyHandler(stack, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);
     }
 
     @Override
@@ -88,7 +88,13 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
      *  @param stack the stack to switch.
      */
     private boolean chargeModeSwitch(ItemStack stack) {
-        boolean mode = !stack.getOrCreateTag().getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
+        CompoundNBT nbt = stack.getOrCreateTag();
+        boolean mode;
+        if (nbt.contains(Ref.KEY_ITEM_DISCHARGE_MODE)) {
+            mode = !stack.getOrCreateTag().getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
+        } else {
+            mode = false;
+        }
         stack.getOrCreateTag().putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, mode);
         return mode;
     }

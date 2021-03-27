@@ -46,7 +46,7 @@ public class TileEntityPipe extends TileEntityBase {
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
     }
 
-    public void cacheNode(BlockPos pos, boolean remove) {
+    public void cacheNode(BlockPos pos, Direction side, boolean remove) {
 
     }
 
@@ -56,7 +56,7 @@ public class TileEntityPipe extends TileEntityBase {
         if (isServerSide()) {
             for (Direction side : Ref.DIRS) {
                 if (Connectivity.has(interaction, side.getIndex())) {
-                    cacheNode(this.pos.offset(side), false);
+                    cacheNode(this.pos.offset(side), side, false);
                 }
             }
         }
@@ -118,14 +118,14 @@ public class TileEntityPipe extends TileEntityBase {
         byte oldInteract = interaction;
         interaction = Connectivity.set(interaction, side.getIndex());
         if (isServerSide() && oldInteract != interaction)
-            cacheNode(this.pos.offset(side), false);
+            cacheNode(this.pos.offset(side), side,false);
         refreshConnection();
     }
 
     public void toggleInteract(Direction side) {
         interaction = Connectivity.toggle(interaction, side.getIndex());
         if (isServerSide())
-            cacheNode(this.pos.offset(side), !Connectivity.has(interaction, side.getIndex()));
+            cacheNode(this.pos.offset(side), side, !Connectivity.has(interaction, side.getIndex()));
         refreshConnection();
     }
 
@@ -133,7 +133,7 @@ public class TileEntityPipe extends TileEntityBase {
         byte oldInteract = interaction;
         interaction = Connectivity.clear(interaction, side.getIndex());
         if (isServerSide() && interaction != oldInteract)
-            cacheNode(this.pos.offset(side), true);
+            cacheNode(this.pos.offset(side), side, true);
         refreshConnection();
     }
 
@@ -141,13 +141,11 @@ public class TileEntityPipe extends TileEntityBase {
         return Connectivity.has(connection, side);
     }
 
-    public void changeConnection(Direction side) {
-        TileEntity neighbor = Utils.getTile(this.getWorld(), this.getPos().offset(side));
-        if (Utils.isForeignTile(neighbor)) {
-            setInteract(side);
-           // PipeCache.update(this.getPipeType(), this.getWorld(), side, neighbor, this.getCover(side).getCover());
-        } else {
-            clearInteract(side);
+    public void refreshSide(Direction side) {
+        if (this.canConnect(side.getIndex()) && Connectivity.has(interaction, side.getIndex())) {
+            BlockPos pos = this.pos.offset(side);
+            cacheNode(pos, side,true);
+            cacheNode(pos, side, false);
         }
     }
 

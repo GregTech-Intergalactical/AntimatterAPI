@@ -296,6 +296,9 @@ public class Utils {
     public static void transferItems(IItemHandler from, IItemHandler to, boolean once) {
         for (int i = 0; i < from.getSlots(); i++) {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
+            if (toInsert.isEmpty()) {
+                continue;
+            }
             if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
                 ItemHandlerHelper.insertItem(to, toInsert, false);
                 from.extractItem(i, from.getStackInSlot(i).getCount(), false);
@@ -331,6 +334,9 @@ public class Utils {
      * @return the number of amps inserted.
      */
     public static long transferEnergy(IEnergyHandler from, IEnergyHandler to) {
+        if (!(from.canOutput() && to.canInput())) {
+            return 0;
+        }
         long extracted = from.extract(from.getOutputVoltage(), true);
         if (extracted > 0) {
             long inputted = to.insert(extracted, true);

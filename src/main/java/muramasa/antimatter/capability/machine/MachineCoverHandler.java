@@ -62,7 +62,11 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
         if (dir == null) return false;
         if (side == dir) return true;
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
-        return moveCover(entity, dir, side);
+        boolean ok = moveCover(entity, dir, side);
+        if (ok) {
+            getTile().refreshCaps();
+        }
+        return ok;
     }
 
     @Override

@@ -39,10 +39,10 @@ public class ItemTileWrapper implements IItemNode {
     }
 
     @Nullable
-    public static ItemTileWrapper of(World world, BlockPos pos, Supplier<TileEntity> supplier) {
+    public static ItemTileWrapper of(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
         Tesseract.ITEM.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
-            LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+            LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
             if (capability.isPresent()) {
                 ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
                 capability.addListener(o -> node.onRemove(null));
@@ -76,17 +76,13 @@ public class ItemTileWrapper implements IItemNode {
 
     @Override
     public int insert(ItemStack stack, boolean simulate) {
-        int slot = getFirstValidSlot(stack);
-        if (slot == -1) {
-            return 0;
-        }
-
-        ItemStack inserted = handler.insertItem(slot, stack, simulate);
         int count = stack.getCount();
-        if (!inserted.isEmpty()) {
-            count -= inserted.getCount() ;
+        for (int i = 0; i < handler.getSlots(); i++) {
+            ItemStack inserted = handler.insertItem(i, stack, simulate);
+            if (inserted.getCount() < stack.getCount()) {
+                return inserted.getCount();
+            }
         }
-
         return count;
     }
 

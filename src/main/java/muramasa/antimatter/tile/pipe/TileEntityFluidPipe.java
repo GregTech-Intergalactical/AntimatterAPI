@@ -53,9 +53,9 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
     }
 
     @Override
-    public void cacheNode(BlockPos pos, boolean remove) {
+    public void cacheNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove)
-            FluidTileWrapper.of(getWorld(), pos, () -> world.getTileEntity(pos));
+            FluidTileWrapper.of(getWorld(), pos, side, () -> world.getTileEntity(pos));
         else {
             Tesseract.FLUID.remove(getWorld().getDimensionKey(), pos.toLong());
         }

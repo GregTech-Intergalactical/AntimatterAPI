@@ -46,9 +46,15 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     @Override
-    protected void onOverVolt() {
-        super.onOverVolt();
-        Utils.createExplosion(tile.getWorld(), tile.getPos(), 4.0F, Explosion.Mode.BREAK);
+    protected boolean checkVoltage(long receive, boolean simulate) {
+        if (receive > this.getInputVoltage()) {
+            if (!this.tile.recipeHandler.map(t -> t.generator).orElse(false)) {
+                if (!simulate)
+                    Utils.createExplosion(tile.getWorld(), tile.getPos(), 4.0F, Explosion.Mode.BREAK);
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

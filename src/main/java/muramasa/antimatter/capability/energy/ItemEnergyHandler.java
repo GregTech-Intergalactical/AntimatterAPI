@@ -24,8 +24,8 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
 
     protected boolean discharge;
 
-    public ItemEnergyHandler(ItemStack stack, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
-        super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
+    public ItemEnergyHandler(ItemStack stack, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+        super(getEnergyFromStack(stack), capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.stack = stack;
     }
 
@@ -40,6 +40,7 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
     }
 
     private boolean canDischarge() {
+        if (!stack.getOrCreateTag().contains(Ref.KEY_ITEM_DISCHARGE_MODE)) return true;
         return stack.getOrCreateTag().contains(Ref.KEY_ITEM_DISCHARGE_MODE) && stack.getTag().getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
 

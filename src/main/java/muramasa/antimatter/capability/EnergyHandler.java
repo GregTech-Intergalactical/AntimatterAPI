@@ -30,9 +30,8 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     /** Tesseract IGTNode Implementations **/
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        if (!canInput()) return 0;
-        if (maxReceive > getInputVoltage()) {
-            onOverVolt();
+        //if (!canInput()) return 0;
+        if (!checkVoltage(maxReceive, simulate)) {
             return 0;
         }
         long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
@@ -47,8 +46,8 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         return toInsert;
     }
 
-    protected void onOverVolt() {
-
+    protected boolean checkVoltage(long receive, boolean simulate) {
+        return true;
     }
 
     public void onUpdate() {
@@ -57,7 +56,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        if (!canOutput()) return 0;
+        //if (!canOutput()) return 0;
         if (getState().extract(true, 1, maxExtract)) {
             long toExtract = Math.max(Math.min(energy, maxExtract), 0);
             if (!simulate) {
