@@ -1,12 +1,12 @@
 package muramasa.antimatter.tile;
 
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.LazyHolder;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.util.Dir;
 
 import java.util.List;

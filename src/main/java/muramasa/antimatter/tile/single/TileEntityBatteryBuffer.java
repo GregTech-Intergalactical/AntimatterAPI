@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.single;
 
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.cover.CoverDynamo;
 import muramasa.antimatter.machine.types.Machine;
@@ -8,6 +7,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityStorage;
 import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.util.Direction;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.util.Dir;
 
 public class TileEntityBatteryBuffer extends TileEntityStorage {
