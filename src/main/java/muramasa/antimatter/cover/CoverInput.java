@@ -25,19 +25,5 @@ public class CoverInput extends BaseCover{
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
-        refresh(instance);
-    }
-
-    public void refresh(CoverStack<?> instance) {
-        instance.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).ifPresent(t -> {
-            if (t instanceof IRefreshable) {
-                ((IRefreshable)t).refreshNet();
-            }
-        });
-        instance.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(t -> {
-            if (t instanceof IRefreshable) {
-                ((IRefreshable)t).refreshNet();
-            }
-        });
     }
 }

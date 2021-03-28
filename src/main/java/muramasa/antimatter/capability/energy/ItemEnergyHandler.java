@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability.energy;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.EnergyHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -9,6 +8,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.capability.TesseractGTCapability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,8 +24,8 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
 
     protected boolean discharge;
 
-    public ItemEnergyHandler(ItemStack stack, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
-        super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
+    public ItemEnergyHandler(ItemStack stack, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+        super(getEnergyFromStack(stack), capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.stack = stack;
     }
 
@@ -40,6 +40,7 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
     }
 
     private boolean canDischarge() {
+        if (!stack.getOrCreateTag().contains(Ref.KEY_ITEM_DISCHARGE_MODE)) return true;
         return stack.getOrCreateTag().contains(Ref.KEY_ITEM_DISCHARGE_MODE) && stack.getTag().getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
 
@@ -82,6 +83,6 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == AntimatterCaps.ENERGY_HANDLER_CAPABILITY ? handler.cast() : LazyOptional.empty();
+        return cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY ? handler.cast() : LazyOptional.empty();
     }
 }

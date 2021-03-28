@@ -8,7 +8,6 @@ import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.pipe.PipeCache;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -17,6 +16,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.graph.Connectivity;
@@ -46,9 +46,20 @@ public class TileEntityPipe extends TileEntityBase {
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
     }
 
+    public void cacheNode(BlockPos pos, Direction side, boolean remove) {
+
+    }
+
     //TODO: what does this do. disabled for now.
     @Override
     public void onLoad() {
+        if (isServerSide()) {
+            for (Direction side : Ref.DIRS) {
+                if (Connectivity.has(interaction, side.getIndex())) {
+                    cacheNode(this.pos.offset(side), side, false);
+                }
+            }
+        }
         /*CoverStack<?>[] covers = this.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRS) {
@@ -74,7 +85,7 @@ public class TileEntityPipe extends TileEntityBase {
             if (Connectivity.has(interaction, side.getIndex())) {
                 TileEntity neighbor = Utils.getTile(this.getWorld(), this.getPos().offset(side));
                 if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
-                    PipeCache.remove(this.getPipeType(), this.getWorld(), side, neighbor);
+                    //PipeCache.remove(this.getPipeType(), this.getWorld(), side, neighbor);
                 }
             }
         }
@@ -104,17 +115,25 @@ public class TileEntityPipe extends TileEntityBase {
     }
 
     public void setInteract(Direction side) {
+        byte oldInteract = interaction;
         interaction = Connectivity.set(interaction, side.getIndex());
+        if (isServerSide() && oldInteract != interaction)
+            cacheNode(this.pos.offset(side), side,false);
         refreshConnection();
     }
 
     public void toggleInteract(Direction side) {
         interaction = Connectivity.toggle(interaction, side.getIndex());
+        if (isServerSide())
+            cacheNode(this.pos.offset(side), side, !Connectivity.has(interaction, side.getIndex()));
         refreshConnection();
     }
 
     public void clearInteract(Direction side) {
+        byte oldInteract = interaction;
         interaction = Connectivity.clear(interaction, side.getIndex());
+        if (isServerSide() && interaction != oldInteract)
+            cacheNode(this.pos.offset(side), side, true);
         refreshConnection();
     }
 
@@ -122,13 +141,11 @@ public class TileEntityPipe extends TileEntityBase {
         return Connectivity.has(connection, side);
     }
 
-    public void changeConnection(Direction side) {
-        TileEntity neighbor = Utils.getTile(this.getWorld(), this.getPos().offset(side));
-        if (Utils.isForeignTile(neighbor)) {
-            setInteract(side);
-            PipeCache.update(this.getPipeType(), this.getWorld(), side, neighbor, this.getCover(side).getCover());
-        } else {
-            clearInteract(side);
+    public void refreshSide(Direction side) {
+        if (this.canConnect(side.getIndex()) && Connectivity.has(interaction, side.getIndex())) {
+            BlockPos pos = this.pos.offset(side);
+            cacheNode(pos, side,true);
+            cacheNode(pos, side, false);
         }
     }
 
@@ -151,6 +168,8 @@ public class TileEntityPipe extends TileEntityBase {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (side == null) return LazyOptional.empty();
+        if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
         if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY) return coverHandler.map(h -> !h.get(side).isEmpty()).orElse(false) ? coverHandler.cast() : super.getCapability(cap, side);
         return LazyOptional.empty();
     }

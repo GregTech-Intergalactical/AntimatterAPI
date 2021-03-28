@@ -1,10 +1,7 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import tesseract.api.IRefreshable;
+import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IGTNode;
 
 public class CoverDynamo extends BaseCover {
@@ -31,6 +28,6 @@ public class CoverDynamo extends BaseCover {
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
-        instance.getTile().getCapability(AntimatterCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(IGTNode::refreshNet);
+        instance.getTile().getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).ifPresent(IGTNode::refreshNet);
     }
 }
