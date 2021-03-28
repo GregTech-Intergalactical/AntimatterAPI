@@ -61,7 +61,7 @@ public abstract class TileEntityStorage extends TileEntityMachine {
                 int oldOut = e.getOutputAmperage();
                 int oldIn = e.getInputAmperage();
                 // 2 amps per battery input.
-                e.setInputAmperage(2 * in);
+                e.setInputAmperage(in);
                 e.setOutputAmperage(out);
                 if (oldOut != out || oldIn != in) {
                     e.refreshNet();
