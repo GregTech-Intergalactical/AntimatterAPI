@@ -13,9 +13,6 @@ import java.util.List;
 
 public abstract class TileEntityStorage extends TileEntityMachine {
 
-    // If, during next tick, amperage amount should be rechecked.
-    private boolean checkAmps = false;
-
     public TileEntityStorage(Machine<?> type) {
         super(type);
         this.itemHandler = LazyHolder.of(() -> new MachineItemHandler<TileEntityStorage>(this) {
@@ -39,16 +36,9 @@ public abstract class TileEntityStorage extends TileEntityMachine {
     }
 
     @Override
-    public void onFirstTick() {
-        super.onFirstTick();
+    public void onLoad() {
+        super.onLoad();
         calculateAmperage();
-    }
-
-    // Schedules a check for amperage next tick.
-    //TODO: This is not good but otherwise items are not available for checking. Check into onContentsChanged for container
-    // So we can calculate amperage during the event ENERGY_SLOT_CHANGED!
-    private void scheduleAmperageCheck() {
-        checkAmps = true;
     }
 
     // calculateAmperage checks batteries and calculates the total available input/output amperage.

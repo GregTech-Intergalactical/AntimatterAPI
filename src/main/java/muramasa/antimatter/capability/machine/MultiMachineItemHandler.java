@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
+import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
@@ -38,13 +39,13 @@ public class MultiMachineItemHandler extends MachineItemHandler<TileEntityMultiM
     private IItemHandlerModifiable calculateInputs() {
         List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_input").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getInputHandler)).map(LazyHolder::get).collect(Collectors.toList());//this::allocateExtraSize);
         handlers.add(super.getInputHandler());
-        return new CombinedInvWrapper(handlers.toArray(new IItemHandlerModifiable[0]));
+        return new MultiTrackedItemHandler(handlers.toArray(new IItemHandlerModifiable[0]));
     }
 
     private IItemHandlerModifiable calculateOutputs() {
         List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_output").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getOutputHandler)).map(LazyHolder::get).collect(Collectors.toList());//this::allocateExtraSize);
         handlers.add(super.getOutputHandler());
-        return new CombinedInvWrapper(handlers.toArray(new IItemHandlerModifiable[0]));
+        return new MultiTrackedItemHandler(handlers.toArray(new IItemHandlerModifiable[0]));
     }
 
     @Override

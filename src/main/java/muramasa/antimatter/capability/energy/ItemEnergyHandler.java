@@ -57,6 +57,13 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
         return energy;
     }
 
+
+    public long setEnergy(long energy) {
+        this.energy = energy;
+        stack.getOrCreateTag().putLong(Ref.KEY_ITEM_ENERGY, this.energy);
+        return energy;
+    }
+
     @Override
     public long extract(long maxExtract, boolean simulate) {
         long energy = super.extract(maxExtract, simulate);

@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
@@ -98,9 +99,13 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
         }
     }
 
-    protected ItemStack insertIntoOutput(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public static ItemStack insertIntoOutput(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (handler instanceof TrackedItemHandler) {
             TrackedItemHandler h = (TrackedItemHandler) handler;
+            return h.insertOutputItem(slot, stack, simulate);
+        }
+        if (handler instanceof MultiTrackedItemHandler) {
+            MultiTrackedItemHandler h = (MultiTrackedItemHandler) handler;
             return h.insertOutputItem(slot, stack, simulate);
         }
         return handler.insertItem(slot, stack, simulate);

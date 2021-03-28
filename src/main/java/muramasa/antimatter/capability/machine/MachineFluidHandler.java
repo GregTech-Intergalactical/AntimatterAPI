@@ -183,7 +183,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                                 }
                                 return t.getContainer();
                             }).orElse(null/* throw exception */);
-                    if (!ih.getCellOutputHandler().insertItem(cellSlot,checkContainer,true).isEmpty()) return;
+                    if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot,checkContainer,true).isEmpty()) return;
 
                     FluidStack stack;
                     if (cfh.getFluidInTank(0).isEmpty()) {
@@ -194,7 +194,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                     if (!stack.isEmpty()) {
                         ItemStack insert = cfh.getContainer();
                         insert.setCount(1);
-                        ih.getCellOutputHandler().insertItem(cellSlot, insert, false);
+                        MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot, insert, false);
                         ih.getCellInputHandler().extractItem(cellSlot, 1, false);
                     }
                 });
