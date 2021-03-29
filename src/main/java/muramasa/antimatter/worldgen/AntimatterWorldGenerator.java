@@ -3,6 +3,7 @@ package muramasa.antimatter.worldgen;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.*;
@@ -171,7 +172,11 @@ public class AntimatterWorldGenerator {
 
     private static void handleFeatureRemoval(BiomeLoadingEvent event) {
         BiomeGenerationSettingsBuilder builder = event.getGeneration();
-        removeOreFeatures(builder);
-        removeStoneFeatures(builder);
+        if (AntimatterConfig.WORLD.VANILLA_ORE_GEN){
+            removeOreFeatures(builder);
+        }
+        if (AntimatterConfig.WORLD.VANILLA_STONE_GEN){
+            removeStoneFeatures(builder);
+        }
     }
 }
