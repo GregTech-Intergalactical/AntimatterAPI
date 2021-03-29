@@ -80,19 +80,17 @@ public class MaterialArmor extends ArmorItem implements IAntimatterTool, IDyeabl
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
-        return Ref.ID + ":textures/models/armor_layer_" + (slot == EquipmentSlotType.LEGS ? 2 : 1) + ".png";
+        return Ref.ID + ":textures/models/armor_layer_" + (slot == EquipmentSlotType.LEGS ? 2 : 1) + (type == null ? "" : "_"  + type) + ".png";
     }
 
     @Override
     public int getColor(ItemStack stack) {
-        Antimatter.LOGGER.info("Getting color");
         Material mat = getPrimaryMaterial(stack);
         return mat != null ? mat.getRGB() : 10511680;
     }
 
     @Override
     public boolean hasColor(ItemStack stack) {
-        Antimatter.LOGGER.info("has color?");
         Material mat = getPrimaryMaterial(stack);
         return mat != null;
     }
