@@ -53,8 +53,8 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     private int fuelPower, liquidTemperature, gasTemperature;
     
     /** Tool Members **/
-    private float toolDamage, toolSpeed;
-    private int toolDurability, toolQuality;
+    private float toolDamage, toolSpeed, armor, toughness;
+    private int toolDurability, toolQuality, armorDurabilityFactor;
     private boolean isHandle;
     private int handleDurability;
     private float handleSpeed;
@@ -205,7 +205,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.toolEnchantment = ImmutableMap.of();
         return this;
     }
-    
+
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
     	this.toolEnchantment = toolEnchantment;
     	return addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
@@ -217,6 +217,30 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     public Material addTools(Material derivedMaterial) {
         return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality);
+    }
+
+    public Material addArmor(float armor, float toughness, int armorDurabilityFactor) {
+        if (has(INGOT)) flags(ARMOR, PLATE);
+        else flags(ARMOR);
+        this.armor = armor;
+        this.toughness = toughness;
+        this.armorDurabilityFactor = armorDurabilityFactor;
+        this.toolEnchantment = ImmutableMap.of();
+        return this;
+    }
+
+    public Material addArmor(float armor, float toughness, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+        this.toolEnchantment = toolEnchantment;
+        return addArmor(armor, toughness, armorDurabilityFactor);
+    }
+
+    public Material addArmor(Material material, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+        this.toolEnchantment = toolEnchantment;
+        return addArmor(material.armor, material.toughness, material.armorDurabilityFactor);
+    }
+
+    public Material addArmor(Material material) {
+        return addArmor(material.armor, material.toughness, material.armorDurabilityFactor);
     }
 
     public Material addHandleStat(int durability, float speed) {
@@ -361,6 +385,18 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     
     public ImmutableMap<Enchantment, Integer> getEnchantments() {
     	return toolEnchantment;
+    }
+
+    public int getArmorDurabilityFactor() {
+        return armorDurabilityFactor;
+    }
+
+    public float getArmor() {
+        return armor;
+    }
+
+    public float getToughness() {
+        return toughness;
     }
 
     public boolean isHandle() { return isHandle; }

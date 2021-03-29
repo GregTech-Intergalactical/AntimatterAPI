@@ -125,6 +125,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
     protected void registerToolRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
         List<Material> mainMats = AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(TOOLS))).collect(Collectors.toList());
+        List<Material> armorMats = AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(ARMOR))).collect(Collectors.toList());
         List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.isHandle())).collect(Collectors.toList());
 
         handleMats.forEach(handle -> AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
@@ -133,6 +134,25 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     "has_material_" + rubber.getId(), hasSafeItem(ingotTag), PLUNGER.getToolStack(handle, rubber),
                     of('W', WIRE_CUTTER.getTag(), 'I', ingotTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WIS", " RI", "R F");
         }));
+
+        armorMats.forEach(armor -> {
+            if (!armor.has(INGOT) && !armor.has(GEM)) return; // TODO: For time being
+            final ITag<Item> inputTag;
+            if (armor.has(INGOT)){
+                inputTag = INGOT.getMaterialTag(armor);
+            } else {
+                inputTag = GEM.getMaterialTag(armor);
+            }
+            final Supplier<ICriterionInstance> inputTrigger = this.hasSafeItem(inputTag);
+            addStackRecipe(consumer, Ref.ID, HELMET.getId() + "_" + armor.getId(), "antimatter_helmets",
+                    "has_material_" + armor.getId(), inputTrigger, HELMET.getToolStack(armor, NULL), of('I', inputTag, 'H', HAMMER.getTag()), "III", "IHI");
+            addStackRecipe(consumer, Ref.ID, CHESTPLATE.getId() + "_" + armor.getId(), "antimatter_chestplates",
+                    "has_material_" + armor.getId(), inputTrigger, CHESTPLATE.getToolStack(armor, NULL), of('I', inputTag, 'H', HAMMER.getTag()), "IHI", "III", "III");
+            addStackRecipe(consumer, Ref.ID, LEGGINGS.getId() + "_" + armor.getId(), "antimatter_leggings",
+                    "has_material_" + armor.getId(), inputTrigger, LEGGINGS.getToolStack(armor, NULL), of('I', inputTag, 'H', HAMMER.getTag()), "III", "IHI", "I I");
+            addStackRecipe(consumer, Ref.ID, BOOTS.getId() + "_" + armor.getId(), "antimatter_boots",
+                    "has_material_" + armor.getId(), inputTrigger, BOOTS.getToolStack(armor, NULL), of('I', inputTag, 'H', HAMMER.getTag()), "I I", "IHI");
+        });
 
         mainMats.forEach(main -> {
             if (!main.has(INGOT)) return; // TODO: For time being
