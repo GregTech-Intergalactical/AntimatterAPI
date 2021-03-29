@@ -32,6 +32,14 @@ public abstract class TileEntityStorage extends TileEntityMachine {
             public boolean connects(Dir direction) {
                 return true;
             }
+
+            @Override
+            public void onMachineEvent(IMachineEvent event, Object... data) {
+                super.onMachineEvent(event, data);
+                if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
+                    refreshNet();
+                }
+            }
         });
     }
 

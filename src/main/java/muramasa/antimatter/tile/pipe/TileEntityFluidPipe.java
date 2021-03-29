@@ -3,17 +3,14 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
-import muramasa.antimatter.tesseract.ItemTileWrapper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractFluidCapability;
-import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.util.Dir;
 
@@ -55,7 +52,7 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
     @Override
     public void cacheNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove)
-            FluidTileWrapper.of(getWorld(), pos, side, () -> world.getTileEntity(pos));
+            FluidTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
         else {
             Tesseract.FLUID.remove(getWorld().getDimensionKey(), pos.toLong());
         }

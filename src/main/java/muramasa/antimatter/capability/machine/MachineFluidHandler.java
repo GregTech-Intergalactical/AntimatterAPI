@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
@@ -20,7 +19,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.Tesseract;
-import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.util.Dir;
 
@@ -398,22 +396,6 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return builder.toString();
     }
 
-    /** Tesseract IFluidNode Implementations **/
-    @Override
-    public int insert(FluidStack data, boolean simulate) {
-        return fill(data, simulate ? SIMULATE : EXECUTE);
-    }
-
-    @Nullable
-    @Override
-    public FluidStack extract(int tank, int amount, boolean simulate) {
-        if (getOutputTanks() == null) {
-            return null;
-        }
-        FluidStack drained = getOutputTanks().drain(amount, simulate ? SIMULATE : EXECUTE);
-        return drained;//drained.isEmpty() ? null : new FluidData<>(drained, drained.getAmount(), drained.getFluid().getAttributes().getTemperature(), drained.getFluid().getAttributes().isGaseous());
-    }
-
     public void deserializeNBT(CompoundNBT nbt) {
         tanks.forEach((k,v) -> {
             v.deserializeNBT(nbt.getList(k.toString(),Constants.NBT.TAG_COMPOUND));
@@ -426,18 +408,6 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
             nbt.put(k.name(), v.serializeNBT());
         });
         return nbt;
-    }
-
-    // TODO needed? Weird semantics
-    @Override
-    public int getAvailableTank(Dir direction) {
-        return 0;
-        // return outputWrapper.getAvailableTank(direction.getIndex());
-    }
-
-    @Override
-    public int getOutputAmount(Dir direction) {
-        return pressure;
     }
 
     @Override

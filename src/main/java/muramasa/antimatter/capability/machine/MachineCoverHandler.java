@@ -10,7 +10,6 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -60,7 +59,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
     public boolean setOutputFacing(PlayerEntity entity, Direction side) {
         Direction dir = getOutputFacing();
         if (dir == null) return false;
-        if (side == dir) return true;
+        if (side == dir) return false;
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
         boolean ok = moveCover(entity, dir, side);
         if (ok) {

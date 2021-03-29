@@ -1,12 +1,9 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
-import muramasa.antimatter.client.dynamic.DynamicTexturer;
-import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;

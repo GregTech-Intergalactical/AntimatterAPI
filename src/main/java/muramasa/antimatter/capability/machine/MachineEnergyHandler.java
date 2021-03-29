@@ -11,7 +11,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
@@ -55,6 +54,22 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
             }
         }
         return true;
+    }
+
+    @Override
+    public long getCapacity() {
+        if (canChargeItem()) {
+            return super.getCapacity() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getCapacity).sum() : 0);
+        }
+        return super.getCapacity();
+    }
+
+    @Override
+    public long getEnergy() {
+        if (canChargeItem()) {
+            return super.getEnergy() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getEnergy).sum() : 0);
+        }
+        return super.getEnergy();
     }
 
     @Override
@@ -151,7 +166,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
             tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());
-            refreshNet();
+            //refreshNet();
         }
     }
 

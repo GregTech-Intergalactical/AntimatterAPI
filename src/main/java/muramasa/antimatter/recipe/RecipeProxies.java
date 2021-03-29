@@ -6,11 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.LazyValue;
 
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class RecipeProxies {
 

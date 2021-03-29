@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.capability.machine.MachineItemHandler;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;

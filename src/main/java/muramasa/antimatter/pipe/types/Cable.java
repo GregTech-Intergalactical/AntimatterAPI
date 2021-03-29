@@ -4,10 +4,8 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.PipeSize;
-import muramasa.antimatter.tesseract.EnergyTileWrapper;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 import java.util.Set;
 import java.util.stream.Collectors;

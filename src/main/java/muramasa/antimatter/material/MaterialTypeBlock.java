@@ -13,7 +13,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
-import net.minecraft.util.LazyValue;
 
 import java.util.Arrays;
 

@@ -2,11 +2,9 @@ package muramasa.antimatter.capability;
 
 import muramasa.antimatter.Ref;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.gt.GTConsumer;
 import tesseract.api.gt.IEnergyHandler;
-import tesseract.api.gt.IGTNode;
 import tesseract.util.Dir;
 
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
@@ -31,8 +29,10 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     @Override
     public long insert(long maxReceive, boolean simulate) {
         //if (!canInput()) return 0;
-        if (!checkVoltage(maxReceive, simulate)) {
-            return 0;
+        if (!simulate) {
+            if (!checkVoltage(maxReceive, false)) {
+                return 0;
+            }
         }
         long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
         if (getState().receive(true, 1, toInsert)) {

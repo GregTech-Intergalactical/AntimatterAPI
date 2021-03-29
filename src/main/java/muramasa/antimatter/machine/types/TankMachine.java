@@ -1,7 +1,6 @@
 package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityTank;
 
 import static muramasa.antimatter.machine.MachineFlag.*;

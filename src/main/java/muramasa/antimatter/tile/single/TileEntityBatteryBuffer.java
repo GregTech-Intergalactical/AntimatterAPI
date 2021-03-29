@@ -7,7 +7,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityStorage;
 import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.util.Direction;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.util.Dir;
 
 public class TileEntityBatteryBuffer extends TileEntityStorage {
@@ -32,15 +31,6 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
                 return true;
             }
 
-            @Override
-            public long getCapacity() {
-                return super.getCapacity() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getCapacity).sum() : 0);
-            }
-
-            @Override
-            public long getEnergy() {
-                return super.getEnergy() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getEnergy).sum() : 0);
-            }
         });
 
 
