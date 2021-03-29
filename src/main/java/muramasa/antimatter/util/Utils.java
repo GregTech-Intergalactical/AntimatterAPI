@@ -393,14 +393,11 @@ public class Utils {
                 } else {
                     toInsert = from.drain(from.getFluidInTank(j), SIMULATE);
                 }
-                if (toInsert != FluidStack.EMPTY) {
-                    break;
+                int filled = to.fill(toInsert, SIMULATE);
+                if (filled > 0) {
+                    toInsert.setAmount(filled);
+                    to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
                 }
-            }
-            int filled = to.fill(toInsert, SIMULATE);
-            if (filled > 0) {
-                toInsert.setAmount(filled);
-                to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
             }
         }
     }
