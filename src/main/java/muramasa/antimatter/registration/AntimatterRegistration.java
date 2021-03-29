@@ -8,7 +8,9 @@ import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.serializer.AntimatterIngredientSerializer;
 import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.ContainerType;
@@ -84,6 +86,11 @@ public final class AntimatterRegistration {
                 i.getItem().setRegistryName(domain, i.getId());
                 registry.register(i.getItem());
             }
+        });
+        AntimatterAPI.all(AntimatterArmorType.class, domain, t -> {
+            IAntimatterArmor i = t.instantiateTools(domain);
+            i.getItem().setRegistryName(domain, i.getId());
+            registry.register(i.getItem());
         });
     }
 }

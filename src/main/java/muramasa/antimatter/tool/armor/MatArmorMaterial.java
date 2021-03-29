@@ -1,29 +1,36 @@
 package muramasa.antimatter.tool.armor;
 
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.IArmorMaterial;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
 
+import java.util.Objects;
+
 import static muramasa.antimatter.Data.INGOT;
+import static muramasa.antimatter.Data.NULL;
 
 public class MatArmorMaterial implements IArmorMaterial {
-    final AntimatterToolType toolType;
+    final AntimatterArmorType toolType;
     private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
-    public MatArmorMaterial(AntimatterToolType toolType){
+    public MatArmorMaterial(AntimatterArmorType toolType){
         this.toolType = toolType;
     }
 
     @Override
     public int getDurability(EquipmentSlotType slotIn) {
-        return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * 40;
+        return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * toolType.getDurabilityFactor();
     }
 
     @Override
     public int getDamageReductionAmount(EquipmentSlotType slotIn) {
-        return (int)toolType.getBaseAttackDamage();
+        return toolType.getBaseArmor();
     }
 
     @Override
@@ -33,7 +40,7 @@ public class MatArmorMaterial implements IArmorMaterial {
 
     @Override
     public SoundEvent getSoundEvent() {
-        return ArmorMaterial.IRON.getSoundEvent();
+        return toolType.getEvent();
     }
 
     @Override
@@ -48,11 +55,11 @@ public class MatArmorMaterial implements IArmorMaterial {
 
     @Override
     public float getToughness() {
-        return toolType.getBaseAttackSpeed();
+        return toolType.getBaseToughness();
     }
 
     @Override
     public float getKnockbackResistance() {
-        return 0;
+        return toolType.getBaseKnockback();
     }
 }

@@ -8,6 +8,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.tool.AntimatterItemTier;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.Entity;
@@ -29,17 +30,17 @@ import static muramasa.antimatter.Data.GEM;
 import static muramasa.antimatter.Data.HELMET;
 import static muramasa.antimatter.Data.INGOT;
 
-public class MaterialArmor extends ArmorItem implements IAntimatterTool, IDyeableArmorItem {
+public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeableArmorItem {
     private static final UUID[] ARMOR_MODIFIERS = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
     protected String domain;
-    protected AntimatterToolType type;
+    protected AntimatterArmorType type;
     private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
 
-    public MaterialArmor(String domain, AntimatterToolType type, IArmorMaterial materialIn, EquipmentSlotType slot, Properties builderIn) {
+    public MaterialArmor(String domain, AntimatterArmorType type, IArmorMaterial materialIn, EquipmentSlotType slot, Properties builderIn) {
         super(materialIn, slot, builderIn);
         this.domain = domain;
         this.type = type;
-        AntimatterAPI.register(IAntimatterTool.class, getId(), this);
+        AntimatterAPI.register(IAntimatterArmor.class, getId(), this);
     }
 
     @Override
@@ -48,32 +49,34 @@ public class MaterialArmor extends ArmorItem implements IAntimatterTool, IDyeabl
     }
 
     @Override
-    public AntimatterToolType getType() {
+    public AntimatterArmorType getType() {
         return type;
     }
 
     @Override
-    public ItemStack asItemStack(Material primary, Material secondary) {
-        return resolveStack(primary, secondary, 0, 0);
+    public ItemStack asItemStack(Material primary) {
+        return resolveStack(primary);
     }
 
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-        return getTier(toRepair).getRepairMaterial().test(repair);
+        return getRepairMaterial(toRepair).test(repair);
     }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        if (getPrimaryMaterial(stack) == null) return super.getMaxDamage(stack);
-        return MAX_DAMAGE_ARRAY[slot.getIndex()] * getPrimaryMaterial(stack).getArmorDurabilityFactor();
+        if (getMaterial(stack) == null) return super.getMaxDamage(stack);
+        return MAX_DAMAGE_ARRAY[slot.getIndex()] * getMaterial(stack).getArmorDurabilityFactor();
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType, ItemStack stack) {
-        if (getPrimaryMaterial(stack) == null || slotType != this.slot) return super.getAttributeModifiers(slotType, stack);
+        Material mat = getMaterial(stack);
+        if (mat == null || slotType != this.slot) return super.getAttributeModifiers(slotType, stack);
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
-        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDamageReductionAmount(slot) + getPrimaryMaterial(stack).getArmor(), AttributeModifier.Operation.ADDITION));
-        modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + getPrimaryMaterial(stack).getToughness(), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDamageReductionAmount(slot) + mat.getArmor(), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + mat.getToughness(), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", mat.getKnockbackResistance(), AttributeModifier.Operation.ADDITION));
         return modifiers;
     }
 
@@ -84,14 +87,13 @@ public class MaterialArmor extends ArmorItem implements IAntimatterTool, IDyeabl
     }
 
     @Override
-    public int getColor(ItemStack stack) {
-        Material mat = getPrimaryMaterial(stack);
-        return mat != null ? mat.getRGB() : 10511680;
+    public int getColor(ItemStack stack) { ;
+        return getItemColor(stack, null, 0);
     }
 
     @Override
     public boolean hasColor(ItemStack stack) {
-        Material mat = getPrimaryMaterial(stack);
+        Material mat = getMaterial(stack);
         return mat != null;
     }
 

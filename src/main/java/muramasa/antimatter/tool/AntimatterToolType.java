@@ -57,7 +57,6 @@ public class AntimatterToolType implements IAntimatterObject {
     private ITag.INamedTag<Item> tag, forgeTag; // Set?
     private UseAction useAction;
     private Class<? extends IAntimatterTool> toolClass;
-    private EquipmentSlotType slot;
     @Nullable private SoundEvent useSound;
     @Nullable private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
 
@@ -98,7 +97,6 @@ public class AntimatterToolType implements IAntimatterObject {
         this.TOOL_TYPE = ToolType.get(id);
         this.TOOL_TYPES.add(id);
         AntimatterAPI.register(AntimatterToolType.class, this);
-        this.slot = null;
     }
 
     public AntimatterToolType(String domain, String id, AntimatterToolType inheritType) {
@@ -159,7 +157,6 @@ public class AntimatterToolType implements IAntimatterObject {
      */
     public IAntimatterTool instantiateTools(String domain) {
         if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, prepareInstantiation(domain));
-        if (toolClass == MaterialArmor.class) return new MaterialArmor(domain, this, new MatArmorMaterial(this), slot, prepareInstantiation(domain));
         return new MaterialTool(domain, this, prepareInstantiation(domain));
     }
 
@@ -177,11 +174,6 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     /* SETTERS */
-
-    public AntimatterToolType setArmorSlot(EquipmentSlotType slot){
-        this.slot = slot;
-        return this;
-    }
 
     public AntimatterToolType setToolTip(ITextComponent... tooltip) {
         this.tooltip.addAll(Arrays.asList(tooltip));

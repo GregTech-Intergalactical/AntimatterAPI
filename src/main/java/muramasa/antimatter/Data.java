@@ -23,6 +23,7 @@ import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.MaterialSword;
+import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.tool.armor.MaterialArmor;
 import muramasa.antimatter.tool.behaviour.*;
 import muramasa.antimatter.util.Utils;
@@ -180,10 +181,10 @@ public class Data {
     public static final AntimatterToolType ELECTRIC_SCREWDRIVER = new AntimatterToolType(Ref.ID, "electric_screwdriver", SCREWDRIVER).setTag(SCREWDRIVER).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).setOverlayLayers(2);
     public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(net.minecraft.block.material.Material.ROCK, EARTH, SAND, ORGANIC);
     public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
-    public static final AntimatterToolType HELMET = new AntimatterToolType(Ref.ID, "helmet", 1, 1, 10, 2.0F, 0.0F).setToolClass(MaterialArmor.class).setArmorSlot(EquipmentSlotType.HEAD);
-    public static final AntimatterToolType CHESTPLATE = new AntimatterToolType(Ref.ID, "chestplate", 1, 1, 10, 6.0F, 0.0F).setToolClass(MaterialArmor.class).setArmorSlot(EquipmentSlotType.CHEST);
-    public static final AntimatterToolType LEGGINGS = new AntimatterToolType(Ref.ID, "leggings", 1, 1, 10, 5.0F, 0.0F).setToolClass(MaterialArmor.class).setArmorSlot(EquipmentSlotType.LEGS);
-    public static final AntimatterToolType BOOTS = new AntimatterToolType(Ref.ID, "boots", 1, 1, 10, 2.0F, 0.0F).setToolClass(MaterialArmor.class).setArmorSlot(EquipmentSlotType.FEET);
+    public static final AntimatterArmorType HELMET = new AntimatterArmorType(Ref.ID, "helmet", 40, 2, 0.0F, 0.0F, EquipmentSlotType.HEAD);
+    public static final AntimatterArmorType CHESTPLATE = new AntimatterArmorType(Ref.ID, "chestplate", 40, 6, 0.0F, 0.0F, EquipmentSlotType.CHEST);
+    public static final AntimatterArmorType LEGGINGS = new AntimatterArmorType(Ref.ID, "leggings", 40, 5, 0.0F, 0.0F, EquipmentSlotType.LEGS);
+    public static final AntimatterArmorType BOOTS = new AntimatterArmorType(Ref.ID, "boots", 40, 2, 0.0F, 0.0F, EquipmentSlotType.FEET);
 
     public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 

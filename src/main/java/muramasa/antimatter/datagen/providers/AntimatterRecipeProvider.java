@@ -145,13 +145,13 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             }
             final Supplier<ICriterionInstance> inputTrigger = this.hasSafeItem(inputTag);
             addStackRecipe(consumer, Ref.ID, HELMET.getId() + "_" + armor.getId(), "antimatter_helmets",
-                    "has_material_" + armor.getId(), inputTrigger, HELMET.getToolStack(armor, NULL), of('I', inputTag, 'H', HAMMER.getTag()), "III", "IHI");
+                    "has_material_" + armor.getId(), inputTrigger, HELMET.getToolStack(armor), of('I', inputTag, 'H', HAMMER.getTag()), "III", "IHI");
             addStackRecipe(consumer, Ref.ID, CHESTPLATE.getId() + "_" + armor.getId(), "antimatter_chestplates",
-                    "has_material_" + armor.getId(), inputTrigger, CHESTPLATE.getToolStack(armor, NULL), of('I', inputTag, 'H', HAMMER.getTag()), "IHI", "III", "III");
+                    "has_material_" + armor.getId(), inputTrigger, CHESTPLATE.getToolStack(armor), of('I', inputTag, 'H', HAMMER.getTag()), "IHI", "III", "III");
             addStackRecipe(consumer, Ref.ID, LEGGINGS.getId() + "_" + armor.getId(), "antimatter_leggings",
-                    "has_material_" + armor.getId(), inputTrigger, LEGGINGS.getToolStack(armor, NULL), of('I', inputTag, 'H', HAMMER.getTag()), "III", "IHI", "I I");
+                    "has_material_" + armor.getId(), inputTrigger, LEGGINGS.getToolStack(armor), of('I', inputTag, 'H', HAMMER.getTag()), "III", "IHI", "I I");
             addStackRecipe(consumer, Ref.ID, BOOTS.getId() + "_" + armor.getId(), "antimatter_boots",
-                    "has_material_" + armor.getId(), inputTrigger, BOOTS.getToolStack(armor, NULL), of('I', inputTag, 'H', HAMMER.getTag()), "I I", "IHI");
+                    "has_material_" + armor.getId(), inputTrigger, BOOTS.getToolStack(armor), of('I', inputTag, 'H', HAMMER.getTag()), "I I", "IHI");
         });
 
         mainMats.forEach(main -> {
