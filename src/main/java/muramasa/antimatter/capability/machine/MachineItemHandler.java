@@ -40,23 +40,25 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
 
     public MachineItemHandler(T tile) {
         this.tile = tile;
-        if (tile.getMachineType().has(ITEM)) {
-            inventories.put(ITEM_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), false, t -> true, ContentEvent.ITEM_INPUT_CHANGED));
-            inventories.put(ITEM_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), true,t -> true, ContentEvent.ITEM_OUTPUT_CHANGED));
-        }
-        if (tile.getMachineType().has(CELL)) {
-            //TODO: allow multiple?
-            inventories.put(CELL_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), false, t -> t.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED));
-        }
-        if (tile.getMachineType().has(CELL)) {
-            //TODO: allow multiple?
-            inventories.put(CELL_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), true, t -> t.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED));
-        }
-   //     if (tile.getMachineType().has(FLUID)) {
-   //         inventories.put(FLUID_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED));
-    //    }
-        if (tile.getMachineType().has(ENERGY)) {
-            inventories.put(ENERGY, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), false, t -> t.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).isPresent(), ContentEvent.ENERGY_SLOT_CHANGED));
+        if (tile.has(GUI)){
+            if (tile.getMachineType().has(ITEM)) {
+                inventories.put(ITEM_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), false, t -> true, ContentEvent.ITEM_INPUT_CHANGED));
+                inventories.put(ITEM_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), true,t -> true, ContentEvent.ITEM_OUTPUT_CHANGED));
+            }
+            if (tile.getMachineType().has(CELL)) {
+                //TODO: allow multiple?
+                inventories.put(CELL_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), false, t -> t.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED));
+            }
+            if (tile.getMachineType().has(CELL)) {
+                //TODO: allow multiple?
+                inventories.put(CELL_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), true, t -> t.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED));
+            }
+            //     if (tile.getMachineType().has(FLUID)) {
+            //         inventories.put(FLUID_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED));
+            //    }
+            if (tile.getMachineType().has(ENERGY)) {
+                inventories.put(ENERGY, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), false, t -> t.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).isPresent(), ContentEvent.ENERGY_SLOT_CHANGED));
+            }
         }
     }
 
