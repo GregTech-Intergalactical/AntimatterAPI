@@ -30,7 +30,7 @@ public class ItemTileWrapper implements IItemNode {
     public static ItemTileWrapper wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
         Tesseract.ITEM.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
-            LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+            LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
                 ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
                 capability.addListener(o -> node.onRemove());

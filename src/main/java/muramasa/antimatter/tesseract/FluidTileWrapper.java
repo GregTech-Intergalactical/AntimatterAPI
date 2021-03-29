@@ -30,7 +30,7 @@ public class FluidTileWrapper implements IFluidNode {
     public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
         Tesseract.FLUID.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
-            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
+            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
                 FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
                 capability.addListener(o -> node.onRemove());

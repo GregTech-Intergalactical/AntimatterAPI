@@ -32,7 +32,7 @@ public class EnergyTileWrapper implements IGTNode {
     public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
         Tesseract.GT_ENERGY.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
-            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side);
+            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
                 return capability.resolve().get();
             } else {
