@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.armor;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
@@ -17,7 +18,9 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
+import net.minecraft.item.IDyeableArmorItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -26,7 +29,7 @@ import static muramasa.antimatter.Data.GEM;
 import static muramasa.antimatter.Data.HELMET;
 import static muramasa.antimatter.Data.INGOT;
 
-public class MaterialArmor extends ArmorItem implements IAntimatterTool {
+public class MaterialArmor extends ArmorItem implements IAntimatterTool, IDyeableArmorItem {
     private static final UUID[] ARMOR_MODIFIERS = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
     protected String domain;
     protected AntimatterToolType type;
@@ -76,13 +79,31 @@ public class MaterialArmor extends ArmorItem implements IAntimatterTool {
 
     @Nullable
     @Override
-    public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default) {
-        return null;
-    }
-
-    @Nullable
-    @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
         return Ref.ID + ":textures/models/armor_layer_" + (slot == EquipmentSlotType.LEGS ? 2 : 1) + ".png";
+    }
+
+    @Override
+    public int getColor(ItemStack stack) {
+        Antimatter.LOGGER.info("Getting color");
+        Material mat = getPrimaryMaterial(stack);
+        return mat != null ? mat.getRGB() : 10511680;
+    }
+
+    @Override
+    public boolean hasColor(ItemStack stack) {
+        Antimatter.LOGGER.info("has color?");
+        Material mat = getPrimaryMaterial(stack);
+        return mat != null;
+    }
+
+    @Override
+    public void setColor(ItemStack stack, int color) {
+
+    }
+
+    @Override
+    public void removeColor(ItemStack stack) {
+
     }
 }
