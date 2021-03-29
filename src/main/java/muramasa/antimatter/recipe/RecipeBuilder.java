@@ -1,11 +1,9 @@
 package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.LazyValue;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Arrays;

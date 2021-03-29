@@ -41,7 +41,12 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (this.isInGroup(group)) {
             ItemStack stack = new ItemStack(this);
-            stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).ifPresent(e -> e.insert(this.cap, false));
+            stack.getOrCreateTag().putLong(Ref.KEY_ITEM_ENERGY, cap);
+            stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).ifPresent(e -> {
+                if (e instanceof ItemEnergyHandler) {
+                    ((ItemEnergyHandler)e).setEnergy(e.getCapacity());
+                }
+            });
             items.add(new ItemStack(this));
             items.add(stack);
         }

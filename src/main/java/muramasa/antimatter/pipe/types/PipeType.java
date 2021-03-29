@@ -11,7 +11,6 @@ import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;

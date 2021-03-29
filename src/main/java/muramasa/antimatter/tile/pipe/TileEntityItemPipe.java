@@ -10,7 +10,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
-import tesseract.api.IConnectable;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
 import tesseract.util.Dir;
@@ -47,7 +46,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
     @Override
     public void cacheNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove)
-            ItemTileWrapper.of(getWorld(), pos, side, () -> world.getTileEntity(pos));
+            ItemTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
         else {
             Tesseract.ITEM.remove(getWorld().getDimensionKey(), pos.toLong());
         }

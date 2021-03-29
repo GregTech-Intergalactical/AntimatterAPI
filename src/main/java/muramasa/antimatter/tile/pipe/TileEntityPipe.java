@@ -144,8 +144,13 @@ public class TileEntityPipe extends TileEntityBase {
     public void refreshSide(Direction side) {
         if (this.canConnect(side.getIndex()) && Connectivity.has(interaction, side.getIndex())) {
             BlockPos pos = this.pos.offset(side);
-            cacheNode(pos, side,true);
-            cacheNode(pos, side, false);
+            clearInteract(side);
+            clearConnection(side);
+            TileEntity tile = world.getTileEntity(pos);
+            if (validateTile(tile, side.getOpposite())) {
+                setConnection(side);
+                setInteract(side);
+            }
         }
     }
 

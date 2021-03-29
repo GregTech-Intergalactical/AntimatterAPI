@@ -415,29 +415,22 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (tickingRecipe) return;
         if (event instanceof ContentEvent) {
-            switch ((ContentEvent) event) {
-                case FLUID_INPUT_CHANGED:
-                case FLUID_OUTPUT_CHANGED:
-                case ITEM_INPUT_CHANGED:
-                case ITEM_OUTPUT_CHANGED:
-                    if (tile.getMachineState() == ACTIVE)
-                        break;
-                    if (tile.getMachineState() == OUTPUT_FULL && canOutput()) {
-                        tickingRecipe = true;
-                        tile.setMachineState(recipeFinish());
-                        tickingRecipe = false;
-                        return;
-                    }
-                    if (tile.getMachineState().allowRecipeCheck()) {
-                        if (activeRecipe != null) {
-                            tile.setMachineState(NO_POWER);
-                        } else {
-                            this.checkRecipe();
-                        }
+                if (tile.getMachineState() == ACTIVE)
+                    return;
+                if (tile.getMachineState() == OUTPUT_FULL && canOutput()) {
+                    tickingRecipe = true;
+                    tile.setMachineState(recipeFinish());
+                    tickingRecipe = false;
+                    return;
+                }
+                if (tile.getMachineState().allowRecipeCheck()) {
+                    if (activeRecipe != null) {
+                        tile.setMachineState(NO_POWER);
+                    } else {
                         this.checkRecipe();
                     }
-                    break;
-            }
+                    this.checkRecipe();
+                }
         } else if (event instanceof MachineEvent) {
             switch ((MachineEvent) event) {
                 case ENERGY_INPUTTED:

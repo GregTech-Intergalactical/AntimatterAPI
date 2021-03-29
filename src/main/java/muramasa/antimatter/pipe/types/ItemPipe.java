@@ -5,7 +5,6 @@ import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tile.pipe.TileEntityItemPipe;
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 import java.util.Set;
 import java.util.stream.Collectors;

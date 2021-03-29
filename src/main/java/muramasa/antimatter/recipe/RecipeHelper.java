@@ -13,7 +13,6 @@ import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;

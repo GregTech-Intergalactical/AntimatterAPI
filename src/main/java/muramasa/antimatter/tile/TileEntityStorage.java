@@ -13,9 +13,6 @@ import java.util.List;
 
 public abstract class TileEntityStorage extends TileEntityMachine {
 
-    // If, during next tick, amperage amount should be rechecked.
-    private boolean checkAmps = false;
-
     public TileEntityStorage(Machine<?> type) {
         super(type);
         this.itemHandler = LazyHolder.of(() -> new MachineItemHandler<TileEntityStorage>(this) {
@@ -35,20 +32,21 @@ public abstract class TileEntityStorage extends TileEntityMachine {
             public boolean connects(Dir direction) {
                 return true;
             }
+
+            @Override
+            public void onMachineEvent(IMachineEvent event, Object... data) {
+                super.onMachineEvent(event, data);
+                if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
+                    refreshNet();
+                }
+            }
         });
     }
 
     @Override
-    public void onFirstTick() {
-        super.onFirstTick();
+    public void onLoad() {
+        super.onLoad();
         calculateAmperage();
-    }
-
-    // Schedules a check for amperage next tick.
-    //TODO: This is not good but otherwise items are not available for checking. Check into onContentsChanged for container
-    // So we can calculate amperage during the event ENERGY_SLOT_CHANGED!
-    private void scheduleAmperageCheck() {
-        checkAmps = true;
     }
 
     // calculateAmperage checks batteries and calculates the total available input/output amperage.
@@ -61,7 +59,7 @@ public abstract class TileEntityStorage extends TileEntityMachine {
                 int oldOut = e.getOutputAmperage();
                 int oldIn = e.getInputAmperage();
                 // 2 amps per battery input.
-                e.setInputAmperage(2 * in);
+                e.setInputAmperage(in);
                 e.setOutputAmperage(out);
                 if (oldOut != out || oldIn != in) {
                     e.refreshNet();

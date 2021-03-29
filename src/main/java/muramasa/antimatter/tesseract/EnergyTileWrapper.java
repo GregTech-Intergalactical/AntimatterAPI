@@ -15,34 +15,31 @@ import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;
 import tesseract.util.Dir;
 
-import javax.annotation.Nullable;
 import java.util.function.Supplier;
 
 public class EnergyTileWrapper implements IGTNode {
 
-    private TileEntity tile;
-    private boolean removed;
-    private IEnergyStorage storage;
+    private final TileEntity tile;
+    private final IEnergyStorage storage;
 
     private final GTConsumer.State state = new GTConsumer.State(this);
-    
+
     private EnergyTileWrapper(TileEntity tile, IEnergyStorage storage) {
         this.tile = tile;
         this.storage = storage;
     }
 
-    @Nullable
-    public static void of(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
+    public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
         Tesseract.GT_ENERGY.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
-            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side);
+            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
                 return capability.resolve().get();
             } else {
                 LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY);
                 if (cap.isPresent()) {
                     EnergyTileWrapper node = new EnergyTileWrapper(tile, cap.orElse(null));
-                    capability.addListener(o -> node.onRemove(null));
+                    capability.addListener(o -> node.onRemove());
                     Tesseract.GT_ENERGY.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), () -> node);
                     return node;
                 }
@@ -51,14 +48,9 @@ public class EnergyTileWrapper implements IGTNode {
         });
     }
 
-    public void onRemove(@Nullable Direction side) {
-        if (side == null) {
-            if (tile.isRemoved()) {
-                Tesseract.GT_ENERGY.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
-                removed = true;
-            } else {
-                // What if tile is recreate cap ?
-            }
+    public void onRemove() {
+        if (tile.isRemoved()) {
+            Tesseract.GT_ENERGY.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
         }
     }
 
@@ -124,7 +116,7 @@ public class EnergyTileWrapper implements IGTNode {
 
     @Override
     public GTConsumer.State getState() {
-        return null;
+        return state;
     }
 
     @Override

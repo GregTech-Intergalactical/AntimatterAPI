@@ -8,10 +8,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
-import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.gt.IGTCable;
 import tesseract.util.Dir;
 
@@ -48,7 +46,7 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     @Override
     public void cacheNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove)
-            EnergyTileWrapper.of(getWorld(), pos, side, () -> world.getTileEntity(pos));
+            EnergyTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
         else {
             Tesseract.GT_ENERGY.remove(getWorld().getDimensionKey(), pos.toLong());
         }
