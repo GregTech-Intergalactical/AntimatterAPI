@@ -39,6 +39,7 @@ public class Recipe implements IRecipe<IInventory> {
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     public ResourceLocation id;
+    public ResourceLocation mapId;
 
     //For jei, have to put here instead of RecipeMapCategory.
     public final Int2ObjectMap<ResourceLocation> tagsToRender = new Int2ObjectOpenHashMap<>();
@@ -93,6 +94,11 @@ public class Recipe implements IRecipe<IInventory> {
     public boolean hasChances() {
         //TODO change this if we add input chances?
         return chances != null && chances.length == itemsOutput.length;
+    }
+
+    public void setIds(ResourceLocation id, ResourceLocation map) {
+        this.id = id;
+        this.mapId = map;
     }
 
     @Nullable
