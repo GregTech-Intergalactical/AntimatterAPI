@@ -74,7 +74,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeab
         if (mat == null || slotType != this.slot) return super.getAttributeModifiers(slotType, stack);
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
-        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDamageReductionAmount(slot) + mat.getArmor(), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDamageReductionAmount(slot) + mat.getArmor()[slot.getIndex()], AttributeModifier.Operation.ADDITION));
         modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + mat.getToughness(), AttributeModifier.Operation.ADDITION));
         modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", mat.getKnockbackResistance(), AttributeModifier.Operation.ADDITION));
         return modifiers;

@@ -2,6 +2,7 @@ package muramasa.antimatter.material;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -54,7 +55,8 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     
     /** Tool Members **/
     private float toolDamage, toolSpeed, toughness, knockbackResistance;
-    private int toolDurability, toolQuality, armorDurabilityFactor, armor;
+    private int toolDurability, toolQuality, armorDurabilityFactor;
+    private int[] armor;
     private boolean isHandle;
     private int handleDurability;
     private float handleSpeed;
@@ -219,7 +221,11 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality);
     }
 
-    public Material addArmor(int armor, float toughness, float knockbackResistance, int armorDurabilityFactor) {
+    public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor) {
+        if (armor.length < 4){
+            Antimatter.LOGGER.info("Material " + this.getId() + " unable to add armor, protection array must have at least 4 values");
+            return this;
+        }
         if (has(INGOT)) flags(ARMOR, PLATE);
         else flags(ARMOR);
         this.armor = armor;
@@ -230,7 +236,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return this;
     }
 
-    public Material addArmor(int armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+    public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
         this.toolEnchantment = toolEnchantment;
         return addArmor(armor, toughness, knockbackResistance, armorDurabilityFactor);
     }
@@ -392,7 +398,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return armorDurabilityFactor;
     }
 
-    public int getArmor() {
+    public int[] getArmor() {
         return armor;
     }
 
