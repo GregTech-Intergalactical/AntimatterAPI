@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
+import static muramasa.antimatter.machine.MachineFlag.GUI;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
@@ -62,8 +63,8 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         this.tile = tile;
         this.capacity = capacity;
         this.pressure = pressure;
-        int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
-        int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
+        int inputCount = tile.has(GUI) ? tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0;
+        int outputCount = tile.has(GUI) ? tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0;
         if (inputCount > 0) {
             tanks.put(FluidDirection.INPUT, FluidTanks.create(tile, ContentEvent.FLUID_INPUT_CHANGED, b -> {
                 for (int i = 0; i < inputCount; i++) {
