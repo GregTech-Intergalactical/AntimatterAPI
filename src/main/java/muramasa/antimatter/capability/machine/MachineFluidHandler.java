@@ -1,6 +1,8 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
@@ -134,7 +136,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         } else if (getOutputTanks() == null) {
             return getInputTanks();
         } else {
-            if (tank > getInputTanks().getTanks()) return getOutputTanks();
+            if (tank >= getInputTanks().getTanks()) return getOutputTanks();
         }
         return getInputTanks();
     }
