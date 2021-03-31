@@ -244,7 +244,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+        return super.getShape(state, worldIn, pos, context); //VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
     }
 
     public int getPipeID(int config, int cull) {
