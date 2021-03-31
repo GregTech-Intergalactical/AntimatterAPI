@@ -28,7 +28,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
@@ -36,6 +35,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
@@ -50,6 +50,7 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -65,7 +66,13 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     protected int modelId = 0;
     protected Texture side = new Texture(Ref.ID, "block/pipe/pipe_side");
     protected Texture[] faces = new Texture[]{new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
-    protected final VoxelShape COLLISION_SHAPE;
+    protected final VoxelShape COLLISION_SHAPE_CENTER;
+    protected final VoxelShape COLLISION_SHAPE_TOP;
+    protected final VoxelShape COLLISION_SHAPE_BOTTOM;
+    protected final VoxelShape COLLISION_SHAPE_NORTH;
+    protected final VoxelShape COLLISION_SHAPE_SOUTH;
+    protected final VoxelShape COLLISION_SHAPE_WEST;
+    protected final VoxelShape COLLISION_SHAPE_EAST;
 
     public BlockPipe(String prefix, T type, PipeSize size) {
         this(prefix, type, size, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(1.0f, 3.0f).notSolid());
@@ -77,7 +84,25 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         this.size = size;
         AntimatterAPI.register(BlockPipe.class, getId(), this);
         setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));
-        this.COLLISION_SHAPE = VoxelShapes.create(size.getAABB());
+        this.COLLISION_SHAPE_CENTER = VoxelShapes.create(size.getAABB());
+        VoxelShape[] voxels = makeShapes();
+        COLLISION_SHAPE_TOP = voxels[0];
+        COLLISION_SHAPE_BOTTOM = voxels[1];
+        COLLISION_SHAPE_NORTH = voxels[2];
+        COLLISION_SHAPE_SOUTH = voxels[3];
+        COLLISION_SHAPE_WEST = voxels[4];
+        COLLISION_SHAPE_EAST = voxels[5];
+    }
+
+    private VoxelShape[] makeShapes(){
+        float offset = 0.0625f * size.ordinal();
+        AxisAlignedBB top = new AxisAlignedBB(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset);
+        AxisAlignedBB bottom = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset);
+        AxisAlignedBB north = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0);
+        AxisAlignedBB south = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1);
+        AxisAlignedBB west = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset);
+        AxisAlignedBB east = new AxisAlignedBB(0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset, 0.5625 + offset);
+        return new VoxelShape[]{VoxelShapes.create(top), VoxelShapes.create(bottom), VoxelShapes.create(north), VoxelShapes.create(south), VoxelShapes.create(west), VoxelShapes.create(east)};
     }
 
     public T getType() {
@@ -252,14 +277,46 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+        TileEntityPipe tile = (TileEntityPipe) world.getTileEntity(pos);
+        if (tile == null){
+            return super.getShape(state, world, pos, context);
+        }
         if (context.getEntity() instanceof PlayerEntity) {
             PlayerEntity entity = (PlayerEntity) context.getEntity();
-            if (getTool(worldIn.getTileEntity(pos)) == Utils.getToolType(entity)) {
-                return super.getCollisionShape(state, worldIn, pos, context);
+            if (getTool(tile) == Utils.getToolType(entity)) {
+                return super.getShape(state, world, pos, context);
             }
         }
-        return this.COLLISION_SHAPE;
+        List<VoxelShape> shapes = new ArrayList<>();
+        if (tile.hasConnection(Direction.UP.getIndex())){
+            shapes.add(COLLISION_SHAPE_TOP);
+        }
+        if (tile.hasConnection(Direction.DOWN.getIndex())){
+            shapes.add(COLLISION_SHAPE_BOTTOM);
+        }
+        if (tile.hasConnection(Direction.NORTH.getIndex())){
+            shapes.add(COLLISION_SHAPE_NORTH);
+        }
+        if (tile.hasConnection(Direction.SOUTH.getIndex())){
+            shapes.add(COLLISION_SHAPE_SOUTH);
+        }
+        if (tile.hasConnection(Direction.WEST.getIndex())){
+            shapes.add(COLLISION_SHAPE_WEST);
+        }
+        if (tile.hasConnection(Direction.EAST.getIndex())){
+            shapes.add(COLLISION_SHAPE_EAST);
+        }
+        VoxelShape[] voxelShapes = shapes.toArray(new VoxelShape[0]);
+        if (voxelShapes.length > 0){
+            return VoxelShapes.or(COLLISION_SHAPE_CENTER, voxelShapes);
+        }
+        return this.COLLISION_SHAPE_CENTER;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        return this.getShape(state, worldIn, pos, context);
     }
 
     public int getPipeID(int config, int cull) {

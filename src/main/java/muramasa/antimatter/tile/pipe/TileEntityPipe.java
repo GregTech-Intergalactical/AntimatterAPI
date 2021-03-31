@@ -140,6 +140,12 @@ public class TileEntityPipe extends TileEntityBase {
         return Connectivity.has(connection, side);
     }
 
+
+    //separate method so canConnect can be overridden in sub tiles to check for additional stuff
+    public boolean hasConnection(int side) {
+        return Connectivity.has(connection, side);
+    }
+
     public void refreshSide(Direction side) {
         if (this.canConnect(side.getIndex())) {
             BlockPos pos = this.pos.offset(side);
