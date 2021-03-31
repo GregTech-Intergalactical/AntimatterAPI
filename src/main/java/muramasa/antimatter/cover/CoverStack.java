@@ -1,7 +1,13 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.network.packets.CoverGuiEventPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class CoverStack<T extends TileEntity> implements INamedContainerProvider {
+public class CoverStack<T extends TileEntity> implements INamedContainerProvider, IGuiHandler {
 
     public static final CoverStack<?>[] EMPTY_COVER_ARRAY = new CoverStack[0];
 
@@ -26,11 +32,13 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     private ICover cover;
     private CompoundNBT nbt;
     private T tile;
+    private Direction facing;
 
-    public CoverStack(ICover cover, T tile) {
+    public CoverStack(ICover cover, T tile, Direction facing) {
         this.cover = Objects.requireNonNull(cover);
         this.tile = tile;
         this.nbt = new CompoundNBT();
+        this.facing = facing;
         //Lazy way to ensure it is only called on client lol
     }
 
@@ -41,9 +49,13 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
         this.cover = cover;
     }
 
-    public CoverStack(CoverStack<T> stack) {
-        this(stack.cover, stack.tile);
+    public CoverStack(CoverStack<T> stack, Direction facing) {
+        this(stack.cover, stack.tile, facing);
         this.nbt = stack.nbt.copy();
+    }
+
+    public Direction getFacing() {
+        return facing;
     }
 
     /** Events **/
@@ -66,6 +78,15 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
 
     public void onMachineEvent(TileEntityMachine tile, IMachineEvent event, int ...data) {
         cover.onMachineEvent(this, tile, event, data);
+    }
+
+    public void onGuiEvent(IGuiEvent event, int... data) {
+        cover.onGuiEvent(this, event, data);
+    }
+
+    @Override
+    public AbstractGuiEventPacket createGuiPacket(GuiEvent event, int... data) {
+       return new CoverGuiEventPacket(event, this.getTile().getPos(),this.getFacing(), data);
     }
 
     public boolean openGui(PlayerEntity player, Direction side) {

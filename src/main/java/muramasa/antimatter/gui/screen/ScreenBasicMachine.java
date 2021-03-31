@@ -8,7 +8,7 @@ import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.SwitchWidget;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.network.packets.GuiEventPacket;
+import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
@@ -55,12 +55,12 @@ public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachin
         if (shouldDrawIO) {
             if (container.getTile().has(MachineFlag.ITEM)) {
                 item = new SwitchWidget(gui, guiLeft + 35, guiTop + 63, 16, 16, ITEM, (b, s) -> {
-                    Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
+                    Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
                 }, container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.get(t.getOutputFacing()))).orElse(false));
             }
             if (container.getTile().has(MachineFlag.FLUID)) {
                 fluid = new SwitchWidget(gui, guiLeft + 53, guiTop + 63, 16, 16, FLUID, (b, s) -> {
-                    Antimatter.NETWORK.sendToServer(new GuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
+                    Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
                 },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
             }
             if (item != null || fluid != null) {
