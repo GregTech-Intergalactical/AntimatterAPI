@@ -2,6 +2,7 @@ package muramasa.antimatter.tesseract;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.tile.pipe.PipeReferenceCounter;
+import muramasa.antimatter.tile.pipe.TileEntityCable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +32,7 @@ public class EnergyTileWrapper implements IGTNode {
     }
 
     public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
-        PipeReferenceCounter.add(world.getDimensionKey(), pos.toLong(), p -> Tesseract.GT_ENERGY.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
+        PipeReferenceCounter.add(world.getDimensionKey(), pos.toLong(), TileEntityCable.class, p -> Tesseract.GT_ENERGY.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
             LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {

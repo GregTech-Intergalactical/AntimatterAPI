@@ -48,7 +48,7 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
         if (!remove) {
                 EnergyTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {
-            PipeReferenceCounter.remove(getWorld().getDimensionKey(), pos.toLong(), p -> Tesseract.GT_ENERGY.remove(getWorld().getDimensionKey(), p));
+            PipeReferenceCounter.remove(getWorld().getDimensionKey(), pos.toLong(), TileEntityCable.class, p -> Tesseract.GT_ENERGY.remove(getWorld().getDimensionKey(), p));
         }
     }
 

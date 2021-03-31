@@ -14,39 +14,49 @@ import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber
 public class PipeReferenceCounter {
-    private static final Object2ObjectMap<RegistryKey<World>, Long2IntMap> LOOKUP = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<RegistryKey<World>, Object2ObjectMap<Class<? extends TileEntityPipe>, Long2IntMap>> LOOKUP = new Object2ObjectOpenHashMap<>();
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
         LOOKUP.remove(((World)e.getWorld()).getDimensionKey());
     }
 
-    public static void add(RegistryKey<World> world, long pos, Consumer<Long> onRegister) {
+    public static void add(RegistryKey<World> world, long pos, Class<? extends TileEntityPipe> pipeType, Consumer<Long> onRegister) {
         LOOKUP.compute(world, (k,v) -> {
             if (v == null) {
-                v = new Long2IntOpenHashMap();
+                v = new Object2ObjectOpenHashMap<>();
             }
-            int n = v.compute(pos, (a,b) -> {
+            v.compute(pipeType, (a,b) -> {
                 //can actually be null.
                 if (b == null) {
-                    return 1;
+                    b = new Long2IntOpenHashMap();
                 }
-                return b+1;
+                int n = b.compute(pos, (c,d) -> {
+                    if (d == null) {
+                        return 1;
+                    }
+                    return d + 1;
+                });
+                if (n == 1) onRegister.accept(pos);
+                return b;
             });
-            if (n == 1) onRegister.accept(pos);
             return v;
         });
     }
 
-    public static void remove(RegistryKey<World> world, long pos, Consumer<Long> onRemove) {
+    public static void remove(RegistryKey<World> world, long pos, Class<? extends TileEntityPipe> pipeType, Consumer<Long> onRemove) {
         LOOKUP.compute(world, (k,v) -> {
             if (v == null) {
-                v = new Long2IntOpenHashMap();
+                v = new Object2ObjectOpenHashMap<>();
             }
-            int n = v.compute(pos, (a,b) -> b-1);
-            if (n == 0) {
-                v.remove(pos);
-                onRemove.accept(pos);
-            }
+            v.compute(pipeType, (a,b) -> {
+                //can actually be null.
+                if (b == null) {
+                    b = new Long2IntOpenHashMap();
+                }
+                int n = b.compute(pos, (c,d) -> d - 1);
+                if (n == 0) onRemove.accept(pos);
+                return b;
+            });
             return v;
         });
     }
