@@ -45,9 +45,9 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
 
     @Override
     public void cacheNode(BlockPos pos, Direction side, boolean remove) {
-        if (!remove)
+        if (!remove) {
             ItemTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
-        else {
+        } else {
             Tesseract.ITEM.remove(getWorld().getDimensionKey(), pos.toLong());
         }
     }

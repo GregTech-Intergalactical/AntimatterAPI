@@ -81,11 +81,10 @@ public class TileEntityPipe extends TileEntityBase {
     @Override
     public void onRemove() {
         coverHandler.ifPresent(PipeCoverHandler::onRemove);
-        for (Direction side : Ref.DIRS) {
-            if (Connectivity.has(interaction, side.getIndex())) {
-                TileEntity neighbor = Utils.getTile(this.getWorld(), this.getPos().offset(side));
-                if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
-                    //PipeCache.remove(this.getPipeType(), this.getWorld(), side, neighbor);
+        if (isServerSide()) {
+            for (Direction side : Ref.DIRS) {
+                if (Connectivity.has(interaction, side.getIndex())) {
+                    cacheNode(this.getPos().offset(side), side, true);
                 }
             }
         }
@@ -142,14 +141,18 @@ public class TileEntityPipe extends TileEntityBase {
     }
 
     public void refreshSide(Direction side) {
-        if (this.canConnect(side.getIndex()) && Connectivity.has(interaction, side.getIndex())) {
+        if (this.canConnect(side.getIndex())) {
             BlockPos pos = this.pos.offset(side);
-            clearInteract(side);
-            clearConnection(side);
-            TileEntity tile = world.getTileEntity(pos);
-            if (validateTile(tile, side.getOpposite())) {
-                setConnection(side);
-                setInteract(side);
+            if (!(world.getTileEntity(pos) instanceof TileEntityPipe)) {
+                if (Connectivity.has(interaction, side.getIndex())) {
+                    clearInteract(side);
+                    clearConnection(side);
+                    TileEntity tile = world.getTileEntity(pos);
+                    if (validateTile(tile, side.getOpposite())) {
+                        setConnection(side);
+                        setInteract(side);
+                    }
+                }
             }
         }
     }
@@ -157,6 +160,7 @@ public class TileEntityPipe extends TileEntityBase {
     public void refreshConnection() {
         sidedSync(true);
     }
+
 
     public ICover[] getValidCovers() {
         return AntimatterAPI.all(ICover.class).toArray(new ICover[0]);

@@ -62,7 +62,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     protected int modelId = 0;
     protected Texture side = new Texture(Ref.ID, "block/pipe/pipe_side");
-    protected Texture[] faces = new Texture[] {new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
+    protected Texture[] faces = new Texture[]{new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
 
     public BlockPipe(String prefix, T type, PipeSize size) {
         this(prefix, type, size, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(1.0f, 3.0f));
@@ -225,30 +225,18 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
         if (!world.isRemote && type == getTool(tile) && hand == Hand.MAIN_HAND) {
             TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
-            if (target != null || world.isAirBlock(pos.offset(side))) {
-                if (target != null){
-                    if (tile.validateTile(target, side.getOpposite())) {
-                        if (target instanceof TileEntityPipe) {
-                            ((TileEntityPipe) target).toggleConnection(side.getOpposite());
-                        } else {
-                            tile.toggleInteract(side);
-                        }
-
-                        // If some target in front of, then create wrapper
-                    /*if (isTarget) {
-                        if (tile.canConnect(side.getIndex())) {
-                            tile.setInteract(side);
-                            //PipeCache.update(tile.getPipeType(), tile.getWorld(), side, target, tile.getCover(side).getCover());
-                        } else {
-                            tile.clearInteract(side);
-                            //PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
-                        }
-                    }*/
-
+            if (target != null) {
+                if (tile.validateTile(target, side.getOpposite())) {
+                    if (target instanceof TileEntityPipe) {
+                        ((TileEntityPipe) target).toggleConnection(side.getOpposite());
+                    } else {
+                        tile.toggleInteract(side);
                     }
+                    tile.toggleConnection(side);
+                    return ActionResultType.SUCCESS;
                 }
+            } else if (world.isAirBlock(pos.offset(side))) {
                 tile.toggleConnection(side);
-                return ActionResultType.SUCCESS;
             }
         }
         return ActionResultType.PASS;
@@ -301,9 +289,9 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         prov.getVariantBuilder(block).forAllStates(s -> ConfiguredModel.builder()
-            .modelFile(getPipeConfig(prov.getBuilder(block)))
-            .uvLock(true)
-            .build()
+                .modelFile(getPipeConfig(prov.getBuilder(block)))
+                .uvLock(true)
+                .build()
         );
     }
 
