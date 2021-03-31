@@ -45,7 +45,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         this.validCovers.add(Data.COVERNONE.getId());
         Arrays.stream(validCovers).forEach(c -> this.validCovers.add(c.getId()));
         Arrays.stream(Ref.DIRS).forEach(d -> {
-            covers.put(d, new CoverStack<>(Data.COVERNONE, tile));
+            covers.put(d, new CoverStack<>(Data.COVERNONE, tile, d));
             buildLookup(COVERNONE, COVERNONE, d);
         });
     }
@@ -53,7 +53,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     @Override
     public boolean set(Direction side, @Nonnull ICover newCover) {
         CoverStack<T> old = covers.get(side);
-        CoverStack<T> stack = new CoverStack<>(newCover, getTile());
+        CoverStack<T> stack = new CoverStack<>(newCover, getTile(), side);
         return set(side, old, stack);
     }
 
@@ -191,13 +191,13 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
                 CompoundNBT cover = nbt.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
-                CoverStack<T> c = new CoverStack<>(AntimatterAPI.get(ICover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID)), tile);
+                CoverStack<T> c = new CoverStack<>(AntimatterAPI.get(ICover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID)), tile, Ref.DIRS[i]);
                 c.deserialize(cover);
                 buildLookup(covers.get(Ref.DIRS[i]).getCover(), c.getCover(), Ref.DIRS[i]);
                 covers.put(Ref.DIRS[i], c);
             } else {
                 buildLookup(covers.get(Ref.DIRS[i]).getCover(),COVERNONE, Ref.DIRS[i]);
-                covers.put(Ref.DIRS[i], new CoverStack<>(Data.COVERNONE, this.tile));
+                covers.put(Ref.DIRS[i], new CoverStack<>(Data.COVERNONE, this.tile, Ref.DIRS[i]));
             }
         }
         World w = tile.getWorld();
@@ -218,7 +218,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         CoverStack<T> newStack = get(newSide);
         CoverStack<T> oldStack = get(oldSide);
         if (!newStack.isEmpty() || oldStack.isEmpty()) return false;
-        CoverStack<T> toPlace = new CoverStack<>(oldStack);
+        CoverStack<T> toPlace = new CoverStack<>(oldStack, newSide);
         if (!removeCover(entity, oldSide, false, false)) return false;
         boolean ok = set(newSide,newStack, toPlace);
         if (ok) {

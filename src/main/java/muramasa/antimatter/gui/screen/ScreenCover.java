@@ -2,6 +2,7 @@ package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.cover.CoverTiered;
+import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.container.ContainerCover;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.Minecraft;
@@ -34,5 +35,13 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(stack, mouseX, mouseY);
         drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+    }
+
+    @Override
+    protected void init() {
+        ResourceLocation loc = container.getCover().getCover().getGui().getButtonLocation();
+        for (ButtonData button : container.getCover().getCover().getGui().getButtons()) {
+            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getCover(), playerInventory, loc, button));
+        }
     }
 }

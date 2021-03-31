@@ -3,6 +3,7 @@ package muramasa.antimatter.cover;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
@@ -44,6 +45,10 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
     }
 
     default void onMachineEvent(CoverStack<?> instance, TileEntityMachine tile, IMachineEvent event, int... data) {
+        //NOOP
+    }
+
+    default void onGuiEvent(CoverStack<?> instance, IGuiEvent event, int... data) {
         //NOOP
     }
 
