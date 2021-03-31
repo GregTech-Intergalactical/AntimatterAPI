@@ -225,16 +225,16 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
         if (!world.isRemote && type == getTool(tile) && hand == Hand.MAIN_HAND) {
             TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
-            if (target != null) {
-                if (tile.validateTile(target, side.getOpposite())) {
-                    if (target instanceof TileEntityPipe) {
-                        ((TileEntityPipe) target).toggleConnection(side.getOpposite());
-                    } else {
-                        tile.toggleInteract(side);
-                    }
-                    tile.toggleConnection(side);
+            if (target != null || world.isAirBlock(pos.offset(side))) {
+                if (target != null){
+                    if (tile.validateTile(target, side.getOpposite())) {
+                        if (target instanceof TileEntityPipe) {
+                            ((TileEntityPipe) target).toggleConnection(side.getOpposite());
+                        } else {
+                            tile.toggleInteract(side);
+                        }
 
-                    // If some target in front of, then create wrapper
+                        // If some target in front of, then create wrapper
                     /*if (isTarget) {
                         if (tile.canConnect(side.getIndex())) {
                             tile.setInteract(side);
@@ -244,11 +244,14 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                             //PipeCache.remove(tile.getPipeType(), tile.getWorld(), side, target);
                         }
                     }*/
-                    return ActionResultType.SUCCESS;
+
+                    }
                 }
+                tile.toggleConnection(side);
+                return ActionResultType.SUCCESS;
             }
         }
-        return ActionResultType.CONSUME;
+        return ActionResultType.PASS;
     }
 
     @Override

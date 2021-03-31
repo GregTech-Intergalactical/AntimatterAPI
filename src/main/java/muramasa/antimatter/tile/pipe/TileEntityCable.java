@@ -46,7 +46,8 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     @Override
     public void cacheNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove)
-            EnergyTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
+            if (world.getTileEntity(pos) != null)
+                EnergyTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
         else {
             Tesseract.GT_ENERGY.remove(getWorld().getDimensionKey(), pos.toLong());
         }
