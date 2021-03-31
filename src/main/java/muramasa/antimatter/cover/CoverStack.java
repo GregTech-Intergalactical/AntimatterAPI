@@ -1,9 +1,13 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.network.packets.CoverGuiEventPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -78,6 +82,11 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
 
     public void onGuiEvent(IGuiEvent event, int... data) {
         cover.onGuiEvent(this, event, data);
+    }
+
+    @Override
+    public AbstractGuiEventPacket createGuiPacket(GuiEvent event, int... data) {
+       return new CoverGuiEventPacket(event, this.getTile().getPos(),this.getFacing(), data);
     }
 
     public boolean openGui(PlayerEntity player, Direction side) {

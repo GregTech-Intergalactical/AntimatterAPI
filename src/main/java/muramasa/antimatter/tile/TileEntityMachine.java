@@ -15,6 +15,7 @@ import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
@@ -24,6 +25,8 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
@@ -39,6 +42,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -231,6 +235,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
                 ch.get(ch.getOutputFacing()).onMachineEvent(this, event, data);
             });
         }
+    }
+
+    @Override
+    public AbstractGuiEventPacket createGuiPacket(GuiEvent event, int... data) {
+        return new TileGuiEventPacket(event, getPos(), data);
     }
 
     // TODO: Fix

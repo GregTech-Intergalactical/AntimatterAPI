@@ -37,7 +37,7 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
             Direction facing = getTileFacing();
             Direction newDir = Utils.coverRotateFacing(d, facing);
             //Don't use set(), it calls onPlace which might call into Tesseract.
-            CoverStack<T> cover = new CoverStack<>(tile.getMachineType().defaultCover(newDir), tile);
+            CoverStack<T> cover = new CoverStack<T>(tile.getMachineType().defaultCover(newDir), tile, d);
             covers.put(d, cover);
             buildLookup(COVERNONE, cover.getCover(), d);
         });

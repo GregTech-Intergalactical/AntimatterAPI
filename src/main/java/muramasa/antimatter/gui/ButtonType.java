@@ -2,17 +2,12 @@ package muramasa.antimatter.gui;
 
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.SwitchWidget;
-import muramasa.antimatter.network.packets.CoverGuiEventPacket;
-import muramasa.antimatter.network.packets.TileGuiEventPacket;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class ButtonType {
@@ -49,11 +44,7 @@ public class ButtonType {
         return b -> {
             int shiftHold = Screen.hasShiftDown() ? 1 : 0;
             handler.onGuiEvent(GuiEvent.EXTRA_BUTTON, button.getId(), shiftHold);
-            if (handler instanceof CoverStack<?>){
-                Antimatter.NETWORK.sendToServer(new CoverGuiEventPacket(GuiEvent.EXTRA_SWITCH, ((CoverStack<?>) handler).getTile().getPos(), ((CoverStack<?>) handler).getFacing(), button.getId(), shiftHold));
-            } else if (handler instanceof TileEntity){
-                Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.EXTRA_SWITCH, ((TileEntity) handler).getPos(), button.getId(), shiftHold));
-            }
+            Antimatter.NETWORK.sendToServer(handler.createGuiPacket(GuiEvent.EXTRA_SWITCH, button.getId(), shiftHold));
         };
     }
 
@@ -61,11 +52,7 @@ public class ButtonType {
         return (b, s) -> {
             int shiftHold = Screen.hasShiftDown() ? 1 : 0;
             handler.onGuiEvent(GuiEvent.EXTRA_SWITCH, button.getId(), shiftHold, s ? 1 : 0);
-            if (handler instanceof CoverStack<?>){
-                Antimatter.NETWORK.sendToServer(new CoverGuiEventPacket(GuiEvent.EXTRA_SWITCH, ((CoverStack<?>) handler).getTile().getPos(), ((CoverStack<?>) handler).getFacing(), button.getId(), shiftHold, s ? 1 : 0));
-            } else if (handler instanceof TileEntity){
-                Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.EXTRA_SWITCH, ((TileEntity) handler).getPos(), button.getId(), shiftHold, s ? 1 : 0));
-            }
+            Antimatter.NETWORK.sendToServer(handler.createGuiPacket(GuiEvent.EXTRA_SWITCH, button.getId(), shiftHold, s ? 1 : 0));
         };
     }
 }
