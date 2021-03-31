@@ -28,6 +28,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
@@ -41,6 +42,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -63,9 +65,10 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     protected int modelId = 0;
     protected Texture side = new Texture(Ref.ID, "block/pipe/pipe_side");
     protected Texture[] faces = new Texture[]{new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
+    protected final VoxelShape COLLISION_SHAPE;
 
     public BlockPipe(String prefix, T type, PipeSize size) {
-        this(prefix, type, size, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(1.0f, 3.0f));
+        this(prefix, type, size, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(1.0f, 3.0f).notSolid());
     }
 
     public BlockPipe(String prefix, T type, PipeSize size, AbstractBlock.Properties properties) {
@@ -74,6 +77,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         this.size = size;
         AntimatterAPI.register(BlockPipe.class, getId(), this);
         setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));
+        this.COLLISION_SHAPE = VoxelShapes.create(size.getAABB());
     }
 
     public T getType() {
@@ -185,7 +189,6 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                 // Check if the block is actually air or there was another reason for change.
                 if (pos.offset(side).equals(neighbor)) {
                     if (isAir(world.getBlockState(neighbor), world, pos)) {
-                        tile.clearConnection(side);
                         tile.clearInteract(side);
                         return;
                     } else {
@@ -194,6 +197,12 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                 }
             }
         }
+    }
+
+    @Override
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        onNeighborChange(stateIn, worldIn, currentPos, facingPos);
+        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     /*@Override // Used to catch new placed neighbors near pipe which enable connection
@@ -243,8 +252,14 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return super.getShape(state, worldIn, pos, context); //VoxelShapes.create(0.1, 0.1, 0.1, 0.9, 0.9, 0.9);
+    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+        if (context.getEntity() instanceof PlayerEntity) {
+            PlayerEntity entity = (PlayerEntity) context.getEntity();
+            if (getTool(worldIn.getTileEntity(pos)) == Utils.getToolType(entity)) {
+                return super.getCollisionShape(state, worldIn, pos, context);
+            }
+        }
+        return this.COLLISION_SHAPE;
     }
 
     public int getPipeID(int config, int cull) {
