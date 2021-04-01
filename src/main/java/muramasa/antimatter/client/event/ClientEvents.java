@@ -5,9 +5,11 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.MatrixApplyingVertexBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
+import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -59,7 +61,15 @@ public class ClientEvents {
         if (player.isCrouching()) return;
         World world = player.getEntityWorld();
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool)) return;
+        if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover))) return;
+        if (stack.getItem() instanceof IHaveCover){
+            IHaveCover cover = (IHaveCover) stack.getItem();
+            ActionResultType res = cover.onDrawHighlight(player, event);
+            if (res.isSuccess()) {
+                event.setCanceled(true);
+            }
+            return;
+        }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         //Perform highlight of wrench
         ActionResultType res = item.onGenericHighlight(player, event);
