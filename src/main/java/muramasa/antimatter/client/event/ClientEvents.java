@@ -74,7 +74,7 @@ public class ClientEvents {
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         AntimatterToolType type = item.getType();
-        if (player.isCrouching() && type != WRENCH && type != SCREWDRIVER && type != ELECTRIC_SCREWDRIVER && type != ELECTRIC_WRENCH && type != CROWBAR) return;
+        if (player.isCrouching() && type != WRENCH && type != ELECTRIC_WRENCH && type != CROWBAR) return;
         //Perform highlight of wrench
         ActionResultType res = item.onGenericHighlight(player, event);
         if (res.isSuccess()) {
