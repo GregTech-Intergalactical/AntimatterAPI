@@ -17,19 +17,27 @@ import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -58,6 +66,7 @@ public class ClientHandler implements IProxyHandler {
 
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
+        MinecraftForge.EVENT_BUS.addListener(ClientHandler::onGetRecipes);
         /* Register screens. */
         AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), ScreenSetup.get(h))));
         /* Set up render types. */
@@ -94,6 +103,24 @@ public class ClientHandler implements IProxyHandler {
 
     public static void onModelRegistry(ModelRegistryEvent e) {
 
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onGetRecipes(AddReloadListenerEvent event){
+        event.addListener(new ReloadListener<Void>() {
+            @Override
+            protected Void prepare(IResourceManager resourceManagerIn, IProfiler profilerIn) {
+                return null;
+            }
+            //The reason for applying the event here and not at the end of recipe manager
+            //is that it will run after both KubeJS and CraftTweaker. KubeJS runs its recipe system
+            //at the end of RecipeManager.apply but CraftTweaker applies it as a resourcereload with priority
+            //low. Hence, lowest! To ensure proxies are loaded fine.
+            @Override
+            protected void apply(Void objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+                AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(event.getDataPackRegistries().getRecipeManager()));
+            }
+        });
     }
 
     @Override
