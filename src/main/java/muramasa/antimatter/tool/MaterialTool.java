@@ -107,8 +107,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, PlayerEntity player) {
-        AntimatterToolType type = Utils.getToolType(player);
-        return (type == WRENCH || type == ELECTRIC_WRENCH || type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && (world.getBlockState(pos).getBlock() instanceof BlockDynamic);
+        return Utils.doesStackHaveToolTypes(stack, WRENCH, ELECTRIC_WRENCH, SCREWDRIVER, ELECTRIC_SCREWDRIVER) && (world.getBlockState(pos).getBlock() instanceof BlockDynamic); // ???
     }
 
     /*
