@@ -50,6 +50,8 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import java.util.Collection;
 import java.util.List;
 
+import static muramasa.antimatter.Data.*;
+
 @Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
 public class ClientEvents {
 
@@ -58,11 +60,11 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onBlockHighlight(DrawHighlightEvent.HighlightBlock event) throws IllegalAccessException {
         PlayerEntity player = MC.player;
-        if (player.isCrouching()) return;
         World world = player.getEntityWorld();
         ItemStack stack = player.getHeldItemMainhand();
         if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover))) return;
         if (stack.getItem() instanceof IHaveCover){
+            if (player.isCrouching()) return;
             IHaveCover cover = (IHaveCover) stack.getItem();
             ActionResultType res = cover.onDrawHighlight(player, event);
             if (res.isSuccess()) {
@@ -71,13 +73,14 @@ public class ClientEvents {
             return;
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
+        AntimatterToolType type = item.getType();
+        if (player.isCrouching() && type != WRENCH && type != SCREWDRIVER && type != ELECTRIC_SCREWDRIVER && type != ELECTRIC_WRENCH && type != CROWBAR) return;
         //Perform highlight of wrench
         ActionResultType res = item.onGenericHighlight(player, event);
         if (res.isSuccess()) {
             event.setCanceled(true);
             return;
         }
-        AntimatterToolType type = item.getType();
         IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
         if (!(behaviour instanceof BehaviourAOEBreak)) return;
         BehaviourAOEBreak aoeBreakBehaviour = (BehaviourAOEBreak) behaviour;
