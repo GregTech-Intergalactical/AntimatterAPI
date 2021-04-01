@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
@@ -144,14 +145,16 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         player.sendMessage(new StringTextComponent("disabling machines doesnt work yet"), player.getUniqueID());
                         return ActionResultType.SUCCESS;
                     } else if (type == CROWBAR) {
-                        return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), true, true)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        if (!player.isCrouching()){
+                            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), true, true)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        } else {
+                            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                        }
                     } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
                         CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(COVER_EMPTY);
                         if (!player.isCrouching()) {
                             return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
-                        } else {
-                            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
-                        }
+                        } 
                      }
                     //Has gui?
                     if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> {
