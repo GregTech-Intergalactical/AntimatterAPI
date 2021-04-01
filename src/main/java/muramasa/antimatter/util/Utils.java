@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
@@ -36,6 +37,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -1043,12 +1045,46 @@ public class Utils {
         return getLocalizedType(type);
     }
 
+    public static boolean doesStackHaveToolTypes(ItemStack stack, ToolType... toolTypes) {
+        if (!stack.isEmpty()) {
+            for (ToolType toolType : toolTypes) {
+                return stack.getToolTypes().contains(toolType);
+            }
+        }
+        return false;
+    }
+
+    public static boolean doesStackHaveToolTypes(ItemStack stack, AntimatterToolType... antimatterToolTypes) {
+        List<ToolType> toolTypes = new ObjectArrayList<>();
+        for (AntimatterToolType antimatterToolType : antimatterToolTypes) {
+            toolTypes.addAll(antimatterToolType.getActualToolTypes());
+        }
+        return doesStackHaveToolTypes(stack, toolTypes.toArray(new ToolType[0]));
+    }
+
+    public static boolean isPlayerHolding(PlayerEntity player, Hand hand, ToolType... toolTypes) {
+        return doesStackHaveToolTypes(player.getHeldItem(hand), toolTypes);
+    }
+
+    public static boolean isPlayerHolding(PlayerEntity player, Hand hand, AntimatterToolType... antimatterToolTypes) {
+        List<ToolType> toolTypes = new ObjectArrayList<>();
+        for (AntimatterToolType antimatterToolType : antimatterToolTypes) {
+            toolTypes.addAll(antimatterToolType.getActualToolTypes());
+        }
+        return isPlayerHolding(player, hand, toolTypes.toArray(new ToolType[0]));
+    }
+
     @Nullable
+    @Deprecated // Ready to use the methods above instead
     public static AntimatterToolType getToolType(PlayerEntity player) {
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool))
-            return null;
-        return ((IAntimatterTool) stack.getItem()).getType();
+        if (!stack.isEmpty()) {
+            Item item = stack.getItem();
+            if (item instanceof IAntimatterTool) {
+                return ((IAntimatterTool) item).getType();
+            }
+        }
+        return null;
     }
 
     /**
