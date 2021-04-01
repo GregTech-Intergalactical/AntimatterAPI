@@ -6,8 +6,7 @@ issueTrackerURL="https://github.com/GregTech-Intergalactical/AntimatterAPI/issue
 
 [[mods]]
 modId="antimatter"
-#version="${version}"
-version="0.1"
+version="${file.jarVersion}"
 displayName="AntimatterAPI"
 #updateJSONURL="http://myurl.me/"
 displayURL="https://github.com/GregTech-Intergalactical/AntimatterAPI"
