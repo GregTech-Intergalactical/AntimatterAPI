@@ -22,6 +22,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,6 +30,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -101,7 +103,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         AxisAlignedBB north = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0);
         AxisAlignedBB south = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1);
         AxisAlignedBB west = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset);
-        AxisAlignedBB east = new AxisAlignedBB(0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset, 0.5625 + offset);
+        AxisAlignedBB east = new AxisAlignedBB(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset);
         return new VoxelShape[]{VoxelShapes.create(top), VoxelShapes.create(bottom), VoxelShapes.create(north), VoxelShapes.create(south), VoxelShapes.create(west), VoxelShapes.create(east)};
     }
 
@@ -315,8 +317,8 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-        return this.getShape(state, worldIn, pos, context);
+    public VoxelShape getRayTraceShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext context) {
+        return super.getRayTraceShape(state, reader, pos, context);
     }
 
     public int getPipeID(int config, int cull) {
