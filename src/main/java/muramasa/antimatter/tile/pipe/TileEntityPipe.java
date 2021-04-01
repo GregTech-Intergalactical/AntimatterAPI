@@ -147,7 +147,7 @@ public class TileEntityPipe extends TileEntityBase {
                 clearConnection(side);
                 clearInteract(side);
                 TileEntity tile = world.getTileEntity(pos);
-                if (validateTile(tile, side.getOpposite())) {
+                if (tile != null && validateTile(tile, side.getOpposite())) {
                     setConnection(side);
                     setInteract(side);
                 }
