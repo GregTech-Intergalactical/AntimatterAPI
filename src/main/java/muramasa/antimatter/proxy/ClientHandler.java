@@ -32,6 +32,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -57,6 +58,7 @@ public class ClientHandler implements IProxyHandler {
         eventBus.addListener(ClientHandler::onBlockColorHandler);
         eventBus.addListener(ClientHandler::onModelRegistry);
         eventBus.addListener(AntimatterTextureStitcher::onTextureStitch);
+        eventBus.addListener(ClientHandler::onRecipesUpdated);
         ScreenSetup.<ContainerMachine, ScreenBasicMachine<ContainerMachine>>setScreenMapping(Data.BASIC_MENU_HANDLER, ScreenBasicMachine::new);
         ScreenSetup.<ContainerCover, ScreenCover<ContainerCover>>setScreenMapping(Data.COVER_MENU_HANDLER, ScreenCover::new);
         ScreenSetup.<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>>setScreenMapping(Data.MULTI_MENU_HANDLER, ScreenMultiMachine::new);
@@ -66,7 +68,6 @@ public class ClientHandler implements IProxyHandler {
 
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
-        MinecraftForge.EVENT_BUS.addListener(ClientHandler::onGetRecipes);
         /* Register screens. */
         AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), ScreenSetup.get(h))));
         /* Set up render types. */
@@ -106,21 +107,8 @@ public class ClientHandler implements IProxyHandler {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onGetRecipes(AddReloadListenerEvent event){
-        event.addListener(new ReloadListener<Void>() {
-            @Override
-            protected Void prepare(IResourceManager resourceManagerIn, IProfiler profilerIn) {
-                return null;
-            }
-            //The reason for applying the event here and not at the end of recipe manager
-            //is that it will run after both KubeJS and CraftTweaker. KubeJS runs its recipe system
-            //at the end of RecipeManager.apply but CraftTweaker applies it as a resourcereload with priority
-            //low. Hence, lowest! To ensure proxies are loaded fine.
-            @Override
-            protected void apply(Void objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
-                AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(event.getDataPackRegistries().getRecipeManager()));
-            }
-        });
+    public static void onRecipesUpdated(RecipesUpdatedEvent event){
+        AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(event.getRecipeManager()));
     }
 
     @Override
