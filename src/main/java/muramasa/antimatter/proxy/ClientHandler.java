@@ -58,7 +58,6 @@ public class ClientHandler implements IProxyHandler {
         eventBus.addListener(ClientHandler::onBlockColorHandler);
         eventBus.addListener(ClientHandler::onModelRegistry);
         eventBus.addListener(AntimatterTextureStitcher::onTextureStitch);
-        eventBus.addListener(ClientHandler::onRecipesUpdated);
         ScreenSetup.<ContainerMachine, ScreenBasicMachine<ContainerMachine>>setScreenMapping(Data.BASIC_MENU_HANDLER, ScreenBasicMachine::new);
         ScreenSetup.<ContainerCover, ScreenCover<ContainerCover>>setScreenMapping(Data.COVER_MENU_HANDLER, ScreenCover::new);
         ScreenSetup.<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>>setScreenMapping(Data.MULTI_MENU_HANDLER, ScreenMultiMachine::new);
@@ -68,6 +67,7 @@ public class ClientHandler implements IProxyHandler {
 
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
+        MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRecipesUpdated);
         /* Register screens. */
         AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), ScreenSetup.get(h))));
         /* Set up render types. */
