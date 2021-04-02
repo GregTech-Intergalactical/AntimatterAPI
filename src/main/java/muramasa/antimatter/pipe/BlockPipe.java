@@ -425,7 +425,6 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         FluidState fluidstate = context.getWorld().getFluidState(context.getPos());
-        BlockState state = super.getStateForPlacement(context);
-        return fluidstate.isEmpty() ? state : state.with(WATERLOGGED, true);
+        return super.getDefaultState().with(WATERLOGGED, fluidstate.getFluid() == Fluids.WATER);
     }
 }
