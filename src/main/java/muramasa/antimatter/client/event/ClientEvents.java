@@ -9,7 +9,10 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
+import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -65,8 +68,7 @@ public class ClientEvents {
         if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover))) return;
         if (stack.getItem() instanceof IHaveCover){
             if (player.isCrouching()) return;
-            IHaveCover cover = (IHaveCover) stack.getItem();
-            ActionResultType res = cover.onDrawHighlight(player, event);
+            ActionResultType res = RenderHelper.onDrawHighlight(player, event, b -> b instanceof BlockMachine || b instanceof BlockPipe);
             if (res.isSuccess()) {
                 event.setCanceled(true);
             }
