@@ -69,6 +69,7 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
     }
 
     default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
+        tooltip.add(new StringTextComponent("Material: " + getMaterial(stack)));
         if (getType().getTooltip().size() != 0) tooltip.addAll(getType().getTooltip());
     }
 
