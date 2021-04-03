@@ -207,8 +207,9 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
     
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-    	this.toolEnchantment = toolEnchantment;
-    	return addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
+    	addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
+        this.toolEnchantment = toolEnchantment;
+    	return this;
     }
 
     public Material addTools(Material derivedMaterial, ImmutableMap<Enchantment, Integer> toolEnchantment) {
