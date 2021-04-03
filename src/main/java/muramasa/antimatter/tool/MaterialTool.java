@@ -12,6 +12,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -184,7 +185,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return type.getToolTypes().contains("axe");
+        return type.getActualToolTypes().contains(ToolType.AXE);
     }
 
     @Override
@@ -252,6 +253,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        if (type.getActualToolTypes().contains(ToolType.AXE) && enchantment.type == EnchantmentType.WEAPON){
+            return true;
+        }
         return type.isPowered() ? enchantment != Enchantments.UNBREAKING : super.canApplyAtEnchantingTable(stack, enchantment);
     }
 
