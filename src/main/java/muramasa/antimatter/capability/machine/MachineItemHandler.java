@@ -8,7 +8,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -237,7 +237,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
      */
     public List<ItemStack> consumeInputs(Recipe recipe, boolean simulate) {
         Set<Integer> skipSlots = new HashSet<>();
-        List<AntimatterIngredient> items = recipe.compileInput();
+        List<RecipeIngredient> items = recipe.getInputItems();
         if (items == null) return Collections.emptyList();
         List<ItemStack> consumedItems = new ObjectArrayList<>();
 
@@ -246,8 +246,8 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
             IItemHandler wrap = getInputHandler();
             for (int i = 0; i < wrap.getSlots(); i++) {
                 ItemStack item = wrap.getStackInSlot(i);
-                if (input.test(item) && !skipSlots.contains(i) && item.getCount() >= input.count/*&& !Utils.hasNoConsumeTag(input)*/) {
-                    if (!Utils.hasNoConsumeTag(input)) wrap.extractItem(i, input.count, simulate);
+                if (input.get().test(item) && !skipSlots.contains(i) && item.getCount() >= input.count/*&& !Utils.hasNoConsumeTag(input)*/) {
+                    if (!input.ignoreConsume()) wrap.extractItem(i, input.count, simulate);
                     ItemStack cloned = item.copy();
                     cloned.setCount(input.count);
                     consumedItems.add(cloned);

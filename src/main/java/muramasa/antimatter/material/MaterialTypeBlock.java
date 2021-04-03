@@ -2,7 +2,6 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
@@ -33,7 +32,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
-        return AntimatterIngredient.of(getMaterialTag(m),count);
+        return RecipeIngredient.of(getMaterialTag(m),count);
     }
 
     public RecipeIngredient getMaterialIngredient(Material m) {
@@ -77,7 +76,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
         }
 
         public RecipeIngredient asIngredient() {
-             return AntimatterIngredient.of(asStack(1));
+             return RecipeIngredient.of(asStack(1));
         }
     }
 }

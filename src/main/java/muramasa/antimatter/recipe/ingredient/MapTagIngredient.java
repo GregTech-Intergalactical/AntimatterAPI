@@ -1,4 +1,4 @@
-package muramasa.antimatter.recipe.map;
+package muramasa.antimatter.recipe.ingredient;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.crafting.Ingredient;
@@ -12,8 +12,7 @@ import java.util.Set;
 public class MapTagIngredient extends AbstractMapIngredient {
     public final ResourceLocation loc;
 
-    public MapTagIngredient(ResourceLocation tag, int id) {
-        super(id);
+    public MapTagIngredient(ResourceLocation tag) {
         this.loc = tag;
     }
 
@@ -36,25 +35,22 @@ public class MapTagIngredient extends AbstractMapIngredient {
         return false;
     }
 
+    private static final boolean ENABLE_TAGS_LOOKUP = true;
+
     public static Optional<ResourceLocation> findCommonTag(Ingredient ing) {
-         if (ing.getMatchingStacks().length >= 0) return Optional.empty();
+         if (!ENABLE_TAGS_LOOKUP || ing.getMatchingStacks().length < 2) return Optional.empty();
          Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getMatchingStacks()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(TagCollectionManager.getManager().getItemTags().getOwningTags(t.getItem()))).reduce((s, b) -> {
-             if (!(s instanceof ObjectOpenHashSet)) {
-                 s = new ObjectOpenHashSet<>(s);
-             }
              s.retainAll(b);
              return s;
          });
-         if (l.isPresent()) {
-             ResourceLocation maxSize = null;
+         return l.map(t -> {
              for (ResourceLocation rl : l.get()) {
-                 if ((maxSize == null || rl.getPath().length() > maxSize.getPath().length()) && TagCollectionManager.getManager().getItemTags().get(rl).getAllElements().size() == ing.getMatchingStacks().length) {
-                     maxSize = rl;
+                 if (TagCollectionManager.getManager().getItemTags().get(rl).getAllElements().size() == ing.getMatchingStacks().length) {
+                     return rl;
                  }
              }
-             return maxSize == null ? Optional.empty() : Optional.of(maxSize);
-         }
-         return Optional.empty();
+             return null;
+         });
     }
 
     @Override

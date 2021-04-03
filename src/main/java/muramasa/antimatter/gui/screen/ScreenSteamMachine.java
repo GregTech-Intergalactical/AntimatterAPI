@@ -7,7 +7,6 @@ import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.SwitchWidget;
 import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 

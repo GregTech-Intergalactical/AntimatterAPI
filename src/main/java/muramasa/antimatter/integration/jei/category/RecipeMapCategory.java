@@ -21,10 +21,9 @@ import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.ingredient.MapTagIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
-import muramasa.antimatter.recipe.ingredient.StackListIngredient;
-import muramasa.antimatter.recipe.ingredient.TagIngredient;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
 import net.minecraft.block.Block;
@@ -92,17 +91,9 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     public void setIngredients(Recipe recipe, IIngredients ingredients) {
         if (recipe.hasInputItems()) {
             List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
-            for (AntimatterIngredient ing : recipe.compileInput()) {
-                if (ing instanceof TagIngredient) {
-                    ResourceLocation rl = ((TagIngredient) ing).getTag();
-                    if (rl != null) {
-                        recipe.tagsToRender.putIfAbsent(inputs.size(), rl);
-                    }
-                }
-                if (ing instanceof StackListIngredient) {
-                    recipe.infoToRender.putIfAbsent(inputs.size(), ing.getMatchingStacks().length);
-                }
-                inputs.add(ing);
+            for (RecipeIngredient ing : recipe.getInputItems()) {
+                MapTagIngredient.findCommonTag(ing.get()).ifPresent(t -> recipe.tagsToRender.putIfAbsent(inputs.size(), t));
+                inputs.add(ing.get());
             }
             ingredients.setInputLists(VanillaTypes.ITEM,inputs.stream().map(t -> Arrays.asList(t.getMatchingStacks())).collect(Collectors.toList()));
         }

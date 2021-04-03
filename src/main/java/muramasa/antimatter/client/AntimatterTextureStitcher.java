@@ -2,9 +2,6 @@ package muramasa.antimatter.client;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.cover.CoverNone;
-import muramasa.antimatter.cover.ICover;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -12,8 +9,6 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-
-import static muramasa.antimatter.Data.COVERNONE;
 
 @Mod.EventBusSubscriber
 public class AntimatterTextureStitcher {

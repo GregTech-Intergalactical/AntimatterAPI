@@ -1,4 +1,4 @@
-package muramasa.antimatter.recipe.map;
+package muramasa.antimatter.recipe.ingredient;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -6,8 +6,7 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     public final FluidStack stack;
 
-    public MapFluidIngredient(FluidStack stack, int id) {
-        super(id);
+    public MapFluidIngredient(FluidStack stack) {
         this.stack = stack;
     }
 

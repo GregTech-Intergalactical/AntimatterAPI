@@ -1,12 +1,7 @@
-package muramasa.antimatter.recipe.map;
+package muramasa.antimatter.recipe.ingredient;
 
 public abstract class AbstractMapIngredient {
     private int hash = Integer.MIN_VALUE;
-    protected final int id;
-
-    public AbstractMapIngredient(int id) {
-        this.id = id;
-    }
 
     protected abstract int hash();
 

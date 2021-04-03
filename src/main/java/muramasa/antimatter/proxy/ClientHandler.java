@@ -36,8 +36,6 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -55,6 +53,7 @@ public class ClientHandler implements IProxyHandler {
             AntimatterModelManager.init();
             AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
         }
+        MinecraftForge.EVENT_BUS.addListener(ClientHandler::getRecipes);
         /* Client event listeners. */
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(ClientHandler::onItemColorHandler);
@@ -73,6 +72,10 @@ public class ClientHandler implements IProxyHandler {
                 event.accept(r);
             }
         }));
+    }
+
+    public static void getRecipes(RecipesUpdatedEvent ev) {
+        AntimatterAPI.onRecipeCompile(ev.getRecipeManager());
     }
 
     @SuppressWarnings({"unchecked", "unused"})

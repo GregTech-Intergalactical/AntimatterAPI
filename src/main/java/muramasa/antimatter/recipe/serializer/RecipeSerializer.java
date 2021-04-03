@@ -8,11 +8,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +29,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
     static {
         INSTANCE.setRegistryName(new ResourceLocation(Ref.ID, "machine"));
     }
-    private final static ResourceLocation ING_ID = new ResourceLocation("antimatter", "ingredient");
+
     @Override
     public Recipe read(ResourceLocation recipeId, JsonObject json) {
         try {
@@ -51,27 +49,14 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
             if (json.has("item_in")) {
                 JsonArray array = json.getAsJsonArray("item_in");
                 for (JsonElement element : array) {
-                    Ingredient i = CraftingHelper.getIngredient(element);
-                    if (i instanceof AntimatterIngredient) {
-                        list.add(new RecipeIngredient(() -> (AntimatterIngredient) i));
-                    } else {{
-                        if (element.isJsonObject()) {
-                            JsonObject obj = element.getAsJsonObject();
-                            if (obj.has("count")) {
-                                list.add(AntimatterIngredient.of(obj.get("count").getAsInt(),i.getMatchingStacks()));
-                            } else {
-                                list.add(AntimatterIngredient.of(i.getMatchingStacks()[0].getCount(),i.getMatchingStacks()));
-                            }
-                        }
-                    }}
+                    list.add(new RecipeIngredient(element));
                 }
             }
             long eut = json.get("euT").getAsLong();
             int duration = json.get("duration").getAsInt();
             int amps = json.has("amps") ? json.get("amps").getAsInt() : 1;
             Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, 0, amps);
-            ResourceLocation map = new ResourceLocation(json.get("map").getAsString());
-            r.setIds(recipeId, map);
+            r.setIds(recipeId, json.get("map").getAsString());
             return r;
         } catch (Exception ex) {
             Antimatter.LOGGER.error(ex);
@@ -95,8 +80,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         List<RecipeIngredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                AntimatterIngredient a = (AntimatterIngredient) CraftingHelper.getIngredient(ING_ID, buffer);
-                ings.add(new RecipeIngredient(() -> a));
+                ings.add(new RecipeIngredient(buffer));
             }
         }
         size = buffer.readInt();
@@ -131,7 +115,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         int dur = buffer.readInt();
         int special = buffer.readInt();
         int amps = buffer.readInt();
-        ResourceLocation map = buffer.readResourceLocation();
+        String map = buffer.readString();
         ResourceLocation id = buffer.readResourceLocation();
 
         Recipe r = new Recipe(
@@ -154,7 +138,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
     public void write(PacketBuffer buffer, Recipe recipe) {
         buffer.writeInt(!recipe.hasInputItems() ? 0 : recipe.getInputItems().size());
         if (recipe.hasInputItems()) {
-            recipe.getInputItems().forEach(t -> CraftingHelper.write(buffer, t.get()));
+            recipe.getInputItems().forEach(t -> t.writeToBuffer(buffer));
         }
         buffer.writeInt(!recipe.hasOutputItems() ? 0 : recipe.getOutputItems().length);
         if (recipe.hasOutputItems()) {
@@ -176,7 +160,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         buffer.writeInt(recipe.getDuration());
         buffer.writeInt(recipe.getSpecialValue());
         buffer.writeInt(recipe.getAmps());
-        buffer.writeResourceLocation(recipe.mapId);
+        buffer.writeString(recipe.mapId);
         buffer.writeResourceLocation(recipe.id);
     }
 }

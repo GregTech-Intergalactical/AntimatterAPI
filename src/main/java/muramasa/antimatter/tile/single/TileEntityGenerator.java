@@ -6,7 +6,6 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.util.Dir;

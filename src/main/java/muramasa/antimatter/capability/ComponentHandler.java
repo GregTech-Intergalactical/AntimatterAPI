@@ -8,7 +8,6 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.LazyOptional;

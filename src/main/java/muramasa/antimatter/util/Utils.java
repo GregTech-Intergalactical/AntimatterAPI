@@ -12,7 +12,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -180,11 +180,6 @@ public class Utils {
         return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
 
-    public static boolean hasNoConsumeTag(AntimatterIngredient stack) {
-        return stack.noConsume();
-    }
-
-
     public static boolean hasNoConsumeTag(FluidStack stack) {
         return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
@@ -266,12 +261,12 @@ public class Utils {
         return matchCount >= a.length;
     }
 
-    public static boolean doItemsMatchAndSizeValid(List<AntimatterIngredient> a, ItemStack[] b) {
+    public static boolean doItemsMatchAndSizeValid(List<RecipeIngredient> a, ItemStack[] b) {
         if (a == null || b == null) return false;
         int matchCount = 0;
-        for (AntimatterIngredient stack : a) {
+        for (RecipeIngredient stack : a) {
             for (ItemStack itemStack : b) {
-                if (stack.test(itemStack)) {
+                if (stack.get().test(itemStack)) {
                     matchCount++;
                     break;
                 }

@@ -1,7 +1,6 @@
 package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
@@ -67,7 +66,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
 
     public RecipeIngredient getIngredient(Material material, int count) {
         if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
-        return AntimatterIngredient.fromStack(new LazyValue<>(() -> new ItemStack(get(material), count)));
+        return RecipeIngredient.of(new LazyValue<>(() -> new ItemStack(get(material), count)), count);
     }
 
     public ITag.INamedTag<Item> getMaterialTag(Material m) {
@@ -75,7 +74,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
-        return AntimatterIngredient.of(getMaterialTag(m),count);
+        return RecipeIngredient.of(getMaterialTag(m),count);
     }
 
     public RecipeIngredient getMaterialIngredient(Material m) {

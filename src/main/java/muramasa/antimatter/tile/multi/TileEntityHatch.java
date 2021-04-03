@@ -12,7 +12,6 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;

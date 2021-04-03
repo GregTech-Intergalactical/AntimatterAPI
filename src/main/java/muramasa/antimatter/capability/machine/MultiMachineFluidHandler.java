@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;

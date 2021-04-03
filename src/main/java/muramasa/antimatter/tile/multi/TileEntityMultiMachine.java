@@ -16,7 +16,6 @@ import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;

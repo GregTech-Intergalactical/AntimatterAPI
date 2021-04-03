@@ -1,8 +1,7 @@
-package muramasa.antimatter.recipe.map;
+package muramasa.antimatter.recipe.ingredient;
 
 import com.google.common.collect.ImmutableSet;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -13,8 +12,7 @@ public class MapItemIngredient extends AbstractMapIngredient {
 
     public final ItemStack stack;
 
-    public MapItemIngredient(ItemStack stack, int id) {
-        super(id);
+    public MapItemIngredient(ItemStack stack) {
         this.stack = stack;
     }
 
@@ -55,7 +53,15 @@ public class MapItemIngredient extends AbstractMapIngredient {
 
     @Override
     protected int hash() {
-        return AntimatterIngredient.itemHash(stack);
+        boolean nbt = stack.hasTag();
+        long tempHash = 1;
+
+        tempHash = 31 * tempHash + stack.getItem().getRegistryName().hashCode();
+        if (nbt && stack.getTag() != null) {
+            CompoundNBT newNbt = filterTags(stack.getTag());
+            if (!newNbt.isEmpty()) tempHash = 31 * tempHash + newNbt.hashCode();
+        }
+        return (int) (tempHash ^ (tempHash >>> 32));
     }
 
     @Override

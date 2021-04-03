@@ -2,7 +2,6 @@ package muramasa.antimatter.cover;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.machine.Tier;
 
 import java.util.Arrays;

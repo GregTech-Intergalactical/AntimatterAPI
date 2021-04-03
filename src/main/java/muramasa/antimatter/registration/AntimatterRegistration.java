@@ -5,7 +5,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
-import muramasa.antimatter.recipe.serializer.AntimatterIngredientSerializer;
 import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -15,7 +14,6 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
@@ -62,7 +60,7 @@ public final class AntimatterRegistration {
             //TODO better solution for this
             if (domain.equals(Ref.ID)) {
                 CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
-                CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), AntimatterIngredientSerializer.INSTANCE);
+                //CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), AntimatterIngredientSerializer.INSTANCE);
                 ((IForgeRegistry<IRecipeSerializer<?>>) e.getRegistry()).register(RecipeSerializer.INSTANCE);
             }
         } else if (e.getRegistry() == ForgeRegistries.FEATURES) {

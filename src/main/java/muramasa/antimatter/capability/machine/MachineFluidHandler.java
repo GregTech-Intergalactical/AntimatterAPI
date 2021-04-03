@@ -1,8 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;

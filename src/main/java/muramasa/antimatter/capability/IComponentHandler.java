@@ -5,7 +5,6 @@ import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.LazyOptional;
 
