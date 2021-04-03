@@ -237,8 +237,9 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+        addArmor(armor, toughness, knockbackResistance, armorDurabilityFactor);
         this.toolEnchantment = toolEnchantment;
-        return addArmor(armor, toughness, knockbackResistance, armorDurabilityFactor);
+        return this;
     }
 
     public Material addArmor(Material material, ImmutableMap<Enchantment, Integer> toolEnchantment) {
