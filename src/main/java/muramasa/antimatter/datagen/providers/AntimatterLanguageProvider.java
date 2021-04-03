@@ -10,6 +10,7 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.item.*;
+import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
@@ -111,7 +112,11 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(Machine.class, domain).forEach(i -> {
             Collection<Tier> tiers =  i.getTiers();
-            tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), lowerUnderscoreToUpperSpacedRotated( i.getId() + "_" + t.getId())));
+            if (i.has(MachineFlag.BASIC)) {
+                tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), lowerUnderscoreToUpperSpacedRotated( i.getId() + "_" + t.getId())));
+            }  else {
+               add("machine." + i.getId(), lowerUnderscoreToUpperSpaced( i.getId()));
+            }
         });
         AntimatterAPI.all(Material.class, domain).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
         AntimatterAPI.all(BlockOre.class, domain, o -> {

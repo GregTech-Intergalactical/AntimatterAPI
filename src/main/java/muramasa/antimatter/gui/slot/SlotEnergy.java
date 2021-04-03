@@ -2,9 +2,9 @@ package muramasa.antimatter.gui.slot;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import tesseract.api.capability.TesseractGTCapability;
 
 import javax.annotation.Nonnull;
 
@@ -15,7 +15,7 @@ public class SlotEnergy extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack) {
-        return stack.getCapability(CapabilityEnergy.ENERGY).isPresent();
+        return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).isPresent();
     }
 
     @Override

@@ -11,10 +11,11 @@ import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
-import muramasa.antimatter.cover.Cover;
 import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
@@ -24,9 +25,13 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.network.packets.TileGuiEventPacket;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -37,21 +42,27 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.capability.TesseractGTCapability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
-import static muramasa.antimatter.capability.AntimatterCaps.ENERGY_HANDLER_CAPABILITY;
 import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -120,6 +131,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         //NOOP
     }
 
+    //Called after a recipe ticks.
+    public boolean onRecipeFound(Recipe r) {
+        return true;
+    }
+
     public void ofState(@Nonnull BlockState state) {
         Block block = state.getBlock();
         this.tier = ((BlockMachine)block).getTier();
@@ -133,6 +149,14 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
         this.recipeHandler.ifPresent(MachineRecipeHandler::onServerUpdate);
+
+        if (false) {
+            double d = Ref.RNG.nextDouble();
+            if (d > 0.97D && this.world.isRainingAt(new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ()))) {
+                if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false))
+                    Utils.createExplosion(this.world, pos, 6.0F, Explosion.Mode.DESTROY);
+            }
+        }
     }
 
     @Override
@@ -213,13 +237,18 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         }
     }
 
+    @Override
+    public AbstractGuiEventPacket createGuiPacket(GuiEvent event, int... data) {
+        return new TileGuiEventPacket(event, getPos(), data);
+    }
+
     // TODO: Fix
     public Direction getOutputFacing() {
         return coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(getFacing().getOpposite());
     }
 
-    public boolean setOutputFacing(Direction side) {
-        return coverHandler.map(h -> h.setOutputFacing(side)).orElse(false);
+    public boolean setOutputFacing(PlayerEntity player, Direction side) {
+        return coverHandler.map(h -> h.setOutputFacing(player, side)).orElse(false);
     }
 
     public MachineState getMachineState() {
@@ -256,8 +285,8 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         }
     }
 
-    public Cover[] getValidCovers() { //TODO fix me
-        return AntimatterAPI.all(Cover.class).toArray(new Cover[0]);
+    public ICover[] getValidCovers() { //TODO fix me
+        return AntimatterAPI.all(ICover.class).toArray(new ICover[0]);
     }
 
     public CoverStack<?> getCover(Direction side) {
@@ -268,17 +297,29 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public IModelData getModelData() {
         ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType());
-        builder.withInitial(AntimatterProperties.MACHINE_TEXTURE,getMachineType().getBaseTexture(getMachineTier()))
-                .withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
+        builder.withInitial(AntimatterProperties.MACHINE_TEXTURE,a -> {
+            Texture[] tex = getMachineType().getBaseTexture(getMachineTier());
+            if (tex.length == 1) return tex[0];
+            return tex[a.getIndex()];
+        }).withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
 
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
         BlockPos cPos = StructureCache.get(this.getWorld(), pos);
         if (cPos != null) {
             TileEntityMultiMachine mTile = (TileEntityMultiMachine) world.getTileEntity(cPos);
-            builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,mTile.getMachineType().getBaseTexture(mTile.getMachineTier()));
+            builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,a -> {
+                Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
+                if (tex.length == 1) return tex[0];
+                return tex[a.getIndex()];
+            });
         }
 
         return builder.build();
+    }
+
+    public ActionResultType onInteract(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit, @Nullable AntimatterToolType type) {
+        //DEFAULT
+        return ActionResultType.PASS;
     }
 
     @Nonnull
@@ -293,13 +334,24 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
+    public void refreshCaps() {
+        energyHandler.ifPresent(EnergyHandler::refreshNet);
+        fluidHandler.ifPresent(MachineFluidHandler::refreshNet);
+        itemHandler.ifPresent(MachineItemHandler::refreshNet);
+    }
+
+    public <T> boolean blocksCapability(@Nonnull Capability<T> cap, Direction side) {
+        return coverHandler.map(t -> t.blocksCapability(cap, side)).orElse(false);
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return side == null ? itemHandler.map(MachineItemHandler::getOutputHandler).transform().cast() : itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
+        if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
+        if (blocksCapability(cap, side)) return LazyOptional.empty();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.map(ih -> ih.getHandlerForSide(side)).transform().cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.transform().cast();
-        else if (cap == ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.transform().cast();
-        else if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.transform().cast();
+        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.transform().cast();
         return super.getCapability(cap, side);
     }
 
@@ -308,11 +360,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         super.read(state, tag);
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
-        itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
-        energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
-        coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
-        fluidHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
-        recipeHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
+        if (tag.contains(Ref.KEY_MACHINE_ITEMS))
+            itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
+        if (tag.contains(Ref.KEY_MACHINE_ENERGY))
+            energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+        if (tag.contains(Ref.KEY_MACHINE_COVER))
+            coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
+        if (tag.contains(Ref.KEY_MACHINE_FLUIDS))
+            fluidHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+        if (tag.contains(Ref.KEY_MACHINE_RECIPE))
+            recipeHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
     }
 
     @Override
@@ -328,43 +385,15 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         return tag;
     }
 
-    /*
-    // Runs earlier then onFirstTick (server only)
-    @Override
-    public void read(CompoundNBT tag) {
-        super.read(tag);
-        if (tag.contains(Ref.KEY_MACHINE_INTERACT)) interactHandler.read(tag.getCompound(Ref.KEY_MACHINE_INTERACT));
-        if (tag.contains(Ref.KEY_MACHINE_ITEMS)) itemHandler.read(tag.getCompound(Ref.KEY_MACHINE_ITEMS));
-        if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) fluidHandler.read(tag.getCompound(Ref.KEY_MACHINE_FLUIDS));
-        if (tag.contains(Ref.KEY_MACHINE_COVER)) coverHandler.read(tag.getCompound(Ref.KEY_MACHINE_COVER));
-        if (tag.contains(Ref.KEY_MACHINE_ENERGY)) energyHandler.read(tag.getCompound(Ref.KEY_MACHINE_ENERGY));
-        if (tag.contains(Ref.KEY_MACHINE_RECIPE)) recipeHandler.read(tag.getCompound(Ref.KEY_MACHINE_RECIPE));
-    }
-
     @Nonnull
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
-        super.write(tag); //TODO get tile data tag
-        interactHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_INTERACT, h.serialize()));
-        itemHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_ITEMS, h.serialize()));
-        fluidHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_FLUIDS, h.serialize()));
-        coverHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_COVER, h.serialize()));
-        energyHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_ENERGY, h.serialize()));
-        recipeHandler.ifPresent(h -> tag.put(Ref.KEY_MACHINE_RECIPE, h.serialize()));
+    public CompoundNBT getUpdateTag() {
+        CompoundNBT tag = super.getUpdateTag();
+        coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));
+        tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
+        tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         return tag;
     }
-
-    @Override
-    public void update(CompoundNBT tag) {
-        //super.update(tag);
-        if (tag.contains(Ref.KEY_MACHINE_INTERACT)) interactHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_INTERACT)));
-        if (tag.contains(Ref.KEY_MACHINE_ITEMS)) itemHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
-        if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) fluidHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
-        if (tag.contains(Ref.KEY_MACHINE_COVER)) coverHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_COVER)));
-        if (tag.contains(Ref.KEY_MACHINE_ENERGY)) energyHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
-        if (tag.contains(Ref.KEY_MACHINE_RECIPE)) recipeHandler.ifPresent(h -> h.deserialize(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
-    }
-     */
 
     @Override
     public List<String> getInfo() {

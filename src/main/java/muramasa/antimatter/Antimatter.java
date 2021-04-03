@@ -13,7 +13,6 @@ import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -74,20 +73,20 @@ public class Antimatter extends AntimatterMod {
         ClientHandler.setup(e);
         AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
-        AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
+        AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
     }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
-        AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
+        AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
     }
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
         ServerHandler.setup(e);
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
-        AntimatterAPI.getServerDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(DeferredWorkQueue::runLater));
+        AntimatterAPI.getServerDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
     }
 
     @Override

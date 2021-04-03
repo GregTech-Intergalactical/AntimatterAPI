@@ -1,6 +1,6 @@
 package muramasa.antimatter.cover;
 
-public class CoverNone extends Cover {
+public class CoverNone extends BaseCover {
 
     public CoverNone() {
         super();

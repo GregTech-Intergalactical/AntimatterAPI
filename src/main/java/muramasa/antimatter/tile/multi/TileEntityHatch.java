@@ -5,7 +5,7 @@ import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -37,7 +37,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
             public boolean canInput(Dir direction) {
                 Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
                 if (out == null) return false;
-                Cover o = tile.getMachineType().getOutputCover();
+                ICover o = tile.getMachineType().getOutputCover();
                 return o.equals(COVERENERGY) && direction.getIndex() == out.getIndex();
             }
 
@@ -45,7 +45,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
             public boolean canOutput(Dir direction) {
                 Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
                 if (out == null) return false;
-                Cover o = tile.getMachineType().getOutputCover();
+                ICover o = tile.getMachineType().getOutputCover();
                 return o.equals(COVERDYNAMO) && direction.getIndex() == out.getIndex();
             }
 

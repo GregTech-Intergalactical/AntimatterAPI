@@ -2,6 +2,8 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,9 +14,22 @@ import java.util.Arrays;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
 
+    public interface ItemSupplier {
+        MaterialItem supply(String domain, MaterialType<?> type, Material material);
+    }
+
+    private final ItemSupplier itemSupplier;
+
     public MaterialTypeItem(String id, int layers, boolean visible, int unitValue) {
         super(id, layers, visible, unitValue);
         AntimatterAPI.register(MaterialTypeItem.class, id, this);
+        this.itemSupplier = MaterialItem::new;
+    }
+
+    public MaterialTypeItem(String id, int layers, boolean visible, int unitValue, ItemSupplier itemSupplier) {
+        super(id, layers, visible, unitValue);
+        AntimatterAPI.register(MaterialTypeItem.class, id, this);
+        this.itemSupplier = itemSupplier;
     }
 
     public boolean allowItemGen(Material material) {
@@ -22,13 +37,17 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public Item get(Material material) {
-        LazyValue<AntimatterIngredient> replacement = AntimatterAPI.getReplacement(this, material);
+        RecipeIngredient replacement = AntimatterAPI.getReplacement(this, material);
         if (replacement == null) {
             if (!allowItemGen(material))
                 Utils.onInvalidData(String.join("", "GET ERROR - DOES NOT GENERATE: T(", id, ") M(", material.getId(), ")"));
             else return AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
         }
         return null;
+    }
+
+    public ItemSupplier getSupplier() {
+        return itemSupplier;
     }
 
 
@@ -46,20 +65,20 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         return new ItemStack(get(material), count);
     }
 
-    public LazyValue<AntimatterIngredient> getIngredient(Material material, int count) {
+    public RecipeIngredient getIngredient(Material material, int count) {
         if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
         return AntimatterIngredient.fromStack(new LazyValue<>(() -> new ItemStack(get(material), count)));
     }
 
     public ITag.INamedTag<Item> getMaterialTag(Material m) {
-        return Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
-    public LazyValue<AntimatterIngredient> getMaterialIngredient(Material m, int count) {
-        return AntimatterIngredient.of(Utils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId())),count);
+    public RecipeIngredient getMaterialIngredient(Material m, int count) {
+        return AntimatterIngredient.of(getMaterialTag(m),count);
     }
 
-    public LazyValue<AntimatterIngredient> getMaterialIngredient(Material m) {
+    public RecipeIngredient getMaterialIngredient(Material m) {
         return getMaterialIngredient(m,1);
     }
 }

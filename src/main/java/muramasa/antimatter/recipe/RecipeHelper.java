@@ -7,12 +7,12 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.data.CookingRecipeBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
@@ -137,7 +137,7 @@ public class RecipeHelper {
         ).build(DynamicResourcePack::addRecipe, new ResourceLocation(Ref.ID, input.toString() + "_" + output.getItem().toString()));
     }
 
-    public static void addSmelting(LazyValue<AntimatterIngredient> input, ItemStack output) {
+    public static void addSmelting(RecipeIngredient input, ItemStack output) {
        // addSmelting(input,output, InventoryChangeTrigger.Instance.forItems(input.getMatchingStacks()[0].getItem()));
     }
 

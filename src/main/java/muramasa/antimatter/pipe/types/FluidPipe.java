@@ -3,11 +3,8 @@ package muramasa.antimatter.pipe.types;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockFluidPipe;
 import muramasa.antimatter.pipe.PipeSize;
-import muramasa.antimatter.tesseract.FluidTileWrapper;
-import muramasa.antimatter.tesseract.ITileWrapper;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,11 +30,6 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     @Override
     public String getTypeName() {
         return "fluid";
-    }
-
-    @Override
-    public ITileWrapper getTileWrapper(TileEntity tile) {
-        return FluidTileWrapper.of(tile);
     }
 
     @Override

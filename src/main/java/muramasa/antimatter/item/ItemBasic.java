@@ -28,6 +28,13 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
         AntimatterAPI.register(getClass(), this);
     }
 
+    public ItemBasic(String domain, String id, Class clazz, Properties properties) {
+        super(properties);
+        this.domain = domain;
+        this.id = id;
+        AntimatterAPI.register(clazz, this);
+    }
+
     public ItemBasic(String domain, String id) {
         this(domain, id, new Properties().group(Ref.TAB_ITEMS));
     }

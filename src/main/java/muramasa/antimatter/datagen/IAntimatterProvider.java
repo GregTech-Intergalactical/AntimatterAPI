@@ -24,7 +24,10 @@ public interface IAntimatterProvider extends IDataProvider {
     enum Types {
         DYNAMIC,
         STATIC,
-        STATIC_AND_DYNAMIC;
+        STATIC_AND_DYNAMIC,
+        //Used to register a provider that doesn't run dynamically. Cheap solution but recipe provider needs to
+        //extend RecipeProvider.
+        FAKE;
 
         public boolean isStatic() {
             return this == STATIC || this == STATIC_AND_DYNAMIC;

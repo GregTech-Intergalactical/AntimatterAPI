@@ -4,11 +4,22 @@ import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.LazyHolder;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
 import tesseract.util.Dir;
 
 import java.util.List;
 import java.util.function.IntToLongFunction;
+
+import static muramasa.antimatter.Data.HAMMER;
 
 public class TileEntityTransformer extends TileEntityMachine {
 
@@ -27,6 +38,11 @@ public class TileEntityTransformer extends TileEntityMachine {
             @Override
             public boolean canOutput(Dir direction) {
                 return isDefaultMachineState() == (tile.getFacing().getIndex() != direction.getIndex());
+            }
+
+            @Override
+            public boolean canInput(Dir direction) {
+                return !canOutput(direction);
             }
 
             @Override
@@ -57,6 +73,25 @@ public class TileEntityTransformer extends TileEntityMachine {
             }
         });
          */
+    }
+
+    @Override
+    public ActionResultType onInteract(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit, AntimatterToolType type) {
+        if (type == HAMMER && hand == Hand.MAIN_HAND) {
+            toggleMachine();
+            energyHandler.ifPresent(h -> {
+                int temp = h.getOutputAmperage();
+                h.setOutputAmperage(h.getInputAmperage());
+                h.setInputAmperage(temp);
+                temp = h.getOutputVoltage();
+                h.setOutputVoltage(h.getInputVoltage());
+                h.setInputVoltage(temp);
+                h.refreshNet();
+                player.sendMessage(new StringTextComponent((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"), player.getUniqueID());
+            });
+            return ActionResultType.SUCCESS;
+        }
+        return super.onInteract(state, world, pos, player, hand, hit, type);
     }
 
     @Override

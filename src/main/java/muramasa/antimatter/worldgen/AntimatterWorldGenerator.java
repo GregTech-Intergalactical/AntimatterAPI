@@ -3,6 +3,7 @@ package muramasa.antimatter.worldgen;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.*;
@@ -10,7 +11,6 @@ import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.GenerationStage;
@@ -172,7 +172,11 @@ public class AntimatterWorldGenerator {
 
     private static void handleFeatureRemoval(BiomeLoadingEvent event) {
         BiomeGenerationSettingsBuilder builder = event.getGeneration();
-        removeOreFeatures(builder);
-        removeStoneFeatures(builder);
+        if (AntimatterConfig.WORLD.VANILLA_ORE_GEN){
+            removeOreFeatures(builder);
+        }
+        if (AntimatterConfig.WORLD.VANILLA_STONE_GEN){
+            removeStoneFeatures(builder);
+        }
     }
 }

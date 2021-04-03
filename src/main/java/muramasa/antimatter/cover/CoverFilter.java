@@ -7,7 +7,7 @@ import java.util.Set;
 
 ;
 
-public abstract class CoverFilter<T> extends Cover {
+public abstract class CoverFilter<T> extends BaseCover {
 
     // TODO: Add black/white lister filter mode
     protected Set<T> filter = new ObjectOpenHashSet<>();

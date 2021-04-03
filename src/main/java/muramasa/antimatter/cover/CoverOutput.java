@@ -8,8 +8,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 
@@ -27,8 +26,10 @@ public class CoverOutput extends CoverInput {
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
-        instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_ITEM, false);
-        instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_FLUID, false);
+        if (!instance.getNbt().contains(Ref.KEY_MACHINE_EJECT_ITEM))
+            instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_ITEM, false);
+        if (!instance.getNbt().contains(Ref.KEY_MACHINE_EJECT_FLUID))
+            instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_FLUID, false);
   //      refresh(instance);
     }
 
@@ -60,11 +61,8 @@ public class CoverOutput extends CoverInput {
         return instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_FLUID);
     }
 
-    public void refresh(CoverStack<?> instance) {
-        super.refresh(instance);
-    }
     //TODO: Not even sure if needed.
-    @OnlyIn(Dist.CLIENT)
+    //@OnlyIn(Dist.CLIENT)
     public void setEjects(CoverStack<?> instance, boolean fluid,boolean item) {
         instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_ITEM, item);
         instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_FLUID, fluid);
@@ -84,7 +82,7 @@ public class CoverOutput extends CoverInput {
         TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
         if (adjTile == null) return;
         adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
-            tile.fluidHandler.ifPresent(h -> Utils.transferFluids(h.getOutputTanks(), adjHandler));
+            tile.fluidHandler.ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h.getOutputTanks(), 1000, true));
         });
     }
 

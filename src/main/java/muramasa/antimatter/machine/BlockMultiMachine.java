@@ -16,8 +16,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 
-import javax.annotation.Nonnull;
-
 import static muramasa.antimatter.Data.HAMMER;
 
 public class BlockMultiMachine extends BlockMachine {
@@ -26,19 +24,18 @@ public class BlockMultiMachine extends BlockMachine {
         super(type, tier);
     }
 
-    @Nonnull
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        if (!world.isRemote) {
-            if (player.getHeldItem(hand).getItem() instanceof MaterialTool && ((MaterialTool) player.getHeldItem(hand).getItem()).getType() == HAMMER) {
-                TileEntityMultiMachine machine = (TileEntityMultiMachine) world.getTileEntity(pos);
+    protected ActionResultType onBlockActivatedBoth(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        if (player.getHeldItem(hand).getItem() instanceof MaterialTool && ((MaterialTool) player.getHeldItem(hand).getItem()).getType() == HAMMER) {
+            TileEntityMultiMachine machine = (TileEntityMultiMachine) world.getTileEntity(pos);
+            if (machine != null) {
                 if (!machine.isStructureValid()) {
                     machine.checkStructure();
-                    return ActionResultType.SUCCESS;
+                    return ActionResultType.CONSUME;
                 }
             }
         }
-        return super.onBlockActivated(state, world, pos, player, hand, hit);
+        return super.onBlockActivatedBoth(state, world, pos, player, hand, hit);
     }
 
     @Override
@@ -48,7 +45,7 @@ public class BlockMultiMachine extends BlockMachine {
         buildModelsForState(builder, MachineState.ACTIVE);
         buildModelsForState(builder, MachineState.INVALID_STRUCTURE);
         builder.loader(AntimatterModelManager.LOADER_MACHINE);
-        builder.property("particle", getType().getBaseTexture(tier).toString());
+        builder.property("particle", getType().getBaseTexture(tier)[0].toString());
         prov.state(block, builder);
     }
 

@@ -67,7 +67,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default Set<ToolType> getToolTypes() {
-        return getType().getToolTypes().stream().map(ToolType::get).collect(Collectors.toSet());
+        return getType().getActualToolTypes();
     }
 
     default int getSubColour(ItemStack stack) {

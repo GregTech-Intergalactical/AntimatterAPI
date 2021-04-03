@@ -1,11 +1,8 @@
 package muramasa.antimatter.capability.machine;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
@@ -18,22 +15,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import tesseract.Tesseract;
-import tesseract.api.item.IItemNode;
-import tesseract.api.item.ItemData;
-import tesseract.util.Dir;
+import tesseract.api.IRefreshable;
+import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class MachineItemHandler<T extends TileEntityMachine> implements IItemNode<ItemStack>, IMachineHandler, INBTSerializable<CompoundNBT> {
+public class MachineItemHandler<T extends TileEntityMachine> implements IRefreshable, IMachineHandler, INBTSerializable<CompoundNBT> {
 
     protected final T tile;
     protected final EnumMap<MachineFlag, TrackedItemHandler<T>> inventories = new EnumMap<>(MachineFlag.class); // Use SlotType instead of MachineFlag?
@@ -43,29 +40,31 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     public MachineItemHandler(T tile) {
         this.tile = tile;
-        if (tile.getMachineType().has(ITEM)) {
-            inventories.put(ITEM_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_INPUT_CHANGED));
-            inventories.put(ITEM_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_OUTPUT_CHANGED));
-        }
-        if (tile.getMachineType().has(CELL)) {
-            //TODO: allow multiple?
-            inventories.put(CELL_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED));
-        }
-        if (tile.getMachineType().has(CELL)) {
-            //TODO: allow multiple?
-            inventories.put(CELL_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED));
-        }
-   //     if (tile.getMachineType().has(FLUID)) {
-   //         inventories.put(FLUID_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED));
-    //    }
-        if (tile.getMachineType().has(ENERGY)) {
-            inventories.put(ENERGY, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), ContentEvent.ENERGY_SLOT_CHANGED));
+        if (tile.has(GUI)){
+            if (tile.getMachineType().has(ITEM)) {
+                inventories.put(ITEM_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), false, t -> true, ContentEvent.ITEM_INPUT_CHANGED));
+                inventories.put(ITEM_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), true,t -> true, ContentEvent.ITEM_OUTPUT_CHANGED));
+            }
+            if (tile.getMachineType().has(CELL)) {
+                //TODO: allow multiple?
+                inventories.put(CELL_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), false, t -> t.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED));
+            }
+            if (tile.getMachineType().has(CELL)) {
+                //TODO: allow multiple?
+                inventories.put(CELL_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), true, t -> t.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED));
+            }
+            //     if (tile.getMachineType().has(FLUID)) {
+            //         inventories.put(FLUID_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED));
+            //    }
+            if (tile.getMachineType().has(ENERGY)) {
+                inventories.put(ENERGY, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), false, t -> t.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).isPresent(), ContentEvent.ENERGY_SLOT_CHANGED));
+            }
         }
     }
 
     @Override
     public void init() {
-        registerNet();
+        ///registerNet();
     }
 
     @Override
@@ -96,8 +95,20 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     public void onRemove() {
         if (tile.isServerSide()) {
-            deregisterNet();
+        //    deregisterNet();
         }
+    }
+
+    public static ItemStack insertIntoOutput(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
+        if (handler instanceof TrackedItemHandler) {
+            TrackedItemHandler h = (TrackedItemHandler) handler;
+            return h.insertOutputItem(slot, stack, simulate);
+        }
+        if (handler instanceof MultiTrackedItemHandler) {
+            MultiTrackedItemHandler h = (MultiTrackedItemHandler) handler;
+            return h.insertOutputItem(slot, stack, simulate);
+        }
+        return handler.insertItem(slot, stack, simulate);
     }
 
     public void onReset() {
@@ -111,15 +122,34 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return inventories.get(ITEM_INPUT);
     }
 
+    //USED FOR SLOTS in gui.
+    public IItemHandlerModifiable getInputGuiHandler() {
+        return inventories.get(ITEM_INPUT);
+    }
+
     public IItemHandlerModifiable getOutputHandler() {
         return inventories.get(ITEM_OUTPUT);
     }
+    //USED FOR SLOTS in gui. CombinedInvWrapper doesn't like the gui.
+    public IItemHandlerModifiable getOutputGuiHandler() {
+        return inventories.get(ITEM_OUTPUT);
+    }
+
 
     public IItemHandlerModifiable getCellInputHandler() {
         return inventories.get(CELL_INPUT);
     }
 
+    public IItemHandlerModifiable getCellInputGuiHandler() {
+        return inventories.get(CELL_INPUT);
+    }
+
+
     public IItemHandlerModifiable getCellOutputHandler() {
+        return inventories.get(CELL_OUTPUT);
+    }
+
+    public IItemHandlerModifiable getCellOutputGuiHandler() {
         return inventories.get(CELL_OUTPUT);
     }
 
@@ -156,8 +186,8 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         return getCellInputHandler().getStackInSlot(1);
     }
 
-    public IItemHandlerModifiable getHandlerForSide(Direction side) {
-        return side != tile.getOutputFacing() ? getInputHandler() : getOutputHandler();
+    public IItemHandler getHandlerForSide(Direction side) {
+        return new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0]));
     }
 
     /** Gets a list of non empty input Items **/
@@ -180,7 +210,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
             for (int i = 0; i < chargeables.getSlots(); i++) {
                 ItemStack item = chargeables.getStackInSlot(i);
                 if (!item.isEmpty()) {
-                    AntimatterCaps.getCustomEnergyHandler(item).ifPresent(list::add);
+                    item.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).ifPresent(list::add);
                 }
             }
         }
@@ -247,7 +277,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         }
         for (ItemStack output : outputs) {
             for (int i = 0; i < outputHandler.getSlots(); i++) {
-                ItemStack result = outputHandler.insertItem(i, output.copy(), false);
+                ItemStack result = insertIntoOutput(outputHandler, i, output.copy(), false);
                 if (result.isEmpty()) {
                     break;
                 }
@@ -257,11 +287,12 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     /** Helpers **/
     public boolean canOutputsFit(ItemStack[] a) {
+        if (a == null) return true;
         IItemHandlerModifiable outputHandler = getOutputHandler();
         boolean[] results = new boolean[a.length];
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < outputHandler.getSlots(); j++) {
-                results[i] |= outputHandler.insertItem(j, a[i], true).isEmpty();
+                results[i] |=  insertIntoOutput(outputHandler, j, a[i], true).isEmpty();
             }
         }
         for (boolean value : results) {
@@ -280,11 +311,11 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         if (!(handler instanceof TrackedItemHandler)) {
             return 0;
         }
-        TrackedItemHandler<T> outputHandler = (TrackedItemHandler<T>) handler;
+        IItemHandlerModifiable outputHandler = handler;
         for (ItemStack stack : a) {
             for (int i = 0; i < outputHandler.getSlots(); i++) {
                 ItemStack item = outputHandler.getStackInSlot(i);
-                if (item.isEmpty() || (Utils.equals(stack, item) && item.getCount() + stack.getCount() <= outputHandler.getStackLimit(i, item))) {
+                if (item.isEmpty() || (Utils.equals(stack, item) && item.getCount() + stack.getCount() <= outputHandler.getSlotLimit(i))) {
                     matchCount++;
                     break;
                 }
@@ -321,7 +352,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         IItemHandlerModifiable outputHandler = getOutputHandler();
         for (int i = 0; i < outputs.length; i++) {
             for (int j = 0; j < outputHandler.getSlots(); j++) {
-                ItemStack result = outputHandler.insertItem(j, outputs[i].copy(), false);
+                ItemStack result = insertIntoOutput(outputHandler, j, outputs[i].copy(), false);
                 if (result.isEmpty()) {
                     break;
                 } else {
@@ -334,13 +365,11 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
         }
         return notExported.toArray(new ItemStack[0]);
     }
-
-    /** Tesseract IItemNode Implementations **/
+/*
     @Override
-    public int insert(ItemData data, boolean simulate) {
-        ItemStack stack = (ItemStack) data.getStack();
+    public int insert(ItemStack stack, boolean simulate) {
         IItemHandlerModifiable inputHandler = getInputHandler();
-        int slot = getFirstValidSlot(stack.getItem());
+        int slot = getFirstValidSlot(stack);
         if (slot != -1) {
             ItemStack inserted = inputHandler.insertItem(slot, stack, simulate);
             if (!inserted.isEmpty()) {
@@ -352,9 +381,9 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     @Nullable
     @Override
-    public ItemData<ItemStack> extract(int slot, int amount, boolean simulate) {
+    public ItemStack extract(int slot, int amount, boolean simulate) {
         ItemStack stack = getOutputHandler().extractItem(slot, amount, simulate);
-        return stack.isEmpty() ? null : new ItemData<>(slot, stack);
+        return stack;
     }
 
     @Nonnull
@@ -393,22 +422,20 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
 
     @Override
     public boolean canOutput(Dir direction) {
-        return tile.getOutputFacing().getIndex() == direction.getIndex();
+        return tile.getOutputFacing().getIndex() != direction.getIndex();
     }
 
     @Override
-    public boolean canInput(Object item, Dir direction) {
+    public boolean canInput(ItemStack item, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
-        if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return getFirstValidSlot(item) != -1;
-    }
+    }*/
 
-    @Override
-    public boolean connects(Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
-    }
+   // public boolean connects(Dir direction) {
+   //     return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
+   // }
 
-    private int getFirstValidSlot(Object item) {
+    /*private int getFirstValidSlot(ItemStack item) {
         int slot = -1;
         IItemHandlerModifiable inputHandler = getInputHandler();
         for (int i = 0; i < inputHandler.getSlots(); i++) {
@@ -416,23 +443,15 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IItemNod
             if (stack.isEmpty()) {
                 slot = i;
             } else {
-                if (stack.getItem().equals(item) && stack.getMaxStackSize() > stack.getCount()) {
+                if (stack.getItem().equals(item.getItem()) && stack.getMaxStackSize() > stack.getCount()) {
                     return i;
                 }
             }
         }
         return slot;
-    }
+    }*/
 
-    @Override
-    public void deregisterNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.ITEM.remove(tile.getDimension(), tile.getPos().toLong());
-    }
-
-    @Override
-    public void registerNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.ITEM.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
+    public void refreshNet() {
+        Tesseract.ITEM.refreshNode(this.tile.getDimension(), this.tile.getPos().toLong());
     }
 }

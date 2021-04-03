@@ -4,12 +4,11 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
@@ -26,7 +25,6 @@ import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.DyeColor;
@@ -36,13 +34,11 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
@@ -66,6 +62,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -75,7 +72,6 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
-import java.util.function.Function;
 
 import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.UNBOUNDED;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
@@ -302,6 +298,9 @@ public class Utils {
     public static void transferItems(IItemHandler from, IItemHandler to, boolean once) {
         for (int i = 0; i < from.getSlots(); i++) {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
+            if (toInsert.isEmpty()) {
+                continue;
+            }
             if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
                 ItemHandlerHelper.insertItem(to, toInsert, false);
                 from.extractItem(i, from.getStackInSlot(i).getCount(), false);
@@ -310,9 +309,9 @@ public class Utils {
         }
     }
 
-    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile, boolean once) {
-        LazyOptional<IItemHandler> from = fromTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-        LazyOptional<IItemHandler> to = toTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile, Direction side, boolean once) {
+        LazyOptional<IItemHandler> from = fromTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+        LazyOptional<IItemHandler> to = toTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
         from.ifPresent(first -> {
             to.ifPresent(second -> {
                 transferItems(first,second, once);
@@ -336,8 +335,20 @@ public class Utils {
      * @param to the handler to insert
      * @return the number of amps inserted.
      */
-    public static int transferEnergy(IEnergyHandler from, IEnergyHandler to, int maxAmps) {
-        return transferEnergyWithLoss(from,to,0, maxAmps);
+    public static long transferEnergy(IEnergyHandler from, IEnergyHandler to) {
+        if (!(from.canOutput() && to.canInput())) {
+            return 0;
+        }
+        long extracted = from.extract(from.getOutputVoltage(), true);
+        if (extracted > 0) {
+            long inputted = to.insert(extracted, true);
+            if (inputted > 0) {
+                from.extract(inputted, false);
+                to.insert(inputted, false);
+                return inputted;
+            }
+        }
+        return 0;
     }
 
     /**
@@ -374,19 +385,21 @@ public class Utils {
     public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
         for (int i = 0; i < to.getTanks(); i++) {
             //if (i >= from.getTanks()) break;
-            FluidStack toInsert;
-            if (cap > 0) {
-                FluidStack fluid = from.getFluidInTank(i).copy();
-                int toDrain = Math.min(cap, fluid.getAmount());
-                fluid.setAmount(toDrain);
-                toInsert = from.drain(fluid, SIMULATE);
-            } else {
-                toInsert = from.drain(from.getFluidInTank(i), SIMULATE);
-            }
-            int filled = to.fill(toInsert, SIMULATE);
-            if (filled > 0) {
-                toInsert.setAmount(filled);
-                to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
+            FluidStack toInsert = FluidStack.EMPTY;
+            for (int j = 0; j < from.getTanks(); j++) {
+                if (cap > 0) {
+                    FluidStack fluid = from.getFluidInTank(j).copy();
+                    int toDrain = Math.min(cap, fluid.getAmount());
+                    fluid.setAmount(toDrain);
+                    toInsert = from.drain(fluid, SIMULATE);
+                } else {
+                    toInsert = from.drain(from.getFluidInTank(j), SIMULATE);
+                }
+                int filled = to.fill(toInsert, SIMULATE);
+                if (filled > 0) {
+                    toInsert.setAmount(filled);
+                    to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
+                }
             }
         }
     }
@@ -984,86 +997,6 @@ public class Utils {
     }
 
     /**
-     * Redirects an ItemTag to a BlockTag
-     * @param tag a ItemTag, preferably already created
-     * @return BlockTag variant of the ItemTag
-     */
-    public static ITag.INamedTag<Block> itemToBlockTag(ITag.INamedTag<Item> tag) {
-        return createTag(tag.getName(), Block.class, BlockTags::makeWrapperTag);
-    }
-
-    /**
-     * Redirects an BlockTag to a ItemTag
-     * @param tag a BlockTag, preferably already created
-     * @return ItemTag variant of the BlockTag
-     */
-    public static ITag.INamedTag<Item> blockToItemTag(ITag.INamedTag<Block> tag) {
-        return createTag(tag.getName(), Item.class, ItemTags::makeWrapperTag);
-    }
-
-    /**
-     * @param loc ResourceLocation of a BlockTag, can be new or old
-     * @return BlockTag
-     */
-    public static ITag.INamedTag<Block> getBlockTag(ResourceLocation loc) {
-       return createTag(loc, Block.class, BlockTags::makeWrapperTag);
-    }
-
-    /* TAG RELATED AREA.  */
-
-    //TODO: Move to another package maybe?
-
-    //A list of all registered tags for all Antimatter mods.
-    protected static final Map<Class, Set<ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
-
-    protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
-        ITag.INamedTag<T> tag = fn.apply(loc.toString());
-        TAG_MAP.compute(clazz, (k,v) -> {
-            if (v == null) v = new ObjectOpenHashSet<>();
-            v.add(tag);
-            return v;
-        });
-        return tag;
-    }
-
-    public static Set<ITag.INamedTag> getTags(Class clazz) {
-        return TAG_MAP.getOrDefault(clazz, Collections.emptySet());
-    }
-
-    /**
-     * @param name name of a BlockTag, can be new or old, has the namespace "forge" attached
-     * @return BlockTag
-     */
-    public static ITag.INamedTag<Block> getForgeBlockTag(String name) {
-        return getBlockTag(new ResourceLocation("forge", name));
-    }
-
-    /**
-     * @param loc ResourceLocation of a ItemTag, can be new or old
-     * @return ItemTag
-     */
-    public static ITag.INamedTag<Item> getItemTag(ResourceLocation loc) {
-        return createTag(loc, Item.class, ItemTags::makeWrapperTag);
-    }
-
-    /**
-     * @param name name of a ItemTag, can be new or old, has the namespace "forge" attached
-     * @return ItemTag
-     */
-    public static ITag.INamedTag<Item> getForgeItemTag(String name) {
-        // TODO: Change "wood" -> "wooden", forge recognises "wooden"
-        return getItemTag(new ResourceLocation("forge", name));
-    }
-
-    /**
-     * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
-     * @return FluidTag
-     */
-    public static ITag.INamedTag<Fluid> getForgeFluidTag(String name) {
-        return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::makeWrapperTag);
-    }
-
-    /**
      * Spawns a new item entity
      * @param tile the active tile
      * @param item the item to spawn, 1.
@@ -1112,12 +1045,46 @@ public class Utils {
         return getLocalizedType(type);
     }
 
+    public static boolean doesStackHaveToolTypes(ItemStack stack, ToolType... toolTypes) {
+        if (!stack.isEmpty()) {
+            for (ToolType toolType : toolTypes) {
+                return stack.getToolTypes().contains(toolType);
+            }
+        }
+        return false;
+    }
+
+    public static boolean doesStackHaveToolTypes(ItemStack stack, AntimatterToolType... antimatterToolTypes) {
+        List<ToolType> toolTypes = new ObjectArrayList<>();
+        for (AntimatterToolType antimatterToolType : antimatterToolTypes) {
+            toolTypes.addAll(antimatterToolType.getActualToolTypes());
+        }
+        return doesStackHaveToolTypes(stack, toolTypes.toArray(new ToolType[0]));
+    }
+
+    public static boolean isPlayerHolding(PlayerEntity player, Hand hand, ToolType... toolTypes) {
+        return doesStackHaveToolTypes(player.getHeldItem(hand), toolTypes);
+    }
+
+    public static boolean isPlayerHolding(PlayerEntity player, Hand hand, AntimatterToolType... antimatterToolTypes) {
+        List<ToolType> toolTypes = new ObjectArrayList<>();
+        for (AntimatterToolType antimatterToolType : antimatterToolTypes) {
+            toolTypes.addAll(antimatterToolType.getActualToolTypes());
+        }
+        return isPlayerHolding(player, hand, toolTypes.toArray(new ToolType[0]));
+    }
+
     @Nullable
+    @Deprecated // Ready to use the methods above instead
     public static AntimatterToolType getToolType(PlayerEntity player) {
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool))
-            return null;
-        return ((IAntimatterTool) stack.getItem()).getType();
+        if (!stack.isEmpty()) {
+            Item item = stack.getItem();
+            if (item instanceof IAntimatterTool) {
+                return ((IAntimatterTool) item).getType();
+            }
+        }
+        return null;
     }
 
     /**

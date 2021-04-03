@@ -1,10 +1,9 @@
 package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.LazyValue;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Arrays;
@@ -15,17 +14,31 @@ import java.util.Set;
 public class RecipeBuilder {
 
     private RecipeMap recipeMap;
-    private ItemStack[] itemsOutput;
-    private List<LazyValue<AntimatterIngredient>> ingredientInput;
-    private FluidStack[] fluidsInput, fluidsOutput;
-    private int[] chances;
-    private int duration, special;
-    private long power;
-    private int amps;
-    private boolean hidden;
-    private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
+    protected ItemStack[] itemsOutput;
+    protected List<RecipeIngredient> ingredientInput;
+    protected FluidStack[] fluidsInput, fluidsOutput;
+    protected int[] chances;
+    protected int duration, special;
+    protected long power;
+    protected int amps;
+    protected boolean hidden;
+    protected Set<RecipeTag> tags = new ObjectOpenHashSet<>();
 
     public Recipe add() {
+        Recipe r = build(duration, power, special, amps);
+        addToMap(r);
+        return r;
+    }
+
+    protected void addToMap(Recipe r) {
+        recipeMap.add(r);
+    }
+
+    /**
+     * Builds a recipe without adding it to a map.
+     * @return the recipe.
+     */
+    public Recipe build(int duration, long power, int special, int amps) {
         if (itemsOutput != null && !Utils.areItemsValid(itemsOutput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
             return Utils.getEmptyRecipe();
@@ -51,17 +64,15 @@ public class RecipeBuilder {
         if (ingredientInput == null) ingredientInput = Collections.emptyList();
         if (amps < 1) amps = 1;
         Recipe recipe = new Recipe(
-            ingredientInput,
-            itemsOutput != null ? itemsOutput.clone() : null,
-            fluidsInput != null ? fluidsInput.clone() : null,
-            fluidsOutput != null ? fluidsOutput.clone() : null,
-            duration, power, special,amps
+                ingredientInput,
+                itemsOutput != null ? itemsOutput.clone() : null,
+                fluidsInput != null ? fluidsInput.clone() : null,
+                fluidsOutput != null ? fluidsOutput.clone() : null,
+                duration, power, special,amps
         );
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
         recipe.addTags(new ObjectOpenHashSet<>(tags));
-
-        recipeMap.add(recipe);
 
         return recipe;
     }
@@ -87,12 +98,12 @@ public class RecipeBuilder {
         return add(duration, 0, 0);
     }
 
-    public RecipeBuilder ii(LazyValue<AntimatterIngredient>... stacks) {
+    public RecipeBuilder ii(RecipeIngredient... stacks) {
         ingredientInput = Arrays.asList(stacks);
         return this;
     }
 
-    public RecipeBuilder ii(List<LazyValue<AntimatterIngredient>> stacks) {
+    public RecipeBuilder ii(List<RecipeIngredient> stacks) {
         ingredientInput = stacks;
         return this;
     }

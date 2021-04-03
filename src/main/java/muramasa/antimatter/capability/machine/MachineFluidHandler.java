@@ -1,6 +1,8 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
@@ -11,6 +13,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -18,7 +21,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.Tesseract;
-import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.util.Dir;
 
@@ -27,10 +29,11 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
+import static muramasa.antimatter.machine.MachineFlag.GUI;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode<FluidStack>, IMachineHandler, IFluidHandler {
+public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidNode, IMachineHandler, IFluidHandler {
 
     protected final T tile;
     protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
@@ -60,8 +63,8 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         this.tile = tile;
         this.capacity = capacity;
         this.pressure = pressure;
-        int inputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size();
-        int outputCount = tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size();
+        int inputCount = tile.has(GUI) ? tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0;
+        int outputCount = tile.has(GUI) ? tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0;
         if (inputCount > 0) {
             tanks.put(FluidDirection.INPUT, FluidTanks.create(tile, ContentEvent.FLUID_INPUT_CHANGED, b -> {
                 for (int i = 0; i < inputCount; i++) {
@@ -86,11 +89,11 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public void init() {
-        registerNet();
+
     }
 
     public void onRemove() {
-        deregisterNet();
+
     }
 
     public void onReset() {
@@ -115,9 +118,13 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     protected FluidTank getTank(int tank) {
         if (getInputTanks() == null) {
-            if (getOutputTanks() != null) return getOutputTanks().getTank(tank);
+            if (getOutputTanks() != null)
+                return getOutputTanks().getTank(tank);
         } else if (getInputTanks() != null && getOutputTanks() != null){
-            if (tank > getInputTanks().getTanks()) return getOutputTanks().getTank(offsetTank(tank));
+            if (tank >= getInputTanks().getTanks())
+                return getOutputTanks().getTank(offsetTank(tank));
+            else
+                return getInputTanks().getTank(tank);
         } else if (getOutputTanks() == null && getInputTanks() != null) {
             return getInputTanks().getTank(tank);
         }
@@ -130,14 +137,13 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         } else if (getOutputTanks() == null) {
             return getInputTanks();
         } else {
-            if (tank > getInputTanks().getTanks()) return getOutputTanks();
+            if (tank >= getInputTanks().getTanks()) return getOutputTanks();
         }
         return getInputTanks();
     }
 
     protected int offsetTank(int tank) {
-        if (getInputTanks() != null && tank > getInputTanks().getTanks()) return tank;
-        if (getInputTanks() != null) return tank - getInputTanks().getTanks();
+        if (getInputTanks() != null && tank >= getInputTanks().getTanks()) return tank - getInputTanks().getTanks();
         return tank;
     }
 
@@ -178,7 +184,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                                 }
                                 return t.getContainer();
                             }).orElse(null/* throw exception */);
-                    if (!ih.getCellOutputHandler().insertItem(cellSlot,checkContainer,true).isEmpty()) return;
+                    if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot,checkContainer,true).isEmpty()) return;
 
                     FluidStack stack;
                     if (cfh.getFluidInTank(0).isEmpty()) {
@@ -189,7 +195,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
                     if (!stack.isEmpty()) {
                         ItemStack insert = cfh.getContainer();
                         insert.setCount(1);
-                        ih.getCellOutputHandler().insertItem(cellSlot, insert, false);
+                        MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot, insert, false);
                         ih.getCellInputHandler().extractItem(cellSlot, 1, false);
                     }
                 });
@@ -393,22 +399,6 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         return builder.toString();
     }
 
-    /** Tesseract IFluidNode Implementations **/
-    @Override
-    public int insert(FluidData data, boolean simulate) {
-        return fill((FluidStack) data.getStack(), simulate ? SIMULATE : EXECUTE);
-    }
-
-    @Nullable
-    @Override
-    public FluidData<FluidStack> extract(int tank, int amount, boolean simulate) {
-        if (getOutputTanks() == null) {
-            return null;
-        }
-        FluidStack drained = getOutputTanks().drain(amount, simulate ? SIMULATE : EXECUTE);
-        return drained.isEmpty() ? null : new FluidData<>(drained, drained.getAmount(), drained.getFluid().getAttributes().getTemperature(), drained.getFluid().getAttributes().isGaseous());
-    }
-
     public void deserializeNBT(CompoundNBT nbt) {
         tanks.forEach((k,v) -> {
             v.deserializeNBT(nbt.getList(k.toString(),Constants.NBT.TAG_COMPOUND));
@@ -421,18 +411,6 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
             nbt.put(k.name(), v.serializeNBT());
         });
         return nbt;
-    }
-
-    // TODO needed? Weird semantics
-    @Override
-    public int getAvailableTank(Dir direction) {
-        return 0;
-        // return outputWrapper.getAvailableTank(direction.getIndex());
-    }
-
-    @Override
-    public int getOutputAmount(Dir direction) {
-        return pressure;
     }
 
     @Override
@@ -457,7 +435,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     // TODO needed? Weird semantics
     @Override
-    public boolean canInput(Object fluid, Dir direction) {
+    public boolean canInput(FluidStack fluid, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return true;
@@ -466,19 +444,12 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public boolean connects(Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex()/* && !(tile.getCover(Ref.DIRECTIONS[direction.getIndex()]) instanceof CoverMaterial)*/;
+        return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
     }
 
     @Override
-    public void registerNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.FLUID.registerNode(tile.getDimension(), tile.getPos().toLong(), this);
-    }
-
-    @Override
-    public void deregisterNet() {
-        if (tile.getWorld() == null) return;
-        Tesseract.FLUID.remove(tile.getDimension(), tile.getPos().toLong());
+    public void refreshNet() {
+        Tesseract.FLUID.refreshNode(this.tile.getDimension(), this.tile.getPos().toLong());
     }
 
     public enum FluidDirection {

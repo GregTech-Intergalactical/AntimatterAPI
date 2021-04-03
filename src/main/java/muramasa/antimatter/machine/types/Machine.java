@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.cover.Cover;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
@@ -20,8 +20,9 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureBuilder;
+import muramasa.antimatter.texture.IOverlayTexturer;
+import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.texture.TextureData;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVERNONE;
 import static muramasa.antimatter.Data.COVEROUTPUT;
+import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider {
@@ -55,7 +57,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
-    protected Cover[] DEFAULT_COVERS = new Cover[]{COVERNONE,COVERNONE,COVERNONE,COVEROUTPUT,COVERNONE,COVERNONE};
+    protected ICover[] DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,COVEROUTPUT,COVERNONE,COVERNONE};
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -65,8 +67,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected ItemGroup group = Ref.TAB_MACHINES;
 
     /** Texture Members **/
-    protected TextureData baseData;
-    protected Texture baseTexture;
+    protected ITextureHandler baseTexture;
+    protected IOverlayTexturer overlayTextures;
 
     /** Multi Members **/
     protected Object2ObjectMap<Tier, Structure> structures = new Object2ObjectOpenHashMap<>();
@@ -78,7 +80,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /** Behaviours **/
     protected boolean allowFrontCovers = false;
-    protected Cover outputCover = COVEROUTPUT;
+    protected ICover outputCover = COVEROUTPUT;
     //TODO get valid covers
 
     public Machine(String domain, String id, Object... data) {
@@ -98,11 +100,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public void setOutputCover(Cover cover) {
+    public void setOutputCover(ICover cover) {
         this.outputCover = cover;
     }
 
-    public Cover getOutputCover() {
+    public ICover getOutputCover() {
         return outputCover;
     }
 
@@ -110,16 +112,27 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return allowFrontCovers;
     }
 
-    public T covers(Cover... covers) {
+    /**
+     * Allows you to configure default covers.
+     * @param covers if null, set n
+     * @return
+     */
+    public T covers(ICover... covers) {
+        if (covers == null) {
+            setOutputCover(COVERNONE);
+            this.DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,COVERNONE,COVERNONE,COVERNONE};
+            return (T) this;
+        }
         if (covers.length == 1) {
-            this.DEFAULT_COVERS = new Cover[]{covers[0],covers[0],covers[0],covers[0],covers[0],covers[0]};
+            setOutputCover(covers[0]);
+            this.DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,covers[0],COVERNONE,COVERNONE};
         } else {
             this.DEFAULT_COVERS = covers;
         }
         return (T) this;
     }
 
-    public Cover defaultCover(Direction dir) {
+    public ICover defaultCover(Direction dir) {
         return DEFAULT_COVERS[dir.getIndex()];
     }
 
@@ -158,16 +171,36 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             }
             if (o instanceof Tier) tiers.add((Tier) o);
             if (o instanceof MachineFlag) flags.add((MachineFlag) o);
-            if (o instanceof Texture) baseTexture = (Texture) o;
+            if (o instanceof Texture) baseTexture = (m, state) -> new Texture[]{(Texture) o};
+            if (o instanceof IOverlayTexturer) overlayTextures = (IOverlayTexturer) o;
+            if (o instanceof ITextureHandler) baseTexture = (ITextureHandler) o;
             if (o instanceof ItemGroup) group = (ItemGroup) o;
-            if (o instanceof Cover) {
-                covers(COVERNONE,COVERNONE,((Cover)o),COVERNONE,COVERNONE,COVERNONE);
-                setOutputCover((Cover) o);
+            if (o instanceof ICover) {
+                covers(COVERNONE,COVERNONE,((ICover)o),COVERNONE,COVERNONE,COVERNONE);
+                setOutputCover((ICover) o);
             }
             //if (data[i] instanceof ITextureHandler) baseData = ((ITextureHandler) data[i]);
         }
         setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
         addFlags(flags.toArray(new MachineFlag[0]));
+
+        if (overlayTextures == null) {
+            overlayTextures = (type, state) -> {
+                if (state != MachineState.ACTIVE && state != MachineState.INVALID_STRUCTURE) state = MachineState.IDLE;
+                String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
+                return new Texture[] {
+                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
+                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "top"),
+                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
+                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "back"),
+                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
+                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
+                };
+            };
+        }
+        if (baseTexture == null) {
+            baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture()};
+        }
     }
 
     public T setTile(Function<Machine<?>, Supplier<? extends TileEntityMachine>> func) {
@@ -190,7 +223,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public ITextComponent getDisplayName(Tier tier) {
-        return new TranslationTextComponent("machine." + id + "." + tier.getId());
+        if (has(BASIC)) {
+            return new TranslationTextComponent("machine." + id + "." + tier.getId());
+        } else {
+            return new TranslationTextComponent("machine." + id);
+        }
     }
 
     public double getMachineEfficiency() {
@@ -201,28 +238,26 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         List<Texture> textures = new ObjectArrayList<>();
         for (Tier tier : getTiers()) {
             //textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
-            textures.add(getBaseTexture(tier));
+            textures.addAll(Arrays.asList(getBaseTexture(tier)));
         }
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE)));
         textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE)));
         return textures;
     }
 
-    public Texture getBaseTexture(Tier tier) {
-        return baseTexture != null ? baseTexture : tier.getBaseTexture();
+    public Texture[] getBaseTexture(Tier tier) {
+        return baseTexture.getBase(this, tier);
     }
 
+    public Texture getBaseTexture(Tier tier, Direction dir) {
+        Texture[] texes = baseTexture.getBase(this, tier);
+        if (texes.length == 1) return texes[0];
+        return texes[dir.getIndex()];
+    }
+
+
     public Texture[] getOverlayTextures(MachineState state) {
-        if (state != MachineState.ACTIVE && state != MachineState.INVALID_STRUCTURE) state = MachineState.IDLE;
-        String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
-        return new Texture[] {
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "top"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "back"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
-            new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
-        };
+        return overlayTextures.getOverlays(this, state);
     }
 
     public ResourceLocation getOverlayModel(Direction side) {

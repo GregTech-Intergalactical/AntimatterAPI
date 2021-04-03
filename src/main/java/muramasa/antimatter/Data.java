@@ -64,7 +64,7 @@ public class Data {
     public static MaterialTypeItem<?> GEM_BRITTLE = new MaterialTypeItem<>("gem_brittle", 2, true, Ref.U);
     public static MaterialTypeItem<?> GEM_POLISHED = new MaterialTypeItem<>("gem_polished", 2, true, Ref.U);
     public static MaterialTypeItem<?> LENS = new MaterialTypeItem<>("lens", 2, true, Ref.U * 3 / 4);
-    public static MaterialTypeItem<?> PLATE = new MaterialTypeItem<>("plate", 2, true, Ref.U);
+    public static MaterialTypeItem<?> PLATE = new MaterialTypeItem<>("plate", 2, true, Ref.U, (a,b,c) -> new CoverMaterialItem(a,b,new CoverPlate(a, b, c),c));
     public static MaterialTypeItem<?> PLATE_DENSE = new MaterialTypeItem<>("plate_dense", 2, true, Ref.U * 9);
     public static MaterialTypeItem<?> ROD = new MaterialTypeItem<>("rod", 2, true, Ref.U2);
     public static MaterialTypeItem<?> ROD_LONG = new MaterialTypeItem<>("rod_long", 2, true, Ref.U);
@@ -180,15 +180,15 @@ public class Data {
 
     public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
-    public static Cover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
+    public static BaseCover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
     public static CoverOutput COVEROUTPUT = new CoverOutput();
-    public static Cover COVERINPUT = new CoverInput();
-    public static Cover COVERMUFFLER = new CoverMuffler();
-    public static Cover COVERDYNAMO = new CoverDynamo("dynamo");
-    public static Cover COVERENERGY = new CoverEnergy();
-    public static Cover COVERBUFFERONE = new CoverDynamo("buffer_one");
-    public static Cover COVERBUFFERFOUR = new CoverDynamo("buffer_four");
-    public static Cover COVERBUFFERNINE = new CoverDynamo("buffer_nine");
+    public static ICover COVERINPUT = new CoverInput();
+    public static ICover COVERMUFFLER = new CoverMuffler();
+    public static ICover COVERDYNAMO = new CoverDynamo("dynamo");
+    public static ICover COVERENERGY = new CoverEnergy();
+    public static ICover COVERBUFFERONE = new CoverDynamo("buffer_one");
+    public static ICover COVERBUFFERFOUR = new CoverDynamo("buffer_four");
+    public static ICover COVERBUFFERNINE = new CoverDynamo("buffer_nine");
 
     public static CoverStack<?> COVER_EMPTY = new CoverStack<>(COVERNONE);
     public static CoverStack<?> COVER_OUTPUT = new CoverStack<>(COVEROUTPUT);
@@ -246,7 +246,7 @@ public class Data {
     }
 
     private static void clientBehaviours() {
-        WRENCH.addBehaviour(BehaviourBlockRotate.INSTANCE, new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
+        WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
         ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));
         WIRE_CUTTER.addBehaviour(new BehaviourConnection(b -> b instanceof BlockPipe));
         CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe));

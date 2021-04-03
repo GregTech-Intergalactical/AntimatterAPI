@@ -12,7 +12,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.+', changing: true
         classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
@@ -29,7 +29,7 @@ apply plugin: 'net.minecraftforge.gradle'
 //apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.1'
+version = "${minecraft_version}-${mod_version}"
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'AntimatterAPI'
 
@@ -216,20 +216,17 @@ mixin {
 }
 
 jar {
+    zip64 true
     manifest {
         attributes([
                 "MixinConfigs": "antimatter.mixins.json",
-                "Specification-Title": "Antimatter",
-                "Specification-Vendor": "AntimatterTeam",
-                "Specification-Version": "1",
+                "Specification-Title": project.name,
+                "Specification-Vendor": "GregTech Intergalactical",
+                "Specification-Version": project.version,
                 "Implementation-Title": project.name,
-                "Implementation-Version": "0.0.1",
-                "Implementation-Vendor" :"AntimatterTeam",
+                "Implementation-Version": project.version,
+                "Implementation-Vendor": "GregTech Intergalactical",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-}
-
-jar {
-    zip64 true
 }

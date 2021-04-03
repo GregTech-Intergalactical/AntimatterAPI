@@ -3,6 +3,8 @@ package muramasa.antimatter.capability;
 import muramasa.antimatter.Ref;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.energy.IEnergyStorage;
+import tesseract.api.gt.GTConsumer;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.util.Dir;
 
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
@@ -11,6 +13,8 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     protected long energy;
     protected int voltageIn, voltageOut, amperageIn, amperageOut;
+
+    protected GTConsumer.State state = new GTConsumer.State(this);
 
     public EnergyHandler(long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         this.energy = energy;
@@ -24,23 +28,44 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     /** Tesseract IGTNode Implementations **/
     @Override
     public long insert(long maxReceive, boolean simulate) {
-       // if (!canInput()) return 0;
-
-        long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
+        //if (!canInput()) return 0;
         if (!simulate) {
-            energy += toInsert;
+            if (!checkVoltage(maxReceive, false)) {
+                return 0;
+            }
+        }
+        long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
+        if (getState().receive(true, 1, toInsert)) {
+            if (!simulate) {
+                energy += toInsert;
+                getState().receive(false,  1, toInsert);
+            }
+        } else {
+            return 0;
         }
         return toInsert;
+    }
+
+    protected boolean checkVoltage(long receive, boolean simulate) {
+        return true;
+    }
+
+    public void onUpdate() {
+        this.state.onTick();
     }
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
         //if (!canOutput()) return 0;
-        long toExtract = Math.max(Math.min(energy, maxExtract), 0);
-        if (!simulate) {
-            energy -= toExtract;
+        if (getState().extract(true, 1, maxExtract)) {
+            long toExtract = Math.max(Math.min(energy, maxExtract), 0);
+            if (!simulate) {
+                energy -= toExtract;
+                getState().extract(false, 1, maxExtract);
+            }
+            return toExtract;
         }
-        return toExtract;
+        return 0;
     }
 
     public void setOutputAmperage(int amperageOut) {
@@ -124,12 +149,14 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
     @Override
     public int getEnergyStored() {
-        return this.energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.energy;
+        long energy = getEnergy();
+        return energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) energy;
     }
 
     @Override
     public int getMaxEnergyStored() {
-        return this.capacity > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) this.capacity;
+        long capacity = getCapacity();
+        return capacity > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) capacity;
     }
 
     @Override
@@ -167,4 +194,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         this.amperageOut = nbt.getInt(Ref.TAG_MACHINE_AMPERAGE_OUT);
     }
 
+    public GTConsumer.State getState() {
+        return state;
+    }
 }

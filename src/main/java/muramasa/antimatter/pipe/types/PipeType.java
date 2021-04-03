@@ -8,11 +8,9 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
-import muramasa.antimatter.tesseract.ITileWrapper;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -68,8 +66,6 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
     public abstract String getId();
 
     public abstract String getTypeName();
-
-    public abstract ITileWrapper getTileWrapper(TileEntity tile);
 
     public Material getMaterial() {
         return material;

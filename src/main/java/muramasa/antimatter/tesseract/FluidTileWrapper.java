@@ -1,34 +1,27 @@
 package muramasa.antimatter.tesseract;
 
-import it.unimi.dsi.fastutil.objects.ObjectSets;
-import muramasa.antimatter.Data;
-import muramasa.antimatter.cover.*;
+import muramasa.antimatter.tile.pipe.PipeReferenceCounter;
+import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
-import tesseract.api.fluid.FluidData;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.util.Dir;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Set;
+import java.util.function.Supplier;
 
-import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
-import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
+public class FluidTileWrapper implements IFluidNode {
 
-public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
-
-    private TileEntity tile;
-    private boolean removed;
-    private IFluidHandler handler;
-
-    private CoverStack[] covers = new CoverStack[] {
-        Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY, Data.COVER_EMPTY
-    };
+    private final TileEntity tile;
+    private final IFluidHandler handler;
 
     private FluidTileWrapper(TileEntity tile, IFluidHandler handler) {
         this.tile = tile;
@@ -36,83 +29,23 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
     }
 
     @Nullable
-    public static FluidTileWrapper of(TileEntity tile) {
-        LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-        if (capability.isPresent()) {
-            FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
-            capability.addListener(x -> node.onRemove(null));
-            Tesseract.FLUID.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), node);
-            return node;
-        }
-        return null;
-    }
-
-    @Override
-    public void onRemove(@Nullable Direction side) {
-        if (side == null) {
-            if (tile.isRemoved()) {
-                Tesseract.FLUID.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
-                removed = true;
-            } else {
-                // What if tile is recreate cap ?
+    public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
+        PipeReferenceCounter.add(world.getDimensionKey(), pos.toLong(), TileEntityFluidPipe.class, p -> Tesseract.FLUID.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
+            TileEntity tile = supplier.get();
+            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+            if (capability.isPresent()) {
+                FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
+                capability.addListener(o -> node.onRemove());
+                return node;
             }
-        } else {
-            covers[side.getIndex()] = Data.COVER_EMPTY;
+            throw new RuntimeException("invalid capability");
+        }));
+    }
+
+    public void onRemove() {
+        if (tile.isRemoved()) {
+            Tesseract.FLUID.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
         }
-    }
-
-    @Override
-    public void onUpdate(Direction side, Cover cover) {
-        covers[side.getIndex()] = new CoverStack(cover, this.tile);
-    }
-
-    @Override
-    public boolean isRemoved() {
-        return removed;
-    }
-
-    @Override
-    public int insert(FluidData data, boolean simulate) {
-        FluidStack stack = (FluidStack) data.getStack();
-        return getFirstValidTank(stack.getFluid()) != -1 ? handler.fill(stack, simulate ? SIMULATE : EXECUTE) : 0;
-    }
-
-    @Nullable
-    @Override
-    public FluidData<FluidStack> extract(int tank, int amount, boolean simulate) {
-        FluidStack fluid = handler.getFluidInTank(tank);
-        if (fluid.getAmount() > amount) {
-            fluid = fluid.copy();
-            fluid.setAmount(amount);
-        }
-        FluidStack stack = handler.drain(fluid, simulate ? SIMULATE : EXECUTE);
-        return stack.isEmpty() ? null : new FluidData<>(stack, stack.getAmount(), stack.getFluid().getAttributes().getTemperature(), stack.getFluid().getAttributes().isGaseous());
-    }
-
-    @Override
-    public int getAvailableTank(Dir direction) {
-        Set<?> filtered = getFiltered(direction.getIndex());
-        if (filtered.isEmpty()) {
-            for (int i = 0; i < handler.getTanks(); i++) {
-                FluidStack stack = handler.getFluidInTank(i);
-                if (!stack.isEmpty()) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = 0; i < handler.getTanks(); i++) {
-                FluidStack stack = handler.getFluidInTank(i);
-                if (!stack.isEmpty() && filtered.contains(stack.getFluid())) {
-                    return i;
-                }
-            }
-        }
-        return -1;
-    }
-
-    @Override
-    public int getOutputAmount(Dir direction) {
-        return 1;
     }
 
     @Override
@@ -132,12 +65,7 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
 
     @Override
     public boolean canOutput(Dir direction) {
-        return covers[direction.getIndex()].getCover()  instanceof CoverOutput;
-    }
-
-    @Override
-    public boolean canInput(Object fluid, Dir direction) {
-        return isFluidAvailable(fluid, direction.getIndex()) && getFirstValidTank(fluid) != -1;
+        return handler != null;
     }
 
     @Override
@@ -145,29 +73,41 @@ public class FluidTileWrapper implements IFluidNode<FluidStack>, ITileWrapper {
         return true;
     }
 
-    private boolean isFluidAvailable(Object fluid, int dir) {
-        if (covers[dir].getCover() instanceof CoverTintable) return false;
-        Set<?> filtered = getFiltered(dir);
-        return filtered.isEmpty() || filtered.contains(fluid);
+    @Override
+    public int getTanks() {
+        return handler.getTanks();
     }
 
-    // Fast way to find available tank for fluid
-    private int getFirstValidTank(Object fluid) {
-        int tank = -1;
-        for (int i = 0; i < handler.getTanks(); i++) {
-            FluidStack stack = handler.getFluidInTank(i);
-            if (stack.isEmpty()) {
-                tank = i;
-            } else {
-                if (stack.getFluid().equals(fluid) && handler.getTankCapacity(i) > stack.getAmount()) {
-                    return i;
-                }
-            }
-        }
-        return tank;
+    @Nonnull
+    @Override
+    public FluidStack getFluidInTank(int tank) {
+        return handler.getFluidInTank(tank);
     }
 
-    private Set<?> getFiltered(int index) {
-        return covers[index].getCover() instanceof CoverFilter<?> ? ((CoverFilter<?>) covers[index].getCover()).getFilter() : ObjectSets.EMPTY_SET;
+    @Override
+    public int getTankCapacity(int tank) {
+        return handler.getTankCapacity(tank);
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+        return handler.isFluidValid(tank, stack);
+    }
+
+    @Override
+    public int fill(FluidStack resource, FluidAction action) {
+        return handler.fill(resource, action);
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack drain(FluidStack resource, FluidAction action) {
+        return handler.drain(resource, action);
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack drain(int maxDrain, FluidAction action) {
+        return handler.drain(maxDrain, action);
     }
 }

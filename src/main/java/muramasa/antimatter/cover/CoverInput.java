@@ -2,12 +2,9 @@ package muramasa.antimatter.cover;
 
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
-import tesseract.api.IRefreshable;
 
 //Behaves like CoverOutput in terms of refresh but no event handler.
-public class CoverInput extends Cover implements IRefreshableCover{
+public class CoverInput extends BaseCover{
 
     public CoverInput() {
         register();
@@ -19,31 +16,11 @@ public class CoverInput extends Cover implements IRefreshableCover{
 
     @Override
     public ResourceLocation getModel(Direction dir, Direction facing) {
-        return getBasicModel();
+        return getBasicDepthModel();
     }
 
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);
-        refresh(instance);
-    }
-
-    @Override
-    public void onRemove(CoverStack<?> instance, Direction side) {
-        super.onRemove(instance,side);
-   //     refresh(instance);
-    }
-
-    public void refresh(CoverStack<?> instance) {
-        instance.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).ifPresent(t -> {
-            if (t instanceof IRefreshable) {
-                ((IRefreshable)t).refreshNet();
-            }
-        });
-        instance.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(t -> {
-            if (t instanceof IRefreshable) {
-                ((IRefreshable)t).refreshNet();
-            }
-        });
     }
 }

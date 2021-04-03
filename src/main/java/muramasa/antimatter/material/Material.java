@@ -83,7 +83,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.ITEMS) {
-            AntimatterAPI.all(MaterialTypeItem.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> new MaterialItem(domain, t, this));
+            AntimatterAPI.all(MaterialTypeItem.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> t.getSupplier().supply(domain, t, this));
         } else if (registry == ForgeRegistries.BLOCKS) {
             if (has(BLOCK)) new BlockStorage(domain, this, BLOCK);
             if (has(FRAME)) new BlockStorage(domain, this, FRAME);

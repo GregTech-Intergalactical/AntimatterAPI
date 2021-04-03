@@ -3,7 +3,7 @@ package muramasa.antimatter.cover;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
-public class CoverMuffler extends Cover{
+public class CoverMuffler extends BaseCover {
 
     public CoverMuffler() {
         register();

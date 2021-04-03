@@ -11,29 +11,23 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class GuiEventPacket {
+public class TileGuiEventPacket extends AbstractGuiEventPacket {
 
-    private final GuiEvent event;
-    private final BlockPos pos;
-    private final int[] data;
-
-    public GuiEventPacket(GuiEvent event, BlockPos pos, int... data) {
-        this.event = event;
-        this.pos = pos;
-        this.data = data;
+    public TileGuiEventPacket(GuiEvent event, BlockPos pos, int... data) {
+        super(event, pos, data);
     }
 
-    public static void encode(GuiEventPacket msg, PacketBuffer buf) {
+    public static void encode(TileGuiEventPacket msg, PacketBuffer buf) {
         buf.writeEnumValue(msg.event);
         buf.writeBlockPos(msg.pos);
         buf.writeVarIntArray(msg.data);
     }
 
-    public static GuiEventPacket decode(PacketBuffer buf) {
-        return new GuiEventPacket(buf.readEnumValue(GuiEvent.class), buf.readBlockPos(), buf.readVarIntArray());
+    public static TileGuiEventPacket decode(PacketBuffer buf) {
+        return new TileGuiEventPacket(buf.readEnumValue(GuiEvent.class), buf.readBlockPos(), buf.readVarIntArray());
     }
 
-    public static void handle(final GuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
+    public static void handle(final TileGuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity sender =  ctx.get().getSender();
             if (sender != null) {

@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.single;
 
-import muramasa.antimatter.capability.IEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.cover.CoverDynamo;
 import muramasa.antimatter.machine.types.Machine;
@@ -32,15 +31,6 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
                 return true;
             }
 
-            @Override
-            public long getCapacity() {
-                return super.getCapacity() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getCapacity).sum() : 0);
-            }
-
-            @Override
-            public long getEnergy() {
-                return super.getEnergy() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getEnergy).sum() : 0);
-            }
         });
 
 
