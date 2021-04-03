@@ -15,7 +15,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;

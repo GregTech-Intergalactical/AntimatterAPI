@@ -202,6 +202,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         maxProgress = activeRecipe.getDuration();
         overclock = getOverclock();
         maxProgress = Math.max(1, maxProgress >>= overclock);
+        tickTimer = 0;
     }
 
     protected void addOutputs() {
@@ -287,8 +288,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             if (tile.energyHandler.isPresent()) {
                 if (!generator) {
                     long power = getPower();
-                    if (tile.energyHandler.get().extract(power, true) >= power) {
-                        tile.energyHandler.get().extract(power, false);
+                    if (tile.energyHandler.map(t -> t.extract(power, true)).orElse(0L) >= power) {
+                        tile.energyHandler.map(t -> t.extract(power, false));
                         return true;
                     } else {
                         return false;
@@ -417,7 +418,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         if (event instanceof ContentEvent) {
                 if (tile.getMachineState() == ACTIVE)
                     return;
-                if (tile.getMachineState() == OUTPUT_FULL && canOutput()) {
+                if ((event == ContentEvent.ITEM_OUTPUT_CHANGED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && tile.getMachineState() == OUTPUT_FULL && canOutput()) {
                     tickingRecipe = true;
                     tile.setMachineState(recipeFinish());
                     tickingRecipe = false;
@@ -427,9 +428,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     if (activeRecipe != null) {
                         tile.setMachineState(NO_POWER);
                     } else {
-                        this.checkRecipe();
+                        this.tickTimer = WAIT_TIME;
                     }
-                    this.checkRecipe();
                 }
         } else if (event instanceof MachineEvent) {
             switch ((MachineEvent) event) {

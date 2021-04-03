@@ -1,5 +1,6 @@
 package muramasa.antimatter.client;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.cover.CoverNone;
@@ -9,6 +10,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static muramasa.antimatter.Data.COVERNONE;
@@ -20,20 +22,24 @@ public class AntimatterTextureStitcher {
         void stitch(Consumer<ResourceLocation> consumer);
     }
 
-    final static List<ITextureSticher> STITCHERS = new ObjectArrayList<>();
+    final static Map<String, List<ITextureSticher>> STITCHERS = new Object2ObjectOpenHashMap<>();
 
     public static void addStitcher(ITextureSticher stitcher) {
-        STITCHERS.add(stitcher);
+        addStitcher(stitcher, "blocks");
+    }
+
+    public static void addStitcher(ITextureSticher stitcher, String name) {
+        STITCHERS.compute(name, (a,b) -> {
+            if (b == null) b = new ObjectArrayList<>();
+            b.add(stitcher);
+            return b;
+        });
     }
 
     public static void onTextureStitch(final TextureStitchEvent.Pre event) {
-        AntimatterAPI.all(ICover.class).forEach(cover -> {
-            if (!event.getMap().getTextureLocation().getPath().contains("blocks")) return;
-            if (cover instanceof CoverNone || cover == COVERNONE) return;
-            for (ResourceLocation r : cover.getTextures()) {
-                event.addSprite(r);
-            }
+        STITCHERS.forEach((k,v) -> {
+            if (!event.getMap().getTextureLocation().getPath().contains(k)) return;
+            v.forEach(t -> t.stitch(event::addSprite));
         });
-        STITCHERS.forEach(t -> t.stitch(event::addSprite));
     }
 }

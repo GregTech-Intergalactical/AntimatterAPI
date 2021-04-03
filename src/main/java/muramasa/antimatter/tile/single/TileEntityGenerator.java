@@ -8,6 +8,7 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.util.Dir;
 
 import static muramasa.antimatter.Data.COVERDYNAMO;
@@ -18,7 +19,7 @@ public class TileEntityGenerator extends TileEntityMachine {
     public TileEntityGenerator(Machine<?> type) {
         super(type);
 
-        this.energyHandler = LazyHolder.of(() -> new MachineEnergyHandler<TileEntityGenerator>(this, type.amps(),type.has(GENERATOR)){
+        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityGenerator>(this, type.amps(),type.has(GENERATOR)){
             @Override
             public boolean canInput(Dir direction) {
                 return false;

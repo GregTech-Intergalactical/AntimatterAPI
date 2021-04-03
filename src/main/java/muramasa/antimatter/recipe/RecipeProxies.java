@@ -2,6 +2,8 @@ package muramasa.antimatter.recipe;
 
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.map.RecipeBuilder;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;

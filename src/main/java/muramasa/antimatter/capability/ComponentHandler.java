@@ -11,6 +11,7 @@ import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
@@ -42,20 +43,20 @@ public class ComponentHandler implements IComponentHandler {
 
     @Nonnull
     @Override
-    public LazyHolder<MachineItemHandler<?>> getItemHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : LazyHolder.empty();
+    public LazyOptional<MachineItemHandler<?>> getItemHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : LazyOptional.empty();
     }
 
     @Nonnull
     @Override
-    public LazyHolder<MachineFluidHandler<?>> getFluidHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : LazyHolder.empty();
+    public LazyOptional<MachineFluidHandler<?>> getFluidHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : LazyOptional.empty();
     }
 
     @Nonnull
     @Override
-    public LazyHolder<MachineEnergyHandler<?>> getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : LazyHolder.empty();
+    public LazyOptional<MachineEnergyHandler<?>> getEnergyHandler() {
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : LazyOptional.empty();
     }
 
     @Override

@@ -6,6 +6,7 @@ import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.LazyHolder;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.util.Dir;
 
@@ -15,14 +16,14 @@ public abstract class TileEntityStorage extends TileEntityMachine {
 
     public TileEntityStorage(Machine<?> type) {
         super(type);
-        this.itemHandler = LazyHolder.of(() -> new MachineItemHandler<TileEntityStorage>(this) {
+        this.itemHandler = LazyOptional.of(() -> new MachineItemHandler<TileEntityStorage>(this) {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 if (event == ContentEvent.ENERGY_SLOT_CHANGED)
                     calculateAmperage();
             }
         });
-        this.energyHandler = LazyHolder.of(() -> new MachineEnergyHandler<TileEntityStorage>(this, 0L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
+        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityStorage>(this, 0L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
             @Override
             public boolean canOutput(Dir direction) {
                 return tile.getOutputFacing().getIndex() == direction.getIndex();

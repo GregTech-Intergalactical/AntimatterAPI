@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -108,7 +109,7 @@ public class Recipe implements IRecipe<IInventory> {
 
     @Nullable
     public List<AntimatterIngredient> compileInput() {
-        return hasInputItems() ? itemsInput.stream().map(RecipeIngredient::get).collect(Collectors.toList()) : null;
+        return hasInputItems() ? itemsInput.stream().map(RecipeIngredient::get).collect(Collectors.toList()) : Collections.emptyList();
     }
 
     @Nullable

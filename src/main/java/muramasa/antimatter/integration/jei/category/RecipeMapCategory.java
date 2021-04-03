@@ -21,7 +21,7 @@ import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.StackListIngredient;
 import muramasa.antimatter.recipe.ingredient.TagIngredient;

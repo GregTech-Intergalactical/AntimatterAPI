@@ -7,6 +7,8 @@ import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.ScreenSetup;
+import muramasa.antimatter.cover.CoverNone;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.gui.container.ContainerCover;
@@ -27,8 +29,7 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -41,6 +42,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import static muramasa.antimatter.Data.COVERNONE;
 
 public class ClientHandler implements IProxyHandler {
 
@@ -63,6 +66,13 @@ public class ClientHandler implements IProxyHandler {
         ScreenSetup.<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>>setScreenMapping(Data.MULTI_MENU_HANDLER, ScreenMultiMachine::new);
         ScreenSetup.<ContainerHatch, ScreenHatch<ContainerHatch>>setScreenMapping(Data.HATCH_MENU_HANDLER, ScreenHatch::new);
         ScreenSetup.<ContainerMachine, ScreenSteamMachine<ContainerMachine>>setScreenMapping(Data.STEAM_MENU_HANDLER, ScreenSteamMachine::new);
+
+        AntimatterTextureStitcher.addStitcher(event -> AntimatterAPI.all(ICover.class).forEach(cover -> {
+            if (cover instanceof CoverNone || cover == COVERNONE) return;
+            for (ResourceLocation r : cover.getTextures()) {
+                event.accept(r);
+            }
+        }));
     }
 
     @SuppressWarnings({"unchecked", "unused"})

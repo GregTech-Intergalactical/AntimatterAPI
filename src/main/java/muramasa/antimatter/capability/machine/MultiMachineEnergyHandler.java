@@ -38,11 +38,11 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
     }
 
     private void cacheInputs() {
-        this.inputs = tile.getComponents("hatch_energy").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> t.getEnergyHandler().get()).toArray(IEnergyHandler[]::new);
+        this.inputs = tile.getComponents("hatch_energy").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().resolve().get())).toArray(IEnergyHandler[]::new);
     }
 
     private void cacheOutputs() {
-        this.outputs = tile.getComponents("hatch_dynamo").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> t.getEnergyHandler().get()).toArray(IEnergyHandler[]::new);
+        this.outputs = tile.getComponents("hatch_dynamo").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().resolve().get())).toArray(IEnergyHandler[]::new);
     }
 
     private IEnergyHandler anyHandler() {

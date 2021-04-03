@@ -20,7 +20,7 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
-import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;

@@ -8,6 +8,7 @@ import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.LazyHolder;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
@@ -38,7 +39,7 @@ public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMult
     }
 
     protected void cacheInputs() {
-        inputs = tile.getComponents("hatch_fluid_input").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        inputs = tile.getComponents("hatch_fluid_input").stream().map(IComponentHandler::getFluidHandler).filter(LazyOptional::isPresent).map(t -> (t.resolve().get())).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         INPUT_TO_HANDLER.clear();
         INPUT_START.clear();
@@ -54,7 +55,7 @@ public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMult
     }
 
     protected void cacheOutputs() {
-        outputs = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).filter(LazyHolder::isPresent).map(LazyHolder::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        outputs = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).filter(LazyOptional::isPresent).map(t -> (t.resolve().get())).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         OUTPUT_TO_HANDLER.clear();
         OUTPUT_START.clear();

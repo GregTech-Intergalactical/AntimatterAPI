@@ -45,9 +45,9 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
-        this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyHolder.of(() -> new MultiMachineItemHandler(this)) : LazyHolder.empty();
-        this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MultiMachineEnergyHandler(this)) : LazyHolder.empty();
-        this.fluidHandler = type.has(FLUID) ? LazyHolder.of(() -> new MultiMachineFluidHandler(this)) : LazyHolder.empty();
+        this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyOptional.of(() -> new MultiMachineItemHandler(this)) : LazyOptional.empty();
+        this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MultiMachineEnergyHandler(this)) : LazyOptional.empty();
+        this.fluidHandler = type.has(FLUID) ? LazyOptional.of(() -> new MultiMachineFluidHandler(this)) : LazyOptional.empty();
     }
 
     @Override

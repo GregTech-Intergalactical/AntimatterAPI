@@ -39,7 +39,7 @@ public class MachineBakedModel extends CoveredBakedModel {
                 CoverStack<TileEntityMachine> c = covers == null ? null : covers.get(side);
                 if (c == null || c.skipRender()) {
                     TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, state.get(BlockStateProperties.HORIZONTAL_FACING), data.getData(AntimatterProperties.MACHINE_STATE));
-                    quads = t.multiTexturer.get().getQuads(quads, state, t, key, side.getIndex(), data);
+                    quads = t.multiTexturer.getValue().getQuads(quads, state, t, key, side.getIndex(), data);
                     assert quads.size() == 0 || quads.get(0).getFace() == side;
                 }
             }

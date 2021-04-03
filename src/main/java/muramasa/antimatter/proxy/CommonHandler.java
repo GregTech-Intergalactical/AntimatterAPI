@@ -2,7 +2,7 @@ package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;

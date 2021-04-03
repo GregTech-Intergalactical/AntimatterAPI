@@ -2,7 +2,7 @@
 //
 //import crafttweaker.api.item.IIngredient;
 //import crafttweaker.api.liquid.ILiquidStack;
-//import muramasa.antimatter.recipe.RecipeBuilder;
+//import muramasa.antimatter.recipe.map.RecipeBuilder;
 //import stanhebben.zenscript.annotations.ZenMethod;
 //
 //public class CTRecipeBuilder {
