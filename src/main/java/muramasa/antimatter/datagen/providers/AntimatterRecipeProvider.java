@@ -135,8 +135,10 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         }));
 
         mainMats.forEach(main -> {
-            if (!main.has(INGOT)) return; // TODO: For time being
-            final ITag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/" + main.getId()), plateTag = TagUtils.getForgeItemTag("plates/" + main.getId()), mainRodTag = TagUtils.getForgeItemTag("rods/" + main.getId());
+            if (!main.has(INGOT) && !main.has(GEM)) return; // TODO: For time being
+            String ingotGem = main.has(INGOT) ? "ingots" : "gems";
+            String plate = main.has(PLATE) ? "plates" : ingotGem;
+            final ITag<Item> ingotTag = TagUtils.getForgeItemTag(ingotGem + "/" + main.getId()), plateTag = TagUtils.getForgeItemTag(plate + "/" + main.getId()), mainRodTag = TagUtils.getForgeItemTag("rods/" + main.getId());
             final Supplier<ICriterionInstance> ingotTrigger = this.hasSafeItem(ingotTag), plateTrigger = this.hasSafeItem(plateTag), rodTrigger = this.hasSafeItem(mainRodTag);
 
             addStackRecipe(consumer, Ref.ID, WRENCH.getId() + "_" + main.getId(), "antimatter_wrenches",
