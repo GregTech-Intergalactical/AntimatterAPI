@@ -100,7 +100,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         Map<Enchantment, Integer> mainEnchants = primary.getEnchantments(), handleEnchants = secondary.getEnchantments();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
-            return stack;
+            //return stack;
         }
         if (!handleEnchants.isEmpty()) handleEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
         return stack;
@@ -133,6 +133,10 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
+        Material primary = getPrimaryMaterial(stack);
+        Material secondary = getSecondaryMaterial(stack);
+        tooltip.add(new StringTextComponent("Primary Material: " + primary.getDisplayName().getString()));
+        tooltip.add(new StringTextComponent("Secondary Material: " + secondary.getDisplayName().getString()));
         if (flag.isAdvanced() && getType().isPowered()) tooltip.add(new StringTextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getType().getTooltip().size() != 0) tooltip.addAll(getType().getTooltip());
     }
