@@ -43,8 +43,6 @@ public class Recipe implements IRecipe<IInventory> {
 
     //For jei, have to put here instead of RecipeMapCategory.
     public final Int2ObjectMap<ResourceLocation> tagsToRender = new Int2ObjectOpenHashMap<>();
-    //for stack lists
-    public final Int2IntMap infoToRender = new Int2IntOpenHashMap();
 
     public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter_machine");
 

@@ -193,12 +193,13 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             if ((rl = recipe.tagsToRender.get(index)) != null) {
                 tooltip.add(new StringTextComponent("Accepts any " + rl).mergeStyle(TextFormatting.GOLD));
             }
-            int i;
-            if ((i = recipe.infoToRender.get(index)) != 0) {
-                tooltip.add(new StringTextComponent("Accepts " + i + " different items.").mergeStyle(TextFormatting.GOLD));
+            if (input) {
+                if (recipe.hasInputItems()) {
+                    if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreConsume()) {
+                        tooltip.add(new StringTextComponent("Does not get consumed in the process.").mergeStyle(TextFormatting.WHITE));
+                    }
+                }
             }
-
-            if (input && (Utils.hasNoConsumeTag(stack) || stack.getCount() == 0)) tooltip.add(new StringTextComponent("Does not get consumed in the process.").mergeStyle(TextFormatting.WHITE));
             if (recipe.hasChances() && !input) {
                 int chanceIndex = index - finalInputItems;
                 if (recipe.getChances()[chanceIndex] < 100) {
