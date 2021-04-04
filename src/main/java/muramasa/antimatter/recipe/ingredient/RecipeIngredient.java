@@ -60,7 +60,7 @@ public class RecipeIngredient {
     }
 
     public RecipeIngredient(PacketBuffer buffer) {
-        Ingredient i = CraftingHelper.getIngredient(buffer.readResourceLocation(), buffer);
+        Ingredient i = Ingredient.read(buffer);
         this.value = new LazyValue<>(() -> i);
         this.count = buffer.readInt();
         this.nonConsume = buffer.readBoolean();

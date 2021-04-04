@@ -33,6 +33,13 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
     @Override
     public Recipe read(ResourceLocation recipeId, JsonObject json) {
         try {
+            List<RecipeIngredient> list = new ObjectArrayList<>();
+            if (json.has("item_in")) {
+                JsonArray array = json.getAsJsonArray("item_in");
+                for (JsonElement element : array) {
+                    list.add(new RecipeIngredient(element));
+                }
+            }
             ItemStack[] outputs = null;
             if (json.has("item_out")) {
                 outputs = Streams.stream(json.getAsJsonArray("item_out")).map(t -> CraftingHelper.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
@@ -45,17 +52,11 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
             if (json.has("fluid_out")) {
                 fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(this::getStack).toArray(FluidStack[]::new);
             }
-            List<RecipeIngredient> list = new ObjectArrayList<>();
-            if (json.has("item_in")) {
-                JsonArray array = json.getAsJsonArray("item_in");
-                for (JsonElement element : array) {
-                    list.add(new RecipeIngredient(element));
-                }
-            }
             long eut = json.get("euT").getAsLong();
             int duration = json.get("duration").getAsInt();
             int amps = json.has("amps") ? json.get("amps").getAsInt() : 1;
-            Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, 0, amps);
+            int special = json.has("special") ? json.get("special").getAsInt() : 0;
+            Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, special, amps);
             r.setIds(recipeId, json.get("map").getAsString());
             return r;
         } catch (Exception ex) {

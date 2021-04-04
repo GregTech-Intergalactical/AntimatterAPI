@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -45,7 +46,7 @@ public class Recipe implements IRecipe<IInventory> {
     //for stack lists
     public final Int2IntMap infoToRender = new Int2IntOpenHashMap();
 
-    public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter:machine_recipe");
+    public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter_machine");
 
     public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = stacksInput;
@@ -261,12 +262,17 @@ public class Recipe implements IRecipe<IInventory> {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return null;
+        return RecipeSerializer.INSTANCE;
     }
 
     @Nonnull
     @Override
     public IRecipeType<?> getType() {
         return Recipe.RECIPE_TYPE;
+    }
+
+    @Override
+    public boolean isDynamic() {
+        return true;
     }
 }
