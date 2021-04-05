@@ -7,21 +7,38 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.SoundType;
+import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particles.BlockParticleData;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolType;
+
+import java.util.Random;
 
 public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
 
     private MaterialType<?> oreType;
 
     public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType, Block.Properties properties) {
-        super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId().replaceAll("stone_", ""), material, stoneType, getOreProperties(properties));
+        super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId().replaceAll("stone_", ""), material, stoneType, getOreProperties(properties, stoneType));
         this.oreType = oreType;
     }
 
     public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType) {
-        this(domain, material, stoneType, oreType, Block.Properties.create(net.minecraft.block.material.Material.ROCK).sound(stoneType.getSoundType()));
+        this(domain, material, stoneType, oreType, getOreProperties(Block.Properties.create(stoneType.getBlockMaterial()), stoneType));
     }
 
     @Override
@@ -51,17 +68,13 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //        return stoneSet[blockState.getValue(STONE_TYPE)].getBaseState().getBlockHardness(worldIn, pos) + getHarvestLevel(blockState) - (type == OreType.SMALL ? 0.2F : 0);
 //    }
 //
-//    @Override
-//    public String getHarvestTool(BlockState state) {
-//        return stoneSet[state.getValue(STONE_TYPE)].getSoundType() == SoundType.STONE ? "pickaxe" : "shovel";
-//    }
 //
 //    //TODO
-//    @Override
-//    public int getHarvestLevel(BlockState state) {
-//        int stoneLvl = stoneSet[state.getValue(STONE_TYPE)].getHarvestLevel();
-//        return Math.max(stoneLvl, material.getToolQuality() > 0 ? material.getToolQuality() - 1 : 1);
-//    }
+    @Override
+    public int getHarvestLevel(BlockState state) {
+        int stoneLvl = stoneType.getHarvestLevel();
+        return Math.max(stoneLvl, material.getToolQuality() > 0 ? material.getToolQuality() - 1 : 1);
+    }
 //
 //    @Override
 //    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
@@ -111,15 +124,81 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //        return Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG ? 15 : 0;
 //    }
 
+    /** Falling block stuff **/
+    @Override
+    public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+        if (this.stoneType.getGravity()) {
+            worldIn.getPendingBlockTicks().scheduleTick(pos, this, this.getFallDelay());
+        }
+    }
+
+    /**
+     * Update the provided state given the provided neighbor facing and neighbor state, returning a new state.
+     * For example, fences make their connections to the passed in state if possible, and wet concrete powder immediately
+     * returns its solidified counterpart.
+     * Note that this method should ideally consider only the specific face passed in.
+     */
+    @Override
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+        if (this.stoneType.getGravity()) {
+            worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, this.getFallDelay());
+        }
+        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+    }
+
+    @Override
+    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
+        if (this.stoneType.getGravity()) {
+            if (worldIn.isAirBlock(pos.down()) || canFallThrough(worldIn.getBlockState(pos.down())) && pos.getY() >= 0) {
+                FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, worldIn.getBlockState(pos));
+                this.onStartFalling(fallingblockentity);
+                worldIn.addEntity(fallingblockentity);
+            }
+        }
+    }
+
+    protected void onStartFalling(FallingBlockEntity fallingEntity) {
+    }
+
+    protected int getFallDelay() {
+        return 2;
+    }
+
+    public static boolean canFallThrough(BlockState state) {
+        net.minecraft.block.material.Material material = state.getMaterial();
+        return state.isAir() || state.isIn(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+        if (this.stoneType.getGravity()) {
+            if (rand.nextInt(16) == 0) {
+                BlockPos blockpos = pos.down();
+                if (worldIn.isAirBlock(blockpos) || canFallThrough(worldIn.getBlockState(blockpos))) {
+                    double d0 = (double)pos.getX() + rand.nextDouble();
+                    double d1 = (double)pos.getY() - 0.05D;
+                    double d2 = (double)pos.getZ() + rand.nextDouble();
+                    worldIn.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, stateIn), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+                }
+            }
+        }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public int getDustColor(BlockState state, IBlockReader reader, BlockPos pos) {
+        return this.stoneType.getFallingDustColor();
+    }
+
     @Override
     public Texture[] getTextures() {
         return new Texture[]{getStoneType().getTexture(), getMaterial().getSet().getTexture(getOreType(), 0)};
     }
 
-    public static Block.Properties getOreProperties(Block.Properties properties) {
+    public static Block.Properties getOreProperties(Block.Properties properties, StoneType type) {
         if (AntimatterConfig.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.notSolid().setLightLevel(b -> 15);
         //TODO: hardness
-        properties.hardnessAndResistance(3.0f);
+        properties.hardnessAndResistance(type.getHardness() * 2, type.getResistence() / 2).harvestTool(type.getToolType()).sound(type.getSoundType());
+        if (type.doesRequireTool()) properties.setRequiresTool();
         return properties;
     }
 }
