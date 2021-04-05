@@ -199,6 +199,11 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return this;
     }
 
+    public Material harvestLevel(int harvestLevel){
+        this.toolQuality = harvestLevel + 1;
+        return this;
+    }
+
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
         if (has(INGOT)) flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(TOOLS, ROD);
