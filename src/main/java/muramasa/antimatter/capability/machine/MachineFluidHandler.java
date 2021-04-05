@@ -332,7 +332,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         }
     }
     @Nonnull
-    public List<FluidStack> consumeAndReturnInputs(List<FluidStack> inputs) {
+    public List<FluidStack> consumeAndReturnInputs(List<FluidStack> inputs, boolean simulate) {
         if (getInputTanks() == null) {
             return Collections.emptyList();
         }
@@ -340,7 +340,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
         FluidStack result;
         if (inputs != null) {
             for (FluidStack input : inputs) {
-                result = drainInput(input, EXECUTE);
+                result = drainInput(input, simulate ? SIMULATE : EXECUTE);
                 if (result != FluidStack.EMPTY) {
                     if (result.getAmount() != input.getAmount()) { //Fluid was partially consumed
                         notConsumed.add(Utils.ca(input.getAmount() - result.getAmount(), input));

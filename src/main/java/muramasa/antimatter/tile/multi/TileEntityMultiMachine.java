@@ -250,7 +250,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
             if (hatch.getFluidHandler().isPresent()) {
                 List<FluidStack> finalFluids = fluids;
-                fluids = hatch.getFluidHandler().map(fh -> fh.consumeAndReturnInputs(finalFluids)).orElse(Collections.emptyList());
+                fluids = hatch.getFluidHandler().map(fh -> fh.consumeAndReturnInputs(finalFluids, false)).orElse(Collections.emptyList());
                 if (fluids.size() == 0) break;
             }
         }
