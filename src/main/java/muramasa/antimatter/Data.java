@@ -24,7 +24,6 @@ import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.MaterialSword;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
-import muramasa.antimatter.tool.armor.MaterialArmor;
 import muramasa.antimatter.tool.behaviour.*;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Blocks;

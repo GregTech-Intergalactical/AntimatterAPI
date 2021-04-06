@@ -1,20 +1,10 @@
 package muramasa.antimatter.tool.armor;
 
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.IArmorMaterial;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundEvent;
-
-import java.util.Objects;
-
-import static muramasa.antimatter.Data.INGOT;
-import static muramasa.antimatter.Data.NULL;
 
 public class MatArmorMaterial implements IArmorMaterial {
     final AntimatterArmorType toolType;

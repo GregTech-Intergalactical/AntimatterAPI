@@ -1,6 +1,5 @@
 package muramasa.antimatter.machine;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;

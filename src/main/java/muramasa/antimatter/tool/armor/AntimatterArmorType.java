@@ -6,11 +6,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
-import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.MaterialSword;
-import muramasa.antimatter.tool.MaterialTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
@@ -22,13 +18,10 @@ import net.minecraft.util.text.ITextComponent;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import static muramasa.antimatter.Data.NULL;
 
 public class AntimatterArmorType implements IAntimatterObject {
     private final String domain, id;
