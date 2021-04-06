@@ -3,9 +3,6 @@ package muramasa.antimatter.client;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.mojang.datafixers.types.Func;
-import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.pipe.BlockPipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -18,6 +15,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -37,23 +35,16 @@ import java.util.function.Function;
 
 public class RenderHelper {
 
-    private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(128).order(ByteOrder.nativeOrder()).asDoubleBuffer();
+    /*private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(128).order(ByteOrder.nativeOrder()).asDoubleBuffer();
 
-    public static float[][] sideToMatrixRotation = new float[][] {
-        new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-        new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-        new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-        new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-        new float[]{0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-        new float[]{0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+    public static float[][] sideToMatrixRotation = new float[][]{
+            new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+            new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
+            new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+            new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+            new float[]{0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+            new float[]{0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
     };
-
-    public static void applyGLRotationForSide(Direction side) {
-        float[] mat = sideToMatrixRotation[side.getOpposite().getIndex()];
-        glBuf.put(mat[0]).put(mat[1]).put(mat[2]).put(mat[3]).put(mat[4]).put(mat[5]).put(mat[6]).put(mat[7]).put(mat[8]).put(mat[9]).put(mat[10]).put(mat[11]).put(mat[12]).put(mat[13]).put(mat[14]).put(mat[15]);
-        glBuf.flip();
-        GL11.glMultMatrixd(glBuf);
-    }
 
 //    public static TextureAtlasSprite getSprite(ResourceLocation loc) {
 //        return Minecraft.getInstance().getTextureMap().getSprite(loc);
@@ -61,33 +52,31 @@ public class RenderHelper {
 //
 //    public static TextureAtlasSprite getSprite(Fluid fluid) {
 //        return Minecraft.getInstance().getTextureMap().getSprite(fluid.getAttributes().getStillTexture());
-//    }
+//    }*/
 
 
     public static void drawFluid(MatrixStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
         if (stack == null) return;
         Fluid fluid = stack.getFluid();
         if (fluid == null) return;
-
-        TextureAtlasSprite fluidStillSprite = getStillFluidSprite(mc, fluid);
+        RenderSystem.enableBlend();
+        RenderSystem.enableAlphaTest();
+        TextureAtlasSprite fluidStillSprite = mc.getModelManager().getAtlasTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE).getSprite(fluid.getAttributes().getStillTexture());
         int fluidColor = fluid.getAttributes().getColor();
 
         //Draw the fluid texture
-        drawTiledSprite(mc, posX, posY, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);
-
-        //Render the amount String
-        RenderSystem.pushMatrix();
-        RenderSystem.translatef(0, 0, 200);
-        if (stack.getAmount() >= 2000) {
-            String amount = stack.getAmount() / 1000 + "";
-            mc.fontRenderer.drawStringWithShadow(mstack, amount, posX + (16 - mc.fontRenderer.getStringWidth(amount) + 1), posY + 9, 0xFFFFFF);
-        }
-        RenderSystem.popMatrix();
+        drawTiledSprite(mstack, mc, posX, posY, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);
+        RenderSystem.disableAlphaTest();
+        RenderSystem.disableBlend();
     }
 
-    public static void drawTiledSprite(Minecraft mc, int posX, int posY, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
+    public static void drawTiledSprite(MatrixStack stack, Minecraft mc, int posX, int posY, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
         mc.textureManager.bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
-        setGLColorFromInt(color);
+        float red = (color >> 16 & 0xFF) / 255.0F;
+        float green = (color >> 8 & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+        RenderSystem.color4f(red, green, blue, 1.0F);
+        Matrix4f matrix = stack.getLast().getMatrix();
 
         int xTileCount = tiledWidth / texWidth;
         int xRemainder = tiledWidth - (xTileCount * texWidth);
@@ -106,57 +95,44 @@ public class RenderHelper {
                     int maskTop = texHeight - height;
                     int maskRight = texWidth - width;
 
-                    drawTextureWithMasking(x, y, sprite, maskTop, maskRight, 100);
+                    drawTextureWithMasking(matrix, x, y, sprite, maskTop, maskRight, 100);
                 }
             }
         }
     }
 
-    public static TextureAtlasSprite getStillFluidSprite(Minecraft mc, Fluid fluid) {
-        //TODO
-        //return mc.getTextureMap().getSprite(fluid.getAttributes().getStillTexture());
-        return null;
-    }
-
-    public static void drawTextureWithMasking(double xCoord, double yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, double zLevel) {
-        double uMin = (double) textureSprite.getMinU();
-        double uMax = (double) textureSprite.getMaxU();
-        double vMin = (double) textureSprite.getMinV();
-        double vMax = (double) textureSprite.getMaxV();
+    //Credit: JEI. Some alterations.
+    public static void drawTextureWithMasking(Matrix4f stack, float xCoord, float yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, float zLevel) {
+        double uMin = textureSprite.getMinU();
+        double uMax = textureSprite.getMaxU();
+        double vMin = textureSprite.getMinV();
+        double vMax = textureSprite.getMaxV();
         uMax = uMax - (maskRight / 16.0 * (uMax - uMin));
         vMax = vMax - (maskTop / 16.0 * (vMax - vMin));
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
 
-        //TODO
-        //bufferBuilder.pos(xCoord, yCoord + 16, zLevel).tex(uMin, vMax).endVertex();
-        //bufferBuilder.pos(xCoord + 16 - maskRight, yCoord + 16, zLevel).tex(uMax, vMax).endVertex();
-        //bufferBuilder.pos(xCoord + 16 - maskRight, yCoord + maskTop, zLevel).tex(uMax, vMin).endVertex();
-        //bufferBuilder.pos(xCoord, yCoord + maskTop, zLevel).tex(uMin, vMin).endVertex();
+        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferBuilder.pos(stack, xCoord, yCoord + 16, zLevel).tex((float) uMin, (float) vMax).endVertex();
+        bufferBuilder.pos(stack, xCoord + 16 - maskRight, yCoord + 16, zLevel).tex((float) uMax, (float) vMax).endVertex();
+        bufferBuilder.pos(stack, xCoord + 16 - maskRight, yCoord + maskTop, zLevel).tex((float) uMax, (float) vMin).endVertex();
+        bufferBuilder.pos(stack, xCoord, yCoord + maskTop, zLevel).tex((float) uMin, (float) vMin).endVertex();
         tessellator.draw();
     }
 
-    public static void setGLColorFromInt(int color) {
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-        RenderSystem.color4f(red, green, blue, 1.0F);
-    }
-
-    public static int rgbToABGR(int rgb) {
+    /*public static int rgbToABGR(int rgb) {
         rgb |= 0xFF000000;
         int r = (rgb >> 16) & 0xFF;
         int b = rgb & 0xFF;
         return (rgb & 0xFF00FF00) | (b << 16) | r;
-    }
+    }*/
 
     /**
      * Colors a quad, defaults to using vertex format block.
      */
     public static void colorQuad(BakedQuad quad, int rgb) {
-        colorQuad(quad, DefaultVertexFormats.BLOCK.getIntegerSize(), DefaultVertexFormats.BLOCK.getOffset(1)/4, rgb);
+        colorQuad(quad, DefaultVertexFormats.BLOCK.getIntegerSize(), DefaultVertexFormats.BLOCK.getOffset(1) / 4, rgb);
     }
 
     public static void colorQuad(BakedQuad quad, int size, int offset, int rgb) {

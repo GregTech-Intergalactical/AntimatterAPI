@@ -9,13 +9,17 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -46,17 +50,24 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
             }
             FluidStack[] fluidInputs = null;
             if (json.has("fluid_in")) {
-                fluidInputs = Streams.stream(json.getAsJsonArray("fluid_in")).map(this::getStack).toArray(FluidStack[]::new);
+                fluidInputs = Streams.stream(json.getAsJsonArray("fluid_in")).map(RecipeSerializer::getStack).toArray(FluidStack[]::new);
             }
             FluidStack[] fluidOutputs = null;
             if (json.has("fluid_out")) {
-                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(this::getStack).toArray(FluidStack[]::new);
+                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(RecipeSerializer::getStack).toArray(FluidStack[]::new);
             }
-            long eut = json.get("euT").getAsLong();
+            long eut = json.get("eu").getAsLong();
             int duration = json.get("duration").getAsInt();
             int amps = json.has("amps") ? json.get("amps").getAsInt() : 1;
             int special = json.has("special") ? json.get("special").getAsInt() : 0;
             Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, special, amps);
+            if (json.has("chances")) {
+                List<Integer> chances = new ObjectArrayList<>();
+                for (JsonElement el : json.getAsJsonArray("chances")) {
+                    chances.add(el.getAsInt());
+                }
+                r.addChances(chances.stream().mapToInt(i->i).toArray());
+            }
             r.setIds(recipeId, json.get("map").getAsString());
             return r;
         } catch (Exception ex) {
@@ -65,9 +76,25 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         return null;
     }
 
-    private FluidStack getStack(JsonElement element) {
+    public static FluidStack getStack(JsonElement element) {
         try {
-            return FluidStack.loadFluidStackFromNBT(JsonToNBT.getTagFromJson(element.getAsString()));
+            if (!(element.isJsonObject())) {
+                return FluidStack.EMPTY;
+            }
+            JsonObject obj = (JsonObject) element;
+            ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
+            Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+            if (fluid == null)
+            {
+                return FluidStack.EMPTY;
+            }
+            FluidStack stack = new FluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsInt() : 1000);
+
+            if (obj.has("tag"))
+            {
+                stack.setTag(JsonToNBT.getTagFromJson(obj.get("tag").getAsString()));
+            }
+            return stack;
         } catch (Exception ex) {
             Antimatter.LOGGER.error(ex);
         }

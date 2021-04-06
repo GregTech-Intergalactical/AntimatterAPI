@@ -3,6 +3,7 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.container.ContainerMachine;
@@ -113,22 +114,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
         int x = slot.getX();
         int y = slot.getY();
         if (fluid.isEmpty()) return;
-        RenderSystem.enableBlend();
-        RenderSystem.enableAlphaTest();
-        ResourceLocation stillLocation = fluid.getFluid().getAttributes().getStillTexture(fluid);
-        int color = fluid.getFluid().getAttributes().getColor();
-        TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(stillLocation);
-        ResourceLocation spriteLocation = sprite.getName();
-        minecraft.getTextureManager().bindTexture(new ResourceLocation(spriteLocation.getNamespace(), "textures/" + spriteLocation.getPath() + ".png"));
-        float r = (color >> 16 & 0xFF) / 255.0F;
-        float g = (color >> 8 & 0xFF) / 255.0F;
-        float b = (color & 0xFF) / 255.0F;
-        RenderSystem.color4f(r,g,b,0.6f);
-        blit(stack,/*guiLeft +*/ x, /*guiTop +*/ y, 0, 16, 16, sprite);
-        RenderSystem.color4f(1,1,1,1);
-        RenderSystem.disableAlphaTest();
-        RenderSystem.disableBlend();
-
+        RenderHelper.drawFluid(stack, minecraft, x, y, 16, 16, 16, fluid);
         if (this.isSlotSelected(slot.getX(), slot.getY(), mouseX, mouseY)) {
             RenderSystem.disableDepthTest();
             RenderSystem.colorMask(true, true, true, false);

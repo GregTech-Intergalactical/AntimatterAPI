@@ -19,4 +19,11 @@ public class MultiTrackedItemHandler extends CombinedInvWrapper {
         slot = getSlotFromIndex(slot, index);
         return MachineItemHandler.insertIntoOutput(handler, slot, stack, simulate);
     }
+    @Nonnull
+    public ItemStack extractInputItem(int slot, int amount, boolean simulate) {
+        int index = getIndexForSlot(slot);
+        IItemHandlerModifiable handler = getHandlerFromIndex(index);
+        slot = getSlotFromIndex(slot, index);
+        return MachineItemHandler.extractFromInput(handler, slot, amount, simulate);
+    }
 }

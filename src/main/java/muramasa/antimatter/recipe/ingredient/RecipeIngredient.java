@@ -48,7 +48,15 @@ public class RecipeIngredient {
     }
 
     public RecipeIngredient(JsonElement element) {
-        this.value = new LazyValue<>(() -> CraftingHelper.getIngredient(element));
+        this.value = new LazyValue<>(() -> {
+            if (element.isJsonObject()) {
+                JsonObject obj = element.getAsJsonObject();
+                if (obj.has("ingredient")) {
+                    return Ingredient.deserialize(obj.get("ingredient"));
+                }
+            }
+            return Ingredient.deserialize(element);
+        });
         if (element.isJsonObject()) {
             JsonObject obj = (JsonObject) element;
             this.count = obj.has("count") ? obj.get("count").getAsInt() : 1;

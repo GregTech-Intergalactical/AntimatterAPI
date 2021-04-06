@@ -47,6 +47,20 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
         return super.insertItem(slot, stack, simulate);
     }
 
+    @Nonnull
+    @Override
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (!output)
+            return ItemStack.EMPTY;
+        return super.extractItem(slot, amount, simulate);
+    }
+
+    @Nonnull
+    public ItemStack extractFromInput(int slot, @Nonnull int amount, boolean simulate) {
+        return super.extractItem(slot, amount, simulate);
+    }
+
+
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         return validator.test(stack);

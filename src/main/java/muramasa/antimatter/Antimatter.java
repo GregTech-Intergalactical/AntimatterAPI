@@ -3,6 +3,7 @@ package muramasa.antimatter;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
+import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
@@ -80,6 +81,9 @@ public class Antimatter extends AntimatterMod {
         CommonHandler.setup(e);
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+            AntimatterKubeJS.init();
+        }
     }
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {

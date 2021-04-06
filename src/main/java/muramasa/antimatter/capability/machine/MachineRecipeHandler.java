@@ -231,6 +231,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     protected MachineState recipeFinish() {
         addOutputs();
+        this.itemInputs = new ObjectArrayList<>();
+        this.fluidInputs = new ObjectArrayList<>();
         if (this.generator) {
             currentProgress = 0;
             return ACTIVE;

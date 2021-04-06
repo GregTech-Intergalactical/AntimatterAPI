@@ -99,7 +99,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
         }
     }
 
-    public static ItemStack insertIntoOutput(IItemHandlerModifiable handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
+    public static ItemStack insertIntoOutput(IItemHandler handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (handler instanceof TrackedItemHandler) {
             TrackedItemHandler h = (TrackedItemHandler) handler;
             return h.insertOutputItem(slot, stack, simulate);
@@ -109,6 +109,18 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
             return h.insertOutputItem(slot, stack, simulate);
         }
         return handler.insertItem(slot, stack, simulate);
+    }
+
+    public static ItemStack extractFromInput(IItemHandler handler, int slot, int amount, boolean simulate) {
+        if (handler instanceof TrackedItemHandler) {
+            TrackedItemHandler h = (TrackedItemHandler) handler;
+            return h.extractFromInput(slot, amount, simulate);
+        }
+        if (handler instanceof MultiTrackedItemHandler) {
+            MultiTrackedItemHandler h = (MultiTrackedItemHandler) handler;
+            return h.extractInputItem(slot, amount, simulate);
+        }
+        return handler.extractItem(slot, amount, simulate);
     }
 
     public void onReset() {
@@ -243,11 +255,11 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
 
         boolean success = items.stream().mapToInt(input -> {
             int failed = 0;
-            IItemHandler wrap = getInputHandler();
+            IItemHandlerModifiable wrap = getInputHandler();
             for (int i = 0; i < wrap.getSlots(); i++) {
                 ItemStack item = wrap.getStackInSlot(i);
                 if (input.get().test(item) && !skipSlots.contains(i) && item.getCount() >= input.count/*&& !Utils.hasNoConsumeTag(input)*/) {
-                    if (!input.ignoreConsume()) wrap.extractItem(i, input.count, simulate);
+                    if (!input.ignoreConsume()) extractFromInput(wrap, i, input.count, simulate);
                     ItemStack cloned = item.copy();
                     cloned.setCount(input.count);
                     consumedItems.add(cloned);
@@ -331,7 +343,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
         for (ItemStack input : inputs) {
             for (int i = 0; i < inputHandler.getSlots(); i++) {
                 if (Utils.equals(input, inputHandler.getStackInSlot(i))) {
-                    ItemStack result = inputHandler.extractItem(i, input.getCount(), false);
+                    ItemStack result = extractFromInput(inputHandler, i, input.getCount(), false);
                     if (!result.isEmpty()) {
                         if (result.getCount() == input.getCount()) {
                             break;
