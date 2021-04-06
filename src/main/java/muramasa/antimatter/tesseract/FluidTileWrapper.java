@@ -1,7 +1,5 @@
 package muramasa.antimatter.tesseract;
 
-import muramasa.antimatter.tile.pipe.PipeReferenceCounter;
-import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +28,7 @@ public class FluidTileWrapper implements IFluidNode {
 
     @Nullable
     public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
-        PipeReferenceCounter.add(world.getDimensionKey(), pos.toLong(), TileEntityFluidPipe.class, p -> Tesseract.FLUID.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
+       Tesseract.FLUID.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
             LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
@@ -39,7 +37,7 @@ public class FluidTileWrapper implements IFluidNode {
                 return node;
             }
             throw new RuntimeException("invalid capability");
-        }));
+        });
     }
 
     public void onRemove() {
@@ -66,11 +64,6 @@ public class FluidTileWrapper implements IFluidNode {
     @Override
     public boolean canOutput(Dir direction) {
         return handler != null;
-    }
-
-    @Override
-    public boolean connects(Dir direction) {
-        return true;
     }
 
     @Override
@@ -109,5 +102,10 @@ public class FluidTileWrapper implements IFluidNode {
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
         return handler.drain(maxDrain, action);
+    }
+
+    @Override
+    public boolean connects(Dir direction) {
+        return true;
     }
 }

@@ -233,12 +233,12 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
             TileEntity target = world.getTileEntity(pos.offset(side));
             if (target != null) {
                 if (tile.validateTile(target, side.getOpposite())) {
+                    tile.toggleConnection(side);
                     if (target instanceof TileEntityPipe) {
                         ((TileEntityPipe) target).toggleConnection(side.getOpposite());
                     } else {
                         tile.toggleInteract(side);
                     }
-                    tile.toggleConnection(side);
                     return ActionResultType.SUCCESS;
                 }
             } else if (world.isAirBlock(pos.offset(side))) {
