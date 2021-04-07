@@ -52,9 +52,9 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
 
     @Override
     public void run() {
-        registerStatesAndModels();
-        models().generatedModels.forEach(DynamicResourcePack::addBlock);
-        registeredBlocks.forEach((b, s) -> DynamicResourcePack.addState(b.getRegistryName(), s));
+        //registerStatesAndModels();
+        //models().generatedModels.forEach(DynamicResourcePack::addBlock);
+        //registeredBlocks.forEach((b, s) -> DynamicResourcePack.addState(b.getRegistryName(), s));
     }
 
     @Override
