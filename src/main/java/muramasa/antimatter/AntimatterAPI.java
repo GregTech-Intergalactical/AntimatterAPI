@@ -295,14 +295,14 @@ public final class AntimatterAPI {
         });
     }
 
-    public static void onRecipeCompile(RecipeManager manager) {
+    public static void onRecipeCompile(RecipeManager manager, Function<Item, Collection<ResourceLocation>> tagGetter) {
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
-        AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(manager));
+        AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(manager, tagGetter));
         List<Recipe> recipes = manager.getRecipesForType(Recipe.RECIPE_TYPE);
         recipes.forEach(t -> {
             RecipeMap<?> map = AntimatterAPI.get(RecipeMap.class, "gt.recipe_map." + t.mapId);
-            if (map != null) map.compileRecipe(t);
+            if (map != null) map.compileRecipe(t, tagGetter);
         });
         time = System.nanoTime()-time;
         Antimatter.LOGGER.info("Time to compile GT recipes: (ms) " + (time)/(1000*1000));

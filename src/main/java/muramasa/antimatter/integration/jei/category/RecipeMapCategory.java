@@ -28,6 +28,7 @@ import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
@@ -92,7 +93,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         if (recipe.hasInputItems()) {
             List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
             for (RecipeIngredient ing : recipe.getInputItems()) {
-                MapTagIngredient.findCommonTag(ing.get()).ifPresent(t -> recipe.tagsToRender.putIfAbsent(inputs.size(), t));
+                MapTagIngredient.findCommonTag(ing.get(), Item::getTags).ifPresent(t -> recipe.tagsToRender.putIfAbsent(inputs.size(), t));
                 inputs.add(ing.get());
             }
             ingredients.setInputLists(VanillaTypes.ITEM,inputs.stream().map(t -> Arrays.asList(t.getMatchingStacks())).collect(Collectors.toList()));

@@ -51,7 +51,6 @@ public class ClientHandler implements IProxyHandler {
             AntimatterModelManager.init();
             AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
         }
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, ClientHandler::getRecipes);
         /* Client event listeners. */
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(ClientHandler::onItemColorHandler);
@@ -70,10 +69,6 @@ public class ClientHandler implements IProxyHandler {
                 event.accept(r);
             }
         }));
-    }
-
-    public static void getRecipes(RecipesUpdatedEvent ev) {
-        AntimatterAPI.onRecipeCompile(ev.getRecipeManager());
     }
 
     @SuppressWarnings({"unchecked", "unused"})

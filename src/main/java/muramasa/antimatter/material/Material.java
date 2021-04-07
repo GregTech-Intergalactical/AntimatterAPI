@@ -91,7 +91,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         } else if (registry == ForgeRegistries.BLOCKS) {
             if (has(BLOCK)) new BlockStorage(domain, this, BLOCK);
             if (has(FRAME)) new BlockStorage(domain, this, FRAME);
-            if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> new BlockSurfaceRock(domain, this, s));
+            if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> new BlockSurfaceRock(s.getDomain(), this, s));
             if (has(ORE)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE));
             if (has(ORE_SMALL)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE_SMALL));
             //if (has(ORE_STONE)) new BlockOreStone(domain, this);
