@@ -315,6 +315,12 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
         ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier)[0]);
+        Texture[] base = type.getBaseTexture(tier);
+        if (base.length >= 6){
+            for (int s = 0; s < 6; s++){
+                b.texture("base" +  Ref.DIRS[s].getString(), base[s]);
+            }
+        }
         Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE);
         for (int s = 0; s < 6; s++) {
             b.texture("overlay" + Ref.DIRS[s].getString(), overlays[s]);
