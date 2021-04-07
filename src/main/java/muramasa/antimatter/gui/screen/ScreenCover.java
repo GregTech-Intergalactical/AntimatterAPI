@@ -33,7 +33,6 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(stack, mouseX, mouseY);
         drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
     }
 
