@@ -47,11 +47,6 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
                 ICover o = tile.getMachineType().getOutputCover();
                 return o.equals(COVERDYNAMO) && direction.getIndex() == out.getIndex();
             }
-
-            @Override
-            public boolean connects(Dir direction) {
-                return true;
-            }
         }) : LazyOptional.empty();
 }
 

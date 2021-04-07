@@ -1,7 +1,5 @@
 package muramasa.antimatter.tesseract;
 
-import muramasa.antimatter.tile.pipe.PipeReferenceCounter;
-import muramasa.antimatter.tile.pipe.TileEntityItemPipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -29,8 +27,8 @@ public class ItemTileWrapper implements IItemNode {
     }
 
     @Nullable
-    public static ItemTileWrapper wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
-        PipeReferenceCounter.add(world.getDimensionKey(), pos.toLong(), TileEntityItemPipe.class, p -> Tesseract.ITEM.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
+    public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
+        Tesseract.ITEM.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
             LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
@@ -39,8 +37,7 @@ public class ItemTileWrapper implements IItemNode {
                 return node;
             }
             throw new RuntimeException("invalid capability");
-        }));
-        return null;
+        });
     }
 
     public void onRemove() {
@@ -71,12 +68,12 @@ public class ItemTileWrapper implements IItemNode {
     }
 
     @Override
-    public boolean canOutput(Dir direction) {
-        return true;
+    public boolean canInput(Dir direction) {
+        return handler != null;
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean canOutput(Dir direction) {
         return true;
     }
 

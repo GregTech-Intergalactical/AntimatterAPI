@@ -435,14 +435,15 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     @Override
     public boolean canInput(FluidStack fluid, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
-        if (/*TODO: Can input into output* ||*/tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
+        if (tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
         return true;
-        // return inputWrapper.isFluidAvailable(fluid, direction.getIndex()) && inputWrapper.getFirstValidTank(fluid) != -1;
     }
 
     @Override
-    public boolean connects(Dir direction) {
-        return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
+    public boolean canInput(Dir direction) {
+        if (tile.getFacing().getIndex() == direction.getIndex()) return false;
+        if (tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
+        return true;
     }
 
     @Override
@@ -454,7 +455,6 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
         INPUT,
         OUTPUT
-
     }
 
 }
