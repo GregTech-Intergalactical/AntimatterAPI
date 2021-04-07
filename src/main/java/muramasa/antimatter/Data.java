@@ -104,7 +104,7 @@ public class Data {
     public static final Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F);
 
     //Vanilla Stone Materials
-    public static Material Stone = new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust();
+    public static Material Stone = new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F);
     public static Material Granite = new Material(Ref.ID, "granite", 0xa07882, NONE).asDust(ROCK);
     public static Material Diorite = new Material(Ref.ID, "diorite", 0xf0f0f0, NONE).asDust(ROCK);
     public static Material Andesite = new Material(Ref.ID, "andesite", 0xbfbfbf, NONE).asDust(ROCK);
