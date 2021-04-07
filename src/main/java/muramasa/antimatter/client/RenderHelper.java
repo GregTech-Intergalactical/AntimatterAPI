@@ -70,7 +70,8 @@ public class RenderHelper {
         float red = (color >> 16 & 0xFF) / 255.0F;
         float green = (color >> 8 & 0xFF) / 255.0F;
         float blue = (color & 0xFF) / 255.0F;
-        RenderSystem.color4f(red, green, blue, 1.0F);
+        float alpha = ((color >> 24) & 0xFF) / 255F;
+        RenderSystem.color4f(red, green, blue, alpha);
         Matrix4f matrix = stack.getLast().getMatrix();
 
         int xTileCount = tiledWidth / texWidth;

@@ -48,22 +48,32 @@ public class FluidTileWrapper implements IFluidNode {
 
     @Override
     public int getPriority(Dir direction) {
-        return 0;
+        return (!(handler instanceof IFluidNode) ? 0 : ((IFluidNode)handler).getPriority(direction));
     }
 
     @Override
     public boolean canOutput() {
-        return handler != null;
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canOutput());
     }
 
     @Override
     public boolean canInput() {
-        return handler != null;
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput());
+    }
+
+    @Override
+    public boolean canInput(Dir direction) {
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput(direction));
     }
 
     @Override
     public boolean canOutput(Dir direction) {
-        return handler != null;
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canOutput(direction));
+    }
+
+    @Override
+    public boolean canInput(FluidStack fluid, Dir direction) {
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput(fluid, direction));
     }
 
     @Override
@@ -102,10 +112,5 @@ public class FluidTileWrapper implements IFluidNode {
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
         return handler.drain(maxDrain, action);
-    }
-
-    @Override
-    public boolean connects(Dir direction) {
-        return true;
     }
 }

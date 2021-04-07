@@ -157,12 +157,6 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     @Override
-    public boolean connects(Dir direction) {
-        // TODO: Finish connections when covers will be ready
-        return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
-    }
-
-    @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
             tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());

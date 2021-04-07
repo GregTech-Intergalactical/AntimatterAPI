@@ -25,12 +25,6 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
                 Direction dir = tile.coverHandler.map(ch -> ch.lookupSingle(CoverDynamo.class)).orElse(null);
                 return super.canInput(direction) && (dir != null && dir.getIndex() != direction.getIndex());
             }
-
-            @Override
-            public boolean connects(Dir direction) {
-                return true;
-            }
-
         });
 
 

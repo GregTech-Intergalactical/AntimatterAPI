@@ -83,7 +83,7 @@ public class BlockCable extends BlockPipe<Cable<?>> {
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
         ITickingController controller = Tesseract.GT_ENERGY.getController(world.getDimensionKey(), pos.toLong());
-        if (controller != null) info.addAll(Arrays.asList(controller.getInfo()));
+        if (controller != null) info.addAll(Arrays.asList(controller.getInfo(pos.toLong())));
         return info;
     }
 

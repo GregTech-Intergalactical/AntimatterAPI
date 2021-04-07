@@ -118,9 +118,4 @@ public class EnergyTileWrapper implements IGTNode {
     public GTConsumer.State getState() {
         return state;
     }
-
-    @Override
-    public boolean connects(Dir direction) {
-        return true;
-    }
 }

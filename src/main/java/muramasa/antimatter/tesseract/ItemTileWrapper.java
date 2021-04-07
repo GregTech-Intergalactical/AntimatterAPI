@@ -68,12 +68,12 @@ public class ItemTileWrapper implements IItemNode {
     }
 
     @Override
-    public boolean canOutput(Dir direction) {
-        return true;
+    public boolean canInput(Dir direction) {
+        return handler != null;
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean canOutput(Dir direction) {
         return true;
     }
 

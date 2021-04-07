@@ -44,11 +44,6 @@ public class TileEntityTransformer extends TileEntityMachine {
             public boolean canInput(Dir direction) {
                 return !canOutput(direction);
             }
-
-            @Override
-            public boolean connects(Dir direction) {
-                return true;
-            }
         });
         // FIXME
         /*

@@ -33,11 +33,6 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
             public boolean canOutput(Dir direction) {
                 return tile.getFacing().getIndex() == direction.getIndex();
             }
-
-            @Override
-            public boolean connects(Dir direction) {
-                return true;
-            }
         });
         // TODO
         /*
