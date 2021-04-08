@@ -16,7 +16,6 @@ import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -45,9 +44,9 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
-        this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyHolder.of(() -> new MultiMachineItemHandler(this)) : LazyHolder.empty();
-        this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MultiMachineEnergyHandler(this)) : LazyHolder.empty();
-        this.fluidHandler = type.has(FLUID) ? LazyHolder.of(() -> new MultiMachineFluidHandler(this)) : LazyHolder.empty();
+        this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyOptional.of(() -> new MultiMachineItemHandler(this)) : LazyOptional.empty();
+        this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MultiMachineEnergyHandler(this)) : LazyOptional.empty();
+        this.fluidHandler = type.has(FLUID) ? LazyOptional.of(() -> new MultiMachineFluidHandler(this)) : LazyOptional.empty();
     }
 
     @Override
@@ -251,7 +250,7 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         for (IComponentHandler hatch : getComponents("hatch_fluid_input")) {
             if (hatch.getFluidHandler().isPresent()) {
                 List<FluidStack> finalFluids = fluids;
-                fluids = hatch.getFluidHandler().map(fh -> fh.consumeAndReturnInputs(finalFluids)).orElse(Collections.emptyList());
+                fluids = hatch.getFluidHandler().map(fh -> fh.consumeAndReturnInputs(finalFluids, false)).orElse(Collections.emptyList());
                 if (fluids.size() == 0) break;
             }
         }

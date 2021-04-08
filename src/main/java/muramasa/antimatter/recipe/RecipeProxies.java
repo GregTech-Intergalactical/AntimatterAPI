@@ -1,7 +1,8 @@
 package muramasa.antimatter.recipe;
 
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.map.RecipeBuilder;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
@@ -17,7 +18,7 @@ public class RecipeProxies {
             List<Ingredient> ingredients = t.getIngredients();
             Ingredient input = ingredients.get(0);
             ItemStack[] stacks = input.getMatchingStacks();
-            RecipeIngredient ing = stacks.length == 1 ? AntimatterIngredient.of(stacks[0]) : AntimatterIngredient.of(1, input.getMatchingStacks());
+            RecipeIngredient ing = stacks.length == 1 ? RecipeIngredient.of(stacks[0]) : RecipeIngredient.of(1, input.getMatchingStacks());
             return b.ii(ing)
                     .io(t.getRecipeOutput()).build(duration, power, 0, 1);
         };

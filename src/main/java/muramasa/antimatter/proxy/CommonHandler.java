@@ -2,12 +2,12 @@ package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.recipe.RecipeMap;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -38,7 +38,7 @@ public class CommonHandler implements IProxyHandler {
             //low. Hence, lowest! To ensure proxies are loaded fine.
             @Override
             protected void apply(Void objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
-                AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(event.getDataPackRegistries().getRecipeManager()));
+                AntimatterAPI.onRecipeCompile(event.getDataPackRegistries().getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
             }
         });
 

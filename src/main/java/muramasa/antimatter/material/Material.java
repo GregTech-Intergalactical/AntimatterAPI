@@ -2,6 +2,7 @@ package muramasa.antimatter.material;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -12,6 +13,7 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
@@ -53,12 +55,14 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     private int fuelPower, liquidTemperature, gasTemperature;
     
     /** Tool Members **/
-    private float toolDamage, toolSpeed;
-    private int toolDurability, toolQuality;
+    private float toolDamage, toolSpeed, toughness, knockbackResistance;
+    private int toolDurability, toolQuality, armorDurabilityFactor;
+    private int[] armor;
     private boolean isHandle;
     private int handleDurability;
     private float handleSpeed;
     private ImmutableMap<Enchantment, Integer> toolEnchantment;
+    private List<AntimatterToolType> toolTypes;
 
     /** Processing Members **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
@@ -87,7 +91,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         } else if (registry == ForgeRegistries.BLOCKS) {
             if (has(BLOCK)) new BlockStorage(domain, this, BLOCK);
             if (has(FRAME)) new BlockStorage(domain, this, FRAME);
-            if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> new BlockSurfaceRock(domain, this, s));
+            if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> new BlockSurfaceRock(s.getDomain(), this, s));
             if (has(ORE)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE));
             if (has(ORE_SMALL)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE_SMALL));
             //if (has(ORE_STONE)) new BlockOreStone(domain, this);
@@ -195,6 +199,11 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return this;
     }
 
+    public Material harvestLevel(int harvestLevel){
+        this.toolQuality = harvestLevel + 1;
+        return this;
+    }
+
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
         if (has(INGOT)) flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(TOOLS, ROD);
@@ -203,12 +212,17 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
         this.toolEnchantment = ImmutableMap.of();
+        this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
         return this;
     }
     
-    public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-    	this.toolEnchantment = toolEnchantment;
-    	return addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
+    public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
+    	addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
+        this.toolEnchantment = toolEnchantment;
+        if (toolTypes.length > 0){
+            this.toolTypes = Arrays.asList(toolTypes);
+        }
+    	return this;
     }
 
     public Material addTools(Material derivedMaterial, ImmutableMap<Enchantment, Integer> toolEnchantment) {
@@ -217,6 +231,36 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     public Material addTools(Material derivedMaterial) {
         return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality);
+    }
+
+    public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor) {
+        if (armor.length < 4){
+            Antimatter.LOGGER.info("Material " + this.getId() + " unable to add armor, protection array must have at least 4 values");
+            return this;
+        }
+        if (has(INGOT)) flags(ARMOR, PLATE);
+        else flags(ARMOR);
+        this.armor = armor;
+        this.toughness = toughness;
+        this.armorDurabilityFactor = armorDurabilityFactor;
+        this.knockbackResistance = knockbackResistance;
+        this.toolEnchantment = ImmutableMap.of();
+        return this;
+    }
+
+    public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+        addArmor(armor, toughness, knockbackResistance, armorDurabilityFactor);
+        this.toolEnchantment = toolEnchantment;
+        return this;
+    }
+
+    public Material addArmor(Material material, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+        this.toolEnchantment = toolEnchantment;
+        return addArmor(material.armor, material.toughness, material.knockbackResistance, material.armorDurabilityFactor);
+    }
+
+    public Material addArmor(Material material) {
+        return addArmor(material.armor, material.toughness, material.knockbackResistance, material.armorDurabilityFactor);
     }
 
     public Material addHandleStat(int durability, float speed) {
@@ -229,8 +273,9 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material addHandleStat(int durability, float speed, ImmutableMap<Enchantment, Integer> toolEnchantment) {
+        addHandleStat(durability, speed);
         this.toolEnchantment = toolEnchantment;
-        return addHandleStat(durability, speed);
+        return this;
     }
 
     public boolean has(IMaterialTag... tags) {
@@ -361,6 +406,26 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     
     public ImmutableMap<Enchantment, Integer> getEnchantments() {
     	return toolEnchantment;
+    }
+
+    public int getArmorDurabilityFactor() {
+        return armorDurabilityFactor;
+    }
+
+    public int[] getArmor() {
+        return armor;
+    }
+
+    public float getToughness() {
+        return toughness;
+    }
+
+    public float getKnockbackResistance() {
+        return knockbackResistance;
+    }
+
+    public List<AntimatterToolType> getToolTypes() {
+        return toolTypes;
     }
 
     public boolean isHandle() { return isHandle; }

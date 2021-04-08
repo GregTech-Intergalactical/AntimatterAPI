@@ -54,7 +54,7 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
         if (!remove) {
             FluidTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {
-            PipeReferenceCounter.remove(getWorld().getDimensionKey(), pos.toLong(), TileEntityFluidPipe.class, p -> Tesseract.FLUID.remove(getWorld().getDimensionKey(), p));
+            Tesseract.FLUID.remove(getWorld().getDimensionKey(), pos.toLong());
         }
     }
 

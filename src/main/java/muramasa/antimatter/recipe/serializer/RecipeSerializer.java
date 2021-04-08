@@ -8,16 +8,16 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -31,47 +31,42 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
     static {
         INSTANCE.setRegistryName(new ResourceLocation(Ref.ID, "machine"));
     }
-    private final static ResourceLocation ING_ID = new ResourceLocation("antimatter", "ingredient");
+
     @Override
     public Recipe read(ResourceLocation recipeId, JsonObject json) {
         try {
+            List<RecipeIngredient> list = new ObjectArrayList<>();
+            if (json.has("item_in")) {
+                JsonArray array = json.getAsJsonArray("item_in");
+                for (JsonElement element : array) {
+                    list.add(new RecipeIngredient(element));
+                }
+            }
             ItemStack[] outputs = null;
             if (json.has("item_out")) {
                 outputs = Streams.stream(json.getAsJsonArray("item_out")).map(t -> CraftingHelper.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
             }
             FluidStack[] fluidInputs = null;
             if (json.has("fluid_in")) {
-                fluidInputs = Streams.stream(json.getAsJsonArray("fluid_in")).map(this::getStack).toArray(FluidStack[]::new);
+                fluidInputs = Streams.stream(json.getAsJsonArray("fluid_in")).map(RecipeSerializer::getStack).toArray(FluidStack[]::new);
             }
             FluidStack[] fluidOutputs = null;
             if (json.has("fluid_out")) {
-                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(this::getStack).toArray(FluidStack[]::new);
+                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(RecipeSerializer::getStack).toArray(FluidStack[]::new);
             }
-            List<RecipeIngredient> list = new ObjectArrayList<>();
-            if (json.has("item_in")) {
-                JsonArray array = json.getAsJsonArray("item_in");
-                for (JsonElement element : array) {
-                    Ingredient i = CraftingHelper.getIngredient(element);
-                    if (i instanceof AntimatterIngredient) {
-                        list.add(new RecipeIngredient(() -> (AntimatterIngredient) i));
-                    } else {{
-                        if (element.isJsonObject()) {
-                            JsonObject obj = element.getAsJsonObject();
-                            if (obj.has("count")) {
-                                list.add(AntimatterIngredient.of(obj.get("count").getAsInt(),i.getMatchingStacks()));
-                            } else {
-                                list.add(AntimatterIngredient.of(i.getMatchingStacks()[0].getCount(),i.getMatchingStacks()));
-                            }
-                        }
-                    }}
-                }
-            }
-            long eut = json.get("euT").getAsLong();
+            long eut = json.get("eu").getAsLong();
             int duration = json.get("duration").getAsInt();
             int amps = json.has("amps") ? json.get("amps").getAsInt() : 1;
-            Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, 0, amps);
-            ResourceLocation map = new ResourceLocation(json.get("map").getAsString());
-            r.setIds(recipeId, map);
+            int special = json.has("special") ? json.get("special").getAsInt() : 0;
+            Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, special, amps);
+            if (json.has("chances")) {
+                List<Integer> chances = new ObjectArrayList<>();
+                for (JsonElement el : json.getAsJsonArray("chances")) {
+                    chances.add(el.getAsInt());
+                }
+                r.addChances(chances.stream().mapToInt(i->i).toArray());
+            }
+            r.setIds(recipeId, json.get("map").getAsString());
             return r;
         } catch (Exception ex) {
             Antimatter.LOGGER.error(ex);
@@ -79,9 +74,25 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         return null;
     }
 
-    private FluidStack getStack(JsonElement element) {
+    public static FluidStack getStack(JsonElement element) {
         try {
-            return FluidStack.loadFluidStackFromNBT(JsonToNBT.getTagFromJson(element.getAsString()));
+            if (!(element.isJsonObject())) {
+                return FluidStack.EMPTY;
+            }
+            JsonObject obj = (JsonObject) element;
+            ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
+            Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+            if (fluid == null)
+            {
+                return FluidStack.EMPTY;
+            }
+            FluidStack stack = new FluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsInt() : 1000);
+
+            if (obj.has("tag"))
+            {
+                stack.setTag(JsonToNBT.getTagFromJson(obj.get("tag").getAsString()));
+            }
+            return stack;
         } catch (Exception ex) {
             Antimatter.LOGGER.error(ex);
         }
@@ -95,8 +106,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         List<RecipeIngredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                AntimatterIngredient a = (AntimatterIngredient) CraftingHelper.getIngredient(ING_ID, buffer);
-                ings.add(new RecipeIngredient(() -> a));
+                ings.add(new RecipeIngredient(buffer));
             }
         }
         size = buffer.readInt();
@@ -131,7 +141,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         int dur = buffer.readInt();
         int special = buffer.readInt();
         int amps = buffer.readInt();
-        ResourceLocation map = buffer.readResourceLocation();
+        String map = buffer.readString();
         ResourceLocation id = buffer.readResourceLocation();
 
         Recipe r = new Recipe(
@@ -154,7 +164,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
     public void write(PacketBuffer buffer, Recipe recipe) {
         buffer.writeInt(!recipe.hasInputItems() ? 0 : recipe.getInputItems().size());
         if (recipe.hasInputItems()) {
-            recipe.getInputItems().forEach(t -> CraftingHelper.write(buffer, t.get()));
+            recipe.getInputItems().forEach(t -> t.writeToBuffer(buffer));
         }
         buffer.writeInt(!recipe.hasOutputItems() ? 0 : recipe.getOutputItems().length);
         if (recipe.hasOutputItems()) {
@@ -176,7 +186,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         buffer.writeInt(recipe.getDuration());
         buffer.writeInt(recipe.getSpecialValue());
         buffer.writeInt(recipe.getAmps());
-        buffer.writeResourceLocation(recipe.mapId);
+        buffer.writeString(recipe.mapId);
         buffer.writeResourceLocation(recipe.id);
     }
 }

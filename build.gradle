@@ -22,6 +22,13 @@ repositories {
     maven { url 'http://dvs1.progwml6.com/files/maven' }
     //GT.
     maven { url 'https://jitpack.io' }
+
+    maven {
+        url "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -29,7 +36,7 @@ apply plugin: 'net.minecraftforge.gradle'
 //apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '0.1'
+version = "${minecraft_version}-${mod_version}"
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'AntimatterAPI'
 
@@ -53,10 +60,17 @@ def shouldCheckEnv() {
     return findProject(':TesseractAPI') != null
 }
 
+def isVSTask() {
+    return gradle.startParameter.taskNames[0].equals("genVSCodeRuns")
+}
+
 def getEnv() {
-    String s = "antimatter%%${project.file('build/resources/main')}" + getPathSeparator() + "antimatter%%${project.file('build/classes/java/main')}"
+    boolean vscode = isVSTask()
+    String resourcePath = vscode ? 'bin/main' : 'build/resources/main'
+    String codePath = vscode ? 'bin/main' : 'build/classes/java/main'
+    String s = "antimatter%%${project.file(resourcePath)}" + getPathSeparator() + "antimatter%%${project.file(codePath)}"
     if (findProject(':TesseractAPI') != null) {
-        s += getPathSeparator() + "tesseract%%${project(':TesseractAPI').file('build/resources/main')}" + getPathSeparator() + "tesseract%%${project(':TesseractAPI').file('build/classes/java/main')}"
+        s += getPathSeparator() + "tesseract%%${project(':TesseractAPI').file(resourcePath)}" + getPathSeparator() + "tesseract%%${project(':TesseractAPI').file(codePath)}"
     }
     return s
 }
@@ -87,11 +101,13 @@ minecraft {
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'DEBUG'
             property 'fml.earlyprogresswindow', 'false'
-            property 'mixin.env.disableRefMap', 'true'
-            //property 'mixin.env.disableRefMap', 'true'
+
+            arg "-mixin.config=antimatter.mixins.json"
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-            arg "-mixin.config=antimatter.mixins.json"
             if (shouldCheckEnv()) {
                  environment 'MOD_CLASSES', getEnv()
             }
@@ -106,14 +122,15 @@ minecraft {
             workingDirectory project.file('run')
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'DEBUG'
-            property 'mixin.env.disableRefMap', 'true'
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
-            //property 'mixin.env.disableRefMap', 'true'
 
             // Disable GUI by default, the IDE console can be used to enter commands
             arg '-nogui'
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             arg "-mixin.config=antimatter.mixins.json"
             if (shouldCheckEnv()) {
                  environment 'MOD_CLASSES', getEnv()
@@ -127,14 +144,15 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-            property 'mixin.env.disableRefMap', 'true'
+
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'DEBUG'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
-            //property 'mixin.env.disableRefMap', 'true'
 
             arg "-mixin.config=antimatter.mixins.json"
             if (shouldCheckEnv()) {
@@ -175,9 +193,9 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
 
     /** KUBEJS STUFF **/
-  //  implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
- //   implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
- //   implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
+    implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
+    implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
+    implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
 }
 
 
@@ -216,20 +234,17 @@ mixin {
 }
 
 jar {
+    zip64 true
     manifest {
         attributes([
                 "MixinConfigs": "antimatter.mixins.json",
-                "Specification-Title": "Antimatter",
-                "Specification-Vendor": "AntimatterTeam",
-                "Specification-Version": "1",
+                "Specification-Title": project.name,
+                "Specification-Vendor": "GregTech Intergalactical",
+                "Specification-Version": project.version,
                 "Implementation-Title": project.name,
-                "Implementation-Version": "0.0.1",
-                "Implementation-Vendor" :"AntimatterTeam",
+                "Implementation-Version": project.version,
+                "Implementation-Vendor": "GregTech Intergalactical",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-}
-
-jar {
-    zip64 true
 }

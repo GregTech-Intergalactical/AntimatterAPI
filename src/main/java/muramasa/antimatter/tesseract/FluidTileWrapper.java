@@ -1,7 +1,5 @@
 package muramasa.antimatter.tesseract;
 
-import muramasa.antimatter.tile.pipe.PipeReferenceCounter;
-import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +28,7 @@ public class FluidTileWrapper implements IFluidNode {
 
     @Nullable
     public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
-        PipeReferenceCounter.add(world.getDimensionKey(), pos.toLong(), TileEntityFluidPipe.class, p -> Tesseract.FLUID.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
+       Tesseract.FLUID.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
             LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
@@ -39,7 +37,7 @@ public class FluidTileWrapper implements IFluidNode {
                 return node;
             }
             throw new RuntimeException("invalid capability");
-        }));
+        });
     }
 
     public void onRemove() {
@@ -50,27 +48,32 @@ public class FluidTileWrapper implements IFluidNode {
 
     @Override
     public int getPriority(Dir direction) {
-        return 0;
+        return (!(handler instanceof IFluidNode) ? 0 : ((IFluidNode)handler).getPriority(direction));
     }
 
     @Override
     public boolean canOutput() {
-        return handler != null;
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canOutput());
     }
 
     @Override
     public boolean canInput() {
-        return handler != null;
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput());
+    }
+
+    @Override
+    public boolean canInput(Dir direction) {
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput(direction));
     }
 
     @Override
     public boolean canOutput(Dir direction) {
-        return handler != null;
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canOutput(direction));
     }
 
     @Override
-    public boolean connects(Dir direction) {
-        return true;
+    public boolean canInput(FluidStack fluid, Dir direction) {
+        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput(fluid, direction));
     }
 
     @Override

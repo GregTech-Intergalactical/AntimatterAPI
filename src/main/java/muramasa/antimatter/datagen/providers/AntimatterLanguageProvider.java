@@ -20,7 +20,8 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
-import muramasa.antimatter.recipe.RecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
+import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -126,6 +127,10 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         });
 
         AntimatterAPI.all(IAntimatterTool.class, t -> {
+            add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+        });
+
+        AntimatterAPI.all(IAntimatterArmor.class, t -> {
             add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
         });
 

@@ -48,7 +48,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
         if (!remove) {
             ItemTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {
-            PipeReferenceCounter.remove(getWorld().getDimensionKey(), pos.toLong(), TileEntityItemPipe.class, p -> Tesseract.ITEM.remove(getWorld().getDimensionKey(), p));
+            Tesseract.ITEM.remove(getWorld().getDimensionKey(), pos.toLong());
         }
     }
 

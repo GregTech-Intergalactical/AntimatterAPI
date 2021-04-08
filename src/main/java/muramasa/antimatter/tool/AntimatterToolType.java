@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class AntimatterToolType implements IAntimatterObject {
 
@@ -306,8 +307,13 @@ public class AntimatterToolType implements IAntimatterObject {
         return TOOL_TYPE;
     }
 
+    @Deprecated // Scheduled for deletion
     public Set<String> getToolTypes() {
         return TOOL_TYPES;
+    }
+
+    public Set<ToolType> getActualToolTypes() {
+        return TOOL_TYPES.stream().map(ToolType::get).collect(Collectors.toSet());
     }
 
     public List<ITextComponent> getTooltip() {

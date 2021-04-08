@@ -12,6 +12,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -107,8 +108,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, PlayerEntity player) {
-        AntimatterToolType type = Utils.getToolType(player);
-        return (type == WRENCH || type == ELECTRIC_WRENCH || type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) && (world.getBlockState(pos).getBlock() instanceof BlockDynamic);
+        return Utils.doesStackHaveToolTypes(stack, WRENCH, ELECTRIC_WRENCH, SCREWDRIVER, ELECTRIC_SCREWDRIVER, CROWBAR) && (world.getBlockState(pos).getBlock() instanceof BlockDynamic); // ???
     }
 
     /*
@@ -185,14 +185,14 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return type.getToolTypes().contains("axe");
+        return type.getActualToolTypes().contains(ToolType.AXE);
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier>modifiers = HashMultimap.create();
         if (slotType == EquipmentSlotType.MAINHAND) {
-            modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", getTier(stack).getAttackDamage(), AttributeModifier.Operation.ADDITION));
+            modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", type.getBaseAttackDamage() + getTier(stack).getAttackDamage(), AttributeModifier.Operation.ADDITION));
             modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
         }
         return modifiers;
@@ -253,6 +253,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        if (type.getActualToolTypes().contains(ToolType.AXE) && enchantment.type == EnchantmentType.WEAPON){
+            return true;
+        }
         return type.isPowered() ? enchantment != Enchantments.UNBREAKING : super.canApplyAtEnchantingTable(stack, enchantment);
     }
 

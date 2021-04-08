@@ -21,14 +21,14 @@ import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.RecipeMap;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
-import muramasa.antimatter.recipe.ingredient.StackListIngredient;
-import muramasa.antimatter.recipe.ingredient.TagIngredient;
+import muramasa.antimatter.recipe.ingredient.MapTagIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
@@ -92,17 +92,9 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     public void setIngredients(Recipe recipe, IIngredients ingredients) {
         if (recipe.hasInputItems()) {
             List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
-            for (AntimatterIngredient ing : recipe.compileInput()) {
-                if (ing instanceof TagIngredient) {
-                    ResourceLocation rl = ((TagIngredient) ing).getTag();
-                    if (rl != null) {
-                        recipe.tagsToRender.putIfAbsent(inputs.size(), rl);
-                    }
-                }
-                if (ing instanceof StackListIngredient) {
-                    recipe.infoToRender.putIfAbsent(inputs.size(), ing.getMatchingStacks().length);
-                }
-                inputs.add(ing);
+            for (RecipeIngredient ing : recipe.getInputItems()) {
+                MapTagIngredient.findCommonTag(ing.get(), Item::getTags).ifPresent(t -> recipe.tagsToRender.putIfAbsent(inputs.size(), t));
+                inputs.add(ing.get());
             }
             ingredients.setInputLists(VanillaTypes.ITEM,inputs.stream().map(t -> Arrays.asList(t.getMatchingStacks())).collect(Collectors.toList()));
         }
@@ -202,12 +194,13 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             if ((rl = recipe.tagsToRender.get(index)) != null) {
                 tooltip.add(new StringTextComponent("Accepts any " + rl).mergeStyle(TextFormatting.GOLD));
             }
-            int i;
-            if ((i = recipe.infoToRender.get(index)) != 0) {
-                tooltip.add(new StringTextComponent("Accepts " + i + " different items.").mergeStyle(TextFormatting.GOLD));
+            if (input) {
+                if (recipe.hasInputItems()) {
+                    if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreConsume()) {
+                        tooltip.add(new StringTextComponent("Does not get consumed in the process.").mergeStyle(TextFormatting.WHITE));
+                    }
+                }
             }
-
-            if (input && (Utils.hasNoConsumeTag(stack) || stack.getCount() == 0)) tooltip.add(new StringTextComponent("Does not get consumed in the process.").mergeStyle(TextFormatting.WHITE));
             if (recipe.hasChances() && !input) {
                 int chanceIndex = index - finalInputItems;
                 if (recipe.getChances()[chanceIndex] < 100) {

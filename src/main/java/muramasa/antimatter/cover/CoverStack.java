@@ -1,6 +1,5 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.event.GuiEvent;

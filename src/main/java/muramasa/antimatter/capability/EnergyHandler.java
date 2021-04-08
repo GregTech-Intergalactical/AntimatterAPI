@@ -170,11 +170,6 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
-    public boolean connects(Dir direction) {
-        return true;
-    }
-
-    @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT tag = new CompoundNBT();
         tag.putLong(Ref.TAG_MACHINE_ENERGY, this.energy);

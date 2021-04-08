@@ -1,6 +1,9 @@
-package muramasa.antimatter.recipe;
+package muramasa.antimatter.recipe.map;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.RecipeTag;
+import muramasa.antimatter.recipe.Unifier;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;

@@ -15,7 +15,6 @@ import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.pipe.TileEntityCable;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
@@ -56,8 +55,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.WIRE_CUTTER;
-import static muramasa.antimatter.Data.WRENCH;
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
 public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider, IWaterLoggable {
@@ -108,7 +105,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     }
 
     public T getType() {
-        return (T) type;
+        return type;
     }
 
     public PipeSize getSize() {
@@ -116,7 +113,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     }
 
     public int getRGB() {
-        return getType().getMaterial().getRGB();
+        return type.getMaterial().getRGB();
     }
 
     public int getModelId() {
@@ -159,7 +156,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return getType().getTileType().create();
+        return type.getTileType().create();
     }
 
     @Override
@@ -229,7 +226,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Override
     public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         onNeighborChange(stateIn, worldIn, currentPos, facingPos);
-        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        return stateIn;
     }
 
     /*@Override // Used to catch new placed neighbors near pipe which enable connection
@@ -248,31 +245,33 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         }
     }*/
 
-    private AntimatterToolType getTool(TileEntity tile) {
-        return tile instanceof TileEntityCable ? WIRE_CUTTER : WRENCH;
-    }
-
     @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         TileEntityPipe tile = (TileEntityPipe) world.getTileEntity(pos);
+        if (tile == null) {
+            return ActionResultType.PASS;
+        }
         AntimatterToolType type = Utils.getToolType(player);
-        Direction side = Utils.getInteractSide(hit);
-
-        if (!world.isRemote && type == getTool(tile) && hand == Hand.MAIN_HAND) {
-            TileEntity target = tile.getWorld().getTileEntity(tile.getPos().offset(side));
+        if (type == null) {
+            return ActionResultType.PASS;
+        }
+        if (!world.isRemote && hand == Hand.MAIN_HAND && getHarvestTool(state) == type.getToolType()) {
+            Direction side = Utils.getInteractSide(hit);
+            TileEntity target = world.getTileEntity(pos.offset(side));
             if (target != null) {
                 if (tile.validateTile(target, side.getOpposite())) {
+                    tile.toggleConnection(side);
                     if (target instanceof TileEntityPipe) {
                         ((TileEntityPipe) target).toggleConnection(side.getOpposite());
                     } else {
                         tile.toggleInteract(side);
                     }
-                    tile.toggleConnection(side);
                     return ActionResultType.SUCCESS;
                 }
             } else if (world.isAirBlock(pos.offset(side))) {
                 tile.toggleConnection(side);
+                return ActionResultType.SUCCESS;
             }
         }
         return ActionResultType.PASS;
@@ -318,7 +317,14 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     @Override
     public VoxelShape getRayTraceShape(BlockState state, IBlockReader reader, BlockPos pos, ISelectionContext context) {
-        return super.getRayTraceShape(state, reader, pos, context);
+        if (context.getEntity() instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) context.getEntity();
+            if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state))) {
+                return super.getCollisionShape(state, worldIn, pos, context);
+            }
+        }
+        return this.COLLISION_SHAPE;
+        // return super.getCollisionShape(state, worldIn, pos, context);
     }
 
     public int getPipeID(int config, int cull) {
@@ -485,7 +491,6 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         FluidState fluidstate = context.getWorld().getFluidState(context.getPos());
-        BlockState state = super.getStateForPlacement(context);
-        return fluidstate.isEmpty() ? state : state.with(WATERLOGGED, true);
+        return super.getDefaultState().with(WATERLOGGED, fluidstate.getFluid() == Fluids.WATER);
     }
 }

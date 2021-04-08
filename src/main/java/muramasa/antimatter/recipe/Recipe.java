@@ -1,14 +1,12 @@
 package muramasa.antimatter.recipe;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -20,9 +18,9 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Recipe implements IRecipe<IInventory> {
     private final ItemStack[] itemsOutput;
@@ -39,14 +37,12 @@ public class Recipe implements IRecipe<IInventory> {
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     public ResourceLocation id;
-    public ResourceLocation mapId;
+    public String mapId;
 
     //For jei, have to put here instead of RecipeMapCategory.
     public final Int2ObjectMap<ResourceLocation> tagsToRender = new Int2ObjectOpenHashMap<>();
-    //for stack lists
-    public final Int2IntMap infoToRender = new Int2IntOpenHashMap();
 
-    public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter:machine_recipe");
+    public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter_machine");
 
     public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = stacksInput;
@@ -96,19 +92,14 @@ public class Recipe implements IRecipe<IInventory> {
         return chances != null && chances.length == itemsOutput.length;
     }
 
-    public void setIds(ResourceLocation id, ResourceLocation map) {
+    public void setIds(ResourceLocation id, String map) {
         this.id = id;
         this.mapId = map;
     }
 
     @Nullable
     public List<RecipeIngredient> getInputItems() {
-        return hasInputItems() ? itemsInput : null;
-    }
-
-    @Nullable
-    public List<AntimatterIngredient> compileInput() {
-        return hasInputItems() ? itemsInput.stream().map(RecipeIngredient::get).collect(Collectors.toList()) : null;
+        return hasInputItems() ? itemsInput : Collections.emptyList();
     }
 
     @Nullable
@@ -267,12 +258,17 @@ public class Recipe implements IRecipe<IInventory> {
 
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return null;
+        return RecipeSerializer.INSTANCE;
     }
 
     @Nonnull
     @Override
     public IRecipeType<?> getType() {
         return Recipe.RECIPE_TYPE;
+    }
+
+    @Override
+    public boolean isDynamic() {
+        return true;
     }
 }

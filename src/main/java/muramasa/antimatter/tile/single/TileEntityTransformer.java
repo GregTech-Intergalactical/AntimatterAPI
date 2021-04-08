@@ -5,7 +5,6 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResultType;
@@ -14,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.util.Dir;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class TileEntityTransformer extends TileEntityMachine {
         super(type);
         this.amperage = amps;
         this.capFunc = capFunc;
-        this.energyHandler = LazyHolder.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, 0L, capFunc.applyAsLong(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4)  {
+        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, 0L, capFunc.applyAsLong(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4)  {
             @Override
             public boolean canOutput(Dir direction) {
                 return isDefaultMachineState() == (tile.getFacing().getIndex() != direction.getIndex());
@@ -43,11 +43,6 @@ public class TileEntityTransformer extends TileEntityMachine {
             @Override
             public boolean canInput(Dir direction) {
                 return !canOutput(direction);
-            }
-
-            @Override
-            public boolean connects(Dir direction) {
-                return true;
             }
         });
         // FIXME

@@ -3,8 +3,8 @@ package muramasa.antimatter.tile.single;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.IRefreshable;
 import tesseract.util.Dir;
 
@@ -23,7 +23,7 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
 
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
-        this.energyHandler = LazyHolder.of(() -> new MachineEnergyHandler<TileEntityInfiniteStorage>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
+        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityInfiniteStorage>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
                 return maxExtract;
@@ -32,11 +32,6 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
             @Override
             public boolean canOutput(Dir direction) {
                 return tile.getFacing().getIndex() == direction.getIndex();
-            }
-
-            @Override
-            public boolean connects(Dir direction) {
-                return true;
             }
         });
         // TODO

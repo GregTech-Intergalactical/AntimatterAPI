@@ -7,6 +7,7 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -46,7 +47,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
 
     @Override
     public void run() {
-        registerModels();
+        //registerModels();
         //generatedModels.forEach(DynamicResourcePack::addItem);
     }
 
@@ -64,6 +65,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         AntimatterAPI.all(Item.class, domain).forEach(i -> AntimatterModelManager.onItemModelBuild(i, this));
         AntimatterAPI.all(Block.class, domain).forEach(b -> AntimatterModelManager.onItemModelBuild(b, this));
         AntimatterAPI.all(IAntimatterTool.class, domain).forEach(t -> tex(t.getItem(), "item/handheld", t.getTextures()));
+        AntimatterAPI.all(IAntimatterArmor.class, domain).forEach(t -> tex(t.getItem(), "item/handheld", t.getTextures()));
         AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> {
             antimatterTex(f.getContainerItem(), "forge", "item/bucket").bucketProperties(f.getFluid());
             antimatterTex(f.getFluidBlock(), AntimatterBlockModelBuilder.getSimple()).tex(a -> a.put("all", f.getAttributes().getFlowingTexture().toString()));

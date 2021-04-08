@@ -130,6 +130,7 @@ public class Ref {
     public static final String MOD_TE = "thermalexpansion";
     public static final String MOD_TF = "thermalfoundation";
     public static final String MOD_UB = "undergroundbiomes";
+    public static final String MOD_KJS = "kubejs";
 
     /** Dimension IDs **/
     public static final int OVERWORLD = 0;

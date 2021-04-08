@@ -15,10 +15,10 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.recipe.RecipeMap;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.*;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.block.Block;
@@ -26,6 +26,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -254,11 +255,11 @@ public final class AntimatterAPI {
         //TODO: This is broken for now.
         if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
         if (true) return null;
-        if (REPLACEMENTS.containsKey(tag.getName().getPath().hashCode())) return AntimatterIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
-        if (replacementsFound) return AntimatterIngredient.of(originalItem,1);
+        if (REPLACEMENTS.containsKey(tag.getName().getPath().hashCode())) return RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
+        if (replacementsFound) return RecipeIngredient.of(originalItem,1);
         Set<String> checks = Sets.newHashSet(namespaces);
         if (checks.isEmpty()) checks.add("minecraft");
-        return AntimatterIngredient.of(() -> Objects.requireNonNull(TagUtils.nc(tag).getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
+        return RecipeIngredient.of(() -> Objects.requireNonNull(TagUtils.nc(tag).getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
                 .findAny().map(i -> {
                     REPLACEMENTS.put(tag.getName().getPath().hashCode(), i);
                     return i;
@@ -292,6 +293,22 @@ public final class AntimatterAPI {
             }
             t.craftingRecipes(new AntimatterRecipeProvider("Antimatter", "Custom recipes",Ref.BACKGROUND_GEN));
         });
+    }
+
+    public static void onRecipeCompile(RecipeManager manager, Function<Item, Collection<ResourceLocation>> tagGetter) {
+        Antimatter.LOGGER.info("Compiling GT recipes");
+        long time = System.nanoTime();
+        AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(manager, tagGetter));
+        List<Recipe> recipes = manager.getRecipesForType(Recipe.RECIPE_TYPE);
+        recipes.forEach(t -> {
+            RecipeMap<?> map = AntimatterAPI.get(RecipeMap.class, "gt.recipe_map." + t.mapId);
+            if (map != null) map.compileRecipe(t, tagGetter);
+        });
+        time = System.nanoTime()-time;
+        Antimatter.LOGGER.info("Time to compile GT recipes: (ms) " + (time)/(1000*1000));
+        int size = AntimatterAPI.all(RecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
+        Antimatter.LOGGER.info("No. of GT recipes: " + size);
+        Antimatter.LOGGER.info("Average loading time / recipe: (µs) " + (time/size)/1000);
     }
 
     /** JEI Registry Section **/

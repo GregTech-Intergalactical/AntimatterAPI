@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
@@ -11,7 +12,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.ingredient.AntimatterIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -36,6 +37,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -178,11 +180,6 @@ public class Utils {
         return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
 
-    public static boolean hasNoConsumeTag(AntimatterIngredient stack) {
-        return stack.noConsume();
-    }
-
-
     public static boolean hasNoConsumeTag(FluidStack stack) {
         return stack.hasTag() && stack.getTag().contains(Ref.KEY_STACK_NO_CONSUME);
     }
@@ -264,12 +261,12 @@ public class Utils {
         return matchCount >= a.length;
     }
 
-    public static boolean doItemsMatchAndSizeValid(List<AntimatterIngredient> a, ItemStack[] b) {
+    public static boolean doItemsMatchAndSizeValid(List<RecipeIngredient> a, ItemStack[] b) {
         if (a == null || b == null) return false;
         int matchCount = 0;
-        for (AntimatterIngredient stack : a) {
+        for (RecipeIngredient stack : a) {
             for (ItemStack itemStack : b) {
-                if (stack.test(itemStack)) {
+                if (stack.get().test(itemStack)) {
                     matchCount++;
                     break;
                 }
@@ -977,8 +974,9 @@ public class Utils {
     public static String getConventionalStoneType(StoneType type) {
         String string = type.getId();
         string = string.replaceAll("stone_", "");
-        int index = string.indexOf("_");
-        if (index != -1) return String.join("", string.substring(index + 1), "_", string.substring(0, index));
+        // breaks generation in stones with underscores cause the stones are generated without the 2 below lines in the name
+        /*int index = string.indexOf("_");
+        if (index != -1) return String.join("", string.substring(index + 1), "_", string.substring(0, index));*/
         return string;
     }
 
@@ -1043,12 +1041,46 @@ public class Utils {
         return getLocalizedType(type);
     }
 
+    public static boolean doesStackHaveToolTypes(ItemStack stack, ToolType... toolTypes) {
+        if (!stack.isEmpty()) {
+            for (ToolType toolType : toolTypes) {
+                return stack.getToolTypes().contains(toolType);
+            }
+        }
+        return false;
+    }
+
+    public static boolean doesStackHaveToolTypes(ItemStack stack, AntimatterToolType... antimatterToolTypes) {
+        List<ToolType> toolTypes = new ObjectArrayList<>();
+        for (AntimatterToolType antimatterToolType : antimatterToolTypes) {
+            toolTypes.addAll(antimatterToolType.getActualToolTypes());
+        }
+        return doesStackHaveToolTypes(stack, toolTypes.toArray(new ToolType[0]));
+    }
+
+    public static boolean isPlayerHolding(PlayerEntity player, Hand hand, ToolType... toolTypes) {
+        return doesStackHaveToolTypes(player.getHeldItem(hand), toolTypes);
+    }
+
+    public static boolean isPlayerHolding(PlayerEntity player, Hand hand, AntimatterToolType... antimatterToolTypes) {
+        List<ToolType> toolTypes = new ObjectArrayList<>();
+        for (AntimatterToolType antimatterToolType : antimatterToolTypes) {
+            toolTypes.addAll(antimatterToolType.getActualToolTypes());
+        }
+        return isPlayerHolding(player, hand, toolTypes.toArray(new ToolType[0]));
+    }
+
     @Nullable
+    @Deprecated // Ready to use the methods above instead
     public static AntimatterToolType getToolType(PlayerEntity player) {
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack.isEmpty() || !(stack.getItem() instanceof IAntimatterTool))
-            return null;
-        return ((IAntimatterTool) stack.getItem()).getType();
+        if (!stack.isEmpty()) {
+            Item item = stack.getItem();
+            if (item instanceof IAntimatterTool) {
+                return ((IAntimatterTool) item).getType();
+            }
+        }
+        return null;
     }
 
     /**

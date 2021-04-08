@@ -12,7 +12,6 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.LazyHolder;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -31,7 +30,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
-        this.energyHandler = type.has(ENERGY) ? LazyHolder.of(() -> new MachineEnergyHandler<TileEntityHatch>(this, 0,getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
+        this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MachineEnergyHandler<TileEntityHatch>(this, 0,getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
                 type.getOutputCover() == COVERENERGY ? 2 : 0,type.getOutputCover() == COVERDYNAMO ? 1 : 0){
             @Override
             public boolean canInput(Dir direction) {
@@ -48,12 +47,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
                 ICover o = tile.getMachineType().getOutputCover();
                 return o.equals(COVERDYNAMO) && direction.getIndex() == out.getIndex();
             }
-
-            @Override
-            public boolean connects(Dir direction) {
-                return true;
-            }
-        }) : LazyHolder.empty();
+        }) : LazyOptional.empty();
 }
 
     @Override
