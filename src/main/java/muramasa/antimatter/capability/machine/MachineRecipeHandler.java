@@ -145,7 +145,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         MachineState state;
         switch (tile.getMachineState()) {
             case ACTIVE:
-                tile.setMachineState(tickRecipe());
+                state = tickRecipe();
+                tile.setMachineState(state);
+                if (state != ACTIVE) {
+                    tile.onRecipeStop();
+                }
                 break;
             case IDLE:
                 break;
@@ -157,6 +161,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 state = tickRecipe();
                 if (state != ACTIVE) {
                     tile.setMachineState(IDLE);
+                    tile.onRecipeStop();
                 } else {
                     tile.setMachineState(state);
                 }
@@ -171,7 +176,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     protected int getOverclock() {
         int oc = 0;
-        if (this.tile.getPowerLevel().getVoltage() > activeRecipe.getPower()) {
+        if (activeRecipe.getPower() > 0 && this.tile.getPowerLevel().getVoltage() > activeRecipe.getPower()) {
             long voltage = this.activeRecipe.getPower();
             int tier = 0;
             //Dont use utils, because we allow overclocking from ulv. (If we don't just change this).
@@ -197,12 +202,15 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     //called when a new recipe is found, to process overclocking
     protected void activateRecipe(boolean reset) {
         //if (canOverclock)
-        if (reset) currentProgress = 0;
         consumedResources = false;
         maxProgress = activeRecipe.getDuration();
         overclock = getOverclock();
         maxProgress = Math.max(1, maxProgress >>= overclock);
         tickTimer = 0;
+        if (reset) {
+            currentProgress = 0;
+            tile.onRecipeActivated(activeRecipe);
+        }
     }
 
     protected void addOutputs() {

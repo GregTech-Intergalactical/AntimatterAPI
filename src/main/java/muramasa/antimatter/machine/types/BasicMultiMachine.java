@@ -21,9 +21,9 @@ import static muramasa.antimatter.machine.MachineFlag.CONFIGURABLE;
 import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.MULTI;
 
-public class BasicMultiMachine extends Machine<BasicMultiMachine> {
+public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T> {
     @Override
-    protected Block getBlock(Machine<BasicMultiMachine> type, Tier tier) {
+    protected Block getBlock(Machine<T> type, Tier tier) {
         return new BlockMultiMachine(type, tier);
     }
 

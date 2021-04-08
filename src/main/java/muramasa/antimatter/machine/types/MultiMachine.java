@@ -18,7 +18,7 @@ import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class MultiMachine extends BasicMultiMachine {
+public class MultiMachine extends BasicMultiMachine<MultiMachine> {
 
     public MultiMachine(String domain, String name, Object... data) {
         super(domain, name, data);

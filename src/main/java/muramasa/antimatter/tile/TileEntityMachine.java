@@ -117,6 +117,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             this.recipeHandler.ifPresent(MachineRecipeHandler::init);
         }
     }
+
+    /** RECIPE UTILITY METHODS **/
+
     //Called before a recipe ticks.
     public void onRecipePreTick() {
         //NOOP
@@ -127,7 +130,17 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         //NOOP
     }
 
-    //Called after a recipe ticks.
+    //Called whenever a recipe is stopped.
+    public void onRecipeStop() {
+
+    }
+
+    //Called whenever a recipe is activated, might be the same as before (e.g. no new recipe).
+    public void onRecipeActivated(Recipe r) {
+
+    }
+
+    //Called in order to validate a found recipe.
     public boolean onRecipeFound(Recipe r) {
         return true;
     }
