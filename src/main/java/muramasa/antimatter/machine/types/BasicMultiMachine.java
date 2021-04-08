@@ -36,6 +36,7 @@ public class BasicMultiMachine extends Machine<BasicMultiMachine> {
         super(domain, name, getData(domain,data));
         setTile(() -> new TileEntityBasicMultiMachine(this));
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
+        setGUI(Data.BASIC_MENU_HANDLER);
     }
 
     //TODO: How else to do this?
