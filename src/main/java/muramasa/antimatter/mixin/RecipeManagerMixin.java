@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * KubeJS has priority 1100, let's set it higher to ensure recipes are loaded.
  */
-@Mixin(value = RecipeManager.class, priority = 2000)
+@Mixin(value = RecipeManager.class)
 public class RecipeManagerMixin {
     /* Inject recipes into recipe map. */
     @Inject(/*remap = false,*/method = "apply(Ljava/util/Map;Lnet/minecraft/resources/IResourceManager;Lnet/minecraft/profiler/IProfiler;)V", at = @At("HEAD"))

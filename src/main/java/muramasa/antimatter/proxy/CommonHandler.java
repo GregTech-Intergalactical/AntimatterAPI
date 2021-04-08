@@ -23,25 +23,6 @@ public class CommonHandler implements IProxyHandler {
     public static void setup(FMLCommonSetupEvent e) {
         AntimatterCaps.register();
         AntimatterWorldGenerator.setup();
-        MinecraftForge.EVENT_BUS.addListener(CommonHandler::resourceReload);
-    }
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void resourceReload(AddReloadListenerEvent event) {
-        event.addListener(new ReloadListener<Void>() {
-            @Override
-            protected Void prepare(IResourceManager resourceManagerIn, IProfiler profilerIn) {
-                return null;
-            }
-            //The reason for applying the event here and not at the end of recipe manager
-            //is that it will run after both KubeJS and CraftTweaker. KubeJS runs its recipe system
-            //at the end of RecipeManager.apply but CraftTweaker applies it as a resourcereload with priority
-            //low. Hence, lowest! To ensure proxies are loaded fine.
-            @Override
-            protected void apply(Void objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
-                AntimatterAPI.onRecipeCompile(event.getDataPackRegistries().getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
-            }
-        });
-
     }
 
     @Override
