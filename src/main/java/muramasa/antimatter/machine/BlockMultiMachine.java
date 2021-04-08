@@ -4,6 +4,7 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.MaterialTool;
 import net.minecraft.block.Block;
@@ -27,7 +28,7 @@ public class BlockMultiMachine extends BlockMachine {
     @Override
     protected ActionResultType onBlockActivatedBoth(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (player.getHeldItem(hand).getItem() instanceof MaterialTool && ((MaterialTool) player.getHeldItem(hand).getItem()).getType() == HAMMER) {
-            TileEntityMultiMachine machine = (TileEntityMultiMachine) world.getTileEntity(pos);
+            TileEntityBasicMultiMachine machine = (TileEntityBasicMultiMachine) world.getTileEntity(pos);
             if (machine != null) {
                 if (!machine.isStructureValid()) {
                     machine.checkStructure();

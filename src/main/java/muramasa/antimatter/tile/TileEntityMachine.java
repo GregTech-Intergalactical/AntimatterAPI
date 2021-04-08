@@ -30,6 +30,7 @@ import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
@@ -116,6 +117,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             this.recipeHandler.ifPresent(MachineRecipeHandler::init);
         }
     }
+
+    /** RECIPE UTILITY METHODS **/
+
     //Called before a recipe ticks.
     public void onRecipePreTick() {
         //NOOP
@@ -126,7 +130,17 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         //NOOP
     }
 
-    //Called after a recipe ticks.
+    //Called whenever a recipe is stopped.
+    public void onRecipeStop() {
+
+    }
+
+    //Called whenever a recipe is activated, might be the same as before (e.g. no new recipe).
+    public void onRecipeActivated(Recipe r) {
+
+    }
+
+    //Called in order to validate a found recipe.
     public boolean onRecipeFound(Recipe r) {
         return true;
     }
@@ -301,7 +315,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
         BlockPos cPos = StructureCache.get(this.getWorld(), pos);
         if (cPos != null) {
-            TileEntityMultiMachine mTile = (TileEntityMultiMachine) world.getTileEntity(cPos);
+            TileEntityBasicMultiMachine mTile = (TileEntityBasicMultiMachine) world.getTileEntity(cPos);
             builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,a -> {
                 Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
                 if (tex.length == 1) return tex[0];

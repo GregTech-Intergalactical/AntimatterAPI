@@ -3,6 +3,7 @@ package muramasa.antimatter.structure;
 import it.unimi.dsi.fastutil.longs.*;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
@@ -66,7 +67,7 @@ public class StructureCache {
 
     private static void invalidateController(World world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).invalidateStructure();
+        if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).invalidateStructure();
         remove(world, pos);
     }
 
