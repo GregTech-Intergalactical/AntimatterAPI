@@ -9,7 +9,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Optional;
+import java.util.Collection;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -31,5 +31,5 @@ public interface IComponentHandler {
 
     boolean hasLinkedController();
 
-    Optional<TileEntityMultiMachine> getFirstController();
+    Collection<TileEntityMultiMachine> getControllers();
 }

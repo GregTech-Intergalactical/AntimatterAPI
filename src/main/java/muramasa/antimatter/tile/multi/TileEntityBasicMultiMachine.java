@@ -1,8 +1,10 @@
 package muramasa.antimatter.tile.multi;
 
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
+import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -20,12 +22,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
 public class TileEntityBasicMultiMachine extends TileEntityMachine implements IComponent {
 
-    protected Optional<StructureResult> result = Optional.empty();
+    protected StructureResult result = null;
 
     protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
@@ -39,9 +40,18 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
         invalidateStructure();
     }
 
+    /**
+     * How many multiblocks you can share components with.
+     * @return how many.
+     */
+    public int maxShares() {
+        return 1;//Integer.MAX_VALUE;
+    }
+
     @Override
     public void onFirstTick() {
-        if (!isStructureValid()) {
+        //if INVALID_STRUCTURE was stored to disk don't bother rechecking on first tick.
+        if (!isStructureValid() && !(getMachineState() == MachineState.INVALID_STRUCTURE)) {
             checkStructure();
         }
         super.onFirstTick();
@@ -52,29 +62,30 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            this.result = Optional.of(result);
-            StructureCache.add(world, pos, result.positions);
-            if (isServerSide()) {
-                if (onStructureFormed()) {
-                    afterStructureFormed();
-                    setMachineState(MachineState.IDLE);
-                    System.out.println("[Structure Debug] Valid Structure");
-                    if (hadFirstTick()) this.recipeHandler.ifPresent(t -> {
-                        if (t.hasRecipe())
-                            setMachineState(MachineState.NO_POWER);
-                        else {
-                            t.checkRecipe();
-                        }
-                    });
+            if (StructureCache.add(world, pos, result.positions, maxShares())) {
+                this.result = result;
+                if (isServerSide()) {
+                    if (onStructureFormed()) {
+                        afterStructureFormed();
+                        setMachineState(MachineState.IDLE);
+                        System.out.println("[Structure Debug] Valid Structure");
+                        if (hadFirstTick()) this.recipeHandler.ifPresent(t -> {
+                            if (t.hasRecipe())
+                                setMachineState(MachineState.NO_POWER);
+                            else {
+                                t.checkRecipe();
+                            }
+                        });
+                        sidedSync(true);
+                        return true;
+                    }
+                } else {
+                    this.result.components.forEach((k, v) -> v.forEach(c -> {
+                        Utils.markTileForRenderUpdate(c.getTile());
+                    }));
                     sidedSync(true);
                     return true;
                 }
-            } else {
-                this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
-                    Utils.markTileForRenderUpdate(c.getTile());
-                })));
-                sidedSync(true);
-                return true;
             }
         } else {
             invalidateStructure();
@@ -93,24 +104,28 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
 
     public void invalidateStructure() {
         if (removed) return;
-        if (!result.isPresent()) return;
+        if (result == null) return;
         StructureCache.remove(this.getWorld(), getPos());
         if (isServerSide()) {
             onStructureInvalidated();
-            result = Optional.empty();
+            result = null;
             resetMachine();
+            //Hard mode, remove recipe progress.
+            if (AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()) {
+                recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
+            }
         } else {
-            this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+            this.result.components.forEach((k, v) -> v.forEach(c -> {
                 Utils.markTileForRenderUpdate(c.getTile());
-            })));
-            result = Optional.empty();
+            }));
+            result = null;
         }
     }
 
     @Override
     public void onServerUpdate() {
         super.onServerUpdate();
-        if (!result.isPresent() && world != null && world.getGameTime() % 200 == 0) {
+        if (result == null && world != null && world.getGameTime() % 200 == 0) {
             //Uncomment to periodically check structure.
             // checkStructure();
         }
@@ -122,16 +137,16 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
     }
 
     public List<IComponentHandler> getComponents(String id) {
-        if (result.isPresent()) {
-            List<IComponentHandler> list = result.get().components.get(id);
+        if (result != null) {
+            List<IComponentHandler> list = result.components.get(id);
             return list != null ? list : Collections.emptyList();
         }
         return Collections.emptyList();
     }
 
     public List<BlockState> getStates(String id) {
-        if (result.isPresent()) {
-            List<BlockState> list = result.get().states.get(id);
+        if (result != null) {
+            List<BlockState> list = result.states.get(id);
             return list != null ? list : Collections.emptyList();
         }
         return Collections.emptyList();
@@ -156,7 +171,9 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
 
     @Override
     public MachineState getDefaultMachineState() {
-        return MachineState.INVALID_STRUCTURE;
+        //Has to be nullchecked because it can be called in a constructor.
+        if (result == null) return MachineState.INVALID_STRUCTURE;
+        return MachineState.IDLE;
     }
 
     @Override

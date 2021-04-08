@@ -18,7 +18,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
+import java.util.Collections;
 
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -60,7 +60,7 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
         if (isClientSide()) return;
         super.onMachineEvent(event,data);
         if (event instanceof ContentEvent) {
-            componentHandler.map(ComponentHandler::getFirstController).orElse(Optional.empty()).ifPresent(controller -> {
+            componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList()).forEach(controller -> {
                 switch ((ContentEvent) event) {
                     case ITEM_INPUT_CHANGED:
                     case ITEM_OUTPUT_CHANGED:
@@ -72,12 +72,12 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
                 }
             });
         } else if (event instanceof MachineEvent) {
-            componentHandler.map(ComponentHandler::getFirstController).ifPresent(controller -> {
+            componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList()).forEach(controller -> {
                 switch ((MachineEvent)event) {
                     //Forward energy event to controller.
                     case ENERGY_DRAINED:
                     case ENERGY_INPUTTED:
-                        controller.ifPresent(c -> c.onMachineEvent(event, data));
+                        controller.onMachineEvent(event, data);
                         break;
                 }
             });

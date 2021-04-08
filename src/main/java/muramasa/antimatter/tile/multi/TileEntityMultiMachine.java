@@ -42,9 +42,9 @@ public class TileEntityMultiMachine extends TileEntityBasicMultiMachine {
 
     @Override
     public void afterStructureFormed(){
-        this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+        this.result.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureFormed(this);
-        })));
+        }));
         //Handlers.
         this.itemHandler.ifPresent(handle -> {
             ((MultiMachineItemHandler)handle).onStructureBuild();
@@ -58,9 +58,9 @@ public class TileEntityMultiMachine extends TileEntityBasicMultiMachine {
     }
 
     public void onStructureInvalidated() {
-        result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+        this.result.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureInvalidated(this);
-        })));
+        }));
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
         this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler)handle).invalidate());

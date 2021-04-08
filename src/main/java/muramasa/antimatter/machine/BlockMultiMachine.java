@@ -30,8 +30,7 @@ public class BlockMultiMachine extends BlockMachine {
             TileEntityBasicMultiMachine machine = (TileEntityBasicMultiMachine) world.getTileEntity(pos);
             if (machine != null) {
                 if (!machine.isStructureValid()) {
-                    machine.checkStructure();
-                    return ActionResultType.CONSUME;
+                    return machine.checkStructure() ? ActionResultType.SUCCESS : ActionResultType.CONSUME;
                 }
             }
         }

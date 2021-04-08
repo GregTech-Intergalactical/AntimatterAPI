@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static muramasa.antimatter.machine.MachineState.*;
@@ -82,8 +83,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     private boolean tickingRecipe = false;
 
     //Items used to find recipe
-    protected List<ItemStack> itemInputs = new ObjectArrayList<>();
-    protected List<FluidStack> fluidInputs = new ObjectArrayList<>();
+    protected List<ItemStack> itemInputs = Collections.emptyList();
+    protected List<FluidStack> fluidInputs = Collections.emptyList();
 
     public MachineRecipeHandler(T tile) {
         this.tile = tile;
@@ -153,6 +154,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 break;
             case IDLE:
                 break;
+            case INVALID_STRUCTURE:
+                break;
             case POWER_LOSS:
                 break;
             case OUTPUT_FULL:
@@ -160,7 +163,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             default:
                 state = tickRecipe();
                 if (state != ACTIVE) {
-                    tile.setMachineState(IDLE);
+                    tile.setMachineState(tile.getDefaultMachineState());
                     tile.onRecipeStop();
                 } else {
                     tile.setMachineState(state);
@@ -247,7 +250,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
         if (!canRecipeContinue()) {
             this.resetRecipe();
-            return IDLE;
+            return tile.getDefaultMachineState();
         } else {
             activateRecipe(true);
             return ACTIVE;
@@ -267,10 +270,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         else {
             tile.onRecipePreTick();
             if (!consumeResourceForRecipe(false)) {
-                if ((currentProgress == 0 && tile.getMachineState() == IDLE) || generator) {
+                if ((currentProgress == 0 && tile.getMachineState() == tile.getDefaultMachineState()) || generator) {
                     //Cannot start a recipe :(
                     resetRecipe();
-                    return IDLE;
+                    return tile.getDefaultMachineState();
                 } else {
                     //TODO: Hard-mode here?
                     recipeFailure();
@@ -343,7 +346,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 }
                 if (!consumeResourceForRecipe(true) || !canOutput() || !canRecipeContinue() || (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) || !tile.onRecipeFound(activeRecipe)) {
                     activeRecipe = null;
-                    tile.setMachineState(IDLE);
+                    tile.setMachineState(tile.getDefaultMachineState());
                     return;
                 }
                 activateRecipe(true);
@@ -423,6 +426,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         this.consumedResources = false;
         this.currentProgress = 0;
         this.overclock = 0;
+        this.maxProgress = 0;
+        this.itemInputs = Collections.emptyList();
+        this.fluidInputs = Collections.emptyList();
     }
 
     @Override
@@ -447,7 +453,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         } else if (event instanceof MachineEvent) {
             switch ((MachineEvent) event) {
                 case ENERGY_INPUTTED:
-                    if (tile.getMachineState() == IDLE && activeRecipe != null) {
+                    if (tile.getMachineState() == tile.getDefaultMachineState() && activeRecipe != null) {
                         tile.setMachineState(NO_POWER);
                     }
                     break;

@@ -8,12 +8,10 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
-import java.util.Optional;
+import java.util.Collection;
 import java.util.Set;
 
 public class ComponentHandler implements IComponentHandler {
@@ -75,13 +73,7 @@ public class ComponentHandler implements IComponentHandler {
 
     @Nonnull
     @Override
-    public Optional<TileEntityMultiMachine> getFirstController() {
-        if (this.controllers.size() != 0) return Optional.of(this.controllers.iterator().next());
-        BlockPos controllerPos = StructureCache.get(getTile().getWorld(), getTile().getPos());
-        if (controllerPos != null) {
-            TileEntity tile = getTile().getWorld().getTileEntity(controllerPos);
-            if (tile instanceof TileEntityMultiMachine) return Optional.of((TileEntityMultiMachine) tile);
-        }
-        return Optional.empty();
+    public Collection<TileEntityMultiMachine> getControllers() {
+        return controllers;
     }
 }
