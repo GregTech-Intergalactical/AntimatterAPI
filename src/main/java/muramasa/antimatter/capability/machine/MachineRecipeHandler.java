@@ -449,8 +449,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 case ENERGY_INPUTTED:
                     if (tile.getMachineState() == IDLE && activeRecipe != null) {
                         tile.setMachineState(NO_POWER);
-                    } else {
-                        this.tickTimer += 20;
                     }
                     break;
                 case ENERGY_DRAINED:

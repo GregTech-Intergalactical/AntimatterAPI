@@ -232,6 +232,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         boolean isEmpty = coverHandler.map(ch -> ch.get(side).isEmpty()).orElse(true);
         if (isEmpty) {
             getWorld().setBlockState(getPos(), getBlockState().with(BlockStateProperties.HORIZONTAL_FACING, side));
+            refreshCaps();
             return true;
         }
         return false;
@@ -344,9 +345,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public void refreshCaps() {
-        energyHandler.ifPresent(EnergyHandler::refreshNet);
-        fluidHandler.ifPresent(MachineFluidHandler::refreshNet);
-        itemHandler.ifPresent(MachineItemHandler::refreshNet);
+        if (isServerSide()) {
+            energyHandler.ifPresent(EnergyHandler::refreshNet);
+            fluidHandler.ifPresent(MachineFluidHandler::refreshNet);
+            itemHandler.ifPresent(MachineItemHandler::refreshNet);
+        }
     }
 
     public <T> boolean blocksCapability(@Nonnull Capability<T> cap, Direction side) {

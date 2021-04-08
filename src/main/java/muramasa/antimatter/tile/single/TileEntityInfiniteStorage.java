@@ -12,15 +12,6 @@ import java.util.List;
 
 public class TileEntityInfiniteStorage extends TileEntityMachine {
 
-    @Override
-    public boolean setFacing(Direction side) {
-        boolean ok = super.setFacing(side);
-        if (ok) {
-            energyHandler.ifPresent(IRefreshable::refreshNet);
-        }
-        return ok;
-    }
-
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
         this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityInfiniteStorage>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
