@@ -32,12 +32,10 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMultiMachine extends TileEntityBasicMultiMachine implements IComponent {
+public class TileEntityMultiMachine extends TileEntityBasicMultiMachine {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
-
-    protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type) {
@@ -212,19 +210,5 @@ public class TileEntityMultiMachine extends TileEntityBasicMultiMachine implemen
     public int getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents("hatch_energy");
         return hatches.size() >= 1 ? hatches.stream().mapToInt(t -> t.getEnergyHandler().map(eh -> eh.getInputAmperage()*eh.getInputVoltage()).orElse(0)).sum() : Ref.V[0];
-    }
-
-    @Override
-    public LazyOptional<ControllerComponentHandler> getComponentHandler() {
-        return componentHandler;
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) {
-            return componentHandler.cast();
-        }
-        return super.getCapability(cap, side);
     }
 }

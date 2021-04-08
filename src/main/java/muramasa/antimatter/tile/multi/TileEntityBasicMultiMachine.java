@@ -1,12 +1,15 @@
 package muramasa.antimatter.tile.multi;
 
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
 import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureResult;
@@ -14,15 +17,20 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
-public class TileEntityBasicMultiMachine extends TileEntityMachine {
+public class TileEntityBasicMultiMachine extends TileEntityMachine implements IComponent {
 
     protected Optional<StructureResult> result = Optional.empty();
+
+    protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
     public TileEntityBasicMultiMachine(Machine<?> type) {
         super(type);
@@ -152,5 +160,19 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine {
     @Override
     public MachineState getDefaultMachineState() {
         return MachineState.INVALID_STRUCTURE;
+    }
+
+    @Override
+    public LazyOptional<ControllerComponentHandler> getComponentHandler() {
+        return componentHandler;
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
+        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) {
+            return componentHandler.cast();
+        }
+        return super.getCapability(cap, side);
     }
 }
