@@ -2,33 +2,23 @@ package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.machine.*;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
+import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.structure.IComponent;
-import muramasa.antimatter.structure.Structure;
-import muramasa.antimatter.structure.StructureCache;
-import muramasa.antimatter.structure.StructureResult;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 

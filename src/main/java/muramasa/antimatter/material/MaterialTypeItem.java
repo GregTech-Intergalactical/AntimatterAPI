@@ -2,14 +2,10 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
 import net.minecraft.util.LazyValue;
-
-import java.util.Arrays;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
 
@@ -32,31 +28,21 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public boolean allowItemGen(Material material) {
-        return !OVERRIDES.contains(material) && allowGen(material) && !blockType && AntimatterAPI.getReplacement(this, material) == null;
+        return !OVERRIDES.contains(material) && allowGen(material) && !blockType;
     }
 
     public Item get(Material material) {
-        RecipeIngredient replacement = AntimatterAPI.getReplacement(this, material);
+        Item replacement = AntimatterAPI.getReplacement(this, material);
         if (replacement == null) {
             if (!allowItemGen(material))
                 Utils.onInvalidData(String.join("", "GET ERROR - DOES NOT GENERATE: T(", id, ") M(", material.getId(), ")"));
             else return AntimatterAPI.get(MaterialItem.class, id + "_" + material.getId());
         }
-        return null;
+        return replacement;
     }
 
     public ItemSupplier getSupplier() {
         return itemSupplier;
-    }
-
-
-    //TODO THIS DOESNT WORK
-    /**
-     * Forces these tags to not generate, assuming they have a replacement.
-     * @param tags
-     */
-    public void forceOverride(Material... tags) {
-        OVERRIDES.addAll(Arrays.asList(tags));
     }
 
     public ItemStack get(Material material, int count) {
@@ -67,17 +53,5 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     public RecipeIngredient getIngredient(Material material, int count) {
         if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
         return RecipeIngredient.of(new LazyValue<>(() -> new ItemStack(get(material), count)), count);
-    }
-
-    public ITag.INamedTag<Item> getMaterialTag(Material m) {
-        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
-    }
-
-    public RecipeIngredient getMaterialIngredient(Material m, int count) {
-        return RecipeIngredient.of(getMaterialTag(m),count);
-    }
-
-    public RecipeIngredient getMaterialIngredient(Material m) {
-        return getMaterialIngredient(m,1);
     }
 }

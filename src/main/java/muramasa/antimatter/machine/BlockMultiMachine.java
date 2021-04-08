@@ -5,7 +5,6 @@ import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tool.MaterialTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

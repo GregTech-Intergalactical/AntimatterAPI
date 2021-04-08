@@ -34,6 +34,8 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
@@ -45,7 +47,6 @@ import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
 
@@ -148,6 +149,12 @@ public class Data {
             return new MaterialTypeBlock.Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
         });
         ORE.set((m, s) -> {
+            if (m != null) {
+                Item item = AntimatterAPI.getReplacement(ORE,m);
+                if (item instanceof BlockItem) {
+                    return new MaterialTypeBlock.Container(((BlockItem)item).getBlock().getDefaultState());
+                }
+            }
             if (m == null || s == null || !ORE.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ORE, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, ORE.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
@@ -164,6 +171,12 @@ public class Data {
             return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         BLOCK.set(m -> {
+            if (m != null) {
+                Item item = AntimatterAPI.getReplacement(BLOCK,m);
+                if (item instanceof BlockItem) {
+                    return new MaterialTypeBlock.Container(((BlockItem)item).getBlock().getDefaultState());
+                }
+            }
             if (m == null || !BLOCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(BLOCK, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, BLOCK.getId() + "_" + m.getId());
             return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
@@ -289,6 +302,7 @@ public class Data {
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
         if (side == Dist.CLIENT) clientBehaviours();
+
     }
 
     private static void clientBehaviours() {

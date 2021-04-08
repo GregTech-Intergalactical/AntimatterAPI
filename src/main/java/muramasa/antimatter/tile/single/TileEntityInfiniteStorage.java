@@ -3,9 +3,7 @@ package muramasa.antimatter.tile.single;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.api.IRefreshable;
 import tesseract.util.Dir;
 
 import java.util.List;

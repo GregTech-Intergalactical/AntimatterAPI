@@ -8,7 +8,6 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -17,9 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static muramasa.antimatter.machine.MachineFlag.CONFIGURABLE;
-import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
-import static muramasa.antimatter.machine.MachineFlag.MULTI;
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T> {
     @Override

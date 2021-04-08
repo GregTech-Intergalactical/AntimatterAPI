@@ -16,7 +16,6 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.*;
@@ -61,7 +60,7 @@ public final class AntimatterAPI {
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
 
 
-    private static final Int2ObjectMap<Item> REPLACEMENTS = new Int2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<ResourceLocation, Object> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
     private static boolean replacementsFound = false;
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
@@ -238,7 +237,8 @@ public final class AntimatterAPI {
         return getRegistrar(id).map(IAntimatterRegistrar::isEnabled).orElse(false);
     }
 
-    public static RecipeIngredient getReplacement(MaterialType<?> type, Material material, String... namespaces) {
+    //TODO: Allow other than item.
+    public static Item getReplacement(MaterialType<?> type, Material material, String... namespaces) {
        ITag.INamedTag<Item> tag = TagUtils.getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
        return getReplacement(null, tag, namespaces);
     }
@@ -251,19 +251,30 @@ public final class AntimatterAPI {
      * @param namespaces    Namespaces of the tags to check against, by default this only checks against 'minecraft' if no namespaces are defined
      * @return originalItem if there's nothing found, null if there is no originalItem, or an replacement
      */
-    public static RecipeIngredient getReplacement(@Nullable Item originalItem, ITag.INamedTag<Item> tag, String... namespaces) {
-        //TODO: This is broken for now.
+    public static <T> T getReplacement(@Nullable T originalItem, ITag.INamedTag<T> tag, String... namespaces) {
         if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
-        if (true) return null;
-        if (REPLACEMENTS.containsKey(tag.getName().getPath().hashCode())) return RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
-        if (replacementsFound) return RecipeIngredient.of(originalItem,1);
-        Set<String> checks = Sets.newHashSet(namespaces);
-        if (checks.isEmpty()) checks.add("minecraft");
-        return RecipeIngredient.of(() -> Objects.requireNonNull(TagUtils.nc(tag).getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
+        if (REPLACEMENTS.containsKey(tag.getName()))  return (T) REPLACEMENTS.get(tag.getName());//return RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
+        return originalItem;
+        //if (replacementsFound) return originalItem;
+        //Set<String> checks = Sets.newHashSet(namespaces);
+        //if (checks.isEmpty()) checks.add("minecraft");
+        /*Objects.requireNonNull(TagUtils.nc(tag).getAllElements().stream().filter(i -> checks.contains(Objects.requireNonNull(i.getRegistryName()).getNamespace()))
                 .findAny().map(i -> {
-                    REPLACEMENTS.put(tag.getName().getPath().hashCode(), i);
+                    REPLACEMENTS.put(tag.getName(), i);
                     return i;
-                }).orElse(originalItem)), 1);
+                }).orElse(originalItem));*/
+    }
+    //TODO
+    public static void calculateReplacements() {
+
+    }
+
+    public static <T> void addReplacement(ResourceLocation tag, T obj) {
+        REPLACEMENTS.put(tag, obj);
+    }
+
+    public static <T> void addReplacement(ITag.INamedTag<Item> tag, T obj) {
+        REPLACEMENTS.put(tag.getName(), obj);
     }
 
     /**

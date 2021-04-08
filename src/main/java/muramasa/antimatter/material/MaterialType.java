@@ -2,10 +2,13 @@ package muramasa.antimatter.material;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
 
 import java.util.LinkedHashSet;
@@ -34,6 +37,22 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     public MaterialType<T> nonGen() {
         generating = false;
         return this;
+    }
+
+    /**
+     * Forces these tags to not generate, assuming they have a replacement.
+     */
+    public void forceOverride(Material mat, Item replacement) {
+        OVERRIDES.add(mat);
+        AntimatterAPI.addReplacement(getMaterialTag(mat), replacement);
+    }
+
+    public ITag.INamedTag<Item> getMaterialTag(Material m) {
+        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+    }
+
+    public RecipeIngredient getMaterialIngredient(Material m, int count) {
+        return RecipeIngredient.of(getMaterialTag(m),count);
     }
 
     public MaterialType<T> blockType() {
@@ -78,7 +97,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public boolean allowGen(Material material) {
-        return generating && materials.contains(material);
+        return generating && materials.contains(material) && AntimatterAPI.getReplacement(this, material) == null;
     }
 
     @Override

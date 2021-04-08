@@ -4,14 +4,12 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
 
 import java.util.Arrays;
 
@@ -27,16 +25,8 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
         return new Container(Blocks.AIR.getDefaultState());
     }
 
-    public ITag.INamedTag<Item> getMaterialTag(Material m) {
-        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
-    }
-
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
         return RecipeIngredient.of(getMaterialTag(m),count);
-    }
-
-    public RecipeIngredient getMaterialIngredient(Material m) {
-        return getMaterialIngredient(m,1);
     }
 
     public interface IBlockGetter {
