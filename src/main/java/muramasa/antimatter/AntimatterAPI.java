@@ -308,7 +308,7 @@ public final class AntimatterAPI {
         Antimatter.LOGGER.info("Time to compile GT recipes: (ms) " + (time)/(1000*1000));
         int size = AntimatterAPI.all(RecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
         Antimatter.LOGGER.info("No. of GT recipes: " + size);
-        Antimatter.LOGGER.info("Average loading time / recipe: (µs) " + (time/size)/1000);
+        Antimatter.LOGGER.info("Average loading time / recipe: (µs) " + (size > 0 ? time/size : time)/1000);
     }
 
     /** JEI Registry Section **/
