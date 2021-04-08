@@ -32,7 +32,7 @@ import java.util.Optional;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMultiMachine extends TileEntityMachine implements IComponent {
+public class TileEntityMultiMachine extends TileEntityBasicMultiMachine implements IComponent {
 
     protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
@@ -60,133 +60,29 @@ public class TileEntityMultiMachine extends TileEntityMachine implements ICompon
         return energyHandler.map(t -> ((MultiMachineEnergyHandler)t).getAccumulatedPower()).orElse(super.getPowerLevel());
     }
 
-    @Override
-    public void onFirstTick() {
-        if (!isStructureValid()) {
-            checkStructure();
-        }
-        super.onFirstTick();
-    }
-
-    public boolean checkStructure() {
-        Structure structure = getMachineType().getStructure(getMachineTier());
-        if (structure == null) return false;
-        StructureResult result = structure.evaluate(this);
-        if (result.evaluate()) {
-            this.result = Optional.of(result);
-            StructureCache.add(world, pos, result.positions);
-            if (isServerSide()) {
-                if (onStructureFormed()) {
-                    this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
-                        c.onStructureFormed(this);
-                    })));
-                    //Handlers.
-                    this.itemHandler.ifPresent(handle -> {
-                        ((MultiMachineItemHandler)handle).onStructureBuild();
-                    });
-                    this.energyHandler.ifPresent(handle -> {
-                        ((MultiMachineEnergyHandler)handle).onStructureBuild();
-                    });
-                    this.fluidHandler.ifPresent(handle -> {
-                        ((MultiMachineFluidHandler)handle).onStructureBuild();
-                    });
-                    setMachineState(MachineState.IDLE);
-                    System.out.println("[Structure Debug] Valid Structure");
-                    if (hadFirstTick()) this.recipeHandler.ifPresent(t -> {
-                        if (t.hasRecipe())
-                            setMachineState(MachineState.NO_POWER);
-                        else {
-                            t.checkRecipe();
-                        }
-                    });
-                    sidedSync(true);
-                    return true;
-                }
-            } else {
-                this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
-                    Utils.markTileForRenderUpdate(c.getTile());
-                })));
-                sidedSync(true);
-                return true;
-            }
-        } else {
-            invalidateStructure();
-        }
-        return false;
-    }
-
-    @Override
-    public boolean setFacing(Direction side) {
-        boolean ok = super.setFacing(side);
-        if (ok) {
-            checkStructure();
-        }
-        return ok;
-    }
-
-    public void invalidateStructure() {
-        if (removed) return;
-        if (!result.isPresent()) return;
-        StructureCache.remove(this.getWorld(), getPos());
-        if (isServerSide()) {
-            result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
-                c.onStructureInvalidated(this);
-            })));
-            this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
-            this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
-            this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler)handle).invalidate());
-            result = Optional.empty();
-            resetMachine();
-            onStructureInvalidated();
-        } else {
-            this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
-                Utils.markTileForRenderUpdate(c.getTile());
-            })));
-            result = Optional.empty();
-        }
-    }
-
-    @Override
-    public void onServerUpdate() {
-        super.onServerUpdate();
-        if (!result.isPresent() && world != null && world.getGameTime() % 200 == 0) {
-            //Uncomment to periodically check structure.
-           // checkStructure();
-        }
-    }
-
-    /** Returns a list of Components **/
-    public List<IComponentHandler> getComponents(IAntimatterObject object) {
-        return getComponents(object.getId());
-    }
-
-    public List<IComponentHandler> getComponents(String id) {
-        if (result.isPresent()) {
-            List<IComponentHandler> list = result.get().components.get(id);
-            return list != null ? list : Collections.emptyList();
-        }
-        return Collections.emptyList();
-    }
-
-    public List<BlockState> getStates(String id) {
-        if (result.isPresent()) {
-            List<BlockState> list = result.get().states.get(id);
-            return list != null ? list : Collections.emptyList();
-        }
-        return Collections.emptyList();
-    }
-
-    public boolean isStructureValid() {
-        return StructureCache.has(world, pos);
-    }
-
-    /** Events **/
-    public boolean onStructureFormed() {
-        return true;
+    public void afterStructurePoint(){
+        this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+            c.onStructureFormed(this);
+        })));
+        //Handlers.
+        this.itemHandler.ifPresent(handle -> {
+            ((MultiMachineItemHandler)handle).onStructureBuild();
+        });
+        this.energyHandler.ifPresent(handle -> {
+            ((MultiMachineEnergyHandler)handle).onStructureBuild();
+        });
+        this.fluidHandler.ifPresent(handle -> {
+            ((MultiMachineFluidHandler)handle).onStructureBuild();
+        });
     }
 
     public void onStructureInvalidated() {
-        //NOOP
+        result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
+            c.onStructureInvalidated(this);
+        })));
+        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
+        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
+        this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler)handle).invalidate());
     }
 
     @Override

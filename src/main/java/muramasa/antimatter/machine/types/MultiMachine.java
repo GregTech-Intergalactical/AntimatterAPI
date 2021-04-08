@@ -18,37 +18,11 @@ import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class MultiMachine extends Machine<MultiMachine> {
-    @Override
-    protected Block getBlock(Machine<MultiMachine> type, Tier tier) {
-        return new BlockMultiMachine(type, tier);
-    }
-
-    @Override
-    public Item getItem(Tier tier) {
-        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMultiMachine.class,this.getId() + "_" + tier.getId()));
-    }
+public class MultiMachine extends BasicMultiMachine {
 
     public MultiMachine(String domain, String name, Object... data) {
-        super(domain, name, getData(domain,data));
+        super(domain, name, data);
         setTile(() -> new TileEntityMultiMachine(this));
-        addFlags(MULTI, CONFIGURABLE, COVERABLE);
         setGUI(Data.MULTI_MENU_HANDLER);
-    }
-
-    //TODO: How else to do this?
-    protected static Object[] getData(String domain, Object[] data) {
-        ArrayList<Object> arrayList = new ArrayList<>(Arrays.asList(data));
-        //Register a multi texture handler.
-        arrayList.add((ITextureHandler) (type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
-        return arrayList.toArray(new Object[0]);
-    }
-
-    @Override
-    public List<Texture> getTextures() {
-        List<Texture> textures = super.getTextures();
-        getTiers().forEach(t -> textures.addAll(Arrays.asList(getBaseTexture(t))));
-        textures.addAll(Arrays.asList(getOverlayTextures(MachineState.INVALID_STRUCTURE)));
-        return textures;
     }
 }
