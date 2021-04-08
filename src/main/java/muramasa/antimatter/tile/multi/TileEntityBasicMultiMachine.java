@@ -148,4 +148,9 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine {
     public void onStructureInvalidated() {
         //NOOP
     }
+
+    @Override
+    public MachineState getDefaultMachineState() {
+        return MachineState.INVALID_STRUCTURE;
+    }
 }

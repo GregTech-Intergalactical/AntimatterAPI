@@ -39,8 +39,6 @@ public class TileEntityMultiMachine extends TileEntityBasicMultiMachine implemen
 
     protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
-    protected Optional<StructureResult> result = Optional.empty();
-
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
@@ -50,17 +48,12 @@ public class TileEntityMultiMachine extends TileEntityBasicMultiMachine implemen
     }
 
     @Override
-    public void onRemove() {
-        super.onRemove();
-        invalidateStructure();
-    }
-
-    @Override
     public Tier getPowerLevel() {
         return energyHandler.map(t -> ((MultiMachineEnergyHandler)t).getAccumulatedPower()).orElse(super.getPowerLevel());
     }
 
-    public void afterStructurePoint(){
+    @Override
+    public void afterStructureFormed(){
         this.result.ifPresent(r -> r.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureFormed(this);
         })));
@@ -224,11 +217,6 @@ public class TileEntityMultiMachine extends TileEntityBasicMultiMachine implemen
     @Override
     public LazyOptional<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
-    }
-
-    @Override
-    public MachineState getDefaultMachineState() {
-        return MachineState.INVALID_STRUCTURE;
     }
 
     @Nonnull
