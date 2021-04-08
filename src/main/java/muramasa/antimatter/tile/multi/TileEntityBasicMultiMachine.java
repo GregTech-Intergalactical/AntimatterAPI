@@ -45,12 +45,14 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
      * @return how many.
      */
     public int maxShares() {
-        return 1;//Integer.MAX_VALUE;
+        return Integer.MAX_VALUE;
     }
 
     @Override
     public void onFirstTick() {
         //if INVALID_STRUCTURE was stored to disk don't bother rechecking on first tick.
+        //This is not only behavioural but if INVALID_STRUCTURE are checked then maxShares
+        //might misbehave.
         if (!isStructureValid() && !(getMachineState() == MachineState.INVALID_STRUCTURE)) {
             checkStructure();
         }
