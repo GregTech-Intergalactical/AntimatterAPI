@@ -126,11 +126,11 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             else add(o, String.join("", "Small ",getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
         });
 
-        AntimatterAPI.all(IAntimatterTool.class, t -> {
+        AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
             add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
         });
 
-        AntimatterAPI.all(IAntimatterArmor.class, t -> {
+        AntimatterAPI.all(IAntimatterArmor.class, domain, t -> {
             add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
         });
 

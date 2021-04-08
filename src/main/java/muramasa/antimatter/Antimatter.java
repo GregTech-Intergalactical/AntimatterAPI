@@ -68,6 +68,7 @@ public class Antimatter extends AntimatterMod {
         AntimatterAPI.addProvider(Ref.ID, g ->
                 new AntimatterRecipeProvider(Ref.ID,Ref.NAME.concat(" Recipes"), g));
         AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockLootProvider(Ref.ID,Ref.NAME.concat( " Loot generator"),g));
+        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
