@@ -234,7 +234,7 @@ public class AntimatterConfig {
 
             INPUT_RESET_MULTIBLOCK = builder.comment("Whether or not to reconsume recipe inputs on multiblock failure - Default : false")
                     .translation(Ref.ID + ".config.input_reset")
-                    .define("INPUT_RESET_MULTIBLOCK", true);
+                    .define("INPUT_RESET_MULTIBLOCK", false);
 
             EU_TO_FE_RATIO = builder.comment("The ratio of the eu to the fe energy converting - Default: (1.0 EU = 4.0 FE)")
                 .translation(Ref.ID + ".config.eu_to_rf_ratio")
