@@ -87,13 +87,25 @@ public class DynamicResourcePack implements IResourcePack {
 
     public static void addTag(ResourceLocation loc, JsonObject obj) {
         if (TAGS_DONE) return;
+        forceAddTag(loc, obj, false);
+    }
+
+    public static void forceAddTag(ResourceLocation loc, JsonObject obj, boolean replace) {
         DATA.compute(loc, (k,v) -> {
             if (v == null) return obj;
-            ITag.Builder builder = ITag.Builder.create();
-            builder = builder.deserialize(obj, name);
-            builder = builder.deserialize(v, name);
-            return builder.serialize();
+            if (!replace) {
+                ITag.Builder builder = ITag.Builder.create();
+                builder = builder.deserialize(obj, name);
+                builder = builder.deserialize(v, name);
+                return builder.serialize();
+            } else {
+                return obj;
+            }
         });
+    }
+
+    public static boolean hasTag(ResourceLocation loc) {
+        return DATA.get(loc) != null;
     }
 
     public static void markComplete() {

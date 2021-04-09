@@ -5,8 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import dev.latvian.kubejs.item.ItemStackJS;
+import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
+import dev.latvian.kubejs.util.MapJS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import net.minecraft.nbt.NBTDynamicOps;
@@ -27,13 +29,50 @@ public class KubeJSRecipe extends RecipeJS {
     private final List<Integer> chances = new ObjectArrayList<>();
     private String map;
 
-    //TODO!
     @Override
     public void create(ListJS listJS) {
-        //Object itemIn = listJS.get(0);
-        //Object itemOut = listJS.get(1);
-        //Object fluidIn = listJS.get(2);
-        //Object fluidOut = listJS.get(3);
+        this.map = (String)listJS.get(0);
+        if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
+            if (inputItem instanceof ItemStackJS) {
+                this.inputItems.add(RecipeIngredientJS.of(((ItemStackJS)inputItem).toResultJson()));
+            } else if (inputItem instanceof MapJS) {
+                MapJS map = (MapJS) inputItem;
+                this.inputItems.add(RecipeIngredientJS.of(map.toJson()));
+            } else if (inputItem instanceof JsonElement) {
+                this.inputItems.add(RecipeIngredientJS.of((JsonElement) inputItem));
+            } else if (inputItem instanceof IngredientJS) {
+                this.inputItems.add(RecipeIngredientJS.of((IngredientJS) inputItem));
+            }
+        }
+        if (listJS.get(2) != null) for (Object outputItem : ListJS.orSelf(listJS.get(2))) {
+            this.outputItems.add(ItemStackJS.of(outputItem));
+        }
+        if (listJS.get(3) != null) for (Object inputFluid : ListJS.orSelf(listJS.get(3))) {
+            MapJS map = (MapJS) inputFluid;
+            this.fluidInput.add(RecipeSerializer.getStack(map.toJson()));
+        }
+        if (listJS.get(4) != null) for (Object outputFluid : ListJS.orSelf(listJS.get(4))) {
+            MapJS map = (MapJS) outputFluid;
+            this.fluidOutput.add(RecipeSerializer.getStack(map.toJson()));
+        }
+        duration = ((Number)listJS.get(5)).intValue();
+        power = ((Number)listJS.get(6)).longValue();
+
+        if (listJS.size() > 7) {
+            amps = ((Number)listJS.get(7)).intValue();
+            special = ((Number)listJS.get(8)).intValue();
+            if (listJS.size() > 9) {
+                for (Object chance : ListJS.orSelf(listJS.get(9))) {
+                    this.chances.add(((Number)chance).intValue());
+                }
+            }
+        } else {
+            amps = 1;
+            special = 0;
+        }
+        if (inputItems.size() == 0 && fluidInput.size() == 0) {
+            throw new IllegalStateException("No input in recipe");
+        }
     }
 
     @Override
