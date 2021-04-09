@@ -166,7 +166,6 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     public void compileRecipe(Recipe recipe, Function<Item, Collection<ResourceLocation>> tagGetter) {
         if (recipe == null) return;
         Branch map = LOOKUP;
-        List<List<AbstractMapIngredient>> items = fromRecipe(recipe, tagGetter);
 
         if (recipe.hasOutputItems()) {
             for (ItemStack stack : recipe.getOutputItems()) {
@@ -176,15 +175,24 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 }
             }
         }
+        boolean flag = false;
         if (recipe.hasInputItems()) {
             for (RecipeIngredient inputItem : recipe.getInputItems()) {
-                if (isIngredientSpecial(inputItem.get())) continue;
+                if (isIngredientSpecial(inputItem.get())) {
+                    flag = true;
+                    continue;
+                }
                 if (inputItem.get().hasNoMatchingItems() || (inputItem.get().getMatchingStacks().length == 1 && inputItem.get().getMatchingStacks()[0].getItem() == Items.BARRIER)) {
                     //Utils.onInvalidData("RECIPE WITH EM");
                     return;
                 }
             }
         }
+        if (flag) {
+            recipe.sortInputItems();
+        }
+        List<List<AbstractMapIngredient>> items = fromRecipe(recipe, tagGetter);
+
         Recipe r = recurseItemTreeFind(items, map, rr -> true);
         if (r != null) {
             Utils.onInvalidData("RECIPE COLLISION! (Map: " + this.id + ")");
