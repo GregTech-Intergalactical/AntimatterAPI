@@ -10,4 +10,8 @@ public abstract class AbstractMapIngredient {
         if (hash == Integer.MIN_VALUE) hash = hash();
         return hash;
     }
+
+    public boolean isSpecial() {
+        return false;
+    }
 }

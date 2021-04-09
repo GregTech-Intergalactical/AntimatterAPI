@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
@@ -15,6 +16,7 @@ import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -27,6 +29,9 @@ import java.util.List;
 public class TileEntityBasicMultiMachine extends TileEntityMachine implements IComponent {
 
     protected StructureResult result = null;
+
+    /** To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded from disk. **/
+    protected boolean shouldCheckFirstTick = true;
 
     protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
@@ -53,7 +58,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
         //if INVALID_STRUCTURE was stored to disk don't bother rechecking on first tick.
         //This is not only behavioural but if INVALID_STRUCTURE are checked then maxShares
         //might misbehave.
-        if (!isStructureValid() && !(getMachineState() == MachineState.INVALID_STRUCTURE)) {
+        if (!isStructureValid() && shouldCheckFirstTick) {
             checkStructure();
         }
         super.onFirstTick();
@@ -70,7 +75,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
                     if (onStructureFormed()) {
                         afterStructureFormed();
                         setMachineState(MachineState.IDLE);
-                        System.out.println("[Structure Debug] Valid Structure");
+                        Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
                         if (hadFirstTick()) this.recipeHandler.ifPresent(t -> {
                             if (t.hasRecipe())
                                 setMachineState(MachineState.NO_POWER);
@@ -190,5 +195,13 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
             return componentHandler.cast();
         }
         return super.getCapability(cap, side);
+    }
+
+    @Override
+    public void read(BlockState state, CompoundNBT tag) {
+        super.read(state, tag);
+        if (getMachineState() == MachineState.INVALID_STRUCTURE) {
+            shouldCheckFirstTick = false;
+        }
     }
 }

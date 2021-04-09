@@ -113,6 +113,10 @@ public class RecipeIngredient {
         return new RecipeIngredient(Ingredient.fromStacks(stack), stack.getCount());
     }
 
+    public static RecipeIngredient of(Ingredient custom, int count) {
+        return new RecipeIngredient(custom, count);
+    }
+
     public static RecipeIngredient of(IItemProvider provider, int count) {
         return of(count, new ItemStack(provider));
     }

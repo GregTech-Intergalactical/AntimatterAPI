@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -144,6 +145,15 @@ public class Recipe implements IRecipe<IInventory> {
         return null;
     }
 
+    //Note: does call get().
+    public boolean hasSpecialIngredients() {
+        for (RecipeIngredient ingredient : itemsInput) {
+            if (RecipeMap.isIngredientSpecial(ingredient.get())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Nullable
     public FluidStack[] getInputFluids() {

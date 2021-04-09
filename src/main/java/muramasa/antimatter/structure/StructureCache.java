@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.longs.LongLists;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -82,7 +81,7 @@ public class StructureCache {
         DimensionEntry entry = LOOKUP.computeIfAbsent(getDimId(world), e -> new DimensionEntry());
         boolean ok = entry.add(pos, structure, maxAmount);
         if (ok) {
-            Antimatter.LOGGER.info("Added Structure to Store!");
+            //Antimatter.LOGGER.info("Added Structure to Store!");
         } else {
             remove(world, pos);
         }
@@ -93,7 +92,7 @@ public class StructureCache {
         DimensionEntry entry = LOOKUP.get(getDimId(world));
         if (entry == null) return;
         entry.remove(pos);
-        Antimatter.LOGGER.info("Removed Structure to Store!");
+        //Antimatter.LOGGER.info("Removed Structure to Store!");
     }
     //just to switch between server & client. You can use two maps but y tho
     private static long getDimId(World world) {

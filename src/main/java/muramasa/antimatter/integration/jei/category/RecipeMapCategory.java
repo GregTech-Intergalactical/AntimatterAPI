@@ -141,9 +141,14 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                     for (; s < slotCount; s++) {
                         itemGroup.init(groupIndex, true, slots.get(s).getX() - offsetX, slots.get(s).getY() - offsetY);
                         List<ItemStack> input = stacks.get(s);
-                        ItemStack whichStack = input.size() == 1 ? input.get(0) : input.get(Ref.RNG.nextInt(stacks.get(s).size()));
-                        itemGroup.set(groupIndex++, whichStack);
-                        inputItems++;
+                        if (input.size() == 0) {
+                            List<ItemStack> st = new ObjectArrayList<>(1);
+                            st.add(new ItemStack(Data.DEBUG_SCANNER,1));
+                            itemGroup.set(groupIndex++, st);
+                        } else {
+                            itemGroup.set(groupIndex++, input);
+                            inputItems++;
+                        }
                     }
                 }
             }
@@ -198,6 +203,12 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 if (recipe.hasInputItems()) {
                     if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreConsume()) {
                         tooltip.add(new StringTextComponent("Does not get consumed in the process.").mergeStyle(TextFormatting.WHITE));
+                    }
+                    if (recipe.getInputItems().size() >= index) {
+                        Ingredient i = recipe.getInputItems().get(index).get();
+                        if (RecipeMap.isIngredientSpecial(i)) {
+                            tooltip.add(new StringTextComponent("Special ingredient. Class name: ").mergeStyle(TextFormatting.GRAY).append(new StringTextComponent(i.getClass().getSimpleName()).mergeStyle(TextFormatting.GOLD)));
+                        }
                     }
                 }
             }

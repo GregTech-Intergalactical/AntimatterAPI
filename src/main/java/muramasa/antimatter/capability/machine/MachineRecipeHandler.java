@@ -174,7 +174,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
     }
 
     public Recipe findRecipe() {
-        return tile.getMachineType().getRecipeMap().find(tile.itemHandler, tile.fluidHandler);
+        return tile.getMachineType().getRecipeMap().find(tile.itemHandler, tile.fluidHandler, this::validateRecipe);
     }
 
     protected int getOverclock() {
@@ -331,7 +331,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
         //First lookup.
         if (!this.tile.hadFirstTick() && hasLoadedInput()) {
-            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]));
+            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), r -> true);
             if (activeRecipe == null) return;
             activateRecipe(false);
             if (canOutput()) tile.setMachineState(ACTIVE);

@@ -252,7 +252,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     protected boolean checkValidFluid(FluidStack fluid) {
         if (tile.has(GENERATOR)) {
-            Recipe recipe = tile.getMachineType().getRecipeMap().find(null, new FluidStack[]{fluid});
+            Recipe recipe = tile.getMachineType().getRecipeMap().find(new ItemStack[0], new FluidStack[]{fluid}, r -> true);
             if (recipe != null) {
                 return true;
             }
