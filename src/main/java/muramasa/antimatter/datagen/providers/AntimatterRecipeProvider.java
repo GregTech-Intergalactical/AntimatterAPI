@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.providers;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.ICraftingLoader;
@@ -10,6 +11,7 @@ import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
+import muramasa.antimatter.recipe.ingredient.MaterialIngredient;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
@@ -25,6 +27,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -76,9 +79,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
     @Override
     public void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-        registerMaterialRecipes(consumer, providerDomain);
+        //registerMaterialRecipes(consumer, providerDomain);
         registerToolRecipes(consumer, providerDomain);
-        craftingLoaders.forEach(cl -> cl.loadRecipes(consumer,this));
+        //craftingLoaders.forEach(cl -> cl.loadRecipes(consumer,this));
     }
 
     protected void registerMaterialRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
@@ -123,6 +126,14 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     }
 
     protected void registerToolRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
+        final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
+
+       // addStackRecipe("helmet", consumer, Ref.ID, HELMET.getId() + "_recipe", "antimatter_helmets",
+       //         "has_wrench", in, HELMET.getToolStack(NULL), of('I', MaterialIngredient.of(PLATE), 'H', HAMMER.getTag()), "III", "IHI");
+        addStackRecipe("hammer", consumer, Ref.ID, HAMMER.getId() + "_" +"recipe", "antimatter_tools",
+                "has_wrench", in, HAMMER.getToolStack(NULL, NULL), of('I', MaterialIngredient.of(INGOT), 'R', MaterialIngredient.of(ROD)), "II ", "IIR", "II ");
+        if (true) return;
+
         List<Material> mainMats = AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(TOOLS))).collect(Collectors.toList());
         List<Material> armorMats = AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(ARMOR))).collect(Collectors.toList());
         List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.isHandle())).collect(Collectors.toList());
@@ -302,11 +313,15 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     }
 
     public void addStackRecipe(Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+        addStackRecipe(null, consumer, recipeDomain, recipeName, groupName, criterionName,criterion, output, inputs, inputPattern);
+    }
+
+    public void addStackRecipe(@Nullable String toolType, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, criterionName, criterion, output, inputs, inputPattern);
         if (recipeName.isEmpty()) recipeBuilder.build(consumer);
         else {
-            if (recipeDomain.isEmpty()) recipeBuilder.build(consumer, recipeName);
-            else recipeBuilder.build(consumer, fixLoc(recipeDomain, recipeName));
+            if (recipeDomain.isEmpty()) recipeBuilder.build(consumer, toolType, recipeName);
+            else recipeBuilder.build(consumer, toolType, fixLoc(recipeDomain, recipeName));
         }
     }
 
@@ -329,6 +344,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                 catch (ClassCastException e) {
                     Utils.onInvalidData("Tag inputs only allow Item Tags!");
                 }
+            }
+            else if (entry.getValue() instanceof MaterialIngredient) {
+                incompleteBuilder = incompleteBuilder.key(entry.getKey(), (MaterialIngredient) entry.getValue());
             }
             else if (entry.getValue() instanceof Ingredient) {
                 incompleteBuilder = incompleteBuilder.key(entry.getKey(), (Ingredient) entry.getValue());
