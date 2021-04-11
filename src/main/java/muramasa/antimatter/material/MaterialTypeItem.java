@@ -28,7 +28,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public boolean allowItemGen(Material material) {
-        return !OVERRIDES.contains(material) && allowGen(material) && !blockType;
+        return !OVERRIDES.containsKey(material) && allowGen(material) && !blockType;
     }
 
     public Item get(Material material) {

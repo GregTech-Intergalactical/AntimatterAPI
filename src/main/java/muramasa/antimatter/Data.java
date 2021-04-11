@@ -17,6 +17,7 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.texture.Texture;
@@ -33,9 +34,11 @@ import net.minecraft.block.SoundType;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.UseAction;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
@@ -45,7 +48,9 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
@@ -236,6 +241,41 @@ public class Data {
     public static final AntimatterArmorType CHESTPLATE = new AntimatterArmorType(Ref.ID, "chestplate", 40, 6, 0.0F, 0.0F, EquipmentSlotType.CHEST);
     public static final AntimatterArmorType LEGGINGS = new AntimatterArmorType(Ref.ID, "leggings", 40, 5, 0.0F, 0.0F, EquipmentSlotType.LEGS);
     public static final AntimatterArmorType BOOTS = new AntimatterArmorType(Ref.ID, "boots", 40, 2, 0.0F, 0.0F, EquipmentSlotType.FEET);
+
+    /** RECIPE BUILDERS **/
+
+    public static final Function<String, MaterialRecipe.ItemBuilder> ARMOR_BUILDER = id -> {
+        MaterialRecipe.ItemBuilder builder = AntimatterAPI.get(MaterialRecipe.ItemBuilder.class, id);
+        return builder != null ? builder : new MaterialRecipe.ItemBuilder() {
+            @Override
+            public String getId() {
+                return id;
+            }
+
+            @Override
+            public ItemStack build(CraftingInventory inv, Map<String, Material> mats) {
+                return AntimatterAPI.get(AntimatterArmorType.class, id).getToolStack(mats.get("primary"));
+            }
+        };
+    };
+
+    public static final Function<String, MaterialRecipe.ItemBuilder> TOOL_BUILDER = id -> {
+        MaterialRecipe.ItemBuilder builder = AntimatterAPI.get(MaterialRecipe.ItemBuilder.class, id);
+
+        return builder != null ? builder : new MaterialRecipe.ItemBuilder() {
+            @Override
+            public String getId() {
+                return id;
+            }
+
+            @Override
+            public ItemStack build(CraftingInventory inv, Map<String, Material> mats) {
+                Material m = mats.get("secondary");
+                return AntimatterAPI.get(AntimatterToolType.class, id).getToolStack(mats.get("primary"), m == null ? NULL : m);
+            }
+        };
+    };
+
 
     public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 

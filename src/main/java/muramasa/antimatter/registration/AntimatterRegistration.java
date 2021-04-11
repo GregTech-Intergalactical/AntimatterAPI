@@ -4,9 +4,9 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.recipe.ToolRecipe;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.MaterialIngredient;
+import muramasa.antimatter.recipe.material.MaterialSerializer;
 import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
@@ -67,7 +67,7 @@ public final class AntimatterRegistration {
                 CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "material"), MaterialIngredient.Serializer.INSTANCE);
                 ((IForgeRegistry<IRecipeSerializer<?>>) e.getRegistry()).register(RecipeSerializer.INSTANCE);
-                ((IForgeRegistry<IRecipeSerializer<?>>) e.getRegistry()).register(ToolRecipe.ToolRecipeSerializer.INSTANCE);
+                ((IForgeRegistry<IRecipeSerializer<?>>) e.getRegistry()).register(MaterialSerializer.INSTANCE);
             }
         } else if (e.getRegistry() == ForgeRegistries.FEATURES) {
             AntimatterAPI.all(AntimatterFeature.class, domain, ForgeRegistries.FEATURES::register);

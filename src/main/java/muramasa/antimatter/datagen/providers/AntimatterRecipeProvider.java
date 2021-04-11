@@ -3,7 +3,6 @@ package muramasa.antimatter.datagen.providers;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.ICraftingLoader;
@@ -12,11 +11,11 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.MaterialIngredient;
+import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.data.*;
-import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -27,12 +26,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
@@ -126,44 +123,65 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     }
 
     protected void registerToolRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
-        final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
+        if (providerDomain.equals(Ref.ID)) {
+            final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
+            addToolRecipe(TOOL_BUILDER.apply(HAMMER.getId()), consumer, Ref.ID, HAMMER.getId() + "_" +"recipe", "antimatter_tools",
+                    "has_wrench", in, HAMMER.getToolStack(NULL, NULL), of('I', MaterialIngredient.of(INGOT, "primary"), 'R', MaterialIngredient.of(ROD, "secondary")), "II ", "IIR", "II ");
 
-       // addStackRecipe("helmet", consumer, Ref.ID, HELMET.getId() + "_recipe", "antimatter_helmets",
-       //         "has_wrench", in, HELMET.getToolStack(NULL), of('I', MaterialIngredient.of(PLATE), 'H', HAMMER.getTag()), "III", "IHI");
-        addStackRecipe("hammer", consumer, Ref.ID, HAMMER.getId() + "_" +"recipe", "antimatter_tools",
-                "has_wrench", in, HAMMER.getToolStack(NULL, NULL), of('I', MaterialIngredient.of(INGOT), 'R', MaterialIngredient.of(ROD)), "II ", "IIR", "II ");
+            addToolRecipe(ARMOR_BUILDER.apply(HELMET.getId()), consumer, Ref.ID, HELMET.getId() + "_recipe", "antimatter_helmets",
+                    "has_wrench", in, HELMET.getToolStack(NULL), of('I', MaterialIngredient.of(PLATE, "primary", ARMOR), 'H', HAMMER.getTag()), "III", "IHI");
+            addToolRecipe(ARMOR_BUILDER.apply(CHESTPLATE.getId()), consumer, Ref.ID, CHESTPLATE.getId() + "_recipe", "antimatter_chestplates",
+                    "has_wrench", in, CHESTPLATE.getToolStack(NULL), of('I', MaterialIngredient.of(PLATE, "primary", ARMOR), 'H', HAMMER.getTag()), "IHI", "III", "III");
+            addToolRecipe(ARMOR_BUILDER.apply(LEGGINGS.getId()), consumer, Ref.ID, LEGGINGS.getId() + "_recipe", "antimatter_leggings",
+                    "has_wrench", in, LEGGINGS.getToolStack(NULL), of('I', MaterialIngredient.of(PLATE, "primary", ARMOR), 'H', HAMMER.getTag()), "III", "IHI", "I I");
+            addToolRecipe(ARMOR_BUILDER.apply(BOOTS.getId()), consumer, Ref.ID, BOOTS.getId() + "_recipe", "antimatter_boots",
+                    "has_wrench", in, BOOTS.getToolStack(NULL), of('I', MaterialIngredient.of(PLATE, "primary", ARMOR), 'H', HAMMER.getTag()), "I I", "IHI");
+
+            addToolRecipe(TOOL_BUILDER.apply(PLUNGER.getId()), consumer, Ref.ID, PLUNGER.getId() + "_recipe", "antimatter_plungers",
+                    "has_wrench", in, PLUNGER.getToolStack(NULL, NULL),
+                    of('W', WIRE_CUTTER.getTag(), 'I',  MaterialIngredient.of(INGOT, "primary"), 'S', Tags.Items.SLIMEBALLS, 'R', MaterialIngredient.of(ROD, "secondary", RUBBERTOOLS), 'F', FILE.getTag()), "WIS", " RI", "R F");
+
+            addToolRecipe(TOOL_BUILDER.apply(WRENCH.getId()), consumer, Ref.ID, WRENCH.getId() + "_recipe", "antimatter_wrenches",
+                    "has_wrench", in, WRENCH.getToolStack(NULL, NULL), of('I', MaterialIngredient.of(INGOT, "primary"), 'H', HAMMER.getTag()), "IHI", "III", " I ");
+
+            addToolRecipe(TOOL_BUILDER.apply(MORTAR.getId()), consumer, Ref.ID, MORTAR.getId() + "_recipe", "antimatter_mortars",
+                    "has_wrench", in, MORTAR.getToolStack(NULL, NULL), of('I', MaterialIngredient.of(INGOT, "primary"), 'S', Tags.Items.STONE), " I ", "SIS", "SSS");
+
+            addToolRecipe(TOOL_BUILDER.apply(FILE.getId()), consumer, Ref.ID, FILE.getId() + "_recipe", "antimatter_files",
+                    "has_wrench", in, FILE.getToolStack(NULL, NULL), of('P', MaterialIngredient.of(PLATE, "primary"), 'R', MaterialIngredient.of(ROD, "secondary")), "P", "P", "R");
+
+            addToolRecipe(TOOL_BUILDER.apply(SCREWDRIVER.getId()), consumer, Ref.ID, SCREWDRIVER.getId() + "_recipe", "antimatter_screwdrivers",
+                    "has_wrench", in, SCREWDRIVER.getToolStack(NULL, NULL),
+                    of('M', MaterialIngredient.of(ROD, "primary"), 'R', MaterialIngredient.of(ROD, "secondary"), 'F', FILE.getTag(), 'H', HAMMER.getTag()), " FM", " MH", "R  ");
+
+            addToolRecipe(TOOL_BUILDER.apply(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
+                    "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
+                b.put('P', MaterialIngredient.ofInverse(PLATE, "primary", SCREW)).put('R', MaterialIngredient.of(ROD, "secondary")).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                        .put('S', SCREWDRIVER.getTag())
+                    , "PFP", "HPS", "R R");
+
+            addToolRecipe(TOOL_BUILDER.apply(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_screw", "antimatter_files",
+                    "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
+                            b.put('P', MaterialIngredient.of(PLATE, "primary", SCREW)).put('R', MaterialIngredient.of(ROD, "secondary")).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                                    .put('S', SCREWDRIVER.getTag()).put('W', MaterialIngredient.of(SCREW, "primary"))
+                    , "PFP", "HPS", "RWR");
+            /*
+              if (main.has(SCREW)){
+                        addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
+                                "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
+                                b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                                        .put('S', SCREWDRIVER.getTag()).put('W', getForgeItemTag("screws/" + main.getId())), "PFP", "HPS", "RWR");
+                    } else {
+                        addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
+                                "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
+                                b -> b.put('P', plateTag).put('R', rodTag).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                                        .put('S', SCREWDRIVER.getTag()), "PFP", "HPS", "R R");
+                    }
+             */
+        }
         if (true) return;
 
-        List<Material> mainMats = AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(TOOLS))).collect(Collectors.toList());
-        List<Material> armorMats = AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(ARMOR))).collect(Collectors.toList());
-        List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.isHandle())).collect(Collectors.toList());
-
-        handleMats.forEach(handle -> AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
-            ITag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/" + rubber.getId()), rodTag = TagUtils.getForgeItemTag("rods/" + handle.getId());
-            addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_" + handle.getId() + "_" + rubber.getId(), "antimatter_plungers",
-                    "has_material_" + rubber.getId(), hasSafeItem(ingotTag), PLUNGER.getToolStack(handle, rubber),
-                    of('W', WIRE_CUTTER.getTag(), 'I', ingotTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WIS", " RI", "R F");
-        }));
-
-        armorMats.forEach(armor -> {
-            if (!armor.has(INGOT) && !armor.has(GEM)) return; // TODO: For time being
-            final ITag<Item> inputTag;
-            if (armor.has(INGOT)){
-                inputTag = INGOT.getMaterialTag(armor);
-            } else {
-                inputTag = GEM.getMaterialTag(armor);
-            }
-            final ICriterionInstance inputTrigger = this.hasSafeItem(inputTag);
-            addStackRecipe(consumer, Ref.ID, HELMET.getId() + "_" + armor.getId(), "antimatter_helmets",
-                    "has_material_" + armor.getId(), inputTrigger, HELMET.getToolStack(armor), of('I', inputTag, 'H', HAMMER.getTag()), "III", "IHI");
-            addStackRecipe(consumer, Ref.ID, CHESTPLATE.getId() + "_" + armor.getId(), "antimatter_chestplates",
-                    "has_material_" + armor.getId(), inputTrigger, CHESTPLATE.getToolStack(armor), of('I', inputTag, 'H', HAMMER.getTag()), "IHI", "III", "III");
-            addStackRecipe(consumer, Ref.ID, LEGGINGS.getId() + "_" + armor.getId(), "antimatter_leggings",
-                    "has_material_" + armor.getId(), inputTrigger, LEGGINGS.getToolStack(armor), of('I', inputTag, 'H', HAMMER.getTag()), "III", "IHI", "I I");
-            addStackRecipe(consumer, Ref.ID, BOOTS.getId() + "_" + armor.getId(), "antimatter_boots",
-                    "has_material_" + armor.getId(), inputTrigger, BOOTS.getToolStack(armor), of('I', inputTag, 'H', HAMMER.getTag()), "I I", "IHI");
-        });
-
+/*
         mainMats.forEach(main -> {
             if (!main.has(INGOT) && !main.has(GEM)) return; // TODO: For time being
             String ingotGem = main.has(INGOT) ? "ingots" : "gems";
@@ -251,7 +269,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     }
                 }
             }
-        });
+        });*/
     }
 
     public void addConditionalRecipe(Consumer<IFinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName) {
@@ -313,19 +331,29 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     }
 
     public void addStackRecipe(Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
-        addStackRecipe(null, consumer, recipeDomain, recipeName, groupName, criterionName,criterion, output, inputs, inputPattern);
-    }
-
-    public void addStackRecipe(@Nullable String toolType, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, criterionName, criterion, output, inputs, inputPattern);
         if (recipeName.isEmpty()) recipeBuilder.build(consumer);
         else {
-            if (recipeDomain.isEmpty()) recipeBuilder.build(consumer, toolType, recipeName);
-            else recipeBuilder.build(consumer, toolType, fixLoc(recipeDomain, recipeName));
+            if (recipeDomain.isEmpty()) recipeBuilder.build(consumer, recipeName);
+            else recipeBuilder.build(consumer, fixLoc(recipeDomain, recipeName));
         }
     }
 
-    @SuppressWarnings("unchecked")
+    public void addToolRecipe(MaterialRecipe.ItemBuilder builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, Function<ImmutableMap.Builder<Character, Object>, ImmutableMap.Builder<Character, Object>> inputs, String... inputPattern) {
+        addToolRecipe(builder, consumer, recipeDomain, recipeName, groupName, criterionName, criterion, output, inputs.apply(new ImmutableMap.Builder<>()).build(), inputPattern);
+    }
+
+    public void addToolRecipe(MaterialRecipe.ItemBuilder builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+        AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, criterionName, criterion, output, inputs, inputPattern);
+        ResourceLocation builderId = new ResourceLocation(builder.getDomain(), builder.getId());
+        if (recipeName.isEmpty()) recipeBuilder.build(consumer);
+        else {
+            if (recipeDomain.isEmpty()) recipeBuilder.buildTool(consumer, builderId, recipeName);
+            else recipeBuilder.buildTool(consumer, builderId, fixLoc(recipeDomain, recipeName));
+        }
+    }
+
+        @SuppressWarnings("unchecked")
     protected AntimatterShapedRecipeBuilder resolveKeys(AntimatterShapedRecipeBuilder incompleteBuilder, ImmutableMap<Character, Object> inputs) {
         for (Map.Entry<Character, Object> entry : inputs.entrySet()) {
             if (entry.getValue() instanceof IItemProvider) {

@@ -81,7 +81,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         this.copy(blockTag, blockToItemTag(blockTag));
         this.copy(frameTag, blockToItemTag(frameTag));
         AntimatterAPI.all(BlockOre.class, domain, o -> {
-            if (o.getOreType() == ORE_SMALL) return;
+            //if (o.getOreType() == ORE_SMALL) return;
             String name = String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
             this.copy(getForgeBlockTag(name), getForgeItemTag(name));
             String forgeName = String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());

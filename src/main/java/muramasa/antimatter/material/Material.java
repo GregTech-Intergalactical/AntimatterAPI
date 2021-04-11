@@ -25,7 +25,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -404,8 +406,8 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return toolQuality;
     }
     
-    public ImmutableMap<Enchantment, Integer> getEnchantments() {
-    	return toolEnchantment;
+    public Map<Enchantment, Integer> getEnchantments() {
+    	return toolEnchantment != null ? toolEnchantment : Collections.emptyMap();
     }
 
     public int getArmorDurabilityFactor() {

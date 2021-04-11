@@ -7,8 +7,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntList;
-import muramasa.antimatter.recipe.ToolRecipe;
 import muramasa.antimatter.recipe.ingredient.MaterialIngredient;
+import muramasa.antimatter.recipe.material.MaterialSerializer;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.ICriterionInstance;
@@ -131,30 +131,46 @@ public class AntimatterShapedRecipeBuilder {
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
     public void build(Consumer<IFinishedRecipe> consumer) {
-        this.build(consumer, null, ForgeRegistries.ITEMS.getKey(this.result.getItem()));
+        this.build(consumer, ForgeRegistries.ITEMS.getKey(this.result.getItem()));
     }
 
     /**
      * Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for
      * the result.
      */
-    public void build(Consumer<IFinishedRecipe> consumer, String toolType, String save) {
+    public void build(Consumer<IFinishedRecipe> consumer, String save) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.getItem());
         if (new ResourceLocation(save).equals(resourcelocation)) {
             throw new IllegalStateException("Shaped Recipe " + save + " should remove its 'save' argument");
         }
         else {
-            this.build(consumer, toolType, new ResourceLocation(save));
+            this.build(consumer, new ResourceLocation(save));
         }
     }
 
     /**
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
-    public void build(Consumer<IFinishedRecipe> consumer, String toolType, ResourceLocation id) {
+    public void build(Consumer<IFinishedRecipe> consumer, ResourceLocation id) {
         this.validate(id);
         this.advBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumer.accept(new Result(id, this.result, this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getGroup().getPath() + "/" + id.getPath()), toolRecipe, toolType));
+        consumer.accept(new Result(id, this.result, this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getGroup().getPath() + "/" + id.getPath())));
+    }
+
+    public void buildTool(Consumer<IFinishedRecipe> consumer, ResourceLocation builder, String id) {
+        buildTool(consumer, builder, new ResourceLocation(id));
+    }
+    /**
+     * Builds this recipe into an {@link IFinishedRecipe}.
+     */
+    public void buildTool(Consumer<IFinishedRecipe> consumer, ResourceLocation builder, ResourceLocation id) {
+        ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.getItem());
+        if (id.equals(resourcelocation)) {
+            throw new IllegalStateException("Shaped Recipe " + id + " should remove its 'save' argument");
+        }
+        this.validate(id);
+        this.advBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
+        consumer.accept(new ToolResult(builder, id, this.result, this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getGroup().getPath() + "/" + id.getPath())));
     }
 
     /**
@@ -199,11 +215,7 @@ public class AntimatterShapedRecipeBuilder {
         private final Advancement.Builder advBuilder;
         private final ResourceLocation advId;
 
-        //TOOL STUFF
-        private final boolean tool;
-        private final String toolType;
-
-        public Result(ResourceLocation id, ItemStack result, String group, List<String> pattern, Map<Character, Ingredient> key, Advancement.Builder advBuilder, ResourceLocation advId, boolean tool, String toolType) {
+        public Result(ResourceLocation id, ItemStack result, String group, List<String> pattern, Map<Character, Ingredient> key, Advancement.Builder advBuilder, ResourceLocation advId) {
             this.id = id;
             this.result = result;
             this.group = group;
@@ -211,8 +223,6 @@ public class AntimatterShapedRecipeBuilder {
             this.key = key;
             this.advBuilder = advBuilder;
             this.advId = advId;
-            this.tool = tool;
-            this.toolType = toolType;
         }
 
         @Override
@@ -239,9 +249,6 @@ public class AntimatterShapedRecipeBuilder {
             if (this.result.hasTag()) {
                 resultObj.addProperty("nbt", this.result.getTag().toString());
             }
-            if (tool) {
-                json.addProperty("tool", toolType);
-            }
         }
 
         @Override
@@ -251,7 +258,7 @@ public class AntimatterShapedRecipeBuilder {
 
         @Override
         public IRecipeSerializer<?> getSerializer() {
-            return tool ? ToolRecipe.ToolRecipeSerializer.INSTANCE : IRecipeSerializer.CRAFTING_SHAPED;
+            return IRecipeSerializer.CRAFTING_SHAPED;
         }
 
         @Nullable
@@ -267,4 +274,25 @@ public class AntimatterShapedRecipeBuilder {
         }
     }
 
+
+    public static class ToolResult extends Result {
+
+        private final ResourceLocation builderId;
+
+        public ToolResult(ResourceLocation builderId, ResourceLocation id, ItemStack result, String group, List<String> pattern, Map<Character, Ingredient> key, Advancement.Builder advBuilder, ResourceLocation advId) {
+            super(id, result, group, pattern, key, advBuilder, advId);
+            this.builderId = builderId;
+        }
+
+        @Override
+        public void serialize(JsonObject json) {
+            super.serialize(json);
+            json.addProperty("builder", builderId.toString());
+        }
+
+        @Override
+        public IRecipeSerializer<?> getSerializer() {
+            return MaterialSerializer.INSTANCE;
+        }
+    }
 }
