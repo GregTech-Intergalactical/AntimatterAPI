@@ -427,7 +427,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public List<AntimatterToolType> getToolTypes() {
-        return toolTypes;
+        return toolTypes != null ? toolTypes : Collections.emptyList();
     }
 
     public boolean isHandle() { return isHandle; }

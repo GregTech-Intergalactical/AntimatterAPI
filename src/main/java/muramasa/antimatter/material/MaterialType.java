@@ -46,6 +46,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
      */
     public void forceOverride(Material mat, Item replacement) {
         OVERRIDES.put(mat, replacement);
+        this.add(mat);
         AntimatterAPI.addReplacement(getMaterialTag(mat), replacement);
     }
 

@@ -1,5 +1,6 @@
 package muramasa.antimatter.recipe.ingredient;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -9,15 +10,20 @@ import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.common.crafting.StackList;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,20 +32,36 @@ public class MaterialIngredient extends Ingredient {
     private final MaterialTypeItem<?> type;
     private final String id;
     private final IMaterialTag[] tags;
-    private boolean inverse;
+    private final String[] optionalTools;
+    private final boolean inverse;
 
     protected MaterialIngredient(MaterialTypeItem<?> type, String id, IMaterialTag[] tags, boolean inverse) {
+        this(type, id, tags, inverse, new String[0]);
+    }
+
+    protected MaterialIngredient(MaterialTypeItem<?> type, String id, IMaterialTag[] tags, boolean inverse, String[] toolTypes) {
         super(Stream.of(new StackList(type.all().stream().filter(t -> {
             boolean ok = t.has(tags);
-            if (inverse) {
-                return !ok;
+            boolean types = true;
+            if (toolTypes.length > 0) {
+                Set<String> set = t.getToolTypes().stream().map(AntimatterToolType::getId).collect(Collectors.toSet());
+                for (String toolType : toolTypes) {
+                    String[] vals = toolType.split("_");
+                    String toolId = vals[0];
+                    boolean which = Boolean.parseBoolean(vals[1]);
+                    types &= which == set.contains(toolId);
+                }
             }
-            return ok;
+            if (inverse) {
+                return !ok && types;
+            }
+            return ok && types;
         }).map(t -> type.get(t, 1)).collect(Collectors.toList()))));
         this.type = type;
         this.id = id;
         this.tags = tags == null ? new MaterialTag[0] : tags;
         this.inverse = inverse;
+        this.optionalTools = toolTypes;
     }
 
     public static MaterialIngredient of(MaterialTypeItem<?> type, String id, IMaterialTag... tags) {
@@ -47,8 +69,18 @@ public class MaterialIngredient extends Ingredient {
         return mat;
     }
 
+    public static MaterialIngredient of(MaterialTypeItem<?> type, String id, ImmutableMap<AntimatterToolType, Boolean> toolTypes, IMaterialTag... tags) {
+        MaterialIngredient mat = new MaterialIngredient(type, id, tags, false, toolTypes.entrySet().stream().map(t -> t.getKey().getId() + "_" + t.getValue().toString()).toArray(String[]::new));
+        return mat;
+    }
+
     public static MaterialIngredient ofInverse(MaterialTypeItem<?> type, String id, IMaterialTag... tags) {
         MaterialIngredient mat = new MaterialIngredient(type, id, tags, true);
+        return mat;
+    }
+
+    public static MaterialIngredient ofInverse(MaterialTypeItem<?> type, String id,  ImmutableMap<AntimatterToolType, Boolean> toolTypes, IMaterialTag... tags) {
+        MaterialIngredient mat = new MaterialIngredient(type, id, tags, true, toolTypes.entrySet().stream().map(t -> t.getKey().getId() + "_" + t.getValue().toString()).toArray(String[]::new));
         return mat;
     }
 
@@ -80,13 +112,22 @@ public class MaterialIngredient extends Ingredient {
             }
             obj.add("tags", arr);
         }
+        if (optionalTools.length > 0) {
+            JsonArray arr = new JsonArray();
+            for (String t : optionalTools) {
+                arr.add(t);
+            }
+            obj.add("tools", arr);
+        }
         return obj;
     }
 
     @Override
     public boolean test(@Nullable ItemStack p_test_1_) {
         if (p_test_1_ == null || p_test_1_.isEmpty()) return false;
-        if (!(p_test_1_.getItem() instanceof MaterialItem)) return false;
+        if (!(p_test_1_.getItem() instanceof MaterialItem)) {
+            return type.tryMaterialFromItem(p_test_1_) != null;
+        }
         return ((MaterialItem)p_test_1_.getItem()).getType() == type;
     }
 
@@ -104,7 +145,11 @@ public class MaterialIngredient extends Ingredient {
             for (int i = 0; i < tags.length; i++) {
                 tags[i] = AntimatterAPI.get(IMaterialTag.class, buffer.readString());
             }
-            return new MaterialIngredient(item, ingId, tags, inverse);
+            String[] types = new String[buffer.readVarInt()];
+            for (int i = 0; i < tags.length; i++) {
+                types[i] = buffer.readString();
+            }
+            return new MaterialIngredient(item, ingId, tags, inverse, types);
         }
 
         @Override
@@ -119,7 +164,13 @@ public class MaterialIngredient extends Ingredient {
             } else {
                 tags = new MaterialTag[0];
             }
-            return new MaterialIngredient(item, ingId,tags, inverse);
+            String[] types;
+            if (json.has("tools")) {
+                types = Streams.stream(JSONUtils.getJsonArray(json, "tools")).map(JsonElement::getAsString).toArray(String[]::new);
+            } else {
+                types = new String[0];
+            }
+            return new MaterialIngredient(item, ingId,tags, inverse, types);
         }
 
         @Override
@@ -130,6 +181,10 @@ public class MaterialIngredient extends Ingredient {
             buffer.writeVarInt(ingredient.tags.length);
             for (IMaterialTag tag : ingredient.tags) {
                 buffer.writeString(tag.getId());
+            }
+            buffer.writeVarInt(ingredient.optionalTools.length);
+            for (String tag : ingredient.optionalTools) {
+                buffer.writeString(tag);
             }
         }
     }

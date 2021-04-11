@@ -29,7 +29,8 @@ import net.minecraftforge.common.Tags;
 import java.util.HashMap;
 import java.util.Map;
 
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.Data.BLOCK;
+import static muramasa.antimatter.Data.FRAME;
 import static muramasa.antimatter.util.TagUtils.*;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;

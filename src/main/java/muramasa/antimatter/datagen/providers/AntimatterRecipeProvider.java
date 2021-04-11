@@ -8,10 +8,12 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.MaterialIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
+import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
@@ -125,6 +127,8 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     protected void registerToolRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
         if (providerDomain.equals(Ref.ID)) {
             final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
+
+
             addToolRecipe(TOOL_BUILDER.apply(HAMMER.getId()), consumer, Ref.ID, HAMMER.getId() + "_" +"recipe", "antimatter_tools",
                     "has_wrench", in, HAMMER.getToolStack(NULL, NULL), of('I', MaterialIngredient.of(INGOT, "primary"), 'R', MaterialIngredient.of(ROD, "secondary")), "II ", "IIR", "II ");
 
@@ -154,6 +158,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     "has_wrench", in, SCREWDRIVER.getToolStack(NULL, NULL),
                     of('M', MaterialIngredient.of(ROD, "primary"), 'R', MaterialIngredient.of(ROD, "secondary"), 'F', FILE.getTag(), 'H', HAMMER.getTag()), " FM", " MH", "R  ");
 
+            addToolRecipe(TOOL_BUILDER.apply(SAW.getId()), consumer, Ref.ID, SAW.getId() + "_recipe", "antimatter_saws",
+                    "has_wrench", in, SAW.getToolStack(NULL, NULL), of('P', MaterialIngredient.of(PLATE, "primary"), 'R', MaterialIngredient.of(ROD, "primary"), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PPR", "FH ");
+
             addToolRecipe(TOOL_BUILDER.apply(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
                     "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
                 b.put('P', MaterialIngredient.ofInverse(PLATE, "primary", SCREW)).put('R', MaterialIngredient.of(ROD, "secondary")).put('F', FILE.getTag()).put('H', HAMMER.getTag())
@@ -165,7 +172,48 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                             b.put('P', MaterialIngredient.of(PLATE, "primary", SCREW)).put('R', MaterialIngredient.of(ROD, "secondary")).put('F', FILE.getTag()).put('H', HAMMER.getTag())
                                     .put('S', SCREWDRIVER.getTag()).put('W', MaterialIngredient.of(SCREW, "primary"))
                     , "PFP", "HPS", "RWR");
+
+            Function<AntimatterToolType, ImmutableMap<Character, Object>> map1 = type -> of('I', MaterialIngredient.of(INGOT, "primary", of(HAMMER, true, FILE, true, type, true)), 'R', MaterialIngredient.of(ROD, "secondary", of(HAMMER, true, FILE, true, type, true)), 'P', MaterialIngredient.of(PLATE, "primary", of(HAMMER, true, FILE, true, type, true)), 'F', FILE.getTag(), 'H', HAMMER.getTag());
+
+            Function<AntimatterToolType, ImmutableMap<Character, Object>> gemMap1 = type -> of('G', MaterialIngredient.of(GEM, "primary", of(HAMMER, true, FILE, true, type, true)), 'R', MaterialIngredient.of(ROD, "secondary", of(HAMMER, true, FILE, true, type, true)), 'F', FILE.getTag(), 'H', HAMMER.getTag());
+
+            Function<AntimatterToolType, ImmutableMap<Character, Object>> map2 = type -> of('R', MaterialIngredient.of(ROD, "secondary", of(HAMMER, true, FILE, true, type, true)), 'P', MaterialIngredient.of(PLATE, "primary", of(HAMMER, true, FILE, true, type, true)), 'F', FILE.getTag(), 'H', HAMMER.getTag()) ;
+            Function<AntimatterToolType, ImmutableMap<Character, Object>> gemMap2 = type -> of('G', MaterialIngredient.of(GEM, "primary", of(HAMMER, true, FILE, true, type, true)), 'R',MaterialIngredient.of(ROD, "secondary", of(HAMMER, true, FILE, true, type, true)),  'F', FILE.getTag(), 'H', HAMMER.getTag()) ;
+
+            String[] strings1 = new String[]{"PII", "FRH", " R "};
+            String[] strings1WithGem = new String[]{"GGG", "FRH", " R "};
+
+            String[] strings2 = new String[]{"FPH", " R ", " R "};
+            String[] strings2WithGem = new String[]{"FGH", " R ", " R "};
+
+            addToolRecipe(TOOL_BUILDER.apply(PICKAXE.getId()), consumer, Ref.ID, PICKAXE.getId() + "_with" , "antimatter_pickaxes",
+                    "has_wrench", in, PICKAXE.getToolStack(NULL, NULL), map1.apply(PICKAXE), strings1);
+
+            addToolRecipe(TOOL_BUILDER.apply(PICKAXE.getId()), consumer, Ref.ID, PICKAXE.getId() + "_withgem" , "antimatter_pickaxes",
+                    "has_wrench", in, PICKAXE.getToolStack(NULL, NULL), gemMap1.apply(PICKAXE), strings1WithGem);
+
+            addToolRecipe(TOOL_BUILDER.apply(SHOVEL.getId()), consumer, Ref.ID, SHOVEL.getId() + "_with" , "antimatter_shovels",
+                    "has_wrench", in, SHOVEL.getToolStack(NULL, NULL), map2.apply(SHOVEL), strings2);
+
+            addToolRecipe(TOOL_BUILDER.apply(SHOVEL.getId()), consumer, Ref.ID, SHOVEL.getId() + "_withgem" , "antimatter_shovels",
+                    "has_wrench", in, SHOVEL.getToolStack(NULL, NULL), gemMap2.apply(SHOVEL), strings2WithGem);
+
+            addToolRecipe(TOOL_BUILDER.apply(AXE.getId()), consumer, Ref.ID, AXE.getId() + "_with" , "antimatter_axes",
+                    "has_wrench", in, AXE.getToolStack(NULL, NULL), map1.apply(AXE), strings1);
+
+            addToolRecipe(TOOL_BUILDER.apply(AXE.getId()), consumer, Ref.ID, AXE.getId() + "_with" , "antimatter_axes",
+                    "has_wrench", in, AXE.getToolStack(NULL, NULL), gemMap1.apply(AXE), strings1WithGem);
+
+
+
+            /*addToolRecipe(TOOL_BUILDER.apply(AXE.getId()), consumer, Ref.ID, AXE.getId() + "_with", "antimatter_axes",
+                    "has_wrench", in, AXE.getToolStack(NULL, NULL), map1With.apply(AXE), stringsWith);
+
+            addToolRecipe(TOOL_BUILDER.apply(AXE.getId()), consumer, Ref.ID, AXE.getId() + "_without", "antimatter_axes",
+                    "has_wrench", in, AXE.getToolStack(NULL, NULL), map1Without.apply(AXE), stringsWithout);*/
             /*
+            ImmutableMap<Character, Object> map1 = main.getToolTypes().contains(HAMMER) && main.getToolTypes().contains(FILE) ? of('I', ingotTag, 'R', rodTag, 'P', plateTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()) : of('I', ingotTag, 'R', rodTag, 'P', plateTag);
+            ImmutableMap<Character, Object> map2 = main.getToolTypes().contains(HAMMER) && main.getToolTypes().contains(FILE) ? of('R', rodTag, 'P', plateTag, 'F', FILE.getTag(), 'H', HAMMER.getTag()) : of('R', rodTag, 'P', plateTag);
               if (main.has(SCREW)){
                         addStackRecipe(consumer, Ref.ID, WIRE_CUTTER.getId() + "_" + main.getId() + "_" + handle.getId(), "antimatter_wire_cutters",
                                 "has_material_" + main.getId(), plateTrigger, WIRE_CUTTER.getToolStack(main, handle),
