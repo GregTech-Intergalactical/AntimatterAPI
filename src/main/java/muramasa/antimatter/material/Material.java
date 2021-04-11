@@ -221,6 +221,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
         if (has(INGOT)) flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(TOOLS, ROD);
+        flags(DRILLBIT, CHAINSAWBIT,BUZZSAW_BLADE, WRENCHBIT);
         this.toolDamage = toolDamage;
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
@@ -232,10 +233,15 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
     	addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
+    	remove(BUZZSAW_BLADE, DRILLBIT, CHAINSAWBIT, WRENCHBIT);
         this.toolEnchantment = toolEnchantment;
         if (toolTypes.length > 0){
             this.toolTypes = Arrays.asList(toolTypes);
         }
+        if (this.toolTypes.contains(ELECTRIC_WRENCH)) flags(WRENCHBIT);
+        if (this.toolTypes.contains(BUZZSAW)) flags(BUZZSAW_BLADE);
+        if (this.toolTypes.contains(DRILL)) flags(DRILLBIT);
+        if (this.toolTypes.contains(CHAINSAW)) flags(CHAINSAWBIT);
     	return this;
     }
 
