@@ -110,12 +110,15 @@ public class AntimatterCookingRecipeBuilder {
             }
 
             json.add("ingredient", this.ingredient.serialize());
-            JsonObject jsonobject1 = new JsonObject();
-            jsonobject1.addProperty("item", Registry.ITEM.getKey(this.result.getItem()).toString());
+            JsonObject resultObj = new JsonObject();
+            resultObj.addProperty("item", Registry.ITEM.getKey(this.result.getItem()).toString());
             if (this.result.getCount() > 1) {
-                jsonobject1.addProperty("count", this.result.getCount());
+                resultObj.addProperty("count", this.result.getCount());
             }
-            json.add("result", jsonobject1);
+            if (this.result.hasTag()) {
+                resultObj.addProperty("nbt", this.result.getTag().toString());
+            }
+            json.add("result", resultObj);
             json.addProperty("experience", this.experience);
             json.addProperty("cookingtime", this.cookingTime);
         }
