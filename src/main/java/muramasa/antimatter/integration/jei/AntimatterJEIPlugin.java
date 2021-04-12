@@ -11,6 +11,7 @@ import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
@@ -19,9 +20,11 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
+import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.map.RecipeMap;
+import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -71,7 +74,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
         REGISTRY.put(map.getId(), new RegistryValue(map,map.getGui() == null ? gui : map.getGui(),tier,itemModel));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
-
+    public static IJeiHelpers helpers() {
+        return helpers;
+    }
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
@@ -107,6 +112,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
             runtime.getRecipesGui().showCategories(list);
         }
     }
+
+    @Override
+    public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+        registration.getCraftingCategory().addCategoryExtension(MaterialRecipe.class, JEIMaterialRecipeExtension::new);
+    }
+
     //To perform a JEI lookup for fluid. Use defines direction.
     public static void uses(FluidStack val, boolean USE) {
         IFocus.Mode mode = !USE ? IFocus.Mode.OUTPUT : IFocus.Mode.INPUT;

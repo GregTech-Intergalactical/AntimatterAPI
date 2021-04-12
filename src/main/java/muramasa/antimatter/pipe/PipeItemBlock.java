@@ -14,6 +14,10 @@ public class PipeItemBlock extends AntimatterItemBlock {
         super(block);
         this.pipe = block;
     }
+
+    public BlockPipe<?> getPipe() {
+        return pipe;
+    }
     @Nonnull
     @Override
     public ActionResultType tryPlace(BlockItemUseContext context) {

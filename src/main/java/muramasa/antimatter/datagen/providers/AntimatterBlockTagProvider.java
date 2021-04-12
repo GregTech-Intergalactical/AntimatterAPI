@@ -5,12 +5,14 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
+import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
@@ -89,6 +91,9 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
             String name = String.join("", block.getType().getTag().getName().getPath(), "/", block.getMaterial().getId());
             this.getOrCreateBuilder(getForgeBlockTag(name)).add(block);
             // if (block.getType() == FRAME) add climbable tag in 1.16
+        });
+        AntimatterAPI.all(BlockItemPipe.class, domain, pipe -> {
+           this.getOrCreateBuilder(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe"))).add(pipe);
         });
     }
 

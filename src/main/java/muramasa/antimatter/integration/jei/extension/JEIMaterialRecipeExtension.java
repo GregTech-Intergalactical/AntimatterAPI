@@ -1,20 +1,127 @@
 package muramasa.antimatter.integration.jei.extension;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
+import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
 import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.category.extensions.IRecipeCategoryExtension;
+import mezz.jei.api.recipe.IFocus;
+import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICustomCraftingCategoryExtension;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 
-public class JEIMaterialRecipeExtension implements IRecipeCategoryExtension {
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtension {
+
+    private static final int craftOutputSlot = 0;
+    private static final int craftInputSlot1 = 1;
+
+    public static final int width = 116;
+    public static final int height = 54;
 
     protected final MaterialRecipe recipe;
+    protected final ICraftingGridHelper helper;
 
     public JEIMaterialRecipeExtension(MaterialRecipe recipe) {
         this.recipe = recipe;
+        this.helper = AntimatterJEIPlugin.helpers().getGuiHelper().createCraftingGridHelper(craftInputSlot1);
     }
     @Override
     public void setIngredients(IIngredients ingredients) {
         ingredients.setInputIngredients(recipe.getIngredients());
-        ingredients.setOutput(VanillaTypes.ITEM, recipe.getRecipeOutput());
+        ingredients.setOutputs(VanillaTypes.ITEM, recipe.stacksToLookup());
+    }
+
+    @Override
+    public void setRecipe(IRecipeLayout recipeLayout, IIngredients ingredients) {
+        IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
+        IFocus<?> focus = recipeLayout.getFocus();
+        guiItemStacks.init(craftOutputSlot, false, 94, 18);
+
+        for (int y = 0; y < 3; ++y) {
+            for (int x = 0; x < 3; ++x) {
+                int index = craftInputSlot1 + x + (y * 3);
+                guiItemStacks.init(index, true, x * 18, y * 18);
+            }
+        }
+
+        List<List<ItemStack>> inputs = ingredients.getInputs(VanillaTypes.ITEM);
+        List<List<ItemStack>> newInputs = new ObjectArrayList<>(inputs);
+        List<List<ItemStack>> outputs = ingredients.getOutputs(VanillaTypes.ITEM);
+        boolean shouldReplace = true;
+        if (focus != null) {
+            ItemStack stack = (ItemStack) focus.getValue();
+            if (focus.getMode() == IFocus.Mode.OUTPUT) {
+                Map<String, Object> m = recipe.builder.getFromResult(stack);
+                for (int i = 0; i < recipe.getIngredients().size(); i++) {
+                    Ingredient j = recipe.getIngredients().get(i);
+                    if (!(j instanceof PropertyIngredient)) continue;
+                    PropertyIngredient inner = (PropertyIngredient)j;
+                    Object o = m.get(inner.getId());
+                    if (o == null) continue;
+                    List<ItemStack> st = Arrays.stream(inner.getMatchingStacks()).filter(t -> MaterialRecipe.getMat(inner, t).equals(o)).collect(Collectors.toList());
+                    if (st.size() > 0) {
+                        newInputs.set(i, st);
+                    } else {
+                        shouldReplace = false;
+                        break;
+                    }
+                }
+                outputs.set(0, Collections.singletonList(stack));
+            } else if (focus.getMode() == IFocus.Mode.INPUT) {
+                for (Ingredient ingredient : recipe.getIngredients()) {
+                    if (!(ingredient instanceof PropertyIngredient)) continue;
+                    PropertyIngredient prop = (PropertyIngredient) ingredient;
+                    if (prop.test(stack)) {
+                        Object obj = MaterialRecipe.getMat(prop, stack);
+                        int i = 0;
+                        for (Ingredient innerIngredient : recipe.getIngredients()) {
+                            if (!(innerIngredient instanceof PropertyIngredient)) {
+                                i++;
+                                continue;
+                            }
+                            PropertyIngredient inner = (PropertyIngredient)innerIngredient;
+                            if (inner.getId().equals(prop.getId())) {
+                                List<ItemStack> st = Arrays.stream(inner.getMatchingStacks()).filter(t -> MaterialRecipe.getMat(inner, t).equals(obj)).collect(Collectors.toList());
+                                if (st.size() > 0) {
+                                    newInputs.set(i, st);
+                                } else {
+                                    shouldReplace = false;
+                                    break;
+                                }
+                            }
+                            i++;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        guiItemStacks.addTooltipCallback((a,b,c,d) -> {
+            if (b) {
+                Ingredient i = recipe.getIngredients().get(a+craftInputSlot1);
+                if (i instanceof PropertyIngredient) {
+                    PropertyIngredient p = (PropertyIngredient) i;
+            //        d.add(new StringTextComponent("Property: " + p.getId()));
+                }
+            }
+        });
+        guiItemStacks.set(craftOutputSlot, outputs.stream().flatMap(Collection::stream).collect(Collectors.toList()));
+        helper.setInputs(guiItemStacks, shouldReplace ? newInputs : inputs, recipe.getWidth(), recipe.getHeight());
+
+/*        Size2i size = getSize();
+        if (size != null && size.width > 0 && size.height > 0) {
+            for (int i = 0; i < inputs.size(); i++) {
+            }
+            ingredients.setInputs(guiItemStacks, inputs, size.width, size.height);
+        }
+        guiItemStacks.set(craftOutputSlot, outputs.get(0));*/
     }
 }

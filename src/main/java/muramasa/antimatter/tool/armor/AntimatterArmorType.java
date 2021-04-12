@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import static muramasa.antimatter.Data.ARMOR_BUILDER;
+
 public class AntimatterArmorType implements IAntimatterObject {
     private final String domain, id;
     private List<ITextComponent> tooltip = new ObjectArrayList<>();
@@ -60,6 +62,7 @@ public class AntimatterArmorType implements IAntimatterObject {
         this.event = SoundEvents.ITEM_ARMOR_EQUIP_IRON;
         this.overlayLayers = 0;
         AntimatterAPI.register(AntimatterArmorType.class, this);
+        ARMOR_BUILDER.apply(getId());
     }
 
     public IAntimatterArmor instantiateTools(String domain) {

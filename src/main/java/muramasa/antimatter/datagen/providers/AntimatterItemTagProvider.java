@@ -110,6 +110,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             this.getOrCreateBuilder(tool.getType().getTag()).add(tool.getItem()).replace(replace);
             this.getOrCreateBuilder(tool.getType().getForgeTag()).add(tool.getItem()).replace(replace);
         });
+        this.copy(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe")), TagUtils.getItemTag(new ResourceLocation(Ref.ID, "item_pipe")));
         this.getOrCreateBuilder(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
     }
 

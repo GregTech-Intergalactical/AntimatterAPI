@@ -9,7 +9,7 @@ import com.google.gson.JsonSyntaxException;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.recipe.ingredient.MaterialIngredient;
+import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
@@ -43,8 +43,11 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
         int i = astring[0].length();
         int j = astring.length;
         NonNullList<Ingredient> nonnulllist = deserializeIngredients(astring, map, i, j);
-        ItemStack itemstack = ShapedRecipe.deserializeItem(JSONUtils.getJsonObject(json, "result"));
-        return new MaterialRecipe(recipeId, s, i, j, nonnulllist, itemstack, json.get("builder").getAsString(), buildMaterialInput(nonnulllist));
+        NonNullList<ItemStack> out = NonNullList.create();
+        for (JsonElement output : JSONUtils.getJsonArray(json, "output")) {
+            out.add(ShapedRecipe.deserializeItem(output.getAsJsonObject()));
+        }
+        return new MaterialRecipe(recipeId, s, i, j, nonnulllist, out, json.get("builder").getAsString(), buildMaterialInput(nonnulllist));
     }
 
     @Nullable
@@ -58,9 +61,12 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
         for (int k = 0; k < nonnulllist.size(); ++k) {
             nonnulllist.set(k, Ingredient.read(buffer));
         }
-
-        ItemStack itemstack = buffer.readItemStack();
-        return new MaterialRecipe(recipeId, s, i, j, nonnulllist, itemstack, buffer.readString(), buildMaterialInput(nonnulllist));
+        int size = buffer.readVarInt();
+        NonNullList<ItemStack> out = NonNullList.create();
+        for (int ii = 0; i < size; i++) {
+            out.add(ii, buffer.readItemStack());
+        }
+        return new MaterialRecipe(recipeId, s, i, j, nonnulllist, out, buffer.readString(), buildMaterialInput(nonnulllist));
     }
 
     @Override
@@ -73,6 +79,11 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
             ingredient.write(buffer);
         }
 
+        buffer.writeVarInt(recipe.outputs.size());
+        for (ItemStack stack : recipe.outputs) {
+            buffer.writeItemStack(stack);
+        }
+
         buffer.writeItemStack(recipe.getRecipeOutput());
         buffer.writeString(recipe.builderId.toString());
     }
@@ -81,9 +92,9 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
         Map<String, Set<Integer>> ret = new Object2ObjectOpenHashMap<>();
         for (int i = 0; i < ingredients.size(); i++) {
             Ingredient ing = ingredients.get(i);
-            if (ing instanceof MaterialIngredient) {
+            if (ing instanceof PropertyIngredient) {
                 int finalI1 = i;
-                ret.compute(((MaterialIngredient) ing).getId(), (s, v) -> {
+                ret.compute(((PropertyIngredient) ing).getId(), (s, v) -> {
                     if (v == null) v = new ObjectArraySet<>();
                     v.add(finalI1);
                     return v;

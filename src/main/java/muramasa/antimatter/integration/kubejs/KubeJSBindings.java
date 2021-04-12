@@ -1,10 +1,7 @@
 package muramasa.antimatter.integration.kubejs;
 
-import dev.latvian.kubejs.item.ItemJS;
 import dev.latvian.kubejs.item.ItemStackJS;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
@@ -12,8 +9,6 @@ import muramasa.antimatter.material.MaterialTypeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.TagCollectionManager;
 
 import java.util.Collections;
 import java.util.List;

@@ -6,9 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.recipe.ingredient.MaterialIngredient;
+import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
@@ -18,7 +16,9 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,22 +31,34 @@ public class MaterialRecipe extends ShapedRecipe {
         public String getDomain() {
             return Ref.ID;
         }
-
         public ItemBuilder() {
             AntimatterAPI.register(ItemBuilder.class, this);
         }
-        public abstract ItemStack build(CraftingInventory inv, Map<String, Material> mats);
-
+        public abstract ItemStack build(CraftingInventory inv, Result mats);
+        public abstract Map<String, Object> getFromResult(@Nonnull ItemStack stack);
     }
     public final Map<String, Set<Integer>> materialSlots;
-    private final ItemBuilder builder;
+    public final ItemBuilder builder;
+    private final int size;
     public final ResourceLocation builderId;
+    public final NonNullList<ItemStack> outputs;
 
-    public MaterialRecipe(ResourceLocation idIn, String groupIn, int recipeWidthIn, int recipeHeightIn, NonNullList<Ingredient> recipeItemsIn, ItemStack recipeOutputIn, String builderId, Map<String, Set<Integer>> materialSlots) {
-        super(idIn, groupIn, recipeWidthIn, recipeHeightIn, recipeItemsIn, recipeOutputIn);
+    public MaterialRecipe(ResourceLocation idIn, String groupIn, int recipeWidthIn, int recipeHeightIn, NonNullList<Ingredient> recipeItemsIn, NonNullList<ItemStack> recipeOutputIn, String builderId, Map<String, Set<Integer>> materialSlots) {
+        super(idIn, groupIn, recipeWidthIn, recipeHeightIn, recipeItemsIn, recipeOutputIn.get(0));
         this.materialSlots = ImmutableMap.copyOf(materialSlots);
+        this.size = materialSlots.values().stream().mapToInt(Set::size).sum();
         this.builderId = new ResourceLocation(builderId);
         this.builder = AntimatterAPI.get(ItemBuilder.class, this.builderId.getPath());
+        this.outputs = recipeOutputIn;
+    }
+
+    /*@Override
+    public IRecipeType<?> getType() {
+        return TYPE;
+    }*/
+
+    public List<ItemStack> stacksToLookup() {
+        return outputs;
     }
 
     @Override
@@ -54,10 +66,10 @@ public class MaterialRecipe extends ShapedRecipe {
        return build(inv, true) != null;
     }
 
-    private Map<String, Material> build(CraftingInventory inv, boolean regularTest) {
+    private Result build(CraftingInventory inv, boolean regularTest) {
         for(int i = 0; i <= inv.getWidth() - this.getWidth(); ++i) {
             for(int j = 0; j <= inv.getHeight() - this.getHeight(); ++j) {
-                Map<String, Material> m = this.build(inv, i, j,regularTest, true);
+                Result m = this.build(inv, i, j,regularTest, true);
                 if (m != null) return m;
                 m = this.build(inv, i, j,regularTest, false);
                 if (m != null) return m;
@@ -66,9 +78,10 @@ public class MaterialRecipe extends ShapedRecipe {
         return null;
     }
 
-    private Map<String, Material> build(CraftingInventory inv, int width, int height, boolean regularTest, boolean someBooleanIDunno) {
-        Int2ObjectMap<Material> result = new Int2ObjectOpenHashMap<>();
-        Map<String, Material> ret = new Object2ObjectOpenHashMap<>();
+    private Result build(CraftingInventory inv, int width, int height, boolean regularTest, boolean someBooleanIDunno) {
+        Int2ObjectMap<Object> result = new Int2ObjectOpenHashMap<>(size);
+        Map<String, Object> ret = new Object2ObjectOpenHashMap<>(5, 0.25f);
+        Map<Ingredient, ItemStack> whichStacks = new Object2ObjectOpenHashMap<>(5, 0.25f);
         for(int i = 0; i < inv.getWidth(); ++i) {
             for (int j = 0; j < inv.getHeight(); ++j) {
                 int k = i - width;
@@ -81,19 +94,23 @@ public class MaterialRecipe extends ShapedRecipe {
                     else
                         offset = k + l * this.getRecipeWidth();
                     ingredient = this.getIngredients().get(offset);
-                    if (ingredient instanceof MaterialIngredient) {
-                        result.put(offset, getMat(((MaterialIngredient)ingredient).getType(), inv.getStackInSlot(i + j * inv.getWidth())));
+                    ItemStack stack = inv.getStackInSlot(i + j * inv.getWidth());
+                    if (ingredient instanceof PropertyIngredient) {
+                        Object obj = getMat((PropertyIngredient)ingredient, stack);
+                        if (obj == null) return null;
+                        result.put(offset, obj);
                     }
-                    if (regularTest && !ingredient.test(inv.getStackInSlot(i + j * inv.getWidth()))) {
+                    if (regularTest && !ingredient.test(stack)) {
                         return null;
                     }
+                    whichStacks.put(ingredient, stack);
                 }
             }
         }
         for (Set<Integer> l : this.materialSlots.values()) {
-            Material mat = null;
+            Object mat = null;
             for (int i : l) {
-                Material innerMat = result.get(i);
+                Object innerMat = result.get(i);
                 if (innerMat == null) {
                     return null;
                 }
@@ -101,28 +118,38 @@ public class MaterialRecipe extends ShapedRecipe {
                     mat = innerMat;
                     continue;
                 }
-                if (innerMat != mat) {
+                if (!innerMat.equals(mat)) {
                     return null;
                 }
             }
-            ret.put(((MaterialIngredient)this.getIngredients().get(l.iterator().next())).getId(), mat);
+            ret.put(((PropertyIngredient)this.getIngredients().get(l.iterator().next())).getId(), mat);
         }
-        for (Material value : ret.values()) {
+        for (Object value : ret.values()) {
             if (value == null) return null;
         }
-        return ret;
+        return new Result(ret, whichStacks);
     }
 
     @Nullable
-    private Material getMat(MaterialType type, ItemStack stack) {
-        return type.tryMaterialFromItem(stack);
+    public static Object getMat(PropertyIngredient type, ItemStack stack) {
+        return type.getMat(stack);
     }
 
     @Override
     public ItemStack getCraftingResult(CraftingInventory inv) {
-        Map<String, Material> m = build(inv, false);
+        Result m = build(inv, false);
 
         return this.builder.build(inv, m);
+    }
+
+    public static final class Result {
+        public final Map<String, Object> mats;
+        public final Map<Ingredient, ItemStack> items;
+
+        public Result(Map<String, Object> mats, Map<Ingredient, ItemStack> items) {
+            this.mats = mats;
+            this.items = items;
+        }
     }
 
 }
