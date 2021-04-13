@@ -111,7 +111,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     @Override
     public String toString() {
-        return getId();
+        return Utils.lowerUnderscoreToUpperSpaced(getId());
     }
     
     public Material asDust(IMaterialTag... tags) {

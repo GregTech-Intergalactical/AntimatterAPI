@@ -37,8 +37,6 @@ public class PropertyIngredient extends Ingredient {
 
     private static final Map<ResourceLocation, Getter> getters = new Object2ObjectOpenHashMap<>();
 
-    private Map<MaterialTypeItem, Map<Material, ItemStack>> SAME_LOOKUP;
-
     public interface Getter {
         @Nullable
         Object get(@Nonnull ItemStack item);
@@ -52,7 +50,6 @@ public class PropertyIngredient extends Ingredient {
     private final boolean inverse;
 
     protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type,Set<ITag.INamedTag<Item>> itemTags, String id, IMaterialTag[] tags, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
-        Map<MaterialTypeItem, Map<Material, ItemStack>> SAME_LOOKUP = new Object2ObjectOpenHashMap<>();
         Stream<IItemList> stream = Stream.concat(itemTags.stream().map(t -> new StackList(TagUtils.nc(t).getAllElements().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new StackList(i.all().stream().filter(t -> {
             boolean ok = t.has(tags);
             boolean types = true;
@@ -66,18 +63,9 @@ public class PropertyIngredient extends Ingredient {
                 return !ok && types;
             }
             return ok && types;
-        }).map(mat -> {
-            ItemStack stack = i.get(mat, 1);
-            SAME_LOOKUP.compute(i, (k,v) -> {
-                if (v == null) v = new Object2ObjectOpenHashMap<>();
-                v.put(mat, stack);
-                return v;
-            });
-            return stack;
-        }).collect(Collectors.toList()))));
+        }).map(mat -> i.get(mat, 1)).collect(Collectors.toList()))));
         PropertyIngredient prop = new PropertyIngredient(stream, type, itemTags, id, tags, inverse, tools);
 
-        prop.SAME_LOOKUP = SAME_LOOKUP;
         return prop;
     }
 
@@ -88,7 +76,7 @@ public class PropertyIngredient extends Ingredient {
         this.tags = tags == null ? new MaterialTag[0] : tags;
         this.inverse = inverse;
         this.optionalTools = tools;
-        this.itemTags = Collections.emptySet();
+        this.itemTags = itemTags;
     }
     //Convenience
     public static PropertyIngredient of(MaterialTypeItem<?> type, String id) {

@@ -51,9 +51,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 import static muramasa.antimatter.material.TextureSet.NONE;
@@ -80,7 +78,7 @@ public class Data {
             public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
                 CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
                 Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-                return ImmutableMap.of("primary", primary);
+                return ImmutableMap.of("primary", primary != null ? primary : NULL);
             }
         };
     };
@@ -133,7 +131,7 @@ public class Data {
                 CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
                 Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
                 Material secondary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
-                return ImmutableMap.of("primary", primary, "secondary", secondary);
+                return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", secondary != null ? secondary : NULL);
             }
         };
     };
@@ -161,7 +159,8 @@ public class Data {
                 CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
                 Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
                 int secondary = nbt.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
-                return ImmutableMap.of("primary", primary, "secondary", secondary);
+                Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getColorValue() == secondary).findFirst();
+                return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", color.orElse(DyeColor.WHITE));
             }
         };
     };

@@ -11,7 +11,9 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
+import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
@@ -39,8 +41,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.MaterialTag.GRINDABLE;
-import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
+import static muramasa.antimatter.material.MaterialTag.*;
 import static muramasa.antimatter.util.TagUtils.getForgeItemTag;
 import static muramasa.antimatter.util.TagUtils.nc;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
@@ -84,6 +85,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     public void registerRecipes(Consumer<IFinishedRecipe> consumer) {
         //registerMaterialRecipes(consumer, providerDomain);
         registerToolRecipes(consumer, providerDomain);
+        registerPipeRecipes(consumer, providerDomain);
         //craftingLoaders.forEach(cl -> cl.loadRecipes(consumer,this));
     }
 
@@ -128,6 +130,22 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         });
     }
 
+    protected void registerPipeRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
+        if (providerDomain.equals(Ref.ID)) {
+            final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
+            final Map<Class, MaterialTag> tags = ImmutableMap.of(ItemPipe.class, MaterialTag.ITEMPIPE, FluidPipe.class, FLUIDPIPE);
+            for (Map.Entry<Class<? extends PipeType>, String> c : ImmutableMap.of(ItemPipe.class, "item", FluidPipe.class, "fluid").entrySet()) {
+                List<ItemStack> stacks = AntimatterAPI.all(c.getKey()).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
+                addToolRecipe(PIPE_BUILDER.apply(c.getValue(), PipeSize.SMALL, c.getKey()),  consumer, Ref.ID, "pipe_"+c.getValue()+ "_" + PipeSize.SMALL.getId(), "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(tags.get(c.getKey())).build()), "PPP", "H W", "PPP");
+
+                stacks = AntimatterAPI.all(c.getKey()).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 4)).collect(Collectors.toList());
+                addToolRecipe(PIPE_BUILDER.apply(c.getValue(), PipeSize.NORMAL, c.getKey()),  consumer, Ref.ID, "pipe_"+c.getValue()+ "_" + PipeSize.NORMAL.getId(), "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(tags.get(c.getKey())).build()), "PWP", "P P", "PHP");
+            }
+        }
+    }
+
     protected void registerToolRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
         if (providerDomain.equals(Ref.ID)) {
             final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
@@ -150,10 +168,6 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     "has_wrench", in, Collections.singletonList(PLUNGER.getToolStack(NULL, NULL)),
                     of('W', WIRE_CUTTER.getTag(), 'I',  PropertyIngredient.of(INGOT, "primary"), 'S', Tags.Items.SLIMEBALLS, 'R', PropertyIngredient.builder("secondary").types(ROD).tags(RUBBERTOOLS).build(), 'F', FILE.getTag()), "WIS", " RI", "R F");
 
-            List<ItemStack> stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL))).collect(Collectors.toList());
-
-            addToolRecipe(PIPE_BUILDER.apply("item", PipeSize.NORMAL, ItemPipe.class),  consumer, Ref.ID, "pipe_item_" + PipeSize.NORMAL.getId(), "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(MaterialTag.ITEMPIPE).build()), "PPP", "H W", "PPP");
             addToolRecipe(TOOL_BUILDER.apply(WRENCH.getId()), consumer, Ref.ID, WRENCH.getId() + "_recipe", "antimatter_wrenches",
                     "has_wrench", in, WRENCH.getToolStack(NULL, NULL), of('I', PropertyIngredient.of(INGOT, "primary"), 'H', HAMMER.getTag()), "IHI", "III", " I ");
 

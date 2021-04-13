@@ -43,7 +43,6 @@ public class CommonHandler implements IProxyHandler {
             @Override
             protected void apply(Void objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
                 AntimatterAPI.onRecipeCompile(ev.getDataPackRegistries().getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
-                AntimatterAPI.onRecipeManagerBuild(DynamicResourcePack::addRecipe);
             }
         });
     }
