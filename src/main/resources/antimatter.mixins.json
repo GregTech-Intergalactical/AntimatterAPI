@@ -4,17 +4,11 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "antimatter.refmap.json",
   "client": [
-    "ClientBlockUpdateMixin",
-    "ClientPlayNetHandlerMixin",
-    "DynamicPackMixin"
-  ],
-  "server": [
-    "ServerDynamicPackMixin"
+    "ClientBlockUpdateMixin"
   ],
   "mixins": [
-    "DataPackRegistriesMixin",
-    "RecipeManagerMixin",
-    "ServerBlockUpdateMixin"
+    "ServerBlockUpdateMixin",
+    "SimpleReloadableResourceManagerMixin"
   ],
   "minVersion": "0.8"
 }

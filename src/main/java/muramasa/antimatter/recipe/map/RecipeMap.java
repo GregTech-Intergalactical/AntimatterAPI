@@ -415,12 +415,13 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM), fluidHandler.map(MachineFluidHandler::getInputs).orElse(EMPTY_FLUID), validator);
     }
 
-    protected void reset() {
+    public void reset() {
         this.LOOKUP.clear();
+        this.RECIPES_TO_COMPILE.clear();
     }
 
     public void compile(RecipeManager reg, Function<Item, Collection<ResourceLocation>> tagGetter) {
-        reset();
+        //reset();
         if (RECIPES_TO_COMPILE.size() > 0) {
             //Recipes with special ingredients have to be compiled first as you cannot
             //verify that a special recipe collides with a regular, but the opposite works.

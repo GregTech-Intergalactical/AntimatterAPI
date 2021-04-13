@@ -8,6 +8,7 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.ItemPipe;
@@ -150,8 +151,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     of('W', WIRE_CUTTER.getTag(), 'I',  PropertyIngredient.of(INGOT, "primary"), 'S', Tags.Items.SLIMEBALLS, 'R', PropertyIngredient.builder("secondary").types(ROD).tags(RUBBERTOOLS).build(), 'F', FILE.getTag()), "WIS", " RI", "R F");
 
             List<ItemStack> stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL))).collect(Collectors.toList());
+
             addToolRecipe(PIPE_BUILDER.apply("item", PipeSize.NORMAL, ItemPipe.class),  consumer, Ref.ID, "pipe_item_" + PipeSize.NORMAL.getId(), "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.of(PLATE, "primary")), "PPP", "HPW", "PPP");
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(MaterialTag.ITEMPIPE).build()), "PPP", "H W", "PPP");
             addToolRecipe(TOOL_BUILDER.apply(WRENCH.getId()), consumer, Ref.ID, WRENCH.getId() + "_recipe", "antimatter_wrenches",
                     "has_wrench", in, WRENCH.getToolStack(NULL, NULL), of('I', PropertyIngredient.of(INGOT, "primary"), 'H', HAMMER.getTag()), "IHI", "III", " I ");
 
@@ -170,12 +172,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
             addToolRecipe(TOOL_BUILDER.apply(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
                     "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
-                b.put('P', PropertyIngredient.builder("primary").inverse().types(PLATE).tags(SCREW).build()).put('R', PropertyIngredient.of(ROD, "secondary")).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                b.put('P', PropertyIngredient.builder("primary").inverse().types(PLATE).tags(SCREW).build()).put('R',PropertyIngredient.builder("secondary").types(ROD).tags(MaterialTag.HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
                         .put('S', SCREWDRIVER.getTag())
                     , "PFP", "HPS", "R R");
             addToolRecipe(TOOL_BUILDER.apply(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_screw", "antimatter_files",
                     "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
-                            b.put('P', PropertyIngredient.builder("primary").types(PLATE).tags(SCREW).build()).put('R', PropertyIngredient.of(ROD, "secondary")).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                            b.put('P', PropertyIngredient.builder("primary").types(PLATE).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(MaterialTag.HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
                                     .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
                     , "PFP", "HPS", "RWR");
 

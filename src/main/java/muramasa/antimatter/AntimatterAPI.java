@@ -1,7 +1,6 @@
 package muramasa.antimatter;
 
 import com.google.common.collect.Sets;
-import com.google.gson.JsonElement;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
@@ -211,7 +210,6 @@ public final class AntimatterAPI {
             }
             t.antimatterRecipes(getRecipeRegistrate());
         });
-        AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class, IRecipeRegistrate.IRecipeLoader::init);
         AntimatterAPI.runDataProvidersDynamically();
     }
 
@@ -295,9 +293,9 @@ public final class AntimatterAPI {
      * MIXIN METHOD: Called when recipe manager builds recipe maps.
      * @param objectIn the recipes.
      */
-    public static void onRecipeManagerBuild(Map<ResourceLocation, JsonElement> objectIn) {
+    public static void onRecipeManagerBuild(Consumer<IFinishedRecipe> objectIn) {
         Antimatter.LOGGER.info("Recipe manager head executing.");
-        AntimatterAPI.collectRecipes(rec -> objectIn.put(rec.getID(), rec.getRecipeJson()));
+        AntimatterAPI.collectRecipes(objectIn::accept);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
                 if (!AntimatterAPI.isModLoaded(mod)) return;

@@ -104,6 +104,13 @@ public class DynamicResourcePack implements IResourcePack {
         });
     }
 
+    public static void ensureTagAvailable(ResourceLocation loc) {
+        DATA.compute(loc, (k,v) -> {
+            if (v != null) return v;
+            return ITag.Builder.create().serialize();
+        });
+    }
+
     public static boolean hasTag(ResourceLocation loc) {
         return DATA.get(loc) != null;
     }

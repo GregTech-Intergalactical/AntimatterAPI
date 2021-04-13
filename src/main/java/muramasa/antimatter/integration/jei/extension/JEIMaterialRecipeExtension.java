@@ -1,5 +1,6 @@
 package muramasa.antimatter.integration.jei.extension;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -13,6 +14,8 @@ import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -73,8 +76,9 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                         break;
                     }
                 }
-                outputs.set(0, Collections.singletonList(stack));
+                guiItemStacks.set(0, Collections.singletonList(stack));
             } else if (focus.getMode() == IFocus.Mode.INPUT) {
+                Map<String, Object> out = new Object2ObjectOpenHashMap<>();
                 for (Ingredient ingredient : recipe.getIngredients()) {
                     if (!(ingredient instanceof PropertyIngredient)) continue;
                     PropertyIngredient prop = (PropertyIngredient) ingredient;
@@ -91,6 +95,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                                 List<ItemStack> st = Arrays.stream(inner.getMatchingStacks()).filter(t -> MaterialRecipe.getMat(inner, t).equals(obj)).collect(Collectors.toList());
                                 if (st.size() > 0) {
                                     newInputs.set(i, st);
+                                    out.put(prop.getId(), obj);
                                 } else {
                                     shouldReplace = false;
                                     break;
@@ -101,19 +106,34 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                         break;
                     }
                 }
+                List<ItemStack> result = outputs.stream().map(t -> t.get(0)).filter(t -> {
+                    Map<String, Object> o = recipe.builder.getFromResult(t);
+                    boolean ok = true;
+                    for (Map.Entry<String, Object> objectEntry : o.entrySet()) {
+                        Object inner = out.get(objectEntry.getKey());
+                        ok &= inner != null && inner.equals(objectEntry.getValue());
+                    }
+                    return ok;
+                }).collect(Collectors.toList());
+                if (result.size() > 0) {
+                    guiItemStacks.set(craftOutputSlot, result);
+                } else {
+                    guiItemStacks.set(craftOutputSlot, outputs.stream().flatMap(Collection::stream).collect(Collectors.toList()));
+                }
             }
+        } else {
+            guiItemStacks.set(craftOutputSlot, outputs.stream().flatMap(Collection::stream).collect(Collectors.toList()));
         }
 
         guiItemStacks.addTooltipCallback((a,b,c,d) -> {
             if (b) {
-                Ingredient i = recipe.getIngredients().get(a+craftInputSlot1);
+                Ingredient i = recipe.getIngredients().get(a-craftInputSlot1);
                 if (i instanceof PropertyIngredient) {
                     PropertyIngredient p = (PropertyIngredient) i;
-            //        d.add(new StringTextComponent("Property: " + p.getId()));
+                    d.add(new StringTextComponent("Property: ").append(new StringTextComponent(p.getId().substring(0,1).toUpperCase() + p.getId().substring(1)).mergeStyle(TextFormatting.GOLD)));
                 }
             }
         });
-        guiItemStacks.set(craftOutputSlot, outputs.stream().flatMap(Collection::stream).collect(Collectors.toList()));
         helper.setInputs(guiItemStacks, shouldReplace ? newInputs : inputs, recipe.getWidth(), recipe.getHeight());
 
 /*        Size2i size = getSize();
