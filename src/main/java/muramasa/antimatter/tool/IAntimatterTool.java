@@ -178,7 +178,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return result;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("rawtypes")
     default ActionResultType onGenericHighlight(PlayerEntity player, DrawHighlightEvent ev) {
         ActionResultType result = ActionResultType.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {
