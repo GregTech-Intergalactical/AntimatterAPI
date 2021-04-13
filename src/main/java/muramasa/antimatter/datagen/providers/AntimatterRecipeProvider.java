@@ -172,12 +172,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
             addToolRecipe(TOOL_BUILDER.apply(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
                     "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
-                b.put('P', PropertyIngredient.builder("primary").inverse().types(PLATE).tags(SCREW).build()).put('R',PropertyIngredient.builder("secondary").types(ROD).tags(MaterialTag.HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                b.put('P', PropertyIngredient.builder("primary").inverse().types(PLATE).tags(SCREW).build()).put('R',PropertyIngredient.builder("secondary").types(ROD).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
                         .put('S', SCREWDRIVER.getTag())
                     , "PFP", "HPS", "R R");
             addToolRecipe(TOOL_BUILDER.apply(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_screw", "antimatter_files",
                     "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
-                            b.put('P', PropertyIngredient.builder("primary").types(PLATE).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(MaterialTag.HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                            b.put('P', PropertyIngredient.builder("primary").types(PLATE).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
                                     .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
                     , "PFP", "HPS", "RWR");
 
