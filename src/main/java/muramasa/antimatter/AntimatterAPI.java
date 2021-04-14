@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.datagen.providers.dummy.DummyTagProviders;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
@@ -318,6 +319,15 @@ public final class AntimatterAPI {
         int size = AntimatterAPI.all(RecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
         Antimatter.LOGGER.info("No. of GT recipes: " + size);
         Antimatter.LOGGER.info("Average loading time / recipe: (µs) " + (size > 0 ? time/size : time)/1000);
+    }
+
+    public static void onResourceReload(boolean server) {
+        AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
+        AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class, IRecipeRegistrate.IRecipeLoader::init);
+        if (server) TagUtils.getTags(Item.class).forEach((k,v) -> {
+            //  ITag.Builder builder = ITag.Builder.create();
+            DynamicResourcePack.ensureTagAvailable(AntimatterItemTagProvider.getTagLoc("items", k)); //builder.serialize(), false);
+        });
     }
 
     /** JEI Registry Section **/

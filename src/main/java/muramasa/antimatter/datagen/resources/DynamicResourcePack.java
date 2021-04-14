@@ -105,6 +105,7 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static void ensureTagAvailable(ResourceLocation loc) {
+        if (loc.getNamespace().contains("minecraft")) return;
         DATA.compute(loc, (k,v) -> {
             if (v != null) return v;
             return ITag.Builder.create().serialize();

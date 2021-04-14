@@ -1,7 +1,6 @@
 package muramasa.antimatter.util;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
@@ -10,12 +9,11 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 
 public class TagUtils {
     //A list of all registered tags for all Antimatter mods.
-    private static final Map<Class, Set<ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
+    private static final Map<Class, Map<ResourceLocation, ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
     /**
      * Redirects an ItemTag to a BlockTag
      * @param tag a ItemTag, preferably already created
@@ -44,8 +42,8 @@ public class TagUtils {
         return createTag(loc, Block.class, BlockTags::makeWrapperTag);
     }
 
-    public static Set<ITag.INamedTag> getTags(Class clazz) {
-        return TAG_MAP.getOrDefault(clazz, Collections.emptySet());
+    public static Map<ResourceLocation, ITag.INamedTag> getTags(Class clazz) {
+        return TAG_MAP.getOrDefault(clazz, Collections.emptyMap());
     }
 
     /**
@@ -98,12 +96,12 @@ public class TagUtils {
     }
 
     protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
-        ITag.INamedTag<T> tag = fn.apply(loc.toString());
+        ITag.INamedTag<T>[] tag = new ITag.INamedTag[1];
         TAG_MAP.compute(clazz, (k,v) -> {
-            if (v == null) v = new ObjectOpenHashSet<>();
-            v.add(tag);
+            if (v == null) v = new Object2ObjectOpenHashMap<>();
+            tag[0] = v.computeIfAbsent(loc, a -> fn.apply(loc.toString()));
             return v;
         });
-        return tag;
+        return tag[0];
     }
 }

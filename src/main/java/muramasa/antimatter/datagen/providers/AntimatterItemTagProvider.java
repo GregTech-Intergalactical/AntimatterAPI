@@ -54,7 +54,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        TagUtils.getTags(Item.class).forEach(t -> addTag("items", t.getName(), getOrCreateBuilder(t).getInternalBuilder()));
+        TagUtils.getTags(Item.class).forEach((k,v) -> addTag("items", k, getOrCreateBuilder(v).getInternalBuilder()));
         tagToBuilder.forEach((k, v) -> addTag("items", k, v));
         b.forEach(tagToBuilder::put);
     }

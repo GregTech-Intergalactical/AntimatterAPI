@@ -19,6 +19,8 @@ import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -27,11 +29,14 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -66,6 +71,13 @@ public class ClientHandler implements IProxyHandler {
                 event.accept(r);
             }
         }));
+
+        MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRecipes);
+    }
+
+    public static void onRecipes(RecipesUpdatedEvent ev) {
+        AntimatterAPI.onResourceReload(false);
+        AntimatterAPI.onRecipeCompile(ev.getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
     }
 
     @SuppressWarnings({"unchecked", "unused"})

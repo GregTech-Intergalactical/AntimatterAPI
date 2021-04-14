@@ -136,11 +136,11 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             final Map<Class, MaterialTag> tags = ImmutableMap.of(ItemPipe.class, MaterialTag.ITEMPIPE, FluidPipe.class, FLUIDPIPE);
             for (Map.Entry<Class<? extends PipeType>, String> c : ImmutableMap.of(ItemPipe.class, "item", FluidPipe.class, "fluid").entrySet()) {
                 List<ItemStack> stacks = AntimatterAPI.all(c.getKey()).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
-                addToolRecipe(PIPE_BUILDER.apply(c.getValue(), PipeSize.SMALL, c.getKey()),  consumer, Ref.ID, "pipe_"+c.getValue()+ "_" + PipeSize.SMALL.getId(), "antimatter_pipes",
+                if (stacks.size() > 0) addToolRecipe(PIPE_BUILDER.apply(c.getValue(), PipeSize.SMALL, c.getKey()),  consumer, Ref.ID, "pipe_"+c.getValue()+ "_" + PipeSize.SMALL.getId(), "antimatter_pipes",
                         "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(tags.get(c.getKey())).build()), "PPP", "H W", "PPP");
 
                 stacks = AntimatterAPI.all(c.getKey()).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 4)).collect(Collectors.toList());
-                addToolRecipe(PIPE_BUILDER.apply(c.getValue(), PipeSize.NORMAL, c.getKey()),  consumer, Ref.ID, "pipe_"+c.getValue()+ "_" + PipeSize.NORMAL.getId(), "antimatter_pipes",
+                if (stacks.size() > 0) addToolRecipe(PIPE_BUILDER.apply(c.getValue(), PipeSize.NORMAL, c.getKey()),  consumer, Ref.ID, "pipe_"+c.getValue()+ "_" + PipeSize.NORMAL.getId(), "antimatter_pipes",
                         "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(tags.get(c.getKey())).build()), "PWP", "P P", "PHP");
             }
         }
