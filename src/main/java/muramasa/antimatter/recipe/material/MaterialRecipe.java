@@ -10,6 +10,7 @@ import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.util.NonNullList;
@@ -140,6 +141,11 @@ public class MaterialRecipe extends ShapedRecipe {
         Result m = build(inv, false);
 
         return this.builder.build(inv, m);
+    }
+
+    @Override
+    public IRecipeSerializer<?> getSerializer() {
+        return MaterialSerializer.INSTANCE;
     }
 
     public static final class Result {
