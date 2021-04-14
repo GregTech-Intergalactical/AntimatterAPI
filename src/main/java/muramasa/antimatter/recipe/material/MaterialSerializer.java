@@ -63,7 +63,7 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
         }
         int size = buffer.readVarInt();
         NonNullList<ItemStack> out = NonNullList.create();
-        for (int ii = 0; i < size; i++) {
+        for (int ii = 0; ii < size; ii++) {
             out.add(ii, buffer.readItemStack());
         }
         return new MaterialRecipe(recipeId, s, i, j, nonnulllist, out, buffer.readString(), buildMaterialInput(nonnulllist));
@@ -84,7 +84,7 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
             buffer.writeItemStack(stack);
         }
 
-        buffer.writeItemStack(recipe.getRecipeOutput());
+        //buffer.writeItemStack(recipe.getRecipeOutput());
         buffer.writeString(recipe.builderId.toString());
     }
 
