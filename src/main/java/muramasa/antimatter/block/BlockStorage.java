@@ -28,7 +28,7 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-public class BlockStorage extends BlockMaterialType implements IItemBlockProvider, IColorHandler {
+public class BlockStorage extends BlockMaterialType implements IItemBlockProvider {
 
     private static final VoxelShape FRAME_SHAPE = VoxelShapes.create(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
     
@@ -96,8 +96,6 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
 //        drops.clear();
 //        drops.add(new ItemStack(this, 1, state.getValue(STORAGE_MATERIAL)));
 //    }
-
-
 
     @Override
     public int getHarvestLevel(BlockState state) {

@@ -68,7 +68,7 @@ import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static net.minecraft.util.Direction.*;
 
-public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
+public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider {
 
     protected Machine<?> type;
     protected Tier tier;
@@ -270,12 +270,14 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         }
     }
 
+    /* TODO: needed?
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
         if (!(state.getBlock() instanceof BlockMachine) && world == null || pos == null) return -1;
         TileEntity tile = Utils.getTile(world, pos);
-        return tile instanceof TileEntityMachine && i == 0 ? /*((TileEntityMachine) tile).getTextureData().getTint()*/-1 : -1;
+        return tile instanceof TileEntityMachine && i == 0 ? /*((TileEntityMachine) tile).getTextureData().getTint() -1 : -1;
     }
+    */
 
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {

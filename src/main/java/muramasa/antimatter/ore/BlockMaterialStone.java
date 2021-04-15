@@ -36,13 +36,12 @@ public abstract class BlockMaterialStone extends BlockBasic implements IAntimatt
 
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-        if (world == null || pos == null || i != 1 || state.isAir(world, pos) || !(state.getBlock() instanceof BlockMaterialStone)) return -1;
-        return ((BlockMaterialStone) state.getBlock()).getMaterial().getRGB();
+        return i == 1 ? material.getRGB() : -1;
     }
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 1 && stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof BlockMaterialStone ? getMaterial().getRGB() : -1;
+        return i == 1 ? material.getRGB() : -1;
     }
 
 }
