@@ -205,24 +205,21 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
+        return addTools(toolDamage, toolSpeed, toolDurability, toolQuality, ImmutableMap.of());
+    }
+    
+    public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
         if (has(INGOT)) flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(TOOLS, ROD);
-        flags(DRILLBIT, CHAINSAWBIT,BUZZSAW_BLADE, WRENCHBIT);
         this.toolDamage = toolDamage;
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
-        this.toolEnchantment = ImmutableMap.of();
-        this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
-        return this;
-    }
-    
-    public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
-    	addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
-    	remove(BUZZSAW_BLADE, DRILLBIT, CHAINSAWBIT, WRENCHBIT);
         this.toolEnchantment = toolEnchantment;
         if (toolTypes.length > 0){
             this.toolTypes = Arrays.asList(toolTypes);
+        } else {
+            this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
         }
         if (this.toolTypes.contains(ELECTRIC_WRENCH)) flags(WRENCHBIT);
         if (this.toolTypes.contains(BUZZSAW)) flags(BUZZSAW_BLADE);
@@ -240,6 +237,10 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor) {
+        return addArmor(armor, toughness, knockbackResistance, armorDurabilityFactor, ImmutableMap.of());
+    }
+
+    public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
         if (armor.length < 4){
             Antimatter.LOGGER.info("Material " + this.getId() + " unable to add armor, protection array must have at least 4 values");
             return this;
@@ -250,19 +251,12 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.toughness = toughness;
         this.armorDurabilityFactor = armorDurabilityFactor;
         this.knockbackResistance = knockbackResistance;
-        this.toolEnchantment = ImmutableMap.of();
-        return this;
-    }
-
-    public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        addArmor(armor, toughness, knockbackResistance, armorDurabilityFactor);
         this.toolEnchantment = toolEnchantment;
         return this;
     }
 
     public Material addArmor(Material material, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        this.toolEnchantment = toolEnchantment;
-        return addArmor(material.armor, material.toughness, material.knockbackResistance, material.armorDurabilityFactor);
+        return addArmor(material.armor, material.toughness, material.knockbackResistance, material.armorDurabilityFactor, toolEnchantment);
     }
 
     public Material addArmor(Material material) {

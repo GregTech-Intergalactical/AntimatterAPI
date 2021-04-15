@@ -434,7 +434,15 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 }
             }
             special.forEach(t -> compileRecipe(t, tagGetter));
-            regular.forEach(t -> compileRecipe(t, tagGetter));
+            regular.forEach(t -> {
+                try {
+                    compileRecipe(t, tagGetter);
+                } catch (NullPointerException e){
+                    String recipe = (t.getOutputItems(false) != null ? Arrays.deepToString(t.getOutputItems(false)) : "") + (t.getOutputFluids() != null ? Arrays.deepToString(t.getOutputFluids()) : "") + " " +  this.getId();
+                    Antimatter.LOGGER.error("Recipe " + recipe + " Is null");
+                }
+
+            });
         }
         if (PROXY != null) {
             List<IRecipe<?>> recipes = reg.getRecipesForType(PROXY.loc);
