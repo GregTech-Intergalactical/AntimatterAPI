@@ -22,6 +22,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -233,7 +234,21 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
-        return (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()) ? 0 : damage(stack, amount);
+        if (!type.isPowered()) {
+            return super.damageItem(stack, amount, entity, onBroken);
+        }
+        if (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()) {
+            return 0;
+        }
+        int durability = damage(stack, amount);
+        if (durability <= 0) {
+            onBroken.accept(entity);
+            stack.shrink(1);
+            if (entity instanceof PlayerEntity) {
+                ((PlayerEntity) entity).addStat(Stats.ITEM_BROKEN.get(stack.getItem()));
+            }
+        }
+        return 0;
     }
 
     @Override
@@ -253,7 +268,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (type.getActualToolTypes().contains(ToolType.AXE) && enchantment.type == EnchantmentType.WEAPON){
+        if (type.getActualToolTypes().contains(ToolType.AXE) && enchantment.type == EnchantmentType.WEAPON) {
             return true;
         }
         return type.isPowered() ? enchantment != Enchantments.UNBREAKING : super.canApplyAtEnchantingTable(stack, enchantment);
