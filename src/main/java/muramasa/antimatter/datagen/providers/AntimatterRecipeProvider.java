@@ -86,7 +86,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         //registerMaterialRecipes(consumer, providerDomain);
         registerToolRecipes(consumer, providerDomain);
         registerPipeRecipes(consumer, providerDomain);
-        //craftingLoaders.forEach(cl -> cl.loadRecipes(consumer,this));
+        craftingLoaders.forEach(cl -> cl.loadRecipes(consumer,this));
     }
 
     protected void registerMaterialRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
