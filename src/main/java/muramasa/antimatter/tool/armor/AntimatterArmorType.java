@@ -62,7 +62,6 @@ public class AntimatterArmorType implements IAntimatterObject {
         this.event = SoundEvents.ITEM_ARMOR_EQUIP_IRON;
         this.overlayLayers = 0;
         AntimatterAPI.register(AntimatterArmorType.class, this);
-        ARMOR_BUILDER.apply(getId());
     }
 
     public IAntimatterArmor instantiateTools(String domain) {

@@ -19,6 +19,8 @@ import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeItemBlock;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.types.FluidPipe;
+import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
@@ -61,109 +63,93 @@ public class Data {
 
     /** RECIPE BUILDERS **/
 
-    public static final Function<String, MaterialRecipe.ItemBuilder> ARMOR_BUILDER = id -> {
-        MaterialRecipe.ItemBuilder builder = AntimatterAPI.get(MaterialRecipe.ItemBuilder.class, id);
-        return builder != null ? builder : new MaterialRecipe.ItemBuilder() {
-            @Override
-            public String getId() {
-                return id;
-            }
+    public static final MaterialRecipe.Provider ARMOR_BUILDER = MaterialRecipe.registerProvider("armor",id -> new MaterialRecipe.ItemBuilder() {
 
-            @Override
-            public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-                return AntimatterAPI.get(AntimatterArmorType.class, id).getToolStack((Material) mats.mats.get("primary"));
-            }
+       @Override
+       public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+           return AntimatterAPI.get(AntimatterArmorType.class, id).getToolStack((Material) mats.mats.get("primary"));
+       }
 
-            @Override
-            public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-                CompoundNBT nbt = stack.getTag(). getCompound(Ref.TAG_TOOL_DATA);
-                Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-                return ImmutableMap.of("primary", primary != null ? primary : NULL);
-            }
-        };
-    };
+       @Override
+       public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+           CompoundNBT nbt = stack.getTag(). getCompound(Ref.TAG_TOOL_DATA);
+           Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
+           return ImmutableMap.of("primary", primary != null ? primary : NULL);
+       }
+   });
 
-    public interface TriFunction<A,B,C,D> {
-        D apply(A a, B b, C c);
-    }
+    public static final MaterialRecipe.Provider ITEM_PIPE_BUILDER = MaterialRecipe.registerProvider("pipe", id  -> new MaterialRecipe.ItemBuilder() {
 
-    public static final TriFunction<String, PipeSize, Class<? extends PipeType>, MaterialRecipe.ItemBuilder> PIPE_BUILDER = (id, size, pipe)  -> {
-        MaterialRecipe.ItemBuilder builder = AntimatterAPI.get(MaterialRecipe.ItemBuilder.class,  id + "_" + size.getId());
-        return builder != null ? builder : new MaterialRecipe.ItemBuilder() {
-            @Override
-            public String getId() {
-                return id + "_" + size.getId();
-            }
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            String[] split = id.split("_");
+            PipeSize size = Arrays.stream(PipeSize.values()).filter(t -> t.getId().equals(split[1])).findFirst().get();
+            Material mat = (Material) mats.mats.get("primary");
+            PipeType p = AntimatterAPI.get(ItemPipe.class, id + "_" + mat.getId());
+            return new ItemStack(p.getBlock(size));
+        }
 
-            @Override
-            public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-                Material mat = (Material) mats.mats.get("primary");
-                PipeType p = AntimatterAPI.get(pipe, id + "_" + mat.getId());
-                return new ItemStack(p.getBlock(size));
-            }
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
+        }
+    });
 
-            @Override
-            public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-                return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
-            }
-        };
-    };
+    public static final MaterialRecipe.Provider FLUID_PIPE_BUILDER = MaterialRecipe.registerProvider("fluid", id  -> new MaterialRecipe.ItemBuilder() {
 
-    public static final Function<String, MaterialRecipe.ItemBuilder> TOOL_BUILDER = id -> {
-        MaterialRecipe.ItemBuilder builder = AntimatterAPI.get(MaterialRecipe.ItemBuilder.class, id);
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            String[] split = id.split("_");
+            PipeSize size = Arrays.stream(PipeSize.values()).filter(t -> t.getId().equals(split[1])).findFirst().get();
+            Material mat = (Material) mats.mats.get("primary");
+            PipeType p = AntimatterAPI.get(FluidPipe.class, id + "_" + mat.getId());
+            return new ItemStack(p.getBlock(size));
+        }
 
-        return builder != null ? builder : new MaterialRecipe.ItemBuilder() {
-            @Override
-            public String getId() {
-                return id;
-            }
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
+        }
+    });
 
-            @Override
-            public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-                Material m = (Material) mats.mats.get("secondary");
-                AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
-                ItemStack stack = type.getToolStack((Material) mats.mats.get("primary"), m == null ? NULL : m);
-                return stack;
-            }
+    public static final MaterialRecipe.Provider TOOL_BUILDER = MaterialRecipe.registerProvider("tool", id -> new MaterialRecipe.ItemBuilder() {
 
-            @Override
-            public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-                CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
-                Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-                Material secondary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
-                return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", secondary != null ? secondary : NULL);
-            }
-        };
-    };
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            Material m = (Material) mats.mats.get("secondary");
+            AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
+            ItemStack stack = type.getToolStack((Material) mats.mats.get("primary"), m == null ? NULL : m);
+            return stack;
+        }
 
-    public static final Function<String, MaterialRecipe.ItemBuilder> CROWBAR_BUILDER = id -> {
-        MaterialRecipe.ItemBuilder builder = AntimatterAPI.get(MaterialRecipe.ItemBuilder.class, id);
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
+            Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
+            Material secondary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
+            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", secondary != null ? secondary : NULL);
+        }
+    });
 
-        return builder != null ? builder : new MaterialRecipe.ItemBuilder() {
-            @Override
-            public String getId() {
-                return id;
-            }
+    public static final MaterialRecipe.Provider CROWBAR_BUILDER = MaterialRecipe.registerProvider("crowbar", id -> new MaterialRecipe.ItemBuilder() {
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            int dye = ((DyeColor) mats.mats.get("secondary")).getColorValue();
+            AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
+            ItemStack stack = type.getToolStack(((Material) mats.mats.get("primary")), NULL);
+            stack.getChildTag(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, dye);
+            return stack;
+        }
 
-            @Override
-            public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-                int dye = ((DyeColor) mats.mats.get("secondary")).getColorValue();
-                AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
-                ItemStack stack = type.getToolStack(((Material) mats.mats.get("primary")), NULL);
-                stack.getChildTag(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, dye);
-                return stack;
-            }
-
-            @Override
-            public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-                CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
-                Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-                int secondary = nbt.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
-                Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getColorValue() == secondary).findFirst();
-                return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", color.orElse(DyeColor.WHITE));
-            }
-        };
-    };
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
+            Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
+            int secondary = nbt.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
+            Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getColorValue() == secondary).findFirst();
+            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", color.orElse(DyeColor.WHITE));
+        }
+    });
 
     static {
         PropertyIngredient.addGetter(Tags.Items.DYES.getName(), DyeColor::getColor);

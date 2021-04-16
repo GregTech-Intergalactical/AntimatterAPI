@@ -96,11 +96,6 @@ public class AntimatterToolType implements IAntimatterObject {
         this.TOOL_TYPE = ToolType.get(id);
         this.TOOL_TYPES.add(id);
         AntimatterAPI.register(AntimatterToolType.class, this);
-        if (!this.getId().equals("crowbar")) {
-            TOOL_BUILDER.apply(getId());
-        } else {
-            CROWBAR_BUILDER.apply(getId());
-        }
     }
 
     public AntimatterToolType(String domain, String id, AntimatterToolType inheritType) {

@@ -26,17 +26,24 @@ import java.util.Set;
 
 public class MaterialRecipe extends ShapedRecipe {
 
-    public abstract static class ItemBuilder implements IAntimatterObject {
+    private final static Map<Provider, String> IDS = new Object2ObjectOpenHashMap<>();
 
-        @Override
-        public String getDomain() {
-            return Ref.ID;
+    public interface Provider {
+        ItemBuilder provide(String id);
+        default String get(String identifier) {
+            return IDS.get(this) + "_" + identifier;
         }
-        public ItemBuilder() {
-            AntimatterAPI.register(ItemBuilder.class, this);
-        }
-        public abstract ItemStack build(CraftingInventory inv, Result mats);
-        public abstract Map<String, Object> getFromResult(@Nonnull ItemStack stack);
+    }
+
+    public static Provider registerProvider(String loc, Provider obj) {
+        AntimatterAPI.register(Provider.class, loc, obj);
+        IDS.put(obj, loc);
+        return obj;
+    }
+
+    public interface ItemBuilder {
+        ItemStack build(CraftingInventory inv, Result mats);
+        Map<String, Object> getFromResult(@Nonnull ItemStack stack);
     }
     public final Map<String, Set<Integer>> materialSlots;
     public final ItemBuilder builder;
@@ -49,7 +56,8 @@ public class MaterialRecipe extends ShapedRecipe {
         this.materialSlots = ImmutableMap.copyOf(materialSlots);
         this.size = materialSlots.values().stream().mapToInt(Set::size).sum();
         this.builderId = new ResourceLocation(builderId);
-        this.builder = AntimatterAPI.get(ItemBuilder.class, this.builderId.getPath());
+        String[] ids = this.builderId.getPath().split("_");
+        this.builder = AntimatterAPI.get(Provider.class, ids[0]).provide(ids[1]);
         this.outputs = recipeOutputIn;
     }
 
