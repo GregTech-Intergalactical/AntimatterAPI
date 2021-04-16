@@ -6,6 +6,7 @@ import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -47,14 +48,15 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
 
     @Override
     public void run() {
-        //registerModels();
-        //generatedModels.forEach(DynamicResourcePack::addItem);
+        registerModels();
+        generatedModels.forEach(DynamicResourcePack::addItem);
     }
 
     @Override
     public Dist getSide() {
         return Dist.CLIENT;
     }
+
 
     @Override
     protected void registerModels() {

@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
@@ -40,7 +41,11 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
 
     @Override
     public void run() {
-
+        loot();
+        for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
+            String input = "loot_tables/blocks/" + e.getKey().getRegistryName().getPath() + ".json";
+            DynamicResourcePack.addLootEntry(new ResourceLocation(e.getKey().getRegistryName().getNamespace(), input), e.getValue().apply(e.getKey()).setParameterSet(LootParameterSets.BLOCK).build());
+        }
     }
 
     protected void loot() {
@@ -58,7 +63,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
 
     @Override
     public Types staticDynamic() {
-        return Types.STATIC;
+        return Types.DYNAMIC;
     }
 
     @Override

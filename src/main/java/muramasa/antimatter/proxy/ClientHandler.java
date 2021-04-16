@@ -19,8 +19,6 @@ import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
-import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -34,6 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
@@ -73,11 +72,17 @@ public class ClientHandler implements IProxyHandler {
         }));
 
         MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRecipes);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::preResourceRegistration);
     }
 
     public static void onRecipes(RecipesUpdatedEvent ev) {
         AntimatterAPI.onResourceReload(false);
         AntimatterAPI.onRecipeCompile(ev.getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
+    }
+
+    //Called before resource registration is performed.
+    public static void preResourceRegistration(ParticleFactoryRegisterEvent ev) {
+        AntimatterAPI.runAssetProvidersDynamically();
     }
 
     @SuppressWarnings({"unchecked", "unused"})

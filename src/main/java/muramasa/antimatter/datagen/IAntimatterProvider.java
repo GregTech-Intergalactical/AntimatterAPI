@@ -18,7 +18,7 @@ public interface IAntimatterProvider extends IDataProvider {
      * @return Whether to only run this provider during dynamic data generation.
      */
     default Types staticDynamic() {
-        return Types.STATIC_AND_DYNAMIC;
+        return Types.DYNAMIC;
     }
 
     enum Types {

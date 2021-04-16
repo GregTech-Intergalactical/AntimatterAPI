@@ -81,7 +81,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
 
     @Override
     public Types staticDynamic() {
-        return Types.STATIC;
+        return Types.DYNAMIC;
     }
 
     // Forge implementation

@@ -207,9 +207,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         for (FluidStack t : ingredients) {
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(1 + t.getFluid().getTags().size());
             inner.add(new MapFluidIngredient(t));
-            for (ResourceLocation rl : t.getFluid().getTags()) {
-                inner.add(new MapTagIngredient(rl));
-            }
+            //for (ResourceLocation rl : t.getFluid().getTags()) {
+            //    inner.add(new MapTagIngredient(rl));
+            //}
             ret.add(inner);
         }
         return ret;

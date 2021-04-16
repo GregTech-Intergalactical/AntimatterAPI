@@ -2,10 +2,12 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
@@ -46,14 +48,21 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
 
     @Override
     public Types staticDynamic() {
-        return Types.STATIC;
+        return Types.DYNAMIC;
     }
 
     @Override
     public void run() {
-        //registerStatesAndModels();
-        //models().generatedModels.forEach(DynamicResourcePack::addBlock);
-        //registeredBlocks.forEach((b, s) -> DynamicResourcePack.addState(b.getRegistryName(), s));
+        registerStatesAndModels();
+        models().generatedModels.forEach(DynamicResourcePack::addBlock);
+        registeredBlocks.forEach((b, s) -> {
+            if (b.getRegistryName() == null) {
+                BlockBasic block = (BlockBasic) b;
+                DynamicResourcePack.addState(new ResourceLocation(block.getDomain(), block.getId()), s);
+            } else {
+                DynamicResourcePack.addState(b.getRegistryName(), s);
+            }
+        });
     }
 
     @Override
@@ -76,6 +85,9 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     }
 
     public AntimatterBlockModelBuilder getBuilder(Block block) {
+        if (block.getRegistryName() == null) {
+            return (AntimatterBlockModelBuilder) models().getBuilder(((BlockBasic) block).getId());
+        }
         return (AntimatterBlockModelBuilder) models().getBuilder(block.getRegistryName().getPath());
     }
 

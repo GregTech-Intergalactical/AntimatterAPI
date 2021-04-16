@@ -34,7 +34,7 @@ public class Antimatter extends AntimatterMod {
     public static IProxyHandler PROXY;
 
     static {
-        AntimatterAPI.runBackgroundProviders();
+        //AntimatterAPI.runBackgroundProviders();
     }
 
     public Antimatter() {
@@ -73,7 +73,7 @@ public class Antimatter extends AntimatterMod {
 
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup(e);
-        AntimatterAPI.runAssetProvidersDynamically();
+        //AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
     }

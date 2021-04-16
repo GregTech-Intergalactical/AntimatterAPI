@@ -66,18 +66,29 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     private ImmutableMap<Enchantment, Integer> toolEnchantment;
     private List<AntimatterToolType> toolTypes;
 
+    private boolean enabled;
+
     /** Processing Members **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
     private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private List<MaterialStack> processInto = new ObjectArrayList<>();
     private List<Material> byProducts = new ObjectArrayList<>();
 
-    public Material(String domain, String id, int rgb, TextureSet set) {
+    public Material(String domain, String id, int rgb, TextureSet set, String... modIds) {
         this.domain = domain;
         this.id = id;
         this.rgb = rgb;
         this.set = set;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
+        if (modIds != null && modIds.length > 0) {
+            for (String modId : modIds) {
+                if (!AntimatterAPI.isModLoaded(modId)) {
+                    enabled = false;
+                    return;
+                }
+            }
+        }
+        enabled = true;
         AntimatterAPI.register(Material.class, this);
     }
 
@@ -88,6 +99,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
+        if (!enabled) return;
         if (registry == ForgeRegistries.ITEMS) {
             AntimatterAPI.all(MaterialTypeItem.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> t.getSupplier().supply(domain, t, this));
         } else if (registry == ForgeRegistries.BLOCKS) {
@@ -288,6 +300,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material flags(IMaterialTag... tags) {
+        if (!enabled) return this;
         for (IMaterialTag t : tags) {
             if (t == ORE) flags(ORE_SMALL);
             if (t == ORE || t == ORE_SMALL || t == ORE_STONE) flags(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
@@ -297,22 +310,26 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public void remove(IMaterialTag... tags) {
+        if (!enabled) return;
         for (IMaterialTag t : tags) {
             t.remove(this);
         }
     }
 
     public Material mats(Function<ImmutableMap.Builder<Material, Integer>, ImmutableMap.Builder<Material, Integer>> func) {
+        if (!enabled) return this;
         return mats(func.apply(new ImmutableMap.Builder<>()).build());
     }
 
     public Material mats(ImmutableMap<Material, Integer> stacks) {
+        if (!enabled) return this;
         stacks.forEach((k, v) -> processInto.add(new MaterialStack(k, v)));
         return this;
     }
     
     public void setChemicalFormula() {
-    	if (element != null) chemicalFormula = element.getElement();
+        if (!enabled) return;
+        if (element != null) chemicalFormula = element.getElement();
     	else if (!processInto.isEmpty()) chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
     }
 

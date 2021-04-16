@@ -2,7 +2,6 @@ package muramasa.antimatter.mixin;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
-import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.resources.IAsyncReloader;
 import net.minecraft.resources.IFutureReloadListener;
@@ -46,7 +45,7 @@ public class SimpleReloadableResourceManagerMixin {
     @Inject(/*remap = false,*/ at = @At("RETURN"), method = "Lnet/minecraft/resources/SimpleReloadableResourceManager;clearResourceNamespaces()V")
     private void clearNamespaceInject(CallbackInfo info) {
         SimpleReloadableResourceManager manager = ((SimpleReloadableResourceManager)(Object)this);
-        if (type == ResourcePackType.SERVER_DATA)
-            manager.addResourcePack(new DynamicResourcePack("Antimatter - Dynamic Data", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
+        //if (type == ResourcePackType.SERVER_DATA)
+        manager.addResourcePack(new DynamicResourcePack("Antimatter - Dynamic Data", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
     }
 }
