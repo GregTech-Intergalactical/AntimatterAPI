@@ -15,28 +15,12 @@ public interface IAntimatterProvider extends IDataProvider {
     Dist getSide();
 
     /**
-     * @return Whether to only run this provider during dynamic data generation.
+     * @return Whether to run this provider during datagen.
      */
-    default Types staticDynamic() {
-        return Types.DYNAMIC;
+    default boolean shouldRun() {
+        return true;
     }
 
-    enum Types {
-        DYNAMIC,
-        STATIC,
-        STATIC_AND_DYNAMIC,
-        //Used to register a provider that doesn't run dynamically. Cheap solution but recipe provider needs to
-        //extend RecipeProvider.
-        FAKE;
-
-        public boolean isStatic() {
-            return this == STATIC || this == STATIC_AND_DYNAMIC;
-        }
-
-        public boolean isDynamic() {
-            return this == STATIC_AND_DYNAMIC || this == DYNAMIC;
-        }
-    }
 
     default void onCompletion() {
 

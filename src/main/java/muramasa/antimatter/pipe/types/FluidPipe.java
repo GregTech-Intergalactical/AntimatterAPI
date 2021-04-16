@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.Data.PIPE_BUILDER;
+
 public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
 
     protected int maxTemp;
@@ -22,6 +24,9 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
         this.gasProof = gasProof;
         material.flags(MaterialTag.FLUIDPIPE);
         setTile(() -> new TileEntityFluidPipe(this));
+
+        PIPE_BUILDER.apply("fluid", PipeSize.NORMAL, FluidPipe.class);
+        PIPE_BUILDER.apply("fluid", PipeSize.SMALL, FluidPipe.class);
     }
 
     @Override

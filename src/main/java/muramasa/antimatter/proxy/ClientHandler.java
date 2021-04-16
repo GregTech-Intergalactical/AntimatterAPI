@@ -1,6 +1,7 @@
 package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
@@ -76,13 +77,13 @@ public class ClientHandler implements IProxyHandler {
     }
 
     public static void onRecipes(RecipesUpdatedEvent ev) {
-        AntimatterAPI.onResourceReload(false);
-        AntimatterAPI.onRecipeCompile(ev.getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
+        AntimatterDynamics.onResourceReload(false);
+        AntimatterDynamics.onRecipeCompile(ev.getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
     }
 
     //Called before resource registration is performed.
     public static void preResourceRegistration(ParticleFactoryRegisterEvent ev) {
-        AntimatterAPI.runAssetProvidersDynamically();
+        AntimatterDynamics.runAssetProvidersDynamically();
     }
 
     @SuppressWarnings({"unchecked", "unused"})

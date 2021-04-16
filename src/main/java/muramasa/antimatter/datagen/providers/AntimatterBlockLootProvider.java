@@ -43,8 +43,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     public void run() {
         loot();
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
-            String input = "loot_tables/blocks/" + e.getKey().getRegistryName().getPath() + ".json";
-            DynamicResourcePack.addLootEntry(new ResourceLocation(e.getKey().getRegistryName().getNamespace(), input), e.getValue().apply(e.getKey()).setParameterSet(LootParameterSets.BLOCK).build());
+            DynamicResourcePack.addLootEntry(e.getKey().getRegistryName(), e.getValue().apply(e.getKey()).setParameterSet(LootParameterSets.BLOCK).build());
         }
     }
 
@@ -59,11 +58,6 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     @Override
     public Dist getSide() {
         return Dist.DEDICATED_SERVER;
-    }
-
-    @Override
-    public Types staticDynamic() {
-        return Types.DYNAMIC;
     }
 
     @Override

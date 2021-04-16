@@ -50,16 +50,10 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        TagUtils.getTags(Block.class).forEach((k,v) -> addTag("blocks", k, getOrCreateBuilder(v).getInternalBuilder()));
-        tagToBuilder.forEach((k, v) -> addTag("blocks", k, v));
+        TagUtils.getTags(Block.class).forEach((k,v) -> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
+        tagToBuilder.forEach(this::addTag);
         b.forEach(tagToBuilder::put);
     }
-
-    @Override
-    public Types staticDynamic() {
-        return Types.DYNAMIC;
-    }
-
 
     @Override
     public Dist getSide() {
@@ -103,29 +97,25 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     }
 
     // Must append 's' in the identifier
-    public void addTag(String identifier, ResourceLocation loc, JsonObject obj) {
-        TAGS.put(getTagLoc(identifier, loc), obj);
+    public void addTag(ResourceLocation loc, JsonObject obj) {
+        TAGS.put(loc, obj);
     }
 
     // Must append 's' in the identifier
     // Appends data to the tag.
-    public void addTag(String identifier, ResourceLocation loc, ITag.Builder obj) {
-        JsonObject json = TAGS.get(getTagLoc(identifier, loc));
+    public void addTag(ResourceLocation loc, ITag.Builder obj) {
+        JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
         if (json == null)  {
-            addTag(identifier, loc, obj.serialize());
+            addTag(loc, obj.serialize());
         } else {
             obj = obj.deserialize(json, "Antimatter - Dynamic Data");
-            TAGS.put(getTagLoc(identifier, loc), obj.serialize());
+            TAGS.put(loc, obj.serialize());
         }
-    }
-
-    public static ResourceLocation getTagLoc(String identifier, ResourceLocation tagId) {
-        return new ResourceLocation(tagId.getNamespace(), String.join("", "tags/", identifier, "/", tagId.getPath(), ".json"));
     }
 
     @Override
     public void onCompletion() {
-        TAGS.forEach(DynamicResourcePack::addTag);
+        TAGS.forEach((k,v) -> DynamicResourcePack.addTag("blocks", k, v));
     }
 }

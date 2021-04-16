@@ -72,8 +72,8 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     }
 
     @Override
-    public Types staticDynamic() {
-        return Types.FAKE;
+    public boolean shouldRun() {
+        return false;
     }
 
     @Override

@@ -57,11 +57,6 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
     }
 
     @Override
-    public Types staticDynamic() {
-        return Types.DYNAMIC;
-    }
-
-    @Override
     public void act(@Nonnull DirectoryCache cache) {
         Path folder = this.gen.getOutputFolder();
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();

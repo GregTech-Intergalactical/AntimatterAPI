@@ -76,7 +76,7 @@ public class Data {
 
             @Override
             public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-                CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
+                CompoundNBT nbt = stack.getTag(). getCompound(Ref.TAG_TOOL_DATA);
                 Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
                 return ImmutableMap.of("primary", primary != null ? primary : NULL);
             }

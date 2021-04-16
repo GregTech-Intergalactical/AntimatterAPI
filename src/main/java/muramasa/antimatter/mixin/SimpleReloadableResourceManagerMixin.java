@@ -1,6 +1,7 @@
 package muramasa.antimatter.mixin;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.resources.IAsyncReloader;
@@ -28,17 +29,11 @@ public class SimpleReloadableResourceManagerMixin {
     @Shadow
     @Final
     private ResourcePackType type;
-   // @Inject(at = @At("RETURN"), method = "<init>(Lnet/minecraft/resources/ResourcePackType;)V")
-   // private void ctorInject(ResourcePackType type, CallbackInfo info) {
-   //     SimpleReloadableResourceManager manager = ((SimpleReloadableResourceManager)(Object)this);
-   //     if (type == ResourcePackType.SERVER_DATA) {
-   //         manager.addReloadListener(CommonHandler.getListener());
-   //     }
-   // }
+
     @Inject(/*remap = false,*/ method = "initializeAsyncReloader(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/List;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/resources/IAsyncReloader;", at = @At("HEAD"))
     private void callback(Executor backgroundExecutor, Executor gameExecutor, List<IFutureReloadListener> listeners, CompletableFuture<Unit> waitingFor, CallbackInfoReturnable<IAsyncReloader> cir) {
         if (type == ResourcePackType.SERVER_DATA) {
-            AntimatterAPI.onResourceReload(true);
+            AntimatterDynamics.onResourceReload(true);
         }
     }
 

@@ -10,6 +10,8 @@ import net.minecraft.block.Block;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.Data.PIPE_BUILDER;
+
 public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
 
     protected int[] caps;
@@ -18,6 +20,8 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
         super(domain, material);
         material.flags(MaterialTag.ITEMPIPE);
         setTile(() -> new TileEntityItemPipe(this));
+        PIPE_BUILDER.apply("item", PipeSize.NORMAL, ItemPipe.class);
+        PIPE_BUILDER.apply("item", PipeSize.SMALL, ItemPipe.class);
     }
 
     @Override

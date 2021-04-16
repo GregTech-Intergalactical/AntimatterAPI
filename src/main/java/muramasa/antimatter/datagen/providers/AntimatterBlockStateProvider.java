@@ -47,11 +47,6 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     }
 
     @Override
-    public Types staticDynamic() {
-        return Types.DYNAMIC;
-    }
-
-    @Override
     public void run() {
         registerStatesAndModels();
         models().generatedModels.forEach(DynamicResourcePack::addBlock);

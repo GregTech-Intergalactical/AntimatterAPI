@@ -81,7 +81,7 @@ public class DynamicResourcePack implements IResourcePack {
 
     public static void addLootEntry(ResourceLocation loc, LootTable table) {
         JsonObject obj =  (JsonObject) LootTableManager.toJson(table);
-        DATA.put(loc, obj);
+        DATA.put(getLootLoc(loc), obj);
     }
 
     public static void addAdvancement(ResourceLocation loc, JsonObject obj) {
@@ -89,12 +89,13 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
 
-    public static void addTag(ResourceLocation loc, JsonObject obj) {
+    public static void addTag(String type, ResourceLocation loc, JsonObject obj) {
         if (TAGS_DONE) return;
-        forceAddTag(loc, obj, false);
+        addTag(getTagLoc(type, loc), obj, false);
     }
 
-    public static void forceAddTag(ResourceLocation loc, JsonObject obj, boolean replace) {
+
+    private static void addTag(ResourceLocation loc, JsonObject obj, boolean replace) {
         DATA.compute(loc, (k,v) -> {
             if (v == null) return obj;
             if (!replace) {
@@ -108,9 +109,9 @@ public class DynamicResourcePack implements IResourcePack {
         });
     }
 
-    public static void ensureTagAvailable(ResourceLocation loc) {
+    public static void ensureTagAvailable(String id, ResourceLocation loc) {
         if (loc.getNamespace().contains("minecraft")) return;
-        DATA.compute(loc, (k,v) -> {
+        DATA.compute(getTagLoc(id, loc), (k,v) -> {
             if (v != null) return v;
             return ITag.Builder.create().serialize();
         });
@@ -182,6 +183,10 @@ public class DynamicResourcePack implements IResourcePack {
     @Override
     public void close() {
         //NOOP
+    }
+
+    public static ResourceLocation getLootLoc(ResourceLocation id) {
+        return new ResourceLocation(id.getNamespace(), "loot_tables/blocks/" + id.getPath() + ".json");
     }
 
     public static ResourceLocation getStateLoc(ResourceLocation registryId) {

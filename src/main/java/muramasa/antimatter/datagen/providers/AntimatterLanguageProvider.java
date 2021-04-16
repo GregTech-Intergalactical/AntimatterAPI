@@ -79,11 +79,6 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         if (!data.isEmpty()) save(cache, data, this.gen.getOutputFolder().resolve(String.join("", "assets/", providerDomain, "/lang/", locale, ".json")));
     }
 
-    @Override
-    public Types staticDynamic() {
-        return Types.DYNAMIC;
-    }
-
     // Forge implementation
     @SuppressWarnings("all")
     private void save(DirectoryCache cache, Object object, Path target) throws IOException {
