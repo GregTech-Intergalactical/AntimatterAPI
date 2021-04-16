@@ -113,6 +113,10 @@ public class MaterialRecipe extends ShapedRecipe {
                         return null;
                     }
                     whichStacks.put(ingredient, stack);
+                } else {
+                    if (regularTest && !Ingredient.EMPTY.test(inv.getStackInSlot(i + j * inv.getWidth()))) {
+                        return null;
+                    }
                 }
             }
         }

@@ -127,11 +127,11 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
 
         guiItemStacks.addTooltipCallback((a,b,c,d) -> {
             if (b) {
-                Ingredient i = recipe.getIngredients().get(a-craftInputSlot1);
+              /*  Ingredient i = recipe.getIngredients().get(a-craftInputSlot1);
                 if (i instanceof PropertyIngredient) {
                     PropertyIngredient p = (PropertyIngredient) i;
                     d.add(new StringTextComponent("Property: ").append(new StringTextComponent(p.getId().substring(0,1).toUpperCase() + p.getId().substring(1)).mergeStyle(TextFormatting.GOLD)));
-                }
+                }*/
             }
         });
         guiItemStacks.addTooltipCallback((a,b,c,d) -> {
