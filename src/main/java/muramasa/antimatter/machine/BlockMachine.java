@@ -16,7 +16,6 @@ import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -25,7 +24,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -74,7 +72,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     protected Tier tier;
 
     public BlockMachine(Machine<?> type, Tier tier) {
-        super(type.getDomain(), type.getId() + "_" + tier.getId(), Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
+        super(type.getDomain(), type.getId() + "_" + tier.getId(), Properties.create(WRENCH_MATERIAL).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
         this.type = type;
         this.tier = tier;
     }
