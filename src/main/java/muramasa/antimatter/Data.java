@@ -86,7 +86,8 @@ public class Data {
             PipeSize size = Arrays.stream(PipeSize.values()).filter(t -> t.getId().equals(split[1])).findFirst().get();
             Material mat = (Material) mats.mats.get("primary");
             PipeType p = AntimatterAPI.get(ItemPipe.class, id + "_" + mat.getId());
-            return new ItemStack(p.getBlock(size));
+            int amount = size == PipeSize.TINY ? 12 : size == PipeSize.SMALL ? 6 : size == PipeSize.NORMAL ? 2 : 1;
+            return new ItemStack(p.getBlock(size), amount);
         }
 
         @Override
@@ -103,7 +104,8 @@ public class Data {
             PipeSize size = Arrays.stream(PipeSize.values()).filter(t -> t.getId().equals(split[1])).findFirst().get();
             Material mat = (Material) mats.mats.get("primary");
             PipeType p = AntimatterAPI.get(FluidPipe.class, id + "_" + mat.getId());
-            return new ItemStack(p.getBlock(size));
+            int amount = size == PipeSize.TINY ? 12 : size == PipeSize.SMALL ? 6 : size == PipeSize.NORMAL ? 2 : 1;
+            return new ItemStack(p.getBlock(size), amount);
         }
 
         @Override
