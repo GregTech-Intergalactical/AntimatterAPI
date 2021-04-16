@@ -287,12 +287,12 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-        return state.getBlock() instanceof BlockPipe ? getRGB() : -1;
+        return getRGB();
     }
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return stack.getItem() instanceof PipeItemBlock ? getRGB() : -1;
+        return getRGB();
     }
 
     @Override

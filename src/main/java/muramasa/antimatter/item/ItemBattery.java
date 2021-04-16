@@ -27,14 +27,26 @@ import java.util.List;
 public class ItemBattery extends ItemBasic<ItemBattery> {
 
     protected Tier tier;
-    final long cap;
-    final boolean reusable;
+    protected final long cap;
+    protected final boolean reusable;
 
     public ItemBattery(String domain, String id, Tier tier, long cap, boolean reusable) {
         super(domain, id);
         this.tier = tier;
         this.cap = cap;
         this.reusable = reusable;
+    }
+
+    public Tier getTier() {
+        return tier;
+    }
+
+    public long getCapacity() {
+        return cap;
+    }
+
+    public boolean isReusable() {
+        return reusable;
     }
 
     @Override
@@ -60,7 +72,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public int getRGBDurabilityForDisplay(ItemStack stack) {
-        return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
+        return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).filter(l -> l <= 0).map(l -> super.getRGBDurabilityForDisplay(stack)).orElse(0x00BFFF);
     }
 
     @Override
@@ -80,7 +92,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        if (Screen.hasShiftDown() && !world.isRemote()) {
+        if (!world.isRemote() && player.isCrouching()) {
             boolean newMode = chargeModeSwitch(stack);
             player.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"), player.getUniqueID());
             return ActionResult.resultSuccess(stack);
