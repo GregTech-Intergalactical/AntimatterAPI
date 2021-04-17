@@ -31,11 +31,13 @@ public class MaterialRecipe extends ShapedRecipe {
     public interface Provider {
         ItemBuilder provide(String id);
         default String get(String identifier) {
-            return IDS.get(this) + "_" + identifier;
+            if (identifier.contains("/")) throw new RuntimeException("invalid input identifier to MaterialRecipe.Provider, contains /");
+            return IDS.get(this) + "/" + identifier;
         }
     }
 
     public static Provider registerProvider(String loc, Provider obj) {
+        if (loc.contains("/")) throw new RuntimeException("invalid input identifier to MaterialRecipe.Provider, contains /");
         AntimatterAPI.register(Provider.class, loc, obj);
         IDS.put(obj, loc);
         return obj;
@@ -56,7 +58,7 @@ public class MaterialRecipe extends ShapedRecipe {
         this.materialSlots = ImmutableMap.copyOf(materialSlots);
         this.size = materialSlots.values().stream().mapToInt(Set::size).sum();
         this.builderId = new ResourceLocation(builderId);
-        String[] ids = this.builderId.getPath().split("_");
+        String[] ids = this.builderId.getPath().split("/");
         this.builder = AntimatterAPI.get(Provider.class, ids[0]).provide(ids[1]);
         this.outputs = recipeOutputIn;
     }

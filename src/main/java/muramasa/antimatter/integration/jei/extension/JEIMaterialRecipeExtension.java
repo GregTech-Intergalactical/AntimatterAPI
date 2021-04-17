@@ -12,6 +12,7 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICustomCraftingC
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.text.StringTextComponent;
@@ -71,6 +72,12 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                     List<ItemStack> st = Arrays.stream(inner.getMatchingStacks()).filter(t -> MaterialRecipe.getMat(inner, t).equals(o)).collect(Collectors.toList());
                     if (st.size() > 0) {
                         newInputs.set(i, st);
+                        final Item item = stack.getItem();
+                        Optional<ItemStack> optionalStack = outputs.stream().flatMap(t -> t.stream()).filter(t -> t.getItem() == item).findAny();
+                        if (optionalStack.isPresent()) {
+                            stack = stack.copy();
+                            stack.setCount(optionalStack.get().getCount());
+                        }
                     } else {
                         shouldReplace = false;
                         break;

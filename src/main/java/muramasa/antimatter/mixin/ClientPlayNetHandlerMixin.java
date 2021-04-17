@@ -1,6 +1,7 @@
 package muramasa.antimatter.mixin;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
@@ -26,7 +27,7 @@ public class ClientPlayNetHandlerMixin {
         if (!netManager.isLocalChannel()) {
             AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
             AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class, IRecipeRegistrate.IRecipeLoader::init);
-            AntimatterAPI.onRecipeCompile(((ClientPlayNetHandler)(Object)this).getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
+            AntimatterDynamics.onRecipeCompile(((ClientPlayNetHandler)(Object)this).getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
         }
     }
 }

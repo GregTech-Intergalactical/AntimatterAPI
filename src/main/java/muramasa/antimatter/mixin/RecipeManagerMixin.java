@@ -1,7 +1,7 @@
 package muramasa.antimatter.mixin;
 
 import com.google.gson.JsonElement;
-import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterDynamics;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
@@ -19,6 +19,6 @@ public class RecipeManagerMixin {
     /* Inject recipes into recipe map. */
     @Inject(/*remap = false,*/method = "apply(Ljava/util/Map;Lnet/minecraft/resources/IResourceManager;Lnet/minecraft/profiler/IProfiler;)V", at = @At("HEAD"))
     private void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn, CallbackInfo info) {
-        AntimatterAPI.onRecipeManagerBuild(rec -> objectIn.put(rec.getID(), rec.getRecipeJson()));
+        AntimatterDynamics.onRecipeManagerBuild(rec -> objectIn.put(rec.getID(), rec.getRecipeJson()));
     }
 }
