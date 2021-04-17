@@ -155,12 +155,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.TINY)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.TINY), 12)).collect(Collectors.toList());
 
-            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_fluid_tiny", "antimatter_pipes",
+            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_fluid_tiny", "antimatter_pipes",
                     "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PPP", "H W", "PPP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
 
-            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_fluid_small", "antimatter_pipes",
+            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_fluid_small", "antimatter_pipes",
                     "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PWP", "P P", "PHP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 2)).collect(Collectors.toList());
