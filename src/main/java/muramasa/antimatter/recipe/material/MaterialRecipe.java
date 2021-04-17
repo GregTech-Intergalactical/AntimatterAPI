@@ -31,7 +31,7 @@ public class MaterialRecipe extends ShapedRecipe {
     public interface Provider {
         ItemBuilder provide(String id);
         default String get(String identifier) {
-            return IDS.get(this) + "_" + identifier;
+            return IDS.get(this) + "/" + identifier;
         }
     }
 
@@ -56,7 +56,7 @@ public class MaterialRecipe extends ShapedRecipe {
         this.materialSlots = ImmutableMap.copyOf(materialSlots);
         this.size = materialSlots.values().stream().mapToInt(Set::size).sum();
         this.builderId = new ResourceLocation(builderId);
-        String[] ids = this.builderId.getPath().split("_");
+        String[] ids = this.builderId.getPath().split("/");
         this.builder = AntimatterAPI.get(Provider.class, ids[0]).provide(ids[1]);
         this.outputs = recipeOutputIn;
     }
