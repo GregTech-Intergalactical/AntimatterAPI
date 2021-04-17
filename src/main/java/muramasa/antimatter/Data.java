@@ -82,7 +82,7 @@ public class Data {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            String[] split = id.split("_");
+            String[] split = id.split("/");
             PipeSize size = Arrays.stream(PipeSize.values()).filter(t -> t.getId().equals(split[1])).findFirst().get();
             Material mat = (Material) mats.mats.get("primary");
             PipeType p = AntimatterAPI.get(ItemPipe.class, id + "_" + mat.getId());
@@ -99,7 +99,7 @@ public class Data {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            String[] split = id.split("_");
+            String[] split = id.split("/");
             PipeSize size = Arrays.stream(PipeSize.values()).filter(t -> t.getId().equals(split[1])).findFirst().get();
             Material mat = (Material) mats.mats.get("primary");
             PipeType p = AntimatterAPI.get(FluidPipe.class, id + "_" + mat.getId());
