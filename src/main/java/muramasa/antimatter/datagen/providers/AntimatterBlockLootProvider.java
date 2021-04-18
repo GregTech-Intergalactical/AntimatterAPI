@@ -1,5 +1,12 @@
 package muramasa.antimatter.datagen.providers;
 
+import static muramasa.antimatter.Ref.GSON;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.function.Function;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStorage;
@@ -20,13 +27,6 @@ import net.minecraft.loot.LootTableManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.function.Function;
-
-import static muramasa.antimatter.Ref.GSON;
-
 public class AntimatterBlockLootProvider extends BlockLootTables implements IDataProvider, IAntimatterProvider {
     protected final String providerDomain, providerName;
     private final DataGenerator generator;
@@ -42,9 +42,6 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     @Override
     public void run() {
         loot();
-        for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
-            DynamicResourcePack.addLootEntry(e.getKey().getRegistryName(), e.getValue().apply(e.getKey()).setParameterSet(LootParameterSets.BLOCK).build());
-        }
     }
 
     protected void loot() {
@@ -53,6 +50,13 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
         AntimatterAPI.all(BlockPipe.class,providerDomain, this::add);
         AntimatterAPI.all(BlockStorage.class,providerDomain, this::add);
         AntimatterAPI.all(BlockOre.class,providerDomain, this::add);
+    }
+
+    @Override
+    public void onCompletion() {
+        for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
+            DynamicResourcePack.addLootEntry(e.getKey().getRegistryName(), e.getValue().apply(e.getKey()).setParameterSet(LootParameterSets.BLOCK).build());
+        }
     }
 
     @Override

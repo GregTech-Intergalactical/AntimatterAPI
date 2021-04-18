@@ -1,6 +1,16 @@
 package muramasa.antimatter;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.google.common.collect.Sets;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -20,14 +30,6 @@ import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
@@ -43,15 +45,23 @@ public class AntimatterDynamics {
     // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to run first
     public static void runDataProvidersDynamically() {
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER) && p.shouldRun())).collect(Collectors.toList());
-        providers.forEach(IAntimatterProvider::run);
+        long time = System.currentTimeMillis();
+        Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
+        Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());        
+        Stream.concat(async, sync).forEach(t -> t.run());
         providers.forEach(IAntimatterProvider::onCompletion);
         DynamicResourcePack.markComplete();
+        Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
     }
 
     public static void runAssetProvidersDynamically() {
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.CLIENT) && p.shouldRun())).collect(Collectors.toList());
-        providers.parallelStream().forEach(IAntimatterProvider::run);
+        long time = System.currentTimeMillis();
+        Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
+        Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());        
+        Stream.concat(async, sync).forEach(t -> t.run());
         providers.forEach(IAntimatterProvider::onCompletion);
+        Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
     }
 
     public static void onDataReady() {

@@ -21,6 +21,10 @@ public interface IAntimatterProvider extends IDataProvider {
         return true;
     }
 
+    default boolean async() {
+        return true;
+    }
+
 
     default void onCompletion() {
 

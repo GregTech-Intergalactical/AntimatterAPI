@@ -1,6 +1,15 @@
 package muramasa.antimatter.datagen.providers;
 
+import static muramasa.antimatter.util.TagUtils.getBlockTag;
+import static muramasa.antimatter.util.TagUtils.getForgeBlockTag;
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
+import static muramasa.antimatter.util.Utils.getConventionalStoneType;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.JsonObject;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -22,14 +31,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static muramasa.antimatter.util.TagUtils.getBlockTag;
-import static muramasa.antimatter.util.TagUtils.getForgeBlockTag;
-import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
-import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
 public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAntimatterProvider {
 
@@ -63,6 +64,11 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     @Override
     public void registerTags() {
         processTags(providerDomain);
+    }
+
+    @Override
+    public boolean async() {
+        return false;
     }
 
     protected void processTags(String domain) {

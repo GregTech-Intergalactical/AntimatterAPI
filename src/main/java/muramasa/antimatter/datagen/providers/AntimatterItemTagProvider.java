@@ -1,6 +1,20 @@
 package muramasa.antimatter.datagen.providers;
 
+import static muramasa.antimatter.Data.BLOCK;
+import static muramasa.antimatter.Data.FRAME;
+import static muramasa.antimatter.util.TagUtils.blockToItemTag;
+import static muramasa.antimatter.util.TagUtils.getBlockTag;
+import static muramasa.antimatter.util.TagUtils.getForgeBlockTag;
+import static muramasa.antimatter.util.TagUtils.getForgeItemTag;
+import static muramasa.antimatter.util.TagUtils.getItemTag;
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
+import static muramasa.antimatter.util.Utils.getConventionalStoneType;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gson.JsonObject;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -25,15 +39,6 @@ import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import static muramasa.antimatter.Data.BLOCK;
-import static muramasa.antimatter.Data.FRAME;
-import static muramasa.antimatter.util.TagUtils.*;
-import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
-import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
 public class AntimatterItemTagProvider extends ItemTagsProvider implements IAntimatterProvider {
 
@@ -62,6 +67,11 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     @Override
     public Dist getSide() {
         return Dist.DEDICATED_SERVER;
+    }
+
+    @Override
+    public boolean async() {
+        return false;
     }
 
     @Override

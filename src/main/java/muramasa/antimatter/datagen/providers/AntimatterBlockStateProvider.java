@@ -1,5 +1,9 @@
 package muramasa.antimatter.datagen.providers;
 
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
@@ -13,11 +17,12 @@ import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.model.generators.*;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.BlockModelProvider;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
-
-import javax.annotation.Nonnull;
-import java.util.Map;
 
 public class AntimatterBlockStateProvider extends BlockStateProvider implements IAntimatterProvider {
 
@@ -49,6 +54,10 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     @Override
     public void run() {
         registerStatesAndModels();
+    }
+
+    @Override
+    public void onCompletion() {
         models().generatedModels.forEach(DynamicResourcePack::addBlock);
         registeredBlocks.forEach((b, s) -> {
             if (b.getRegistryName() == null) {
