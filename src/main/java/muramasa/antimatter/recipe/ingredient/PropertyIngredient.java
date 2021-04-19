@@ -1,14 +1,12 @@
 package muramasa.antimatter.recipe.ingredient;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -47,10 +45,11 @@ public class PropertyIngredient extends Ingredient {
     private final String id;
     private final IMaterialTag[] tags;
     private final Object2BooleanMap<AntimatterToolType> optionalTools;
+    private final Set<Material> fixedMats;
     private final boolean inverse;
 
-    protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type,Set<ITag.INamedTag<Item>> itemTags, String id, IMaterialTag[] tags, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
-        Stream<IItemList> stream = Stream.concat(itemTags.stream().map(t -> new StackList(TagUtils.nc(t).getAllElements().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new StackList(i.all().stream().filter(t -> {
+    protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type,Set<ITag.INamedTag<Item>> itemTags, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
+        Stream<IItemList> stream = Stream.concat(itemTags.stream().map(t -> new StackList(TagUtils.nc(t).getAllElements().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new StackList((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
             boolean ok = t.has(tags);
             boolean types = true;
             if (tools.size() > 0) {
@@ -64,12 +63,10 @@ public class PropertyIngredient extends Ingredient {
             }
             return ok && types;
         }).map(mat -> i.get(mat, 1)).collect(Collectors.toList()))));
-        PropertyIngredient prop = new PropertyIngredient(stream, type, itemTags, id, tags, inverse, tools);
-
-        return prop;
+        return new PropertyIngredient(stream, type, itemTags, id, tags, fixedMats, inverse, tools);
     }
 
-    protected PropertyIngredient(Stream<IItemList> stream, Set<MaterialTypeItem<?>> type,Set<ITag.INamedTag<Item>> itemTags, String id, IMaterialTag[] tags, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
+    protected PropertyIngredient(Stream<IItemList> stream, Set<MaterialTypeItem<?>> type,Set<ITag.INamedTag<Item>> itemTags, String id, IMaterialTag[] tags,Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
         super(stream);
         this.type = type;
         this.id = id;
@@ -77,10 +74,11 @@ public class PropertyIngredient extends Ingredient {
         this.inverse = inverse;
         this.optionalTools = tools;
         this.itemTags = itemTags;
+        this.fixedMats = fixedMats;
     }
     //Convenience
     public static PropertyIngredient of(MaterialTypeItem<?> type, String id) {
-        return build(ImmutableSet.of(type), new ObjectArraySet<>(), id, new IMaterialTag[0], false, new Object2BooleanOpenHashMap<>());
+        return build(ImmutableSet.of(type), Collections.emptySet(), id, new IMaterialTag[0], Collections.emptySet(), false, new Object2BooleanOpenHashMap<>());
     }
 
     public Set<MaterialTypeItem<?>> getTypes() {
@@ -151,6 +149,13 @@ public class PropertyIngredient extends Ingredient {
             }
             obj.add("tools", map);
         }
+        if (fixedMats.size() > 0) {
+            JsonArray arr = new JsonArray();
+            for (Material mat : this.fixedMats) {
+                arr.add(mat.getId());
+            }
+            obj.add("fixed", arr);
+        }
         return obj;
     }
 
@@ -210,7 +215,12 @@ public class PropertyIngredient extends Ingredient {
             for (int i = 0; i < size; i++) {
                 map.put(AntimatterAPI.get(AntimatterToolType.class, buffer.readString()), buffer.readBoolean());
             }
-            return PropertyIngredient.build(items, t, id, tags, inverse, map);
+            size = buffer.readVarInt();
+            Set<Material> fixedMats = new ObjectArraySet<>(size);
+            for (int i = 0; i < size; i++) {
+               fixedMats.add(AntimatterAPI.get(Material.class, buffer.readString()));
+            }
+            return PropertyIngredient.build(items, t, id, tags, fixedMats, inverse, map);
         }
 
         @Override
@@ -234,12 +244,12 @@ public class PropertyIngredient extends Ingredient {
                 for (Map.Entry<String, JsonElement> entry : JSONUtils.getJsonObject(json, "tools").entrySet()) {
                     map.put(AntimatterAPI.get(AntimatterToolType.class, entry.getKey()), entry.getValue().getAsBoolean());
                 }
-              //  JSONUtils.getJsonArray(json, "tools").forEach(el -> {
-              //      JsonObject obj = el.getAsJsonObject();
-              //      obj.entrySet().forEach(i -> map.put(AntimatterAPI.get(AntimatterToolType.class, i.getKey()), i.getValue().getAsBoolean()));
-               // });
             }
-            return PropertyIngredient.build(items, itemTags, ingId,tags, inverse, map);
+            Set<Material> fixedMats = Collections.emptySet();
+            if (json.has("fixed")) {
+                fixedMats = Streams.stream(JSONUtils.getJsonArray(json, "fixed")).map(t -> AntimatterAPI.get(Material.class, t.getAsString())).collect(Collectors.toSet());
+            }
+            return PropertyIngredient.build(items,itemTags,ingId,tags,fixedMats,inverse, map);
         }
 
         @Override
@@ -263,12 +273,17 @@ public class PropertyIngredient extends Ingredient {
                 buffer.writeString(entry.getKey().getId());
                 buffer.writeBoolean(entry.getBooleanValue());
             }
+            buffer.writeVarInt(ingredient.fixedMats.size());
+            for (Material fixedMat : ingredient.fixedMats) {
+                buffer.writeString(fixedMat.getId());
+            }
         }
     }
 
     public static class Builder {
         private Set<MaterialTypeItem<?>> type;
         private Set<ITag.INamedTag<Item>> itemTags;
+        private Set<Material> fixedMats;
         private String id;
         private IMaterialTag[] tags = new IMaterialTag[0];
         private Object2BooleanMap<AntimatterToolType> optionalTools = new Object2BooleanOpenHashMap<>();
@@ -285,6 +300,11 @@ public class PropertyIngredient extends Ingredient {
 
         public Builder tags(IMaterialTag... tags) {
             this.tags = tags;
+            return this;
+        }
+
+        public Builder mats(Material... tags) {
+            this.fixedMats = Sets.newHashSet(tags);
             return this;
         }
 
@@ -305,7 +325,7 @@ public class PropertyIngredient extends Ingredient {
         }
 
         public PropertyIngredient build() {
-            return PropertyIngredient.build(type == null ? Collections.emptySet() : type,itemTags == null ? Collections.emptySet() : itemTags, id, tags, inverse, optionalTools);
+            return PropertyIngredient.build(type == null ? Collections.emptySet() : type,itemTags == null ? Collections.emptySet() : itemTags, id, tags, fixedMats == null ? Collections.emptySet() : fixedMats, inverse, optionalTools);
         }
     }
 }

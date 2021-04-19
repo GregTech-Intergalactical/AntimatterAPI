@@ -10,6 +10,8 @@ import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.pipe.BlockItemPipe;
+import muramasa.antimatter.pipe.PipeItemBlock;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
@@ -22,6 +24,7 @@ import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.data.*;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -134,64 +137,64 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         if (providerDomain.equals(Ref.ID)) {
             final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
             List<ItemStack> stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.TINY)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.TINY), 12)).collect(Collectors.toList());
-
-            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_item_tiny", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PPP", "H W", "PPP");
+            Material[] mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_item_tiny", "antimatter_pipes",
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "H W", "PPP");
 
             stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
-
-            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_item_small", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PWP", "P P", "PHP");
+            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_item_small", "antimatter_pipes",
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PWP", "P P", "PHP");
 
             stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 2)).collect(Collectors.toList());
-
+            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
             if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.NORMAL.getId()),  consumer, Ref.ID,"pipe_item_normal", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PPP", "W H", "PPP");
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "W H", "PPP");
 
             stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.LARGE)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.LARGE), 1)).collect(Collectors.toList());
-
+            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
             if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.LARGE.getId()),  consumer, Ref.ID,"pipe_item_large", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PHP", "P P", "PWP");
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PHP", "P P", "PWP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.TINY)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.TINY), 12)).collect(Collectors.toList());
-
+            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
             if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_fluid_tiny", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PPP", "H W", "PPP");
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "H W", "PPP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
-
+            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
             if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_fluid_small", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PWP", "P P", "PHP");
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PWP", "P P", "PHP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 2)).collect(Collectors.toList());
-
+            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
             if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.NORMAL.getId()),  consumer, Ref.ID,"pipe_fluid_normal", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PPP", "W H", "PPP");
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "W H", "PPP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.LARGE)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.LARGE), 1)).collect(Collectors.toList());
-
+            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
             if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.LARGE.getId()),  consumer, Ref.ID,"pipe_fluid_large", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PHP", "P P", "PWP");
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PHP", "P P", "PWP");
         }
     }
 
     protected void registerToolRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
         if (providerDomain.equals(Ref.ID)) {
             final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
-
-
             addToolRecipe(TOOL_BUILDER.get(HAMMER.getId()), consumer, Ref.ID, HAMMER.getId() + "_" +"recipe", "antimatter_tools",
                     "has_wrench", in, Collections.singletonList(HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.of(INGOT, "primary"), 'R', PropertyIngredient.of(ROD, "secondary")), "II ", "IIR", "II ");
 
             PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build();
-            addToolRecipe(ARMOR_BUILDER.get(HELMET.getId()), consumer, Ref.ID, HELMET.getId() + "_recipe", "antimatter_helmets",
-                    "has_wrench", in, Collections.singletonList(HELMET.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI");
-            addToolRecipe(ARMOR_BUILDER.get(CHESTPLATE.getId()), consumer, Ref.ID, CHESTPLATE.getId() + "_recipe", "antimatter_chestplates",
-                    "has_wrench", in, Collections.singletonList(CHESTPLATE.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build(), 'H', HAMMER.getTag()), "IHI", "III", "III");
-            addToolRecipe(ARMOR_BUILDER.get(LEGGINGS.getId()), consumer, Ref.ID, LEGGINGS.getId() + "_recipe", "antimatter_leggings",
-                    "has_wrench", in, Collections.singletonList(LEGGINGS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI", "I I");
-            addToolRecipe(ARMOR_BUILDER.get(BOOTS.getId()), consumer, Ref.ID, BOOTS.getId() + "_recipe", "antimatter_boots",
-                    "has_wrench", in, Collections.singletonList(BOOTS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build(), 'H', HAMMER.getTag()), "I I", "IHI");
+            if (!ARMOR.all().isEmpty()) {
+                addToolRecipe(ARMOR_BUILDER.get(HELMET.getId()), consumer, Ref.ID, HELMET.getId() + "_recipe", "antimatter_helmets",
+                        "has_wrench", in, Collections.singletonList(HELMET.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI");
+                addToolRecipe(ARMOR_BUILDER.get(CHESTPLATE.getId()), consumer, Ref.ID, CHESTPLATE.getId() + "_recipe", "antimatter_chestplates",
+                        "has_wrench", in, Collections.singletonList(CHESTPLATE.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build(), 'H', HAMMER.getTag()), "IHI", "III", "III");
+                addToolRecipe(ARMOR_BUILDER.get(LEGGINGS.getId()), consumer, Ref.ID, LEGGINGS.getId() + "_recipe", "antimatter_leggings",
+                        "has_wrench", in, Collections.singletonList(LEGGINGS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI", "I I");
+                addToolRecipe(ARMOR_BUILDER.get(BOOTS.getId()), consumer, Ref.ID, BOOTS.getId() + "_recipe", "antimatter_boots",
+                        "has_wrench", in, Collections.singletonList(BOOTS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE).tags(ARMOR).build(), 'H', HAMMER.getTag()), "I I", "IHI");
+            }
 
             addToolRecipe(TOOL_BUILDER.get(PLUNGER.getId()), consumer, Ref.ID, PLUNGER.getId() + "_recipe", "antimatter_plungers",
                     "has_wrench", in, Collections.singletonList(PLUNGER.getToolStack(NULL, NULL)),
