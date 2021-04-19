@@ -133,24 +133,45 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     protected void registerPipeRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
         if (providerDomain.equals(Ref.ID)) {
             final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
-            List<ItemStack> stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
+            List<ItemStack> stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.TINY)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.TINY), 12)).collect(Collectors.toList());
 
-            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_item_small", "antimatter_pipes",
+            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_item_tiny", "antimatter_pipes",
                     "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PPP", "H W", "PPP");
 
-            stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 4)).collect(Collectors.toList());
+            stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
+
+            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_item_small", "antimatter_pipes",
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PWP", "P P", "PHP");
+
+            stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 2)).collect(Collectors.toList());
 
             if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.NORMAL.getId()),  consumer, Ref.ID,"pipe_item_normal", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PWP", "P P", "PHP");
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PPP", "W H", "PPP");
+
+            stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.LARGE)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.LARGE), 1)).collect(Collectors.toList());
+
+            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.LARGE.getId()),  consumer, Ref.ID,"pipe_item_large", "antimatter_pipes",
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(ITEMPIPE).build()), "PHP", "P P", "PWP");
+
+            stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.TINY)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.TINY), 12)).collect(Collectors.toList());
+
+            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_fluid_tiny", "antimatter_pipes",
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PPP", "H W", "PPP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
 
             if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_fluid_small", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PPP", "H W", "PPP");
-
-            stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 4)).collect(Collectors.toList());
-            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.NORMAL.getId()),  consumer, Ref.ID,"pipe_fluid_normal", "antimatter_pipes",
                     "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PWP", "P P", "PHP");
+
+            stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 2)).collect(Collectors.toList());
+
+            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.NORMAL.getId()),  consumer, Ref.ID,"pipe_fluid_normal", "antimatter_pipes",
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PPP", "W H", "PPP");
+
+            stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.LARGE)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.LARGE), 1)).collect(Collectors.toList());
+
+            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.LARGE.getId()),  consumer, Ref.ID,"pipe_fluid_large", "antimatter_pipes",
+                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).tags(FLUIDPIPE).build()), "PHP", "P P", "PWP");
         }
     }
 
