@@ -41,7 +41,7 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        TagUtils.getTags(Fluid.class).forEach((k,v)-> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
+        //TagUtils.getTags(Fluid.class).forEach((k,v)-> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
         tagToBuilder.forEach(this::addTag);
         b.forEach(tagToBuilder::put);
     }

@@ -44,14 +44,12 @@ public class DynamicResourcePack implements IResourcePack {
     private String name = null;
 
     static {
-        SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID));
+        CLIENT_DOMAINS.addAll(Sets.newHashSet(Ref.ID));
         SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, "minecraft", "forge"));
     }
 
     public DynamicResourcePack(String name, Collection<String> domains) {
         this.name = name;
-        //TODO!
-        //domains.add("gti");
         CLIENT_DOMAINS.addAll(domains);
         SERVER_DOMAINS.addAll(domains);
     }
@@ -97,34 +95,13 @@ public class DynamicResourcePack implements IResourcePack {
 
 
     public static void addTag(String type, ResourceLocation loc, JsonObject obj) {
-        addTag(getTagLoc(type, loc), obj, false);
-    }
-
-
-    private static void addTag(ResourceLocation loc, JsonObject obj, boolean replace) {
-        DATA.put(loc, obj);
-       // DATA.compute(loc, (k,v) -> {
-       //     if (v == null) return obj;
-            /*if (!replace) {
-                ITag.Builder builder = ITag.Builder.create();
-                builder = builder.deserialize(obj, name);
-                builder = builder.deserialize(v, name);
-                return builder.serialize();
-            } else {
-                return obj;
-            }*/
-      //  });
+        DATA.putIfAbsent(getTagLoc(type, loc), obj);
     }
 
     public static void ensureTagAvailable(String id, ResourceLocation loc) {
         if (loc.getNamespace().contains("minecraft")) return;
         DATA.putIfAbsent(getTagLoc(id, loc), ITag.Builder.create().serialize());
     }
-
-    public static boolean hasTag(ResourceLocation loc) {
-        return DATA.get(loc) != null;
-    }
-
 
     @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {

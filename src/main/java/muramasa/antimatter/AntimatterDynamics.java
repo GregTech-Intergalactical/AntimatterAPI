@@ -49,7 +49,7 @@ public class AntimatterDynamics {
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());        
-        Stream.concat(async, sync).forEach(t -> t.run());
+        Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
     }
@@ -60,7 +60,7 @@ public class AntimatterDynamics {
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());        
-        Stream.concat(async, sync).forEach(t -> t.run());
+        Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
         Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
     }

@@ -51,7 +51,6 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
         Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
         this.tagToBuilder.clear();
         registerTags();
-        TagUtils.getTags(Block.class).forEach((k,v) -> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
         tagToBuilder.forEach(this::addTag);
         b.forEach(tagToBuilder::put);
     }
