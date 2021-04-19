@@ -41,21 +41,28 @@ public class DynamicResourcePack implements IResourcePack {
     protected static final Map<ResourceLocation, JsonObject> LANG = new HashMap<>();
     protected static final Map<ResourceLocation, JsonObject> DATA = new HashMap<>();
 
-    protected static boolean TAGS_DONE = false;
-
-    private static String name = null;
+    private String name = null;
 
     static {
-        CLIENT_DOMAINS.addAll(Sets.newHashSet(Ref.ID, "gti"));
-        SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, "gti","minecraft", "forge"));
+        SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID));
+        SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, "minecraft", "forge"));
     }
 
     public DynamicResourcePack(String name, Collection<String> domains) {
-        DynamicResourcePack.name = name;
+        this.name = name;
         //TODO!
         //domains.add("gti");
         CLIENT_DOMAINS.addAll(domains);
         SERVER_DOMAINS.addAll(domains);
+    }
+
+    public static void clearServer() {
+        DATA.clear();
+    }
+
+    public static void clearClient() {
+        ASSETS.clear();
+        LANG.clear();
     }
 
     public static void addState(ResourceLocation loc, IGeneratedBlockstate state) {
@@ -90,39 +97,32 @@ public class DynamicResourcePack implements IResourcePack {
 
 
     public static void addTag(String type, ResourceLocation loc, JsonObject obj) {
-        if (TAGS_DONE) return;
         addTag(getTagLoc(type, loc), obj, false);
     }
 
 
     private static void addTag(ResourceLocation loc, JsonObject obj, boolean replace) {
-        DATA.compute(loc, (k,v) -> {
-            if (v == null) return obj;
-            if (!replace) {
+        DATA.put(loc, obj);
+       // DATA.compute(loc, (k,v) -> {
+       //     if (v == null) return obj;
+            /*if (!replace) {
                 ITag.Builder builder = ITag.Builder.create();
                 builder = builder.deserialize(obj, name);
                 builder = builder.deserialize(v, name);
                 return builder.serialize();
             } else {
                 return obj;
-            }
-        });
+            }*/
+      //  });
     }
 
     public static void ensureTagAvailable(String id, ResourceLocation loc) {
         if (loc.getNamespace().contains("minecraft")) return;
-        DATA.compute(getTagLoc(id, loc), (k,v) -> {
-            if (v != null) return v;
-            return ITag.Builder.create().serialize();
-        });
+        DATA.putIfAbsent(getTagLoc(id, loc), ITag.Builder.create().serialize());
     }
 
     public static boolean hasTag(ResourceLocation loc) {
         return DATA.get(loc) != null;
-    }
-
-    public static void markComplete() {
-        TAGS_DONE = true;
     }
 
 

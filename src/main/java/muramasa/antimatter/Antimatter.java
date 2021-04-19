@@ -100,4 +100,9 @@ public class Antimatter extends AntimatterMod {
             Data.init(side);
         }
     }
+
+    @Override
+    public String getId() {
+        return Ref.ID;
+    }
 }

@@ -44,17 +44,18 @@ public class AntimatterDynamics {
 
     // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to run first
     public static void runDataProvidersDynamically() {
+        DynamicResourcePack.clearServer();
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER) && p.shouldRun())).collect(Collectors.toList());
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());        
         Stream.concat(async, sync).forEach(t -> t.run());
         providers.forEach(IAntimatterProvider::onCompletion);
-        DynamicResourcePack.markComplete();
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
     }
 
     public static void runAssetProvidersDynamically() {
+        DynamicResourcePack.clearClient();
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.CLIENT) && p.shouldRun())).collect(Collectors.toList());
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
@@ -71,7 +72,6 @@ public class AntimatterDynamics {
             }
             t.antimatterRecipes(AntimatterAPI.getRecipeRegistrate());
         });
-        runDataProvidersDynamically();
     }
 
     /**
@@ -116,6 +116,7 @@ public class AntimatterDynamics {
     }
 
     public static void onResourceReload(boolean server) {
+        if (server) runDataProvidersDynamically();
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class, IRecipeRegistrate.IRecipeLoader::init);
         if (server) {
