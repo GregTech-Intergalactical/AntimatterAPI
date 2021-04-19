@@ -64,7 +64,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     protected final VoxelShape COLLISION_SHAPE;
 
     public BlockPipe(String prefix, T type, PipeSize size) {
-        this(prefix, type, size, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(1.0f, 3.0f).notSolid());
+        this(prefix, type, size, Block.Properties.create(Data.WRENCH_MATERIAL).hardnessAndResistance(1.0f, 3.0f).notSolid().setRequiresTool());
     }
 
     public BlockPipe(String prefix, T type, PipeSize size, AbstractBlock.Properties properties) {
