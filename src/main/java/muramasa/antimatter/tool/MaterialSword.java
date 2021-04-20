@@ -129,7 +129,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     @Override
     public int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
-        return getTier(stack).getHarvestLevel();
+        return getToolTypes().contains(tool) ? getTier(stack).getHarvestLevel() : -1;
     }
 
     @Override
