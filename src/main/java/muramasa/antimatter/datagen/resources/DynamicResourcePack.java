@@ -2,13 +2,13 @@ package muramasa.antimatter.datagen.resources;
 
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.Ref;
 import net.minecraft.data.IFinishedRecipe;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTableManager;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
@@ -24,11 +24,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -38,25 +37,30 @@ public class DynamicResourcePack implements IResourcePack {
 
     protected static final ObjectSet<String> CLIENT_DOMAINS = new ObjectOpenHashSet<>();
     protected static final ObjectSet<String> SERVER_DOMAINS = new ObjectOpenHashSet<>();
-    protected static final Object2ObjectMap<ResourceLocation, String> ASSETS = new Object2ObjectOpenHashMap<>();
-    protected static final Object2ObjectMap<ResourceLocation, JsonObject> LANG = new Object2ObjectOpenHashMap<>();
-    protected static final Object2ObjectMap<ResourceLocation, JsonObject> DATA = new Object2ObjectOpenHashMap<>();
+    protected static final Map<ResourceLocation, String> ASSETS = new HashMap<>();
+    protected static final Map<ResourceLocation, JsonObject> LANG = new HashMap<>();
+    protected static final Map<ResourceLocation, JsonObject> DATA = new HashMap<>();
 
-    protected static boolean TAGS_DONE = false;
-
-    private static String name = null;
+    private String name = null;
 
     static {
-        CLIENT_DOMAINS.add(Ref.ID);
+        CLIENT_DOMAINS.addAll(Sets.newHashSet(Ref.ID));
         SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, "minecraft", "forge"));
     }
 
     public DynamicResourcePack(String name, Collection<String> domains) {
-        DynamicResourcePack.name = name;
-        //TODO!
-        //domains.add("gti");
+        this.name = name;
         CLIENT_DOMAINS.addAll(domains);
         SERVER_DOMAINS.addAll(domains);
+    }
+
+    public static void clearServer() {
+        DATA.clear();
+    }
+
+    public static void clearClient() {
+        ASSETS.clear();
+        LANG.clear();
     }
 
     public static void addState(ResourceLocation loc, IGeneratedBlockstate state) {
@@ -80,36 +84,34 @@ public class DynamicResourcePack implements IResourcePack {
         if (recipe.getAdvancementJson() != null) DATA.put(getAdvancementLoc(Objects.requireNonNull(recipe.getAdvancementID())), recipe.getAdvancementJson());
     }
 
+    public static void addLootEntry(ResourceLocation loc, LootTable table) {
+        JsonObject obj =  (JsonObject) LootTableManager.toJson(table);
+        DATA.put(getLootLoc(loc), obj);
+    }
+
     public static void addAdvancement(ResourceLocation loc, JsonObject obj) {
         DATA.put(getAdvancementLoc(loc), obj);
     }
 
 
-    public static void addTag(ResourceLocation loc, JsonObject obj) {
-        if (TAGS_DONE) return;
-        DATA.compute(loc, (k,v) -> {
-            if (v == null) return obj;
-            ITag.Builder builder = ITag.Builder.create();
-            builder = builder.deserialize(obj, name);
-            builder = builder.deserialize(v, name);
-            return builder.serialize();
-        });
+    public static void addTag(String type, ResourceLocation loc, JsonObject obj) {
+        DATA.putIfAbsent(getTagLoc(type, loc), obj);
     }
 
-    public static void markComplete() {
-        TAGS_DONE = true;
+    public static void ensureTagAvailable(String id, ResourceLocation loc) {
+        if (loc.getNamespace().contains("minecraft")) return;
+        DATA.putIfAbsent(getTagLoc(id, loc), ITag.Builder.create().serialize());
     }
-
 
     @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
         if (type == ResourcePackType.SERVER_DATA) {
-            if (DATA.get(location) != null) return new ByteArrayInputStream(DATA.get(location).toString().getBytes(StandardCharsets.UTF_8));
+            if (DATA.containsKey(location)) return new ByteArrayInputStream(DATA.get(location).toString().getBytes(StandardCharsets.UTF_8));
             else throw new FileNotFoundException("Can't find " + location + " " + getName());
         }
         else {
-            if (LANG.get(location) != null) return new ByteArrayInputStream(LANG.get(location).toString().getBytes(StandardCharsets.UTF_8));
-            else if (ASSETS.get(location) != null) return new ByteArrayInputStream(ASSETS.get(location).getBytes(StandardCharsets.UTF_8));
+            if (LANG.containsKey(location)) return new ByteArrayInputStream(LANG.get(location).toString().getBytes(StandardCharsets.UTF_8));
+            else if (ASSETS.containsKey(location)) return new ByteArrayInputStream(ASSETS.get(location).getBytes(StandardCharsets.UTF_8));
             else throw new FileNotFoundException("Can't find " + location + " " + getName());
         }
     }
@@ -121,14 +123,22 @@ public class DynamicResourcePack implements IResourcePack {
 
     @Override
     public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
-        return ASSETS.containsKey(location) ? ASSETS.containsKey(location) : DATA.containsKey(location) ? DATA.containsKey(location) : LANG.containsKey(location);
+        if (type == ResourcePackType.CLIENT_RESOURCES) {
+            return ASSETS.containsKey(location) || LANG.containsKey(location);
+        } else {
+            return DATA.containsKey(location);
+        }
     }
 
     @Override
     public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespace, String path, int maxDepth, Predicate<String> filter) {
         if (type == ResourcePackType.SERVER_DATA) return DATA.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
-        else if (type == ResourcePackType.CLIENT_RESOURCES) return ASSETS.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
-        return LANG.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
+        else if (type == ResourcePackType.CLIENT_RESOURCES) {
+            Stream<ResourceLocation> obj = LANG.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath()));
+            Stream<ResourceLocation> obj2 = ASSETS.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath()));
+            return Stream.concat(obj, obj2).collect(Collectors.toList());
+        }
+        return Collections.emptyList();//LANG.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
     }
 
     @Override
@@ -150,6 +160,10 @@ public class DynamicResourcePack implements IResourcePack {
     @Override
     public void close() {
         //NOOP
+    }
+
+    public static ResourceLocation getLootLoc(ResourceLocation id) {
+        return new ResourceLocation(id.getNamespace(), "loot_tables/blocks/" + id.getPath() + ".json");
     }
 
     public static ResourceLocation getStateLoc(ResourceLocation registryId) {

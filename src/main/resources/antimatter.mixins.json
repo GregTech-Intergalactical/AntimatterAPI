@@ -5,15 +5,12 @@
   "refmap": "antimatter.refmap.json",
   "client": [
     "ClientBlockUpdateMixin",
-    "DynamicPackMixin",
     "ClientPlayNetHandlerMixin"
-  ],
-  "server": [
-    "ServerDynamicPackMixin"
   ],
   "mixins": [
     "RecipeManagerMixin",
-    "ServerBlockUpdateMixin"
+    "ServerBlockUpdateMixin",
+    "SimpleReloadableResourceManagerMixin"
   ],
   "minVersion": "0.8"
 }

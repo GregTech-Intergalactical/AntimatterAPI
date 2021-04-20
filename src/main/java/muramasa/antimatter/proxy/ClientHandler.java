@@ -1,6 +1,7 @@
 package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
@@ -27,14 +28,15 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -69,6 +71,19 @@ public class ClientHandler implements IProxyHandler {
                 event.accept(r);
             }
         }));
+
+        MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRecipes);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::preResourceRegistration);
+    }
+
+    public static void onRecipes(RecipesUpdatedEvent ev) {
+        AntimatterDynamics.onResourceReload(false);
+        AntimatterDynamics.onRecipeCompile(ev.getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
+    }
+
+    //Called before resource registration is performed.
+    public static void preResourceRegistration(ParticleFactoryRegisterEvent ev) {
+        AntimatterDynamics.runAssetProvidersDynamically();
     }
 
     @SuppressWarnings({"unchecked", "unused"})

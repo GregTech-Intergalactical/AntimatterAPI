@@ -28,8 +28,16 @@ public class MaterialTag implements IMaterialTag {
     public static MaterialTag BRITTLEG = new MaterialTag("brittle_g"); //This is for Gems that cannot be used in recipes such as Gem > Rod in Lathe
     public static MaterialTag RUBBERTOOLS = new MaterialTag("rubber_tools");
     public static MaterialTag METAL = new MaterialTag("metal");
-    public static MaterialTag CABLE = new MaterialTag("cable");
     public static MaterialTag ELEMENTAL = new MaterialTag("elemental");
+
+    /** ETC **/
+    public static MaterialTag HANDLE = new MaterialTag("handle");
+
+    /** PIPES **/
+    public static MaterialTag ITEMPIPE = new MaterialTag("itempipe");
+    public static MaterialTag FLUIDPIPE = new MaterialTag("fluidpipe");
+    public static MaterialTag WIRE = new MaterialTag("wire");
+    public static MaterialTag CABLE = new MaterialTag("cable");
 
     //TODO get alloy flag for adding mixer and dust crafting recipes automatically
 

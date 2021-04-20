@@ -16,7 +16,6 @@ import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -68,13 +67,13 @@ import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static net.minecraft.util.Direction.*;
 
-public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider, IColorHandler {
+public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider {
 
     protected Machine<?> type;
     protected Tier tier;
 
     public BlockMachine(Machine<?> type, Tier tier) {
-        super(type.getDomain(), type.getId() + "_" + tier.getId(), Properties.create(Material.IRON).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL));
+        super(type.getDomain(), type.getId() + "_" + tier.getId(), Properties.create(WRENCH_MATERIAL).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL).setRequiresTool());
         this.type = type;
         this.tier = tier;
     }
@@ -270,12 +269,14 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         }
     }
 
+    /* TODO: needed?
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
         if (!(state.getBlock() instanceof BlockMachine) && world == null || pos == null) return -1;
         TileEntity tile = Utils.getTile(world, pos);
-        return tile instanceof TileEntityMachine && i == 0 ? /*((TileEntityMachine) tile).getTextureData().getTint()*/-1 : -1;
+        return tile instanceof TileEntityMachine && i == 0 ? /*((TileEntityMachine) tile).getTextureData().getTint() -1 : -1;
     }
+    */
 
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {

@@ -17,6 +17,13 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.pipe.PipeItemBlock;
+import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.types.FluidPipe;
+import muramasa.antimatter.pipe.types.ItemPipe;
+import muramasa.antimatter.pipe.types.PipeType;
+import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
+import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.texture.Texture;
@@ -30,26 +37,129 @@ import muramasa.antimatter.tool.behaviour.*;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
+import net.minecraft.block.material.MaterialColor;
+import net.minecraft.block.material.PushReaction;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.UseAction;
+import net.minecraft.item.*;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 
-import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
 
 public class Data {
+
+    /** RECIPE BUILDERS **/
+
+    public static final MaterialRecipe.Provider ARMOR_BUILDER = MaterialRecipe.registerProvider("armor",id -> new MaterialRecipe.ItemBuilder() {
+
+       @Override
+       public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+           return AntimatterAPI.get(AntimatterArmorType.class, id).getToolStack((Material) mats.mats.get("primary"));
+       }
+
+       @Override
+       public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+           CompoundNBT nbt = stack.getTag(). getCompound(Ref.TAG_TOOL_DATA);
+           Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
+           return ImmutableMap.of("primary", primary != null ? primary : NULL);
+       }
+   });
+
+    public static final MaterialRecipe.Provider ITEM_PIPE_BUILDER = MaterialRecipe.registerProvider("pipe", id  -> new MaterialRecipe.ItemBuilder() {
+
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            PipeSize size = PipeSize.valueOf(id.toUpperCase(Locale.ENGLISH));
+            Material mat = (Material) mats.mats.get("primary");
+            PipeType p = AntimatterAPI.get(ItemPipe.class, "item_" + mat.getId());
+            int amount = size == PipeSize.TINY ? 12 : size == PipeSize.SMALL ? 6 : size == PipeSize.NORMAL ? 2 : 1;
+            return new ItemStack(p.getBlock(size), amount);
+        }
+
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
+        }
+    });
+
+    public static final MaterialRecipe.Provider FLUID_PIPE_BUILDER = MaterialRecipe.registerProvider("fluid", id  -> new MaterialRecipe.ItemBuilder() {
+
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            PipeSize size = PipeSize.valueOf(id.toUpperCase(Locale.ENGLISH));
+            Material mat = (Material) mats.mats.get("primary");
+            PipeType p = AntimatterAPI.get(FluidPipe.class, "fluid_" + mat.getId());
+            int amount = size == PipeSize.TINY ? 12 : size == PipeSize.SMALL ? 6 : size == PipeSize.NORMAL ? 2 : 1;
+            return new ItemStack(p.getBlock(size), amount);
+        }
+
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
+        }
+    });
+
+    public static final MaterialRecipe.Provider TOOL_BUILDER = MaterialRecipe.registerProvider("tool", id -> new MaterialRecipe.ItemBuilder() {
+
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            Material m = (Material) mats.mats.get("secondary");
+            AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
+            ItemStack stack = type.getToolStack((Material) mats.mats.get("primary"), m == null ? NULL : m);
+            return stack;
+        }
+
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
+            Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
+            Material secondary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
+            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", secondary != null ? secondary : NULL);
+        }
+    });
+
+    public static final MaterialRecipe.Provider CROWBAR_BUILDER = MaterialRecipe.registerProvider("crowbar", id -> new MaterialRecipe.ItemBuilder() {
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            int dye = ((DyeColor) mats.mats.get("secondary")).getColorValue();
+            AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
+            ItemStack stack = type.getToolStack(((Material) mats.mats.get("primary")), NULL);
+            stack.getChildTag(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, dye);
+            return stack;
+        }
+
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
+            Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
+            int secondary = nbt.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
+            Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getColorValue() == secondary).findFirst();
+            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", color.orElse(DyeColor.WHITE));
+        }
+    });
+
+    static {
+        PropertyIngredient.addGetter(Tags.Items.DYES.getName(), DyeColor::getColor);
+    }
+
+    /** END RECIPE BUILDERS **/
+
+    public static final net.minecraft.block.material.Material WRENCH_MATERIAL = new net.minecraft.block.material.Material(MaterialColor.IRON, false, true, true, true, false, false, PushReaction.BLOCK);
 
     //CELLS
     public final static Set<ItemFluidCell> EMPTY_CELLS = new HashSet<>();
@@ -84,6 +194,10 @@ public class Data {
     public static MaterialTypeItem<?> WIRE_FINE = new MaterialTypeItem<>("wire_fine", 2, true, Ref.U8);
     public static MaterialTypeItem<?> SPRING = new MaterialTypeItem<>("spring", 2, true, Ref.U);
     public static MaterialTypeItem<?> ROTOR = new MaterialTypeItem<>("rotor", 2, true, Ref.U * 4 + Ref.U4);
+    public static MaterialTypeItem<?> DRILLBIT = new MaterialTypeItem<>("drill_bit", 2, true, Ref.U * 4);
+    public static MaterialTypeItem<?> CHAINSAWBIT = new MaterialTypeItem<>("chainsaw_bit", 2, true, Ref.U * 2);
+    public static MaterialTypeItem<?> WRENCHBIT = new MaterialTypeItem<>("wrench_bit", 2, true, Ref.U * 4);
+    public static MaterialTypeItem<?> BUZZSAW_BLADE = new MaterialTypeItem<>("buzzsaw_blade", 2, true, Ref.U * 4);
 
     //Block Types
     public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE = new MaterialTypeBlock<>("ore", 1, true, -1);
@@ -148,6 +262,12 @@ public class Data {
             return new MaterialTypeBlock.Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
         });
         ORE.set((m, s) -> {
+            if (m != null) {
+                Item item = AntimatterAPI.getReplacement(ORE,m);
+                if (item instanceof BlockItem) {
+                    return new MaterialTypeBlock.Container(((BlockItem)item).getBlock().getDefaultState());
+                }
+            }
             if (m == null || s == null || !ORE.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ORE, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, ORE.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
             return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
@@ -164,6 +284,12 @@ public class Data {
             return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
         }).blockType();
         BLOCK.set(m -> {
+            if (m != null) {
+                Item item = AntimatterAPI.getReplacement(BLOCK,m);
+                if (item instanceof BlockItem) {
+                    return new MaterialTypeBlock.Container(((BlockItem)item).getBlock().getDefaultState());
+                }
+            }
             if (m == null || !BLOCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(BLOCK, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, BLOCK.getId() + "_" + m.getId());
             return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
@@ -208,17 +334,17 @@ public class Data {
     public static final AntimatterToolType SAW = new AntimatterToolType(Ref.ID, "saw", 2, 2, 2, 2.0F, -2.8F);
     public static final AntimatterToolType FILE = new AntimatterToolType(Ref.ID, "file", 2, 2, 2, -2.0F, -2.4F);
     public static final AntimatterToolType CROWBAR = new AntimatterToolType(Ref.ID, "crowbar", 2, 10, 5, 1.0F, -2.0F).setUseSound(SoundEvents.ENTITY_ITEM_BREAK).setSecondaryRequirement(MaterialTag.RUBBERTOOLS);
-    public static final AntimatterToolType DRILL = new AntimatterToolType(Ref.ID, "drill", 2, 2, 10, 3.0F, -4.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addToolTypes("pickaxe").addEffectiveMaterials(PACKED_ICE, IRON, net.minecraft.block.material.Material.ROCK, ANVIL, PISTON);
+    public static final AntimatterToolType DRILL = new AntimatterToolType(Ref.ID, "drill", 2, 2, 10, 3.0F, -3.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addToolTypes("pickaxe", "shovel").addEffectiveMaterials(PACKED_ICE, IRON, net.minecraft.block.material.Material.ROCK, ANVIL, PISTON, EARTH, CLAY, net.minecraft.block.material.Material.SAND);
     public static final AntimatterToolType SCREWDRIVER = new AntimatterToolType(Ref.ID, "screwdriver", 2, 2, 2, 0.0F, -1.0F).setUseSound(Ref.WRENCH);
     public static final AntimatterToolType MORTAR = new AntimatterToolType(Ref.ID, "mortar", 5, 5, 2, -2.0F, 0.0F).setUseSound(SoundEvents.BLOCK_GRINDSTONE_USE).setBlockBreakability(false);
     public static final AntimatterToolType WIRE_CUTTER = new AntimatterToolType(Ref.ID, "wire_cutter", 5, 3, 2, 0.0F, -1.5F).setUseSound(SoundEvents.ENTITY_SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CARPET);
     public static final AntimatterToolType KNIFE = new AntimatterToolType(Ref.ID, "knife", 2, 2, 5, 2.1F, -2.0F).setToolClass(MaterialSword.class);
     public static final AntimatterToolType PLUNGER = new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F).setUseSound(SoundEvents.ITEM_BUCKET_EMPTY).setPrimaryRequirement(MaterialTag.RUBBERTOOLS);
-    public static final AntimatterToolType CHAINSAW = new AntimatterToolType(Ref.ID, "chainsaw", 2, 1, 5, 3.0F, -4.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.BOW).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO, LEAVES).addToolTypes("axe", "saw");
+    public static final AntimatterToolType CHAINSAW = new AntimatterToolType(Ref.ID, "chainsaw", 2, 1, 5, 3.0F, -2.0F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.BOW).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO, LEAVES).addToolTypes("axe", "saw");
     public static final AntimatterToolType ELECTRIC_WRENCH = new AntimatterToolType(Ref.ID, "electric_wrench", WRENCH).setTag(WRENCH).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH);
     public static final AntimatterToolType ELECTRIC_SCREWDRIVER = new AntimatterToolType(Ref.ID, "electric_screwdriver", SCREWDRIVER).setTag(SCREWDRIVER).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).setOverlayLayers(2);
     public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseAction(UseAction.SPEAR).setUseSound(Ref.DRILL).addEffectiveMaterials(net.minecraft.block.material.Material.ROCK, EARTH, net.minecraft.block.material.Material.SAND, ORGANIC);
-    public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
+    public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setTag(SAW).setPowered(100000, 1, 2, 3).setOverlayLayers(2);
     public static final AntimatterArmorType HELMET = new AntimatterArmorType(Ref.ID, "helmet", 40, 2, 0.0F, 0.0F, EquipmentSlotType.HEAD);
     public static final AntimatterArmorType CHESTPLATE = new AntimatterArmorType(Ref.ID, "chestplate", 40, 6, 0.0F, 0.0F, EquipmentSlotType.CHEST);
     public static final AntimatterArmorType LEGGINGS = new AntimatterArmorType(Ref.ID, "leggings", 40, 5, 0.0F, 0.0F, EquipmentSlotType.LEGS);
@@ -289,6 +415,7 @@ public class Data {
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
         if (side == Dist.CLIENT) clientBehaviours();
+
     }
 
     private static void clientBehaviours() {

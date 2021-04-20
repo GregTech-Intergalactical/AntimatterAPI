@@ -19,6 +19,12 @@ public class RecipeIngredientJS implements IngredientJS {
         this.sourceIngredient = source;
     }
 
+    public static RecipeIngredientJS of(IngredientJS json) {
+        RecipeIngredientJS js = new RecipeIngredientJS(json);
+        js.count = json.getCount();
+        return js;
+    }
+
     public static RecipeIngredientJS of(JsonElement json) {
         if (!(json instanceof JsonObject)) {
             throw new RuntimeException("invalid input to RecipeIngredientJS");
@@ -30,7 +36,7 @@ public class RecipeIngredientJS implements IngredientJS {
         } else {
             r = new RecipeIngredientJS(IngredientJS.of(obj));
         }
-        r.count = obj.get("count").getAsInt();
+        r.count = obj.has("count") ? obj.get("count").getAsInt() : 1;
         r.ignoreNbt = obj.has("nbt") && !obj.get("nbt").getAsBoolean();
         r.nonConsume= obj.has("consume") && !obj.get("consume").getAsBoolean();
         return r;

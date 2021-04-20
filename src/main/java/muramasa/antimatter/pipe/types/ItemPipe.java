@@ -1,6 +1,7 @@
 package muramasa.antimatter.pipe.types;
 
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tile.pipe.TileEntityItemPipe;
@@ -15,6 +16,7 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
 
     public ItemPipe(String domain, Material material) {
         super(domain, material);
+        material.flags(MaterialTag.ITEMPIPE);
         setTile(() -> new TileEntityItemPipe(this));
     }
 

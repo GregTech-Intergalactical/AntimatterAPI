@@ -2,6 +2,7 @@ package muramasa.antimatter.pipe.types;
 
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
@@ -20,6 +21,7 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
         super(domain, material);
         this.loss = loss;
         this.tier = tier;
+        material.flags(MaterialTag.CABLE);
         setTile(() -> new TileEntityCable(this));
     }
 

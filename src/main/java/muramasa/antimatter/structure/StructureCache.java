@@ -1,9 +1,13 @@
 package muramasa.antimatter.structure;
 
-import it.unimi.dsi.fastutil.longs.*;
-import muramasa.antimatter.Antimatter;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongList;
+import it.unimi.dsi.fastutil.longs.LongLists;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -13,7 +17,10 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Set;
 
 @Mod.EventBusSubscriber
 public class StructureCache {
@@ -25,10 +32,13 @@ public class StructureCache {
             if (oldState == newState) return;  // TODO: better checks?
             StructureCache.DimensionEntry entry = LOOKUP.get(getDimId(world));
             if (entry == null) return;
-            BlockPos controllerPos = entry.get(pos);
-            if (controllerPos != null) {
-                if (!controllerPos.equals(pos))
-                    invalidateController(world, controllerPos);
+            Set<BlockPos> controllerPos = entry.get(pos);
+            if (controllerPos.size() > 0) {
+                controllerPos.forEach(p -> {
+                    if (!p.equals(pos)) {
+                        invalidateController(world, p);
+                    }
+                });
             }
         });
     }
@@ -36,26 +46,53 @@ public class StructureCache {
 
     public static boolean has(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(getDimId(world));
-        return entry != null && entry.get(pos) != null;
+        if (entry == null) return false;
+        return entry.get(pos).size() > 0;
     }
 
     @Nullable
-    public static BlockPos get(World world, BlockPos pos) {
+    public static Set<BlockPos> get(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(getDimId(world));
         return entry != null ? entry.get(pos) : null;
     }
 
-    public static void add(World world, BlockPos pos, LongList structure) {
+    @Nullable
+    public static <T extends TileEntityMachine> T getAnyMulti(World world, BlockPos pos, Class<T> clazz) {
+        DimensionEntry entry = LOOKUP.get(getDimId(world));
+        if (entry == null) return null;
+        Set<BlockPos> list = entry.get(pos);
+        if (list.size() == 0) return null;
+        for (BlockPos blockPos : list) {
+            TileEntity tile = world.getTileEntity(blockPos);
+            if (tile != null && clazz.isInstance(tile)) return (T) tile;
+        }
+        return null;
+    }
+
+    /**
+     * Adds a structure to the cache.
+     * @param world the world the structure is in.
+     * @param pos controller position.
+     * @param structure BlockPos-packed positions
+     * @param maxAmount how many shared controllers per block.
+     * @return whether or not structure was added successfully.
+     */
+    public static boolean add(World world, BlockPos pos, LongList structure, int maxAmount) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(getDimId(world), e -> new DimensionEntry());
-        entry.add(pos, structure);
-        Antimatter.LOGGER.info("Added Structure to Store!");
+        boolean ok = entry.add(pos, structure, maxAmount);
+        if (ok) {
+            //Antimatter.LOGGER.info("Added Structure to Store!");
+        } else {
+            remove(world, pos);
+        }
+        return ok;
     }
 
     public static void remove(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(getDimId(world));
         if (entry == null) return;
         entry.remove(pos);
-        Antimatter.LOGGER.info("Removed Structure to Store!");
+        //Antimatter.LOGGER.info("Removed Structure to Store!");
     }
     //just to switch between server & client. You can use two maps but y tho
     private static long getDimId(World world) {
@@ -66,7 +103,7 @@ public class StructureCache {
 
     private static void invalidateController(World world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityMultiMachine) ((TileEntityMultiMachine) tile).invalidateStructure();
+        if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).invalidateStructure();
         remove(world, pos);
     }
 
@@ -93,33 +130,46 @@ public class StructureCache {
 
     public static class DimensionEntry {
 
-        private Long2LongMap STRUCTURE_TO_CONTROLLER = new Long2LongOpenHashMap(); //Structure Position -> Controller Position
+        private Long2ObjectMap<Set<BlockPos>> STRUCTURE_TO_CONTROLLER = new Long2ObjectOpenHashMap<>(); //Structure Position -> Controller Position
         private Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
 
         public DimensionEntry() {
-            STRUCTURE_TO_CONTROLLER.defaultReturnValue(Long.MAX_VALUE);
+            STRUCTURE_TO_CONTROLLER.defaultReturnValue(Collections.EMPTY_SET);
             CONTROLLER_TO_STRUCTURE.defaultReturnValue(LongLists.EMPTY_LIST);
         }
 
-        @Nullable
-        public BlockPos get(BlockPos pos) {
-            long at = STRUCTURE_TO_CONTROLLER.get(pos.toLong());
-            return at != Long.MAX_VALUE ? BlockPos.fromLong(at) : null;
+        @Nonnull
+        public Set<BlockPos> get(BlockPos pos) {
+            return STRUCTURE_TO_CONTROLLER.get(pos.toLong());
         }
 
-        public void add(BlockPos pos, LongList structure) {
+        public boolean add(BlockPos pos, LongList structure, int maxAmount) {
             long at = pos.toLong();
+            int[] counter = new int[]{0};
             CONTROLLER_TO_STRUCTURE.put(at, structure);
             for (long s : structure) {
-                STRUCTURE_TO_CONTROLLER.put(s, at);
+                STRUCTURE_TO_CONTROLLER.compute(s, (k,v) -> {
+                    if (v == null) {
+                        v = new ObjectOpenHashSet<>();
+                    }
+                    counter[0] = Math.max(counter[0], v.size());
+                    v.add(pos);
+                    return v;
+                });
             }
+            return counter[0] <= maxAmount;
         }
 
         public void remove(BlockPos pos) {
             long at = pos.toLong();
             LongList structure = CONTROLLER_TO_STRUCTURE.remove(at);
             for (long s : structure) {
-                STRUCTURE_TO_CONTROLLER.remove(s);
+                STRUCTURE_TO_CONTROLLER.compute(s, (k,v) -> {
+                    if (v == null) return null;
+                    if (v.size() == 1) return null;
+                    v.remove(pos);
+                    return v;
+                } );
             }
         }
     }

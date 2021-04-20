@@ -34,6 +34,9 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.Data.CROWBAR_BUILDER;
+import static muramasa.antimatter.Data.TOOL_BUILDER;
+
 public class AntimatterToolType implements IAntimatterObject {
 
     private final String domain, id;

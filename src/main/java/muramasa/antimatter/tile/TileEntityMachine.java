@@ -30,7 +30,7 @@ import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -116,6 +116,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             this.recipeHandler.ifPresent(MachineRecipeHandler::init);
         }
     }
+
+    /** RECIPE UTILITY METHODS **/
+
     //Called before a recipe ticks.
     public void onRecipePreTick() {
         //NOOP
@@ -126,7 +129,17 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         //NOOP
     }
 
-    //Called after a recipe ticks.
+    //Called whenever a recipe is stopped.
+    public void onRecipeStop() {
+
+    }
+
+    //Called whenever a recipe is activated, might be the same as before (e.g. no new recipe).
+    public void onRecipeActivated(Recipe r) {
+
+    }
+
+    //Called in order to validate a found recipe.
     public boolean onRecipeFound(Recipe r) {
         return true;
     }
@@ -218,6 +231,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         boolean isEmpty = coverHandler.map(ch -> ch.get(side).isEmpty()).orElse(true);
         if (isEmpty) {
             getWorld().setBlockState(getPos(), getBlockState().with(BlockStateProperties.HORIZONTAL_FACING, side));
+            refreshCaps();
             return true;
         }
         return false;
@@ -297,11 +311,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             if (tex.length == 1) return tex[0];
             return tex[a.getIndex()];
         }).withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
-
-        coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
-        BlockPos cPos = StructureCache.get(this.getWorld(), pos);
-        if (cPos != null) {
-            TileEntityMultiMachine mTile = (TileEntityMultiMachine) world.getTileEntity(cPos);
+        TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getWorld(), pos, TileEntityBasicMultiMachine.class);
+        if (mTile != null) {
+            coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
             builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,a -> {
                 Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
                 if (tex.length == 1) return tex[0];
@@ -330,9 +342,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     }
 
     public void refreshCaps() {
-        energyHandler.ifPresent(EnergyHandler::refreshNet);
-        fluidHandler.ifPresent(MachineFluidHandler::refreshNet);
-        itemHandler.ifPresent(MachineItemHandler::refreshNet);
+        if (isServerSide()) {
+            energyHandler.ifPresent(EnergyHandler::refreshNet);
+            fluidHandler.ifPresent(MachineFluidHandler::refreshNet);
+            itemHandler.ifPresent(MachineItemHandler::refreshNet);
+        }
     }
 
     public <T> boolean blocksCapability(@Nonnull Capability<T> cap, Direction side) {

@@ -1,10 +1,23 @@
 package muramasa.antimatter.datagen.providers;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import javax.annotation.Nonnull;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
@@ -13,16 +26,6 @@ import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
 
 public class AntimatterAdvancementProvider implements IDataProvider, IAntimatterProvider {
 
@@ -42,6 +45,11 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
 
     @Override
     public void run() {
+
+    }
+
+    @Override
+    public void onCompletion() {
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {
             if (!locs.add(a.getId())) throw new IllegalStateException("Duplicate advancement " + a.getId());
@@ -53,11 +61,6 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
     @Override
     public Dist getSide() {
         return Dist.DEDICATED_SERVER;
-    }
-
-    @Override
-    public Types staticDynamic() {
-        return Types.STATIC;
     }
 
     @Override
@@ -89,11 +92,11 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
     }
 
     public static Advancement.Builder buildRootAdvancement(IItemProvider provider, ResourceLocation backgroundPath, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.builder().withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), backgroundPath, type, toast, announce, hide);
+        return Advancement.Builder.builder().withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), backgroundPath, type, toast, announce, hide).withRewards(AdvancementRewards.Builder.experience(10));
     }
 
     public static Advancement.Builder buildAdvancement(Advancement parent, IItemProvider provider, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.builder().withParent(parent).withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), null, type, toast, announce, hide);
+        return Advancement.Builder.builder().withParent(parent).withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), null, type, toast, announce, hide).withRewards(AdvancementRewards.Builder.experience(10));
     }
 
     public static String getLoc(String domain, String id) {

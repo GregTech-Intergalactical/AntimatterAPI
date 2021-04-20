@@ -1,9 +1,17 @@
 package muramasa.antimatter.datagen.providers;
 
+import static muramasa.antimatter.Ref.GSON;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.function.Function;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
@@ -19,13 +27,6 @@ import net.minecraft.loot.LootTableManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.function.Function;
-
-import static muramasa.antimatter.Ref.GSON;
-
 public class AntimatterBlockLootProvider extends BlockLootTables implements IDataProvider, IAntimatterProvider {
     protected final String providerDomain, providerName;
     private final DataGenerator generator;
@@ -40,7 +41,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
 
     @Override
     public void run() {
-
+        loot();
     }
 
     protected void loot() {
@@ -52,13 +53,15 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.DEDICATED_SERVER;
+    public void onCompletion() {
+        for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
+            DynamicResourcePack.addLootEntry(e.getKey().getRegistryName(), e.getValue().apply(e.getKey()).setParameterSet(LootParameterSets.BLOCK).build());
+        }
     }
 
     @Override
-    public Types staticDynamic() {
-        return Types.STATIC;
+    public Dist getSide() {
+        return Dist.DEDICATED_SERVER;
     }
 
     @Override

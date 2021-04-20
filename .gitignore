@@ -24,3 +24,5 @@ run/
 src/generated/
 
 TesseractAPI
+
+.vscode/

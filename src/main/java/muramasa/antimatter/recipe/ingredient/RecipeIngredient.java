@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * Small wrapper, to avoid typing lazyvalue.
@@ -113,6 +114,10 @@ public class RecipeIngredient {
         return new RecipeIngredient(Ingredient.fromStacks(stack), stack.getCount());
     }
 
+    public static RecipeIngredient of(Ingredient custom, int count) {
+        return new RecipeIngredient(custom, count);
+    }
+
     public static RecipeIngredient of(IItemProvider provider, int count) {
         return of(count, new ItemStack(provider));
     }
@@ -125,14 +130,14 @@ public class RecipeIngredient {
         ensureRegisteredTag(tagIn);
         return new RecipeIngredient(() -> {
             ITag<Item> tag = collectTag(tagIn);
-            return Ingredient.fromTag(tag);
+            return tag != null ? Ingredient.fromTag(tag) : Ingredient.fromItemListStream(Stream.empty());
         }, count);
     }
     public static RecipeIngredient of(ITag.INamedTag<Item> tagIn,int count) {
         ensureRegisteredTag(tagIn.getName());
         return new RecipeIngredient(() -> {
             ITag<Item> tag = collectTag(tagIn.getName());
-            return Ingredient.fromTag(tag);
+            return tag != null ? Ingredient.fromTag(tag) : Ingredient.fromItemListStream(Stream.empty());
         }, count);
     }
     private static ITag<Item> collectTag(ResourceLocation loc) {

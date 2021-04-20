@@ -16,7 +16,7 @@ public abstract class AntimatterMod implements IAntimatterRegistrar {
 
     public void onGatherData(GatherDataEvent e) {
         DataGenerator gen = e.getGenerator();
-        if (e.includeClient()) AntimatterAPI.onProviderInit(e.getModContainer().getNamespace(), gen, Dist.CLIENT);
-        if (e.includeServer()) AntimatterAPI.onProviderInit(e.getModContainer().getNamespace(), gen, Dist.DEDICATED_SERVER);
+        if (e.includeClient()) AntimatterDynamics.onProviderInit(e.getModContainer().getNamespace(), gen, Dist.CLIENT);
+        if (e.includeServer()) AntimatterDynamics.onProviderInit(e.getModContainer().getNamespace(), gen, Dist.DEDICATED_SERVER);
     }
 }

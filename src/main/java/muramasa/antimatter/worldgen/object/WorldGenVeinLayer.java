@@ -275,7 +275,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
         //Place small ores for the vein
         if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
-            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 10 * AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+            int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 20 * AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
             generateSmallOres(world, rand, posX, posZ, nSmallOres);
         }
         // Something (at least the bottom layer must have 1 block) must have been placed, return true

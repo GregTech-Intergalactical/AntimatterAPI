@@ -1,7 +1,6 @@
 package muramasa.antimatter.tool;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
@@ -48,6 +47,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static muramasa.antimatter.Data.NULL;
+
 public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IForgeItem {
 
     AntimatterToolType getType();
@@ -85,7 +86,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default CompoundNBT getDataTag(ItemStack stack) {
         CompoundNBT dataTag = stack.getChildTag(Ref.TAG_TOOL_DATA);
-        return dataTag != null ? dataTag : validateTag(stack, Data.NULL, Data.NULL, 0, 10000);
+        return dataTag != null ? dataTag : validateTag(stack, NULL, NULL, 0, 10000);
     }
 
     default IItemTier getTier(ItemStack stack) {
@@ -125,18 +126,18 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     default void onGenericFillItemGroup(ItemGroup group, NonNullList<ItemStack> list, long maxEnergy) {
         if (group != Ref.TAB_TOOLS) return;
         if (getType().isPowered()) {
-            ItemStack stack = asItemStack(Data.NULL, Data.NULL);
+            ItemStack stack = asItemStack(NULL, NULL);
             getDataTag(stack).putLong(Ref.KEY_TOOL_DATA_ENERGY, maxEnergy);
             list.add(stack);
         }
-        else list.add(asItemStack(Data.NULL, Data.NULL));
+        else list.add(asItemStack(NULL, NULL));
     }
 
     default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
         tooltip.add(new StringTextComponent("Primary Material: " + primary.getDisplayName().getString()));
-        tooltip.add(new StringTextComponent("Secondary Material: " + secondary.getDisplayName().getString()));
+        if (secondary != NULL) tooltip.add(new StringTextComponent("Secondary Material: " + secondary.getDisplayName().getString()));
         if (flag.isAdvanced() && getType().isPowered()) tooltip.add(new StringTextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getType().getTooltip().size() != 0) tooltip.addAll(getType().getTooltip());
     }
@@ -178,7 +179,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return result;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("rawtypes")
     default ActionResultType onGenericHighlight(PlayerEntity player, DrawHighlightEvent ev) {
         ActionResultType result = ActionResultType.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getType().getBehaviours().entrySet()) {

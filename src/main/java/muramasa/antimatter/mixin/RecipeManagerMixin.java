@@ -1,7 +1,7 @@
 package muramasa.antimatter.mixin;
 
 import com.google.gson.JsonElement;
-import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterDynamics;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
@@ -13,14 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
-/**
- * KubeJS has priority 1100, let's set it higher to ensure recipes are loaded.
- */
-@Mixin(value = RecipeManager.class, priority = 2000)
+
+@Mixin(value = RecipeManager.class)
 public class RecipeManagerMixin {
     /* Inject recipes into recipe map. */
     @Inject(/*remap = false,*/method = "apply(Ljava/util/Map;Lnet/minecraft/resources/IResourceManager;Lnet/minecraft/profiler/IProfiler;)V", at = @At("HEAD"))
     private void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn, CallbackInfo info) {
-        AntimatterAPI.onRecipeManagerBuild(objectIn);
+        AntimatterDynamics.onRecipeManagerBuild(rec -> objectIn.put(rec.getID(), rec.getRecipeJson()));
     }
 }

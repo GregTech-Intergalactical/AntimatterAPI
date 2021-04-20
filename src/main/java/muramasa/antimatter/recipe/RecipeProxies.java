@@ -13,7 +13,7 @@ import java.util.function.BiFunction;
 
 public class RecipeProxies {
 
-    private static final BiFunction<IRecipe, RecipeBuilder, Recipe> getDefault(int power, int duration) {
+    private static final BiFunction<IRecipe<?>, RecipeBuilder, Recipe> getDefault(int power, int duration) {
         return (t, b) -> {
             List<Ingredient> ingredients = t.getIngredients();
             Ingredient input = ingredients.get(0);

@@ -1,11 +1,16 @@
 package muramasa.antimatter.material;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
 
 import java.util.LinkedHashSet;
@@ -20,7 +25,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     protected Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
     protected Map<MaterialType<?>, ITag.INamedTag<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
-    protected Set<Material> OVERRIDES = new ObjectOpenHashSet<>();
+    protected BiMap<Material, Item> OVERRIDES = HashBiMap.create();
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {
         this.id = id;
@@ -34,6 +39,30 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     public MaterialType<T> nonGen() {
         generating = false;
         return this;
+    }
+
+    /**
+     * Forces these tags to not generate, assuming they have a replacement.
+     */
+    public void forceOverride(Material mat, Item replacement) {
+        OVERRIDES.put(mat, replacement);
+        this.add(mat);
+        AntimatterAPI.addReplacement(getMaterialTag(mat), replacement);
+    }
+
+    public Material tryMaterialFromItem(ItemStack stack) {
+        if (stack.getItem() instanceof MaterialItem) {
+            return ((MaterialItem) stack.getItem()).getMaterial();
+        }
+        return OVERRIDES.inverse().get(stack.getItem());
+    }
+
+    public ITag.INamedTag<Item> getMaterialTag(Material m) {
+        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+    }
+
+    public RecipeIngredient getMaterialIngredient(Material m, int count) {
+        return RecipeIngredient.of(getMaterialTag(m),count);
     }
 
     public MaterialType<T> blockType() {
@@ -78,7 +107,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     }
 
     public boolean allowGen(Material material) {
-        return generating && materials.contains(material);
+        return generating && materials.contains(material) && AntimatterAPI.getReplacement(this, material) == null;
     }
 
     @Override

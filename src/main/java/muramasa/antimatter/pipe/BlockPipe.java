@@ -74,7 +74,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     protected final VoxelShape COLLISION_SHAPE_EAST;
 
     public BlockPipe(String prefix, T type, PipeSize size) {
-        this(prefix, type, size, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(1.0f, 3.0f).notSolid());
+        this(prefix, type, size, Block.Properties.create(Data.WRENCH_MATERIAL).hardnessAndResistance(1.0f, 3.0f).notSolid().setRequiresTool());
     }
 
     public BlockPipe(String prefix, T type, PipeSize size, AbstractBlock.Properties properties) {
@@ -353,12 +353,12 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     @Override
     public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-        return state.getBlock() instanceof BlockPipe ? getRGB() : -1;
+        return getRGB();
     }
 
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return stack.getItem() instanceof PipeItemBlock ? getRGB() : -1;
+        return getRGB();
     }
 
     @Override

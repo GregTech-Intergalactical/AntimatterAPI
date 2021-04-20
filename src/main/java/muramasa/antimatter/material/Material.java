@@ -25,7 +25,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -64,18 +66,29 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     private ImmutableMap<Enchantment, Integer> toolEnchantment;
     private List<AntimatterToolType> toolTypes;
 
+    private boolean enabled;
+
     /** Processing Members **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
     private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private List<MaterialStack> processInto = new ObjectArrayList<>();
     private List<Material> byProducts = new ObjectArrayList<>();
 
-    public Material(String domain, String id, int rgb, TextureSet set) {
+    public Material(String domain, String id, int rgb, TextureSet set, String... modIds) {
         this.domain = domain;
         this.id = id;
         this.rgb = rgb;
         this.set = set;
         this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
+        if (modIds != null && modIds.length > 0) {
+            for (String modId : modIds) {
+                if (!AntimatterAPI.isModLoaded(modId)) {
+                    enabled = false;
+                    return;
+                }
+            }
+        }
+        enabled = true;
         AntimatterAPI.register(Material.class, this);
     }
 
@@ -86,6 +99,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
+        if (!enabled) return;
         if (registry == ForgeRegistries.ITEMS) {
             AntimatterAPI.all(MaterialTypeItem.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> t.getSupplier().supply(domain, t, this));
         } else if (registry == ForgeRegistries.BLOCKS) {
@@ -109,7 +123,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     @Override
     public String toString() {
-        return getId();
+        return Utils.lowerUnderscoreToUpperSpaced(getId());
     }
     
     public Material asDust(IMaterialTag... tags) {
@@ -205,23 +219,26 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
+        return addTools(toolDamage, toolSpeed, toolDurability, toolQuality, ImmutableMap.of());
+    }
+    
+    public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
         if (has(INGOT)) flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(TOOLS, ROD);
         this.toolDamage = toolDamage;
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
-        this.toolEnchantment = ImmutableMap.of();
-        this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
-        return this;
-    }
-    
-    public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
-    	addTools(toolDamage, toolSpeed, toolDurability, toolQuality);
         this.toolEnchantment = toolEnchantment;
         if (toolTypes.length > 0){
             this.toolTypes = Arrays.asList(toolTypes);
+        } else {
+            this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
         }
+        if (this.toolTypes.contains(ELECTRIC_WRENCH)) flags(WRENCHBIT);
+        if (this.toolTypes.contains(BUZZSAW)) flags(BUZZSAW_BLADE);
+        if (this.toolTypes.contains(DRILL)) flags(DRILLBIT);
+        if (this.toolTypes.contains(CHAINSAW)) flags(CHAINSAWBIT);
     	return this;
     }
 
@@ -234,6 +251,10 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor) {
+        return addArmor(armor, toughness, knockbackResistance, armorDurabilityFactor, ImmutableMap.of());
+    }
+
+    public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
         if (armor.length < 4){
             Antimatter.LOGGER.info("Material " + this.getId() + " unable to add armor, protection array must have at least 4 values");
             return this;
@@ -244,19 +265,12 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.toughness = toughness;
         this.armorDurabilityFactor = armorDurabilityFactor;
         this.knockbackResistance = knockbackResistance;
-        this.toolEnchantment = ImmutableMap.of();
-        return this;
-    }
-
-    public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        addArmor(armor, toughness, knockbackResistance, armorDurabilityFactor);
         this.toolEnchantment = toolEnchantment;
         return this;
     }
 
     public Material addArmor(Material material, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        this.toolEnchantment = toolEnchantment;
-        return addArmor(material.armor, material.toughness, material.knockbackResistance, material.armorDurabilityFactor);
+        return addArmor(material.armor, material.toughness, material.knockbackResistance, material.armorDurabilityFactor, toolEnchantment);
     }
 
     public Material addArmor(Material material) {
@@ -286,6 +300,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material flags(IMaterialTag... tags) {
+        if (!enabled) return this;
         for (IMaterialTag t : tags) {
             if (t == ORE) flags(ORE_SMALL);
             if (t == ORE || t == ORE_SMALL || t == ORE_STONE) flags(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
@@ -295,22 +310,26 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public void remove(IMaterialTag... tags) {
+        if (!enabled) return;
         for (IMaterialTag t : tags) {
             t.remove(this);
         }
     }
 
     public Material mats(Function<ImmutableMap.Builder<Material, Integer>, ImmutableMap.Builder<Material, Integer>> func) {
+        if (!enabled) return this;
         return mats(func.apply(new ImmutableMap.Builder<>()).build());
     }
 
     public Material mats(ImmutableMap<Material, Integer> stacks) {
+        if (!enabled) return this;
         stacks.forEach((k, v) -> processInto.add(new MaterialStack(k, v)));
         return this;
     }
     
     public void setChemicalFormula() {
-    	if (element != null) chemicalFormula = element.getElement();
+        if (!enabled) return;
+        if (element != null) chemicalFormula = element.getElement();
     	else if (!processInto.isEmpty()) chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
     }
 
@@ -404,8 +423,8 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return toolQuality;
     }
     
-    public ImmutableMap<Enchantment, Integer> getEnchantments() {
-    	return toolEnchantment;
+    public Map<Enchantment, Integer> getEnchantments() {
+    	return toolEnchantment != null ? toolEnchantment : Collections.emptyMap();
     }
 
     public int getArmorDurabilityFactor() {
@@ -425,7 +444,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public List<AntimatterToolType> getToolTypes() {
-        return toolTypes;
+        return toolTypes != null ? toolTypes : Collections.emptyList();
     }
 
     public boolean isHandle() { return isHandle; }

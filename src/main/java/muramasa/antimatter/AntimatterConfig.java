@@ -132,7 +132,7 @@ public class AntimatterConfig {
                 ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
 
         public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS,
-                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
+                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
 
         public CommonConfig(Builder builder) {
 
@@ -231,6 +231,10 @@ public class AntimatterConfig {
             builder.pop();
 
             builder.push("Gameplay");
+
+            INPUT_RESET_MULTIBLOCK = builder.comment("Whether or not to reconsume recipe inputs on multiblock failure - Default : false")
+                    .translation(Ref.ID + ".config.input_reset")
+                    .define("INPUT_RESET_MULTIBLOCK", false);
 
             EU_TO_FE_RATIO = builder.comment("The ratio of the eu to the fe energy converting - Default: (1.0 EU = 4.0 FE)")
                 .translation(Ref.ID + ".config.eu_to_rf_ratio")

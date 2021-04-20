@@ -34,7 +34,7 @@ public class Antimatter extends AntimatterMod {
     public static IProxyHandler PROXY;
 
     static {
-        AntimatterAPI.runBackgroundProviders();
+        //AntimatterAPI.runBackgroundProviders();
     }
 
     public Antimatter() {
@@ -57,22 +57,23 @@ public class Antimatter extends AntimatterMod {
 
     private void providers() {
         final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
-        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
-        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
-        AntimatterAPI.addProvider(Ref.ID, g -> {
+        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
+        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
+        AntimatterDynamics.addProvider(Ref.ID, g -> {
             p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g, new ExistingFileHelperOverride());
             return p[0];
         });
-        AntimatterAPI.addProvider(Ref.ID, g ->
+        AntimatterDynamics.addProvider(Ref.ID, g ->
                 new AntimatterItemTagProvider(Ref.ID,Ref.NAME.concat(" Item Tags"), false, g, p[0], new ExistingFileHelperOverride()));
-        AntimatterAPI.addProvider(Ref.ID, g ->
+        AntimatterDynamics.addProvider(Ref.ID, g ->
                 new AntimatterRecipeProvider(Ref.ID,Ref.NAME.concat(" Recipes"), g));
-        AntimatterAPI.addProvider(Ref.ID, g -> new AntimatterBlockLootProvider(Ref.ID,Ref.NAME.concat( " Loot generator"),g));
+        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterBlockLootProvider(Ref.ID,Ref.NAME.concat( " Loot generator"),g));
+        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup(e);
-        AntimatterAPI.runAssetProvidersDynamically();
+        //AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
     }
@@ -98,5 +99,10 @@ public class Antimatter extends AntimatterMod {
         if (event == RegistrationEvent.DATA_INIT) {
             Data.init(side);
         }
+    }
+
+    @Override
+    public String getId() {
+        return Ref.ID;
     }
 }

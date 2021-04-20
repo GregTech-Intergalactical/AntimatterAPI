@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -97,6 +98,16 @@ public class Recipe implements IRecipe<IInventory> {
         this.mapId = map;
     }
 
+    public void sortInputItems() {
+        this.itemsInput.sort((a,b) -> {
+            boolean a1 = RecipeMap.isIngredientSpecial(a.get());
+            boolean a2 = RecipeMap.isIngredientSpecial(b.get());
+            if (a1 == a2) return 0;
+            if (a1) return 1;
+            return -1;
+        });
+    }
+
     @Nullable
     public List<RecipeIngredient> getInputItems() {
         return hasInputItems() ? itemsInput : Collections.emptyList();
@@ -144,6 +155,15 @@ public class Recipe implements IRecipe<IInventory> {
         return null;
     }
 
+    //Note: does call get().
+    public boolean hasSpecialIngredients() {
+        for (RecipeIngredient ingredient : itemsInput) {
+            if (RecipeMap.isIngredientSpecial(ingredient.get())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Nullable
     public FluidStack[] getInputFluids() {
