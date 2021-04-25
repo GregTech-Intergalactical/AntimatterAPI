@@ -144,7 +144,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         return ActionResultType.SUCCESS;
                     } else if (type == CROWBAR) {
                         if (!player.isCrouching()){
-                            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), true, true)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                         } else {
                             return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                         }

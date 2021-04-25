@@ -11,6 +11,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -427,21 +428,24 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public boolean canOutput(Dir direction) {
-        return tile.getOutputFacing().getIndex() == direction.getIndex();
+        Direction dir = tile.getOutputFacing();
+        return dir != null && tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
     // TODO needed? Weird semantics
     @Override
     public boolean canInput(FluidStack fluid, Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
-        if (tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
+        Direction dir = tile.getOutputFacing();
+        if (dir != null && dir.getIndex() == direction.getIndex()) return false;
         return true;
     }
 
     @Override
     public boolean canInput(Dir direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
-        if (tile.getOutputFacing().getIndex() == direction.getIndex()) return false;
+        Direction dir = tile.getOutputFacing();
+        if (dir != null && dir.getIndex() == direction.getIndex()) return false;
         return true;
     }
 

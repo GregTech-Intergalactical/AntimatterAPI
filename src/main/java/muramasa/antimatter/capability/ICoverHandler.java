@@ -17,7 +17,7 @@ import java.util.function.Function;
 public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializable<CompoundNBT> {
 
     /** Getters/Setters **/
-    boolean set(Direction side, ICover cover);
+    boolean set(Direction side, ICover cover, boolean sync);
 
     CoverStack<T> get(Direction side);
 
@@ -26,10 +26,6 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
     Direction getTileFacing();
 
     T getTile();
-    //Returns a lambda that, given a direction returns the given Cover.
-    default Function<Direction, CoverStack> getCoverFunction() {
-        return this::get;
-    }
 
     /** Events **/
     void onRemove();
@@ -46,11 +42,9 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
      * Removes a cover.
      * @param player entity.
      * @param side which side to remove.
-     * @param drop whether to drop the cover.
-     * @param validateRemoval whether or not to validate if the cover can be removed. (see Output)
      * @return
      */
-    boolean removeCover(PlayerEntity player, Direction side, boolean drop, boolean validateRemoval);
+    boolean removeCover(PlayerEntity player, Direction side, boolean onlyRemove);
 
     boolean hasCover(Direction side, ICover cover);
 

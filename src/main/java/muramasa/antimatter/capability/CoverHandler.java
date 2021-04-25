@@ -51,18 +51,18 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public boolean set(Direction side, @Nonnull ICover newCover) {
+    public boolean set(Direction side, @Nonnull ICover newCover, boolean sync) {
         CoverStack<T> old = covers.get(side);
         CoverStack<T> stack = new CoverStack<>(newCover, getTile(), side);
-        return set(side, old, stack);
+        return set(side, old, stack, sync);
     }
 
-    public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack) {
+    public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack, boolean sync) {
         covers.put(side, stack); //Emplace newCover, calls onPlace!
         buildLookup(old.getCover(),stack.getCover(), side);
         old.onRemove(side);
         stack.onPlace(side);
-        if (tile.getWorld() != null) {
+        if (tile.getWorld() != null && sync) {
             sync();
         }
         return true;
@@ -140,17 +140,17 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     @Override
     public boolean placeCover(PlayerEntity player, Direction side, ItemStack stack, ICover cover) {
-        if (!get(side).isEmpty() || !set(side, cover)) return false;
+        if (!get(side).isEmpty() || !set(side, cover, true)) return false;
         if (!player.isCreative()) stack.shrink(1);
         return true;
     }
 
     @Override
-    public boolean removeCover(PlayerEntity player, Direction side, boolean drop, boolean validateRemoval) {
+    public boolean removeCover(PlayerEntity player, Direction side, boolean onlyRemove) {
         ICover oldCover = get(side).getCover();
-        if (validateRemoval && !canRemoveCover(oldCover)) return false;
-        if (get(side).isEmpty() || !set(side, Data.COVERNONE)) return false;
-        if (drop && !player.isCreative()) player.dropItem(oldCover.getDroppedStack(), false);
+        if (!onlyRemove && !canRemoveCover(oldCover)) return false;
+        if (get(side).isEmpty() || !set(side, Data.COVERNONE, !onlyRemove)) return false;
+        if (!onlyRemove && !player.isCreative()) player.dropItem(oldCover.getDroppedStack(), false);
         player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
         return true;
     }
@@ -219,8 +219,8 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         CoverStack<T> oldStack = get(oldSide);
         if (!newStack.isEmpty() || oldStack.isEmpty()) return false;
         CoverStack<T> toPlace = new CoverStack<>(oldStack, newSide);
-        if (!removeCover(entity, oldSide, false, false)) return false;
-        boolean ok = set(newSide,newStack, toPlace);
+        if (!removeCover(entity, oldSide, true)) return false;
+        boolean ok = set(newSide,newStack, toPlace, true);
         if (ok) {
             sync();
         }

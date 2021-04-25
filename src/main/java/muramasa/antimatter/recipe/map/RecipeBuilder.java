@@ -46,11 +46,11 @@ public class RecipeBuilder {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
             return Utils.getEmptyRecipe();
         }
-        if (fluidsInput != null && !Utils.areFluidsValid(fluidsInput)) {
+        if (fluidsInput != null && fluidsInput.length > 0 && !Utils.areFluidsValid(fluidsInput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
         }
-        if (fluidsOutput != null && !Utils.areFluidsValid(fluidsOutput)) {
+        if (fluidsOutput != null && fluidsOutput.length > 0 && !Utils.areFluidsValid(fluidsOutput)) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
         }

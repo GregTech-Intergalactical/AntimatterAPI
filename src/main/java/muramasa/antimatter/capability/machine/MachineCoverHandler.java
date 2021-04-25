@@ -1,5 +1,16 @@
 package muramasa.antimatter.capability.machine;
 
+import static muramasa.antimatter.Data.COVERNONE;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
@@ -18,16 +29,6 @@ import net.minecraft.util.Hand;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static muramasa.antimatter.Data.COVERNONE;
 
 public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandler<T> implements IMachineHandler {
     public Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
@@ -69,9 +70,9 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
     }
 
     @Override
-    public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack) {
+    public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack, boolean sync) {
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
-        return super.set(side, old, stack);
+        return super.set(side, old, stack, sync);
     }
 
     @Override
