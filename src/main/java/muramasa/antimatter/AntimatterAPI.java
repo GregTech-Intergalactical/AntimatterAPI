@@ -150,9 +150,6 @@ public final class AntimatterAPI {
         INTERNAL_REGISTRAR.onRegistrationEvent(event, side);
         all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event, side));
         if (CALLBACKS.containsKey(event)) CALLBACKS.get(event).forEach(Runnable::run);
-        if (event == RegistrationEvent.DATA_READY) {
-            AntimatterDynamics.onDataReady();
-        }
     }
 
     public static boolean isModLoaded(String mod) {

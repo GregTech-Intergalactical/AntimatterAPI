@@ -38,9 +38,9 @@ public class DynamicDataPackFinder implements IPackFinder {
 
     @SubscribeEvent
     public static void addPackFinder(FMLServerAboutToStartEvent e) {
-        Antimatter.LOGGER.info("Adding Antimatter's Dynamic Datapack to the server...");
-        e.getServer().getResourcePacks().addPackFinder(Ref.SERVER_PACK_FINDER);
-        e.getServer().getResourcePacks().getEnabledPacks().forEach(p -> Antimatter.LOGGER.info(p.getName() + " is being loaded into the server..."));
+        //Antimatter.LOGGER.info("Adding Antimatter's Dynamic Datapack to the server...");
+        //e.getServer().getResourcePacks().addPackFinder(Ref.SERVER_PACK_FINDER);
+        //e.getServer().getResourcePacks().getEnabledPacks().forEach(p -> Antimatter.LOGGER.info(p.getName() + " is being loaded into the server..."));
     }
 
     @Override

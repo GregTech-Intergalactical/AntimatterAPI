@@ -1,10 +1,12 @@
 package muramasa.antimatter.mixin;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
+import net.minecraft.item.Item;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.STagsListPacket;
 import net.minecraft.tags.TagCollectionManager;
@@ -25,9 +27,8 @@ public class ClientPlayNetHandlerMixin {
     private void clientRecipesInjection(STagsListPacket packetIn, CallbackInfo info) {
         //Since recipe maps are static we don't have to double compile when playing a local server.
         if (!netManager.isLocalChannel()) {
-            AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
-            AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class, IRecipeRegistrate.IRecipeLoader::init);
-            AntimatterDynamics.onRecipeCompile(((ClientPlayNetHandler)(Object)this).getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
+            AntimatterDynamics.onResourceReload(false);
+            AntimatterDynamics.onRecipeCompile(((ClientPlayNetHandler)(Object)this).getRecipeManager(), Item::getTags);
         }
     }
 }

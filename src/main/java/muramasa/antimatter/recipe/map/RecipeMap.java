@@ -183,7 +183,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     continue;
                 }
                 if (inputItem.get().hasNoMatchingItems() || (inputItem.get().getMatchingStacks().length == 1 && inputItem.get().getMatchingStacks()[0].getItem() == Items.BARRIER)) {
-                    //Utils.onInvalidData("RECIPE WITH EM");
+                    Utils.onInvalidData("RECIPE WITH EMPTY INPUT (MAP): " + this.id);
                     return;
                 }
             }

@@ -65,15 +65,6 @@ public class AntimatterDynamics {
         Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
     }
 
-    public static void onDataReady() {
-        AntimatterAPI.all(ModRegistrar.class, t -> {
-            for (String mod : t.modIds()) {
-                if (!AntimatterAPI.isModLoaded(mod)) return;
-            }
-            t.antimatterRecipes(AntimatterAPI.getRecipeRegistrate());
-        });
-    }
-
     /**
      * Collects all antimatter registered recipes, pushing them to @rec.
      * @param rec consumer for IFinishedRecipe.
@@ -113,12 +104,23 @@ public class AntimatterDynamics {
         int size = AntimatterAPI.all(RecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
         Antimatter.LOGGER.info("No. of GT recipes: " + size);
         Antimatter.LOGGER.info("Average loading time / recipe: (µs) " + (size > 0 ? time/size : time)/1000);
+        AntimatterAPI.all(RecipeMap.class, t -> {
+            Antimatter.LOGGER.info("Recipe map " + t.getId() + " compiled " + t.getRecipes(false).size() + " recipes.");
+        });
+
     }
 
     public static void onResourceReload(boolean server) {
         if (server) runDataProvidersDynamically();
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class, IRecipeRegistrate.IRecipeLoader::init);
+        AntimatterAPI.all(ModRegistrar.class, t -> {
+            for (String mod : t.modIds()) {
+                if (!AntimatterAPI.isModLoaded(mod)) return;
+            }
+            t.antimatterRecipes(AntimatterAPI.getRecipeRegistrate());
+        });
+        Antimatter.LOGGER.info("Amount of Antimatter Recipe Loaders registered: " + AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class).size());
         if (server) {
             TagUtils.getTags(Item.class).forEach((k,v) -> {
                 DynamicResourcePack.ensureTagAvailable("items", k); //builder.serialize(), false);

@@ -18,8 +18,8 @@ public class Ref {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     public static final XSTR RNG = new XSTR();
     public static final BackgroundDataGenerator BACKGROUND_GEN = new BackgroundDataGenerator();
-    public static final DynamicResourcePackFinder PACK_FINDER = new DynamicResourcePackFinder("antimatter_pack", "Antimatter - Dynamic Assets", "Dynamic Resource Pack", true);
-    public static final DynamicDataPackFinder SERVER_PACK_FINDER = new DynamicDataPackFinder("antimatter_pack", "Antimatter - Dynamic Data");
+    //public static final DynamicResourcePackFinder PACK_FINDER = new DynamicResourcePackFinder("antimatter_pack", "Antimatter - Dynamic Assets", "Dynamic Resource Pack", true);
+    //public static final DynamicDataPackFinder SERVER_PACK_FINDER = new DynamicDataPackFinder("antimatter_pack", "Antimatter - Dynamic Data");
 
     /** Mod Data **/
     public static final String ID = "antimatter";

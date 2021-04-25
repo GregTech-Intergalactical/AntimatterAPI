@@ -72,7 +72,7 @@ public class ClientHandler implements IProxyHandler {
             }
         }));
 
-        MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRecipes);
+        //MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRecipes);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::preResourceRegistration);
     }
 
