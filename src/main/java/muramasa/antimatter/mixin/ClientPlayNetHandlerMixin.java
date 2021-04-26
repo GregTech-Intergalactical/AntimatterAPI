@@ -1,15 +1,10 @@
 package muramasa.antimatter.mixin;
 
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterDynamics;
-import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
-import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.item.Item;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.STagsListPacket;
-import net.minecraft.tags.TagCollectionManager;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

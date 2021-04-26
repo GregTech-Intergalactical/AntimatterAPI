@@ -40,6 +40,9 @@ public class TileEntityPipe extends TileEntityBase {
     /** Connection data **/
     private byte connection, interaction;
 
+    /** CAPABILITIES **/
+    protected LazyOptional<?>[] SIDE_CAPS;
+
     public TileEntityPipe(PipeType<?> type) {
         super(type.getTileType());
         this.type = type;
@@ -74,6 +77,15 @@ public class TileEntityPipe extends TileEntityBase {
         }*/
     }
 
+    public void onInvalidate(Direction side) {
+        clearInteract(side);
+        TileEntity tile = this.world.getTileEntity(pos.offset(side));
+        if (tile == null) return;
+        if (this.validateTile(tile, side.getOpposite()) && !(tile instanceof TileEntityPipe)) {
+            toggleInteract(side);
+        }
+    }
+
     public boolean validateTile(TileEntity tile, Direction side) {
         return false;
     }
@@ -85,6 +97,11 @@ public class TileEntityPipe extends TileEntityBase {
             for (Direction side : Ref.DIRS) {
                 if (Connectivity.has(interaction, side.getIndex())) {
                     cacheNode(this.getPos().offset(side), side, true);
+                }
+            }
+            if (SIDE_CAPS != null) {
+                for (LazyOptional<?> side_cap : SIDE_CAPS) {
+                    side_cap.invalidate();
                 }
             }
         }

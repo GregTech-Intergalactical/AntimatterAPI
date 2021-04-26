@@ -31,10 +31,9 @@ public class BlockCable extends BlockPipe<Cable<?>> {
     protected boolean insulated;
 
     public BlockCable(Cable<?> type, PipeSize size, boolean insulated) {
-        super(insulated ? "cable" : "wire", type, size);
+        super(insulated ? "cable" : "wire", type, size, 2);
         this.insulated = insulated;
         String prefix = insulated ? "cable" : "wire";
-        this.modelId = 2;
         this.side = new Texture(Ref.ID, "block/pipe/" + prefix + "_side");
         this.faces = new Texture[] {
             new Texture(Ref.ID, "block/pipe/" + prefix + "_vtiny"),

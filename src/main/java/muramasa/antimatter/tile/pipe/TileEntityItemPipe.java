@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.pipe;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.ItemTileWrapper;
@@ -16,11 +17,13 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
 
     public TileEntityItemPipe(PipeType<?> type) {
         super(type);
+        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(t -> LazyOptional.of(() -> new TesseractItemCapability(this, t))).toArray(LazyOptional[]::new);
     }
 
     @Override
@@ -46,7 +49,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
     @Override
     public void cacheNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove) {
-            ItemTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
+            ItemTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {
             Tesseract.ITEM.remove(getWorld().getDimensionKey(), pos.toLong());
         }
@@ -58,7 +61,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
         if (side == null) return LazyOptional.empty();
         if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return LazyOptional.of(() -> new TesseractItemCapability(this, side)).cast();
+            return SIDE_CAPS[side.getIndex()].cast();
         }
         return LazyOptional.empty();
     }

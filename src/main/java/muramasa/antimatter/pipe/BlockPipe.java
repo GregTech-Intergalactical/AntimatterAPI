@@ -58,22 +58,48 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     protected T type;
     protected PipeSize size;
 
-    protected int modelId = 0;
+    protected final int modelId;
     protected Texture side = new Texture(Ref.ID, "block/pipe/pipe_side");
     protected Texture[] faces = new Texture[]{new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
-    protected final VoxelShape COLLISION_SHAPE;
 
-    public BlockPipe(String prefix, T type, PipeSize size) {
-        this(prefix, type, size, Block.Properties.create(Data.WRENCH_MATERIAL).hardnessAndResistance(1.0f, 3.0f).notSolid().setRequiresTool());
+    public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
+        this(prefix, type, size, modelId, Block.Properties.create(Data.WRENCH_MATERIAL).hardnessAndResistance(1.0f, 3.0f).notSolid().setRequiresTool());
     }
 
-    public BlockPipe(String prefix, T type, PipeSize size, AbstractBlock.Properties properties) {
+    public BlockPipe(String prefix, T type, PipeSize size, int modelId, AbstractBlock.Properties properties) {
         super(type.getDomain(), prefix + "_" + type.getMaterial().getId() + "_" + size.getId(), properties);
         this.type = type;
         this.size = size;
         AntimatterAPI.register(BlockPipe.class, getId(), this);
         setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));
-        this.COLLISION_SHAPE = VoxelShapes.create(size.getAABB());
+        this.modelId = modelId;
+        buildShapes();
+    }
+
+    private void buildShapes() {
+        recursiveShapeBuild(0, (byte) 0);
+        shapes.put(getPipeID(0, 0), VoxelShapes.create(size.getAABB()));
+    }
+
+    private void recursiveShapeBuild(int index, byte acc) {
+        if (index > 5) {
+            shapes.put(getPipeID(acc, 0), makeShapes(acc));
+            return;
+        }
+        recursiveShapeBuild(index+1, (byte) (acc | (1 << index)));
+        recursiveShapeBuild(index+1, acc);
+    }
+
+    private VoxelShape makeShapes(byte which){
+        float offset = 0.0625f * size.ordinal();
+        VoxelShape shape = VoxelShapes.create(size.getAABB());
+        if ((which & (1 << 0)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
+        if ((which & (1 << 1)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
+        if ((which & (1 << 2)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
+        if ((which & (1 << 3)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(00.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
+        if ((which & (1 << 4)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
+        if ((which & (1 << 5)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
+        return shape;
     }
 
     public T getType() {
@@ -250,15 +276,16 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         if (context.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) context.getEntity();
             if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state))) {
-                return super.getCollisionShape(state, worldIn, pos, context);
+                return VoxelShapes.fullCube();
             }
         }
-        return this.COLLISION_SHAPE;
-        // return super.getCollisionShape(state, worldIn, pos, context);
+        int config = getConfig(state, world, new BlockPos.Mutable(pos.getX(), pos.getY(), pos.getZ()), pos).getConfig()[0];
+        VoxelShape shape = this.shapes.get(config);
+        return shape != null ? shape : VoxelShapes.fullCube();
     }
 
     public int getPipeID(int config, int cull) {

@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.pipe;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.EnergyTileWrapper;
@@ -15,11 +16,13 @@ import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 
 public class TileEntityCable extends TileEntityPipe implements IGTCable {
 
     public TileEntityCable(PipeType<?> type) {
         super(type);
+        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(t -> LazyOptional.of(() -> new TesseractGTCapability(this, t))).toArray(LazyOptional[]::new);
     }
 
     @Override
@@ -46,7 +49,7 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     @Override
     public void cacheNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove) {
-            EnergyTileWrapper.wrap(getWorld(), pos, side, () -> world.getTileEntity(pos));
+            EnergyTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {
            Tesseract.GT_ENERGY.remove(getWorld().getDimensionKey(), pos.toLong());
         }
@@ -63,7 +66,7 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
         if (side == null) return LazyOptional.empty();
         if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
         if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY) {
-            return LazyOptional.of(() -> new TesseractGTCapability(this, side)).cast();
+            return SIDE_CAPS[side.getIndex()].cast();
         }
         return LazyOptional.empty();
     }

@@ -1,5 +1,6 @@
 package muramasa.antimatter.tesseract;
 
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -27,25 +28,18 @@ public class ItemTileWrapper implements IItemNode {
     }
 
     @Nullable
-    public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
+    public static void wrap(TileEntityPipe pipe, World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
         Tesseract.ITEM.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
             LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
                 ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
-                capability.addListener(o -> node.onRemove());
+                capability.addListener(o -> pipe.onInvalidate(side));
                 return node;
             }
             throw new RuntimeException("invalid capability");
         });
     }
-
-    public void onRemove() {
-        if (tile.isRemoved()) {
-            Tesseract.ITEM.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
-        }
-    }
-
 
     @Override
     public int getPriority(Dir direction) {

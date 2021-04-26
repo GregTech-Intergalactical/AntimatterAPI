@@ -1,25 +1,5 @@
 package muramasa.antimatter.tile;
 
-import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
-import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
-import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
-import static muramasa.antimatter.machine.MachineFlag.CELL;
-import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
-import static muramasa.antimatter.machine.MachineFlag.FLUID;
-import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
-import static muramasa.antimatter.machine.MachineFlag.GUI;
-import static muramasa.antimatter.machine.MachineFlag.ITEM;
-import static muramasa.antimatter.machine.MachineFlag.RECIPE;
-import static net.minecraft.block.Blocks.AIR;
-import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
-
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
@@ -27,11 +7,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.machine.MachineCoverHandler;
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.capability.machine.MachineFluidHandler;
-import muramasa.antimatter.capability.machine.MachineItemHandler;
-import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
@@ -65,11 +41,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.LazyValue;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -80,6 +52,18 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.capability.TesseractGTCapability;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+
+import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
+import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
+import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
+import static muramasa.antimatter.machine.MachineFlag.*;
+import static net.minecraft.block.Blocks.AIR;
+import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler, IDynamicModelProvider {
 
@@ -191,6 +175,11 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             itemHandler.ifPresent(MachineItemHandler::onRemove);
             energyHandler.ifPresent(MachineEnergyHandler::onRemove);
             recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
+
+            coverHandler.invalidate();
+            fluidHandler.invalidate();
+            itemHandler.invalidate();
+            energyHandler.invalidate();
         }
     }
 
@@ -362,9 +351,17 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     public void refreshCaps() {
         if (isServerSide()) {
-            energyHandler.ifPresent(EnergyHandler::refreshNet);
-            fluidHandler.ifPresent(MachineFluidHandler::refreshNet);
-            itemHandler.ifPresent(MachineItemHandler::refreshNet);
+            if (energyHandler.isPresent()) {
+                MachineEnergyHandler<?> handler = energyHandler.orElse(null);
+                energyHandler.invalidate();
+                energyHandler = LazyOptional.of(() -> handler);
+            }
+            if (fluidHandler.isPresent()) {
+                MachineFluidHandler<?> fhandler = fluidHandler.orElse(null);
+                fluidHandler.invalidate();
+                fluidHandler = LazyOptional.of(() -> fhandler);
+            }
+            itemHandler.ifPresent(MachineItemHandler::refreshCap);
         }
     }
 
@@ -377,7 +374,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
         if (blocksCapability(cap, side)) return LazyOptional.empty();
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.lazyMap(ih -> ih.getHandlerForSide(side)).cast();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.resolve().orElse(null).capability.cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.cast();
         else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.cast();
         return super.getCapability(cap, side);

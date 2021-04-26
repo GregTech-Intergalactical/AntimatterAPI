@@ -8,7 +8,6 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.IModelProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;

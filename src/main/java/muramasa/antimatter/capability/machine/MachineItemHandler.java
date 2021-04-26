@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -38,6 +39,8 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
     protected final int[] priority = new int[]{0, 0, 0, 0, 0, 0}; // TODO
 
 
+    public LazyOptional<IItemHandler> capability;
+
     public MachineItemHandler(T tile) {
         this.tile = tile;
         if (tile.has(GUI)){
@@ -60,6 +63,12 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
                 inventories.put(ENERGY, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), false, t -> t.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).isPresent(), ContentEvent.ENERGY_SLOT_CHANGED));
             }
         }
+        capability = LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0])));
+    }
+
+    public void refreshCap() {
+        capability.invalidate();
+        capability = LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0])));
     }
 
     @Override
@@ -95,7 +104,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
 
     public void onRemove() {
         if (tile.isServerSide()) {
-        //    deregisterNet();
+            capability.invalidate();
         }
     }
 

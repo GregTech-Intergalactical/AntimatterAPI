@@ -1,6 +1,7 @@
 package muramasa.antimatter.tesseract;
 
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -29,31 +30,24 @@ public class EnergyTileWrapper implements IGTNode {
         this.storage = storage;
     }
 
-    public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
+    public static void wrap(TileEntityPipe pipe, World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
         Tesseract.GT_ENERGY.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
             LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
+                capability.addListener(o -> pipe.onInvalidate(side));
                 return capability.resolve().get();
             } else {
                 LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY);
                 if (cap.isPresent()) {
                     EnergyTileWrapper node = new EnergyTileWrapper(tile, cap.orElse(null));
-                    capability.addListener(o -> node.onRemove());
-                    Tesseract.GT_ENERGY.registerNode(tile.getWorld().getDimensionKey(), tile.getPos().toLong(), () -> node);
+                    capability.addListener(o -> pipe.onInvalidate(side));
                     return node;
                 }
             }
             return null;
         });
     }
-
-    public void onRemove() {
-        if (tile.isRemoved()) {
-            Tesseract.GT_ENERGY.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
-        }
-    }
-
     @Override
     public long insert(long maxReceive, boolean simulate) {
         return storage.receiveEnergy((int)(maxReceive * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), simulate);

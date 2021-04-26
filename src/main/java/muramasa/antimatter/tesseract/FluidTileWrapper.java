@@ -1,5 +1,6 @@
 package muramasa.antimatter.tesseract;
 
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -27,23 +28,17 @@ public class FluidTileWrapper implements IFluidNode {
     }
 
     @Nullable
-    public static void wrap(World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
+    public static void wrap(TileEntityPipe pipe, World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
        Tesseract.FLUID.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
             TileEntity tile = supplier.get();
             LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
                 FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
-                capability.addListener(o -> node.onRemove());
+                capability.addListener(o -> pipe.onInvalidate(side));
                 return node;
             }
             throw new RuntimeException("invalid capability");
         });
-    }
-
-    public void onRemove() {
-        if (tile.isRemoved()) {
-            Tesseract.FLUID.remove(tile.getWorld().getDimensionKey(), tile.getPos().toLong());
-        }
     }
 
     @Override
