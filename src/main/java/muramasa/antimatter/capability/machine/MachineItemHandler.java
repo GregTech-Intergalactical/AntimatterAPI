@@ -2,7 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
+import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
@@ -36,10 +36,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
     protected final T tile;
     protected final EnumMap<MachineFlag, TrackedItemHandler<T>> inventories = new EnumMap<>(MachineFlag.class); // Use SlotType instead of MachineFlag?
 
-    protected final int[] priority = new int[]{0, 0, 0, 0, 0, 0}; // TODO
-
-
-    public LazyOptional<IItemHandler> capability;
+    private LazyOptional<IItemHandler> capability;
 
     public MachineItemHandler(T tile) {
         this.tile = tile;
@@ -69,6 +66,10 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
     public void refreshCap() {
         capability.invalidate();
         capability = LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0])));
+    }
+
+    public LazyOptional<IItemHandler> getCapability() {
+        return capability;
     }
 
     @Override
@@ -109,25 +110,15 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
     }
 
     public static ItemStack insertIntoOutput(IItemHandler handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (handler instanceof TrackedItemHandler) {
-            TrackedItemHandler h = (TrackedItemHandler) handler;
-            return h.insertOutputItem(slot, stack, simulate);
-        }
-        if (handler instanceof MultiTrackedItemHandler) {
-            MultiTrackedItemHandler h = (MultiTrackedItemHandler) handler;
-            return h.insertOutputItem(slot, stack, simulate);
+        if (handler instanceof ITrackedHandler) {
+            return ((ITrackedHandler) handler).insertOutputItem(slot, stack, simulate);
         }
         return handler.insertItem(slot, stack, simulate);
     }
 
     public static ItemStack extractFromInput(IItemHandler handler, int slot, int amount, boolean simulate) {
-        if (handler instanceof TrackedItemHandler) {
-            TrackedItemHandler h = (TrackedItemHandler) handler;
-            return h.extractFromInput(slot, amount, simulate);
-        }
-        if (handler instanceof MultiTrackedItemHandler) {
-            MultiTrackedItemHandler h = (MultiTrackedItemHandler) handler;
-            return h.extractInputItem(slot, amount, simulate);
+        if (handler instanceof ITrackedHandler) {
+            return ((ITrackedHandler)handler).extractFromInput(slot, amount, simulate);
         }
         return handler.extractItem(slot, amount, simulate);
     }
@@ -139,23 +130,23 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
     }
 
     /** Handler Access **/
-    public IItemHandlerModifiable getInputHandler() {
+    public ITrackedHandler getInputHandler() {
         return inventories.get(ITEM_INPUT);
     }
 
-    public IItemHandlerModifiable getOutputHandler() {
+    public ITrackedHandler getOutputHandler() {
         return inventories.get(ITEM_OUTPUT);
     }
 
-    public IItemHandlerModifiable getCellInputHandler() {
+    public ITrackedHandler getCellInputHandler() {
         return inventories.get(CELL_INPUT);
     }
 
-    public IItemHandlerModifiable getCellOutputHandler() {
+    public ITrackedHandler getCellOutputHandler() {
         return inventories.get(CELL_OUTPUT);
     }
 
-    public IItemHandlerModifiable getChargeHandler() {
+    public ITrackedHandler getChargeHandler() {
         return inventories.get(ENERGY);
     }
 

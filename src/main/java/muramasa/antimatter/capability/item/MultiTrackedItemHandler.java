@@ -7,12 +7,13 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nonnull;
 
-public class MultiTrackedItemHandler extends CombinedInvWrapper {
+public class MultiTrackedItemHandler extends CombinedInvWrapper implements ITrackedHandler {
 
     public MultiTrackedItemHandler(IItemHandlerModifiable... itemHandler) {
         super(itemHandler);
     }
     @Nonnull
+    @Override
     public ItemStack insertOutputItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
@@ -20,7 +21,8 @@ public class MultiTrackedItemHandler extends CombinedInvWrapper {
         return MachineItemHandler.insertIntoOutput(handler, slot, stack, simulate);
     }
     @Nonnull
-    public ItemStack extractInputItem(int slot, int amount, boolean simulate) {
+    @Override
+    public ItemStack extractFromInput(int slot, int amount, boolean simulate) {
         int index = getIndexForSlot(slot);
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
         slot = getSlotFromIndex(slot, index);
