@@ -56,7 +56,6 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.Function;
 
 import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
@@ -94,6 +93,27 @@ public class Data {
         @Override
         public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
             return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
+        }
+    });
+
+    public static final MaterialRecipe.Provider DUST_BUILDER = MaterialRecipe.registerProvider("dust", id -> new MaterialRecipe.ItemBuilder() {
+        final MaterialTypeItem type = AntimatterAPI.get(MaterialTypeItem.class, id);
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            Material mat = (Material) mats.mats.get("primary");
+            return type.get(mat, 1);
+        }
+
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            if (stack.getItem() instanceof MaterialItem) {
+                return ImmutableMap.of("primary", ((MaterialItem)stack.getItem()).getMaterial());
+            }
+            Material mat = type.tryMaterialFromItem(stack);
+            if (mat != null) {
+                return ImmutableMap.of("primary", mat);
+            }
+            return null;
         }
     });
 

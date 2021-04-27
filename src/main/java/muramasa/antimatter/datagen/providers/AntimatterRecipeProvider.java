@@ -9,23 +9,18 @@ import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.PipeItemBlock;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
-import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.data.*;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -45,7 +40,8 @@ import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.MaterialTag.*;
+import static muramasa.antimatter.material.MaterialTag.GRINDABLE;
+import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
 import static muramasa.antimatter.util.TagUtils.getForgeItemTag;
 import static muramasa.antimatter.util.TagUtils.nc;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
@@ -90,7 +86,18 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         //registerMaterialRecipes(consumer, providerDomain);
         registerToolRecipes(consumer, providerDomain);
         registerPipeRecipes(consumer, providerDomain);
+        registerOther(consumer, providerDomain);
         craftingLoaders.forEach(cl -> cl.loadRecipes(consumer,this));
+    }
+
+    protected void registerOther(Consumer<IFinishedRecipe> consumer, String providerDomain) {
+        final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
+        if (providerDomain.equals(Ref.ID)) {
+            addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "dust_small", "antimatter_dusts",
+                    "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_SMALL)).map(t -> DUST.get(t,1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_SMALL).tags(DUST).build()), "DD ", "DD ", "   ");
+            addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "dust_tiny", "antimatter_dusts",
+                    "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_TINY)).map(t -> DUST.get(t,1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_TINY).tags(DUST).build()), "DDD", "DDD", "DDD");
+        }
     }
 
     protected void registerMaterialRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {

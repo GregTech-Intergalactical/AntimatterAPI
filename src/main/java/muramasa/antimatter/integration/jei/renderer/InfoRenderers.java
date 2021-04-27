@@ -19,7 +19,7 @@ public class InfoRenderers {
             String power = "Duration: " + recipe.getDuration() + " ticks";
             String euT = "EU/t: " + recipe.getPower();
             String total = "Total: " + recipe.getPower()*recipe.getDuration() +" EU";
-            String temperature = "Temperature: " + recipe.getSpecialValue();
+            String temperature = "Temperature: " + recipe.getSpecialValue() + " K";
             Tier tier = Tier.getTier((int) (recipe.getPower()/recipe.getAmps()));
             String formattedText = " (" + tier.getId().toUpperCase() + ")";
             renderString(stack, power,fontRenderer, 5, 0,guiOffsetX,guiOffsetY);
