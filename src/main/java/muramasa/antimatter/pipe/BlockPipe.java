@@ -1,10 +1,17 @@
 package muramasa.antimatter.pipe;
 
+import static com.google.common.collect.ImmutableMap.of;
+import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
+
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -46,14 +53,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-
-import static com.google.common.collect.ImmutableMap.of;
-import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
-
-public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IInfoProvider, IWaterLoggable {
+public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable {
 
     protected T type;
     protected PipeSize size;
@@ -96,7 +96,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if ((which & (1 << 0)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
         if ((which & (1 << 1)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
         if ((which & (1 << 2)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
-        if ((which & (1 << 3)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(00.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
+        if ((which & (1 << 3)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
         if ((which & (1 << 4)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
         if ((which & (1 << 5)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
         return shape;
@@ -280,6 +280,9 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if (context.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) context.getEntity();
             if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state))) {
+                return VoxelShapes.fullCube();
+            }
+            if (player.getHeldItemMainhand().getItem() instanceof PipeItemBlock || player.getHeldItemOffhand().getItem() instanceof PipeItemBlock) {
                 return VoxelShapes.fullCube();
             }
         }

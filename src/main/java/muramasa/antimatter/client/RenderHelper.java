@@ -1,8 +1,13 @@
 package muramasa.antimatter.client;
 
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+
+import muramasa.antimatter.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -16,7 +21,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Matrix4f;
@@ -25,8 +32,7 @@ import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.fluids.FluidStack;
-
-import java.util.function.Function;
+import tesseract.graph.Connectivity;
 
 public class RenderHelper {
 
@@ -145,7 +151,9 @@ public class RenderHelper {
     static float INDENTATION_SIDE = 0.25F;
     static double INTERACT_DISTANCE = 5;
 
-    public static ActionResultType onDrawHighlight(PlayerEntity player, DrawHighlightEvent ev, Function<Block, Boolean> validator) {
+
+    //This code is pretty complicated but it was written while I knew nothing about rendering. it works though
+    public static ActionResultType onDrawHighlight(PlayerEntity player, DrawHighlightEvent ev, Function<Block, Boolean> validator, BiFunction<Direction, TileEntity, Boolean> getter) {
         Vector3d lookPos = player.getEyePosition(ev.getPartialTicks()), rotation = player.getLook(ev.getPartialTicks()), realLookPos = lookPos.add(rotation.x * INTERACT_DISTANCE, rotation.y * INTERACT_DISTANCE, rotation.z * INTERACT_DISTANCE);
         BlockRayTraceResult result = player.getEntityWorld().rayTraceBlocks(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
         BlockState state = player.getEntityWorld().getBlockState(result.getPos());
@@ -219,8 +227,72 @@ public class RenderHelper {
 
         builderLines.pos(matrix4f, (float) (X), (float) (Y), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
         builderLines.pos(matrix4f, (float) (0), (float) (Y), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-
+        TileEntity tile = player.getEntityWorld().getTileEntity(result.getPos());
+        if (tile != null) {
+            byte sides = 0;
+            Direction dir = result.getFace();
+            for (Direction d: Ref.DIRS) {
+                if (getter.apply(d, tile)) {
+                    sides |= 1 << d.getIndex();
+                }
+            }
+            boolean left, right, up, down, back, front;
+            back = Connectivity.has(sides, dir.getOpposite().getIndex());
+            front = Connectivity.has(sides, dir.getIndex());
+            if (dir.getAxis().isVertical()) {
+                if (dir == Direction.UP) {
+                    right = Connectivity.has(sides, 4);
+                    left = Connectivity.has(sides, 5);
+                    up = Connectivity.has(sides, 2);
+                    down = Connectivity.has(sides, 3);
+                } else {
+                    right = Connectivity.has(sides, 5);
+                    left = Connectivity.has(sides, 4);
+                    up = Connectivity.has(sides, 3);
+                    down = Connectivity.has(sides, 2);
+                }
+            } else {
+                if (dir == Direction.EAST || dir == Direction.NORTH) {
+                    right = Connectivity.has(sides, dir.rotateYCCW().getIndex());
+                    left = Connectivity.has(sides, dir.rotateY().getIndex());
+                } else {
+                    right = Connectivity.has(sides, dir.rotateY().getIndex());
+                    left = Connectivity.has(sides, dir.rotateYCCW().getIndex());
+                }
+                up = Connectivity.has(sides, 1);
+                down = Connectivity.has(sides, 0);
+            }
+            if (back) {
+                drawX(builderLines, matrix4f, 0, 0, INDENTATION_SIDE, INDENTATION_SIDE);
+                drawX(builderLines, matrix4f, X, 0, X - INDENTATION_SIDE, INDENTATION_SIDE);
+                drawX(builderLines, matrix4f, X, Y, X - INDENTATION_SIDE, Y - INDENTATION_SIDE);
+                drawX(builderLines, matrix4f, 0, Y, INDENTATION_SIDE, Y - INDENTATION_SIDE);
+            }
+            if (left) {
+                drawX(builderLines, matrix4f, X, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE);
+            }
+            if (right) {
+                drawX(builderLines, matrix4f, 0, INDENTATION_SIDE, INDENTATION_SIDE, Y - INDENTATION_SIDE);
+            }
+            if (up) {
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, Y - INDENTATION_SIDE, X - INDENTATION_SIDE, Y);
+            }
+            if (down) {
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, 0, X - INDENTATION_SIDE, INDENTATION_SIDE);
+            }
+            if (front) {
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, INDENTATION_SIDE,X - INDENTATION_SIDE, Y - INDENTATION_SIDE);
+            }
+        }
         matrix.pop();
         return ActionResultType.SUCCESS;
+    }
+
+    private static void drawX(IVertexBuilder builder, Matrix4f matrix, float x1, float y1, float x2, float y2) {
+        builder.pos(matrix, x1, y1, 0).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builder.pos(matrix, x2, y2, 0).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+
+        builder.pos(matrix, x2, y1, 0).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builder.pos(matrix, x1, y2, 0).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
     }
 }

@@ -144,6 +144,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     public static <T> void addModDescriptor(List<ITextComponent> tooltip, T t) {
+        if (t == null || helpers == null) return;
         String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(t).getDisplayModId(t));
         tooltip.add(new StringTextComponent(text));
     }

@@ -1,18 +1,25 @@
 package muramasa.antimatter.client.event;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.MatrixApplyingVertexBuilder;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
@@ -49,11 +56,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-import java.util.Collection;
-import java.util.List;
-
-import static muramasa.antimatter.Data.*;
-
 @Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
 public class ClientEvents {
 
@@ -65,21 +67,23 @@ public class ClientEvents {
         World world = player.getEntityWorld();
         ItemStack stack = player.getHeldItemMainhand();
         if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover))) return;
-        if (stack.getItem() instanceof IHaveCover){
+        if (stack.getItem() instanceof IHaveCover) {
             if (player.isCrouching()) return;
-            ActionResultType res = RenderHelper.onDrawHighlight(player, event, b -> b instanceof BlockMachine || b instanceof BlockPipe);
-            if (res.isSuccess()) {
-                event.setCanceled(true);
-            }
+            RenderHelper.onDrawHighlight(player, event, b -> b instanceof BlockMachine || b instanceof BlockPipe, (dir, tile) -> {
+                if (tile instanceof TileEntityBase) {
+                    TileEntityBase machine = (TileEntityBase) tile;
+                    return machine.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(t -> !t.get(dir).isEmpty()).orElse(false);
+                }
+                return false;
+            });
             return;
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         AntimatterToolType type = item.getType();
-        if (player.isCrouching() && type != WRENCH && type != ELECTRIC_WRENCH && type != CROWBAR) return;
+        if (player.isCrouching() && type != Data.WRENCH && type != Data.ELECTRIC_WRENCH && type != Data.CROWBAR && type != Data.WIRE_CUTTER) return;
         //Perform highlight of wrench
         ActionResultType res = item.onGenericHighlight(player, event);
         if (res.isSuccess()) {
-            event.setCanceled(true);
             return;
         }
         IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
