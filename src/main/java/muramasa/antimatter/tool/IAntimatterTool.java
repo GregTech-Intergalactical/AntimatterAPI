@@ -25,9 +25,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IItemTier;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.IItemProvider;
@@ -40,6 +42,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeItem;
+import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -201,7 +204,19 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             }
             amount -= j;
         }
-        if (amount > 0) stack.setDamage(stack.getDamage()+amount);
+        boolean empty = false;
+        if (amount > 0) {
+            int l = stack.getDamage() + amount;
+            stack.setDamage(l);
+            empty = l >= stack.getMaxDamage();
+        }
+        if (empty){
+            if (!getType().getBrokenItems().containsKey(this.getId()) || getType().getBrokenItems().get(this.getId()) == Items.AIR){
+                return ItemStack.EMPTY;
+            }
+            IItemProvider item = getType().getBrokenItems().get(this.getId());
+            return new ItemStack(item);
+        }
         return stack;
     }
 
