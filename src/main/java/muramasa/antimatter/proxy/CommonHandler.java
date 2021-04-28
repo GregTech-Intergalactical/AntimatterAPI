@@ -33,7 +33,7 @@ public class CommonHandler implements IProxyHandler {
             }
             @Override
             protected void apply(Void objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
-                AntimatterDynamics.onRecipeCompile(ev.getDataPackRegistries().getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
+                AntimatterDynamics.onRecipeCompile(ev.getDataPackRegistries().getRecipeManager(), ev.getDataPackRegistries().func_244358_d());
             }
         });
     }

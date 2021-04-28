@@ -93,7 +93,6 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         if (recipe.hasInputItems()) {
             List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
             for (RecipeIngredient ing : recipe.getInputItems()) {
-                MapTagIngredient.findCommonTag(ing.get(), Item::getTags).ifPresent(t -> recipe.tagsToRender.putIfAbsent(inputs.size(), t));
                 inputs.add(ing.get());
             }
             ingredients.setInputLists(VanillaTypes.ITEM,inputs.stream().map(t -> Arrays.asList(t.getMatchingStacks())).collect(Collectors.toList()));
@@ -195,10 +194,6 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 
         final int finalInputItems = inputItems;
         itemGroup.addTooltipCallback((index, input, stack, tooltip) -> {
-            ResourceLocation rl;
-            if ((rl = recipe.tagsToRender.get(index)) != null) {
-                tooltip.add(new StringTextComponent("Accepts any " + rl).mergeStyle(TextFormatting.GOLD));
-            }
             if (input) {
                 if (recipe.hasInputItems()) {
                     if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreConsume()) {

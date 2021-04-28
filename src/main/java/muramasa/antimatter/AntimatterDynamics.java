@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +26,7 @@ import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 
@@ -90,14 +90,15 @@ public class AntimatterDynamics {
         });
     }
 
-    public static void onRecipeCompile(RecipeManager manager, Function<Item, Collection<ResourceLocation>> tagGetter) {
+    public static void onRecipeCompile(RecipeManager manager, ITagCollectionSupplier tags) {
+        TagUtils.TAG_GETTER = tags;
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
-        AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(manager, tagGetter));
+        AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(manager, tags));
         List<Recipe> recipes = manager.getRecipesForType(Recipe.RECIPE_TYPE);
         recipes.forEach(t -> {
             RecipeMap<?> map = AntimatterAPI.get(RecipeMap.class, "gt.recipe_map." + t.mapId);
-            if (map != null) map.compileRecipe(t, tagGetter);
+            if (map != null) map.compileRecipe(t, tags);
         });
         time = System.nanoTime()-time;
         Antimatter.LOGGER.info("Time to compile GT recipes: (ms) " + (time)/(1000*1000));

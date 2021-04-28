@@ -7,25 +7,26 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.NonNullSupplier;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
  * ItemEnergyHandler represents the Antimatter Energy capability implementation for items.
  * It wraps an item and provides the ability to charge it & remove it, depending on if the item supports it.
  */
-public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvider {
+public class ItemEnergyHandler extends EnergyHandler {
 
-    private final LazyOptional<ItemEnergyHandler> handler = LazyOptional.of(() -> this);
     protected final ItemStack stack;
 
     protected boolean discharge;
 
-    public ItemEnergyHandler(ItemStack stack, @Nullable CompoundNBT nbt, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
-        super(getEnergyFromStack(stack, nbt), capacity, voltageIn, voltageOut, amperageIn, amperageOut);
+    public ItemEnergyHandler(ItemStack stack, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+        super(0, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.stack = stack;
     }
 
@@ -43,7 +44,6 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
         if (!stack.getOrCreateTag().contains(Ref.KEY_ITEM_DISCHARGE_MODE)) return true;
         return stack.getOrCreateTag().contains(Ref.KEY_ITEM_DISCHARGE_MODE) && stack.getTag().getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
-
     public static long getEnergyFromStack(ItemStack stack, @Nullable CompoundNBT nbt) {
         if (nbt != null) {
             return nbt.getLong(Ref.KEY_ITEM_ENERGY);
@@ -90,9 +90,28 @@ public class ItemEnergyHandler extends EnergyHandler implements ICapabilityProvi
         this.discharge = nbt.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY ? handler.cast() : LazyOptional.empty();
+
+    public static class Provider implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
+        private final LazyOptional<IEnergyHandler> energy;
+
+        public Provider(NonNullSupplier<IEnergyHandler> cap) {
+            this.energy = LazyOptional.of(cap);
+        }
+
+        @Override
+        public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
+            return cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY ? energy.cast() : LazyOptional.empty();
+        }
+
+        @Override
+        public CompoundNBT serializeNBT() {
+            return energy.map(t -> t.serializeNBT()).orElse(new CompoundNBT());
+        }
+
+        @Override
+        public void deserializeNBT(CompoundNBT nbt) {
+            energy.ifPresent(t -> t.deserializeNBT(nbt));
+        }
+
     }
 }

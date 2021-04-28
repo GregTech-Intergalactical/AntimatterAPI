@@ -18,13 +18,13 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
@@ -40,7 +40,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -163,7 +162,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      *
      * @param recipe the recipe to add.
      */
-    public void compileRecipe(Recipe recipe, Function<Item, Collection<ResourceLocation>> tagGetter) {
+    public void compileRecipe(Recipe recipe, ITagCollectionSupplier tags) {
         if (recipe == null) return;
         Branch map = LOOKUP;
 
@@ -191,7 +190,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         if (flag) {
             recipe.sortInputItems();
         }
-        List<List<AbstractMapIngredient>> items = fromRecipe(recipe, tagGetter);
+        List<List<AbstractMapIngredient>> items = fromRecipe(recipe, tags);
 
         Recipe r = recurseItemTreeFind(items, map, rr -> true);
         if (r != null) {
@@ -215,17 +214,17 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return ret;
     }
 
-    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, Function<Item, Collection<ResourceLocation>> tagGetter) {
-        List<List<AbstractMapIngredient>> items = r.hasInputItems() ? buildFromItems(r.getInputItems().stream().map(RecipeIngredient::get).collect(Collectors.toList()), tagGetter) : new ObjectArrayList<>();
+    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, ITagCollectionSupplier tags) {
+        List<List<AbstractMapIngredient>> items = r.hasInputItems() ? buildFromItems(r.getInputItems().stream().map(RecipeIngredient::get).collect(Collectors.toList()), tags) : new ObjectArrayList<>();
         if (r.hasInputFluids()) items.addAll(buildFromFluids(Arrays.asList(r.getInputFluids())));
         return items;
     }
 
-    protected List<List<AbstractMapIngredient>> buildFromItems(List<Ingredient> ingredients, Function<Item, Collection<ResourceLocation>> tagGetter) {
+    protected List<List<AbstractMapIngredient>> buildFromItems(List<Ingredient> ingredients, ITagCollectionSupplier tags) {
         List<List<AbstractMapIngredient>> ret = new ObjectArrayList<>(ingredients.size());
         for (Ingredient t : ingredients) {
             if (!isIngredientSpecial(t)) {
-                Optional<ResourceLocation> rl = MapTagIngredient.findCommonTag(t, tagGetter);
+                Optional<ResourceLocation> rl = MapTagIngredient.findCommonTag(t, tags);
                 if (rl.isPresent()) {
                     ret.add(Collections.singletonList(new MapTagIngredient(rl.get())));
                 } else {
@@ -420,7 +419,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         this.RECIPES_TO_COMPILE.clear();
     }
 
-    public void compile(RecipeManager reg, Function<Item, Collection<ResourceLocation>> tagGetter) {
+    public void compile(RecipeManager reg, ITagCollectionSupplier tags) {
         //reset();
         if (RECIPES_TO_COMPILE.size() > 0) {
             //Recipes with special ingredients have to be compiled first as you cannot
@@ -434,14 +433,14 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     regular.add(recipe);
                 }
             }
-            special.forEach(t -> compileRecipe(t, tagGetter));
-            regular.forEach(t -> compileRecipe(t, tagGetter));
+            special.forEach(t -> compileRecipe(t, tags));
+            regular.forEach(t -> compileRecipe(t, tags));
         }
         if (PROXY != null) {
             List<IRecipe<?>> recipes = reg.getRecipesForType(PROXY.loc);
             recipes.forEach(recipe -> {
                 Recipe r = PROXY.handler.apply(recipe, RB());
-                if (r != null) compileRecipe(r, tagGetter);
+                if (r != null) compileRecipe(r, tags);
             });
         }
     }

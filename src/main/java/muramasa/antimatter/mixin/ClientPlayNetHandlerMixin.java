@@ -22,8 +22,9 @@ public class ClientPlayNetHandlerMixin {
     private void clientRecipesInjection(STagsListPacket packetIn, CallbackInfo info) {
         //Since recipe maps are static we don't have to double compile when playing a local server.
         if (!netManager.isLocalChannel()) {
+            ClientPlayNetHandler handler = ((ClientPlayNetHandler)(Object)this);
             AntimatterDynamics.onResourceReload(false);
-            AntimatterDynamics.onRecipeCompile(((ClientPlayNetHandler)(Object)this).getRecipeManager(), Item::getTags);
+            AntimatterDynamics.onRecipeCompile(handler.getRecipeManager(), handler.getTags());
         }
     }
 }

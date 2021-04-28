@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class TagUtils {
+
+    //Initialized in onResourceReload.
+    public static ITagCollectionSupplier TAG_GETTER;
+
     //A list of all registered tags for all Antimatter mods.
     private static final Map<Class, Map<ResourceLocation, ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
     /**

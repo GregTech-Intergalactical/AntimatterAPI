@@ -71,14 +71,7 @@ public class ClientHandler implements IProxyHandler {
                 event.accept(r);
             }
         }));
-
-        //MinecraftForge.EVENT_BUS.addListener(ClientHandler::onRecipes);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::preResourceRegistration);
-    }
-
-    public static void onRecipes(RecipesUpdatedEvent ev) {
-        AntimatterDynamics.onResourceReload(false);
-        AntimatterDynamics.onRecipeCompile(ev.getRecipeManager(), TagCollectionManager.getManager().getItemTags()::getOwningTags);
     }
 
     //Called before resource registration is performed.

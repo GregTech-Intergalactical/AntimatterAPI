@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
@@ -140,8 +139,9 @@ public class RecipeIngredient {
             return tag != null ? Ingredient.fromTag(tag) : Ingredient.fromItemListStream(Stream.empty());
         }, count);
     }
+
     private static ITag<Item> collectTag(ResourceLocation loc) {
-        return TagCollectionManager.getManager().getItemTags().get(loc);
+        return TagUtils.TAG_GETTER.getItemTags().get(loc);
     }
 
     private static void ensureRegisteredTag(ResourceLocation loc) {

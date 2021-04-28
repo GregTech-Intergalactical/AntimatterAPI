@@ -66,7 +66,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT tag) {
-        return new ItemEnergyHandler(stack, tag, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);
+        return new ItemEnergyHandler.Provider(() -> new ItemEnergyHandler(stack, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1));
     }
 
     @Override
