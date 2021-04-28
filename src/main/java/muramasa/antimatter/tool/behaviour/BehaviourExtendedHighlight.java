@@ -7,6 +7,7 @@ import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
@@ -32,9 +33,8 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
     };
 
     public final static BiFunction<Direction, TileEntity, Boolean> PIPE_FUNCTION = (dir, tile) -> {
-        if (tile instanceof TileEntityBase) {
-            TileEntityBase machine = (TileEntityBase) tile;
-            return machine.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(t -> !t.get(dir).isEmpty()).orElse(false);
+        if (tile instanceof TileEntityPipe) {
+            return ((TileEntityPipe)tile).canConnect(dir.getIndex());
         }
         return false;
     };
