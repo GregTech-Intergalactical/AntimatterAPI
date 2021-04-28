@@ -7,7 +7,7 @@ import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.Data.COVERNONE;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class GeneratorMachine extends Machine<BasicMachine> {
+public class GeneratorMachine extends Machine<GeneratorMachine> {
     public GeneratorMachine(String domain, String id, Object... data) {
         super(domain, id,data);
         addFlags(BASIC, ENERGY, COVERABLE, CONFIGURABLE,GENERATOR);
