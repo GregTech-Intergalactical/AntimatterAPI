@@ -23,6 +23,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
+import muramasa.antimatter.tool.behaviour.BehaviourExtendedHighlight;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -69,13 +70,7 @@ public class ClientEvents {
         if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover))) return;
         if (stack.getItem() instanceof IHaveCover) {
             if (player.isCrouching()) return;
-            RenderHelper.onDrawHighlight(player, event, b -> b instanceof BlockMachine || b instanceof BlockPipe, (dir, tile) -> {
-                if (tile instanceof TileEntityBase) {
-                    TileEntityBase machine = (TileEntityBase) tile;
-                    return machine.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(t -> !t.get(dir).isEmpty()).orElse(false);
-                }
-                return false;
-            });
+            RenderHelper.onDrawHighlight(player, event, b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
             return;
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();

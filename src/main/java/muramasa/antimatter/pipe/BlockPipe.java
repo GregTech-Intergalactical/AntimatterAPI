@@ -282,9 +282,16 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
             if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state))) {
                 return VoxelShapes.fullCube();
             }
-            if (player.getHeldItemMainhand().getItem() instanceof PipeItemBlock || player.getHeldItemOffhand().getItem() instanceof PipeItemBlock) {
-                return VoxelShapes.fullCube();
+            BlockPipe pipe = null;
+            if (player.getHeldItemMainhand().getItem() instanceof PipeItemBlock) {
+                pipe = ((PipeItemBlock)player.getHeldItemMainhand().getItem()).getPipe();
             }
+            if (player.getHeldItemOffhand().getItem() instanceof PipeItemBlock) {
+                pipe = ((PipeItemBlock)player.getHeldItemOffhand().getItem()).getPipe();
+            }
+            if (pipe != null && getClass().isInstance(pipe)) {
+                return VoxelShapes.fullCube();
+            } 
         }
         int config = getConfig(state, world, new BlockPos.Mutable(pos.getX(), pos.getY(), pos.getZ()), pos).getConfig()[0];
         VoxelShape shape = this.shapes.get(config);

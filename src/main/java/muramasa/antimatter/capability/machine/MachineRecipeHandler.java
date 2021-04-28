@@ -301,9 +301,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             if (tile.energyHandler.isPresent()) {
                 if (!generator) {
                     long power = getPower();
-                    if (tile.energyHandler.map(t -> t.extract(power, true)).orElse(0L) >= power) {
+                    if (tile.energyHandler.map(t -> t.extractInternal(power, true, true)).orElse(0L) >= power) {
                         if (!simulate)
-                            tile.energyHandler.map(t -> t.extract(power, false));
+                            tile.energyHandler.map(t -> t.extractInternal(power, false, true));
                         return true;
                     } else {
                         return false;
@@ -395,7 +395,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             throw new RuntimeException("Missing fuel in active generator recipe!");
         }
         long toConsume = calculateGeneratorConsumption(tile.getMachineTier().getVoltage(), activeRecipe);
-        boolean shouldRun = tile.energyHandler.map(h -> h.insert((long)((double)toConsume*activeRecipe.getPower()*tile.getMachineType().getMachineEfficiency()),true) > 0).orElse(false);
+        boolean shouldRun = tile.energyHandler.map(h -> h.insertInternal((long)((double)toConsume*activeRecipe.getPower()*tile.getMachineType().getMachineEfficiency()),true, true) > 0).orElse(false);
         if (!shouldRun) return false;
         if (tile.fluidHandler.map(h -> {
             int amount = h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)toConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
@@ -408,7 +408,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }).orElse(false)) {
             //Input energy
             if (!simulate)
-                tile.energyHandler.ifPresent(handler -> handler.insert((long)((double)toConsume*activeRecipe.getPower()*tile.getMachineType().getMachineEfficiency()), false));
+                tile.energyHandler.ifPresent(handler -> handler.insertInternal((long)((double)toConsume*activeRecipe.getPower()*tile.getMachineType().getMachineEfficiency()), false, true));
             return true;
         }
         return false;

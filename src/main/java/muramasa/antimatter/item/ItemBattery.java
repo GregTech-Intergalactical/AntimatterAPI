@@ -66,7 +66,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT tag) {
-        return new ItemEnergyHandler(stack, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);
+        return new ItemEnergyHandler(stack, tag, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         if (reusable) {
             tooltip.add(new TranslationTextComponent("item.reusable"));
         }
-        long energy = ItemEnergyHandler.getEnergyFromStack(stack);
+        long energy = ItemEnergyHandler.getEnergyFromStack(stack, stack.getTag());
         tooltip.add(new TranslationTextComponent("item.charge").appendString(": ").append(new StringTextComponent(energy + "/" + cap).mergeStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).appendString(" (" + tier.getId().toUpperCase() + ")"));
         super.addInformation(stack, worldIn, tooltip, flag);
     }

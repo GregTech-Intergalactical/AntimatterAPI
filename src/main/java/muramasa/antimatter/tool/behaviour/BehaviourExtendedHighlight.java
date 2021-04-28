@@ -1,14 +1,18 @@
 package muramasa.antimatter.tool.behaviour;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import muramasa.antimatter.behaviour.IItemHighlight;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 
 public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterTool> {
@@ -17,9 +21,28 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
     final double INTERACT_DISTANCE = 5;
 
     protected Function<Block, Boolean> validator;
+    protected BiFunction<Direction, TileEntity, Boolean> function;
 
-    public BehaviourExtendedHighlight(Function<Block, Boolean> validator) {
+    public final static BiFunction<Direction, TileEntity, Boolean> COVER_FUNCTION = (dir, tile) -> {
+        if (tile instanceof TileEntityBase) {
+            TileEntityBase machine = (TileEntityBase) tile;
+            return machine.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(t -> !t.get(dir).isEmpty()).orElse(false);
+        }
+        return false;
+    };
+
+    public final static BiFunction<Direction, TileEntity, Boolean> PIPE_FUNCTION = (dir, tile) -> {
+        if (tile instanceof TileEntityBase) {
+            TileEntityBase machine = (TileEntityBase) tile;
+            return machine.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(t -> !t.get(dir).isEmpty()).orElse(false);
+        }
+        return false;
+    };
+
+
+    public BehaviourExtendedHighlight(Function<Block, Boolean> validator, BiFunction<Direction, TileEntity, Boolean> builder) {
         this.validator = validator;
+        this.function = builder;
     }
 
     @Override
@@ -29,11 +52,6 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
 
     @Override
     public ActionResultType onDrawHighlight(PlayerEntity player, DrawHighlightEvent ev) {
-        return RenderHelper.onDrawHighlight(player, ev, validator, (dir, tile) -> {
-                if (tile instanceof TileEntityPipe) {
-                    return ((TileEntityPipe)tile).canConnect(dir.getIndex());
-                }
-                return false;
-        });
+        return RenderHelper.onDrawHighlight(player, ev, validator, function);
     }
 }

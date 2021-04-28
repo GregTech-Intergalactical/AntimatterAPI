@@ -102,14 +102,17 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        long inserted = super.insert(maxReceive, simulate);
+        return this.insertInternal(maxReceive, simulate, false);
+    }
+
+    @Override
+    public long insertInternal(long maxReceive, boolean simulate, boolean force) {
+        long inserted = super.insertInternal(maxReceive, simulate, force);
         if (inserted == 0 && canChargeItem()) {
             inserted = insertIntoItems(maxReceive, simulate);
         }
         if (!simulate) {
             tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED, inserted);
-           // System.out.println("Insert " + maxReceive);
-            // tile.markDirty();
         }
         return inserted;
     }
@@ -131,7 +134,12 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        long extracted = super.extract(maxExtract, simulate);
+        return extractInternal(maxExtract, simulate, false);
+    }
+
+    @Override
+    public long extractInternal(long maxExtract, boolean simulate, boolean force) {
+        long extracted = super.extractInternal(maxExtract, simulate, force);
         if (extracted == 0) {
             extracted = extractFromItems(maxExtract,simulate);
         }
