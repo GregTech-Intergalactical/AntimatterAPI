@@ -35,6 +35,8 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static muramasa.antimatter.Data.DUST;
+
 public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
     protected Material material;
@@ -89,10 +91,15 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
             int level = state.get(CauldronBlock.LEVEL);
             if (level > 0) {
                 MaterialItem item = (MaterialItem) stack.getItem();
-                player.setHeldItem(context.getHand(), Data.DUST_IMPURE.get(item.getMaterial(), stack.getCount()));
-                world.setBlockState(context.getPos(), state.with(CauldronBlock.LEVEL, --level));
-                world.playSound(player, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                return ActionResultType.SUCCESS;
+                if (item.getMaterial().has(DUST)){
+                    stack.shrink(1);
+                    if (!player.addItemStackToInventory(DUST.get(item.getMaterial(), 1))){
+                        player.dropItem(DUST.get(item.getMaterial(), 1), false);
+                    }
+                    world.setBlockState(context.getPos(), state.with(CauldronBlock.LEVEL, --level));
+                    world.playSound(player, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    return ActionResultType.SUCCESS;
+                }
             }
         }
         return ActionResultType.FAIL;
