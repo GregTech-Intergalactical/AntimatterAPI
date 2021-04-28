@@ -180,7 +180,7 @@ public class Data {
 
     /** END RECIPE BUILDERS **/
 
-    public static final net.minecraft.block.material.Material WRENCH_MATERIAL = new net.minecraft.block.material.Material(MaterialColor.IRON, false, true, true, true, false, false, PushReaction.BLOCK);
+    public static final net.minecraft.block.material.Material WRENCH_MATERIAL = new net.minecraft.block.material.Material(MaterialColor.IRON, false, true, true, true, false, false, PushReaction.NORMAL);
 
     //CELLS
     public final static Set<ItemFluidCell> EMPTY_CELLS = new HashSet<>();

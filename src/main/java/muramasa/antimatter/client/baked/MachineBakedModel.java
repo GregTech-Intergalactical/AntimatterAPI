@@ -14,7 +14,10 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,6 +48,23 @@ public class MachineBakedModel extends CoveredBakedModel {
             }
         }
         return quads;
+    }
+
+    
+
+    @Override
+    public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData data) {
+        data = super.getModelData(world, pos, state, data);
+        TileEntityMachine machine = (TileEntityMachine) world.getTileEntity(pos);
+        data.setData(AntimatterProperties.MACHINE_TYPE, machine.getMachineType());
+        data.setData(AntimatterProperties.MACHINE_TEXTURE,a -> {
+            Texture[] tex = machine.getMachineType().getBaseTexture(machine.getMachineTier());
+            if (tex.length == 1) return tex[0];
+            return tex[a.getIndex()];
+        });
+        data.setData(AntimatterProperties.MACHINE_STATE, machine.getMachineState());
+        data.setData(AntimatterProperties.MACHINE_TILE, machine);
+        return data;
     }
 
     @Override

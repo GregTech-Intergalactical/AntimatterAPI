@@ -261,7 +261,11 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                 if (tile.validateTile(target, side.getOpposite())) {
                     tile.toggleConnection(side);
                     if (target instanceof TileEntityPipe) {
-                        ((TileEntityPipe) target).toggleConnection(side.getOpposite());
+                        if (tile.canConnect(side.getIndex())) {
+                            ((TileEntityPipe)target).setConnection(side.getOpposite());
+                        } else {
+                            ((TileEntityPipe)target).clearConnection(side.getOpposite());
+                        }
                     } else {
                         tile.toggleInteract(side);
                     }

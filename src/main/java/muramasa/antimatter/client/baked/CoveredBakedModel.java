@@ -34,9 +34,9 @@ public class CoveredBakedModel extends AttachableBakedModel {
     @Nonnull
     @Override
     public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile == null) return super.getModelData(world, pos, state, data);
-        tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).ifPresent(t -> data.setData(AntimatterProperties.MACHINE_TILE,(TileEntityMachine)tile));//map(h -> h.getAll()).orElse(CoverInstance.EMPTY_COVER_ARRAY);
+       // TileEntity tile = world.getTileEntity(pos);
+        //if (tile == null) return super.getModelData(world, pos, state, data);
+      //  data.setData(AntimatterProperties.MACHINE_TILE,(TileEntityMachine)tile);
         return super.getModelData(world, pos, state, data);
     }
 

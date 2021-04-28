@@ -329,15 +329,9 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Nonnull
     @Override
     public IModelData getModelData() {
-        ModelDataMap.Builder builder = new ModelDataMap.Builder().withInitial(AntimatterProperties.MACHINE_TYPE, getMachineType());
-        builder.withInitial(AntimatterProperties.MACHINE_TEXTURE,a -> {
-            Texture[] tex = getMachineType().getBaseTexture(getMachineTier());
-            if (tex.length == 1) return tex[0];
-            return tex[a.getIndex()];
-        }).withInitial(AntimatterProperties.MACHINE_STATE, getMachineState());
+        ModelDataMap.Builder builder = new ModelDataMap.Builder();
         TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getWorld(), pos, TileEntityBasicMultiMachine.class);
         if (mTile != null) {
-            coverHandler.ifPresent(machineCoverHandler -> builder.withInitial(AntimatterProperties.MACHINE_TILE, this));
             builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,a -> {
                 Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
                 if (tex.length == 1) return tex[0];
