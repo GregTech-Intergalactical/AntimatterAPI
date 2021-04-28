@@ -32,6 +32,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.material.MaterialTag.HANDLE;
 import static muramasa.antimatter.material.MaterialTag.METAL;
 
 public class Material implements IAntimatterObject, IRegistryEntryProvider {
@@ -279,6 +280,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     public Material addHandleStat(int durability, float speed) {
         if (!has(ROD)) flags(ROD);
+        flags(HANDLE);
         this.isHandle = true;
         this.handleDurability = durability;
         this.handleSpeed = speed;
