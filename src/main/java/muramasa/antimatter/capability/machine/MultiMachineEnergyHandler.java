@@ -10,8 +10,8 @@ import java.util.Arrays;
 
 public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMultiMachine> {
 
-    protected IEnergyHandler[] inputs;//= new IEnergyHandler[0];
-    protected IEnergyHandler[] outputs; //= new IEnergyHandler[0];
+    protected MachineEnergyHandler<?>[] inputs;//= new IEnergyHandler[0];
+    protected MachineEnergyHandler<?>[] outputs; //= new IEnergyHandler[0];
 
     protected long cachedCapacity;
 
@@ -38,11 +38,11 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
     }
 
     private void cacheInputs() {
-        this.inputs = tile.getComponents("hatch_energy").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().resolve().get())).toArray(IEnergyHandler[]::new);
+        this.inputs = tile.getComponents("hatch_energy").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().resolve().get())).toArray(MachineEnergyHandler<?>[]::new);
     }
 
     private void cacheOutputs() {
-        this.outputs = tile.getComponents("hatch_dynamo").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().resolve().get())).toArray(IEnergyHandler[]::new);
+        this.outputs = tile.getComponents("hatch_dynamo").stream().filter(t -> t.getEnergyHandler().isPresent()).map(t -> (t.getEnergyHandler().resolve().get())).toArray(MachineEnergyHandler<?>[]::new);
     }
 
     private IEnergyHandler anyHandler() {
@@ -62,12 +62,12 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
     }
 
     @Override
-    public long insert(long maxReceive, boolean simulate) {
+    public long insertInternal(long maxReceive, boolean simulate, boolean force) {
         if (outputs == null) cacheOutputs();
-        long inserted = super.insert(maxReceive, simulate);
+        long inserted = super.insertInternal(maxReceive, simulate, force);
         if (inserted == 0 && outputs != null) {
-            for (IEnergyHandler handler : outputs) {
-                inserted += handler.insert(maxReceive-inserted, simulate);
+            for (MachineEnergyHandler<?> handler : outputs) {
+                inserted += handler.insertInternal(maxReceive-inserted, simulate, force);
                 //Output voltage as a dynamo outputs energy.
                 if (!simulate && inserted > handler.getOutputVoltage()) {
                     System.out.println("BOOM");
@@ -100,12 +100,12 @@ public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMu
     }
 
     @Override
-    public long extract(long maxReceive, boolean simulate) {
+    public long extractInternal(long maxReceive, boolean simulate, boolean force) {
         if (inputs == null) cacheInputs();
-        long extracted = super.extract(maxReceive, simulate);
+        long extracted = super.extractInternal(maxReceive, simulate, force);
         if (extracted == 0 && inputs != null) {
-            for (IEnergyHandler handler : inputs) {
-                extracted += handler.extract(maxReceive-extracted, simulate);
+            for (MachineEnergyHandler<?> handler : inputs) {
+                extracted += handler.extractInternal(maxReceive-extracted, simulate, force);
                 if (extracted >= maxReceive)
                     return extracted;
             }

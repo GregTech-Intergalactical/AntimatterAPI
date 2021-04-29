@@ -18,11 +18,10 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
     protected int[] amps;
 
     public Cable(String domain, Material material, int loss, Tier tier) {
-        super(domain, material);
+        super(domain, material, TileEntityCable::new);
         this.loss = loss;
         this.tier = tier;
         material.flags(MaterialTag.CABLE);
-        setTile(() -> new TileEntityCable(this));
     }
 
     @Override

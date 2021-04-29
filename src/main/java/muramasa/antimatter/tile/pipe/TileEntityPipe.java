@@ -26,7 +26,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.graph.Connectivity;
 
-public class TileEntityPipe extends TileEntityBase {
+public abstract class TileEntityPipe extends TileEntityBase {
 
     /** Pipe Data **/
     protected PipeType<?> type;
@@ -50,11 +50,8 @@ public class TileEntityPipe extends TileEntityBase {
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
     }
 
-    public void cacheNode(BlockPos pos, Direction side, boolean remove) {
+    protected abstract void registerNode(BlockPos pos, Direction side, boolean remove);
 
-    }
-
-    //TODO: what does this do. disabled for now.
     @Override
     public void onLoad() {
         if (isServerSide()) initTesseract();
@@ -75,7 +72,7 @@ public class TileEntityPipe extends TileEntityBase {
     protected void initTesseract() {
         for (Direction side : Ref.DIRS) {
             if (Connectivity.has(interaction, side.getIndex())) {
-                cacheNode(this.pos.offset(side), side, false);
+                registerNode(this.pos.offset(side), side, false);
             }
         }
     }
@@ -89,9 +86,7 @@ public class TileEntityPipe extends TileEntityBase {
         }
     }
 
-    public boolean validateTile(TileEntity tile, Direction side) {
-        return false;
-    }
+    public abstract boolean validateTile(TileEntity tile, Direction side);
 
     @Override
     public void onRemove() {
@@ -99,7 +94,7 @@ public class TileEntityPipe extends TileEntityBase {
         if (isServerSide()) {
             for (Direction side : Ref.DIRS) {
                 if (Connectivity.has(interaction, side.getIndex())) {
-                    cacheNode(this.getPos().offset(side), side, true);
+                    registerNode(this.getPos().offset(side), side, true);
                 }
             }
             if (SIDE_CAPS != null) {
@@ -137,14 +132,14 @@ public class TileEntityPipe extends TileEntityBase {
         byte oldInteract = interaction;
         interaction = Connectivity.set(interaction, side.getIndex());
         if (isServerSide() && oldInteract != interaction)
-            cacheNode(this.pos.offset(side), side,false);
+            registerNode(this.pos.offset(side), side,false);
         refreshConnection();
     }
 
     public void toggleInteract(Direction side) {
         interaction = Connectivity.toggle(interaction, side.getIndex());
         if (isServerSide())
-            cacheNode(this.pos.offset(side), side, !Connectivity.has(interaction, side.getIndex()));
+            registerNode(this.pos.offset(side), side, !Connectivity.has(interaction, side.getIndex()));
         refreshConnection();
     }
 
@@ -152,7 +147,7 @@ public class TileEntityPipe extends TileEntityBase {
         byte oldInteract = interaction;
         interaction = Connectivity.clear(interaction, side.getIndex());
         if (isServerSide() && interaction != oldInteract)
-            cacheNode(this.pos.offset(side), side, true);
+            registerNode(this.pos.offset(side), side, true);
         refreshConnection();
     }
 
@@ -210,6 +205,9 @@ public class TileEntityPipe extends TileEntityBase {
         connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         if (connection != oldConnection && (world != null && world.isRemote)) {
             Utils.markTileForRenderUpdate(this);
+        }
+        if (connection != oldConnection && world != null) {
+            refreshConnection();
         }
     }
 

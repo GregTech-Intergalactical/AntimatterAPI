@@ -48,7 +48,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
     }
 
     @Override
-    public void cacheNode(BlockPos pos, Direction side, boolean remove) {
+    public void registerNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove) {
             ItemTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {

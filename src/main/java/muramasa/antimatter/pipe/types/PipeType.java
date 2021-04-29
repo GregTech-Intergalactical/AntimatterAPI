@@ -6,7 +6,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
@@ -18,25 +17,25 @@ import net.minecraftforge.registries.IForgeRegistry;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObject, IRegistryEntryProvider {
+public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryProvider {
 
     /** Basic Members **/
     protected String domain;
     protected Material material;
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
     protected TileEntityType<?> tileType;
-    protected Function<PipeType<?>, Supplier<? extends TileEntityPipe>> tileFunc = p -> () -> new TileEntityPipe(this);
     protected Map<PipeSize, Block> registeredBlocks;
 
-    public PipeType(String domain, Material material) {
+    private final Function<PipeType<?>, TileEntityPipe> tileFunc;
+
+    public PipeType(String domain, Material material, Function<PipeType<?>, TileEntityPipe> func) {
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);
         AntimatterAPI.register(getClass(), getId() + "_" + material.getId(), this);
-
+        this.tileFunc = func;
     }
 
     @Override
@@ -44,7 +43,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
         if (registry != ForgeRegistries.BLOCKS) return;
         Set<Block> blocks = getBlocks();
         registeredBlocks = blocks.stream().map(t ->new Pair<>(((BlockPipe<?>)t).getSize(), t.getBlock())).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-        tileType = new TileEntityType<>(tileFunc.apply(this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId());
+        tileType = new TileEntityType<>(() -> tileFunc.apply(this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId());
         AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId(), getTileType());
     }
 
@@ -81,16 +80,6 @@ public abstract class PipeType<T extends PipeType<T>> implements IAntimatterObje
 
     public T sizes(PipeSize... sizes) {
         this.sizes = ImmutableSet.copyOf(sizes);
-        return (T) this;
-    }
-
-    public T setTile(Function<PipeType<?>, Supplier<? extends TileEntityPipe>> func) {
-        this.tileFunc = func;
-        return (T) this;
-    }
-
-    public T setTile(Supplier<? extends TileEntityPipe> supplier) {
-        setTile(m -> supplier);
         return (T) this;
     }
 }

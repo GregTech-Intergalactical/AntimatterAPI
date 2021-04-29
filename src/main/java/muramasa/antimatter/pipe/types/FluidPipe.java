@@ -17,11 +17,10 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     protected int[] caps, pressures;
 
     public FluidPipe(String domain, Material material, int maxTemp, boolean gasProof) {
-        super(domain, material);
+        super(domain, material, TileEntityFluidPipe::new);
         this.maxTemp = maxTemp;
         this.gasProof = gasProof;
         material.flags(MaterialTag.FLUIDPIPE);
-        setTile(() -> new TileEntityFluidPipe(this));
     }
 
     @Override

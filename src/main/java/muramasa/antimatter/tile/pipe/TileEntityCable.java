@@ -48,7 +48,7 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     }
 
     @Override
-    public void cacheNode(BlockPos pos, Direction side, boolean remove) {
+    public void registerNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove) {
             EnergyTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {

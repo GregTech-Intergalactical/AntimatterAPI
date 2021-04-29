@@ -147,8 +147,6 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         return Data.WRENCH.getToolType();
     }
 
-    // TODO: Block if covers are exist
-
     @Override // Used to set connection for sides where neighbor has pre-set connection
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         TileEntityPipe tile = getTilePipe(worldIn, pos);
