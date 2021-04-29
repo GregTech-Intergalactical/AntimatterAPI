@@ -16,6 +16,7 @@ import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
@@ -108,10 +109,10 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             Item ingot = INGOT.get(o.getMaterial().getSmeltInto());
             ITag.INamedTag<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
             ITag.INamedTag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(o.getMaterial().getSmeltInto().getId()));
-            AntimatterCookingRecipeBuilder.blastingRecipe(Ingredient.fromTag(nc(oreTag)), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 100)
+            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(oreTag, 1).get(), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 100)
                     .addCriterion("has_material_" + o.getMaterial().getId(), hasItem(ingotTag))
                     .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot")));
-            AntimatterCookingRecipeBuilder.smeltingRecipe(Ingredient.fromTag(nc(oreTag)), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 200)
+            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(oreTag, 1).get(), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 200)
                     .addCriterion("has_material_" + o.getMaterial().getId(), hasItem(ingotTag))
                     .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot_smelting")));
         });

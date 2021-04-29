@@ -2,12 +2,14 @@ package muramasa.antimatter.recipe.ingredient;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
@@ -141,7 +143,11 @@ public class RecipeIngredient {
     }
 
     private static ITag<Item> collectTag(ResourceLocation loc) {
-        return TagUtils.TAG_GETTER.getItemTags().get(loc);
+        ITagCollectionSupplier getter = TagUtils.TAG_GETTER;
+        if (getter == null){
+            return TagUtils.nc(loc);
+        }
+        return getter.getItemTags().get(loc);
     }
 
     private static void ensureRegisteredTag(ResourceLocation loc) {

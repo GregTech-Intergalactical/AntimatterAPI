@@ -96,8 +96,20 @@ public class TagUtils {
      * @return
      */
     public static ITag<Item> nc(ITag.INamedTag<Item> tag) {
-        return TagCollectionManager.getManager().getItemTags().get(tag.getName());
+        return nc(tag.getName());
     }
+
+    /**
+     * NamedToContent
+     * In order to use a named tag in recipes outside antimatter(e.g. for furnace recipes)
+     * you have to convert the tag into a safe one, this method returns a safe tag.
+     * @param tag
+     * @return
+     */
+    public static ITag<Item> nc(ResourceLocation tag) {
+        return TagCollectionManager.getManager().getItemTags().get(tag);
+    }
+
 
     protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
         ITag.INamedTag<T>[] tag = new ITag.INamedTag[1];
