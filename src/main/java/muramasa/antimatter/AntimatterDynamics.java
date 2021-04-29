@@ -108,7 +108,7 @@ public class AntimatterDynamics {
         AntimatterAPI.all(RecipeMap.class, t -> {
             Antimatter.LOGGER.info("Recipe map " + t.getId() + " compiled " + t.getRecipes(false).size() + " recipes.");
         });
-
+        TagUtils.TAG_GETTER = null;
     }
 
     public static void onResourceReload(boolean server) {

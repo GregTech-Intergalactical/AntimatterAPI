@@ -85,7 +85,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
     @Override
     public void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-        //registerMaterialRecipes(consumer, providerDomain);
+        registerMaterialRecipes(consumer, providerDomain);
         registerToolRecipes(consumer, providerDomain);
         registerPipeRecipes(consumer, providerDomain);
         registerOther(consumer, providerDomain);
