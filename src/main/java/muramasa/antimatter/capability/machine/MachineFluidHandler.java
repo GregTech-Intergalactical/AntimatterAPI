@@ -451,7 +451,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public void refreshNet() {
-        Tesseract.FLUID.refreshNode(this.tile.getDimension(), this.tile.getPos().toLong());
+        Tesseract.FLUID.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
     }
 
     public enum FluidDirection {

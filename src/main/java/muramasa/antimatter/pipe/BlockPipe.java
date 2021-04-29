@@ -131,21 +131,6 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         return new PipeItemBlock(this);
     }
 
-
-//    @Override
-//    public BlockState getExtendedState(BlockState state, IBlockReader world, BlockPos pos) {
-//        IExtendedBlockState exState = (IExtendedBlockState) state;
-//        TileEntityPipe tile = getTilePipe(world, pos);
-//        if (tile != null) {
-//            exState = exState.withProperty(PIPE_CONNECTIONS, tile.getConnections());
-//            exState = exState.withProperty(TEXTURE, getData());
-//            if (tile.coverHandler.isPresent()) {
-//                exState = exState.withProperty(COVER, tile.coverHandler.get().getAll());
-//            }
-//        }
-//        return exState;
-//    }
-
     @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
@@ -226,22 +211,6 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         onNeighborChange(stateIn, worldIn, currentPos, facingPos);
         return stateIn;
     }
-
-    /*@Override // Used to catch new placed neighbors near pipe which enable connection
-    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos from, boolean isMoving) {
-        TileEntityPipe tile = getTilePipe(world, pos);
-        if (tile != null) {
-            for (Direction side : Ref.DIRS) {
-                // Looking for the side where is a neighbor changed
-                if (pos.offset(side).equals(from)) {
-                    if (tile.canConnect(side.getIndex())) {
-                        tile.changeConnection(side);
-                    }
-                    return;
-                }
-            }
-        }
-    }*/
 
     @Nonnull
     @Override

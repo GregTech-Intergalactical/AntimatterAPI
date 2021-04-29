@@ -459,6 +459,6 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
     }*/
 
     public void refreshNet() {
-        Tesseract.ITEM.refreshNode(this.tile.getDimension(), this.tile.getPos().toLong());
+        Tesseract.ITEM.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
     }
 }

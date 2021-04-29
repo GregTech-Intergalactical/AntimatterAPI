@@ -174,6 +174,6 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
 
     @Override
     public void refreshNet() {
-        Tesseract.GT_ENERGY.refreshNode(this.tile.getDimension(), this.tile.getPos().toLong());
+        Tesseract.GT_ENERGY.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
     }
 }

@@ -57,13 +57,7 @@ public class TileEntityPipe extends TileEntityBase {
     //TODO: what does this do. disabled for now.
     @Override
     public void onLoad() {
-        if (isServerSide()) {
-            for (Direction side : Ref.DIRS) {
-                if (Connectivity.has(interaction, side.getIndex())) {
-                    cacheNode(this.pos.offset(side), side, false);
-                }
-            }
-        }
+        if (isServerSide()) initTesseract();
         /*CoverStack<?>[] covers = this.getAllCovers();
         if (covers.length == 0) return;
         for (Direction side : Ref.DIRS) {
@@ -76,6 +70,14 @@ public class TileEntityPipe extends TileEntityBase {
                 }
             }
         }*/
+    }
+
+    protected void initTesseract() {
+        for (Direction side : Ref.DIRS) {
+            if (Connectivity.has(interaction, side.getIndex())) {
+                cacheNode(this.pos.offset(side), side, false);
+            }
+        }
     }
 
     public void onInvalidate(Direction side) {
@@ -161,10 +163,10 @@ public class TileEntityPipe extends TileEntityBase {
     public void refreshSide(Direction side) {
         if (this.canConnect(side.getIndex())) {
             BlockPos pos = this.pos.offset(side);
-            if (!(world.getTileEntity(pos) instanceof TileEntityPipe)) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (!(tile instanceof TileEntityPipe)) {
                 clearConnection(side);
                 clearInteract(side);
-                TileEntity tile = world.getTileEntity(pos);
                 if (tile != null && validateTile(tile, side.getOpposite())) {
                     setConnection(side);
                     setInteract(side);

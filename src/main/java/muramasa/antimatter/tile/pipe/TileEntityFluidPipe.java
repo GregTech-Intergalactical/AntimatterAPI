@@ -26,16 +26,10 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
         SIDE_CAPS = Arrays.stream(Ref.DIRS).map(t -> LazyOptional.of(() -> new TesseractFluidCapability(this, t))).toArray(LazyOptional[]::new);
     }
 
-   /* @Override
-    public void onFirstTick() {
-        super.onFirstTick();
-        if (isServerSide()) Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
-    }*/
-
     @Override
-    public void onLoad() {
-        super.onLoad();
-        if (isServerSide()) Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this);
+    protected void initTesseract() {
+        if (isServerSide()) Tesseract.FLUID.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
+        super.initTesseract();
     }
 
     @Override
@@ -46,8 +40,9 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
     @Override
     public void refreshConnection() {
         if (isServerSide()) {
-            Tesseract.FLUID.remove(getDimension(), pos.toLong());
-            Tesseract.FLUID.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
+            if (Tesseract.FLUID.remove(getWorld(), pos.toLong())) {
+                Tesseract.FLUID.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
+            }
         }
         super.refreshConnection();
     }
@@ -57,13 +52,13 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
         if (!remove) {
             FluidTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {
-            Tesseract.FLUID.remove(getWorld().getDimensionKey(), pos.toLong());
+            Tesseract.FLUID.remove(getWorld(), pos.toLong());
         }
     }
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.FLUID.remove(getDimension(), pos.toLong());
+        if (isServerSide()) Tesseract.FLUID.remove(getWorld(), pos.toLong());
         super.onRemove();
     }
 

@@ -27,16 +27,17 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
-        if (isServerSide()) Tesseract.ITEM.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
+    protected void initTesseract() {
+        if (isServerSide()) Tesseract.ITEM.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
+        super.initTesseract();
     }
 
     @Override
     public void refreshConnection() {
         if (isServerSide()) {
-            Tesseract.ITEM.remove(getDimension(), pos.toLong());
-            Tesseract.ITEM.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
+            if (Tesseract.ITEM.remove(getWorld(), pos.toLong())) {
+                Tesseract.ITEM.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
+            }
         }
         super.refreshConnection();
     }
@@ -51,7 +52,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
         if (!remove) {
             ItemTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {
-            Tesseract.ITEM.remove(getWorld().getDimensionKey(), pos.toLong());
+            Tesseract.ITEM.remove(getWorld(), pos.toLong());
         }
     }
 
@@ -68,7 +69,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.ITEM.remove(getDimension(), pos.toLong());
+        if (isServerSide()) Tesseract.ITEM.remove(getWorld(), pos.toLong());
         super.onRemove();
     }
 

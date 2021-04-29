@@ -28,21 +28,22 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     @Override
     public void refreshConnection() {
         if (isServerSide()) {
-            Tesseract.GT_ENERGY.remove(getDimension(), pos.toLong());
-            Tesseract.GT_ENERGY.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
+            if (Tesseract.GT_ENERGY.remove(getWorld(), pos.toLong())) {
+                Tesseract.GT_ENERGY.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
+            }
         }
         super.refreshConnection();
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
-        if (isServerSide()) Tesseract.GT_ENERGY.registerConnector(getDimension(), pos.toLong(), this); // this is connector class
+    protected void initTesseract() {
+        if (isServerSide()) Tesseract.GT_ENERGY.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
+        super.initTesseract();
     }
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.GT_ENERGY.remove(getDimension(), pos.toLong());
+        if (isServerSide()) Tesseract.GT_ENERGY.remove(getWorld(), pos.toLong());
         super.onRemove();
     }
 
@@ -51,7 +52,7 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
         if (!remove) {
             EnergyTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
         } else {
-           Tesseract.GT_ENERGY.remove(getWorld().getDimensionKey(), pos.toLong());
+           Tesseract.GT_ENERGY.remove(getWorld(), pos.toLong());
         }
     }
 

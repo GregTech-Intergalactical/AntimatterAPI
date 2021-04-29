@@ -29,15 +29,21 @@ public class ItemTileWrapper implements IItemNode {
 
     @Nullable
     public static void wrap(TileEntityPipe pipe, World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
-        Tesseract.ITEM.registerNode(world.getDimensionKey(),pos.toLong(), () -> {
+        Tesseract.ITEM.registerNode(world, pos.toLong(), () -> {
             TileEntity tile = supplier.get();
+            if (tile == null) {
+                pipe.clearInteract(side);
+                return null;
+            }
             LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
             if (capability.isPresent()) {
                 ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
                 capability.addListener(o -> pipe.onInvalidate(side));
                 return node;
+            } else {
+                pipe.clearInteract(side);
+                return null;
             }
-            throw new RuntimeException("invalid capability");
         });
     }
 
