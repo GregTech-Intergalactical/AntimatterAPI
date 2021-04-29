@@ -66,11 +66,11 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
 
     @Override
     public void act(DirectoryCache cache) throws IOException {
-        loot();
+        /*loot();
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
             Path path = getPath(generator.getOutputFolder(), e.getKey().getRegistryName());
             IDataProvider.save(GSON, cache, LootTableManager.toJson(e.getValue().apply(e.getKey()).setParameterSet(LootParameterSets.BLOCK).build()), path);
-        }
+        }*/
     }
 
     private static Path getPath(Path root, ResourceLocation id) {

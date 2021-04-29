@@ -65,7 +65,7 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
 
     @Override
     public void act(@Nonnull DirectoryCache cache) {
-        Path folder = this.gen.getOutputFolder();
+        /*Path folder = this.gen.getOutputFolder();
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {
             if (!locs.add(a.getId())) throw new IllegalStateException("Duplicate advancement " + a.getId());
@@ -78,7 +78,7 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
                 }
             }
         };
-        advancements.forEach(a -> a.accept(consumer));
+        advancements.forEach(a -> a.accept(consumer));*/
     }
 
     private Path getPath(Path path, Advancement advancement) {
