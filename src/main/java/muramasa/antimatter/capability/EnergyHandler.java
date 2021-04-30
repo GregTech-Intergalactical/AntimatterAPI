@@ -2,10 +2,11 @@ package muramasa.antimatter.capability;
 
 import muramasa.antimatter.Ref;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.gt.GTConsumer;
 import tesseract.api.gt.IEnergyHandler;
-import tesseract.util.Dir;
+
 
 public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
 
@@ -132,12 +133,12 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
-    public boolean canInput(Dir direction) {
+    public boolean canInput(Direction direction) {
         return canInput();
     }
 
     @Override
-    public boolean canOutput(Dir direction) {
+    public boolean canOutput(Direction direction) {
         return canOutput();
     }
 

@@ -7,7 +7,6 @@ import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;

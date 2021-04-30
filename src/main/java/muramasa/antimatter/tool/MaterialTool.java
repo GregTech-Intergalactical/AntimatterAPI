@@ -1,24 +1,7 @@
 package muramasa.antimatter.tool;
 
-import static muramasa.antimatter.Data.CROWBAR;
-import static muramasa.antimatter.Data.ELECTRIC_SCREWDRIVER;
-import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
-import static muramasa.antimatter.Data.SCREWDRIVER;
-import static muramasa.antimatter.Data.WIRE_CUTTER;
-import static muramasa.antimatter.Data.WRENCH;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.function.Consumer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -37,11 +20,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.item.ToolItem;
-import net.minecraft.item.UseAction;
+import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResultType;
@@ -53,6 +32,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+import java.util.function.Consumer;
+
+import static muramasa.antimatter.Data.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault

@@ -14,7 +14,6 @@ import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTConsumer;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;
-import tesseract.util.Dir;
 
 import java.util.function.Supplier;
 
@@ -104,12 +103,12 @@ public class EnergyTileWrapper implements IGTNode {
     }
 
     @Override
-    public boolean canInput(Dir dir) {
+    public boolean canInput(Direction dir) {
         return canInput();
     }
 
     @Override
-    public boolean canOutput(Dir direction) {
+    public boolean canOutput(Direction direction) {
         return false;
     }
 

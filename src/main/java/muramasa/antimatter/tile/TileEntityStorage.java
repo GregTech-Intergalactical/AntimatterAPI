@@ -8,7 +8,6 @@ import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.gt.IEnergyHandler;
-import tesseract.util.Dir;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ public abstract class TileEntityStorage extends TileEntityMachine {
         });
         this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityStorage>(this, 0L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
             @Override
-            public boolean canOutput(Dir direction) {
+            public boolean canOutput(Direction direction) {
                 Direction dir = tile.getOutputFacing();
                 return dir != null && dir.getIndex() == direction.getIndex();
             }

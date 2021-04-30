@@ -1,27 +1,5 @@
 package muramasa.antimatter.datagen.providers;
 
-import static muramasa.antimatter.Data.CRUSHED;
-import static muramasa.antimatter.Data.CRUSHED_CENTRIFUGED;
-import static muramasa.antimatter.Data.CRUSHED_PURIFIED;
-import static muramasa.antimatter.Data.ORE;
-import static muramasa.antimatter.Data.ROCK;
-import static muramasa.antimatter.util.Utils.getLocalizeStoneType;
-import static muramasa.antimatter.util.Utils.getLocalizedMaterialType;
-import static muramasa.antimatter.util.Utils.getLocalizedType;
-import static muramasa.antimatter.util.Utils.lowerUnderscoreToUpperSpaced;
-import static muramasa.antimatter.util.Utils.lowerUnderscoreToUpperSpacedRotated;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Supplier;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -31,11 +9,7 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.item.DebugScannerItem;
-import muramasa.antimatter.item.ItemBasic;
-import muramasa.antimatter.item.ItemBattery;
-import muramasa.antimatter.item.ItemCover;
-import muramasa.antimatter.item.ItemFluidCell;
+import muramasa.antimatter.item.*;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
@@ -61,6 +35,19 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraftforge.api.distmarker.Dist;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Supplier;
+
+import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.util.Utils.*;
 
 public class AntimatterLanguageProvider implements IDataProvider, IAntimatterProvider {
 

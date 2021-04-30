@@ -3,7 +3,6 @@ package muramasa.antimatter.block;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

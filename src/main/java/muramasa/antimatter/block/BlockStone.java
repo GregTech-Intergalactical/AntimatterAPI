@@ -2,9 +2,7 @@ package muramasa.antimatter.block;
 
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 
 public class BlockStone extends BlockBasic {
 

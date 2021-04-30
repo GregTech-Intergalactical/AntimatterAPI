@@ -1,15 +1,6 @@
 package muramasa.antimatter.datagen.providers;
 
-import static muramasa.antimatter.util.TagUtils.getBlockTag;
-import static muramasa.antimatter.util.TagUtils.getForgeBlockTag;
-import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
-import static muramasa.antimatter.util.Utils.getConventionalStoneType;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.JsonObject;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -23,7 +14,6 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.tags.ITag;
@@ -31,6 +21,14 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static muramasa.antimatter.util.TagUtils.getBlockTag;
+import static muramasa.antimatter.util.TagUtils.getForgeBlockTag;
+import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
+import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
 public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAntimatterProvider {
 

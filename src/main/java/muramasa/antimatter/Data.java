@@ -16,7 +16,6 @@ import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeItemBlock;
 import muramasa.antimatter.pipe.PipeSize;
