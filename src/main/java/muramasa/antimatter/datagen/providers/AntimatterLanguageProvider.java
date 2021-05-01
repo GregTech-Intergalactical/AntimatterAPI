@@ -1,5 +1,28 @@
 package muramasa.antimatter.datagen.providers;
 
+import static muramasa.antimatter.Data.CRUSHED;
+import static muramasa.antimatter.Data.CRUSHED_CENTRIFUGED;
+import static muramasa.antimatter.Data.CRUSHED_PURIFIED;
+import static muramasa.antimatter.Data.ORE;
+import static muramasa.antimatter.Data.ROCK;
+import static muramasa.antimatter.util.Utils.getLocalizeStoneType;
+import static muramasa.antimatter.util.Utils.getLocalizedMaterialType;
+import static muramasa.antimatter.util.Utils.getLocalizedType;
+import static muramasa.antimatter.util.Utils.lowerUnderscoreToUpperSpaced;
+import static muramasa.antimatter.util.Utils.lowerUnderscoreToUpperSpacedRotated;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Supplier;
+
+import muramasa.antimatter.pipe.types.Cable;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -138,6 +161,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             String str = s.getSize().getId();
             //hmmmm
             if (str.equals("vtiny")) str = "very tiny";
+            if (s.getType() instanceof Cable){
+                str = s.getSize().getCableThickness() + "x";
+            }
             String strd = s.getType().getId();
             if (s.getType() instanceof FluidPipe || s.getType() instanceof ItemPipe) {
                 strd = s.getType().getId() + " Pipe";
