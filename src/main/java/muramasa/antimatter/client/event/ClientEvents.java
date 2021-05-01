@@ -1,25 +1,19 @@
 package muramasa.antimatter.client.event;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.MatrixApplyingVertexBuilder;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
@@ -56,6 +50,9 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+
+import java.util.Collection;
+import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
 public class ClientEvents {

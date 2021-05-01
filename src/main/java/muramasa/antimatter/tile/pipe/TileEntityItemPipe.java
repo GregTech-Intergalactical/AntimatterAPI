@@ -13,7 +13,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -79,7 +78,7 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
     }
 }

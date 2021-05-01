@@ -1,8 +1,5 @@
 package muramasa.antimatter.tool.behaviour;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
@@ -15,6 +12,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.event.DrawHighlightEvent;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterTool> {
 

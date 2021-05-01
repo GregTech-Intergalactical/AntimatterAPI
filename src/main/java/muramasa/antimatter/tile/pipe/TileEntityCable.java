@@ -12,7 +12,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IGTCable;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -88,7 +87,7 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
     }
 }

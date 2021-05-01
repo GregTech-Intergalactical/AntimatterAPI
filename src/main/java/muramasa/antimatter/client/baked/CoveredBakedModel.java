@@ -2,7 +2,6 @@ package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
@@ -12,7 +11,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;

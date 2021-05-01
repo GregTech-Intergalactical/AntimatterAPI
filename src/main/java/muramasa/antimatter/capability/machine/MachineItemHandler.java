@@ -1,27 +1,9 @@
 package muramasa.antimatter.capability.machine;
 
-import static muramasa.antimatter.machine.MachineFlag.CELL;
-import static muramasa.antimatter.machine.MachineFlag.CELL_INPUT;
-import static muramasa.antimatter.machine.MachineFlag.CELL_OUTPUT;
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
-import static muramasa.antimatter.machine.MachineFlag.GUI;
-import static muramasa.antimatter.machine.MachineFlag.ITEM;
-import static muramasa.antimatter.machine.MachineFlag.ITEM_INPUT;
-import static muramasa.antimatter.machine.MachineFlag.ITEM_OUTPUT;
-
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.item.ITrackedHandler;
+import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -42,6 +24,12 @@ import tesseract.Tesseract;
 import tesseract.api.IRefreshable;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
+
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class MachineItemHandler<T extends TileEntityMachine> implements IRefreshable, IMachineHandler, INBTSerializable<CompoundNBT> {
 

@@ -1,12 +1,6 @@
 package muramasa.antimatter.datagen.providers;
 
-import static muramasa.antimatter.util.TagUtils.getForgeFluidTag;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.gson.JsonObject;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -14,13 +8,16 @@ import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static muramasa.antimatter.util.TagUtils.getForgeFluidTag;
 
 public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implements IAntimatterProvider {
 

@@ -1,13 +1,5 @@
 package muramasa.antimatter.pipe;
 
-import static com.google.common.collect.ImmutableMap.of;
-import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
-
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -52,6 +44,13 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+
+import static com.google.common.collect.ImmutableMap.of;
+import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
 public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable {
 

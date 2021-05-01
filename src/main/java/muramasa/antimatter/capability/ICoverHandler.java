@@ -12,7 +12,6 @@ import net.minecraft.util.Hand;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 import javax.annotation.Nullable;
-import java.util.function.Function;
 
 public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializable<CompoundNBT> {
 
