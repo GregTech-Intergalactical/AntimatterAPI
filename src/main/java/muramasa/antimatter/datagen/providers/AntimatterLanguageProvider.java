@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import muramasa.antimatter.pipe.types.Cable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
@@ -151,6 +152,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             String str = s.getSize().getId();
             //hmmmm
             if (str.equals("vtiny")) str = "very tiny";
+            if (s.getType() instanceof Cable){
+                str = s.getSize().getCableThickness() + "x";
+            }
             String strd = s.getType().getId();
             if (s.getType() instanceof FluidPipe || s.getType() instanceof ItemPipe) {
                 strd = s.getType().getId() + " Pipe";
