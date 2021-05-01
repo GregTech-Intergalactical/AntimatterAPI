@@ -1044,7 +1044,9 @@ public class Utils {
     public static boolean doesStackHaveToolTypes(ItemStack stack, ToolType... toolTypes) {
         if (!stack.isEmpty()) {
             for (ToolType toolType : toolTypes) {
-                return stack.getToolTypes().contains(toolType);
+                if (stack.getToolTypes().contains(toolType)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1071,7 +1073,8 @@ public class Utils {
     }
 
     @Nullable
-    @Deprecated // Ready to use the methods above instead
+    //@Deprecated // Ready to use the methods above instead
+    //Not deprecated so you don't have to call methods multiple times.
     public static AntimatterToolType getToolType(PlayerEntity player) {
         ItemStack stack = player.getHeldItemMainhand();
         if (!stack.isEmpty()) {

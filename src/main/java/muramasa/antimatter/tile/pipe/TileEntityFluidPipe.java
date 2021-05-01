@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
@@ -61,17 +62,6 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
         super.onRemove();
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (side == null) return LazyOptional.empty();
-        if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
-        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
-            return SIDE_CAPS[side.getIndex()].cast();
-        }
-        return LazyOptional.empty();
-    }
-
     @Override
     public boolean isGasProof() {
         return ((FluidPipe<?>)getPipeType()).isGasProof();
@@ -96,4 +86,22 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
     public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
     }
+
+    @Override
+    protected Capability<?> getCapability() {
+        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+    }
+
+    public static class TileEntityCoveredFluidPipe extends TileEntityFluidPipe implements ITickablePipe {
+
+        public TileEntityCoveredFluidPipe(PipeType<?> type) {
+            super(type);
+        }
+
+        @Override
+        public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
+            return this.coverHandler;
+        }
+    }
+
 }

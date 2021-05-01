@@ -5,6 +5,7 @@ import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.pipe.BlockFluidPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
+import muramasa.antimatter.tile.pipe.TileEntityFluidPipe.TileEntityCoveredFluidPipe;
 import net.minecraft.block.Block;
 
 import java.util.Set;
@@ -17,7 +18,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     protected int[] caps, pressures;
 
     public FluidPipe(String domain, Material material, int maxTemp, boolean gasProof) {
-        super(domain, material, TileEntityFluidPipe::new);
+        super(domain, material, TileEntityFluidPipe::new, TileEntityCoveredFluidPipe::new);
         this.maxTemp = maxTemp;
         this.gasProof = gasProof;
         material.flags(MaterialTag.FLUIDPIPE);

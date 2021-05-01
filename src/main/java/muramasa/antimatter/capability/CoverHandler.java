@@ -7,6 +7,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.dynamic.DynamicTexturer;
+import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -20,13 +22,17 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.api.distmarker.Dist;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static muramasa.antimatter.Data.*;
@@ -39,6 +45,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     protected final Object2ObjectMap<Direction, CoverStack<T>> covers = new Object2ObjectOpenHashMap<>(6);
     protected final Object2ObjectMap<Class<?>, Set<Direction>> reverseLookup = new Object2ObjectOpenHashMap<>(6);
     protected List<String> validCovers = new ObjectArrayList<>();
+    public Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
     public CoverHandler(T tile, ICover... validCovers) {
         this.tile = tile;
@@ -48,6 +55,12 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
             covers.put(d, new CoverStack<>(Data.COVERNONE, tile, d));
             buildLookup(COVERNONE, COVERNONE, d);
         });
+        coverTexturer = new HashMap<>(6);//LazyHolder.of(() -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public DynamicTexturer<ICover, ICover.DynamicKey> getTexturer(Direction dir) {
+        return coverTexturer.computeIfAbsent(dir, d -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
     }
 
     @Override
@@ -156,7 +169,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     protected boolean canRemoveCover(ICover cover) {
-        return cover.isEqual(COVEROUTPUT);
+        return true;
     }
 
     @Override
@@ -225,5 +238,16 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
             sync();
         }
         return ok;
+    }
+
+    /**
+     * Checks whether a cover would block capability on this side.
+     * @param side side to check
+     * @return a boolean whether or not capability was blocked.
+     */
+    public <U> boolean blocksCapability(Capability<U> capability, Direction side) {
+        CoverStack<?> stack = get(side);
+        if (stack.isEmpty()) return false;
+        return stack.getCover().blocksCapability(stack, capability, side);
     }
 }

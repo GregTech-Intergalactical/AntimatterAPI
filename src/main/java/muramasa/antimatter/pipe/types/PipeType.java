@@ -26,16 +26,20 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     protected Material material;
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
     protected TileEntityType<?> tileType;
+    protected TileEntityType<?> coveredType;
     protected Map<PipeSize, Block> registeredBlocks;
 
     private final Function<PipeType<?>, TileEntityPipe> tileFunc;
+    private final Function<PipeType<?>, TileEntityPipe> coveredFunc;
 
-    public PipeType(String domain, Material material, Function<PipeType<?>, TileEntityPipe> func) {
+
+    public PipeType(String domain, Material material, Function<PipeType<?>, TileEntityPipe> func,  Function<PipeType<?>, TileEntityPipe> covered) {
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);
         AntimatterAPI.register(getClass(), getId() + "_" + material.getId(), this);
         this.tileFunc = func;
+        this.coveredFunc = covered;
     }
 
     @Override
@@ -44,6 +48,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         Set<Block> blocks = getBlocks();
         registeredBlocks = blocks.stream().map(t ->new Pair<>(((BlockPipe<?>)t).getSize(), t.getBlock())).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
         tileType = new TileEntityType<>(() -> tileFunc.apply(this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId());
+        coveredType = new TileEntityType<>(() -> coveredFunc.apply(this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId() + "_covered");
         AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId(), getTileType());
     }
 
@@ -76,6 +81,10 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
 
     public TileEntityType<?> getTileType() {
         return tileType;
+    }
+
+    public TileEntityType<?> getCoveredType() {
+        return coveredType;
     }
 
     public T sizes(PipeSize... sizes) {
