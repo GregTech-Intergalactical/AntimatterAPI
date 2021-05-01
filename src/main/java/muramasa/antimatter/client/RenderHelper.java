@@ -1,12 +1,8 @@
 package muramasa.antimatter.client;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-
 import muramasa.antimatter.Ref;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -33,6 +29,9 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.graph.Connectivity;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class RenderHelper {
 

@@ -11,7 +11,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.item.IItemNode;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,7 +47,7 @@ public class ItemTileWrapper implements IItemNode {
     }
 
     @Override
-    public int getPriority(Dir direction) {
+    public int getPriority(Direction direction) {
         return 0;
     }
 
@@ -68,12 +67,12 @@ public class ItemTileWrapper implements IItemNode {
     }
 
     @Override
-    public boolean canInput(Dir direction) {
+    public boolean canInput(Direction direction) {
         return handler != null;
     }
 
     @Override
-    public boolean canOutput(Dir direction) {
+    public boolean canOutput(Direction direction) {
         return true;
     }
 

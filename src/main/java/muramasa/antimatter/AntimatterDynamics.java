@@ -1,15 +1,6 @@
 package muramasa.antimatter;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import com.google.common.collect.Sets;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -29,6 +20,14 @@ import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();

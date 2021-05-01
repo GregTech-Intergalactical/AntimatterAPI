@@ -15,7 +15,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -33,19 +32,19 @@ public class TileEntityHatch extends TileEntityMachine implements IComponent {
         this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MachineEnergyHandler<TileEntityHatch>(this, 0,getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
                 type.getOutputCover() == COVERENERGY ? 2 : 0,type.getOutputCover() == COVERDYNAMO ? 1 : 0){
             @Override
-            public boolean canInput(Dir direction) {
+            public boolean canInput(Direction direction) {
                 Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
                 if (out == null) return false;
                 ICover o = tile.getMachineType().getOutputCover();
-                return o.equals(COVERENERGY) && direction.getIndex() == out.getIndex();
+                return o.equals(COVERENERGY) && direction == out;
             }
 
             @Override
-            public boolean canOutput(Dir direction) {
+            public boolean canOutput(Direction direction) {
                 Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
                 if (out == null) return false;
                 ICover o = tile.getMachineType().getOutputCover();
-                return o.equals(COVERDYNAMO) && direction.getIndex() == out.getIndex();
+                return o.equals(COVERDYNAMO) && direction == out;
             }
         }) : LazyOptional.empty();
 }

@@ -41,9 +41,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.MaterialTag.GRINDABLE;
-import static muramasa.antimatter.material.MaterialTag.HANDLE;
-import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
+import static muramasa.antimatter.material.MaterialTag.*;
 import static muramasa.antimatter.util.TagUtils.getForgeItemTag;
 import static muramasa.antimatter.util.TagUtils.nc;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;

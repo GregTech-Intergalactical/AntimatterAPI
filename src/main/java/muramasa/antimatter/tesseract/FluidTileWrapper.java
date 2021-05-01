@@ -11,7 +11,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
 import tesseract.api.fluid.IFluidNode;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -48,7 +47,7 @@ public class FluidTileWrapper implements IFluidNode {
     }
 
     @Override
-    public int getPriority(Dir direction) {
+    public int getPriority(Direction direction) {
         return (!(handler instanceof IFluidNode) ? 0 : ((IFluidNode)handler).getPriority(direction));
     }
 
@@ -63,17 +62,17 @@ public class FluidTileWrapper implements IFluidNode {
     }
 
     @Override
-    public boolean canInput(Dir direction) {
+    public boolean canInput(Direction direction) {
         return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput(direction));
     }
 
     @Override
-    public boolean canOutput(Dir direction) {
+    public boolean canOutput(Direction direction) {
         return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canOutput(direction));
     }
 
     @Override
-    public boolean canInput(FluidStack fluid, Dir direction) {
+    public boolean canInput(FluidStack fluid, Direction direction) {
         return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput(fluid, direction));
     }
 

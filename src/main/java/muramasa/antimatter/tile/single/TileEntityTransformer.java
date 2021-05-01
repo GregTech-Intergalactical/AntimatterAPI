@@ -8,13 +8,13 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.util.Dir;
 
 import java.util.List;
 import java.util.function.IntToLongFunction;
@@ -36,12 +36,12 @@ public class TileEntityTransformer extends TileEntityMachine {
         this.capFunc = capFunc;
         this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, 0L, capFunc.applyAsLong(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4)  {
             @Override
-            public boolean canOutput(Dir direction) {
+            public boolean canOutput(Direction direction) {
                 return isDefaultMachineState() == (tile.getFacing().getIndex() != direction.getIndex());
             }
 
             @Override
-            public boolean canInput(Dir direction) {
+            public boolean canInput(Direction direction) {
                 return !canOutput(direction);
             }
         });

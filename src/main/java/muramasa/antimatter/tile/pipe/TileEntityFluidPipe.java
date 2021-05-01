@@ -13,7 +13,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.IFluidPipe;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -94,7 +93,7 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
     }
 
     @Override
-    public boolean connects(Dir direction) {
+    public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
     }
 }

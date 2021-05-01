@@ -20,7 +20,6 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.Tesseract;
 import tesseract.api.fluid.IFluidNode;
-import tesseract.util.Dir;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -412,7 +411,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     @Override
-    public int getPriority(Dir direction) {
+    public int getPriority(Direction direction) {
         return priority[direction.getIndex()];
     }
 
@@ -427,14 +426,14 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     @Override
-    public boolean canOutput(Dir direction) {
+    public boolean canOutput(Direction direction) {
         Direction dir = tile.getOutputFacing();
         return dir != null && tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
     // TODO needed? Weird semantics
     @Override
-    public boolean canInput(FluidStack fluid, Dir direction) {
+    public boolean canInput(FluidStack fluid, Direction direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         Direction dir = tile.getOutputFacing();
         if (dir != null && dir.getIndex() == direction.getIndex()) return false;
@@ -442,7 +441,7 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
     }
 
     @Override
-    public boolean canInput(Dir direction) {
+    public boolean canInput(Direction direction) {
         if (tile.getFacing().getIndex() == direction.getIndex()) return false;
         Direction dir = tile.getOutputFacing();
         if (dir != null && dir.getIndex() == direction.getIndex()) return false;

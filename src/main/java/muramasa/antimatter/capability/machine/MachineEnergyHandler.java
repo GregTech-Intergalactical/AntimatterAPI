@@ -15,7 +15,6 @@ import net.minecraft.world.Explosion;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
-import tesseract.util.Dir;
 
 import java.util.List;
 
@@ -77,7 +76,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         super.onUpdate();
         cachedItems.forEach(t -> t.getState().onTick());
         for (Direction dir : Ref.DIRS) {
-            if (canOutput(Dir.VALUES[dir.getIndex()])) {
+            if (canOutput(Ref.DIRS[dir.getIndex()])) {
                 if (!getState().extract(true, 1, 0)) {
                     break;
                 }
@@ -96,8 +95,8 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     }
 
     @Override
-    public boolean canInput(Dir direction) {
-        return super.canInput(direction) && tile.getFacing().getIndex() != direction.getIndex();
+    public boolean canInput(Direction direction) {
+        return super.canInput(direction) && tile.getFacing() != direction;
     }
 
     @Override

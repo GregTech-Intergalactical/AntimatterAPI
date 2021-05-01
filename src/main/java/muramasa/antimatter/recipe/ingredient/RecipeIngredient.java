@@ -2,7 +2,6 @@ package muramasa.antimatter.recipe.ingredient;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

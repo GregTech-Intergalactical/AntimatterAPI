@@ -14,11 +14,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.UseAction;
+import net.minecraft.item.*;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
@@ -36,9 +32,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static muramasa.antimatter.Data.CROWBAR_BUILDER;
-import static muramasa.antimatter.Data.TOOL_BUILDER;
 
 public class AntimatterToolType implements IAntimatterObject {
 

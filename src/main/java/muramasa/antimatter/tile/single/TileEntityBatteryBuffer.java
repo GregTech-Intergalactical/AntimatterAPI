@@ -7,7 +7,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityStorage;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.util.Dir;
+
 
 public class TileEntityBatteryBuffer extends TileEntityStorage {
 
@@ -15,15 +15,15 @@ public class TileEntityBatteryBuffer extends TileEntityStorage {
         super(type);
         this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, 0L, 0L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0, 0) {
             @Override
-            public boolean canOutput(Dir direction) {
+            public boolean canOutput(Direction direction) {
                 Direction dir = tile.coverHandler.map(ch -> ch.lookupSingle(CoverDynamo.class)).orElse(null);
                 return super.canOutput(direction) && (dir != null && dir.getIndex() == direction.getIndex());
             }
 
             @Override
-            public boolean canInput(Dir direction) {
+            public boolean canInput(Direction direction) {
                 Direction dir = tile.coverHandler.map(ch -> ch.lookupSingle(CoverDynamo.class)).orElse(null);
-                return super.canInput(direction) && (dir != null && dir.getIndex() != direction.getIndex());
+                return super.canInput(direction) && (dir != null && dir != direction);
             }
         });
 
