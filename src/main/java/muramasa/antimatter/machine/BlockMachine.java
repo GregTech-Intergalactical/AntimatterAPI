@@ -157,7 +157,30 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> {
                         FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true);
                         if (res.isSuccess() && !player.isCreative()) {
-                            player.setHeldItem(hand, res.result);
+                            boolean single = stack.getCount() == 1;
+                            stack.shrink(1);
+                            if (single){
+                                player.setHeldItem(hand, res.result);
+                            } else {
+                                if (!player.addItemStackToInventory(res.result)){
+                                    player.dropItem(res.result, true);
+                                }
+                            }
+
+                        }
+                        if (!res.isSuccess()){
+                            res = FluidUtil.tryFillContainer(stack, fh, 1000, player, true);
+                            if (res.isSuccess() && !player.isCreative()) {
+                                boolean single = stack.getCount() == 1;
+                                stack.shrink(1);
+                                if (single){
+                                    player.setHeldItem(hand, res.result);
+                                } else {
+                                    if (!player.addItemStackToInventory(res.result)){
+                                        player.dropItem(res.result, true);
+                                    }
+                                }
+                            }
                         }
                         return res.isSuccess();
                     }).orElse(false)) {
