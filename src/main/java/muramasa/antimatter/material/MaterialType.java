@@ -32,7 +32,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         this.visible = visible;
         this.unitValue = unitValue;
         this.layers = layers;
-        this.tagMap.put(this, Utils.getForgeItemTag(Utils.getConventionalMaterialType(this)));
+        this.tagMap.put(this, TagUtils.getForgeItemTag(Utils.getConventionalMaterialType(this)));
         register(MaterialType.class, getId());
     }
 
