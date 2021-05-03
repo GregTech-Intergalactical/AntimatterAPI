@@ -28,6 +28,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
@@ -89,9 +90,14 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
 
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        //If we are replacing with the same block, remove tile since we are replacing with a covered/uncovered tile.
         if (state.hasTileEntity() && state.isIn(newState.getBlock())) {
             worldIn.removeTileEntity(pos);
          } else {
+            TileEntity tile = worldIn.getTileEntity(pos);
+            if (tile == null) return;
+            TileEntityPipe pipe = (TileEntityPipe) tile;
+            pipe.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), stack)));
             super.onReplaced(state, worldIn, pos, newState, isMoving);
          }
     }
@@ -292,7 +298,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
             if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType())) {
                 return VoxelShapes.fullCube();
             }
-            BlockPipe pipe = null;
+            BlockPipe<?> pipe = null;
             if (player.getHeldItemMainhand().getItem() instanceof PipeItemBlock) {
                 pipe = ((PipeItemBlock)player.getHeldItemMainhand().getItem()).getPipe();
             }

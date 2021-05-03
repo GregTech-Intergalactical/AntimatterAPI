@@ -77,6 +77,7 @@ public abstract class TileEntityPipe extends TileEntityBase {
     }
 
     public void onInvalidate(Direction side) {
+        if (!Connectivity.has(interaction, side.getIndex())) return;
         clearInteract(side);
         TileEntity tile = this.world.getTileEntity(pos.offset(side));
         if (tile == null) return;
@@ -204,7 +205,7 @@ public abstract class TileEntityPipe extends TileEntityBase {
     }
 
     public ICover[] getValidCovers() {
-        return AntimatterAPI.all(ICover.class).toArray(new ICover[0]);
+        return AntimatterAPI.all(ICover.class).stream().filter(t -> !t.blocksCapability(new CoverStack<>(t), getCapability(), null)).toArray(ICover[]::new);
     }
 
     public CoverStack<?>[] getAllCovers() {

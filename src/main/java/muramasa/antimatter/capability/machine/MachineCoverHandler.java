@@ -87,13 +87,4 @@ public class MachineCoverHandler<T extends TileEntityMachine> extends CoverHandl
     public Direction getTileFacing() {
         return getTile().getFacing();
     }
-
-    /**
-     * Returns a list of item stacks to be dropped upon machine removal.
-     * @return list.
-     */
-    public List<ItemStack> getDrops() {
-        return this.covers.values().stream().filter(t -> !t.getCover().getDroppedStack().isEmpty()).map(t ->
-            t.getCover().getDroppedStack()).collect(Collectors.toList());
-    }
 }

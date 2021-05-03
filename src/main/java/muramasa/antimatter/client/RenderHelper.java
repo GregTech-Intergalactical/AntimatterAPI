@@ -1,9 +1,11 @@
 package muramasa.antimatter.client;
 
+import com.google.common.collect.ImmutableSet;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.pipe.PipeSize;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -20,6 +22,7 @@ import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Matrix4f;
@@ -30,6 +33,8 @@ import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.graph.Connectivity;
 
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -141,6 +146,41 @@ public class RenderHelper {
         for (int i = 0; i < 4; i++) {
             vertices[offset + size * i] = convertRGB2ABGR(rgb);
         }
+    }
+    //Returns the quad that would represent the quad at the front of the side, to avoid cover z-fighting.
+    //Very complicated method but pretty straight forward nonetheless.
+    public static int findPipeFront(PipeSize size, List<BakedQuad> quads, Direction side) {
+        for (int i = 0; i < quads.size(); i++) {
+            BakedQuad quad = quads.get(i);
+            //Only look at the relevant side.
+            if (quad.getFace() != side) continue;
+            int[] vertices = quad.getVertexData();
+            //if not two vertices then skip. (All sides of relevance have just two vertices.)
+            if (vertices.length != DefaultVertexFormats.BLOCK.getIntegerSize()*4) continue;
+            float p1 = Float.intBitsToFloat(vertices[0]);
+            float p2 = Float.intBitsToFloat(vertices[1]);
+            float p3 = Float.intBitsToFloat(vertices[2]);
+            int boff = DefaultVertexFormats.BLOCK.getIntegerSize()*2;
+            float p4 = Float.intBitsToFloat(vertices[boff]);
+            float p5 = Float.intBitsToFloat(vertices[1 + boff]);
+            float p6 = Float.intBitsToFloat(vertices[2 + boff]);
+            float offset = 0.0625f * size.ordinal();
+            float a1 = 0.4375f - offset;
+            float a2 = 0.5625f + offset;
+            //Just check that both edges are present.
+            if (p1 == a1 || p2 == a1 || p3 == a1 || p4 == a1 || p5 == a1 || p6 == a1) {
+                if (p1 == a2 || p2 == a2 || p3 == a2 || p4 == a2 || p5 == a2 || p6 == a2) {
+                    //Hate floating point math. But this is only way to actually check if integer.
+                    float d = p1 + p2 + p3 + p4 + p5 + p6;
+                    double ans = Math.abs(d - Math.floor(d));
+                    double anss = Math.abs(d - Math.ceil(d));
+                    if (ans < 0.01 || anss < 0.01) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return -1;
     }
 
     public static int convertRGB2ABGR(int colour) {

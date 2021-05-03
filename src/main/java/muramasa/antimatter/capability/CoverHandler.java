@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.*;
 
@@ -249,5 +250,14 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         CoverStack<?> stack = get(side);
         if (stack.isEmpty()) return false;
         return stack.getCover().blocksCapability(stack, capability, side);
+    }
+
+    /**
+     * Returns a list of item stacks to be dropped upon machine removal.
+     * @return list.
+     */
+    public List<ItemStack> getDrops() {
+        return this.covers.values().stream().filter(t -> !t.getCover().getDroppedStack().isEmpty()).map(t ->
+            t.getCover().getDroppedStack()).collect(Collectors.toList());
     }
 }
