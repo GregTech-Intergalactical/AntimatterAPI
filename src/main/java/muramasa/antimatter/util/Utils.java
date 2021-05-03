@@ -383,7 +383,11 @@ public class Utils {
             FluidStack toInsert = FluidStack.EMPTY;
             for (int j = 0; j < from.getTanks(); j++) {
                 if (cap > 0) {
-                    FluidStack fluid = from.getFluidInTank(j).copy();
+                    FluidStack fluid = from.getFluidInTank(j);
+                    if (fluid.isEmpty()) {
+                        continue;
+                    }
+                    fluid = fluid.copy();
                     int toDrain = Math.min(cap, fluid.getAmount());
                     fluid.setAmount(toDrain);
                     toInsert = from.drain(fluid, SIMULATE);
@@ -1044,7 +1048,9 @@ public class Utils {
     public static boolean doesStackHaveToolTypes(ItemStack stack, ToolType... toolTypes) {
         if (!stack.isEmpty()) {
             for (ToolType toolType : toolTypes) {
-                return stack.getToolTypes().contains(toolType);
+                if (stack.getToolTypes().contains(toolType)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1071,7 +1077,8 @@ public class Utils {
     }
 
     @Nullable
-    @Deprecated // Ready to use the methods above instead
+    //@Deprecated // Ready to use the methods above instead
+    //Not deprecated so you don't have to call methods multiple times.
     public static AntimatterToolType getToolType(PlayerEntity player) {
         ItemStack stack = player.getHeldItemMainhand();
         if (!stack.isEmpty()) {

@@ -402,9 +402,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         inputs.addAll(buildFromFluids(Arrays.asList(fluids)));
 
         //Find recipe.
-        long current = System.nanoTime();
+        //long current = System.nanoTime();
         Recipe r = recurseItemTreeFind(inputs, LOOKUP, canHandle);
-        Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() - current) / 1000));
+       // Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() - current) / 1000));
 
         return r;
     }

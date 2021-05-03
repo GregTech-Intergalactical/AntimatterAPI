@@ -15,7 +15,7 @@ public abstract class CoverMaterial extends BaseCover {
 
     @Override
     public <T> boolean blocksCapability(CoverStack<?> stack, Capability<T> cap, Direction side) {
-        return true;
+        return side != null;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package muramasa.antimatter.client.dynamic;
 
+import java.util.List;
+
 import com.mojang.datafixers.util.Either;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.client.ModelUtils;
@@ -19,9 +21,8 @@ public class DynamicTexturers {
      * Dynamic texture implementations.
      **/
     public static final DynamicTextureProvider<ICover, ICover.DynamicKey> COVER_DYNAMIC_TEXTURER = new DynamicTextureProvider<ICover, ICover.DynamicKey>(t -> {
-        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), Utils.getModelRotation(t.currentDir), t.source.getModel(t.currentDir, Direction.NORTH));/*new SimpleModelTransform(new TransformationMatrix(null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true), null, TransformationHelper.quatFromXYZ(dir.toVector3f(), true)))/Ä,c);*/
-
-        return t.source.transformQuads(b.getQuads(t.state, null, t.rand, t.data));
+        IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), Utils.getModelRotation(t.currentDir), t.source.getModel(t.currentDir, Direction.NORTH));
+        return t.source.transformQuads(t.state, b.getQuads(t.state, null, t.rand, t.data));
     }, t -> {
         t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
         t.source.setTextures((name, texture) -> t.model.textures.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));

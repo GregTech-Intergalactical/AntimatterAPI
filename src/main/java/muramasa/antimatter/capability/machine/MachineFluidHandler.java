@@ -427,24 +427,26 @@ public class MachineFluidHandler<T extends TileEntityMachine> implements IFluidN
 
     @Override
     public boolean canOutput(Direction direction) {
-        Direction dir = tile.getOutputFacing();
-        return dir != null && tile.getOutputFacing().getIndex() == direction.getIndex();
+        if (tile.getFacing().getIndex() == direction.getIndex() && !tile.getMachineType().allowsFrontCovers()) return false;
+        return true;
+     //   Direction dir = tile.getOutputFacing();
+      //  return dir != null && tile.getOutputFacing().getIndex() == direction.getIndex();
     }
 
     // TODO needed? Weird semantics
     @Override
     public boolean canInput(FluidStack fluid, Direction direction) {
-        if (tile.getFacing().getIndex() == direction.getIndex()) return false;
-        Direction dir = tile.getOutputFacing();
-        if (dir != null && dir.getIndex() == direction.getIndex()) return false;
+        //if (tile.getFacing().getIndex() == direction.getIndex()) return false;
+        //Direction dir = tile.getOutputFacing();
+        //if (dir != null && dir.getIndex() == direction.getIndex()) return false;
         return true;
     }
 
     @Override
     public boolean canInput(Direction direction) {
-        if (tile.getFacing().getIndex() == direction.getIndex()) return false;
-        Direction dir = tile.getOutputFacing();
-        if (dir != null && dir.getIndex() == direction.getIndex()) return false;
+        if (tile.getFacing().getIndex() == direction.getIndex() && !tile.getMachineType().allowsFrontCovers()) return false;
+        //Direction dir = tile.getOutputFacing();
+        //if (dir != null && dir.getIndex() == direction.getIndex()) return false;
         return true;
     }
 

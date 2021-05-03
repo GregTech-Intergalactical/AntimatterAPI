@@ -4,7 +4,9 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.texture.Texture;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -69,7 +71,7 @@ public class CoverPlate extends CoverMaterial {
     }
 
     @Override
-    public List<BakedQuad> transformQuads(List<BakedQuad> quads) {
+    public List<BakedQuad> transformQuads(BlockState state, List<BakedQuad> quads) {
         quads.forEach(t -> RenderHelper.colorQuad(t, material.getRGB()));
         return quads;
     }

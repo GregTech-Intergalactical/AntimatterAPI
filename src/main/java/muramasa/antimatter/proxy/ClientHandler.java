@@ -20,6 +20,7 @@ import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -85,6 +86,7 @@ public class ClientHandler implements IProxyHandler {
             AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockMultiMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+            AntimatterAPI.all(BlockPipe.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
                 RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());

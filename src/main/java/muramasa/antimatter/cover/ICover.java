@@ -1,16 +1,20 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -20,8 +24,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -79,7 +85,8 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
 
     GuiData getGui();
 
-    default <T> boolean blocksCapability(CoverStack<?> stack, Capability<T> cap, Direction side) {
+    //Stack is not guaranteed to contain a real tile and side is nullable.
+    default <T> boolean blocksCapability(CoverStack<?> stack, Capability<T> cap, @Nullable Direction side) {
         return false;
     }
 
@@ -105,7 +112,12 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
         return this == cover;
     }
 
-    default List<BakedQuad> transformQuads(List<BakedQuad> quads) {
+    default List<BakedQuad> transformQuads(BlockState state, List<BakedQuad> quads) {
+        if (state.getBlock() instanceof IColorHandler) {
+            quads.forEach(t -> {
+                RenderHelper.colorQuad(t, ((IColorHandler)state.getBlock()).getBlockColor(state, null, null, t.getTintIndex()));
+            });
+        }
         return quads;
     }
     /**

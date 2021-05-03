@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.EnergyTileWrapper;
@@ -60,17 +61,11 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
         return tile instanceof TileEntityCable || tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side).isPresent();
     }
 
-    @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (side == null) return LazyOptional.empty();
-        if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
-        if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY) {
-            return SIDE_CAPS[side.getIndex()].cast();
-        }
-        return LazyOptional.empty();
+    protected Capability<?> getCapability() {
+        return TesseractGTCapability.ENERGY_HANDLER_CAPABILITY;
     }
-
+    
     @Override
     public int getVoltage() {
         return ((Cable<?>)getPipeType()).getTier().getVoltage();
@@ -89,5 +84,17 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     @Override
     public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
+    }
+
+    public static class TileEntityCoveredCable extends TileEntityCable implements ITickablePipe {
+
+        public TileEntityCoveredCable(PipeType<?> type) {
+            super(type);
+        }
+
+        @Override
+        public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
+            return this.coverHandler;
+        }
     }
 }
