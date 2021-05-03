@@ -59,10 +59,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
@@ -70,7 +67,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
-import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
 public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
@@ -181,12 +177,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
      * @return  Fluid contained in the container
      */
     public FluidStack getFluid(ItemStack stack) {
-        CompoundNBT tags = stack.getTag();
-        if(tags != null) {
-            return FluidStack.loadFluidStackFromNBT(tags.getCompound(TAG_FLUID));
-        }
-
-        return FluidStack.EMPTY;
+        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(t -> t.getFluidInTank(0)).orElse(FluidStack.EMPTY);
     }
 
     @Override
