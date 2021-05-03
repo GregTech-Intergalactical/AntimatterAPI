@@ -33,6 +33,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -91,9 +92,10 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         //If we are replacing with the same block, remove tile since we are replacing with a covered/uncovered tile.
-        if (state.hasTileEntity() && state.isIn(newState.getBlock())) {
+        //Also make sure it is the covered data that actually changes.
+        if (state.hasTileEntity() && state.isIn(newState.getBlock()) && (state.equals(newState.with(COVERED, !newState.get(COVERED))))) {
             worldIn.removeTileEntity(pos);
-         } else {
+         } else if (!state.isIn(newState.getBlock())) {
             TileEntity tile = worldIn.getTileEntity(pos);
             if (tile == null) return;
             TileEntityPipe pipe = (TileEntityPipe) tile;

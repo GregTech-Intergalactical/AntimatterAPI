@@ -60,6 +60,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.system.CallbackI;
 
@@ -141,10 +142,11 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     public ItemStack fill(Fluid fluid, int amount) {
         ItemStack stack = new ItemStack(this);
-        stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).ifPresent(h -> {
+        IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(h -> {
             h.fill(new FluidStack(fluid, amount), EXECUTE);
-        });
-        return stack;
+            return h;
+        }).orElse(null);
+        return handler != null ? handler.getContainer() : stack;
     }
 
     public ItemStack fill(Fluid fluid) {
