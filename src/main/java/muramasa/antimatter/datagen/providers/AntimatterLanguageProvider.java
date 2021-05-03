@@ -126,7 +126,12 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         });
 
         AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
-            add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+            if (t.getType().isPowered()){
+                add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+            } else {
+                add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
+            }
+
         });
 
         AntimatterAPI.all(IAntimatterArmor.class, domain, t -> {

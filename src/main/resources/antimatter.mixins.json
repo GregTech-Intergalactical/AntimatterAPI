@@ -11,8 +11,8 @@
     "RecipeManagerMixin",
     "ServerBlockUpdateMixin",
     "SimpleReloadableResourceManagerMixin",
-    "BlockLootTablesMixin",
-    "BlockLootTablesAccessor"
+    "BlockLootTablesAccessor",
+    "LeavesBlockMixin"
   ],
   "minVersion": "0.8"
 }

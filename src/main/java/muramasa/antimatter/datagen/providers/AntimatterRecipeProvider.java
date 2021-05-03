@@ -237,6 +237,17 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                                     .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
                     , "PFP", "HPS", "RWR");
 
+            addToolRecipe(TOOL_BUILDER.get(BRANCH_CUTTER.getId()), consumer, Ref.ID, BRANCH_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
+                    "has_wrench", in, BRANCH_CUTTER.getToolStack(NULL, NULL), b ->
+                            b.put('P', PropertyIngredient.builder("primary").inverse().tool(SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R',PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag())
+                                    .put('S', SCREWDRIVER.getTag())
+                    , "PFP", "PSP", "R R");
+            addToolRecipe(TOOL_BUILDER.get(BRANCH_CUTTER.getId()), consumer, Ref.ID, BRANCH_CUTTER.getId() + "_recipe_screw", "antimatter_files",
+                    "has_wrench", in, BRANCH_CUTTER.getToolStack(NULL, NULL), b ->
+                            b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag())
+                                    .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
+                    , "PFP", "PSP", "RWR");
+
             Function<AntimatterToolType, ImmutableMap<Character, Object>> map1 = type -> of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(type, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(type, true).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag());
 
             Function<AntimatterToolType, ImmutableMap<Character, Object>> map2 = type -> of('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(type, true).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag());

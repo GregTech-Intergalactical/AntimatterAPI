@@ -152,6 +152,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public int getMaxDamage(ItemStack stack) {
+        if (getId().equals("branch_cutter")){
+            return Math.round((float)getTier(stack).getMaxUses() / 4);
+        }
         return getTier(stack).getMaxUses();
     }
 
