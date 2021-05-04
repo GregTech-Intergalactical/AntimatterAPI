@@ -5,7 +5,6 @@ import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.ItemTileWrapper;
-import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -13,12 +12,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.Tesseract;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 
 public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
@@ -90,5 +86,10 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
             return this.coverHandler;
         }
 
+    }
+
+    @Override
+    protected LazyOptional<?> buildCapForSide(Direction side) {
+        return LazyOptional.of(() -> new TesseractItemCapability(this, side));
     }
 }

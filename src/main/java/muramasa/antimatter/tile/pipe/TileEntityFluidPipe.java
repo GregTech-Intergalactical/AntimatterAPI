@@ -2,28 +2,36 @@ package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
+import muramasa.antimatter.capability.pipe.PipeFluidHandler;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
+import net.minecraft.block.BlockState;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractFluidCapability;
+import tesseract.api.fluid.FluidController;
+import tesseract.api.fluid.IFluidNode;
 import tesseract.api.fluid.IFluidPipe;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.List;
 
 public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
 
+    protected LazyOptional<PipeFluidHandler> fluidHandler;
+
     public TileEntityFluidPipe(PipeType<?> type) {
         super(type);
-        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(t -> LazyOptional.of(() -> new TesseractFluidCapability(this, t))).toArray(LazyOptional[]::new);
+        if (fluidHandler == null) {
+            fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0)) : LazyOptional.empty();
+        } 
     }
 
     @Override
@@ -47,6 +55,21 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
         super.refreshConnection();
     }
 
+    
+
+    @Override
+    public void read(BlockState state, CompoundNBT tag) {
+        super.read(state, tag);
+        if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) fluidHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+    }
+
+    @Override
+    public CompoundNBT write(CompoundNBT tag) {
+        CompoundNBT nbt = super.write(tag);
+        fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serializeNBT()));
+        return nbt;
+    }
+
     @Override
     public void registerNode(BlockPos pos, Direction side, boolean remove) {
         if (!remove) {
@@ -59,6 +82,8 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
     @Override
     public void onRemove() {
         if (isServerSide()) Tesseract.FLUID.remove(getWorld(), pos.toLong());
+        fluidHandler.ifPresent(t -> t.onRemove());
+        fluidHandler.invalidate();
         super.onRemove();
     }
 
@@ -104,4 +129,33 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
         }
     }
 
+    @Override
+    public IFluidNode getNode() {
+        return this.fluidHandler.orElse(null);
+    }
+
+    @Override
+    public List<String> getInfo() {
+        List<String> list = super.getInfo();
+        fluidHandler.ifPresent(t -> {
+            for (int i = 0; i < t.getTanks(); i++) {
+                FluidStack stack = t.getFluidInTank(i);
+                list.add(stack.getFluid().getRegistryName().toString() + " " + stack.getAmount() + " mb.");
+            }
+        });
+        return list;
+    }
+
+
+    @Override
+    protected LazyOptional<?> buildCapForSide(Direction side) {
+        if (FluidController.SLOOSH) {
+            if (fluidHandler == null) {
+                fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0));
+            }
+        } else {
+            return LazyOptional.of(() -> new TesseractFluidCapability(this, side));
+        }
+        return fluidHandler;
+    }
 }

@@ -162,7 +162,9 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return state.get(COVERED) ? type.getCoveredType().create() : type.getTileType().create();
+        TileEntityPipe pipe = (TileEntityPipe)( state.get(COVERED) ? type.getCoveredType().create() : type.getTileType().create());
+        pipe.ofState(state);
+        return pipe;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.pipe;
 
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
@@ -14,15 +13,10 @@ import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IGTCable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Arrays;
-
 public class TileEntityCable extends TileEntityPipe implements IGTCable {
 
     public TileEntityCable(PipeType<?> type) {
         super(type);
-        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(t -> LazyOptional.of(() -> new TesseractGTCapability(this, t))).toArray(LazyOptional[]::new);
     }
 
     @Override
@@ -84,6 +78,12 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
     @Override
     public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
+    }
+
+
+    @Override
+    protected LazyOptional<?> buildCapForSide(Direction side) {
+        return LazyOptional.of(() -> new TesseractGTCapability(this, side));
     }
 
     public static class TileEntityCoveredCable extends TileEntityCable implements ITickablePipe {
