@@ -1,5 +1,6 @@
 package muramasa.antimatter.pipe;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -263,9 +264,9 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
                     return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                 }
             } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
-                CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(Data.COVER_EMPTY);
+                CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(Data.COVER_EMPTY);
                 if (!player.isCrouching()) {
-                    return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                    return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, Utils.getInteractSide(hit)) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                 } 
              }
             if (getHarvestTool(state) == type.getToolType()) {
@@ -299,7 +300,10 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         if (context.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) context.getEntity();
-            if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType())) {
+            if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType(), Data.SCREWDRIVER.getToolType())) {
+                return VoxelShapes.fullCube();
+            }
+            if (!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof IHaveCover){
                 return VoxelShapes.fullCube();
             }
             BlockPipe<?> pipe = null;

@@ -441,6 +441,7 @@ public class Data {
 
     private static void clientBehaviours() {
         WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        SCREWDRIVER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
         ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine ||  (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
         WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WIRE_CUTTER.getToolType(), BehaviourExtendedHighlight.PIPE_FUNCTION));
         CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
