@@ -4,7 +4,7 @@ import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Antimatter;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -53,6 +53,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private final B builder;
     private final Branch LOOKUP = new Branch();
     private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
+    private final Set<AbstractMapIngredient> ROOT = new ObjectOpenHashSet<>();
+    private final List<AbstractMapIngredient> ROOT_SPECIAL = new ObjectArrayList<>();
 
     @Nullable
     private GuiData GUI;
@@ -197,7 +199,14 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             Utils.onInvalidData("RECIPE COLLISION! (Map: " + this.id + ")");
             return;
         }
-        recurseItemTreeAdd(recipe, items, map, 0, 0);
+        if (recurseItemTreeAdd(recipe, items, map, 0, 0)) {
+            items.forEach(t -> t.forEach(ing -> {
+                if (!ing.isSpecial())
+                    ROOT.add(ing);
+                else
+                    ROOT_SPECIAL.add(ing);
+            }));
+        }
     }
 
     protected List<List<AbstractMapIngredient>> buildFromFluids(List<FluidStack> ingredients) {
@@ -206,9 +215,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         for (FluidStack t : ingredients) {
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(1 + t.getFluid().getTags().size());
             inner.add(new MapFluidIngredient(t));
-            //for (ResourceLocation rl : t.getFluid().getTags()) {
-            //    inner.add(new MapTagIngredient(rl));
-            //}
+            for (ResourceLocation rl : t.getFluid().getTags()) {
+                inner.add(new MapTagIngredient(rl));
+            }
             ret.add(inner);
         }
         return ret;
@@ -417,6 +426,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     public void reset() {
         this.LOOKUP.clear();
         this.RECIPES_TO_COMPILE.clear();
+        this.ROOT.clear();
+        this.ROOT_SPECIAL.clear();
     }
 
     public void compile(RecipeManager reg, ITagCollectionSupplier tags) {
@@ -443,6 +454,31 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                 if (r != null) compileRecipe(r, tags);
             });
         }
+    }
+
+    public boolean acceptsItem(ItemStack item) {
+        List<AbstractMapIngredient> list = new ObjectArrayList<>(1 + item.getItem().getTags().size());
+        MapItemIngredient i = new MapItemIngredient(item);
+        list.add(i);
+        item.getItem().getTags().forEach(t -> list.add(new MapTagIngredient(t)));
+        for (AbstractMapIngredient ing : list) {
+            if (ROOT.contains(ing)) return true;
+        }
+        for (AbstractMapIngredient ing : ROOT_SPECIAL) {
+            if (ing.equals(i)) return true;
+        }
+        return false;
+    }
+
+    public boolean acceptsFluid(FluidStack fluid) {
+        List<AbstractMapIngredient> list = new ObjectArrayList<>(1 + fluid.getFluid().getTags().size());
+        MapFluidIngredient i = new MapFluidIngredient(fluid);
+        list.add(i);
+        fluid.getFluid().getTags().forEach(t -> list.add(new MapTagIngredient(t)));
+        for (AbstractMapIngredient ing : list) {
+            if (ROOT.contains(ing)) return true;
+        }
+        return false;
     }
 
     /**

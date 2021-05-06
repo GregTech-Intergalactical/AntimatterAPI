@@ -13,9 +13,9 @@ import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IGTCable;
 
-public class TileEntityCable extends TileEntityPipe implements IGTCable {
+public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable {
 
-    public TileEntityCable(PipeType<?> type) {
+    public TileEntityCable(T type) {
         super(type);
     }
 
@@ -86,9 +86,9 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
         return LazyOptional.of(() -> new TesseractGTCapability(this, side));
     }
 
-    public static class TileEntityCoveredCable extends TileEntityCable implements ITickablePipe {
+    public static class TileEntityCoveredCable<T extends Cable<T>> extends TileEntityCable<T> implements ITickablePipe {
 
-        public TileEntityCoveredCable(PipeType<?> type) {
+        public TileEntityCoveredCable(T type) {
             super(type);
         }
 

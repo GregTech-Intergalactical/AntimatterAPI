@@ -81,7 +81,7 @@ public class AntimatterBakedModel<T> implements IDynamicBakedModel {
 
     @Override
     public boolean isBuiltInRenderer() {
-        return bakedModel == null && bakedModel.isBuiltInRenderer();
+        return bakedModel == null || bakedModel.isBuiltInRenderer();
     }
 
     @Override

@@ -1,11 +1,5 @@
 package muramasa.antimatter.capability;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -18,6 +12,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.api.fluid.IFluidNode;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.EnumMap;
 
 public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> implements IMachineHandler, IFluidNode {
     protected final T tile;

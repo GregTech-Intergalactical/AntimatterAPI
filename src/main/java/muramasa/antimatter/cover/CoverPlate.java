@@ -4,7 +4,6 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;

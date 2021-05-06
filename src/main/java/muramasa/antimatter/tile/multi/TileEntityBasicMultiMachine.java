@@ -6,6 +6,10 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.cover.CoverDynamo;
+import muramasa.antimatter.cover.CoverEnergy;
+import muramasa.antimatter.cover.CoverInput;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -18,12 +22,17 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.capability.TesseractGTCapability;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+
+import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
+import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
 public class TileEntityBasicMultiMachine extends TileEntityMachine implements IComponent {
@@ -72,6 +81,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
             if (StructureCache.add(world, pos, result.positions, maxShares())) {
                 this.result = result;
                 if (isServerSide()) {
+                    result.build(this, result);
                     if (onStructureFormed()) {
                         afterStructureFormed();
                         setMachineState(MachineState.IDLE);
@@ -100,6 +110,13 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
         return false;
     }
 
+    public <T> LazyOptional<T> getCapabilityFromFake(Capability<T> cap, BlockPos pos, Direction side, ICover coverPresent) {
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent() && (coverPresent instanceof CoverInput)) return itemHandler.resolve().orElse(null).getCapability().cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent() && (coverPresent instanceof CoverInput)) return fluidHandler.cast();
+        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent() && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return energyHandler.cast();
+        return LazyOptional.empty();
+    }
+
     @Override
     public boolean setFacing(Direction side) {
         boolean ok = super.setFacing(side);
@@ -115,6 +132,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
         StructureCache.remove(this.getWorld(), getPos());
         if (isServerSide()) {
             onStructureInvalidated();
+            result.remove(this, result);
             result = null;
             resetMachine();
             //Hard mode, remove recipe progress.

@@ -9,6 +9,7 @@ import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
 import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
+import muramasa.antimatter.client.model.ProxyModel;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -33,6 +34,7 @@ public class AntimatterModelManager {
     private static final Object2ObjectOpenHashMap<ResourceLocation, IBlockProviderOverride> BLOCK_OVERRIDES = new Object2ObjectOpenHashMap<>();
 
     public static final AntimatterModelLoader LOADER_MAIN = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "main"));
+
     public static final DynamicModelLoader LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
     public static final DynamicModelLoader LOADER_MACHINE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "machine")) {
         @Override
@@ -56,6 +58,13 @@ public class AntimatterModelManager {
                     return new PipeBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };
+        }
+    };
+
+    public static final AntimatterModelLoader LOADER_PROXY = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "proxy")) {
+        @Override
+        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
+            return new ProxyModel();
         }
     };
 

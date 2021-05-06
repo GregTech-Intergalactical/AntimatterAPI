@@ -33,7 +33,6 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -58,7 +57,7 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable {
+public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable {
 
     protected T type;
     protected PipeSize size;
@@ -98,7 +97,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
          } else if (!state.isIn(newState.getBlock())) {
             TileEntity tile = worldIn.getTileEntity(pos);
             if (tile == null) return;
-            TileEntityPipe pipe = (TileEntityPipe) tile;
+            TileEntityPipe<T> pipe = (TileEntityPipe<T>) tile;
             pipe.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), stack)));
             super.onReplaced(state, worldIn, pos, newState, isMoving);
          }
@@ -240,7 +239,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        TileEntityPipe tile = (TileEntityPipe) world.getTileEntity(pos);
+        TileEntityPipe<T> tile = (TileEntityPipe) world.getTileEntity(pos);
         if (tile == null) {
             return ActionResultType.PASS;
         }

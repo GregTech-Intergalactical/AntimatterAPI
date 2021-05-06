@@ -10,9 +10,9 @@ import tesseract.api.ITickingController;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockItemPipe extends BlockPipe<ItemPipe<?>> {
+public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
 
-    public BlockItemPipe(ItemPipe<?> type, PipeSize size) {
+    public BlockItemPipe(T type, PipeSize size) {
         super(type.getId(), type, size, 0);
     }
 
@@ -20,6 +20,7 @@ public class BlockItemPipe extends BlockPipe<ItemPipe<?>> {
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
         ITickingController controller = Tesseract.ITEM.getController(world, pos.toLong());
         if (controller != null) info.addAll(Arrays.asList(controller.getInfo(pos.toLong())));
+        info.add("Capacity: " + getType().getCapacity(getSize()));
         return info;
     }
 

@@ -369,11 +369,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
+        if (side == getFacing() && !allowsFrontIO()) return LazyOptional.empty();
         if (blocksCapability(cap, side)) return LazyOptional.empty();
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.resolve().orElse(null).getCapability().cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.cast();
         else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.cast();
         return super.getCapability(cap, side);
+    }
+
+    public boolean allowsFrontIO() {
+        return getMachineType().allowsFrontCovers();
     }
 
     @Override

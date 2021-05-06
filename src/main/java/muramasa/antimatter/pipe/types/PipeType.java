@@ -29,11 +29,11 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     protected TileEntityType<?> coveredType;
     protected Map<PipeSize, Block> registeredBlocks;
 
-    private final Function<PipeType<?>, TileEntityPipe> tileFunc;
-    private final Function<PipeType<?>, TileEntityPipe> coveredFunc;
+    private final Function<T, TileEntityPipe<T>> tileFunc;
+    private final Function<T, TileEntityPipe<T>> coveredFunc;
 
 
-    public PipeType(String domain, Material material, Function<PipeType<?>, TileEntityPipe> func,  Function<PipeType<?>, TileEntityPipe> covered) {
+    public PipeType(String domain, Material material, Function<T, TileEntityPipe<T>> func,  Function<T, TileEntityPipe<T>> covered) {
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);
@@ -41,15 +41,16 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         this.tileFunc = func;
         this.coveredFunc = covered;
     }
-
+    @SuppressWarnings("unchecked")
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry != ForgeRegistries.BLOCKS) return;
         Set<Block> blocks = getBlocks();
         registeredBlocks = blocks.stream().map(t ->new Pair<>(((BlockPipe<?>)t).getSize(), t.getBlock())).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-        tileType = new TileEntityType<>(() -> tileFunc.apply(this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId());
-        coveredType = new TileEntityType<>(() -> coveredFunc.apply(this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId() + "_covered");
+        tileType = new TileEntityType<>(() -> tileFunc.apply((T)this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId());
+        coveredType = new TileEntityType<>(() -> coveredFunc.apply((T)this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId() + "_covered");
         AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId(), getTileType());
+        AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId() + "_covered", getCoveredType());
     }
 
     public Block getBlock(PipeSize size) {

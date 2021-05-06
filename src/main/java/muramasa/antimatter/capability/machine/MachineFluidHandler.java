@@ -16,7 +16,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineFlag.GUI;
@@ -90,6 +91,12 @@ public class MachineFluidHandler<T extends TileEntityMachine> extends FluidHandl
         if (tile.itemHandler.map(MachineItemHandler::getCellCount).orElse(0) > 0) {
             fillCell(slot, maxFill);
         }
+    }
+
+    @Override
+    public int fill(FluidStack stack, FluidAction action) {
+        if (!tile.recipeHandler.map(t -> t.accepts(stack)).orElse(true)) return 0;
+        return super.fill(stack, action);
     }
 
     @Override

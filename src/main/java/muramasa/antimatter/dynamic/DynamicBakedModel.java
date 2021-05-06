@@ -3,9 +3,11 @@ package muramasa.antimatter.dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.client.baked.AntimatterBakedModel;
+import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -48,6 +50,9 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
         }
         mutablePos.setPos(pos);
         data.setData(AntimatterProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, mutablePos, pos));
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile instanceof TileEntityBase)
+            data.setData(AntimatterProperties.TILE_PROPERTY,(TileEntityBase) tile);
         return data;
     }
 

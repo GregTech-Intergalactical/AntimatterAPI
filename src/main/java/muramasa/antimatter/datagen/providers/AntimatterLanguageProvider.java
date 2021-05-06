@@ -1,28 +1,5 @@
 package muramasa.antimatter.datagen.providers;
 
-import static muramasa.antimatter.Data.CRUSHED;
-import static muramasa.antimatter.Data.CRUSHED_CENTRIFUGED;
-import static muramasa.antimatter.Data.CRUSHED_PURIFIED;
-import static muramasa.antimatter.Data.ORE;
-import static muramasa.antimatter.Data.ROCK;
-import static muramasa.antimatter.util.Utils.getLocalizeStoneType;
-import static muramasa.antimatter.util.Utils.getLocalizedMaterialType;
-import static muramasa.antimatter.util.Utils.getLocalizedType;
-import static muramasa.antimatter.util.Utils.lowerUnderscoreToUpperSpaced;
-import static muramasa.antimatter.util.Utils.lowerUnderscoreToUpperSpacedRotated;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.function.Supplier;
-
-import muramasa.antimatter.pipe.types.Cable;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -41,6 +18,7 @@ import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.recipe.map.RecipeMap;
