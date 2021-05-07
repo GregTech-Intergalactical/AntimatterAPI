@@ -117,7 +117,7 @@ public class Ref {
 
     /** Mod IDs **/
     public static final String MOD_JEI = "jei";
-    public static final String MOD_REI = "rei";
+    public static final String MOD_REI = "roughlyenoughitems";
     public static final String MOD_TOP = "theoneprobe";
     public static final String MOD_CT = "crafttweaker";
     public static final String MOD_FR = "forestry";
