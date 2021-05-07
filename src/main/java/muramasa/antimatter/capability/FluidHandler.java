@@ -23,10 +23,12 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
     protected int capacity, pressure;
 
-     /** For GUI **/
-     protected boolean dirty;
+    /**
+     * For GUI
+     **/
+    protected boolean dirty;
 
-     public FluidHandler(T tile, int capacity, int pressure, int inputCount, int outputCount) {
+    public FluidHandler(T tile, int capacity, int pressure, int inputCount, int outputCount) {
         this.tile = tile;
         this.capacity = capacity;
         this.pressure = pressure;
@@ -48,17 +50,17 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         }
     }
 
-     protected void markDirty() {
-         dirty = true;
-     }
- 
-     public boolean isDirty() {
-         return dirty;
-     }
- 
-     public void markSynced() {
-         dirty = false;
-     }
+    protected void markDirty() {
+        dirty = true;
+    }
+
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void markSynced() {
+        dirty = false;
+    }
 
     public void onRemove() {
 
@@ -79,14 +81,14 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) {
-         return getTank(tank).getFluid();
+        return getTank(tank).getFluid();
     }
 
     protected FluidTank getTank(int tank) {
         if (getInputTanks() == null) {
             if (getOutputTanks() != null)
                 return getOutputTanks().getTank(tank);
-        } else if (getInputTanks() != null && getOutputTanks() != null){
+        } else if (getInputTanks() != null && getOutputTanks() != null) {
             if (tank >= getInputTanks().getTanks())
                 return getOutputTanks().getTank(offsetTank(tank));
             else
@@ -130,7 +132,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         if (getOutputTanks() != null) list.addAll(Arrays.asList(getOutputTanks().getBackingTanks()));
         return new FluidTanks(list);
     }
-    
+
     public int fill(FluidStack stack, IFluidHandler.FluidAction action) {
         FluidTanks input = getInputTanks();
         if (input != null && !empty(input)) {
@@ -149,6 +151,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         }
         return 0;
     }
+
     @Nonnull
     public FluidStack drain(FluidStack stack, IFluidHandler.FluidAction action) {
         if (getOutputTanks() != null) {
@@ -159,7 +162,8 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     /**
      * Drains from the input tanks rather than output tanks. Useful for recipes.
-     * @param stack stack to drain.
+     *
+     * @param stack  stack to drain.
      * @param action execute/simulate
      * @return the drained stack
      */
@@ -182,11 +186,11 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     protected boolean checkValidFluid(FluidStack fluid) {
         return true;
     }
-    
+
     @Override
-    public void onMachineEvent(IMachineEvent event, Object ...data) {
+    public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event instanceof ContentEvent) {
-            switch ((ContentEvent)event) {
+            switch ((ContentEvent) event) {
                 case FLUID_INPUT_CHANGED:
                 case FLUID_OUTPUT_CHANGED:
                     this.markDirty();
@@ -195,7 +199,9 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         }
     }
 
-    /** Helpers **/
+    /**
+     * Helpers
+     **/
     @Nonnull
     public FluidStack[] getInputs() {
         FluidTanks tanks = getInputTanks();
@@ -278,14 +284,14 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     }
 
     public void deserializeNBT(CompoundNBT nbt) {
-        tanks.forEach((k,v) -> {
-            v.deserializeNBT(nbt.getList(k.toString(),Constants.NBT.TAG_COMPOUND));
+        tanks.forEach((k, v) -> {
+            v.deserializeNBT(nbt.getList(k.toString(), Constants.NBT.TAG_COMPOUND));
         });
     }
 
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
-        tanks.forEach((k,v) -> {
+        tanks.forEach((k, v) -> {
             nbt.put(k.name(), v.serializeNBT());
         });
         return nbt;

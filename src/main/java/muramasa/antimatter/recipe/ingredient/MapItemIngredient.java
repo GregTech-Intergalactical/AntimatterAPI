@@ -10,14 +10,16 @@ import java.util.Set;
 
 public class MapItemIngredient extends AbstractMapIngredient {
 
-    public final ItemStack stack;
+    public ItemStack stack;
 
-    public MapItemIngredient(ItemStack stack) {
+    public MapItemIngredient(ItemStack stack, boolean insideMap) {
+        super(insideMap);
         this.stack = stack;
     }
 
     @Override
     public boolean equals(Object o) {
+        if (!super.equals(o)) return false;
         if (o instanceof MapTagIngredient) {
             return stack.getItem().getTags().contains(((MapTagIngredient)o).loc);
         }

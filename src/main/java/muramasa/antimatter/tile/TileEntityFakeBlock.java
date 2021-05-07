@@ -49,10 +49,9 @@ public class TileEntityFakeBlock extends TileEntityBase {
     }
 
     public TileEntityFakeBlock setCovers(Map<Direction, ICover> covers) {
-        this.covers = covers;
         for (Map.Entry<Direction, ICover> entry : covers.entrySet()) {
             Direction dir = entry.getKey();
-            covers.put(Utils.coverRotateFacing(dir, facing.getAxis() == Direction.Axis.X ? facing.getOpposite() : facing), entry.getValue());
+            this.covers.put(Utils.coverRotateFacing(dir, facing.getAxis() == Direction.Axis.X ? facing.getOpposite() : facing), entry.getValue());
         }
         markDirty();
         return this;
