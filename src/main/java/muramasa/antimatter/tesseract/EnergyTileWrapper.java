@@ -41,10 +41,10 @@ public class EnergyTileWrapper implements IGTNode {
                 capability.addListener(o -> pipe.onInvalidate(side));
                 return capability.resolve().get();
             } else {
-                LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY);
+                LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, side.getOpposite());
                 if (cap.isPresent()) {
                     EnergyTileWrapper node = new EnergyTileWrapper(tile, cap.orElse(null));
-                    capability.addListener(o -> pipe.onInvalidate(side));
+                    cap.addListener(o -> pipe.onInvalidate(side));
                     return node;
                 }
             }
@@ -54,7 +54,10 @@ public class EnergyTileWrapper implements IGTNode {
     }
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        return storage.receiveEnergy((int)(maxReceive * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), simulate);
+        if (state.receive(simulate, getInputAmperage(), maxReceive)) {
+            return storage.receiveEnergy((int)(maxReceive * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), simulate);
+        }
+        return 0;
     }
 
     @Override
@@ -64,12 +67,12 @@ public class EnergyTileWrapper implements IGTNode {
 
     @Override
     public long getEnergy() {
-        return storage.getEnergyStored();
+        return (long) (storage.getEnergyStored()* AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO);
     }
 
     @Override
     public long getCapacity() {
-        return storage.getMaxEnergyStored();
+        return (long)(storage.getMaxEnergyStored()* AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO);
     }
 
     @Override
@@ -116,4 +119,11 @@ public class EnergyTileWrapper implements IGTNode {
     public GTConsumer.State getState() {
         return state;
     }
+
+    @Override
+    public void tesseractTick() {
+        getState().onTick();
+    }
+
+    
 }
