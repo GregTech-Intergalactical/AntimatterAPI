@@ -296,9 +296,12 @@ public class Utils {
             if (toInsert.isEmpty()) {
                 continue;
             }
-            if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
+            ItemStack inserted = ItemHandlerHelper.insertItem(to, toInsert, true);
+            if (inserted.getCount() < toInsert.getCount()) {
+                int actual = toInsert.getCount()-inserted.getCount();
+                toInsert.setCount(toInsert.getCount()-inserted.getCount());
                 ItemHandlerHelper.insertItem(to, toInsert, false);
-                from.extractItem(i, from.getStackInSlot(i).getCount(), false);
+                from.extractItem(i, actual, false);
                 if (once) break;
             }
         }

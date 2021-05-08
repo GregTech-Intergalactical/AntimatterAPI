@@ -6,6 +6,7 @@ import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -36,7 +37,9 @@ public class MachineBakedModel extends CoveredBakedModel {
             Function<Direction, Texture> fn = data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE);
             if (fn != null) {
                 Texture tex = fn.apply(side);
-                TileEntityMachine t = data.getData(AntimatterProperties.MACHINE_TILE);
+                TileEntityBase tile = data.getData(AntimatterProperties.TILE_PROPERTY);
+                if (!(tile instanceof TileEntityMachine)) return quads;
+                TileEntityMachine t = (TileEntityMachine) tile;
                 MachineCoverHandler<TileEntityMachine> covers = t.coverHandler.orElse(null);
                 CoverStack<TileEntityMachine> c = covers == null ? null : covers.get(side);
                 if (c == null || c.skipRender()) {
@@ -54,7 +57,7 @@ public class MachineBakedModel extends CoveredBakedModel {
     @Override
     public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData data) {
         data = super.getModelData(world, pos, state, data);
-        TileEntityMachine machine = (TileEntityMachine) world.getTileEntity(pos);
+        TileEntityMachine machine = (TileEntityMachine) data.getData(AntimatterProperties.TILE_PROPERTY);
         data.setData(AntimatterProperties.MACHINE_TYPE, machine.getMachineType());
         data.setData(AntimatterProperties.MACHINE_TEXTURE,a -> {
             Texture[] tex = machine.getMachineType().getBaseTexture(machine.getMachineTier());
@@ -62,7 +65,6 @@ public class MachineBakedModel extends CoveredBakedModel {
             return tex[a.getIndex()];
         });
         data.setData(AntimatterProperties.MACHINE_STATE, machine.getMachineState());
-        data.setData(AntimatterProperties.MACHINE_TILE, machine);
         return data;
     }
 

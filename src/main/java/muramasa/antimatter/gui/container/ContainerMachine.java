@@ -33,7 +33,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
         if (!(playerInv.player instanceof ServerPlayerEntity)) {
             tile.recipeHandler.ifPresent(t -> t.setClientProgress(0));
         }
-        tile.setOpenContainer(this);
+        tile.addOpenContainer(this);
     }
 
     public TileEntityMachine getTile() {
@@ -49,7 +49,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
     @Override
     public void onContainerClosed(PlayerEntity playerIn) {
         super.onContainerClosed(playerIn);
-        tile.onContainerClose();
+        tile.onContainerClose(this);
     }
 
     @Override

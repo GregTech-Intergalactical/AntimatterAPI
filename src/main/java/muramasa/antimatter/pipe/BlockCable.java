@@ -26,11 +26,11 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockCable extends BlockPipe<Cable<?>> {
+public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
 
     protected boolean insulated;
 
-    public BlockCable(Cable<?> type, PipeSize size, boolean insulated) {
+    public BlockCable(T type, PipeSize size, boolean insulated) {
         super(insulated ? "cable" : "wire", type, size, 2);
         this.insulated = insulated;
         String prefix = insulated ? "cable" : "wire";

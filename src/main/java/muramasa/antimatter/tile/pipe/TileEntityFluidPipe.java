@@ -4,7 +4,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
 import muramasa.antimatter.pipe.types.FluidPipe;
-import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
@@ -23,11 +22,11 @@ import tesseract.api.fluid.IFluidPipe;
 
 import java.util.List;
 
-public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
+public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe {
 
     protected LazyOptional<PipeFluidHandler> fluidHandler;
 
-    public TileEntityFluidPipe(PipeType<?> type) {
+    public TileEntityFluidPipe(T type) {
         super(type);
         if (fluidHandler == null) {
             fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0)) : LazyOptional.empty();
@@ -89,22 +88,22 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
 
     @Override
     public boolean isGasProof() {
-        return ((FluidPipe<?>)getPipeType()).isGasProof();
+        return getPipeType().isGasProof();
     }
 
     @Override
     public int getCapacity() {
-        return ((FluidPipe<?>)getPipeType()).getCapacity(getPipeSize());
+        return getPipeType().getCapacity(getPipeSize());
     }
 
     @Override
     public int getPressure() {
-        return ((FluidPipe<?>)getPipeType()).getPressure(getPipeSize());
+        return getPipeType().getPressure(getPipeSize());
     }
 
     @Override
     public int getTemperature() {
-        return ((FluidPipe<?>)getPipeType()).getTemperature();
+        return getPipeType().getTemperature();
     }
 
     @Override
@@ -117,9 +116,9 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
         return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
     }
 
-    public static class TileEntityCoveredFluidPipe extends TileEntityFluidPipe implements ITickablePipe {
+    public static class TileEntityCoveredFluidPipe<T extends FluidPipe<T>> extends TileEntityFluidPipe<T> implements ITickablePipe {
 
-        public TileEntityCoveredFluidPipe(PipeType<?> type) {
+        public TileEntityCoveredFluidPipe(T type) {
             super(type);
         }
 
@@ -143,6 +142,10 @@ public class TileEntityFluidPipe extends TileEntityPipe implements IFluidPipe {
                 list.add(stack.getFluid().getRegistryName().toString() + " " + stack.getAmount() + " mb.");
             }
         });
+        list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));
+        list.add("Capacity: " + getPipeType().getCapacity(getPipeSize()));
+        list.add("Max temperature: " + getPipeType().getTemperature());
+        list.add(getPipeType().isGasProof() ? "Gas proof." : "Cannot handle gas.");
         return list;
     }
 

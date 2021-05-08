@@ -1,18 +1,11 @@
 package muramasa.antimatter.client.baked;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.BaseCover;
-import muramasa.antimatter.cover.CoverMaterial;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import muramasa.antimatter.pipe.BlockPipe;
@@ -28,6 +21,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
 public class PipeBakedModel extends DynamicBakedModel {
 
     public static final Int2ObjectOpenHashMap<IBakedModel[]> CONFIGS = new Int2ObjectOpenHashMap<>();
@@ -42,15 +39,13 @@ public class PipeBakedModel extends DynamicBakedModel {
     @Override
     public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData data) {
         data = super.getModelData(world, pos, state, data);
-        data.setData(AntimatterProperties.PIPE_TILE, ((TileEntityPipe)world.getTileEntity(pos)));
+        data.setData(AntimatterProperties.TILE_PROPERTY, ((TileEntityPipe)world.getTileEntity(pos)));
         return data;
     }
 
-
-
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data) {
-        TileEntityPipe pipe = data.getData(AntimatterProperties.PIPE_TILE);
+        TileEntityPipe<?> pipe = (TileEntityPipe<?>) data.getData(AntimatterProperties.TILE_PROPERTY);
         PipeCoverHandler<?> covers = pipe.coverHandler.orElse(null);
         List<BakedQuad> quads = super.getBlockQuads(state, side, rand, data);
         List<BakedQuad> coverQuads = new LinkedList<>();

@@ -14,7 +14,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -24,10 +23,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IWorldReader;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -87,6 +84,14 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
 
     //Stack is not guaranteed to contain a real tile and side is nullable.
     default <T> boolean blocksCapability(CoverStack<?> stack, Capability<T> cap, @Nullable Direction side) {
+        return false;
+    }
+
+    default <T> boolean blocksInput(CoverStack<?> stack, Capability<T> cap, @Nullable Direction side) {
+        return false;
+    }
+
+    default <T> boolean blocksOutput(CoverStack<?> stack, Capability<T> cap, @Nullable Direction side) {
         return false;
     }
 

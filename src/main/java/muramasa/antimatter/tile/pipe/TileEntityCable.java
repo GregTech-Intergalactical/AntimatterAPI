@@ -9,13 +9,14 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IGTCable;
 
-public class TileEntityCable extends TileEntityPipe implements IGTCable {
+public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable {
 
-    public TileEntityCable(PipeType<?> type) {
+    public TileEntityCable(T type) {
         super(type);
     }
 
@@ -52,7 +53,7 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
 
     @Override
     public boolean validateTile(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityCable || tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side).isPresent();
+        return tile instanceof TileEntityCable || tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, side).isPresent();
     }
 
     @Override
@@ -86,9 +87,9 @@ public class TileEntityCable extends TileEntityPipe implements IGTCable {
         return LazyOptional.of(() -> new TesseractGTCapability(this, side));
     }
 
-    public static class TileEntityCoveredCable extends TileEntityCable implements ITickablePipe {
+    public static class TileEntityCoveredCable<T extends Cable<T>> extends TileEntityCable<T> implements ITickablePipe {
 
-        public TileEntityCoveredCable(PipeType<?> type) {
+        public TileEntityCoveredCable(T type) {
             super(type);
         }
 

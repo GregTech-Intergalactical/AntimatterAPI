@@ -10,7 +10,6 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 
-import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
 public class TileEntityGenerator extends TileEntityMachine {

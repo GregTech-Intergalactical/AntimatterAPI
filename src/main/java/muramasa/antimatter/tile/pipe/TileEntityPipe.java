@@ -24,14 +24,13 @@ import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class TileEntityPipe extends TileEntityBase implements IMachineHandler {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase implements IMachineHandler {
 
     /** Pipe Data **/
-    protected PipeType<?> type;
+    protected T type;
     protected PipeSize size;
 
     /** Capabilities **/
@@ -46,11 +45,11 @@ public abstract class TileEntityPipe extends TileEntityBase implements IMachineH
     /** CAPABILITIES **/
     protected LazyOptional<?>[] SIDE_CAPS;
 
-    public TileEntityPipe(PipeType<?> type) {
+    public TileEntityPipe(T type) {
         super(type.getTileType());
         this.type = type;
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
-        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(t -> buildCapForSide(t)).toArray(LazyOptional[]::new);
+        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(this::buildCapForSide).toArray(LazyOptional[]::new);
     }
 
     protected abstract void registerNode(BlockPos pos, Direction side, boolean remove);
@@ -115,15 +114,15 @@ public abstract class TileEntityPipe extends TileEntityBase implements IMachineH
         }
     }
 
-    public PipeType<?> getPipeType() {
+    public T getPipeType() {
         if (type == null) {
             type = getPipeType(getBlockState());
         }
         return type;
     }
 
-    private PipeType<?> getPipeType(BlockState state) {
-        return (((BlockPipe<?>) state.getBlock()).getType());
+    private T getPipeType(BlockState state) {
+        return (((BlockPipe<T>) state.getBlock()).getType());
     }
 
     public PipeSize getPipeSize() { 

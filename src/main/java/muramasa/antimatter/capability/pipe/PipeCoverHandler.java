@@ -5,7 +5,7 @@ import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.util.Direction;
 
-public class PipeCoverHandler<T extends TileEntityPipe> extends CoverHandler<T> {
+public class PipeCoverHandler<T extends TileEntityPipe<?>> extends CoverHandler<T> {
 
     public PipeCoverHandler(T tile) {
         super(tile, tile.getValidCovers());

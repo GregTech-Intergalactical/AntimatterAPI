@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.longs.LongLists;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.tileentity.TileEntity;
@@ -30,6 +31,7 @@ public class StructureCache {
     static {
         AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState) -> {
             if (oldState == newState) return;  // TODO: better checks?
+            if (newState.isIn(Data.PROXY_INSTANCE)) return;
             StructureCache.DimensionEntry entry = LOOKUP.get(getDimId(world));
             if (entry == null) return;
             Set<BlockPos> controllerPos = entry.get(pos);
@@ -43,6 +45,11 @@ public class StructureCache {
         });
     }
 
+    public static int refCount(World world, BlockPos pos) {
+        DimensionEntry entry = LOOKUP.get(getDimId(world));
+        if (entry == null) return 0;
+        return entry.get(pos).size();
+    }
 
     public static boolean has(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(getDimId(world));

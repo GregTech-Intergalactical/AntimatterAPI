@@ -47,6 +47,12 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
     }
 
     @Override
+    public boolean allowsFrontIO() {
+        return true;
+    }
+
+
+    @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
         energyHandler.ifPresent(h -> {

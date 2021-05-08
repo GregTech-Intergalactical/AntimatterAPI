@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.machine.event.ContentEvent;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
@@ -39,6 +40,10 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (output)
             return stack;
+        if (simulate) {
+            RecipeMap<?> map = tile.getMachineType().getRecipeMap();
+            if (!tile.recipeHandler.map(t -> t.accepts(stack)).orElse(true)) return stack;
+        }
         return super.insertItem(slot, stack, simulate);
     }
 

@@ -1,7 +1,5 @@
 package muramasa.antimatter.client.dynamic;
 
-import java.util.List;
-
 import com.mojang.datafixers.util.Either;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.client.ModelUtils;
