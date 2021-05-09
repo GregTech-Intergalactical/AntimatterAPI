@@ -1,10 +1,5 @@
 package muramasa.antimatter.datagen.providers;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Map;
-import java.util.function.Function;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
@@ -30,6 +25,11 @@ import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.MatchTool;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.function.Function;
 
 public class AntimatterBlockLootProvider extends BlockLootTables implements IDataProvider, IAntimatterProvider {
     protected final String providerDomain, providerName;

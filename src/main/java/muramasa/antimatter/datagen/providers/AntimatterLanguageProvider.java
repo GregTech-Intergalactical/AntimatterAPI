@@ -18,6 +18,7 @@ import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.recipe.map.RecipeMap;
@@ -143,6 +144,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             String str = s.getSize().getId();
             //hmmmm
             if (str.equals("vtiny")) str = "very tiny";
+            if (s.getType() instanceof Cable){
+                str = s.getSize().getCableThickness() + "x";
+            }
             String strd = s.getType().getId();
             if (s.getType() instanceof FluidPipe || s.getType() instanceof ItemPipe) {
                 strd = s.getType().getId() + " Pipe";
@@ -163,8 +167,10 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             else if (type == CRUSHED_CENTRIFUGED) add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
             else {
                 String[] split = getLocalizedMaterialType(type);
-                if (split.length > 1) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
-                else add(item, String.join("",  getLocalizedType(item.getMaterial())," ", split[0]));
+                if (split.length > 1) {
+                    if (type.isSplitName()) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
+                    else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[1], " ", split[0]));
+                } else add(item, String.join("",  getLocalizedType(item.getMaterial())," ", split[0]));
             }
         });
 

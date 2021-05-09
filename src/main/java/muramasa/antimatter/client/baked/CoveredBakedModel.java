@@ -2,19 +2,18 @@ package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.capability.machine.MachineCoverHandler;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
@@ -29,23 +28,14 @@ public class CoveredBakedModel extends AttachableBakedModel {
         super(bakedTuple);
     }
 
-    @Nonnull
-    @Override
-    public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
-       // TileEntity tile = world.getTileEntity(pos);
-        //if (tile == null) return super.getModelData(world, pos, state, data);
-      //  data.setData(AntimatterProperties.MACHINE_TILE,(TileEntityMachine)tile);
-        return super.getModelData(world, pos, state, data);
-    }
-
     @Override
     protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         return attachCoverQuads(new ArrayList<>(), state, side, data);
     }
 
     protected final List<BakedQuad> attachCoverQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull IModelData data) {
-        if (!data.hasProperty(AntimatterProperties.MACHINE_TILE)) return quads;
-        MachineCoverHandler<TileEntityMachine> covers = data.getData(AntimatterProperties.MACHINE_TILE).coverHandler.orElse(null);
+        TileEntityBase tile = data.getData(AntimatterProperties.TILE_PROPERTY);
+        CoverHandler<?> covers = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).filter(t -> t instanceof CoverHandler).map(t -> (CoverHandler)t).orElse(null);
         if (covers == null) return quads;
         Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE) ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(side) : data.getData(AntimatterProperties.MACHINE_TEXTURE).apply(side);
         CoverStack<?> c = covers.get(side);

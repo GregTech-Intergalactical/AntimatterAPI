@@ -5,6 +5,7 @@ import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tile.pipe.TileEntityItemPipe;
+import muramasa.antimatter.tile.pipe.TileEntityItemPipe.TileEntityCoveredItemPipe;
 import net.minecraft.block.Block;
 
 import java.util.Set;
@@ -15,7 +16,7 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
     protected int[] caps;
 
     public ItemPipe(String domain, Material material) {
-        super(domain, material, TileEntityItemPipe::new);
+        super(domain, material, TileEntityItemPipe::new, TileEntityCoveredItemPipe::new);
         material.flags(MaterialTag.ITEMPIPE);
     }
 

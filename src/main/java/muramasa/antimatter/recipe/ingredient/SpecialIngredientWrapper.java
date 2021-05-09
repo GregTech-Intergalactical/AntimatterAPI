@@ -10,6 +10,7 @@ public class SpecialIngredientWrapper extends AbstractMapIngredient {
     private final Ingredient source;
 
     public SpecialIngredientWrapper(Ingredient source) {
+        super(false);
         this.source = source;
     }
 

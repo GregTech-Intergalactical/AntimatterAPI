@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
@@ -56,6 +57,7 @@ import tesseract.api.capability.TesseractGTCapability;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Set;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
@@ -68,8 +70,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler, IDynamicModelProvider {
 
     /** Open container. Allows for better syncing **/
-    @Nullable
-    protected Container openContainer;
+    protected final Set<ContainerMachine> openContainers = new ObjectOpenHashSet<>();
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -99,12 +100,12 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         multiTexturer = new LazyValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER));
     }
 
-    public void setOpenContainer(ContainerMachine c) {
-        this.openContainer = c;
+    public void addOpenContainer(ContainerMachine c) {
+        this.openContainers.add(c);
     }
 
-    public void onContainerClose() {
-        this.openContainer = null;
+    public void onContainerClose(ContainerMachine c) {
+        this.openContainers.remove(c);
     }
 
     @Override
@@ -185,14 +186,14 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        if (!this.getWorld().isRemote) {
+        if (this.getWorld() != null && !this.getWorld().isRemote) {
             coverHandler.ifPresent(c -> c.onMachineEvent(event, data));
             itemHandler.ifPresent(i -> i.onMachineEvent(event, data));
             energyHandler.ifPresent(e -> e.onMachineEvent(event, data));
             fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
             recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
-            if (event instanceof ContentEvent && openContainer != null) {
-                openContainer.detectAndSendChanges();
+            if (event instanceof ContentEvent && openContainers.size() > 0) {
+                openContainers.forEach(ContainerMachine::detectAndSendChanges);
             }
         }
     }
@@ -369,11 +370,16 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
         if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
+        if (side == getFacing() && !allowsFrontIO()) return LazyOptional.empty();
         if (blocksCapability(cap, side)) return LazyOptional.empty();
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.resolve().orElse(null).getCapability().cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.cast();
         else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.cast();
         return super.getCapability(cap, side);
+    }
+
+    public boolean allowsFrontIO() {
+        return getMachineType().allowsFrontCovers();
     }
 
     @Override

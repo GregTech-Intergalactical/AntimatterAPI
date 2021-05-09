@@ -4,7 +4,10 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -25,8 +28,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -52,7 +57,7 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable {
+public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable {
 
     protected T type;
     protected PipeSize size;
@@ -61,6 +66,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     protected Texture side = new Texture(Ref.ID, "block/pipe/pipe_side");
     protected Texture[] faces = new Texture[]{new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
 
+    public static final BooleanProperty COVERED = BooleanProperty.create("cover");
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
         this(prefix, type, size, modelId, Block.Properties.create(Data.WRENCH_MATERIAL).hardnessAndResistance(1.0f, 3.0f).notSolid().setRequiresTool());
     }
@@ -70,7 +76,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         this.type = type;
         this.size = size;
         AntimatterAPI.register(BlockPipe.class, getId(), this);
-        setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));
+        setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false).with(COVERED, false));
         this.modelId = modelId;
         buildShapes();
     }
@@ -78,6 +84,23 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     private void buildShapes() {
         recursiveShapeBuild(0, (byte) 0);
         shapes.put(getPipeID(0, 0), VoxelShapes.create(size.getAABB()));
+    }
+
+    
+
+    @Override
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        //If we are replacing with the same block, remove tile since we are replacing with a covered/uncovered tile.
+        //Also make sure it is the covered data that actually changes.
+        if (state.hasTileEntity() && state.isIn(newState.getBlock()) && (state.equals(newState.with(COVERED, !newState.get(COVERED))))) {
+            worldIn.removeTileEntity(pos);
+         } else if (!state.isIn(newState.getBlock())) {
+            TileEntity tile = worldIn.getTileEntity(pos);
+            if (tile == null) return;
+            TileEntityPipe<T> pipe = (TileEntityPipe<T>) tile;
+            pipe.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), stack)));
+            super.onReplaced(state, worldIn, pos, newState, isMoving);
+         }
     }
 
     private void recursiveShapeBuild(int index, byte acc) {
@@ -138,7 +161,9 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return type.getTileType().create();
+        TileEntityPipe pipe = (TileEntityPipe)( state.get(COVERED) ? type.getCoveredType().create() : type.getTileType().create());
+        pipe.ofState(state);
+        return pipe;
     }
 
     @Override
@@ -152,6 +177,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
         if (tile != null) {
             for (Direction side : Ref.DIRS) {
                 TileEntityPipe neighbor = getTilePipe(worldIn, pos.offset(side));
+                if (tile.blocksSide(side)) return;
                 if (neighbor != null && tile.validateTile(neighbor, side.getOpposite())) {
                     if (neighbor.canConnect(side.getOpposite().getIndex())) {
                         tile.setConnection(side);
@@ -165,6 +191,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public boolean onBlockPlacedTo(World world, BlockPos pos, Direction face) {
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
+            if (tile.blocksSide(face)) return false;
             TileEntity neighbor = world.getTileEntity(pos.offset(face.getOpposite()));
             if (neighbor != null) {
                 if (tile.validateTile(neighbor, face)) {
@@ -212,34 +239,56 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Nonnull
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        TileEntityPipe tile = (TileEntityPipe) world.getTileEntity(pos);
+        TileEntityPipe<T> tile = (TileEntityPipe) world.getTileEntity(pos);
         if (tile == null) {
             return ActionResultType.PASS;
         }
-        AntimatterToolType type = Utils.getToolType(player);
-        if (type == null) {
-            return ActionResultType.PASS;
-        }
-        if (!world.isRemote && hand == Hand.MAIN_HAND && getHarvestTool(state) == type.getToolType()) {
-            Direction side = Utils.getInteractSide(hit);
-            TileEntity target = world.getTileEntity(pos.offset(side));
-            if (target != null) {
-                if (tile.validateTile(target, side.getOpposite())) {
-                    tile.toggleConnection(side);
-                    if (target instanceof TileEntityPipe) {
-                        if (tile.canConnect(side.getIndex())) {
-                            ((TileEntityPipe)target).setConnection(side.getOpposite());
-                        } else {
-                            ((TileEntityPipe)target).clearConnection(side.getOpposite());
-                        }
-                    } else {
-                        tile.toggleInteract(side);
-                    }
+        if (!world.isRemote && hand == Hand.MAIN_HAND) {
+            if (player.getHeldItem(hand).getItem() instanceof IHaveCover) {
+                ItemStack stack = player.getHeldItem(hand);
+                boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,Utils.getInteractSide(hit)).map(i -> i.placeCover(player,Utils.getInteractSide(hit),stack,((IHaveCover) stack.getItem()).getCover())).orElse(false);
+                if (ok) {
                     return ActionResultType.SUCCESS;
                 }
-            } else if (world.isAirBlock(pos.offset(side))) {
-                tile.toggleConnection(side);
-                return ActionResultType.SUCCESS;
+            }
+            AntimatterToolType type = Utils.getToolType(player);
+            if (type == null) {
+                return ActionResultType.PASS;
+            }
+            if (type == Data.CROWBAR) {
+                if (!player.isCrouching()){
+                    return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                } else {
+                    return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                }
+            } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
+                CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.get(hit.getFace())).orElse(Data.COVER_EMPTY);
+                if (!player.isCrouching()) {
+                    return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                } 
+             }
+            if (getHarvestTool(state) == type.getToolType()) {
+                Direction side = Utils.getInteractSide(hit);
+                TileEntity target = world.getTileEntity(pos.offset(side));
+                if (tile.blocksSide(side)) return ActionResultType.CONSUME;
+                if (target != null) {
+                    if (tile.validateTile(target, side.getOpposite())) {
+                        tile.toggleConnection(side);
+                        if (target instanceof TileEntityPipe) {
+                            if (tile.canConnect(side.getIndex())) {
+                                ((TileEntityPipe)target).setConnection(side.getOpposite());
+                            } else {
+                                ((TileEntityPipe)target).clearConnection(side.getOpposite());
+                            }
+                        } else {
+                            tile.toggleInteract(side);
+                        }
+                        return ActionResultType.SUCCESS;
+                    }
+                } else if (world.isAirBlock(pos.offset(side))) {
+                    tile.toggleConnection(side);
+                    return ActionResultType.SUCCESS;
+                }
             }
         }
         return ActionResultType.PASS;
@@ -249,10 +298,10 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         if (context.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) context.getEntity();
-            if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state))) {
+            if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType())) {
                 return VoxelShapes.fullCube();
             }
-            BlockPipe pipe = null;
+            BlockPipe<?> pipe = null;
             if (player.getHeldItemMainhand().getItem() instanceof PipeItemBlock) {
                 pipe = ((PipeItemBlock)player.getHeldItemMainhand().getItem()).getPipe();
             }
@@ -423,6 +472,7 @@ public abstract class BlockPipe<T extends PipeType<?>> extends BlockDynamic impl
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED);
+        builder.add(COVERED);
     }
 
     @Override

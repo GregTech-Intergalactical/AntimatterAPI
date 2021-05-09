@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 
 public class SlotEnergy extends SlotItemHandler {
     int index;
+
     public SlotEnergy(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(itemHandler, index, xPosition, yPosition);
         this.index = index;
@@ -22,14 +23,18 @@ public class SlotEnergy extends SlotItemHandler {
     }
 
     @Override
+    public int getSlotStackLimit() {
+        return 1;
+    }
+
+    @Override
     public boolean canTakeStack(PlayerEntity playerIn) {
         return true;
     }
 
     @Override
     @Nonnull
-    public ItemStack decrStackSize(int amount)
-    {
+    public ItemStack decrStackSize(int amount) {
         return MachineItemHandler.extractFromInput(this.getItemHandler(), index, amount, false);
     }
 }

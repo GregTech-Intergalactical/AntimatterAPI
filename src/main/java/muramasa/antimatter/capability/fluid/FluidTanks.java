@@ -1,8 +1,9 @@
 package muramasa.antimatter.capability.fluid;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
@@ -23,7 +24,7 @@ import java.util.stream.IntStream;
  */
 public class FluidTanks implements IFluidHandler {
 
-    public static <T extends TileEntityMachine> FluidTanks create(T tile, ContentEvent contentEvent, UnaryOperator<Builder<T>> builder) {
+    public static <T extends TileEntityBase & IMachineHandler> FluidTanks create(T tile, ContentEvent contentEvent, UnaryOperator<Builder<T>> builder) {
         return builder.apply(new Builder<>(tile, contentEvent)).build();
     }
 
@@ -171,7 +172,7 @@ public class FluidTanks implements IFluidHandler {
         return FluidStack.EMPTY;
     }
 
-    public static class Builder<T extends TileEntityMachine> {
+    public static class Builder<T extends TileEntityBase & IMachineHandler> {
 
         private final T tile;
         private final List<FluidTank> tanks;

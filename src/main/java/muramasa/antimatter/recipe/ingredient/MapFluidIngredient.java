@@ -4,9 +4,10 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class MapFluidIngredient extends AbstractMapIngredient {
 
-    public final FluidStack stack;
+    public FluidStack stack;
 
-    public MapFluidIngredient(FluidStack stack) {
+    public MapFluidIngredient(FluidStack stack, boolean insideMap) {
+        super(insideMap);
         this.stack = stack;
     }
 
@@ -17,7 +18,7 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof MapFluidIngredient)) return false;
+        if (!(o instanceof MapFluidIngredient) || !super.equals(o)) return false;
         MapFluidIngredient fluid = (MapFluidIngredient) o;
         return this.hashCode() == fluid.hashCode() && stack.getFluid() == fluid.stack.getFluid(); //&& stack.isFluidEqual(fluid.stack);
     }

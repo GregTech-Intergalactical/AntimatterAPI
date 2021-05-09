@@ -356,6 +356,14 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
     }
 
+    public boolean accepts(ItemStack stack) {
+        return this.tile.getMachineType().getRecipeMap().acceptsItem(stack);
+    }
+
+    public boolean accepts(FluidStack stack) {
+        return this.tile.getMachineType().getRecipeMap().acceptsFluid(stack);
+    }
+
     @Nullable
     public Recipe getActiveRecipe() {
         return activeRecipe;

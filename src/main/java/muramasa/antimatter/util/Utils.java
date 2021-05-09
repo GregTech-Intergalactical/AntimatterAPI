@@ -296,9 +296,12 @@ public class Utils {
             if (toInsert.isEmpty()) {
                 continue;
             }
-            if (ItemHandlerHelper.insertItem(to, toInsert, true).isEmpty()) {
+            ItemStack inserted = ItemHandlerHelper.insertItem(to, toInsert, true);
+            if (inserted.getCount() < toInsert.getCount()) {
+                int actual = toInsert.getCount()-inserted.getCount();
+                toInsert.setCount(toInsert.getCount()-inserted.getCount());
                 ItemHandlerHelper.insertItem(to, toInsert, false);
-                from.extractItem(i, from.getStackInSlot(i).getCount(), false);
+                from.extractItem(i, actual, false);
                 if (once) break;
             }
         }
@@ -383,7 +386,11 @@ public class Utils {
             FluidStack toInsert = FluidStack.EMPTY;
             for (int j = 0; j < from.getTanks(); j++) {
                 if (cap > 0) {
-                    FluidStack fluid = from.getFluidInTank(j).copy();
+                    FluidStack fluid = from.getFluidInTank(j);
+                    if (fluid.isEmpty()) {
+                        continue;
+                    }
+                    fluid = fluid.copy();
                     int toDrain = Math.min(cap, fluid.getAmount());
                     fluid.setAmount(toDrain);
                     toInsert = from.drain(fluid, SIMULATE);
@@ -983,7 +990,7 @@ public class Utils {
     public static String getConventionalMaterialType(MaterialType<?> type) {
         String id = type.getId();
         int index = id.indexOf("_");
-        if (index != -1) {
+        if (index != -1 && type.isSplitName()) {
             id = String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
             if (id.contains("crushed")) id = StringUtils.replace(id, "crushed", "crushed_ore");
             return id;
@@ -1044,7 +1051,9 @@ public class Utils {
     public static boolean doesStackHaveToolTypes(ItemStack stack, ToolType... toolTypes) {
         if (!stack.isEmpty()) {
             for (ToolType toolType : toolTypes) {
-                return stack.getToolTypes().contains(toolType);
+                if (stack.getToolTypes().contains(toolType)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1071,7 +1080,8 @@ public class Utils {
     }
 
     @Nullable
-    @Deprecated // Ready to use the methods above instead
+    //@Deprecated // Ready to use the methods above instead
+    //Not deprecated so you don't have to call methods multiple times.
     public static AntimatterToolType getToolType(PlayerEntity player) {
         ItemStack stack = player.getHeldItemMainhand();
         if (!stack.isEmpty()) {

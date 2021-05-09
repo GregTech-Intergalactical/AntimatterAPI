@@ -68,4 +68,12 @@ public class Structure {
         }
         return result;
     }
+
+    public int3 size() {
+        return size;
+    }
+
+    public int2 getOffset() {
+        return offset;
+    }
 }

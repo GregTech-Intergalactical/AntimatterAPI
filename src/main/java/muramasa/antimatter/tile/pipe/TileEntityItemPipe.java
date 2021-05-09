@@ -1,8 +1,8 @@
 package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.ItemPipe;
-import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.ItemTileWrapper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -14,13 +14,11 @@ import tesseract.Tesseract;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 
-public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
+public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T> implements IItemPipe {
 
-    public TileEntityItemPipe(PipeType<?> type) {
+    public TileEntityItemPipe(T type) {
         super(type);
         SIDE_CAPS = Arrays.stream(Ref.DIRS).map(t -> LazyOptional.of(() -> new TesseractItemCapability(this, t))).toArray(LazyOptional[]::new);
     }
@@ -55,17 +53,6 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
         }
     }
 
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (side == null) return LazyOptional.empty();
-        if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return SIDE_CAPS[side.getIndex()].cast();
-        }
-        return LazyOptional.empty();
-    }
-
     @Override
     public void onRemove() {
         if (isServerSide()) Tesseract.ITEM.remove(getWorld(), pos.toLong());
@@ -74,11 +61,34 @@ public class TileEntityItemPipe extends TileEntityPipe implements IItemPipe {
 
     @Override
     public int getCapacity() {
-        return ((ItemPipe<?>)getPipeType()).getCapacity(getPipeSize());
+        return getPipeType().getCapacity(getPipeSize());
     }
 
     @Override
     public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
+    }
+
+    @Override
+    protected Capability<?> getCapability() {
+        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+    }
+
+    public static class TileEntityCoveredItemPipe<T extends ItemPipe<T>> extends TileEntityItemPipe<T> implements ITickablePipe {
+
+        public TileEntityCoveredItemPipe(T type) {
+            super(type);
+        }
+
+        @Override
+        public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
+            return this.coverHandler;
+        }
+
+    }
+
+    @Override
+    protected LazyOptional<?> buildCapForSide(Direction side) {
+        return LazyOptional.of(() -> new TesseractItemCapability(this, side));
     }
 }

@@ -21,7 +21,7 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
     protected String id;
     protected int unitValue, layers;
-    protected boolean generating = true, blockType, visible;
+    protected boolean generating = true, blockType, visible, splitName;
     protected Set<Material> materials = new LinkedHashSet<>(); //Linked to preserve insertion order for JEI
     protected Map<MaterialType<?>, ITag.INamedTag<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
@@ -71,6 +71,11 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         return this;
     }
 
+    public MaterialType<T> unSplitName(){
+        splitName = false;
+        return this;
+    }
+
     @Override
     public String getId() {
         return id;
@@ -108,6 +113,10 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
 
     public boolean allowGen(Material material) {
         return generating && materials.contains(material) && AntimatterAPI.getReplacement(this, material) == null;
+    }
+
+    public boolean isSplitName() {
+        return splitName;
     }
 
     @Override

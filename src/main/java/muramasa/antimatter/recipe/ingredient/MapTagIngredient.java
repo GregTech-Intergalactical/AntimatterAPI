@@ -10,10 +10,16 @@ import java.util.Optional;
 import java.util.Set;
 
 public class MapTagIngredient extends AbstractMapIngredient {
-    public final ResourceLocation loc;
 
-    public MapTagIngredient(ResourceLocation tag) {
+    public ResourceLocation loc;
+
+    public MapTagIngredient(ResourceLocation tag, boolean insideMap) {
+        super(insideMap);
         this.loc = tag;
+    }
+
+    public void setTag(ResourceLocation loc) {
+        this.loc = loc;
     }
 
     @Override

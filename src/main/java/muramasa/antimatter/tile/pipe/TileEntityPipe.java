@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
+import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
@@ -23,12 +24,13 @@ import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 
-public abstract class TileEntityPipe extends TileEntityBase {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase implements IMachineHandler {
 
     /** Pipe Data **/
-    protected PipeType<?> type;
+    protected T type;
     protected PipeSize size;
 
     /** Capabilities **/
@@ -43,10 +45,11 @@ public abstract class TileEntityPipe extends TileEntityBase {
     /** CAPABILITIES **/
     protected LazyOptional<?>[] SIDE_CAPS;
 
-    public TileEntityPipe(PipeType<?> type) {
+    public TileEntityPipe(T type) {
         super(type.getTileType());
         this.type = type;
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
+        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(this::buildCapForSide).toArray(LazyOptional[]::new);
     }
 
     protected abstract void registerNode(BlockPos pos, Direction side, boolean remove);
@@ -68,6 +71,11 @@ public abstract class TileEntityPipe extends TileEntityBase {
         }*/
     }
 
+    public void ofState(BlockState state) {
+        this.size = getPipeSize(state);
+        this.type = getPipeType(state);
+    }
+
     protected void initTesseract() {
         for (Direction side : Ref.DIRS) {
             if (Connectivity.has(interaction, side.getIndex())) {
@@ -77,6 +85,7 @@ public abstract class TileEntityPipe extends TileEntityBase {
     }
 
     public void onInvalidate(Direction side) {
+        if (!Connectivity.has(interaction, side.getIndex())) return;
         clearInteract(side);
         TileEntity tile = this.world.getTileEntity(pos.offset(side));
         if (tile == null) return;
@@ -90,6 +99,7 @@ public abstract class TileEntityPipe extends TileEntityBase {
     @Override
     public void onRemove() {
         coverHandler.ifPresent(PipeCoverHandler::onRemove);
+        coverHandler.invalidate();
         if (isServerSide()) {
             for (Direction side : Ref.DIRS) {
                 if (Connectivity.has(interaction, side.getIndex())) {
@@ -104,30 +114,51 @@ public abstract class TileEntityPipe extends TileEntityBase {
         }
     }
 
-    public PipeType<?> getPipeType() {
-        return type != null ? type : (type = ((BlockPipe<?>) getBlockState().getBlock()).getType());
+    public T getPipeType() {
+        if (type == null) {
+            type = getPipeType(getBlockState());
+        }
+        return type;
     }
 
-    public PipeSize getPipeSize() { //TODO need to store? when getBlockState is cached?
-        return size != null ? size : (size = ((BlockPipe<?>) getBlockState().getBlock()).getSize());
+    private T getPipeType(BlockState state) {
+        return (((BlockPipe<T>) state.getBlock()).getType());
+    }
+
+    public PipeSize getPipeSize() { 
+        if (size == null) {
+            size = getPipeSize(getBlockState());
+        }
+        return size;
+    } 
+
+    private PipeSize getPipeSize(BlockState state) { 
+        return ((BlockPipe<?>) state.getBlock()).getSize();
     }
 
     public void setConnection(Direction side) {
+        if (blocksSide(side)) return;
         connection = Connectivity.set(connection, side.getIndex());
         refreshConnection();
     }
 
     public void toggleConnection(Direction side) {
-        connection = Connectivity.toggle(connection, side.getIndex());
-        refreshConnection();
+        if (Connectivity.has(connection, side.getIndex())) {
+            clearConnection(side);
+        } else {
+            setConnection(side);
+        }
     }
 
     public void clearConnection(Direction side) {
         connection = Connectivity.clear(connection, side.getIndex());
+        SIDE_CAPS[side.getIndex()].invalidate();
+        SIDE_CAPS[side.getIndex()] = buildCapForSide(side);
         refreshConnection();
     }
 
     public void setInteract(Direction side) {
+        if (blocksSide(side)) return;
         byte oldInteract = interaction;
         interaction = Connectivity.set(interaction, side.getIndex());
         if (isServerSide() && oldInteract != interaction)
@@ -136,10 +167,11 @@ public abstract class TileEntityPipe extends TileEntityBase {
     }
 
     public void toggleInteract(Direction side) {
-        interaction = Connectivity.toggle(interaction, side.getIndex());
-        if (isServerSide())
-            registerNode(this.pos.offset(side), side, !Connectivity.has(interaction, side.getIndex()));
-        refreshConnection();
+        if (Connectivity.has(interaction, side.getIndex())) {
+            clearInteract(side);
+        } else {
+            setInteract(side);
+        }
     }
 
     public void clearInteract(Direction side) {
@@ -169,13 +201,40 @@ public abstract class TileEntityPipe extends TileEntityBase {
         }
     }
 
+    protected abstract LazyOptional<?> buildCapForSide(Direction side);
+
+    protected abstract Capability<?> getCapability();
+
     public void refreshConnection() {
         sidedSync(true);
     }
 
 
+    public void onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, CoverStack<? extends TileEntityPipe> old, CoverStack<? extends TileEntityPipe> stack) {
+        if (stack.getCover().blocksCapability(stack, getCapability(), side)) {
+            this.clearConnection(side);
+            this.clearInteract(side);
+        }
+        if (this instanceof ITickablePipe) {
+            if (remove && !hasNonEmpty) {
+                world.setBlockState(getPos(), getBlockState().with(BlockPipe.COVERED, false), 11);
+                TileEntityPipe pipe = (TileEntityPipe) world.getTileEntity(getPos());
+                if (pipe != this) {
+                    pipe.read(pipe.getBlockState(), this.write(new CompoundNBT()));
+                }
+            }
+        } else if (!remove && hasNonEmpty) {
+            //set this to be covered.
+            world.setBlockState(getPos(), getBlockState().with(BlockPipe.COVERED, true), 11);
+            TileEntityPipe pipe = (TileEntityPipe) world.getTileEntity(getPos());
+            if (pipe != this) {
+                pipe.read(pipe.getBlockState(), this.write(new CompoundNBT()));
+            }
+        }
+    }
+
     public ICover[] getValidCovers() {
-        return AntimatterAPI.all(ICover.class).toArray(new ICover[0]);
+        return AntimatterAPI.all(ICover.class).stream().filter(t -> !t.blocksCapability(new CoverStack<>(t), getCapability(), null)).toArray(ICover[]::new);
     }
 
     public CoverStack<?>[] getAllCovers() {
@@ -186,19 +245,28 @@ public abstract class TileEntityPipe extends TileEntityBase {
         return coverHandler.map(h -> h.get(side)).orElse(null);
     }
 
+    public boolean blocksSide(Direction side) {
+        return coverHandler.map(t -> t.blocksCapability(getCapability(), side)).orElse(false);
+    }
+
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (side == null) return LazyOptional.empty();
+        if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
         if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
-        if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY) return coverHandler.map(h -> !h.get(side).isEmpty()).orElse(false) ? coverHandler.cast() : super.getCapability(cap, side);
+        if (cap == getCapability()) {
+            return SIDE_CAPS[side.getIndex()].cast();
+        }
         return LazyOptional.empty();
     }
 
     @Override
     public void read(BlockState state, CompoundNBT tag) {
         super.read(state, tag); //TODO get tile data tag
-        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
+        ofState(state);
+        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
+        byte oldInteract = interaction;
         interaction = tag.getByte(Ref.TAG_PIPE_TILE_INTERACT);
         byte oldConnection = connection;
         connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
@@ -208,13 +276,24 @@ public abstract class TileEntityPipe extends TileEntityBase {
         if (connection != oldConnection && world != null) {
             refreshConnection();
         }
+        //E.g. replaced with cover or created from a create contraption. 
+        //Make sure Tesseract is up to date.
+        if (interaction != oldInteract && world != null && isServerSide())  {
+            for (Direction dir : Ref.DIRS) {
+                boolean firstHas = Connectivity.has(interaction, dir.getIndex());
+                boolean secondHas = Connectivity.has(oldInteract, dir.getIndex());
+                if (firstHas != secondHas) {
+                    registerNode(pos.offset(dir), dir, !firstHas && secondHas);
+                }
+            }
+        }
     }
 
     @Nonnull
     @Override
     public CompoundNBT write(CompoundNBT tag) {
         super.write(tag);
-        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
+        coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
         tag.putByte(Ref.TAG_PIPE_TILE_INTERACT, interaction);
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         return tag;
