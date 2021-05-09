@@ -307,46 +307,23 @@ public class Utils {
         }
     }
 
-    public static void transferItemsOnCap(TileEntity fromTile, TileEntity toTile, Direction side, boolean once) {
-        LazyOptional<IItemHandler> from = fromTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
-        LazyOptional<IItemHandler> to = toTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
-        from.ifPresent(first -> {
-            to.ifPresent(second -> {
-                transferItems(first,second, once);
-            });
-        });
-    }
-
-    public static void transferFluidsOnCap(TileEntity fromTile, TileEntity toTile, int maxFluid) {
-        LazyOptional<IFluidHandler> from = fromTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-        LazyOptional<IFluidHandler> to = toTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY);
-        from.ifPresent(first -> {
-            to.ifPresent(second -> {
-                transferFluids(first,second);
-            });
-        });
-    }
-
     /**
      * Transfers up to maxAmps between energy handlers, without loss.
      * @param from the handler to extract from
      * @param to the handler to insert
-     * @return the number of amps inserted.
+     * @return if energy was inserted
      */
-    public static long transferEnergy(IEnergyHandler from, IEnergyHandler to) {
-        if (!(from.canOutput() && to.canInput())) {
-            return 0;
-        }
+    public static boolean transferEnergy(IEnergyHandler from, IEnergyHandler to) {
         long extracted = from.extract(from.getOutputVoltage(), true);
         if (extracted > 0) {
             long inputted = to.insert(extracted, true);
             if (inputted > 0) {
-                from.extract(inputted, false);
                 to.insert(inputted, false);
-                return inputted;
+                from.extract(inputted, false);
+                return true;
             }
         }
-        return 0;
+        return false;
     }
 
     /**
@@ -354,30 +331,19 @@ public class Utils {
      * @param from energy handler to extract from
      * @param to energy handler to insert from
      * @param loss energy loss
-     * @param maxAmps max amperage to insert
      * @return number of amps
      */
-    public static int transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss, int maxAmps) {
-        if (from.canOutput() && to.canInput()) {
-            long voltageIn = to.getInputVoltage();
-            long voltageOut = from.getOutputVoltage();
-            if (voltageIn != voltageOut) {
-                return 0;
+    public static boolean transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss) {
+        long extracted = from.extract(from.getOutputVoltage(), true);
+        if (extracted > 0) {
+            long inputted = to.insert(extracted-loss, true);
+            if (inputted > 0) {
+                to.insert(inputted-loss, false);
+                from.extract(inputted, false);
+                return true;
             }
-            //The maximum possible amperage to output.
-            int outputAmperage = (int) Math.min(Math.min(from.getEnergy() / voltageOut, from.getOutputAmperage()), maxAmps);
-            int inputAmps = (int) Math.min(((to.getCapacity() - to.getEnergy())) / (voltageIn - loss), to.getInputAmperage());
-
-            int amps = Math.min(outputAmperage, inputAmps);
-            if (amps == 0) {
-                return 0;
-            }
-            //No need to simulate, calculations already done.
-            from.extract(voltageOut * amps, false);
-            to.insert((voltageOut - loss) * amps, false);
-            return amps;
         }
-        return 0;
+        return false;
     }
 
     public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {

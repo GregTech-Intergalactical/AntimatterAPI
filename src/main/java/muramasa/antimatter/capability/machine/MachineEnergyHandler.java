@@ -12,10 +12,13 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.world.Explosion;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 
 public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHandler implements IMachineHandler{
@@ -23,10 +26,12 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     protected final T tile;
 
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
+    private final List<LazyOptional<IEnergyHandler>> cache = new ObjectArrayList<>(6);
 
     public MachineEnergyHandler(T tile, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.tile = tile;
+        Arrays.stream(Ref.DIRS).forEach(dir -> cache.add(LazyOptional.empty()));
     }
 
     public MachineEnergyHandler(T tile, boolean isGenerator) {
@@ -76,13 +81,24 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         super.onUpdate();
         cachedItems.forEach(t -> t.getState().onTick());
         for (Direction dir : Ref.DIRS) {
-            if (canOutput(Ref.DIRS[dir.getIndex()])) {
-                if (!getState().extract(true, 1, 0)) {
-                    break;
+            if (canOutput(dir)) {
+                LazyOptional<IEnergyHandler> handle = cache.get(dir.getIndex());
+                if (!handle.isPresent()) {
+                    TileEntity tile = this.tile.getWorld().getTileEntity(this.tile.getPos().offset(dir));
+                    if (tile == null) continue;
+                    handle = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
+                    if (!handle.isPresent()) {
+                        continue;
+                    }
+                    cache.add(dir.getIndex(), handle);
+                    handle.addListener(h -> cache.add(dir.getIndex(), LazyOptional.empty()));
                 }
-                TileEntity tile = this.tile.getWorld().getTileEntity(this.tile.getPos().offset(dir));
-                if (tile != null) {
-                    tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite()).ifPresent(eh -> Utils.transferEnergy(this, eh));
+                boolean ok = true;
+                while(ok) {
+                    if (!getState().extract(true, 1, 0)) {
+                        break;
+                    }
+                    ok = handle.map(eh -> Utils.transferEnergy(this, eh)).orElse(false);
                 }
             }
         }
