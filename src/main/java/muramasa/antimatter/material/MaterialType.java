@@ -32,8 +32,12 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         this.visible = visible;
         this.unitValue = unitValue;
         this.layers = layers;
-        this.tagMap.put(this, TagUtils.getForgeItemTag(Utils.getConventionalMaterialType(this)));
+        this.tagMap.put(this, tagFromString(Utils.getConventionalMaterialType(this)));
         register(MaterialType.class, getId());
+    }
+
+    protected ITag.INamedTag<?> tagFromString(String name) {
+        return TagUtils.getForgeItemTag(name);
     }
 
     public MaterialType<T> nonGen() {
@@ -56,9 +60,9 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
         }
         return OVERRIDES.inverse().get(stack.getItem());
     }
-
+    @SuppressWarnings("unchecked")
     public ITag.INamedTag<Item> getMaterialTag(Material m) {
-        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+        return (ITag.INamedTag<Item>) tagFromString(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
