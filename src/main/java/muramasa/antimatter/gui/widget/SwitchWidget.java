@@ -45,7 +45,7 @@ public class SwitchWidget extends AbstractButton {
     }
 
     @Override
-    public void renderButton(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+    public void renderWidget(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bindTexture(res);
         RenderSystem.disableDepthTest();

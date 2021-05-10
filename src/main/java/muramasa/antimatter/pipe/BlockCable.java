@@ -90,9 +90,9 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
 
-        tooltip.add(new TranslationTextComponent("generic.amp").appendString(": ").append(new StringTextComponent(""+this.type.getAmps(this.size)).mergeStyle(TextFormatting.GREEN)));
-        tooltip.add(new TranslationTextComponent("generic.voltage").appendString(": ").append(new StringTextComponent(""+this.type.getTier().getVoltage()).mergeStyle(TextFormatting.BLUE)));
-        tooltip.add(new TranslationTextComponent("generic.loss").appendString(": ").append(new StringTextComponent(""+this.type.getLoss()).mergeStyle(TextFormatting.BLUE)));
+        tooltip.add(new TranslationTextComponent("generic.amp").appendString(": ").appendSibling(new StringTextComponent(""+this.type.getAmps(this.size)).mergeStyle(TextFormatting.GREEN)));
+        tooltip.add(new TranslationTextComponent("generic.voltage").appendString(": ").appendSibling(new StringTextComponent(""+this.type.getTier().getVoltage()).mergeStyle(TextFormatting.BLUE)));
+        tooltip.add(new TranslationTextComponent("generic.loss").appendString(": ").appendSibling(new StringTextComponent(""+this.type.getLoss()).mergeStyle(TextFormatting.BLUE)));
     }
 
     //    @Override

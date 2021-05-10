@@ -25,7 +25,7 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
     public static final Object2ObjectOpenHashMap<ChunkPos, List<Tuple<BlockPos, Material>>> ROCKS = new Object2ObjectOpenHashMap<>();
 
     public FeatureSurfaceRock() {
-        super(NoFeatureConfig.field_236558_a_, FeatureSurfaceRock.class);
+        super(NoFeatureConfig.CODEC, FeatureSurfaceRock.class);
     }
 
     @Override

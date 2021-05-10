@@ -92,9 +92,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         //If we are replacing with the same block, remove tile since we are replacing with a covered/uncovered tile.
         //Also make sure it is the covered data that actually changes.
-        if (state.hasTileEntity() && state.isIn(newState.getBlock()) && (state.equals(newState.with(COVERED, !newState.get(COVERED))))) {
+        if (state.hasTileEntity() && state.getBlock().matchesBlock(newState.getBlock()) && (state.equals(newState.with(COVERED, !newState.get(COVERED))))) {
             worldIn.removeTileEntity(pos);
-         } else if (!state.isIn(newState.getBlock())) {
+         } else if (!state.getBlock().matchesBlock(newState.getBlock())) {
             TileEntity tile = worldIn.getTileEntity(pos);
             if (tile == null) return;
             TileEntityPipe<T> pipe = (TileEntityPipe<T>) tile;

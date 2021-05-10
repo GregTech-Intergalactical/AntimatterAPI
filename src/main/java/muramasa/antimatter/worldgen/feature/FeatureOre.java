@@ -24,7 +24,7 @@ public class FeatureOre extends AntimatterFeature<NoFeatureConfig> {
     public static final Object2ObjectOpenHashMap<ChunkPos, List<Triple<BlockPos, Material, Boolean>>> ORES = new Object2ObjectOpenHashMap<>();
 
     public FeatureOre() {
-        super(NoFeatureConfig.field_236558_a_, FeatureOre.class);
+        super(NoFeatureConfig.CODEC, FeatureOre.class);
     }
 
     @Override

@@ -34,8 +34,8 @@ public class ButtonWidget extends Button {
         this(res, x, y, w, h, body, null, "", onPress);
     }
 
-    @Override
-    public void renderButton(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+    public void renderWidget(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+        //super.renderWidget(stack, mouseX, mouseY, partialTicks);
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bindTexture(res);
         RenderSystem.disableDepthTest();

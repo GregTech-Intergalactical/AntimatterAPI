@@ -24,7 +24,7 @@ import java.util.Random;
 public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
     public FeatureStoneLayer() {
-        super(NoFeatureConfig.field_236558_a_, WorldGenStoneLayer.class);
+        super(NoFeatureConfig.CODEC, WorldGenStoneLayer.class);
     }
 
     @Override

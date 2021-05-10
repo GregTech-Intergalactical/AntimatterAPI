@@ -145,7 +145,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
             if (!b) {
                 Map<String, Object> o = recipe.builder.getFromResult(c);
                 d.add(new StringTextComponent("Properties:").mergeStyle(TextFormatting.GOLD));
-                o.forEach((k,v) -> d.add(new StringTextComponent(k.substring(0,1).toUpperCase() + k.substring(1)).append(new StringTextComponent(" - " + v.toString()))));
+                o.forEach((k,v) -> d.add(new StringTextComponent(k.substring(0,1).toUpperCase() + k.substring(1)).appendSibling(new StringTextComponent(" - " + v.toString()))));
             }
         });
         helper.setInputs(guiItemStacks, shouldReplace ? newInputs : inputs, recipe.getWidth(), recipe.getHeight());

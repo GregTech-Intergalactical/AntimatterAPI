@@ -122,7 +122,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
             tooltip.add(new TranslationTextComponent("item.reusable"));
         }
         long energy = ItemEnergyHandler.getEnergyFromStack(stack, stack.getTag());
-        tooltip.add(new TranslationTextComponent("item.charge").appendString(": ").append(new StringTextComponent(energy + "/" + cap).mergeStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).appendString(" (" + tier.getId().toUpperCase() + ")"));
+        tooltip.add(new TranslationTextComponent("item.charge").appendString(": ").appendSibling(new StringTextComponent(energy + "/" + cap).mergeStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).appendString(" (" + tier.getId().toUpperCase() + ")"));
         super.addInformation(stack, worldIn, tooltip, flag);
     }
 }

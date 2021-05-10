@@ -108,7 +108,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
             FluidStack fluid = x.getFluidInTank(0);
             if (!fluid.isEmpty()) {
                 TextComponent fluidname = (TextComponent) fluid.getDisplayName();
-                fluidname.appendString(": ").append(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
+                fluidname.appendString(": ").appendSibling(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
                 tooltip.add(fluidname);
             }
             tooltip.add(new StringTextComponent("Max Temp: " + ((ItemFluidCell) stack.getItem()).getMaxTemp() + "K"));

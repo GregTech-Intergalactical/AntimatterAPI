@@ -75,7 +75,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatter
             }
         }
         if (type == Data.ROCK) {
-            tooltip.add(new TranslationTextComponent("gti.tooltip.occurrence").append(new StringTextComponent(material.getDisplayName().getString()).mergeStyle(TextFormatting.YELLOW)));
+            tooltip.add(new TranslationTextComponent("gti.tooltip.occurrence").appendSibling(new StringTextComponent(material.getDisplayName().getString()).mergeStyle(TextFormatting.YELLOW)));
         }
     }
 

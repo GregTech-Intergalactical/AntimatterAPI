@@ -27,7 +27,7 @@ public class FakeTileElement extends StructureElement {
     }
 
     public FakeTileElement(Block... pred) {
-        this.preds = Arrays.stream(pred).map(t -> (IBlockStatePredicate) (reader, pos, state) -> reader.getBlockState(pos).isIn(t)).toArray(IBlockStatePredicate[]::new);
+        this.preds = Arrays.stream(pred).map(t -> (IBlockStatePredicate) (reader, pos, state) -> reader.getBlockState(pos).getBlock().matchesBlock(t)).toArray(IBlockStatePredicate[]::new);
     }
 
     public FakeTileElement(BlockState... pred) {
@@ -42,7 +42,7 @@ public class FakeTileElement extends StructureElement {
     @Override
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
         BlockState state = machine.getWorld().getBlockState(pos);
-        if (state.isIn(Data.PROXY_INSTANCE)) {
+        if (state.getBlock().matchesBlock(Data.PROXY_INSTANCE)) {
             result.addState("fake", pos, state);
             return true;
         }
@@ -70,7 +70,7 @@ public class FakeTileElement extends StructureElement {
         World world = machine.getWorld();
         BlockState oldState = world.getBlockState(pos);
         //Already set.
-        if (count > 1 || oldState.isIn(Data.PROXY_INSTANCE)) {
+        if (count > 1 || oldState.getBlock().matchesBlock(Data.PROXY_INSTANCE)) {
             ((TileEntityFakeBlock) world.getTileEntity(pos)).addController(machine);
             return;
         }

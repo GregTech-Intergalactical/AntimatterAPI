@@ -200,7 +200,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                     if (recipe.getInputItems().size() >= index) {
                         Ingredient i = recipe.getInputItems().get(index).get();
                         if (RecipeMap.isIngredientSpecial(i)) {
-                            tooltip.add(new StringTextComponent("Special ingredient. Class name: ").mergeStyle(TextFormatting.GRAY).append(new StringTextComponent(i.getClass().getSimpleName()).mergeStyle(TextFormatting.GOLD)));
+                            tooltip.add(new StringTextComponent("Special ingredient. Class name: ").mergeStyle(TextFormatting.GRAY).appendSibling(new StringTextComponent(i.getClass().getSimpleName()).mergeStyle(TextFormatting.GOLD)));
                         }
                     }
                 }

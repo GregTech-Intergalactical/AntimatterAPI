@@ -19,7 +19,7 @@ import java.util.Random;
 public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
 
     public FeatureOreSmall() {
-        super(NoFeatureConfig.field_236558_a_, WorldGenOreSmall.class);
+        super(NoFeatureConfig.CODEC, WorldGenOreSmall.class);
     }
 
     @Override

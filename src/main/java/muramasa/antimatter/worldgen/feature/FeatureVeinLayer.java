@@ -19,7 +19,7 @@ import java.util.Random;
 public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
 
     public FeatureVeinLayer() {
-        super(NoFeatureConfig.field_236558_a_, WorldGenVeinLayer.class);
+        super(NoFeatureConfig.CODEC, WorldGenVeinLayer.class);
     }
 
     @Override

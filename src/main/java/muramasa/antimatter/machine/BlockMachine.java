@@ -259,7 +259,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.isIn(newState.getBlock())) {
+        if (!state.getBlock().matchesBlock(newState.getBlock())) {
             if (!worldIn.isRemote) {
                 TileEntity tile = worldIn.getTileEntity(pos);
                 if (tile == null) return;
@@ -285,8 +285,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (getType().has(BASIC)) {
             if (getTier().getVoltage() > 0) {
-                tooltip.add(new TranslationTextComponent("machine.voltage.in").appendString(": ").append(new StringTextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).mergeStyle(TextFormatting.GREEN));
-                tooltip.add(new TranslationTextComponent("machine.power.capacity").appendString(": ").append(new StringTextComponent("" + (getTier().getVoltage() * 64))).mergeStyle(TextFormatting.BLUE));
+                tooltip.add(new TranslationTextComponent("machine.voltage.in").appendString(": ").appendSibling(new StringTextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).mergeStyle(TextFormatting.GREEN));
+                tooltip.add(new TranslationTextComponent("machine.power.capacity").appendString(": ").appendSibling(new StringTextComponent("" + (getTier().getVoltage() * 64))).mergeStyle(TextFormatting.BLUE));
             }
         }
     }
