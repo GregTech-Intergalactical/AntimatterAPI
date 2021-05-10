@@ -31,7 +31,7 @@ public class StructureCache {
     static {
         AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState) -> {
             if (oldState == newState) return;  // TODO: better checks?
-            if (newState.isIn(Data.PROXY_INSTANCE)) return;
+            if (newState.getBlock().matchesBlock(Data.PROXY_INSTANCE)) return;
             StructureCache.DimensionEntry entry = LOOKUP.get(getDimId(world));
             if (entry == null) return;
             Set<BlockPos> controllerPos = entry.get(pos);
