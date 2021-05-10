@@ -176,14 +176,14 @@ public final class AntimatterAPI {
 
     /** JEI Registry Section **/
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, String model) {
-        if (ModList.get().isLoaded(Ref.MOD_JEI)) {
+        if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
             AntimatterJEIPlugin.registerCategory(map, gui,tier, model);
         }
     }
 
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Machine<?> machine) {
-        if (ModList.get().isLoaded(Ref.MOD_JEI)) {
-            AntimatterJEIPlugin.registerCategory(map, gui, machine.has(STEAM) ? Tier.BRONZE : Tier.LV, machine.getId());
+        if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
+            AntimatterJEIPlugin.registerCategory(map, gui, machine.getFirstTier(), machine.getId());
         }
     }
 

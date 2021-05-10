@@ -2,6 +2,7 @@ package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.gui.ButtonData;
@@ -155,7 +156,7 @@ public class ScreenMachine<T extends ContainerMachine> extends AntimatterContain
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        if (!ModList.get().isLoaded("jei") || !container.getTile().has(MachineFlag.RECIPE)) return false;
+        if ((!ModList.get().isLoaded(Ref.MOD_JEI) && !ModList.get().isLoaded(Ref.MOD_REI)) || !container.getTile().has(MachineFlag.RECIPE)) return false;
         if (isInGui((xSize / 2) - 10, 24, 20, 18, mouseX, mouseY)) {
             AntimatterJEIPlugin.showCategory(container.getTile().getMachineType());
             return true;

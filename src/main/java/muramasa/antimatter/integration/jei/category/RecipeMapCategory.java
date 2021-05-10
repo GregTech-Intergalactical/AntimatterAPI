@@ -19,6 +19,7 @@ import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
@@ -61,6 +62,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         background = guiHelper.drawableBuilder(gui.getTexture(guiTier,"machine"), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
         progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier,"machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
         Block block = AntimatterAPI.get(BlockMachine.class, blockItemModel == null ? "" : blockItemModel + "_" + defaultTier.getId());
+        if (block == null) block = AntimatterAPI.get(BlockMultiMachine.class, blockItemModel == null ? "" : blockItemModel + "_" + defaultTier.getId());
         icon = block == null ? guiHelper.createDrawableIngredient(new ItemStack(Data.DEBUG_SCANNER,1)) : guiHelper.createDrawableIngredient(new ItemStack(block.asItem(),1));
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();
