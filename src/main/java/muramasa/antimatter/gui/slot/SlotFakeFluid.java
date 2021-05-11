@@ -9,7 +9,7 @@ import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;
 
-public class SlotFakeFluid extends SlotItemHandler {
+public class SlotFakeFluid extends AbstractSlot {
 
     TileEntityMachine tile;
     public final MachineFluidHandler.FluidDirection dir;

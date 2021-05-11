@@ -42,7 +42,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
         this.tile = tile;
         if (tile.has(GUI)){
             if (tile.getMachineType().has(ITEM)) {
-                inventories.put(ITEM_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), false, t -> true, ContentEvent.ITEM_INPUT_CHANGED));
+                inventories.put(ITEM_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), false, t -> tile.recipeHandler.map(i -> i.accepts(t)).orElse(true), ContentEvent.ITEM_INPUT_CHANGED));
                 inventories.put(ITEM_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), true,t -> true, ContentEvent.ITEM_OUTPUT_CHANGED));
             }
             if (tile.getMachineType().has(CELL)) {

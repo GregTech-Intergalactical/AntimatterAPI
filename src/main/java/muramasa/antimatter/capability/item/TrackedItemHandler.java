@@ -40,7 +40,7 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
         if (output)
             return stack;
         if (simulate) {
-            if (!tile.recipeHandler.map(t -> t.accepts(stack)).orElse(true)) return stack;
+            if (!validator.test(stack)) return stack;
         }
         return super.insertItem(slot, stack, simulate);
     }
@@ -59,7 +59,7 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
     }
 
     @Nonnull
-    public ItemStack extractFromInput(int slot, @Nonnull int amount, boolean simulate) {
+    public ItemStack extractFromInput(int slot, int amount, boolean simulate) {
         return super.extractItem(slot, amount, simulate);
     }
 

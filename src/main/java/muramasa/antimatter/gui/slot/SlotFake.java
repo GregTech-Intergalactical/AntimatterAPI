@@ -8,7 +8,7 @@ import net.minecraftforge.items.SlotItemHandler;
 import javax.annotation.Nonnull;
 
 //TODO: Should be used on filters
-public class SlotFake extends SlotItemHandler {
+public class SlotFake extends AbstractSlot {
     public SlotFake(IItemHandler stackHandler, int index, int x, int y) {
         super(stackHandler, index, x, y);
     }

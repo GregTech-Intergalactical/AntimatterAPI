@@ -19,7 +19,7 @@ import tesseract.api.gt.IEnergyHandler;
  */
 public class ItemEnergyHandler extends EnergyHandler {
 
-    protected boolean discharge;
+    protected boolean discharge = true;
 
     public ItemEnergyHandler(long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         super(0, capacity, voltageIn, voltageOut, amperageIn, amperageOut);

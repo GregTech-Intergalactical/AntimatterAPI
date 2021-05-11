@@ -10,20 +10,13 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class SlotInput extends SlotItemHandler {
+public class SlotInput extends AbstractSlot {
 
     protected TileEntityMachine tile;
-    private int index;
 
     public SlotInput(TileEntityMachine tile, IItemHandler stackHandler, int index, int x, int y) {
         super(stackHandler, index, x, y);
         this.tile = tile;
-        this.index = index;
-    }
-
-    @Override
-    public boolean isItemValid(ItemStack stack) {
-        return tile.recipeHandler.map(t -> t.accepts(stack)).orElse(true);
     }
 
     @Override
@@ -36,13 +29,4 @@ public class SlotInput extends SlotItemHandler {
         super.onSlotChanged();
         tile.onMachineEvent(ContentEvent.ITEM_INPUT_CHANGED);
     }
-
-    @Override
-    @Nonnull
-    public ItemStack decrStackSize(int amount)
-    {
-        return MachineItemHandler.extractFromInput(this.getItemHandler(), index, amount, false);
-    }
-
-
 }
