@@ -13,21 +13,16 @@ import net.minecraftforge.common.util.NonNullSupplier;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 
-import javax.annotation.Nullable;
-
 /**
  * ItemEnergyHandler represents the Antimatter Energy capability implementation for items.
  * It wraps an item and provides the ability to charge it & remove it, depending on if the item supports it.
  */
 public class ItemEnergyHandler extends EnergyHandler {
 
-    protected final ItemStack stack;
-
     protected boolean discharge;
 
-    public ItemEnergyHandler(ItemStack stack, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+    public ItemEnergyHandler(long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         super(0, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
-        this.stack = stack;
     }
 
     @Override
@@ -41,39 +36,27 @@ public class ItemEnergyHandler extends EnergyHandler {
     }
 
     private boolean canDischarge() {
-        if (!stack.getOrCreateTag().contains(Ref.KEY_ITEM_DISCHARGE_MODE)) return true;
-        return stack.getOrCreateTag().contains(Ref.KEY_ITEM_DISCHARGE_MODE) && stack.getTag().getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
+        return discharge;
     }
-    public static long getEnergyFromStack(ItemStack stack, @Nullable CompoundNBT nbt) {
-        if (nbt != null) {
-            return nbt.getLong(Ref.KEY_ITEM_ENERGY);
-        }
-        return stack.getOrCreateTag().getLong(Ref.KEY_ITEM_ENERGY);
+
+    public boolean chargeModeSwitch() {
+        discharge = !discharge;
+        return discharge;
     }
 
     @Override
     public long insert(long maxReceive, boolean simulate) {
-        long energy = super.insert(maxReceive, simulate);
-        if (!simulate) {
-            stack.getOrCreateTag().putLong(Ref.KEY_ITEM_ENERGY, this.energy);
-        }
-        return energy;
+        return super.insert(maxReceive, simulate);
     }
 
 
-    public long setEnergy(long energy) {
+    public void setEnergy(long energy) {
         this.energy = energy;
-        stack.getOrCreateTag().putLong(Ref.KEY_ITEM_ENERGY, this.energy);
-        return energy;
     }
 
     @Override
     public long extract(long maxExtract, boolean simulate) {
-        long energy = super.extract(maxExtract, simulate);
-        if (!simulate) {
-            stack.getOrCreateTag().putLong(Ref.KEY_ITEM_ENERGY, this.energy);
-        }
-        return energy;
+        return super.extract(maxExtract, simulate);
     }
 
     @Override
@@ -105,7 +88,7 @@ public class ItemEnergyHandler extends EnergyHandler {
 
         @Override
         public CompoundNBT serializeNBT() {
-            return energy.map(t -> t.serializeNBT()).orElse(new CompoundNBT());
+            return energy.map(INBTSerializable::serializeNBT).orElse(new CompoundNBT());
         }
 
         @Override

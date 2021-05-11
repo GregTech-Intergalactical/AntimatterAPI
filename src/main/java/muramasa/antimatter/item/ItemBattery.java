@@ -17,9 +17,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IGTNode;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -52,11 +55,8 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (this.isInGroup(group)) {
             ItemStack stack = new ItemStack(this);
-            stack.getOrCreateTag().putLong(Ref.KEY_ITEM_ENERGY, cap);
-            stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).ifPresent(e -> {
-                if (e instanceof ItemEnergyHandler) {
-                    ((ItemEnergyHandler)e).setEnergy(e.getCapacity());
-                }
+            getCastedHandler(stack).ifPresent(e -> {
+                e.setEnergy(e.getCapacity());
             });
             items.add(new ItemStack(this));
             items.add(stack);
@@ -66,7 +66,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT tag) {
-        return new ItemEnergyHandler.Provider(() -> new ItemEnergyHandler(stack, cap, reusable ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1));
+        return new ItemEnergyHandler.Provider(() -> new ItemEnergyHandler(cap, isReusable() ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1));
     }
 
     @Override
@@ -81,13 +81,10 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public double getDurabilityForDisplay(ItemStack stack) {
-        CompoundNBT tag = stack.getTag();
-        if (tag == null) {
-            return 1D;
-        }
         return 1D - stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap;
     }
 
+    @Nonnull
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack stack = player.getHeldItem(hand);
@@ -99,30 +96,46 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         return ActionResult.resultPass(stack);
     }
 
+    private LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
+        return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).cast();
+    }
+
     /** Switches the discharge mode for an item.
      *  False does nothing, true disables discharge.
      *  @param stack the stack to switch.
      */
     private boolean chargeModeSwitch(ItemStack stack) {
-        CompoundNBT nbt = stack.getOrCreateTag();
-        boolean mode;
-        if (nbt.contains(Ref.KEY_ITEM_DISCHARGE_MODE)) {
-            mode = !stack.getOrCreateTag().getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
-        } else {
-            mode = false;
-        }
-        stack.getOrCreateTag().putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, mode);
-        return mode;
+        return getCastedHandler(stack).map(ItemEnergyHandler::chargeModeSwitch).orElse(true);
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flag) {
         //TODO: Translateable
         if (reusable) {
             tooltip.add(new TranslationTextComponent("item.reusable"));
         }
-        long energy = ItemEnergyHandler.getEnergyFromStack(stack, stack.getTag());
+        long energy = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IGTNode::getEnergy).orElse(0L);
         tooltip.add(new TranslationTextComponent("item.charge").appendString(": ").appendSibling(new StringTextComponent(energy + "/" + cap).mergeStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).appendString(" (" + tier.getId().toUpperCase() + ")"));
         super.addInformation(stack, worldIn, tooltip, flag);
+    }
+
+    @Nullable
+    @Override
+    public CompoundNBT getShareTag(ItemStack stack) {
+        CompoundNBT nbt = super.getShareTag(stack);
+        CompoundNBT inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
+        if (inner != null) {
+            if (nbt == null) nbt = new CompoundNBT();
+            nbt.put("E", inner);
+        }
+        return nbt;
+    }
+
+    @Override
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
+        super.readShareTag(stack, nbt);
+        if (nbt != null) {
+            getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound("E")));
+        }
     }
 }

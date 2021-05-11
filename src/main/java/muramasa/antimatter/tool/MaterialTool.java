@@ -31,6 +31,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.capability.TesseractGTCapability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -312,8 +314,31 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         if (type.isPowered()) {
             //TODO: not lv
-            return new ItemEnergyHandler.Provider(() -> new ItemEnergyHandler(stack, type.getBaseMaxEnergy(), 32, 32, 1, 1));
+            return new ItemEnergyHandler.Provider(() -> new ItemEnergyHandler(type.getBaseMaxEnergy(), 32, 32, 1, 1));
         }
         return null;
+    }
+    private LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
+        return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).cast();
+    }
+
+    @Nullable
+    @Override
+    public CompoundNBT getShareTag(ItemStack stack) {
+        CompoundNBT nbt = super.getShareTag(stack);
+        CompoundNBT inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
+        if (inner != null) {
+            if (nbt == null) nbt = new CompoundNBT();
+            nbt.put("E", inner);
+        }
+        return nbt;
+    }
+
+    @Override
+    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
+        super.readShareTag(stack, nbt);
+        if (nbt != null) {
+            getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound("E")));
+        }
     }
 }

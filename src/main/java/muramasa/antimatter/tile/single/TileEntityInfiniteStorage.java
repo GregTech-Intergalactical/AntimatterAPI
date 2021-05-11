@@ -15,6 +15,12 @@ public class TileEntityInfiniteStorage extends TileEntityMachine {
         this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityInfiniteStorage>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
+                if (simulate && !getState().extract(true, 1, maxExtract)) {
+                    return 0;
+                }
+                if (!simulate) {
+                    getState().extract(false, 1, maxExtract);
+                }
                 return maxExtract;
             }
 
