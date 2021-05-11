@@ -23,7 +23,7 @@ public class SlotInput extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return true;
+        return tile.recipeHandler.map(t -> t.accepts(stack)).orElse(true);
     }
 
     @Override

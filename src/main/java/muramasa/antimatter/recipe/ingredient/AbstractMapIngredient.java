@@ -1,7 +1,8 @@
 package muramasa.antimatter.recipe.ingredient;
 
 public abstract class AbstractMapIngredient {
-    private int hash = Integer.MIN_VALUE;
+    private int hash;
+    private boolean hashed = false;
     private final Class<? extends AbstractMapIngredient> objClass;
     private final boolean insideMap;
 
@@ -13,8 +14,11 @@ public abstract class AbstractMapIngredient {
     protected abstract int hash();
 
     @Override
-    public int hashCode() {
-        if (hash == Integer.MIN_VALUE) hash = hash();
+    public final int hashCode() {
+        if (!hashed) {
+            hash = hash();
+            hashed = true;
+        }
         return hash;
     }
 

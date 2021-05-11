@@ -21,10 +21,10 @@ public class SpecialIngredientWrapper extends AbstractMapIngredient {
     //Illegal am I right? But it is in essence a map ingredient.
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof MapItemIngredient)) {
+        if (!(obj instanceof MapItemStackIngredient)) {
             return false;
         }
-        return isItemValid(((MapItemIngredient) obj).stack);
+        return isItemValid(((MapItemStackIngredient) obj).stack);
     }
 
     @Override

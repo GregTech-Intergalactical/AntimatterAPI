@@ -18,9 +18,16 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof MapFluidIngredient) || !super.equals(o)) return false;
-        MapFluidIngredient fluid = (MapFluidIngredient) o;
-        return this.hashCode() == fluid.hashCode() && stack.getFluid() == fluid.stack.getFluid(); //&& stack.isFluidEqual(fluid.stack);
+        if (!super.equals(o)) return false;
+        if (o instanceof MapFluidIngredient) {
+            MapFluidIngredient fluid = (MapFluidIngredient) o;
+            return this.hashCode() == fluid.hashCode() && stack.getFluid() == fluid.stack.getFluid(); //&& stack.isFluidEqual(fluid.stack);
+        }
+        if (o instanceof MapTagIngredient) {
+            MapTagIngredient tag = (MapTagIngredient) o;
+            return stack.getFluid().getTags().contains(tag.loc);
+        }
+        return false;
     }
 
     @Override

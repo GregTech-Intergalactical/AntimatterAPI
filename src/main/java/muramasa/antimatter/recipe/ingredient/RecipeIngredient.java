@@ -97,6 +97,10 @@ public class RecipeIngredient {
         return this;
     }
 
+    public boolean ignoreNbt() {
+        return ignoreNbt;
+    }
+
     public Ingredient get() {
         Ingredient v = value.getValue();
         if (!setStacks) {

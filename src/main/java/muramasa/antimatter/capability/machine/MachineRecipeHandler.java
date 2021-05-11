@@ -187,6 +187,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
 
     protected Recipe cachedRecipe() {
         if (lastRecipe != null) {
+            if (!lastRecipe.isValid()) {
+                lastRecipe = null;
+                return null;
+            }
             Recipe old = activeRecipe;
             activeRecipe = lastRecipe;
             if (canRecipeContinue()) {

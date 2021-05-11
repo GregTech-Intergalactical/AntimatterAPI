@@ -37,6 +37,8 @@ public class Recipe implements IRecipe<IInventory> {
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     public ResourceLocation id;
     public String mapId;
+
+    private boolean valid;
     
     public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter_machine");
 
@@ -49,6 +51,16 @@ public class Recipe implements IRecipe<IInventory> {
         this.fluidsInput = fluidsInput;
         this.amps = amps;
         this.fluidsOutput = fluidsOutput;
+        this.valid = true;
+    }
+    //After data reload this is false.
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void invalidate() {
+        if (this.id != null)
+            this.valid = false;
     }
 
     public int getAmps() {
