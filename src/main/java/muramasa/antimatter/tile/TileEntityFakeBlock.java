@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -12,8 +13,11 @@ import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.LongNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -22,6 +26,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,16 +40,22 @@ public class TileEntityFakeBlock extends TileEntityBase {
 
     public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
+    private List<BlockPos> controllerPos;
+
     public TileEntityFakeBlock(BlockProxy block) {
         super(block.TYPE);
         coverTexturer = new Object2ObjectOpenHashMap<>();
     }
 
     public void addController(TileEntityBasicMultiMachine controller) {
+        if (world != null)
+            world.notifyNeighborsOfStateChange(pos, getBlockState().getBlock());
         controllers.add(controller);
     }
 
     public void removeController(TileEntityBasicMultiMachine controller) {
+        if (world != null)
+            world.notifyNeighborsOfStateChange(pos, getBlockState().getBlock());
         controllers.remove(controller);
     }
 
@@ -71,6 +82,10 @@ public class TileEntityFakeBlock extends TileEntityBase {
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (controllerPos != null) {
+            controllerPos.forEach(t -> controllers.add((TileEntityBasicMultiMachine) world.getTileEntity(t)));
+            controllerPos = null;
+        }
         for (TileEntityBasicMultiMachine controller : controllers) {
             LazyOptional<T> opt = controller.getCapabilityFromFake(cap, getPos(), side, covers.get(side));
             if (opt.isPresent()) return opt;
@@ -90,7 +105,6 @@ public class TileEntityFakeBlock extends TileEntityBase {
         this.facing = Direction.byIndex(nbt.getInt("F"));
         if (world != null && world.isRemote) {
             Utils.markTileForRenderUpdate(this);
-
         }
         this.covers = new EnumMap<>(Direction.class);
         CompoundNBT c = nbt.getCompound("C");
@@ -99,22 +113,38 @@ public class TileEntityFakeBlock extends TileEntityBase {
             if (id.isEmpty()) continue;
             covers.put(dir, AntimatterAPI.get(ICover.class, id));
         }
+        if (nbt.contains("P")) {
+            ListNBT list = nbt.getList("P", 4);
+            this.controllerPos = new ObjectArrayList<>(list.size());
+            list.forEach(n -> controllerPos.add(BlockPos.fromLong(((LongNBT)n).getLong())));
+        }
     }
 
     @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
-        return this.write(new CompoundNBT());
+        return this.writeTag(new CompoundNBT(), true);
     }
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {
+        return writeTag(compound, false);
+    }
+
+    private CompoundNBT writeTag(CompoundNBT compound, boolean send) {
         CompoundNBT nbt = super.write(compound);
         nbt.put("B", NBTUtil.writeBlockState(state));
         nbt.putInt("F", facing.ordinal());
         CompoundNBT n = new CompoundNBT();
         this.covers.forEach((k,v) -> n.putString(k.getName2(), v.getId()));
         compound.put("C", n);
+        if (!send) {
+            ListNBT list = new ListNBT();
+            for (TileEntityBasicMultiMachine controller : controllers) {
+                list.add(LongNBT.valueOf(controller.getPos().toLong()));
+            }
+            compound.put("P", list);
+        }
         return nbt;
     }
 
