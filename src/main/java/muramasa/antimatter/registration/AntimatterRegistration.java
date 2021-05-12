@@ -40,13 +40,13 @@ public final class AntimatterRegistration {
         AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, b -> {
-                if (b instanceof IAntimatterObject) b.setRegistryName(domain, ((IAntimatterObject) b).getId());
+                if (b instanceof IAntimatterObject && b.getRegistryName() == null) b.setRegistryName(domain, ((IAntimatterObject) b).getId());
                 AntimatterAPI.register(Item.class, b.getRegistryName().toString(), b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock() : new AntimatterItemBlock(b));
                 ((IForgeRegistry) e.getRegistry()).register(b);
             });
         } else if (e.getRegistry() == ForgeRegistries.ITEMS) {
             AntimatterAPI.all(Item.class, domain, i -> {
-                if (i instanceof IAntimatterObject) i.setRegistryName(domain, ((IAntimatterObject) i).getId());
+                if (i instanceof IAntimatterObject && i.getRegistryName() == null) i.setRegistryName(domain, ((IAntimatterObject) i).getId());
                 ((IForgeRegistry) e.getRegistry()).register(i);
             });
             registerTools(domain, e.getRegistry());
@@ -79,19 +79,19 @@ public final class AntimatterRegistration {
         AntimatterAPI.all(AntimatterToolType.class, domain, t -> {
             if (t.isPowered()) {
                 for (IAntimatterTool i : t.instantiatePoweredTools(domain)) {
-                    i.getItem().setRegistryName(domain, i.getId());
+                    if (i.getItem().getRegistryName() == null) i.getItem().setRegistryName(domain, i.getId());
                     registry.register(i.getItem());
                 }
             }
             else {
                 IAntimatterTool i = t.instantiateTools(domain);
-                i.getItem().setRegistryName(domain, i.getId());
+                if (i.getItem().getRegistryName() == null) i.getItem().setRegistryName(domain, i.getId());
                 registry.register(i.getItem());
             }
         });
         AntimatterAPI.all(AntimatterArmorType.class, domain, t -> {
             IAntimatterArmor i = t.instantiateTools(domain);
-            i.getItem().setRegistryName(domain, i.getId());
+            if (i.getItem().getRegistryName() == null) i.getItem().setRegistryName(domain, i.getId());
             registry.register(i.getItem());
         });
     }
