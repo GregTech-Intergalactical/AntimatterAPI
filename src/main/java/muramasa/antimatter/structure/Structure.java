@@ -1,5 +1,7 @@
 package muramasa.antimatter.structure;
 
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -58,15 +60,27 @@ public class Structure {
         Tuple<int3, StructureElement> element;
         int3 corner = new int3(tile.getPos(), tile.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y);
         int3 working = new int3(tile.getFacing());
-        int elementSize = elements.size();
-        for (int i = 0; i < elementSize; i++) {
-            element = elements.get(i);
+        for (Tuple<int3, StructureElement> int3StructureElementTuple : elements) {
+            element = int3StructureElementTuple;
             working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
             if (!element.getB().evaluate(tile, working, result)) {
                 return result;
             }
         }
         return result;
+    }
+
+    public LongList getStructure(TileEntityMachine tile) {
+        LongList l = new LongArrayList();
+        Tuple<int3, StructureElement> element;
+        int3 corner = new int3(tile.getPos(), tile.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y);
+        int3 working = new int3(tile.getFacing());
+        for (Tuple<int3, StructureElement> int3StructureElementTuple : elements) {
+            element = int3StructureElementTuple;
+            working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
+            l.add(working.toLong());
+        }
+        return l;
     }
 
     public int3 size() {

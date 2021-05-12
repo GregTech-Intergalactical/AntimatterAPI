@@ -52,6 +52,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
     public void onRemove() {
         super.onRemove();
         invalidateStructure();
+        StructureCache.remove(world, pos);
     }
 
     /**
@@ -67,6 +68,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
         //if INVALID_STRUCTURE was stored to disk don't bother rechecking on first tick.
         //This is not only behavioural but if INVALID_STRUCTURE are checked then maxShares
         //might misbehave.
+        StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).getStructure(this));
         if (!isStructureValid() && shouldCheckFirstTick) {
             checkStructure();
         }
@@ -78,7 +80,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
         if (structure == null) return false;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            if (StructureCache.add(world, pos, result.positions, maxShares())) {
+            if (StructureCache.validate(world, pos, result.positions, maxShares())) {
                 this.result = result;
                 if (isServerSide()) {
                     result.build(this, result);
@@ -126,10 +128,17 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
         return ok;
     }
 
-    public void invalidateStructure() {
+    public void onBlockUpdate(BlockPos pos) {
+        if (result != null) {
+            invalidateStructure();
+        }
+        checkStructure();
+    }
+
+    protected void invalidateStructure() {
         if (removed) return;
         if (result == null) return;
-        StructureCache.remove(this.getWorld(), getPos());
+        StructureCache.invalidate(this.getWorld(), getPos(), getMachineType().getStructure(getMachineTier()).getStructure(this));
         if (isServerSide()) {
             onStructureInvalidated();
             result.remove(this, result);
@@ -179,6 +188,11 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
 
     public boolean isStructureValid() {
         return StructureCache.has(world, pos);
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
     }
 
     /** Events **/

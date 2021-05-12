@@ -8,11 +8,12 @@
     "ClientPlayNetHandlerMixin"
   ],
   "mixins": [
+    "BlockLootTablesAccessor",
+    "ChunkReaderAccessor",
+    "LeavesBlockMixin",
     "RecipeManagerMixin",
     "ServerBlockUpdateMixin",
-    "SimpleReloadableResourceManagerMixin",
-    "BlockLootTablesAccessor",
-    "LeavesBlockMixin"
+    "SimpleReloadableResourceManagerMixin"
   ],
   "minVersion": "0.8"
 }

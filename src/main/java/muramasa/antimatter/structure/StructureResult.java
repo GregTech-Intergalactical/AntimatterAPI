@@ -82,11 +82,9 @@ public class StructureResult {
         int3 working = new int3(machine.getFacing());
         int elementSize = result.structure.getElements().size();
         Tuple<int3, StructureElement> element;
-
         for (int i = 0; i < elementSize; i++) {
             element = structure.getElements().get(i);
             working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
-            int3 pos = element.getA();
             StructureElement el = element.getB();
             int count = StructureCache.refCount(machine.getWorld(), working);
             el.onBuild(machine, working, result, count);
@@ -100,11 +98,9 @@ public class StructureResult {
         int3 working = new int3(machine.getFacing());
         int elementSize = result.structure.getElements().size();
         Tuple<int3, StructureElement> element;
-
         for (int i = 0; i < elementSize; i++) {
             element = structure.getElements().get(i);
             working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
-            int3 pos = element.getA();
             StructureElement el = element.getB();
             int count = StructureCache.refCount(machine.getWorld(), working);
             el.onRemove(machine, working, result, count);

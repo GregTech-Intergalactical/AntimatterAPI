@@ -14,18 +14,25 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
     private final ContentEvent contentEvent;
     private final boolean output;
     private final Predicate<ItemStack> validator;
+    private final int limit;
 
     public TrackedItemHandler(T tile, int size, boolean output, Predicate<ItemStack> validator, ContentEvent contentEvent) {
+        this(tile, size, output, validator, contentEvent, 64);
+    }
+
+    public TrackedItemHandler(T tile, int size, boolean output, Predicate<ItemStack> validator, ContentEvent contentEvent, int limit) {
         super(size);
         this.tile = tile;
         this.output = output;
         this.contentEvent = contentEvent;
         this.validator = validator;
+        this.limit = limit;
     }
 
     @Override
-    public int getStackLimit(int slot, @Nonnull ItemStack stack) {
-        return super.getStackLimit(slot, stack);
+    public int getSlotLimit(int slot)
+    {
+        return limit;
     }
 
     @Override
