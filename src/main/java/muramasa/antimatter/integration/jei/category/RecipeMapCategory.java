@@ -199,6 +199,9 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                     if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreConsume()) {
                         tooltip.add(new StringTextComponent("Does not get consumed in the process.").mergeStyle(TextFormatting.WHITE));
                     }
+                    if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreNbt()) {
+                        tooltip.add(new StringTextComponent("Ignores NBT.").mergeStyle(TextFormatting.WHITE));
+                    }
                     if (recipe.getInputItems().size() >= index) {
                         Ingredient i = recipe.getInputItems().get(index).get();
                         if (RecipeMap.isIngredientSpecial(i)) {
