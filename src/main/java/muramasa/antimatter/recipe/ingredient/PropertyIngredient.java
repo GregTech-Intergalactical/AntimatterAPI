@@ -30,10 +30,7 @@ import net.minecraftforge.common.crafting.StackList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -226,7 +223,11 @@ public class PropertyIngredient extends Ingredient {
             for (int i = 0; i < size; i++) {
                fixedMats.add(AntimatterAPI.get(Material.class, buffer.readString()));
             }
-            return PropertyIngredient.build(items, t, id, tags, fixedMats, inverse, map);
+            ItemStack[] stacks = new ItemStack[buffer.readVarInt()];
+            for (int i = 0; i < stacks.length; i++) {
+                stacks[i] = buffer.readItemStack();
+            }
+            return new PropertyIngredient(Stream.of(new StackList(Arrays.asList(stacks))), items, t, id, tags, fixedMats, inverse, map);
         }
 
         @Override
@@ -283,6 +284,13 @@ public class PropertyIngredient extends Ingredient {
             for (Material fixedMat : ingredient.fixedMats) {
                 buffer.writeString(fixedMat.getId());
             }
+
+            //Needed because tags might not be available on client.
+            ItemStack[] items = ingredient.getMatchingStacks();
+            buffer.writeVarInt(items.length);
+
+            for (ItemStack stack : items)
+                buffer.writeItemStack(stack);
         }
     }
 
