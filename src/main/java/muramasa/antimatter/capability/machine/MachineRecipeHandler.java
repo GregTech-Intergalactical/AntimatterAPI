@@ -427,20 +427,37 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
             throw new RuntimeException("Missing fuel in active generator recipe!");
         }
         long toConsume = calculateGeneratorConsumption(tile.getMachineTier().getVoltage(), activeRecipe);
-        boolean shouldRun = tile.energyHandler.map(h -> h.insertInternal((long)((double)toConsume*activeRecipe.getPower()*tile.getMachineType().getMachineEfficiency()),true, true) > 0).orElse(false);
-        if (!shouldRun) return false;
+        long inserted = (long)((double)toConsume*activeRecipe.getPower()/activeRecipe.getInputFluids()[0].getAmount()*tile.getMachineType().getMachineEfficiency());
+
+        final long t = inserted;
+        long actual = tile.energyHandler.map(h -> h.insertInternal(t,true, true)).orElse(0L);
+        //If there isn't enough room for an entire run reduce output.
+        //E.g. if recipe is 24 eu per MB then you have to run 2x to match 48 eu/t
+        //but eventually it will be too much so reduce output.
+        while (actual < inserted && actual > 0) {
+            toConsume--;
+            inserted = (long)((double)toConsume*activeRecipe.getPower()/activeRecipe.getInputFluids()[0].getAmount()*tile.getMachineType().getMachineEfficiency());
+            final long temp = inserted;
+            actual = tile.energyHandler.map(h -> h.insertInternal(temp,true, true)).orElse(0L);
+        }
+        //If nothing to insert.
+        if (actual == 0) return false;
+        //because lambda don't like primitives
+        final long actualConsume = toConsume;
+        final long actualInsert = inserted;
+        //make sure there are fluids avaialble
         if (tile.fluidHandler.map(h -> {
-            int amount = h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)toConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
-            if (amount == toConsume) {
+            int amount = h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            if (amount == actualConsume) {
                 if (!simulate)
-                    h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)toConsume), IFluidHandler.FluidAction.EXECUTE);
+                    h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)actualConsume), IFluidHandler.FluidAction.EXECUTE);
                 return true;
             }
             return false;
         }).orElse(false)) {
-            //Input energy
+            //insert power!
             if (!simulate)
-                tile.energyHandler.ifPresent(handler -> handler.insertInternal((long)((double)toConsume*activeRecipe.getPower()/activeRecipe.getInputFluids()[0].getAmount()*tile.getMachineType().getMachineEfficiency()), false, true));
+                tile.energyHandler.ifPresent(handler -> handler.insertInternal(actualInsert, false, true));
             return true;
         }
         return false;
@@ -450,6 +467,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         long power = r.getPower();
         int amount = r.getInputFluids()[0].getAmount();
         double offset =  (volt /((double)power/(double) amount));
+        if (r.getDuration() > 1)
+            offset /= r.getDuration();
         return Math.max(1, (long)(Math.ceil(offset)));
     }
 
