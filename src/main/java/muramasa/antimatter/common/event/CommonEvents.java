@@ -1,13 +1,21 @@
 package muramasa.antimatter.common.event;
 
+import com.google.common.eventbus.Subscribe;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.tool.IAntimatterTool;
+import net.minecraft.block.Block;
+import net.minecraft.block.LeavesBlock;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @Mod.EventBusSubscriber(modid = Ref.ID)
 public class CommonEvents {
@@ -22,6 +30,21 @@ public class CommonEvents {
                 SoundEvent type = tool.getType().getUseSound();
                 if (type != null) {
                     e.getPlayer().playSound(type, 0.75F, 0.75F);
+                }
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onLootTableLoad(LootTableLoadEvent event){
+        //Antimatter.LOGGER.info(event.getTable().getLootTableId().toString());
+        if (event.getTable().getLootTableId().getPath().startsWith("blocks/")){
+            ResourceLocation blockId = new ResourceLocation(event.getTable().getLootTableId().getNamespace(), event.getName().getPath().replace("blocks/", ""));
+            if (ForgeRegistries.BLOCKS.containsKey(blockId)){
+                Block block = ForgeRegistries.BLOCKS.getValue(blockId);
+                //Antimatter.LOGGER.info(blockId.toString());
+                if (block instanceof LeavesBlock){
+                    Antimatter.LOGGER.info(blockId.toString());
                 }
             }
         }

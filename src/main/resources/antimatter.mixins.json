@@ -10,7 +10,9 @@
   "mixins": [
     "RecipeManagerMixin",
     "ServerBlockUpdateMixin",
-    "SimpleReloadableResourceManagerMixin"
+    "SimpleReloadableResourceManagerMixin",
+    "BlockLootTablesAccessor",
+    "LeavesBlockMixin"
   ],
   "minVersion": "0.8"
 }
