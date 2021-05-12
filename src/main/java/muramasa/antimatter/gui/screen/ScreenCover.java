@@ -2,6 +2,8 @@ package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.cover.CoverTiered;
+import muramasa.antimatter.cover.ICoverMode;
+import muramasa.antimatter.cover.ICoverModeHandler;
 import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.container.ContainerCover;
 import muramasa.antimatter.machine.Tier;
@@ -27,6 +29,16 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
         }
     }
 
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
+        drawTitle(stack, mouseX, mouseY);
+        if (container.getCover().getCover() instanceof ICoverModeHandler){
+            ICoverModeHandler coverModeHandler = (ICoverModeHandler) container.getCover().getCover();
+            ICoverMode mode = coverModeHandler.getCoverMode(container.getCover());
+            Minecraft.getInstance().fontRenderer.drawString(stack,"Mode: " + mode.getName(), getCenteredStringX("Mode: " + mode.getName()), 13, 0x404040);
+        }
+    }
+
     protected void drawTitle(MatrixStack stack, int mouseX, int mouseY) {
         Minecraft.getInstance().fontRenderer.drawString(stack, name, getCenteredStringX(name), 4, 0x404040);
     }
@@ -34,6 +46,11 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+        if (container.getCover().getCover() instanceof ICoverModeHandler){
+            ICoverModeHandler coverModeHandler = (ICoverModeHandler) container.getCover().getCover();
+            ICoverMode mode = coverModeHandler.getCoverMode(container.getCover());
+            drawTexture(stack, gui, guiLeft + mode.getX(), guiTop + mode.getY(), coverModeHandler.getOverlayX(), coverModeHandler.getOverlayY(), 18, 18);
+        }
     }
 
     @Override
