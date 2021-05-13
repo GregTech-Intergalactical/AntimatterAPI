@@ -2,6 +2,7 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
@@ -34,6 +35,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setTile(() -> new TileEntityBasicMultiMachine(this));
         addFlags(MULTI, CONFIGURABLE, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);
+        covers((ICover[]) null);
     }
 
     //TODO: How else to do this?
