@@ -165,4 +165,18 @@ public class TileEntityFakeBlock extends TileEntityBase {
         this.state = state;
         return this;
     }
+
+    @Override
+    public List<String> getInfo() {
+        List<String> list = super.getInfo();
+        list.add("State: " + getState().toString());
+        list.add("Facing: " + facing.getName2());
+        covers.forEach((k,v) -> {
+            list.add("Cover on " + k.getName2() + ": " + v.getId());
+        });
+        if (controllers.size() > 0) {
+            list.add("Controller positions: " + controllers.stream().map(t -> t.getPos().toString()).reduce((k,v) -> k + ", " + v).orElse(""));
+        }
+        return list;
+    }
 }
