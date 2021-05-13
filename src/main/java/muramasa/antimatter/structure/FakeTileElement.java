@@ -47,6 +47,7 @@ public class FakeTileElement extends StructureElement {
             if (tile instanceof TileEntityFakeBlock) {
                 BlockState st = ((TileEntityFakeBlock)tile).getState();
                 if (st == null) {
+                    result.withError("Missing state in fake tile.");
                     return false;
                 }
                 for (IBlockStatePredicate pred : preds) {

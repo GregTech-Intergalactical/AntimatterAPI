@@ -1,5 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.ITrackedHandler;
@@ -231,23 +233,28 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
      * @return a list of consumed items, or an empty list if it failed during simulation.
      */
     public List<ItemStack> consumeInputs(Recipe recipe, boolean simulate) {
-        Set<Integer> skipSlots = new HashSet<>();
         List<RecipeIngredient> items = recipe.getInputItems();
         if (items == null) return Collections.emptyList();
+        IntSet skipSlots = new IntOpenHashSet(getInputHandler().getSlots());
         List<ItemStack> consumedItems = new ObjectArrayList<>();
 
         boolean success = items.stream().mapToInt(input -> {
             int failed = 0;
-            IItemHandlerModifiable wrap = getInputHandler();
+            ITrackedHandler wrap = getInputHandler();
+            int countToReach = input.count;
             for (int i = 0; i < wrap.getSlots(); i++) {
                 ItemStack item = wrap.getStackInSlot(i);
-                if (input.get().test(item) && !skipSlots.contains(i) && item.getCount() >= input.count/*&& !Utils.hasNoConsumeTag(input)*/) {
-                    if (!input.ignoreConsume()) extractFromInput(wrap, i, input.count, simulate);
-                    ItemStack cloned = item.copy();
-                    cloned.setCount(input.count);
-                    consumedItems.add(cloned);
+                if (input.get().test(item) && !skipSlots.contains(i)) {
+                    int toConsume = Math.min(item.getCount(), Math.max(countToReach - item.getCount(), countToReach));
+                    countToReach -= toConsume;
                     skipSlots.add(i);
-                    break;
+                    ItemStack copy = item.copy();
+                    copy.setCount(toConsume);
+                    consumedItems.add(copy);
+                    if (!input.ignoreConsume()) wrap.extractFromInput(i, toConsume, simulate);
+                    if (countToReach == 0) {
+                        break;
+                    }
                 }
                 if (i == wrap.getSlots() - 1) {
                     failed++;

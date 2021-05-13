@@ -369,7 +369,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     activeRecipe = null;
                     return;
                 }
-                if (!consumeResourceForRecipe(true) || !canOutput() || !canRecipeContinue() || (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) || !tile.onRecipeFound(activeRecipe)) {
+                if (!consumeResourceForRecipe(true) || !canRecipeContinue() || (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) || !tile.onRecipeFound(activeRecipe)) {
                     activeRecipe = null;
                     tile.setMachineState(tile.getDefaultMachineState());
                     return;
