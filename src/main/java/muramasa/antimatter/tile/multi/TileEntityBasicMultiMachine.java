@@ -137,7 +137,12 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
 
     protected void invalidateStructure() {
         if (removed) return;
-        if (result == null) return;
+        if (result == null) {
+            if (isServerSide() && getMachineState() != getDefaultMachineState()) {
+                resetMachine();
+            }
+            return;
+        }
         StructureCache.invalidate(this.getWorld(), getPos(), getMachineType().getStructure(getMachineTier()).getStructure(this));
         if (isServerSide()) {
             onStructureInvalidated();

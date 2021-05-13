@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockProxy;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
@@ -20,6 +21,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -122,6 +125,12 @@ public class TileEntityFakeBlock extends TileEntityBase {
 
     @Nonnull
     @Override
+    public IModelData getModelData() {
+        return new ModelDataMap.Builder().withInitial(AntimatterProperties.STATE_MODEL_PROPERTY, getState()).withInitial(AntimatterProperties.TILE_PROPERTY, this).build();
+    }
+
+    @Nonnull
+    @Override
     public CompoundNBT getUpdateTag() {
         return this.writeTag(new CompoundNBT(), true);
     }
@@ -148,7 +157,6 @@ public class TileEntityFakeBlock extends TileEntityBase {
         return nbt;
     }
 
-    @Nonnull
     public BlockState getState() {
         return state;
     }

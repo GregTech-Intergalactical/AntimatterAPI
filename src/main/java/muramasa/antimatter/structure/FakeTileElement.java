@@ -20,18 +20,18 @@ import java.util.EnumMap;
 public class FakeTileElement extends StructureElement {
 
     private final IBlockStatePredicate[] preds;
-    private EnumMap<Direction, ICover> covers = new EnumMap<>(Direction.class);
+    private final EnumMap<Direction, ICover> covers = new EnumMap<>(Direction.class);
 
     public FakeTileElement(IBlockStatePredicate... pred) {
         this.preds = pred;
     }
 
     public FakeTileElement(Block... pred) {
-        this.preds = Arrays.stream(pred).map(t -> (IBlockStatePredicate) (reader, pos, state) -> reader.getBlockState(pos).getBlock().matchesBlock(t)).toArray(IBlockStatePredicate[]::new);
+        this.preds = Arrays.stream(pred).map(t -> (IBlockStatePredicate) (reader, pos, state) -> state.getBlock() == Data.PROXY_INSTANCE || state.getBlock().matchesBlock(t)).toArray(IBlockStatePredicate[]::new);
     }
 
     public FakeTileElement(BlockState... pred) {
-        this.preds = Arrays.stream(pred).map(t -> (IBlockStatePredicate) (reader, pos, state) -> reader.getBlockState(pos).equals(t)).toArray(IBlockStatePredicate[]::new);
+        this.preds = Arrays.stream(pred).map(t -> (IBlockStatePredicate) (reader, pos, state) -> state.getBlock() == Data.PROXY_INSTANCE || state.equals(t)).toArray(IBlockStatePredicate[]::new);
     }
 
 
@@ -43,8 +43,25 @@ public class FakeTileElement extends StructureElement {
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
         BlockState state = machine.getWorld().getBlockState(pos);
         if (state.getBlock().matchesBlock(Data.PROXY_INSTANCE)) {
-            result.addState("fake", pos, state);
-            return true;
+            TileEntity tile = machine.getWorld().getTileEntity(pos);
+            if (tile instanceof TileEntityFakeBlock) {
+                BlockState st = ((TileEntityFakeBlock)tile).getState();
+                if (st == null) {
+                    return false;
+                }
+                for (IBlockStatePredicate pred : preds) {
+                    if (pred.evaluate((IWorldReader)machine.getWorld(), (BlockPos) pos, st)) {
+                        result.addState("fake", pos, st);
+                        return true;
+                    }
+                }
+                if (preds.length == 0) {
+                    result.addState("fake", pos, st);
+                    return true;
+                }
+            }
+            result.withError("Invalid BlockProxy state.");
+            return false;
         }
         if (state.hasTileEntity()) return false;
         if (preds.length == 0) {
@@ -57,6 +74,7 @@ public class FakeTileElement extends StructureElement {
                 return true;
             }
         }
+        result.withError("No matching blocks for FakeTile");
         return false;
     }
 

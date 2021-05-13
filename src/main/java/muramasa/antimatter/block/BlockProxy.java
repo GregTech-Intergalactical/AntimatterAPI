@@ -1,6 +1,7 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
@@ -11,17 +12,22 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
+import java.util.List;
 
 public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
 
@@ -57,6 +63,30 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
             TYPE = new TileEntityType<>(() -> new TileEntityFakeBlock(this), Collections.singleton(this), null).setRegistryName(new ResourceLocation(Ref.ID, "proxy"));
             AntimatterAPI.register(TileEntityType.class, getId(), TYPE);
         }
+    }
+
+    @Override
+    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        super.onReplaced(state, worldIn, pos, newState, isMoving);
+    }
+
+    @Override
+    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+        TileEntity tileentity = builder.get(LootParameters.BLOCK_ENTITY);
+        if (tileentity instanceof TileEntityFakeBlock) {
+            TileEntityFakeBlock fake = (TileEntityFakeBlock) tileentity;
+            ForgeRegistries.ITEMS.getValues().parallelStream().filter(t -> t.canHarvestBlock(fake.getState())).findFirst().ifPresent(item -> {
+                builder.withParameter(LootParameters.TOOL, new ItemStack(item));
+            });
+            return fake.getState().getDrops(builder);
+        }
+        return super.getDrops(state, builder);
+    }
+
+    @Nullable
+    @Override
+    public ToolType getHarvestTool(BlockState state) {
+        return Data.HAMMER.getToolType();
     }
 
     @Override

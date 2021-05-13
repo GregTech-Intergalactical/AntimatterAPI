@@ -355,6 +355,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
         //First lookup.
         if (!this.tile.hadFirstTick() && hasLoadedInput()) {
+            if (!tile.getMachineState().allowRecipeCheck()) return;
             activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), r -> true);
             if (activeRecipe == null) return;
             activateRecipe(false);

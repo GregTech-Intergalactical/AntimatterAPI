@@ -42,7 +42,12 @@ public class StructureCache {
 
     public static boolean validate(World world, BlockPos pos, LongList structure, int maxAmount) {
         DimensionEntry e = LOOKUP.get(world);
-        return e != null && e.validate(pos, maxAmount, structure);
+        if (e != null) {
+            if (!has(world, pos)) {
+                return e.validate(pos, maxAmount, structure);
+            }
+        }
+        return false;
     }
 
     public static int refCount(World world, BlockPos pos) {
@@ -98,7 +103,10 @@ public class StructureCache {
 
     public static void invalidate(World world, BlockPos pos, LongList structure) {
         DimensionEntry entry = LOOKUP.get(world);
-        if (entry != null) entry.invalidate(pos, structure);
+        if (entry != null) {
+            if (has(world, pos))
+                entry.invalidate(pos, structure);
+        }
     }
 
     private static void refreshController(World world, BlockPos pos) {

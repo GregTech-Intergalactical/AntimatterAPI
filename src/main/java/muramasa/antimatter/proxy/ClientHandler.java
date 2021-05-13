@@ -83,6 +83,7 @@ public class ClientHandler implements IProxyHandler {
         AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), ScreenSetup.get(h))));
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
+            RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.getCutout());
             AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockMultiMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));

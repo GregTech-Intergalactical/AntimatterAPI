@@ -388,7 +388,7 @@ public class Data {
     public static CoverStack<?> COVER_EMPTY = new CoverStack<>(COVERNONE);
     public static CoverStack<?> COVER_OUTPUT = new CoverStack<>(COVEROUTPUT);
 
-    public static BlockProxy PROXY_INSTANCE = new BlockProxy(Ref.ID, "proxy", AbstractBlock.Properties.create(net.minecraft.block.material.Material.ROCK));
+    public static BlockProxy PROXY_INSTANCE = new BlockProxy(Ref.ID, "proxy", AbstractBlock.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 1.0f).notSolid());
 
 
     public static MenuHandlerMachine<ContainerMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_basic") {

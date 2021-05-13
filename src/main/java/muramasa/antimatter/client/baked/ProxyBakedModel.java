@@ -1,5 +1,6 @@
 package muramasa.antimatter.client.baked;
 
+import com.google.common.collect.Sets;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
@@ -9,10 +10,12 @@ import muramasa.antimatter.tile.TileEntityFakeBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.IUnbakedModel;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.ModelLoader;
@@ -22,10 +25,7 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
@@ -39,24 +39,27 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         if (tileData instanceof EmptyModelData) {
             tileData = new ModelDataMap.Builder().build();
         }
-        TileEntityFakeBlock fake = ((TileEntityFakeBlock)world.getTileEntity(pos));
-        if (fake.getState() == null) throw new RuntimeException("missing state in ProxyModel");
-        IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(fake.getState());
-        IUnbakedModel m = ModelLoader.instance().getUnbakedModel(BlockModelShapes.getModelLocation(fake.getState()));
-        if (m instanceof BlockModel) {
-            BlockModel mi = (BlockModel) m;
-            ResourceLocation loc = mi.textures.values().iterator().next().map(RenderMaterial::getTextureLocation, ResourceLocation::new);
-            tileData.setData(AntimatterProperties.TEXTURE_MODEL_PROPERTY, new Texture(loc.toString()));
-        } else if (model instanceof SimpleBakedModel) {
-            SimpleBakedModel mod = (SimpleBakedModel) model;
-            tileData.setData(AntimatterProperties.TEXTURE_MODEL_PROPERTY, new Texture(mod.getParticleTexture().getName().toString()));
-            this.bakedModel = model;
-        } if (model instanceof ProxyBakedModel) {
+        TileEntityFakeBlock fake;
+        if (tileData.hasProperty(AntimatterProperties.TILE_PROPERTY)) {
+            fake = (TileEntityFakeBlock) tileData.getData(AntimatterProperties.TILE_PROPERTY);
+        } else {
+            fake = (TileEntityFakeBlock) world.getTileEntity(pos);
+        }
+        if (fake.getState() == null) {
             return tileData;
         }
+        IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(fake.getState());
+        IUnbakedModel m = ModelLoader.instance().getUnbakedModel(BlockModelShapes.getModelLocation(fake.getState()));
+
+        Collection<RenderMaterial> mats = m.getTextures(ModelLoader.defaultModelGetter(), Sets.newLinkedHashSet());
+        RenderMaterial first = mats.iterator().next();
+        tileData.setData(AntimatterProperties.TEXTURE_MODEL_PROPERTY, new Texture(first.getTextureLocation().toString()));
         tileData = model.getModelData(world, pos, state, tileData);
-        tileData.setData(AntimatterProperties.STATE_MODEL_PROPERTY, fake.getState());
-        tileData.setData(AntimatterProperties.TILE_PROPERTY, fake);
+
+        if (!tileData.hasProperty(AntimatterProperties.STATE_MODEL_PROPERTY))
+            tileData.setData(AntimatterProperties.STATE_MODEL_PROPERTY, fake.getState());
+        if (!tileData.hasProperty(AntimatterProperties.TILE_PROPERTY))
+            tileData.setData(AntimatterProperties.TILE_PROPERTY, fake);
         return tileData;
     }
 
