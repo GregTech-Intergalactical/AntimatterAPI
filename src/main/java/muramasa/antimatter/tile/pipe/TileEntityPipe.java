@@ -217,18 +217,20 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         }
         if (this instanceof ITickablePipe) {
             if (remove && !hasNonEmpty) {
+                CompoundNBT nbt = this.write(new CompoundNBT());
                 world.setBlockState(getPos(), getBlockState().with(BlockPipe.COVERED, false), 11);
                 TileEntityPipe pipe = (TileEntityPipe) world.getTileEntity(getPos());
                 if (pipe != this) {
-                    pipe.read(pipe.getBlockState(), this.write(new CompoundNBT()));
+                    pipe.read(pipe.getBlockState(), nbt);
                 }
             }
         } else if (!remove && hasNonEmpty) {
             //set this to be covered.
+            CompoundNBT nbt = this.write(new CompoundNBT());
             world.setBlockState(getPos(), getBlockState().with(BlockPipe.COVERED, true), 11);
             TileEntityPipe pipe = (TileEntityPipe) world.getTileEntity(getPos());
             if (pipe != this) {
-                pipe.read(pipe.getBlockState(), this.write(new CompoundNBT()));
+                pipe.read(pipe.getBlockState(), nbt);
             }
         }
     }
