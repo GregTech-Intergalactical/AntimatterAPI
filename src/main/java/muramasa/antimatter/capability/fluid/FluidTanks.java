@@ -71,6 +71,7 @@ public class FluidTanks implements IFluidHandler {
             FluidTank tank = this.tanks[i];
             if (tank.isEmpty()) {
                 firstAvailable = i;
+                break;
             } else if ((drain && !tank.drain(stack, FluidAction.SIMULATE).isEmpty()) || (!drain && tank.fill(stack, FluidAction.SIMULATE) != 0)) {
                 return i;
             }
