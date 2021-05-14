@@ -242,12 +242,12 @@ public final class AntimatterAPI {
      * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
      */
     @SuppressWarnings("unused")
-    public static void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState) {
-        BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState));
+    public static void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState, int flags) {
+        BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState, flags));
     }
 
     public interface IBlockUpdateEvent {
 
-        void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState);
+        void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState, int flags);
     }
 }

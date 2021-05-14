@@ -41,6 +41,8 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
 
     /** To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded from disk. **/
     protected boolean shouldCheckFirstTick = true;
+    //Number of calls into checkStructure, invalidateStructure. if > 0 ignore callbacks from structurecache.
+    private int checkingStructure = 0;
 
     protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
@@ -78,6 +80,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
     public boolean checkStructure() {
         Structure structure = getMachineType().getStructure(getMachineTier());
         if (structure == null) return false;
+        checkingStructure++;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             if (StructureCache.validate(world, pos, result.positions, maxShares())) {
@@ -96,6 +99,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
                             }
                         });
                         sidedSync(true);
+                        checkingStructure--;
                         return true;
                     }
                 } else {
@@ -103,12 +107,14 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
                         Utils.markTileForRenderUpdate(c.getTile());
                     }));
                     sidedSync(true);
+                    checkingStructure--;
                     return true;
                 }
             }
         } else {
             invalidateStructure();
         }
+        checkingStructure--;
         return false;
     }
 
@@ -129,6 +135,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
     }
 
     public void onBlockUpdate(BlockPos pos) {
+        if (checkingStructure > 0) return;
         if (result != null) {
             invalidateStructure();
         }
@@ -143,6 +150,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
             }
             return;
         }
+        checkingStructure++;
         StructureCache.invalidate(this.getWorld(), getPos(), getMachineType().getStructure(getMachineTier()).getStructure(this));
         if (isServerSide()) {
             onStructureInvalidated();
@@ -159,6 +167,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
             }));
             result = null;
         }
+        checkingStructure--;
     }
 
     @Override

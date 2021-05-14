@@ -25,7 +25,7 @@ public class StructureCache {
     private static final Object2ObjectMap<World, DimensionEntry> LOOKUP = new Object2ObjectOpenHashMap<>();
 
     static {
-        AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState) -> {
+        AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState, flags) -> {
             if (oldState == newState) return;  // TODO: better checks?
             StructureCache.DimensionEntry entry = LOOKUP.get(world);
             if (entry == null) return;

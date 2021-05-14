@@ -17,6 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ClientBlockUpdateMixin {
     @Inject(/*remap = false,*/at = @At("HEAD"), method = "notifyBlockUpdate(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;I)V")
     private void onNotifyBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo info) {
-        AntimatterAPI.onNotifyBlockUpdate((World) (Object)this, pos, oldState, newState);
+        AntimatterAPI.onNotifyBlockUpdate((World) (Object)this, pos, oldState, newState, flags);
     }
 }
