@@ -69,7 +69,7 @@ public class CoverOutput extends CoverInput {
     }
 
     protected void processItemOutput(CoverStack<?> instance, TileEntityMachine tile) {
-        Direction outputDir = tile.getOutputFacing();
+        Direction outputDir = instance.getFacing();
         TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
         if (adjTile == null) return;
         adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
@@ -78,7 +78,7 @@ public class CoverOutput extends CoverInput {
     }
 
     protected void processFluidOutput(CoverStack<?> instance, TileEntityMachine tile) {
-        Direction outputDir = tile.getOutputFacing();
+        Direction outputDir = instance.getFacing();
         TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
         if (adjTile == null) return;
         adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, outputDir.getOpposite()).ifPresent(adjHandler -> {
