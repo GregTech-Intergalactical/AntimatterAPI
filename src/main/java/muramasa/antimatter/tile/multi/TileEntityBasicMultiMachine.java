@@ -111,9 +111,9 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
                     return true;
                 }
             }
-        } else {
-            invalidateStructure();
         }
+        //if we reached here something went wrong.
+        invalidateStructure();
         checkingStructure--;
         return false;
     }
