@@ -521,7 +521,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      */
     public static boolean isIngredientSpecial(Ingredient i) {
         Class<? extends Ingredient> clazz = i.getClass();
-        return i.getMatchingStacks().length == 0 && (clazz != Ingredient.class && clazz != CompoundIngredient.class && clazz != NBTIngredient.class);
+        return /*i.getMatchingStacks().length == 0 && */(clazz != Ingredient.class && clazz != CompoundIngredient.class && clazz != NBTIngredient.class);
     }
 
     /**

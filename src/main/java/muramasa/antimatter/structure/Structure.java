@@ -8,6 +8,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.Arrays;
 import java.util.List;
@@ -68,6 +69,16 @@ public class Structure {
             }
         }
         return result;
+    }
+
+    public boolean evaluatePosition(TileEntityMachine tile, BlockPos pos) {
+        BlockPos fin = pos.subtract(new int3(tile.getPos(), tile.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y));
+        for (Tuple<int3, StructureElement> element : this.elements) {
+            if (element.getA().equals(fin)) {
+                return element.getB().evaluate(tile, new int3(pos.getX(), pos.getY(), pos.getZ()), new StructureResult(this));
+            }
+        }
+        return false;
     }
 
     public LongList getStructure(TileEntityMachine tile) {

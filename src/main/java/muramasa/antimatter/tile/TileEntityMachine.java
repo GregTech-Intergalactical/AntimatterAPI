@@ -175,7 +175,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             fluidHandler.ifPresent(MachineFluidHandler::onRemove);
             itemHandler.ifPresent(MachineItemHandler::onRemove);
             energyHandler.ifPresent(MachineEnergyHandler::onRemove);
-            recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
+            recipeHandler.ifPresent(MachineRecipeHandler::onRemove);
 
             coverHandler.invalidate();
             fluidHandler.invalidate();

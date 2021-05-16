@@ -10,6 +10,7 @@ import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -168,6 +169,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                     tile.onRecipeStop();
                 } else {
                     tile.setMachineState(state);
+                    tile.onRecipeActivated(activeRecipe);
                 }
                 break;
         }
@@ -182,7 +184,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
                 return lastRecipe;
             }
         }
-        return tile.getMachineType().getRecipeMap().find(tile.itemHandler, tile.fluidHandler, this::validateRecipe);
+        RecipeMap<?> map = tile.getMachineType().getRecipeMap();
+        return map != null ? map.find(tile.itemHandler, tile.fluidHandler, this::validateRecipe) : null;
     }
 
     protected Recipe cachedRecipe() {
@@ -316,7 +319,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         return !generator;
     }
 
-    private void recipeFailure() {
+    protected void recipeFailure() {
         currentProgress = 0;
     }
 
@@ -481,6 +484,31 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         this.maxProgress = 0;
         this.itemInputs = Collections.emptyList();
         this.fluidInputs = Collections.emptyList();
+    }
+
+    public void onMultiBlockStateChange(boolean isValid, boolean hardcore) {
+        if (isValid) {
+            if (tile.hadFirstTick()) {
+                if (hasRecipe())
+                    tile.setMachineState(MachineState.NO_POWER);
+                else {
+                    checkRecipe();
+                }
+            }
+        } else {
+            if (hardcore) {
+                tile.onRecipeStop();
+                resetRecipe();
+            } else {
+                tile.onRecipeStop();
+                tile.resetMachine();
+            }
+        }
+    }
+
+    public void onRemove() {
+        tile.onRecipeStop();
+        resetRecipe();
     }
 
     @Override

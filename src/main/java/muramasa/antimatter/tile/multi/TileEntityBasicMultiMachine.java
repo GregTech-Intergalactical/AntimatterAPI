@@ -91,13 +91,7 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
                         afterStructureFormed();
                         setMachineState(MachineState.IDLE);
                         Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
-                        if (hadFirstTick()) this.recipeHandler.ifPresent(t -> {
-                            if (t.hasRecipe())
-                                setMachineState(MachineState.NO_POWER);
-                            else {
-                                t.checkRecipe();
-                            }
-                        });
+                        this.recipeHandler.ifPresent(t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
                         sidedSync(true);
                         checkingStructure--;
                         return true;
@@ -137,9 +131,13 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
     public void onBlockUpdate(BlockPos pos) {
         if (checkingStructure > 0) return;
         if (result != null) {
-            invalidateStructure();
+            if (!getMachineType().getStructure(getMachineTier()).evaluatePosition(this, pos)) {
+                invalidateStructure();
+                return;
+            }
+        } else {
+            checkStructure();
         }
-        checkStructure();
     }
 
     protected void invalidateStructure() {
@@ -156,11 +154,8 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
             onStructureInvalidated();
             result.remove(this, result);
             result = null;
-            resetMachine();
+            recipeHandler.ifPresent(t -> t.onMultiBlockStateChange(false, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
             //Hard mode, remove recipe progress.
-            if (AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()) {
-                recipeHandler.ifPresent(MachineRecipeHandler::resetRecipe);
-            }
         } else {
             this.result.components.forEach((k, v) -> v.forEach(c -> {
                 Utils.markTileForRenderUpdate(c.getTile());
@@ -168,15 +163,6 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
             result = null;
         }
         checkingStructure--;
-    }
-
-    @Override
-    public void onServerUpdate() {
-        super.onServerUpdate();
-        if (result == null && world != null && world.getGameTime() % 200 == 0) {
-            //Uncomment to periodically check structure.
-            // checkStructure();
-        }
     }
 
     /** Returns a list of Components **/

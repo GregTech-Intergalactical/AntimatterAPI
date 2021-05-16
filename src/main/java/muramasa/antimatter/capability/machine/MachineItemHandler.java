@@ -11,6 +11,7 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.ingredient.impl.Ingredients;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -226,14 +227,9 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
         }
         return list;
     }
-    /**
-     * Consumes the inputs from the active recipe.
-     * @param recipe active recipe.
-     * @param simulate whether to execute or just return items.
-     * @return a list of consumed items, or an empty list if it failed during simulation.
-     */
-    public List<ItemStack> consumeInputs(Recipe recipe, boolean simulate) {
-        List<RecipeIngredient> items = recipe.getInputItems();
+
+
+    public List<ItemStack> consumeInputs(List<RecipeIngredient> items, boolean simulate) {
         if (items == null) return Collections.emptyList();
         IntSet skipSlots = new IntOpenHashSet(getInputHandler().getSlots());
         List<ItemStack> consumedItems = new ObjectArrayList<>();
@@ -263,9 +259,18 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
             return failed;
         }).sum() == 0;
         //onSlotChanged should call dirty though, not sure if needed.
-        if (!simulate && success && recipe.hasInputItems()) tile.markDirty();
+        if (!simulate && success) tile.markDirty();
         if (simulate) return success ? consumedItems : Collections.emptyList();
         return consumedItems;
+    }
+    /**
+     * Consumes the inputs from the active recipe.
+     * @param recipe active recipe.
+     * @param simulate whether to execute or just return items.
+     * @return a list of consumed items, or an empty list if it failed during simulation.
+     */
+    public List<ItemStack> consumeInputs(Recipe recipe, boolean simulate) {
+        return consumeInputs(recipe.getInputItems(), simulate);
     }
 
     /**

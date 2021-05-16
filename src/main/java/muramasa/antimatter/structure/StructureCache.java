@@ -33,7 +33,7 @@ public class StructureCache {
             if (controllerPos.size() > 0) {
                 controllerPos.forEach((p, valid) -> {
                     if (!p.equals(pos)) {
-                        refreshController(world, p);
+                        refreshController(world, p, pos);
                     }
                 });
             }
@@ -109,9 +109,9 @@ public class StructureCache {
         }
     }
 
-    private static void refreshController(World world, BlockPos pos) {
-        TileEntity tile = world.getTileEntity(pos);
-        if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).onBlockUpdate(pos);
+    private static void refreshController(World world, BlockPos controller, BlockPos at) {
+        TileEntity tile = world.getTileEntity(controller);
+        if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).onBlockUpdate(at);
     }
 
     @SubscribeEvent
