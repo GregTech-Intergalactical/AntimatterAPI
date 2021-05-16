@@ -151,7 +151,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         //Collectors.toSet is very important since there are duplicate recipes but they point to the same memory location
         //so == works to remove them.
         //Or maybe not, I'm not sure but let's make a set anyways
-        return LOOKUP.getRecipes(filterHidden).collect(Collectors.toSet());
+        return LOOKUP.getRecipes(filterHidden).sorted(Comparator.comparingLong(Recipe::getPower)).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     void add(Recipe recipe) {
