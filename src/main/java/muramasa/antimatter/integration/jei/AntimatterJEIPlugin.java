@@ -23,6 +23,7 @@ import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.item.Item;
@@ -41,6 +42,8 @@ import java.util.stream.Stream;
 
 import static muramasa.antimatter.Data.DUST_SMALL;
 import static muramasa.antimatter.Data.DUST_TINY;
+import static muramasa.antimatter.Data.ORE;
+import static muramasa.antimatter.Data.ROCK;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 
@@ -88,6 +91,8 @@ public class AntimatterJEIPlugin implements IModPlugin {
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BLOCK_TO_ITEM.get(t.getFluidBlock()))).collect(Collectors.toList()));
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Collections.singletonList(new ItemStack(Data.PROXY_INSTANCE)));
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Stream.concat(DUST_TINY.all().stream().map(t -> DUST_TINY.get(t, 1)),DUST_SMALL.all().stream().map(t -> DUST_SMALL.get(t, 1))).collect(Collectors.toList()));
+        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, ROCK.all().stream().map(t -> ROCK.get(t, 1)).collect(Collectors.toList()));
+        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));
     }
 
