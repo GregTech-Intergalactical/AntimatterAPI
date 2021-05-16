@@ -64,7 +64,10 @@ public class FakeTileElement extends StructureElement {
             result.withError("Invalid BlockProxy state.");
             return false;
         }
-        if (state.hasTileEntity()) return false;
+        if (state.hasTileEntity()) {
+            result.withError("BlockProxy replacement should not have Tile.");
+            return false;
+        }
         if (preds.length == 0) {
             result.addState("fake", pos, state);
             return true;
