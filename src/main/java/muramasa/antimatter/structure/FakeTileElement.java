@@ -63,6 +63,9 @@ public class FakeTileElement extends StructureElement {
             }
             result.withError("Invalid BlockProxy state.");
             return false;
+        } else if (StructureCache.refCount(machine.getWorld(), pos) > 0) {
+            result.withError("FakeTile sharing a block that is not of proxy type.");
+            return false;
         }
         if (state.hasTileEntity()) {
             result.withError("BlockProxy replacement should not have Tile.");

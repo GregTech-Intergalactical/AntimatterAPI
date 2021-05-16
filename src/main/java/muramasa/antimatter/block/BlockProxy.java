@@ -52,7 +52,7 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
     @Override
     public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
         TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getTileEntity(pos);
-        return tile.getState().getBlock().asItem().getDefaultInstance();
+        return tile != null && tile.getState() != null ? tile.getState().getBlock().asItem().getDefaultInstance() : ItemStack.EMPTY;
     }
 
     @Override

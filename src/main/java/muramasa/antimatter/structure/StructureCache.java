@@ -61,7 +61,7 @@ public class StructureCache {
         if (entry == null) return false;
         long p = pos.toLong();
         LongList l = entry.CONTROLLER_TO_STRUCTURE.get(p);
-        if (l == null) return false;
+        if (l == null || l.size() == 0) return false;
         return entry.STRUCTURE_TO_CONTROLLER.get(l.iterator().nextLong()).getBoolean(pos);
     }
 
