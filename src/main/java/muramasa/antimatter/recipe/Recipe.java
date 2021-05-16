@@ -217,7 +217,9 @@ public class Recipe implements IRecipe<IInventory> {
         if (itemsInput.size() > 0) {
             builder.append("\nInput Items: { ");
             for (int i = 0; i < itemsInput.size(); i++) {
-                builder.append(itemsInput.get(i).get().getMatchingStacks()[0].getDisplayName()).append(" x").append(itemsInput.get(i).get().getMatchingStacks()[0].getCount());
+                builder.append("\n Item ").append(i);
+                //builder.append(itemsInput.get(i).get().getMatchingStacks()[0].getDisplayName()).append(" x").append(itemsInput.get(i).get().getMatchingStacks()[0].getCount());
+                builder.append(itemsInput.get(i).get().serialize().toString());
                 if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");

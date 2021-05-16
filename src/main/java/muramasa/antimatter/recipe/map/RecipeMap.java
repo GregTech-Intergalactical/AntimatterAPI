@@ -195,8 +195,11 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
         Recipe r = recurseItemTreeFind(items, map, rr -> true);
         if (r != null) {
-            Utils.onInvalidData("RECIPE COLLISION! (Map: " + this.id + ")");
-            return;
+            Antimatter.LOGGER.warn("Recipe collision, adding both but only first is available.");
+            //Utils.onInvalidData("RECIPE COLLISION! (Map: " + this.id + ")");
+            //Utils.onInvalidData("RECIPE ALREADY IN MAP: \n " + r);
+            //Utils.onInvalidData("\n + RECIPE BEING ADDED " + recipe);
+            //return;
         }
         if (recurseItemTreeAdd(recipe, items, map, 0, 0)) {
             items.forEach(t -> t.forEach(ing -> {
@@ -282,13 +285,16 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
         //Loop through NUMBER_OF_INGREDIENTS times.
         List<AbstractMapIngredient> current = ingredients.get(index);
-        Either<Recipe, Branch> r;
+        Either<List<Recipe>, Branch> r;
         for (AbstractMapIngredient obj : current) {
             if (!obj.isSpecial()) {
                 //Either add the recipe or create a branch.
                 r = map.NODES.compute(obj, (k, v) -> {
                     if (count == ingredients.size() - 1) {
-                        v = Either.left(recipe);
+                        if (v == null) {
+                            v = Either.left(new ObjectArrayList<>());
+                        }
+                        v.ifLeft(list -> list.add(recipe));
                         return v;
                     } else if (v == null) {
                         Branch traverse = new Branch();
@@ -359,10 +365,17 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         List<AbstractMapIngredient> wr = items.get(index);
         //Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
-            Either<Recipe, RecipeMap.Branch> result = map.NODES.get(t);
+            Either<List<Recipe>, RecipeMap.Branch> result = map.NODES.get(t);
             if (result != null) {
                 //Either return recipe or continue branch.
-                Recipe r = result.map(left -> canHandle.test(left) ? left : null, right -> callback(items, right, canHandle, index, count, skip));
+                Recipe r = result.map(left -> {
+                    for (Recipe recipe : left) {
+                        if (canHandle.test(recipe)) {
+                            return recipe;
+                        }
+                    }
+                    return null;
+                }, right -> callback(items, right, canHandle, index, count, skip));
                 if (r != null && canHandle.test(r)) return r;
             }
             if (map.SPECIAL_NODES.size() > 0) {
@@ -527,13 +540,13 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     protected static class Branch {
 
-        private Map<AbstractMapIngredient, Either<Recipe, Branch>> NODES = new Object2ObjectOpenHashMap<>();
+        private Map<AbstractMapIngredient, Either<List<Recipe>, Branch>> NODES = new Object2ObjectOpenHashMap<>();
 
         private final List<Tuple<AbstractMapIngredient, Either<Recipe, Branch>>> SPECIAL_NODES = new ObjectArrayList<>();
 
         public Stream<Recipe> getRecipes(boolean filterHidden) {
             Stream<Recipe> stream = NODES.values().stream().flatMap(t -> t.map(
-                    Stream::of,
+                    Collection::stream,
                     branch -> branch.getRecipes(filterHidden)
             ));
             if (SPECIAL_NODES.size() > 0) {
