@@ -9,13 +9,11 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import static muramasa.antimatter.util.Dir.*;

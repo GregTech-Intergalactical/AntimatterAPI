@@ -2,6 +2,7 @@ package muramasa.antimatter.tesseract;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -17,14 +18,14 @@ import tesseract.api.gt.IGTNode;
 
 import java.util.function.Supplier;
 
-public class EnergyTileWrapper implements IGTNode {
+public class EnergyTileWrapper implements IEnergyHandler {
 
     private final TileEntity tile;
     private final IEnergyStorage storage;
 
     private final GTConsumer.State state = new GTConsumer.State(this);
 
-    private EnergyTileWrapper(TileEntity tile, IEnergyStorage storage) {
+    public EnergyTileWrapper(TileEntity tile, IEnergyStorage storage) {
         this.tile = tile;
         this.storage = storage;
     }
@@ -125,5 +126,14 @@ public class EnergyTileWrapper implements IGTNode {
         getState().onTick();
     }
 
-    
+
+    @Override
+    public CompoundNBT serializeNBT() {
+        return null;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundNBT nbt) {
+
+    }
 }

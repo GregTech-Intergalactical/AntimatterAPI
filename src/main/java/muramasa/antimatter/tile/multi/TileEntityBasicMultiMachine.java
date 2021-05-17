@@ -5,7 +5,6 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
-import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.cover.CoverDynamo;
 import muramasa.antimatter.cover.CoverEnergy;
 import muramasa.antimatter.cover.CoverInput;

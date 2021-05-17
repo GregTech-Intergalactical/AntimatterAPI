@@ -6,13 +6,11 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int3;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.RegistryObject;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class StructureBuilder {
 

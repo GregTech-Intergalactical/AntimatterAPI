@@ -7,12 +7,15 @@ import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
+import muramasa.antimatter.tesseract.EnergyTileWrapper;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.world.Explosion;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
@@ -80,6 +83,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
     public void onUpdate() {
         super.onUpdate();
         cachedItems.forEach(t -> t.getState().onTick());
+        cache.forEach(v -> v.ifPresent(t -> {
+            if (t instanceof EnergyTileWrapper) {
+                t.tesseractTick();
+            }
+        }));
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
                 LazyOptional<IEnergyHandler> handle = cache.get(dir.getIndex());
@@ -88,7 +96,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
                     if (tile == null) continue;
                     handle = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
                     if (!handle.isPresent()) {
-                        continue;
+                        LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, dir.getOpposite());
+                        if (!cap.isPresent()) continue;
+                        handle = LazyOptional.of(() -> new EnergyTileWrapper(tile, cap.orElse(null)));
+                        LazyOptional<IEnergyHandler> finalHandle = handle;
+                        cap.addListener(list -> finalHandle.invalidate());
                     }
                     cache.add(dir.getIndex(), handle);
                     handle.addListener(h -> cache.add(dir.getIndex(), LazyOptional.empty()));
