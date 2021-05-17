@@ -105,6 +105,8 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
                     return true;
                 }
             }
+        } else {
+           // Antimatter.LOGGER.info("[Structure Debug] Error " + result.getError());
         }
         //if we reached here something went wrong.
         invalidateStructure();
@@ -131,9 +133,8 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
     public void onBlockUpdate(BlockPos pos) {
         if (checkingStructure > 0) return;
         if (result != null) {
-            if (!getMachineType().getStructure(getMachineTier()).evaluatePosition(this, pos)) {
+            if (!getMachineType().getStructure(getMachineTier()).evaluatePosition(result,this, pos)) {
                 invalidateStructure();
-                return;
             }
         } else {
             checkStructure();

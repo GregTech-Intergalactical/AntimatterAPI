@@ -27,6 +27,10 @@ public class StructureCache {
     static {
         AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState, flags) -> {
             if (oldState == newState) return;  // TODO: better checks?
+            //if no block update is actually queried, ignore
+            if ((flags & (1 << 0)) == 0) {
+                return;
+            }
             StructureCache.DimensionEntry entry = LOOKUP.get(world);
             if (entry == null) return;
             Object2BooleanMap<BlockPos> controllerPos = entry.get(pos);

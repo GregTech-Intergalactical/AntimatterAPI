@@ -1,5 +1,6 @@
 package muramasa.antimatter.structure;
 
+import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -7,10 +8,13 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +22,12 @@ import static muramasa.antimatter.util.Dir.*;
 
 public class Structure {
 
-    private List<Tuple<int3, StructureElement>> elements;
+    private ImmutableMap<int3, StructureElement> elements;
     private Object2ObjectMap<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
     private int3 size;
     private int2 offset = new int2();
 
-    public Structure(int3 size, List<Tuple<int3, StructureElement>> elements) {
+    public Structure(int3 size, ImmutableMap<int3, StructureElement> elements) {
         this.size = size;
         this.elements = elements;
     }
@@ -48,7 +52,7 @@ public class Structure {
         return this;
     }
 
-    public List<Tuple<int3, StructureElement>> getElements() {
+    public Map<int3, StructureElement> getElements() {
         return elements;
     }
 
@@ -56,40 +60,61 @@ public class Structure {
         return requirements;
     }
 
-    public StructureResult evaluate(TileEntityMachine tile) {
+    public StructureResult evaluate(@Nonnull TileEntityMachine tile) {
         StructureResult result = new StructureResult(this);
-        Tuple<int3, StructureElement> element;
-        int3 corner = new int3(tile.getPos(), tile.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y);
-        int3 working = new int3(tile.getFacing());
-        for (Tuple<int3, StructureElement> int3StructureElementTuple : elements) {
-            element = int3StructureElementTuple;
-            working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
-            if (!element.getB().evaluate(tile, working, result)) {
+        for (Iterator<Point> it = forAllElements(tile.getPos(), tile.getFacing()); it.hasNext(); ) {
+            Point point = it.next();
+            if (!point.el.evaluate(tile, point.pos, result)) {
                 return result;
+            } else {
+                result.register(point.pos.toImmutable(), point.el);
             }
         }
         return result;
     }
 
-    public boolean evaluatePosition(TileEntityMachine tile, BlockPos pos) {
-        BlockPos fin = pos.subtract(new int3(tile.getPos(), tile.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y));
-        for (Tuple<int3, StructureElement> element : this.elements) {
-            if (element.getA().equals(fin)) {
-                return element.getB().evaluate(tile, new int3(pos.getX(), pos.getY(), pos.getZ()), new StructureResult(this));
-            }
+    public boolean evaluatePosition(@Nonnull StructureResult res, @Nonnull TileEntityMachine tile, @Nonnull BlockPos pos) {
+        StructureElement el = res.get(pos);
+        if (el != null) {
+            return el.evaluate(tile, new int3(pos.getX(), pos.getY(), pos.getZ()), res);
         }
         return false;
     }
 
+    public static class Point {
+        public int3 pos;
+        public int3 offset;
+        public StructureElement el;
+    }
+
+
+    public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing) {
+        return new Iterator<Point>() {
+            final int3 corner = new int3(source, facing).left(size.getX() / 2).back(offset.x).up(offset.y);
+            final int3 working = new int3(facing);
+            final Point point = new Point();
+            final Iterator<Map.Entry<int3, StructureElement>> it = elements.entrySet().iterator();
+            @Override
+            public boolean hasNext() {
+                return it.hasNext();
+            }
+
+            @Override
+            public Point next() {
+                Map.Entry<int3, StructureElement> next = it.next();
+                working.set(corner).offset(next.getKey(), RIGHT, UP, FORWARD);
+                point.el = next.getValue();
+                point.offset = next.getKey();
+                point.pos = working;
+                return point;
+            }
+        };
+    }
+
     public LongList getStructure(TileEntityMachine tile) {
         LongList l = new LongArrayList();
-        Tuple<int3, StructureElement> element;
-        int3 corner = new int3(tile.getPos(), tile.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y);
-        int3 working = new int3(tile.getFacing());
-        for (Tuple<int3, StructureElement> int3StructureElementTuple : elements) {
-            element = int3StructureElementTuple;
-            working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
-            l.add(working.toLong());
+        for (Iterator<Point> it = forAllElements(tile.getPos(), tile.getFacing()); it.hasNext(); ) {
+            l.add(it.next().pos.toLong());
         }
         return l;
     }

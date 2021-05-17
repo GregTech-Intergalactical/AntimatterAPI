@@ -12,7 +12,7 @@ public class StructureElement {
 
     public static FakeTileElement FAKE_TILE = new FakeTileElement();
     protected String elementId = "";
-    protected boolean exclude;
+    private boolean exclude;
 
     public StructureElement() {
 
@@ -25,6 +25,10 @@ public class StructureElement {
     public StructureElement exclude() {
         exclude = true;
         return this;
+    }
+
+    public boolean excludes() {
+        return exclude;
     }
 
     public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {

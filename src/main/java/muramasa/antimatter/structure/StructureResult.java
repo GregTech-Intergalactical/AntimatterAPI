@@ -13,6 +13,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ public class StructureResult {
     public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
     public Object2ObjectMap<String, List<BlockState>> states = new Object2ObjectOpenHashMap<>();
     public LongList positions = new LongArrayList();
+    //Used to quickly find the element in StructureCache lookup.
+    private final Map<BlockPos, StructureElement> ELEMENT_LOOKUP = new Object2ObjectOpenHashMap<>();
 
     public StructureResult(Structure structure) {
         this.structure = structure;
@@ -37,6 +40,15 @@ public class StructureResult {
     public void withError(String error) {
         this.error = error;
         hasError = true;
+    }
+
+    public StructureResult register(BlockPos pos, StructureElement el) {
+        ELEMENT_LOOKUP.put(pos, el);
+        return this;
+    }
+
+    public StructureElement get(BlockPos pos) {
+        return ELEMENT_LOOKUP.get(pos);
     }
 
     public String getError() {
@@ -76,34 +88,18 @@ public class StructureResult {
     }
 
     public void build(TileEntityBasicMultiMachine machine, StructureResult result) {
-        int3 size = result.structure.size();
-        int2 offset = result.structure.getOffset();
-        int3 corner = new int3(machine.getPos(), machine.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y);
-        int3 working = new int3(machine.getFacing());
-        int elementSize = result.structure.getElements().size();
-        Tuple<int3, StructureElement> element;
-        for (int i = 0; i < elementSize; i++) {
-            element = structure.getElements().get(i);
-            working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
-            StructureElement el = element.getB();
-            int count = StructureCache.refCount(machine.getWorld(), working);
-            el.onBuild(machine, working, result, count);
+        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing()); it.hasNext(); ) {
+            Structure.Point point = it.next();
+            int count = StructureCache.refCount(machine.getWorld(),point.pos);
+            point.el.onBuild(machine, point.pos, result, count);
         }
     }
 
     public void remove(TileEntityBasicMultiMachine machine, StructureResult result) {
-        int3 size = result.structure.size();
-        int2 offset = result.structure.getOffset();
-        int3 corner = new int3(machine.getPos(), machine.getFacing()).left(size.getX() / 2).back(offset.x).up(offset.y);
-        int3 working = new int3(machine.getFacing());
-        int elementSize = result.structure.getElements().size();
-        Tuple<int3, StructureElement> element;
-        for (int i = 0; i < elementSize; i++) {
-            element = structure.getElements().get(i);
-            working.set(corner).offset(element.getA(), RIGHT, UP, FORWARD);
-            StructureElement el = element.getB();
-            int count = StructureCache.refCount(machine.getWorld(), working);
-            el.onRemove(machine, working, result, count);
+        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing()); it.hasNext(); ) {
+            Structure.Point point = it.next();
+            int count = StructureCache.refCount(machine.getWorld(),point.pos);
+            point.el.onRemove(machine, point.pos, result, count);
         }
     }
 }

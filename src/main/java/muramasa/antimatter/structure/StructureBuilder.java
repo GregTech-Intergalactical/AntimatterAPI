@@ -1,5 +1,6 @@
 package muramasa.antimatter.structure;
 
+import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -11,13 +12,14 @@ import net.minecraftforge.fml.RegistryObject;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class StructureBuilder {
 
-    private static Object2ObjectMap<String, StructureElement> globalElementLookup = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<String, StructureElement> globalElementLookup = new Object2ObjectOpenHashMap<>();
 
-    private List<String[]> slices = new ObjectArrayList<>();
-    private Object2ObjectMap<String, StructureElement> elementLookup = new Object2ObjectOpenHashMap<>();
+    private final List<String[]> slices = new ObjectArrayList<>();
+    private final Object2ObjectMap<String, StructureElement> elementLookup = new Object2ObjectOpenHashMap<>();
 
     //TODO, probably move to StructureElement?
     public static void addGlobalElement(String key, StructureElement element) {
@@ -67,7 +69,7 @@ public class StructureBuilder {
     }
 
     public Structure build() {
-        List<Tuple<int3, StructureElement>> elements = new ObjectArrayList<>();
+        ImmutableMap.Builder<int3, StructureElement> elements = ImmutableMap.builder();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
         for (int y = 0; y < size.getY(); y++) {
@@ -77,12 +79,12 @@ public class StructureBuilder {
                     if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     //TODO log this and return null;
                     if (e == null) throw new NullPointerException("StructureBuilder failed to parse slice: " + slices.get(y)[x]);
-                    if (e.exclude) continue;
-                    elements.add(new Tuple<>(new int3(x, y, z), e));
+                    if (e.excludes()) continue;
+                    elements.put(new int3(x, y, z), e);
                 }
             }
         }
-        return new Structure(size, elements);
+        return new Structure(size, elements.build());
     }
 
     public static IAntimatterObject[] getAntiObjects(Object... objects) {
