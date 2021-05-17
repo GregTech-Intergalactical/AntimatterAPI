@@ -169,8 +169,8 @@ public class TileEntityFakeBlock extends TileEntityBase {
     @Override
     public List<String> getInfo() {
         List<String> list = super.getInfo();
-        list.add("State: " + getState().toString());
-        list.add("Facing: " + facing.getName2());
+        if (getState() !=null) list.add("State: " + getState().toString());
+        if (facing != null) list.add("Facing: " + facing.getName2());
         covers.forEach((k,v) -> {
             list.add("Cover on " + k.getName2() + ": " + v.getId());
         });
