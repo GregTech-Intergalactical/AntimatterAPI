@@ -22,11 +22,8 @@ public class MapItemIngredient extends AbstractMapIngredient {
         if (o instanceof MapTagIngredient) {
             return stack.getTags().contains(((MapTagIngredient)o).loc);
         }
-        if (o instanceof MapItemStackIngredient) {
-            return ((MapItemStackIngredient)o).stack.getItem().equals(stack);
-        }
         if (o instanceof MapItemIngredient) {
-            return ((MapItemIngredient)o).stack.equals(stack);
+            return ((MapItemIngredient)o).stack.getItem().equals(stack);
         }
         return false;
     }

@@ -213,10 +213,6 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, FluidStack[] ingredients, boolean insideMap) {
         for (FluidStack t : ingredients) {
-            if (!insideMap) {
-                builder.add(Collections.singletonList(new MapFluidIngredient(t, false)));
-                return;
-            }
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(1 + t.getFluid().getTags().size());
             inner.add(new MapFluidIngredient(t, insideMap));
             for (ResourceLocation rl : t.getFluid().getTags()) {
@@ -249,8 +245,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     for (ItemStack stack : t.getMatchingStacks()) {
                         if (r.ignoreNbt()) {
                             inner.add(new MapItemIngredient(stack.getItem(), insideMap));
+                        } else {
+                            inner.add(new MapItemStackIngredient(stack, insideMap));
                         }
-                        inner.add(new MapItemStackIngredient(stack, insideMap));
                     }
                     list.add(inner);
                 }
@@ -262,13 +259,13 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
         for (ItemStack t : ingredients) {
-            //List<AbstractMapIngredient> ls = new ObjectArrayList<>(2);
-            //ls.add(new MapItemIngredient(t.getItem(), false));
-            //ls.add(new MapItemStackIngredient(t, false));
-            //for (ResourceLocation rl : t.getItem().getTags()) {
-            //    ls.add(new MapTagIngredient(rl, false));
-            //}
-            list.add(Collections.singletonList(new MapItemStackIngredient(t, false)));
+            List<AbstractMapIngredient> ls = new ObjectArrayList<>(2 + t.getItem().getTags().size());
+            ls.add(new MapItemIngredient(t.getItem(), false));
+            ls.add(new MapItemStackIngredient(t, false));
+            for (ResourceLocation rl : t.getItem().getTags()) {
+                ls.add(new MapTagIngredient(rl, false));
+            }
+            list.add(ls);
         }
     }
 
