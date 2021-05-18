@@ -224,7 +224,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     of('M', PropertyIngredient.builder("primary").types(ROD).tool(SCREWDRIVER, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), " FM", " MH", "R  ");
 
             addToolRecipe(TOOL_BUILDER.get(SAW.getId()), consumer, Ref.ID, SAW.getId() + "_recipe", "antimatter_saws",
-                    "has_wrench", in, SAW.getToolStack(NULL, NULL), of('P', PropertyIngredient.of(PLATE, "primary"), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PPR", "FH ");
+                    "has_wrench", in, SAW.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(SAW, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PPR", "FH ");
 
             addToolRecipe(TOOL_BUILDER.get(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
                     "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
@@ -276,6 +276,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
             addToolRecipe(CROWBAR_BUILDER.get(CROWBAR.getId()),  consumer, Ref.ID, CROWBAR.getId() + "_recipe", "antimatter_crowbars",
                     "has_wrench", in, CROWBAR.getToolStack(NULL, NULL), of('H', HAMMER.getTag(), 'C', PropertyIngredient.builder("secondary").itemTags(Tags.Items.DYES).build(), 'R', PropertyIngredient.builder("primary").types(ROD).tool(CROWBAR, true).build(), 'F', FILE.getTag()), "HCR", "CRC", "RCF");
+
+            addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID, KNIFE.getId() + "_with", "antimatter_knives",
+                    "has_wrench", in, KNIFE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(KNIFE, true).build(), 'S', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FP", "HS");
 
             List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(HANDLE))).collect(Collectors.toList());
 
