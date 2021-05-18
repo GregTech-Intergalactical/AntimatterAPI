@@ -276,7 +276,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         }
         if (!canRecipeContinue()) {
             this.resetRecipe();
-            return tile.getDefaultMachineState();
+            checkRecipe();
+            return activeRecipe != null ? ACTIVE : tile.getDefaultMachineState();
         } else {
             activateRecipe(true);
             return ACTIVE;
