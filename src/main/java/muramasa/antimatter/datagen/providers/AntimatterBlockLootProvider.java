@@ -10,12 +10,15 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
+import net.minecraft.advancements.criterion.EnchantmentPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.data.loot.BlockLootTables;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.loot.ConstantRange;
 import net.minecraft.loot.ItemLootEntry;
 import net.minecraft.loot.LootParameterSets;
@@ -37,6 +40,12 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     protected final Map<Block, Function<Block, LootTable.Builder>> tables = new Object2ObjectOpenHashMap<>();
 
     public static final ILootCondition.IBuilder BRANCH_CUTTER = MatchTool.builder(ItemPredicate.Builder.create().item(Data.BRANCH_CUTTER.getToolStack(Data.NULL, Data.NULL).getItem()));
+    public static final ILootCondition.IBuilder SAW = MatchTool.builder(ItemPredicate.Builder.create().item(Data.SAW.getToolStack(Data.NULL, Data.NULL).getItem()).enchantment(new EnchantmentPredicate(){
+        @Override
+        public boolean test(Map<Enchantment, Integer> enchantmentsIn) {
+            return !enchantmentsIn.containsKey(Enchantments.SILK_TOUCH);
+        }
+    }));
 
     //public static final ILootCondition.IBuilder BRANCH_CUTTER_SHEARS_SILK_TOUCH = BlockLootTablesAccessor.getSilkTouchOrShears().alternative(BRANCH_CUTTER);
 

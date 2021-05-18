@@ -4,10 +4,15 @@ import com.google.common.eventbus.Subscribe;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.loot.ConstantRange;
+import net.minecraft.loot.ItemLootEntry;
+import net.minecraft.loot.LootPool;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
@@ -43,8 +48,8 @@ public class CommonEvents {
             if (ForgeRegistries.BLOCKS.containsKey(blockId)){
                 Block block = ForgeRegistries.BLOCKS.getValue(blockId);
                 //Antimatter.LOGGER.info(blockId.toString());
-                if (block instanceof LeavesBlock){
-                    Antimatter.LOGGER.info(blockId.toString());
+                if (block == Blocks.ICE || block == Blocks.PACKED_ICE || block == Blocks.BLUE_ICE){
+                    event.getTable().addPool(LootPool.builder().rolls(ConstantRange.of(1)).acceptCondition(AntimatterBlockLootProvider.SAW).addEntry(ItemLootEntry.builder(block)).build());
                 }
             }
         }

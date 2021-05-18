@@ -11,6 +11,7 @@
     "BlockLootTablesAccessor",
     "ChunkReaderAccessor",
     "LeavesBlockMixin",
+    "IceBlockMixin",
     "RecipeManagerMixin",
     "ServerBlockUpdateMixin",
     "SimpleReloadableResourceManagerMixin"
