@@ -1,19 +1,16 @@
 package muramasa.antimatter.capability.machine;
 
-import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.ingredient.impl.Ingredients;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.IIntArray;
 import net.minecraftforge.common.ForgeHooks;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
-
-import static muramasa.antimatter.machine.MachineState.ACTIVE;
 
 public class CookingRecipeHandler<T extends TileEntityMachine> extends MachineRecipeHandler<T> {
 
@@ -29,6 +26,34 @@ public class CookingRecipeHandler<T extends TileEntityMachine> extends MachineRe
         if (!(stack = tile.itemHandler.map(t -> t.consumeInputs(BURNABLE.get(), false)).orElse(Collections.emptyList())).isEmpty()) {
             burnDuration += ForgeHooks.getBurnTime(stack.get(0)) / 10;
         }
+    }
+
+    @Override
+    public IIntArray getProgressData() {
+        IIntArray sup = super.getProgressData();
+        return new IIntArray() {
+            @Override
+            public int get(int index) {
+                if (index == sup.size()) {
+                    return CookingRecipeHandler.this.burnDuration;
+                }
+                return sup.get(index);
+            }
+
+            @Override
+            public void set(int index, int value) {
+                if (index == sup.size()) {
+                    CookingRecipeHandler.this.burnDuration = value;
+                    return;
+                }
+                sup.set(index, value);
+            }
+
+            @Override
+            public int size() {
+                return sup.size() + 1;
+            }
+        };
     }
 
     @Override
@@ -48,6 +73,12 @@ public class CookingRecipeHandler<T extends TileEntityMachine> extends MachineRe
         CompoundNBT nbt = super.serializeNBT();
         nbt.putInt("burn", burnDuration);
         return nbt;
+    }
+
+    @Override
+    public void getInfo(List<String> builder) {
+        super.getInfo(builder);
+        if (burnDuration > 0) builder.add("Current burn time left: " + burnDuration);
     }
 
     @Override

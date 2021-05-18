@@ -20,6 +20,7 @@ public class MapTagIngredient extends AbstractMapIngredient {
 
     public void setTag(ResourceLocation loc) {
         this.loc = loc;
+        invalidate();
     }
 
     @Override

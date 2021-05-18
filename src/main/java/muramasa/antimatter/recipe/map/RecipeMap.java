@@ -376,7 +376,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     }
                     return null;
                 }, right -> callback(items, right, canHandle, index, count, skip));
-                if (r != null && canHandle.test(r)) return r;
+                if (r != null) return r;
             }
             if (map.SPECIAL_NODES.size() > 0) {
                 //Iterate over special nodes.
@@ -488,14 +488,14 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     public boolean acceptsItem(ItemStack item) {
-        List<AbstractMapIngredient> list = new ObjectArrayList<>(2 + item.getItem().getTags().size());
         MapItemStackIngredient i = new MapItemStackIngredient(item, false);
         MapItemIngredient j = new MapItemIngredient(item.getItem(), false);
-        list.add(i);
-        list.add(j);
-        item.getItem().getTags().forEach(t -> list.add(new MapTagIngredient(t, false)));
-        for (AbstractMapIngredient ing : list) {
-            if (ROOT.contains(ing)) return true;
+        if (ROOT.contains(i)) return true;
+        if (ROOT.contains(j)) return true;
+        MapTagIngredient tag = new MapTagIngredient(null, false);
+        for (ResourceLocation t : item.getItem().getTags()) {
+            tag.setTag(t);
+            if (ROOT.contains(tag)) return true;
         }
         for (AbstractMapIngredient ing : ROOT_SPECIAL) {
             if (ing.equals(i)) return true;
@@ -504,12 +504,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     public boolean acceptsFluid(FluidStack fluid) {
-        List<AbstractMapIngredient> list = new ObjectArrayList<>(1 + fluid.getFluid().getTags().size());
         MapFluidIngredient i = new MapFluidIngredient(fluid, false);
-        list.add(i);
-        fluid.getFluid().getTags().forEach(t -> list.add(new MapTagIngredient(t, false)));
-        for (AbstractMapIngredient ing : list) {
-            if (ROOT.contains(ing)) return true;
+        if (ROOT.contains(i)) return true;
+        MapTagIngredient tag = new MapTagIngredient(null, false);
+        for (ResourceLocation t : fluid.getFluid().getTags()) {
+            tag.setTag(t);
+            if (ROOT.contains(tag)) return true;
         }
         return false;
     }

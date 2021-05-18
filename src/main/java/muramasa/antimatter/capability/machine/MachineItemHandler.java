@@ -247,7 +247,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
                     ItemStack copy = item.copy();
                     copy.setCount(toConsume);
                     consumedItems.add(copy);
-                    if (!input.ignoreConsume()) wrap.extractFromInput(i, toConsume, simulate);
+                    if (!input.ignoreConsume() && !simulate) wrap.extractFromInput(i, toConsume, simulate);
                     if (countToReach == 0) {
                         break;
                     }
