@@ -280,14 +280,11 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID, KNIFE.getId() + "_with", "antimatter_knives",
                     "has_wrench", in, KNIFE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(KNIFE, true).build(), 'S', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FP", "HS");
 
-            List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(HANDLE))).collect(Collectors.toList());
+           // List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(HANDLE))).collect(Collectors.toList());
 
-            handleMats.forEach(handle -> AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(RUBBERTOOLS))).forEach(rubber -> {
-                ITag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/" + rubber.getId()), rodTag = TagUtils.getForgeItemTag("rods/" + handle.getId());
-                addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_" + handle.getId() + "_" + rubber.getId(), "antimatter_plungers",
-                        "has_material_" + rubber.getId(), hasSafeItem(ingotTag), PLUNGER.getToolStack(handle, rubber),
-                        of('W', WIRE_CUTTER.getTag(), 'I', ingotTag, 'S', Tags.Items.SLIMEBALLS, 'R', rodTag, 'F', FILE.getTag()), "WIS", " RI", "R F");
-            }));
+            addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_", "antimatter_plungers",
+                    "has_wrench", in, PLUNGER.getToolStack(NULL, NULL),
+                    of('W', WIRE_CUTTER.getTag(), 'I', PropertyIngredient.builder("primary").tool(PLUNGER, true).types(PLATE, GEM).build(), 'S', Tags.Items.SLIMEBALLS, 'R',  PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE, RUBBERTOOLS).build(), 'F', FILE.getTag()), "WIS", " RI", "R F");
         }
 
 
