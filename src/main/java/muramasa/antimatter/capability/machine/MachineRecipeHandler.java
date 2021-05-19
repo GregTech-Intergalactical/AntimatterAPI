@@ -348,7 +348,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         int voltage = this.generator ? Tier.getMax().getVoltage() : tile.getMachineType().amps()*tile.getMaxInputVoltage();
         boolean ok = voltage >= r.getPower()/ r.getAmps();
         List<ItemStack> consumed = this.tile.itemHandler.map(t -> t.consumeInputs(r, true)).orElse(Collections.emptyList());
-        return ok && consumed.size() > 0;
+        return ok && (consumed.size() > 0 || !r.hasInputItems());
     }
 
     protected boolean hasLoadedInput() {
