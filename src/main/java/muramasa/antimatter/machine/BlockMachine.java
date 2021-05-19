@@ -72,7 +72,11 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     protected Tier tier;
 
     public BlockMachine(Machine<?> type, Tier tier) {
-        super(type.getDomain(), type.getId() + "_" + tier.getId(), Properties.create(WRENCH_MATERIAL).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL).setRequiresTool());
+        this(type, tier, Properties.create(WRENCH_MATERIAL).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL).setRequiresTool());
+    }
+
+    public BlockMachine(Machine<?> type, Tier tier, Properties properties) {
+        super(type.getDomain(), type.getId() + "_" + tier.getId(), properties);
         this.type = type;
         this.tier = tier;
     }
