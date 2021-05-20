@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.tesseract.ItemTileWrapper;
@@ -10,17 +11,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
 
 import java.util.Arrays;
 
-public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T> implements IItemPipe {
+public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T> implements IItemPipe, Dispatch.Sided<IItemHandler> {
 
     public TileEntityItemPipe(T type) {
         super(type);
-        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(t -> LazyOptional.of(() -> new TesseractItemCapability(this, t))).toArray(LazyOptional[]::new);
+        pipeCapHolder.set(() -> this);
     }
 
     @Override
@@ -74,6 +76,16 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
     }
 
+    @Override
+    public LazyOptional<IItemHandler> forSide(Direction side) {
+        return LazyOptional.of(() -> new TesseractItemCapability(this, side));
+    }
+
+    @Override
+    public void refresh() {
+
+    }
+
     public static class TileEntityCoveredItemPipe<T extends ItemPipe<T>> extends TileEntityItemPipe<T> implements ITickablePipe {
 
         public TileEntityCoveredItemPipe(T type) {
@@ -85,10 +97,5 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
             return this.coverHandler;
         }
 
-    }
-
-    @Override
-    protected LazyOptional<?> buildCapForSide(Direction side) {
-        return LazyOptional.of(() -> new TesseractItemCapability(this, side));
     }
 }

@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
 import muramasa.antimatter.pipe.types.FluidPipe;
@@ -14,6 +15,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
@@ -22,7 +24,7 @@ import tesseract.api.fluid.IFluidPipe;
 
 import java.util.List;
 
-public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe {
+public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<IFluidHandler> {
 
     protected LazyOptional<PipeFluidHandler> fluidHandler;
 
@@ -116,6 +118,23 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
     }
 
+    @Override
+    public LazyOptional<? extends IFluidHandler> forSide(Direction side) {
+        if (FluidController.SLOOSH) {
+            if (fluidHandler == null) {
+                fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0));
+            }
+        } else {
+            return LazyOptional.of(() -> new TesseractFluidCapability(this, side));
+        }
+        return fluidHandler;
+    }
+
+    @Override
+    public void refresh() {
+
+    }
+
     public static class TileEntityCoveredFluidPipe<T extends FluidPipe<T>> extends TileEntityFluidPipe<T> implements ITickablePipe {
 
         public TileEntityCoveredFluidPipe(T type) {
@@ -147,18 +166,5 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         list.add("Max temperature: " + getPipeType().getTemperature());
         list.add(getPipeType().isGasProof() ? "Gas proof." : "Cannot handle gas.");
         return list;
-    }
-
-
-    @Override
-    protected LazyOptional<?> buildCapForSide(Direction side) {
-        if (FluidController.SLOOSH) {
-            if (fluidHandler == null) {
-                fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0));
-            }
-        } else {
-            return LazyOptional.of(() -> new TesseractFluidCapability(this, side));
-        }
-        return fluidHandler;
     }
 }

@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
+import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverStack;
@@ -42,14 +43,13 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     /** Connection data **/
     private byte connection, interaction;
 
-    /** CAPABILITIES **/
-    protected LazyOptional<?>[] SIDE_CAPS;
+    protected Holder pipeCapHolder;
 
     public TileEntityPipe(T type) {
         super(type.getTileType());
         this.type = type;
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
-        SIDE_CAPS = Arrays.stream(Ref.DIRS).map(this::buildCapForSide).toArray(LazyOptional[]::new);
+        this.pipeCapHolder = new Holder<>(this, getCapability(), this.dispatch);
     }
 
     protected abstract void registerNode(BlockPos pos, Direction side, boolean remove);
@@ -99,16 +99,11 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Override
     public void onRemove() {
         coverHandler.ifPresent(PipeCoverHandler::onRemove);
-        coverHandler.invalidate();
         if (isServerSide()) {
+            dispatch.invalidate();
             for (Direction side : Ref.DIRS) {
                 if (Connectivity.has(interaction, side.getIndex())) {
                     registerNode(this.getPos().offset(side), side, true);
-                }
-            }
-            if (SIDE_CAPS != null) {
-                for (LazyOptional<?> side_cap : SIDE_CAPS) {
-                    side_cap.invalidate();
                 }
             }
         }
@@ -152,8 +147,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     public void clearConnection(Direction side) {
         connection = Connectivity.clear(connection, side.getIndex());
-        SIDE_CAPS[side.getIndex()].invalidate();
-        SIDE_CAPS[side.getIndex()] = buildCapForSide(side);
+        dispatch.invalidate(side);
         refreshConnection();
     }
 
@@ -200,8 +194,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
             }
         }
     }
-
-    protected abstract LazyOptional<?> buildCapForSide(Direction side);
 
     protected abstract Capability<?> getCapability();
 
@@ -258,7 +250,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
         if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
         if (cap == getCapability()) {
-            return SIDE_CAPS[side.getIndex()].cast();
+            return pipeCapHolder.side(side).cast();
         }
         return LazyOptional.empty();
     }

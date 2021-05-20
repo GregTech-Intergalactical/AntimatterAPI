@@ -142,14 +142,14 @@ public class Holder<U extends TileEntityBase<U>, V, T extends Dispatch.Sided<V>>
         return value != null && predicate.test(value) ? LazyOptional.of(() -> value)  : LazyOptional.empty();
     }
 
-    public LazyOptional<V> side(Direction side) {
+    public LazyOptional<? extends V> side(Direction side) {
         if (!isPresent()) {
             return LazyOptional.empty();
         }
         if (resolved == null) {
             get();
         }
-        LazyOptional<V> t = sided[side.getIndex()];
+        LazyOptional<? extends V> t = sided[side.getIndex()];
         if (!t.isPresent()) {
             sided[side.getIndex()] = (t = resolved.forSide(side));
         }

@@ -18,6 +18,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     public TileEntityCable(T type) {
         super(type);
+        pipeCapHolder.set(() -> this);
     }
 
     @Override
@@ -81,11 +82,6 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         return canConnect(direction.getIndex());
     }
 
-
-    @Override
-    protected LazyOptional<?> buildCapForSide(Direction side) {
-        return LazyOptional.of(() -> new TesseractGTCapability(this, side));
-    }
 
     public static class TileEntityCoveredCable<T extends Cable<T>> extends TileEntityCable<T> implements ITickablePipe {
 

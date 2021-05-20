@@ -58,7 +58,7 @@ public class Dispatch {
     }
 
     public interface Sided<U> {
-        LazyOptional<U> forSide(Direction side);
+        LazyOptional<? extends U> forSide(Direction side);
         void refresh();
     }
 }
