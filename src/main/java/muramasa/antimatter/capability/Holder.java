@@ -58,6 +58,8 @@ public class Holder<U extends TileEntityBase<U>, V, T extends Dispatch.Sided<V>>
     }
 
     public void refresh() {
+        if (!isPresent()) return;
+        if (resolved == null) get();
         resolved.refresh();
     }
 
@@ -143,6 +145,9 @@ public class Holder<U extends TileEntityBase<U>, V, T extends Dispatch.Sided<V>>
     public LazyOptional<V> side(Direction side) {
         if (!isPresent()) {
             return LazyOptional.empty();
+        }
+        if (resolved == null) {
+            get();
         }
         LazyOptional<V> t = sided[side.getIndex()];
         if (!t.isPresent()) {
