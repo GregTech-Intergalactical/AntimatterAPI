@@ -53,7 +53,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /** Basic Members **/
     protected TileEntityType<?> tileType;
-    protected Function<Machine<?>, Supplier<? extends TileEntityMachine>> tileFunc = m -> () -> new TileEntityMachine(this);
+    protected Function<T, Supplier<? extends TileEntityMachine<?>>> tileFunc = m -> () -> new TileEntityMachine<>(this);
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
@@ -143,7 +143,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry != ForgeRegistries.BLOCKS) return;
-        tileType = new TileEntityType<>(tileFunc.apply(this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
+        tileType = new TileEntityType<>(tileFunc.apply((T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
     }
 
@@ -203,12 +203,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         }
     }
 
-    public T setTile(Function<Machine<?>, Supplier<? extends TileEntityMachine>> func) {
+    public T setTile(Function<T, Supplier<? extends TileEntityMachine<?>>> func) {
         this.tileFunc = func;
         return (T) this;
     }
 
-    public T setTile(Supplier<? extends TileEntityMachine> supplier) {
+    public T setTile(Supplier<? extends TileEntityMachine<?>> supplier) {
         setTile(m -> supplier);
         return (T) this;
     }

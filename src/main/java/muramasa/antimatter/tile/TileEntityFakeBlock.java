@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class TileEntityFakeBlock extends TileEntityBase {
+public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
 
     private BlockState state;
 
-    private final Set<TileEntityBasicMultiMachine> controllers = new ObjectOpenHashSet<>();
+    private final Set<TileEntityBasicMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
     private Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
     public Direction facing;
 
@@ -50,13 +50,13 @@ public class TileEntityFakeBlock extends TileEntityBase {
         coverTexturer = new Object2ObjectOpenHashMap<>();
     }
 
-    public void addController(TileEntityBasicMultiMachine controller) {
+    public void addController(TileEntityBasicMultiMachine<?> controller) {
         if (world != null)
             world.notifyNeighborsOfStateChange(pos, getBlockState().getBlock());
         controllers.add(controller);
     }
 
-    public void removeController(TileEntityBasicMultiMachine controller) {
+    public void removeController(TileEntityBasicMultiMachine<?> controller) {
         if (world != null)
             world.notifyNeighborsOfStateChange(pos, getBlockState().getBlock());
         controllers.remove(controller);
@@ -86,10 +86,10 @@ public class TileEntityFakeBlock extends TileEntityBase {
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (controllerPos != null) {
-            controllerPos.forEach(t -> controllers.add((TileEntityBasicMultiMachine) world.getTileEntity(t)));
+            controllerPos.forEach(t -> controllers.add((TileEntityBasicMultiMachine<?>) world.getTileEntity(t)));
             controllerPos = null;
         }
-        for (TileEntityBasicMultiMachine controller : controllers) {
+        for (TileEntityBasicMultiMachine<?> controller : controllers) {
             LazyOptional<T> opt = controller.getCapabilityFromFake(cap, getPos(), side, covers.get(side));
             if (opt.isPresent()) return opt;
         }
@@ -149,7 +149,7 @@ public class TileEntityFakeBlock extends TileEntityBase {
         compound.put("C", n);
         if (!send) {
             ListNBT list = new ListNBT();
-            for (TileEntityBasicMultiMachine controller : controllers) {
+            for (TileEntityBasicMultiMachine<?> controller : controllers) {
                 list.add(LongNBT.valueOf(controller.getPos().toLong()));
             }
             compound.put("P", list);

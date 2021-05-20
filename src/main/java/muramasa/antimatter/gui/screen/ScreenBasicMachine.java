@@ -3,7 +3,7 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.ButtonOverlay;
-import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.container.ContainerBasicMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.SwitchWidget;
 import muramasa.antimatter.machine.MachineFlag;
@@ -17,13 +17,13 @@ import net.minecraft.util.text.ITextComponent;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
 
-public class ScreenBasicMachine<T extends ContainerMachine> extends ScreenMachine<T> {
+public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends ContainerBasicMachine<T>> extends ScreenMachine<T,U> {
 
     private final static ButtonOverlay FLUID = new ButtonOverlay("fluid_eject", 177, 19, 16, 16);
     private final static ButtonOverlay ITEM = new ButtonOverlay("item_eject", 177, 37, 16, 16);
     private Widget item, fluid;
 
-    public ScreenBasicMachine(T container, PlayerInventory inv, ITextComponent name) {
+    public ScreenBasicMachine(U container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
     }
 

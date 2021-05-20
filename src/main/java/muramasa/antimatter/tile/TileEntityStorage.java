@@ -7,22 +7,23 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 
 import java.util.List;
 
-public abstract class TileEntityStorage extends TileEntityMachine {
+public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends TileEntityMachine<T> {
 
     public TileEntityStorage(Machine<?> type) {
         super(type);
-        this.itemHandler = LazyOptional.of(() -> new MachineItemHandler<TileEntityStorage>(this) {
+        itemHandler.set(() -> new MachineItemHandler<T>((T)this) {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 if (event == ContentEvent.ENERGY_SLOT_CHANGED)
                     calculateAmperage();
             }
         });
-        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityStorage>(this, 0L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.getOutputFacing();
@@ -33,7 +34,7 @@ public abstract class TileEntityStorage extends TileEntityMachine {
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 super.onMachineEvent(event, data);
                 if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
-                    refreshNet();
+                    this.tile.refreshCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
                 }
             }
         });
@@ -58,7 +59,7 @@ public abstract class TileEntityStorage extends TileEntityMachine {
                 e.setInputAmperage(in);
                 e.setOutputAmperage(out);
                 if (oldOut != out || oldIn != in) {
-                    e.refreshNet();
+                    this.refreshCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
                 }
             });
         });

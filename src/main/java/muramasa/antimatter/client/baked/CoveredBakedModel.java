@@ -34,7 +34,7 @@ public class CoveredBakedModel extends AttachableBakedModel {
     }
 
     protected final List<BakedQuad> attachCoverQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull IModelData data) {
-        TileEntityBase tile = data.getData(AntimatterProperties.TILE_PROPERTY);
+        TileEntityBase<?> tile = data.getData(AntimatterProperties.TILE_PROPERTY);
         if (tile == null) return quads;
         CoverHandler<?> covers = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, side).filter(t -> t instanceof CoverHandler).map(t -> (CoverHandler)t).orElse(null);
         if (covers == null) return quads;

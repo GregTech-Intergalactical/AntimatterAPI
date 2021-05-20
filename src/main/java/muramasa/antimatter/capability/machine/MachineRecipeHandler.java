@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -16,9 +17,11 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.IIntArray;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
@@ -29,7 +32,7 @@ import java.util.List;
 
 import static muramasa.antimatter.machine.MachineState.*;
 //TODO: This needs some look into, a bit of spaghetti code sadly.
-public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachineHandler {
+public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMachineHandler, Dispatch.Sided<MachineRecipeHandler> {
 
     protected final T tile;
     protected final boolean generator;
@@ -574,5 +577,15 @@ public class MachineRecipeHandler<T extends TileEntityMachine> implements IMachi
         nbt.getList("I",10).forEach(t -> itemInputs.add(ItemStack.read((CompoundNBT) t)));
         nbt.getList("F",10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundNBT) t)));
         this.currentProgress = nbt.getInt("P");
+    }
+
+    @Override
+    public LazyOptional<MachineRecipeHandler> forSide(Direction side) {
+        return LazyOptional.of(() -> this);
+    }
+
+    @Override
+    public void refresh() {
+
     }
 }

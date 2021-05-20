@@ -8,19 +8,19 @@ import tesseract.api.gt.IGTNode;
 
 import java.util.Arrays;
 
-public class MultiMachineEnergyHandler extends MachineEnergyHandler<TileEntityMultiMachine> {
+public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> extends MachineEnergyHandler<T> {
 
     protected MachineEnergyHandler<?>[] inputs;//= new IEnergyHandler[0];
     protected MachineEnergyHandler<?>[] outputs; //= new IEnergyHandler[0];
 
     protected long cachedCapacity;
 
-    public MultiMachineEnergyHandler(TileEntityMachine tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
-        super((TileEntityMultiMachine)tile, energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
+    public MultiMachineEnergyHandler(T tile, long energy, long capacity, int voltage_in, int voltage_out, int amperage_in, int amperage_out) {
+        super(tile, energy, capacity, voltage_in, voltage_out, amperage_in, amperage_out);
     }
 
-    public MultiMachineEnergyHandler(TileEntityMachine tile) {
-        super((TileEntityMultiMachine)tile,0,0, 0, 0,0,0);
+    public MultiMachineEnergyHandler(T tile) {
+        super(tile,0,0, 0, 0,0,0);
     }
 
     public void onStructureBuild() {

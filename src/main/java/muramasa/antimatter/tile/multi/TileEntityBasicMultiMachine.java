@@ -34,7 +34,7 @@ import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
-public class TileEntityBasicMultiMachine extends TileEntityMachine implements IComponent {
+public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T>> extends TileEntityMachine<T> implements IComponent {
 
     protected StructureResult result = null;
 
@@ -114,9 +114,9 @@ public class TileEntityBasicMultiMachine extends TileEntityMachine implements IC
     }
 
     public <T> LazyOptional<T> getCapabilityFromFake(Capability<T> cap, BlockPos pos, Direction side, ICover coverPresent) {
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent() && (coverPresent instanceof CoverInput)) return itemHandler.resolve().orElse(null).getCapability().cast();
-        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent() && (coverPresent instanceof CoverInput)) return fluidHandler.cast();
-        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent() && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return energyHandler.cast();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent() && (coverPresent instanceof CoverInput)) return itemHandler.side(side).cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent() && (coverPresent instanceof CoverInput)) return fluidHandler.side(side).cast();
+        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent() && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return energyHandler.side(side).cast();
         return LazyOptional.empty();
     }
 

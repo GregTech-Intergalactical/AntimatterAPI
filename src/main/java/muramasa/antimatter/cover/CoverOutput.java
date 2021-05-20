@@ -49,8 +49,8 @@ public class CoverOutput extends CoverInput {
     }
 
     public void manualOutput(CoverStack<?> instance) {
-        if (shouldOutputFluids(instance)) processFluidOutput(instance, (TileEntityMachine) instance.getTile());
-        if (shouldOutputItems(instance)) processItemOutput(instance, (TileEntityMachine) instance.getTile());
+        if (shouldOutputFluids(instance)) processFluidOutput(instance, (TileEntityMachine<?>) instance.getTile());
+        if (shouldOutputItems(instance)) processItemOutput(instance, (TileEntityMachine<?>) instance.getTile());
     }
 
     public boolean shouldOutputItems(CoverStack<?> instance) {
@@ -68,7 +68,7 @@ public class CoverOutput extends CoverInput {
         instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_FLUID, fluid);
     }
 
-    protected void processItemOutput(CoverStack<?> instance, TileEntityMachine tile) {
+    protected void processItemOutput(CoverStack<?> instance, TileEntityMachine<?> tile) {
         Direction outputDir = instance.getFacing();
         TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
         if (adjTile == null) return;
@@ -77,7 +77,7 @@ public class CoverOutput extends CoverInput {
         });
     }
 
-    protected void processFluidOutput(CoverStack<?> instance, TileEntityMachine tile) {
+    protected void processFluidOutput(CoverStack<?> instance, TileEntityMachine<?> tile) {
         Direction outputDir = instance.getFacing();
         TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
         if (adjTile == null) return;
@@ -87,7 +87,7 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
-    public void onMachineEvent(CoverStack<?> instance, TileEntityMachine tile, IMachineEvent event, int... data) {
+    public void onMachineEvent(CoverStack<?> instance, TileEntityMachine<?> tile, IMachineEvent event, int... data) {
         if (event == GuiEvent.ITEM_EJECT) {
             instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_ITEM, !instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_ITEM));
             processItemOutput(instance,tile);

@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class CookingRecipeHandler<T extends TileEntityMachine> extends MachineRecipeHandler<T> {
+public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends MachineRecipeHandler<T> {
 
     protected int burnDuration = 0;
     protected static final Supplier<List<RecipeIngredient>> BURNABLE = () -> Collections.singletonList(RecipeIngredient.of(Ingredients.BURNABLES, 1));

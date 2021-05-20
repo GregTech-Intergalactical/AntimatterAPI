@@ -391,15 +391,15 @@ public class Data {
     public static BlockProxy PROXY_INSTANCE = new BlockProxy(Ref.ID, "proxy", AbstractBlock.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 1.0f).notSolid());
 
 
-    public static MenuHandlerMachine<ContainerMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_basic") {
+    public static MenuHandlerMachine<? extends TileEntityMachine, ? extends ContainerMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_basic") {
         @Nullable
         @Override
-        public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
-            return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine) tile, playerInv, this, windowId) : null;
+        public ContainerMachine<?> getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+            return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine<?>) tile, playerInv, this, windowId) : null;
         }
     };
 
-    public static MenuHandlerMachine<ContainerMachine> STEAM_MENU_HANDLER = new MenuHandlerMachine<ContainerMachine>(Ref.ID, "container_steam") {
+    public static MenuHandlerMachine<? extends TileEntityMachine, ? extends ContainerMachine> STEAM_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_steam") {
         @Nullable
         @Override
         public ContainerMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
@@ -414,17 +414,17 @@ public class Data {
         }
     };
 
-    public static MenuHandlerMachine<ContainerMultiMachine> MULTI_MENU_HANDLER = new MenuHandlerMachine<ContainerMultiMachine>(Ref.ID, "container_multi") {
+    public static MenuHandlerMachine<? extends TileEntityMultiMachine, ? extends ContainerMultiMachine> MULTI_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_multi") {
         @Override
         public ContainerMultiMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
-            return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine) tile, playerInv, this, windowId) : null;
+            return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine<?>) tile, playerInv, this, windowId) : null;
         }
     };
 
-    public static MenuHandlerMachine<ContainerHatch> HATCH_MENU_HANDLER = new MenuHandlerMachine<ContainerHatch>(Ref.ID, "container_hatch") {
+    public static MenuHandlerMachine<? extends TileEntityHatch, ? extends ContainerHatch> HATCH_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_hatch") {
         @Override
         public ContainerHatch getMenu(Object tile, PlayerInventory playerInv, int windowId) {
-            return tile instanceof TileEntityHatch ? new ContainerHatch((TileEntityHatch) tile, playerInv, this, windowId) : null;
+            return tile instanceof TileEntityHatch ? new ContainerHatch((TileEntityHatch<?>) tile, playerInv, this, windowId) : null;
         }
     };
 

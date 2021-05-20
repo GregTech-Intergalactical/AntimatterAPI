@@ -3,6 +3,7 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.gui.ButtonData;
@@ -11,6 +12,7 @@ import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.slot.SlotFakeFluid;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IHasContainer;
@@ -36,13 +38,13 @@ import static muramasa.antimatter.gui.SlotType.FL_IN;
 import static muramasa.antimatter.gui.SlotType.FL_OUT;
 
 // TODO - recipe stuff only when tile.getMachineType().has(MachineFlag.RECIPE)
-public class ScreenMachine<T extends ContainerMachine> extends AntimatterContainerScreen<T> implements IHasContainer<T> {
+public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMachine<T>> extends AntimatterContainerScreen<U> implements IHasContainer<U> {
 
-    protected T container;
+    protected U container;
     protected String name;
     protected ResourceLocation gui;
 
-    public ScreenMachine(T container, PlayerInventory inv, ITextComponent name) {
+    public ScreenMachine(U container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
         this.name = name.getString();

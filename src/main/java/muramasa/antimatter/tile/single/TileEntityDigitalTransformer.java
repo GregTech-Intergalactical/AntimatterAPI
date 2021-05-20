@@ -7,8 +7,9 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.client.gui.FontRenderer;
+import tesseract.api.capability.TesseractGTCapability;
 
-public class TileEntityDigitalTransformer extends TileEntityTransformer {
+public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer<T>> extends TileEntityTransformer<T> {
 
     public TileEntityDigitalTransformer(Machine<?> type) {
         super(type, 0, (v) -> (8192L + v * 64L));
@@ -84,7 +85,7 @@ public class TileEntityDigitalTransformer extends TileEntityTransformer {
                     h.setOutputVoltage(amperage);
                 }
 
-                h.refreshNet();
+                this.refreshCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
             });
         }
     }

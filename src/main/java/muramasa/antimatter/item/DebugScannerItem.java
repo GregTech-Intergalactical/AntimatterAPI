@@ -56,7 +56,7 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
         BlockState state = context.getWorld().getBlockState(context.getPos());
         TileEntity tile = context.getWorld().getTileEntity(context.getPos());
         if (tile instanceof TileEntityBase) {
-            ((TileEntityBase) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new StringTextComponent(s), context.getPlayer().getUniqueID()));
+            ((TileEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new StringTextComponent(s), context.getPlayer().getUniqueID()));
         }
         if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
             ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getWorld(), state, context.getPos()).forEach(s -> {

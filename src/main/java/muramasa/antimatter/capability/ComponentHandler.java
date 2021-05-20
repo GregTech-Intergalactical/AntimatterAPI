@@ -14,14 +14,14 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Set;
 
-public class ComponentHandler implements IComponentHandler {
+public class ComponentHandler<T extends TileEntityBase<T>> implements IComponentHandler {
 
     protected String componentId;
-    protected TileEntityBase componentTile;
+    protected T componentTile;
 
-    protected Set<TileEntityMultiMachine> controllers = new ObjectOpenHashSet<>();
+    protected Set<TileEntityMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
 
-    public ComponentHandler(String componentId, TileEntityBase componentTile) {
+    public ComponentHandler(String componentId, T componentTile) {
         this.componentId = componentId;
         this.componentTile = componentTile;
     }
@@ -34,35 +34,35 @@ public class ComponentHandler implements IComponentHandler {
 
     @Nonnull
     @Override
-    public TileEntityBase getTile() {
+    public T getTile() {
         return componentTile;
     }
 
     @Nonnull
     @Override
     public LazyOptional<MachineItemHandler<?>> getItemHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler : LazyOptional.empty();
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler.nullSide() : LazyOptional.empty();
     }
 
     @Nonnull
     @Override
     public LazyOptional<MachineFluidHandler<?>> getFluidHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler : LazyOptional.empty();
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler.nullSide() : LazyOptional.empty();
     }
 
     @Nonnull
     @Override
     public LazyOptional<MachineEnergyHandler<?>> getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler : LazyOptional.empty();
+        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler.nullSide() : LazyOptional.empty();
     }
 
     @Override
-    public void onStructureFormed(@Nonnull TileEntityMultiMachine controllerTile) {
+    public void onStructureFormed(@Nonnull TileEntityMultiMachine<?> controllerTile) {
         this.controllers.add(controllerTile);
     }
 
     @Override
-    public void onStructureInvalidated(@Nonnull TileEntityMultiMachine controllerTile) {
+    public void onStructureInvalidated(@Nonnull TileEntityMultiMachine<?> controllerTile) {
         this.controllers.remove(controllerTile);
     }
 
@@ -73,7 +73,7 @@ public class ComponentHandler implements IComponentHandler {
 
     @Nonnull
     @Override
-    public Collection<TileEntityMultiMachine> getControllers() {
+    public Collection<TileEntityMultiMachine<?>> getControllers() {
         return controllers;
     }
 }

@@ -95,7 +95,7 @@ public class FluidStackPacket {
         if (inputFluids == null && outputFluids == null) return;
         TileEntity tile = Utils.getTile(Minecraft.getInstance().world, this.pos);
         if (tile instanceof TileEntityMachine) {
-            TileEntityMachine machine = (TileEntityMachine) tile;
+            TileEntityMachine<?> machine = (TileEntityMachine) tile;
             machine.fluidHandler.ifPresent(h -> {
                 if (this.inputFluids != null) {
                     FluidStack[] inputs = new FluidStack[this.inputFluids.length];

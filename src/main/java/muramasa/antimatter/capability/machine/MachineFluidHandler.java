@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -10,9 +11,11 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
@@ -24,7 +27,7 @@ import static muramasa.antimatter.machine.MachineFlag.GUI;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
-public class MachineFluidHandler<T extends TileEntityMachine> extends FluidHandler<T> {
+public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHandler<T> implements Dispatch.Sided<IFluidHandler> {
 
     private boolean fillingCell = false;
 
@@ -194,8 +197,14 @@ public class MachineFluidHandler<T extends TileEntityMachine> extends FluidHandl
         return super.canInput();
     }
 
+
     @Override
-    public void refreshNet() {
-        Tesseract.FLUID.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
+    public LazyOptional<IFluidHandler> forSide(Direction side) {
+        return LazyOptional.of(() -> this);
+    }
+
+    @Override
+    public void refresh() {
+
     }
 }

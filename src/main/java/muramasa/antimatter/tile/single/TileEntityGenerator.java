@@ -12,12 +12,11 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
-public class TileEntityGenerator extends TileEntityMachine {
+public class TileEntityGenerator<T extends TileEntityGenerator<T>> extends TileEntityMachine<T> {
 
     public TileEntityGenerator(Machine<?> type) {
         super(type);
-
-        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityGenerator>(this, type.amps(),type.has(GENERATOR)){
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, type.amps(),type.has(GENERATOR)){
             @Override
             public boolean canInput(Direction direction) {
                 return false;

@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -24,7 +25,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 
-public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHandler implements IMachineHandler{
+public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends EnergyHandler implements IMachineHandler, Dispatch.Sided<IEnergyHandler> {
 
     protected final T tile;
 
@@ -199,8 +200,14 @@ public class MachineEnergyHandler<T extends TileEntityMachine> extends EnergyHan
         }
     }
 
+
     @Override
-    public void refreshNet() {
-        Tesseract.GT_ENERGY.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
+    public LazyOptional<IEnergyHandler> forSide(Direction side) {
+        return LazyOptional.of(() -> this);
+    }
+
+    @Override
+    public void refresh() {
+        Tesseract.GT_ENERGY.refreshNode(tile.getWorld(), tile.getPos().toLong());
     }
 }

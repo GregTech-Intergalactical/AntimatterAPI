@@ -5,9 +5,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
@@ -52,7 +50,10 @@ import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -60,6 +61,7 @@ import java.util.List;
 import java.util.Set;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
+import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -67,10 +69,10 @@ import static net.minecraft.block.Blocks.AIR;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-public class TileEntityMachine extends TileEntityTickable implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler, IDynamicModelProvider {
+public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler, IDynamicModelProvider {
 
     /** Open container. Allows for better syncing **/
-    protected final Set<ContainerMachine> openContainers = new ObjectOpenHashSet<>();
+    protected final Set<ContainerMachine<T>> openContainers = new ObjectOpenHashSet<>();
 
     /** Machine Data **/
     protected Machine<?> type;
@@ -78,11 +80,17 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
     protected MachineState machineState;
 
     /** Handlers **/
-    public LazyOptional<MachineItemHandler<?>> itemHandler;
+   /* public LazyOptional<MachineItemHandler<?>> itemHandler;
     public LazyOptional<MachineFluidHandler<?>> fluidHandler;
-    public LazyOptional<MachineEnergyHandler<?>> energyHandler;
-    public LazyOptional<MachineRecipeHandler<?>> recipeHandler;
-    public LazyOptional<MachineCoverHandler<TileEntityMachine>> coverHandler;
+    public LazyOptional<MachineEnergyHandler<T>> energyHandler;
+    public LazyOptional<MachineRecipeHandler<T>> recipeHandler;
+    public LazyOptional<MachineCoverHandler<TileEntityMachine>> coverHandler;*/
+
+    public Holder<T, IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>((T)this,ITEM_HANDLER_CAPABILITY, dispatch);
+    public Holder<T, IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>((T)this,FLUID_HANDLER_CAPABILITY, dispatch);
+    public Holder<T, ICoverHandler, MachineCoverHandler<T>> coverHandler = new Holder<>((T)this, COVERABLE_HANDLER_CAPABILITY, dispatch);
+    public Holder<T, IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>((T)this, TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dispatch);
+    public Holder<T, MachineRecipeHandler, MachineRecipeHandler<T>> recipeHandler = new Holder<>((T)this, RECIPE_HANDLER_CAPABILITY, dispatch);
 
     /** Texture related areas. **/
     public LazyValue<DynamicTexturer<TileEntityMachine, DynamicKey>> multiTexturer;
@@ -91,12 +99,21 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
         super(type.getTileType());
         this.type = type;
         this.machineState = getDefaultMachineState();
-        this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyOptional.of(() -> new MachineItemHandler<>(this)) : LazyOptional.empty();
-        this.fluidHandler = type.has(FLUID) ? LazyOptional.of(() -> new MachineFluidHandler<>(this)) : LazyOptional.empty();
-        this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MachineEnergyHandler<>(this, type.amps(),type.has(GENERATOR))) : LazyOptional.empty();
-        this.recipeHandler = type.has(RECIPE) ? LazyOptional.of(() -> new MachineRecipeHandler<>(this)) : LazyOptional.empty();
-        this.coverHandler = type.has(COVERABLE) ? LazyOptional.of(() -> new MachineCoverHandler<>(this)) : LazyOptional.empty();
-        //lazy way to only runn on client.
+        if (type.has(ITEM) || type.has(CELL)) {
+            itemHandler.set(() -> new MachineItemHandler<>((T)this));
+        }
+        if (type.has(FLUID)) {
+            fluidHandler.set(() -> new MachineFluidHandler<>((T)this));
+        }
+        if (type.has(ENERGY)) {
+            energyHandler.set(() -> new MachineEnergyHandler<>((T)this,type.amps(),type.has(GENERATOR)));
+        }
+        if (type.has(RECIPE)) {
+            recipeHandler.set(() -> new MachineRecipeHandler<>((T)this));
+        }
+        if (type.has(COVERABLE)) {
+            coverHandler.set(() -> new MachineCoverHandler<>((T)this));
+        }
         multiTexturer = new LazyValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER));
     }
 
@@ -110,6 +127,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     @Override
     public void onFirstTick() {
+        super.onFirstTick();
         if (isServerSide()) {
             this.itemHandler.ifPresent(MachineItemHandler::init);
             this.fluidHandler.ifPresent(MachineFluidHandler::init);
@@ -177,10 +195,7 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
             energyHandler.ifPresent(MachineEnergyHandler::onRemove);
             recipeHandler.ifPresent(MachineRecipeHandler::onRemove);
 
-            coverHandler.invalidate();
-            fluidHandler.invalidate();
-            itemHandler.invalidate();
-            energyHandler.invalidate();
+            dispatch.invalidate();
         }
     }
 
@@ -346,35 +361,41 @@ public class TileEntityMachine extends TileEntityTickable implements INamedConta
 
     public void refreshCaps() {
         if (isServerSide()) {
-            if (energyHandler.isPresent()) {
-                LazyOptional old = energyHandler;
-                MachineEnergyHandler<?> handler = energyHandler.orElse(null);
-                energyHandler = LazyOptional.of(() -> handler);
-                old.invalidate();
-            }
-            if (fluidHandler.isPresent()) {
-                LazyOptional old = fluidHandler;
-                MachineFluidHandler<?> fhandler = fluidHandler.orElse(null);
-                fluidHandler = LazyOptional.of(() -> fhandler);
-                old.invalidate();
-            }
-            itemHandler.ifPresent(MachineItemHandler::refreshCap);
+            dispatch.refresh();
         }
     }
 
-    public <T> boolean blocksCapability(@Nonnull Capability<T> cap, Direction side) {
+    public void refreshCap(Capability<?> cap) {
+        if (isServerSide()) {
+            dispatch.refresh(cap);
+        }
+    }
+
+    public void invalidateCaps() {
+        if (isServerSide()) {
+            dispatch.invalidate();
+        }
+    }
+
+    public void invalidateCap(Capability<?> cap) {
+        if (isServerSide()) {
+            dispatch.invalidate(cap);
+        }
+    }
+
+    public <V> boolean blocksCapability(@Nonnull Capability<V> cap, Direction side) {
         return coverHandler.map(t -> t.blocksCapability(cap, side)).orElse(false);
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
+        if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.side(side).cast();
         if (side == getFacing() && !allowsFrontIO()) return LazyOptional.empty();
         if (blocksCapability(cap, side)) return LazyOptional.empty();
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.resolve().orElse(null).getCapability().cast();
-        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.cast();
-        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.cast();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.side(side).cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.side(side).cast();
+        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.side(side).cast();
         return super.getCapability(cap, side);
     }
 

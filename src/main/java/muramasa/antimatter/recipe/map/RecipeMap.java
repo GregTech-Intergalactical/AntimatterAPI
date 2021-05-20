@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.GuiData;
@@ -15,6 +16,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.*;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -34,6 +36,8 @@ import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -436,16 +440,11 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
         if (list.size() == 0) return null;
         //Find recipe.
-        //long current = System.nanoTime();
+        long current = System.nanoTime();
         Recipe r = recurseItemTreeFind(list, LOOKUP, canHandle);
-        //Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() - current) / 1000));
+        Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() - current) / 1000));
 
         return r;
-    }
-
-    @Nullable
-    public Recipe find(@Nonnull LazyHolder<MachineItemHandler<?>> itemHandler, @Nonnull LazyHolder<MachineFluidHandler<?>> fluidHandler, @Nonnull Predicate<Recipe> validator) {
-        return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM), fluidHandler.map(MachineFluidHandler::getInputs).orElse(EMPTY_FLUID), validator);
     }
 
     public void reset() {
@@ -522,6 +521,10 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     public static boolean isIngredientSpecial(Ingredient i) {
         Class<? extends Ingredient> clazz = i.getClass();
         return /*i.getMatchingStacks().length == 0 && */(clazz != Ingredient.class && clazz != CompoundIngredient.class && clazz != NBTIngredient.class);
+    }
+
+    public <T extends TileEntityMachine<T>> Recipe find(Holder<T, IItemHandler, MachineItemHandler<T>> itemHandler, Holder<T, IFluidHandler, MachineFluidHandler<T>> fluidHandler, Predicate<Recipe> validateRecipe) {
+        return find(itemHandler.map(t -> t.getInputs()).orElse(EMPTY_ITEM), fluidHandler.map(t -> t.getInputs()).orElse(EMPTY_FLUID), validateRecipe);
     }
 
     /**

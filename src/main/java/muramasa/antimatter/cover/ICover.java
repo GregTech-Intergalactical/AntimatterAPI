@@ -47,7 +47,7 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
 
     }
 
-    default void onMachineEvent(CoverStack<?> instance, TileEntityMachine tile, IMachineEvent event, int... data) {
+    default void onMachineEvent(CoverStack<?> instance, TileEntityMachine<?> tile, IMachineEvent event, int... data) {
         //NOOP
     }
 

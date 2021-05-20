@@ -37,6 +37,6 @@ public class SlotType {
 
     public interface ISlotSupplier {
 
-        Optional<SlotItemHandler> get(TileEntityMachine tile, int index, SlotData data);
+        Optional<SlotItemHandler> get(TileEntityMachine<?> tile, int index, SlotData data);
     }
 }

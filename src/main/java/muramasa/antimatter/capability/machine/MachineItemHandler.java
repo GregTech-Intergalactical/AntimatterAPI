@@ -3,6 +3,7 @@ package muramasa.antimatter.capability.machine;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
@@ -11,7 +12,6 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.recipe.ingredient.impl.Ingredients;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -24,7 +24,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import tesseract.Tesseract;
-import tesseract.api.IRefreshable;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 
@@ -34,12 +33,10 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class MachineItemHandler<T extends TileEntityMachine> implements IRefreshable, IMachineHandler, INBTSerializable<CompoundNBT> {
+public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMachineHandler, INBTSerializable<CompoundNBT>, Dispatch.Sided<IItemHandler> {
 
     protected final T tile;
     protected final EnumMap<MachineFlag, TrackedItemHandler<T>> inventories = new EnumMap<>(MachineFlag.class); // Use SlotType instead of MachineFlag?
-
-    private LazyOptional<IItemHandler> capability;
 
     public MachineItemHandler(T tile) {
         this.tile = tile;
@@ -63,19 +60,8 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
                 inventories.put(ENERGY, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), false, t -> t.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).isPresent(), ContentEvent.ENERGY_SLOT_CHANGED, 1));
             }
         }
-        capability = LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0])));
     }
 
-    public void refreshCap() {
-        LazyOptional oldcap = capability;
-        IItemHandler handler = capability.orElse(null);
-        capability = LazyOptional.of(() -> handler);
-        oldcap.invalidate();
-    }
-
-    public LazyOptional<IItemHandler> getCapability() {
-        return capability;
-    }
 
     @Override
     public void init() {
@@ -109,9 +95,7 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
     }
 
     public void onRemove() {
-        if (tile.isServerSide()) {
-            capability.invalidate();
-        }
+
     }
 
     public static ItemStack insertIntoOutput(IItemHandler handler, int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -459,6 +443,17 @@ public class MachineItemHandler<T extends TileEntityMachine> implements IRefresh
     }*/
 
     public void refreshNet() {
+        Tesseract.ITEM.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
+    }
+
+
+    @Override
+    public LazyOptional<IItemHandler> forSide(Direction side) {
+        return LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0])));
+    }
+
+    @Override
+    public void refresh() {
         Tesseract.ITEM.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
     }
 }

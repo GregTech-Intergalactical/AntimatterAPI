@@ -2,12 +2,14 @@ package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.container.ContainerMultiMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
 
-public class ScreenMultiMachine<T extends ContainerMultiMachine> extends ScreenBasicMachine<T> {
+public class ScreenMultiMachine<T extends TileEntityBasicMultiMachine<T>, U extends ContainerMultiMachine<T>> extends ScreenMachine<T,U> {
 
-    public ScreenMultiMachine(T container, PlayerInventory inv, ITextComponent name) {
+    public ScreenMultiMachine(U container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
     }
 

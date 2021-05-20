@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase implements IMachineHandler {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler {
 
     /** Pipe Data **/
     protected T type;
@@ -253,7 +253,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
         if (side == null) return LazyOptional.empty();
         if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
         if (!this.canConnect(side.getIndex())) return LazyOptional.empty();

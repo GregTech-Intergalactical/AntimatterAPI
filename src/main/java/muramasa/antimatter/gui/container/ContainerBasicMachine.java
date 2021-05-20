@@ -4,11 +4,11 @@ import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerInventory;
 
-public class ContainerBasicMachine extends ContainerMachine {
+public class ContainerBasicMachine<T extends TileEntityMachine<T>> extends ContainerMachine<T> {
 
     private int lastProgress = -1;
 
-    public ContainerBasicMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine handler, int windowId) {
+    public ContainerBasicMachine(T tile, PlayerInventory playerInv, MenuHandlerMachine handler, int windowId) {
         super(tile, playerInv, handler, windowId);
     }
 

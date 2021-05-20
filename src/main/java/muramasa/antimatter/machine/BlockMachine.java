@@ -119,7 +119,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         ActionResultType ty = onBlockActivatedBoth(state, world, pos, player, hand, hit);
         if (ty.isSuccessOrConsume()) return ty;
         if (!world.isRemote) {
-            TileEntityMachine tile = (TileEntityMachine)world.getTileEntity(pos);
+            TileEntityMachine<?> tile = (TileEntityMachine<?>)world.getTileEntity(pos);
             if (tile != null) {
                 ItemStack stack = player.getHeldItem(hand);
                 AntimatterToolType type = Utils.getToolType(player);
@@ -267,7 +267,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             if (!worldIn.isRemote) {
                 TileEntity tile = worldIn.getTileEntity(pos);
                 if (tile == null) return;
-                TileEntityMachine machine = (TileEntityMachine) tile;
+                TileEntityMachine<?> machine = (TileEntityMachine<?>) tile;
                 machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, machine.getPos().getX(), machine.getPos().getY(), machine.getPos().getZ(), stack)));
                 machine.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, machine.getPos().getX(), machine.getPos().getY(), machine.getPos().getZ(), stack)));
             }
@@ -310,8 +310,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityMachine) {
             MachineState machineState = ((TileEntityMachine) tile).getMachineState();
-            if (((TileEntityMachine) tile).coverHandler.isPresent()) {
-                CoverHandler<?> h = ((TileEntityMachine) tile).coverHandler.orElse(null);
+            if (((TileEntityMachine<?>) tile).coverHandler.isPresent()) {
+                CoverHandler<?> h = ((TileEntityMachine<?>) tile).coverHandler.orElse(null);
                 return config.set(new int[] {
                     h.get(DOWN).skipRender() ? getModelId(facing, DOWN, machineState) : 0,
                     h.get(UP).skipRender() ? getModelId(facing, UP, machineState) : 0,

@@ -7,16 +7,10 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
-import muramasa.antimatter.client.ScreenSetup;
 import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
-import muramasa.antimatter.gui.container.ContainerCover;
-import muramasa.antimatter.gui.container.ContainerHatch;
-import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.container.ContainerMultiMachine;
-import muramasa.antimatter.gui.screen.*;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
@@ -57,11 +51,6 @@ public class ClientHandler implements IProxyHandler {
         eventBus.addListener(ClientHandler::onBlockColorHandler);
         eventBus.addListener(ClientHandler::onModelRegistry);
         eventBus.addListener(AntimatterTextureStitcher::onTextureStitch);
-        ScreenSetup.<ContainerMachine, ScreenBasicMachine<ContainerMachine>>setScreenMapping(Data.BASIC_MENU_HANDLER, ScreenBasicMachine::new);
-        ScreenSetup.<ContainerCover, ScreenCover<ContainerCover>>setScreenMapping(Data.COVER_MENU_HANDLER, ScreenCover::new);
-        ScreenSetup.<ContainerMultiMachine, ScreenMultiMachine<ContainerMultiMachine>>setScreenMapping(Data.MULTI_MENU_HANDLER, ScreenMultiMachine::new);
-        ScreenSetup.<ContainerHatch, ScreenHatch<ContainerHatch>>setScreenMapping(Data.HATCH_MENU_HANDLER, ScreenHatch::new);
-        ScreenSetup.<ContainerMachine, ScreenSteamMachine<ContainerMachine>>setScreenMapping(Data.STEAM_MENU_HANDLER, ScreenSteamMachine::new);
 
         AntimatterTextureStitcher.addStitcher(event -> AntimatterAPI.all(ICover.class).forEach(cover -> {
             if (cover instanceof CoverNone || cover == COVERNONE) return;
@@ -80,7 +69,7 @@ public class ClientHandler implements IProxyHandler {
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
         /* Register screens. */
-        AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), ScreenSetup.get(h))));
+        AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), h.screen())));
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
             RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.getCutout());

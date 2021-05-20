@@ -23,34 +23,36 @@ import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
 //TODO: HATCH SHOULD NOT HAVE TWO OUTPUTS!
-public class TileEntityHatch extends TileEntityMachine implements IComponent {
+public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
-    private final LazyOptional<HatchComponentHandler> componentHandler = LazyOptional.of(() -> new HatchComponentHandler(this));
+    private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional.of(() -> new HatchComponentHandler((T)this));
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
-        this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MachineEnergyHandler<TileEntityHatch>(this, 0,getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
-                type.getOutputCover() == COVERENERGY ? 2 : 0,type.getOutputCover() == COVERDYNAMO ? 1 : 0){
-            @Override
-            public boolean canInput(Direction direction) {
-                Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
-                if (out == null) return false;
-                ICover o = tile.getMachineType().getOutputCover();
-                return o.equals(COVERENERGY) && direction == out;
-            }
+        if (type.has(ENERGY)) {
+            energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0,getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
+                    type.getOutputCover() == COVERENERGY ? 2 : 0,type.getOutputCover() == COVERDYNAMO ? 1 : 0){
+                @Override
+                public boolean canInput(Direction direction) {
+                    Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
+                    if (out == null) return false;
+                    ICover o = tile.getMachineType().getOutputCover();
+                    return o.equals(COVERENERGY) && direction == out;
+                }
 
-            @Override
-            public boolean canOutput(Direction direction) {
-                Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
-                if (out == null) return false;
-                ICover o = tile.getMachineType().getOutputCover();
-                return o.equals(COVERDYNAMO) && direction == out;
-            }
-        }) : LazyOptional.empty();
+                @Override
+                public boolean canOutput(Direction direction) {
+                    Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
+                    if (out == null) return false;
+                    ICover o = tile.getMachineType().getOutputCover();
+                    return o.equals(COVERDYNAMO) && direction == out;
+                }
+            });
+        }
 }
 
     @Override
-    public LazyOptional<HatchComponentHandler> getComponentHandler() {
+    public LazyOptional<HatchComponentHandler<T>> getComponentHandler() {
         return componentHandler;
     }
 

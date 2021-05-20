@@ -25,11 +25,11 @@ public interface IComponentHandler {
 
     LazyOptional<MachineEnergyHandler<?>> getEnergyHandler();
 
-    void onStructureFormed(TileEntityMultiMachine tile);
+    void onStructureFormed(TileEntityMultiMachine<?> tile);
 
-    void onStructureInvalidated(TileEntityMultiMachine tile);
+    void onStructureInvalidated(TileEntityMultiMachine<?> tile);
 
     boolean hasLinkedController();
 
-    Collection<TileEntityMultiMachine> getControllers();
+    Collection<TileEntityMultiMachine<?>> getControllers();
 }

@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class RecipeBuilder {
 
-    private RecipeMap recipeMap;
+    private RecipeMap<? extends RecipeBuilder> recipeMap;
     protected ItemStack[] itemsOutput;
     protected List<RecipeIngredient> ingredientInput;
     protected FluidStack[] fluidsInput, fluidsOutput;

@@ -11,13 +11,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-public class MultiMachineItemHandler extends MachineItemHandler<TileEntityMultiMachine> {
+public class MultiMachineItemHandler<T extends TileEntityMultiMachine<T>> extends MachineItemHandler<T> {
 
     Optional<ITrackedHandler> inputs = Optional.empty();
     Optional<ITrackedHandler> outputs = Optional.empty();
-    public MultiMachineItemHandler(TileEntityMachine tile) {
+    public MultiMachineItemHandler(T tile) {
         //TODO: Won't work otherwise, requires TEM tile as argument to this constructor. Not sure why! Feel free to fix, this works thoguh
-        super((TileEntityMultiMachine)tile);
+        super(tile);
     }
 
     @Override

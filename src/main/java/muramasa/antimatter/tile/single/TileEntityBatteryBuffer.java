@@ -9,11 +9,11 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 
 
-public class TileEntityBatteryBuffer extends TileEntityStorage {
+public class TileEntityBatteryBuffer<T extends TileEntityBatteryBuffer<T>> extends TileEntityStorage<T> {
 
     public TileEntityBatteryBuffer(Machine<?> type) {
         super(type);
-        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityMachine>(this, 0L, 0L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0, 0) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0L, 0L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0, 0) {
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.coverHandler.map(ch -> ch.lookupSingle(CoverDynamo.class)).orElse(null);

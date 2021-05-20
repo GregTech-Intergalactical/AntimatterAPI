@@ -3,10 +3,7 @@ package muramasa.antimatter.tile.multi;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
-import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
-import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
+import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.Tier;
@@ -22,22 +19,27 @@ import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMultiMachine extends TileEntityBasicMultiMachine {
+public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends TileEntityBasicMultiMachine<T> {
 
-    protected int efficiency, efficiencyIncrease; //TODO move to BasicMachine
     protected long EUt;
 
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type) {
         super(type);
-        this.itemHandler = type.has(ITEM) || type.has(CELL) ? LazyOptional.of(() -> new MultiMachineItemHandler(this)) : LazyOptional.empty();
-        this.energyHandler = type.has(ENERGY) ? LazyOptional.of(() -> new MultiMachineEnergyHandler(this)) : LazyOptional.empty();
-        this.fluidHandler = type.has(FLUID) ? LazyOptional.of(() -> new MultiMachineFluidHandler(this)) : LazyOptional.empty();
+        if (type.has(ITEM) || type.has(CELL)) {
+            itemHandler.set(() -> new MultiMachineItemHandler<>((T) this));
+        }
+        if (type.has(ENERGY)) {
+            energyHandler.set(() -> new MultiMachineEnergyHandler<>((T)this));
+        }
+        if (type.has(FLUID)) {
+            fluidHandler.set(() -> new MultiMachineFluidHandler<>((T)this));
+        }
     }
 
     @Override
     public Tier getPowerLevel() {
-        return energyHandler.map(t -> ((MultiMachineEnergyHandler)t).getAccumulatedPower()).orElse(super.getPowerLevel());
+        return energyHandler.map(t -> ((MultiMachineEnergyHandler<T>)t).getAccumulatedPower()).orElse(super.getPowerLevel());
     }
 
     @Override
@@ -47,13 +49,13 @@ public class TileEntityMultiMachine extends TileEntityBasicMultiMachine {
         }));
         //Handlers.
         this.itemHandler.ifPresent(handle -> {
-            ((MultiMachineItemHandler)handle).onStructureBuild();
+            ((MultiMachineItemHandler<T>)handle).onStructureBuild();
         });
         this.energyHandler.ifPresent(handle -> {
-            ((MultiMachineEnergyHandler)handle).onStructureBuild();
+            ((MultiMachineEnergyHandler<T>)handle).onStructureBuild();
         });
         this.fluidHandler.ifPresent(handle -> {
-            ((MultiMachineFluidHandler)handle).onStructureBuild();
+            ((MultiMachineFluidHandler<T>)handle).onStructureBuild();
         });
     }
 
@@ -61,9 +63,9 @@ public class TileEntityMultiMachine extends TileEntityBasicMultiMachine {
         this.result.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureInvalidated(this);
         }));
-        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler)handle).invalidate());
-        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler)handle).invalidate());
-        this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler)handle).invalidate());
+        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler<T>)handle).invalidate());
+        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler<T>)handle).invalidate());
+        this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler<T>)handle).invalidate());
     }
 
     @Override

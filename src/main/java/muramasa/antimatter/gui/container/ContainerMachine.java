@@ -18,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class ContainerMachine extends AntimatterContainer {
+public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
 
-    protected final TileEntityMachine tile;
+    protected final T tile;
     protected List<ServerPlayerEntity> listeners = new ArrayList<>();
 
-    public ContainerMachine(TileEntityMachine tile, PlayerInventory playerInv, MenuHandlerMachine<?> menuHandler, int windowId) {
+    public ContainerMachine(T tile, PlayerInventory playerInv, MenuHandlerMachine<T, ContainerMachine<T>> menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
         this.tile = tile;
         addSlots(tile);
@@ -36,7 +36,7 @@ public abstract class ContainerMachine extends AntimatterContainer {
         tile.addOpenContainer(this);
     }
 
-    public TileEntityMachine getTile() {
+    public T getTile() {
         return tile;
     }
 

@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.stream.Collectors;
 
-public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMultiMachine> {
+public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> extends MachineFluidHandler<T> {
 
     private FluidTanks EMPTY;
 
@@ -32,7 +32,7 @@ public class MultiMachineFluidHandler extends MachineFluidHandler<TileEntityMult
 
     protected final EnumMap<FluidDirection, FluidTanks> tanks = new EnumMap<>(FluidDirection.class);
 
-    public MultiMachineFluidHandler(TileEntityMultiMachine tile) {
+    public MultiMachineFluidHandler(T tile) {
         super(tile);
         EMPTY = new FluidTanks(new FluidTank(0));
     }

@@ -39,9 +39,9 @@ public class MachineBakedModel extends CoveredBakedModel {
                 Texture tex = fn.apply(side);
                 TileEntityBase tile = data.getData(AntimatterProperties.TILE_PROPERTY);
                 if (!(tile instanceof TileEntityMachine)) return quads;
-                TileEntityMachine t = (TileEntityMachine) tile;
-                MachineCoverHandler<TileEntityMachine> covers = t.coverHandler.orElse(null);
-                CoverStack<TileEntityMachine> c = covers == null ? null : covers.get(side);
+                TileEntityMachine<?> t = (TileEntityMachine) tile;
+                MachineCoverHandler<?> covers = t.coverHandler.orElse(null);
+                CoverStack<?> c = covers == null ? null : covers.get(side);
                 if (c == null || c.skipRender()) {
                     TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, state.get(BlockStateProperties.HORIZONTAL_FACING), data.getData(AntimatterProperties.MACHINE_STATE));
                     quads = t.multiTexturer.getValue().getQuads(quads, state, t, key, side.getIndex(), data);

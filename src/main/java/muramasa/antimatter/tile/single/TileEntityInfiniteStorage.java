@@ -8,11 +8,11 @@ import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.List;
 
-public class TileEntityInfiniteStorage extends TileEntityMachine {
+public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> extends TileEntityMachine<T> {
 
     public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
         super(type);
-        this.energyHandler = LazyOptional.of(() -> new MachineEnergyHandler<TileEntityInfiniteStorage>(this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
             @Override
             public long extract(long maxExtract, boolean simulate) {
                 if (simulate && !getState().extract(true, 1, maxExtract)) {

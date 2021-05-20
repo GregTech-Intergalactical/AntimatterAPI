@@ -4,17 +4,19 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.container.ContainerHatch;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.tile.multi.TileEntityHatch;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.List;
 
-public class ScreenHatch<T extends ContainerMachine> extends ScreenMachine<T> {
+public class ScreenHatch<T extends TileEntityHatch<T>, U extends ContainerHatch<T>> extends ScreenMachine<T, U> {
 
-    public ScreenHatch(T container, PlayerInventory inv, ITextComponent name) {
+    public ScreenHatch(U container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         gui = new ResourceLocation(Ref.ID, "textures/gui/machine/hatch.png");
     }
