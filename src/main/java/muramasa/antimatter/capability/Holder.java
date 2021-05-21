@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -12,17 +11,16 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class Holder<U extends TileEntityBase<U>, V, T extends Dispatch.Sided<V>> {
+public class Holder<V, T extends Dispatch.Sided<V>> {
     private final Dispatch dispatch;
     public final Capability<?> cap;
     private final LazyOptional[] sided;
-    private final U tile;
     private LazyOptional<T> opt = LazyOptional.empty();
     private Supplier<? extends T> supplier;
     private T resolved;
     private boolean flag;
 
-    public Holder(U tile, Capability<?> cap, Dispatch dispatch, Supplier<T> source) {
+    public Holder(Capability<?> cap, Dispatch dispatch, Supplier<T> source) {
         this.dispatch = dispatch;
         this.cap = cap;
         this.sided = new LazyOptional[Ref.DIRS.length];
@@ -30,13 +28,12 @@ public class Holder<U extends TileEntityBase<U>, V, T extends Dispatch.Sided<V>>
             sided[dir.getIndex()] = LazyOptional.empty();
         }
         this.flag = false;
-        this.tile = tile;
         this.supplier = source;
         dispatch.registerHolder(this);
     }
 
-    public Holder(U tile, Capability<V> cap, Dispatch dispatch) {
-        this(tile,cap, dispatch, null);
+    public Holder(Capability<V> cap, Dispatch dispatch) {
+        this(cap, dispatch, null);
     }
 
     public boolean isPresent() {
@@ -148,6 +145,9 @@ public class Holder<U extends TileEntityBase<U>, V, T extends Dispatch.Sided<V>>
         }
         if (resolved == null) {
             get();
+        }
+        if (side == null) {
+            return nullSide().cast();
         }
         LazyOptional<? extends V> t = sided[side.getIndex()];
         if (!t.isPresent()) {

@@ -1,11 +1,9 @@
 package muramasa.antimatter.gui.slot;
 
-import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
-import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -22,6 +20,12 @@ public class AbstractSlot extends SlotItemHandler {
     @Nonnull
     public ItemStack decrStackSize(int amount) {
         return MachineItemHandler.extractFromInput(this.getItemHandler(), index, amount, false);
+    }
+
+    @Override
+    public boolean canTakeStack(PlayerEntity playerIn)
+    {
+        return !MachineItemHandler.extractFromInput(this.getItemHandler(), index, 1, true).isEmpty();
     }
 
     @Override

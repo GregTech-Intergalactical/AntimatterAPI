@@ -4,7 +4,6 @@ import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;

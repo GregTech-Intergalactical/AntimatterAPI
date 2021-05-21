@@ -80,6 +80,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     //20 seconds per check.
     static final int WAIT_TIME = 20*20;
     static final int WAIT_TIME_POWER_LOSS = 20*5;
+    static final int WAIT_TIME_OUTPUT_FULL = 20*1;
     protected int tickTimer = 0;
 
     //Consuming resources can call into the recipe handler, causing a loop.
@@ -133,20 +134,22 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     public void onServerUpdate() {
         //First, a few timer related tasks that ensure the machine can recover from certain situations.
-        if (activeRecipe == null && tickTimer >= WAIT_TIME) {
-            tickTimer = 0;
-            //Convert from power_loss to idle.
-            checkRecipe();
+        if (tickingRecipe) return;
+        if (tickTimer > 0) {
+            tickTimer--;
+            return;
         }
-        else if (tile.getMachineState() == POWER_LOSS && tickTimer >= WAIT_TIME_POWER_LOSS) {
+        if (tile.getMachineState() == POWER_LOSS && activeRecipe != null) {
             tile.setMachineState(NO_POWER);
             tickTimer = 0;
         }
-        else if (activeRecipe == null || tile.getMachineState() == POWER_LOSS) {
-            tickTimer++;
-            return;
+        if (tile.getMachineState() == OUTPUT_FULL) {
+            if (canOutput()) {
+                tile.setMachineState(recipeFinish());
+                return;
+            }
         }
-        if (tickingRecipe || activeRecipe == null) return;
+        if (activeRecipe == null) return;
         tickingRecipe = true;
         MachineState state;
         switch (tile.getMachineState()) {
@@ -270,6 +273,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     protected MachineState recipeFinish() {
+        tickTimer = 0;
         addOutputs();
         this.itemInputs = new ObjectArrayList<>();
         this.fluidInputs = new ObjectArrayList<>();
@@ -294,6 +298,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         }
         if (this.currentProgress == this.maxProgress) {
             if (!canOutput()) {
+                tickTimer += WAIT_TIME_OUTPUT_FULL;
                 return OUTPUT_FULL;
             }
             MachineState state = recipeFinish();
@@ -310,6 +315,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 //TODO: Hard-mode here?
                 recipeFailure();
             }
+            tickTimer += WAIT_TIME_POWER_LOSS;
             return POWER_LOSS;
         }
         if (currentProgress == 0 && !consumedResources && shouldConsumeResources())
@@ -381,11 +387,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 if (!consumeResourceForRecipe(true) || !canRecipeContinue() || (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) || !tile.onRecipeFound(activeRecipe)) {
                     activeRecipe = null;
                     tile.setMachineState(tile.getDefaultMachineState());
+                    //wait half a second after trying again.
+                    tickTimer += 10;
                     return;
                 }
                 activateRecipe(true);
                 tile.setMachineState(ACTIVE);
-                return;
             }
         }
     }
@@ -523,7 +530,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (event instanceof ContentEvent) {
                 if (tile.getMachineState() == ACTIVE)
                     return;
-                if ((event == ContentEvent.ITEM_OUTPUT_CHANGED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && tile.getMachineState() == OUTPUT_FULL && canOutput()) {
+                if ((event == ContentEvent.ITEM_OUTPUT_CHANGED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && tile.getMachineState() == OUTPUT_FULL && tickTimer == 0 && canOutput()) {
                     tickingRecipe = true;
                     tile.setMachineState(recipeFinish());
                     tickingRecipe = false;
@@ -532,8 +539,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 if (tile.getMachineState().allowRecipeCheck()) {
                     if (activeRecipe != null) {
                         tile.setMachineState(NO_POWER);
-                    } else if (tile.getMachineState() != POWER_LOSS) {
-                        this.tickTimer = WAIT_TIME;
+                    } else if (tile.getMachineState() != POWER_LOSS && tickTimer == 0) {
+                        checkRecipe();
                     }
                 }
         } else if (event instanceof MachineEvent) {

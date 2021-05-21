@@ -3,7 +3,6 @@ package muramasa.antimatter.cover;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import tesseract.api.capability.TesseractGTCapability;
-import tesseract.api.gt.IGTNode;
 
 public class CoverEnergy extends BaseCover{
 

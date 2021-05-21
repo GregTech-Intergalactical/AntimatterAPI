@@ -1,7 +1,6 @@
 package muramasa.antimatter.gui.container;
 
 import muramasa.antimatter.gui.MenuHandlerMachine;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import net.minecraft.entity.player.PlayerInventory;
 

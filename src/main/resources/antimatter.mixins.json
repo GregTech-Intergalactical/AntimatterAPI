@@ -5,11 +5,11 @@
   "refmap": "antimatter.refmap.json",
   "client": [
     "ClientBlockUpdateMixin",
-    "ClientPlayNetHandlerMixin"
+    "ClientPlayNetHandlerMixin",
+    "ChunkReaderAccessor"
   ],
   "mixins": [
     "BlockLootTablesAccessor",
-    "ChunkReaderAccessor",
     "LeavesBlockMixin",
     "IceBlockMixin",
     "RecipeManagerMixin",

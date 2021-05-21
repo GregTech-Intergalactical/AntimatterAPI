@@ -14,7 +14,6 @@ import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTConsumer;
 import tesseract.api.gt.IEnergyHandler;
-import tesseract.api.gt.IGTNode;
 
 import java.util.function.Supplier;
 

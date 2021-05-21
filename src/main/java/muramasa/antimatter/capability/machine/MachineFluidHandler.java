@@ -16,7 +16,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -30,6 +29,8 @@ import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIM
 public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHandler<T> implements Dispatch.Sided<IFluidHandler> {
 
     private boolean fillingCell = false;
+    private boolean filledLastTick = false;
+    private int lastCellSlot = 0;
 
     public MachineFluidHandler(T tile, int capacity, int pressure) {
         super(tile, capacity, pressure, tile.has(GUI) ? tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0,
@@ -40,44 +41,61 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         this(tile, 8000 * (1 + tile.getMachineTier().getIntegerId()), 1000 * (250 + tile.getMachineTier().getIntegerId()));
     }
 
-    public int fillCell(int cellSlot, int maxFill) {
-        if (fillingCell) return 0;
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+        if (filledLastTick) {
+            tryFillCell(lastCellSlot, -1);
+        }
+    }
+
+    public void fillCell(int cellSlot, int maxFill) {
+        if (fillingCell) return;
         fillingCell = true;
         if (getInputTanks() != null) {
-            tile.itemHandler.ifPresent(ih -> {
-                if (ih.getCellInputHandler() == null) return;
+            filledLastTick = tile.itemHandler.map(ih -> {
+                if (ih.getCellInputHandler() == null) {
+                    return false;
+                }
                 ItemStack cell = ih.getCellInputHandler().getStackInSlot(cellSlot);
-                if (cell.isEmpty()) return;
+                if (cell.isEmpty()) {
+                    return false;
+                }
                 ItemStack toActOn = cell.copy();
                 toActOn.setCount(1);
-                toActOn.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(cfh -> {
+                return toActOn.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(cfh -> {
+                    final int actualMax = maxFill == -1 ? cfh.getTankCapacity(0) : maxFill;
                     ItemStack checkContainer = toActOn.copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(t -> {
                                 if (t.getFluidInTank(0).isEmpty()) {
-                                    t.fill(FluidUtil.tryFluidTransfer(t,this.getAllTanks(), maxFill, false), EXECUTE);
+                                    t.fill(FluidUtil.tryFluidTransfer(t,this.getAllTanks(), actualMax, false), EXECUTE);
                                 } else {
-                                    t.drain(maxFill, EXECUTE);
+                                    t.drain(actualMax, EXECUTE);
                                 }
                                 return t.getContainer();
                             }).orElse(null/* throw exception */);
-                    if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot,checkContainer,true).isEmpty()) return;
+                    if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot,checkContainer,true).isEmpty()) return false;
 
                     FluidStack stack;
                     if (cfh.getFluidInTank(0).isEmpty()) {
-                        stack = FluidUtil.tryFluidTransfer(cfh,this.getAllTanks(), maxFill, true);
+                        stack = FluidUtil.tryFluidTransfer(cfh,this.getAllTanks(), actualMax, true);
                     } else {
-                        stack = FluidUtil.tryFluidTransfer(this.getAllTanks(),cfh, maxFill, true);
+                        stack = FluidUtil.tryFluidTransfer(this.getAllTanks(),cfh, actualMax, true);
                     }
                     if (!stack.isEmpty()) {
                         ItemStack insert = cfh.getContainer();
                         insert.setCount(1);
                         MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot, insert, false);
-                        ih.getCellInputHandler().extractItem(cellSlot, 1, false);
+                        MachineItemHandler.extractFromInput(ih.getCellInputHandler(),cellSlot, 1, false);
+                        lastCellSlot = cellSlot;
+                        return true;
                     }
-                });
-            });
+                    return false;
+                }).orElse(false);
+            }).orElse(false);
+        } else {
+            filledLastTick = false;
         }
         fillingCell = false;
-        return 0;
     }
 
     protected boolean checkValidFluid(FluidStack fluid) {
@@ -108,11 +126,11 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         if (event instanceof ContentEvent) {
             switch ((ContentEvent)event) {
                 case ITEM_CELL_CHANGED:
-                    if (data[0] instanceof Integer) tryFillCell((Integer) data[0], 1000);
+                    if (data[0] instanceof Integer) tryFillCell((Integer) data[0], -1);
                     break;
                 case FLUID_INPUT_CHANGED:
                 case FLUID_OUTPUT_CHANGED:
-                    if (data[0] instanceof Integer) tryFillCell((Integer) data[0], 1000);
+                    if (data[0] instanceof Integer) tryFillCell((Integer) data[0], -1);
                     break;
             }
         }

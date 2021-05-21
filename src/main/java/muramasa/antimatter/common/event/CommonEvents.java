@@ -1,14 +1,11 @@
 package muramasa.antimatter.common.event;
 
-import com.google.common.eventbus.Subscribe;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.LeavesBlock;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.loot.ConstantRange;
 import net.minecraft.loot.ItemLootEntry;

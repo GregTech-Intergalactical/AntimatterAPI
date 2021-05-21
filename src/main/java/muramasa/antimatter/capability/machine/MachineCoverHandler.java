@@ -88,7 +88,6 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
         return getTile().getFacing();
     }
 
-
     @Override
     public LazyOptional<ICoverHandler> forSide(Direction side) {
         return LazyOptional.of(() -> this);

@@ -1,11 +1,13 @@
 package muramasa.antimatter.recipe.map;
 
+import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
@@ -17,7 +19,6 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.*;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.LazyHolder;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -440,9 +441,9 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
         if (list.size() == 0) return null;
         //Find recipe.
-        long current = System.nanoTime();
+        //long current = System.nanoTime();
         Recipe r = recurseItemTreeFind(list, LOOKUP, canHandle);
-        Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() - current) / 1000));
+        //Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() - current) / 1000));
 
         return r;
     }
@@ -523,8 +524,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return /*i.getMatchingStacks().length == 0 && */(clazz != Ingredient.class && clazz != CompoundIngredient.class && clazz != NBTIngredient.class);
     }
 
-    public <T extends TileEntityMachine<T>> Recipe find(Holder<T, IItemHandler, MachineItemHandler<T>> itemHandler, Holder<T, IFluidHandler, MachineFluidHandler<T>> fluidHandler, Predicate<Recipe> validateRecipe) {
-        return find(itemHandler.map(t -> t.getInputs()).orElse(EMPTY_ITEM), fluidHandler.map(t -> t.getInputs()).orElse(EMPTY_FLUID), validateRecipe);
+    public <T extends TileEntityMachine<T>> Recipe find(Holder<IItemHandler, MachineItemHandler<T>> itemHandler, Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler, Predicate<Recipe> validateRecipe) {
+        return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM), fluidHandler.map(FluidHandler::getInputs).orElse(EMPTY_FLUID), validateRecipe);
     }
 
     /**
@@ -565,8 +566,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
 
         public void finish() {
-            //NODES.forEach((k,v) -> v.ifRight(Branch::finish));
-            //this.NODES = ImmutableMap.<AbstractMapIngredient, Either<Recipe, Branch>>builder().putAll(NODES).build();
+            NODES.forEach((k,v) -> v.ifRight(Branch::finish));
+            this.NODES = ImmutableMap.<AbstractMapIngredient, Either<List<Recipe>, Branch>>builder().putAll(NODES).build();
         }
     }
 }

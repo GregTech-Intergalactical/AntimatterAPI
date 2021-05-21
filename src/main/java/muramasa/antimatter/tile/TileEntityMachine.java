@@ -86,11 +86,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public LazyOptional<MachineRecipeHandler<T>> recipeHandler;
     public LazyOptional<MachineCoverHandler<TileEntityMachine>> coverHandler;*/
 
-    public Holder<T, IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>((T)this,ITEM_HANDLER_CAPABILITY, dispatch);
-    public Holder<T, IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>((T)this,FLUID_HANDLER_CAPABILITY, dispatch);
-    public Holder<T, ICoverHandler, MachineCoverHandler<T>> coverHandler = new Holder<>((T)this, COVERABLE_HANDLER_CAPABILITY, dispatch);
-    public Holder<T, IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>((T)this, TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dispatch);
-    public Holder<T, MachineRecipeHandler, MachineRecipeHandler<T>> recipeHandler = new Holder<>((T)this, RECIPE_HANDLER_CAPABILITY, dispatch);
+    public Holder<IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>(ITEM_HANDLER_CAPABILITY, dispatch);
+    public Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>(FLUID_HANDLER_CAPABILITY, dispatch);
+    public Holder<ICoverHandler, MachineCoverHandler<T>> coverHandler = new Holder<>(COVERABLE_HANDLER_CAPABILITY, dispatch);
+    public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dispatch);
+    public Holder<MachineRecipeHandler, MachineRecipeHandler<T>> recipeHandler = new Holder<>(RECIPE_HANDLER_CAPABILITY, dispatch);
 
     /** Texture related areas. **/
     public LazyValue<DynamicTexturer<TileEntityMachine, DynamicKey>> multiTexturer;
@@ -117,11 +117,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         multiTexturer = new LazyValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER));
     }
 
-    public void addOpenContainer(ContainerMachine c) {
+    public void addOpenContainer(ContainerMachine<T> c) {
         this.openContainers.add(c);
     }
 
-    public void onContainerClose(ContainerMachine c) {
+    public void onContainerClose(ContainerMachine<T> c) {
         this.openContainers.remove(c);
     }
 
@@ -312,9 +312,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public void setMachineState(MachineState newState) {
         if (this.machineState != newState) {
             this.machineState = newState;
-            if (hadFirstTick()) {
+            if (world != null) {
                 sidedSync(true);
             }
+            markDirty();
         }
     }
 

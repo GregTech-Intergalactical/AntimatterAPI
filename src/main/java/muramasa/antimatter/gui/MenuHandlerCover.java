@@ -2,13 +2,9 @@ package muramasa.antimatter.gui;
 
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.gui.container.ContainerCover;
-import muramasa.antimatter.gui.screen.ScreenCover;
-import muramasa.antimatter.gui.screen.ScreenMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -33,10 +29,7 @@ public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHan
     }
 
     @Override
-    public <V extends Screen & IHasContainer<T>> ScreenManager.IScreenFactory<T, V> screen() {
-        return (a,b,c) -> {
-            ScreenCover<T> machine = new ScreenCover<>(a, b, c);
-            return (V) machine;
-        };
+    public Object screen() {
+        return ClientData.SCREEN_COVER;
     }
 }

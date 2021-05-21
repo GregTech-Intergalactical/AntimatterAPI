@@ -136,7 +136,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     if (type == WRENCH || type == ELECTRIC_WRENCH) {
                         if (!player.isCrouching()) {
                             boolean ok = tile.setOutputFacing(player, Utils.getInteractSide(hit));
-                            return ok ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                            if (ok) {
+                                return ActionResultType.SUCCESS;
+                            }
                         }
                         //TODO: Disbling machines isnt working.
                     } else if (type == HAMMER) {
@@ -147,15 +149,21 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         return ActionResultType.SUCCESS;
                     } else if (type == CROWBAR) {
                         if (!player.isCrouching()){
-                            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                            if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
+                                return ActionResultType.SUCCESS;
+                            }
                         } else {
-                            return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                            if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false)) {
+                                return ActionResultType.SUCCESS;
+                            }
                         }
                     } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
                         CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(COVER_EMPTY);
                         if (!player.isCrouching()) {
-                            return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace()) ? ActionResultType.SUCCESS : ActionResultType.PASS;
-                        } 
+                            if (!instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace())) {
+                                return ActionResultType.SUCCESS;
+                            }
+                        }
                      }
                     //Has gui?
                     if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> {
@@ -208,7 +216,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         });
                         return ActionResultType.SUCCESS;
                     }
-                    return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.onInteract(player, hand, hit.getFace(), Utils.getToolType(player))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                    return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.onInteract(player, hand, hit.getFace(), Utils.getToolType(player))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
                 }
             }
         }

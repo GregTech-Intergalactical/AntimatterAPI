@@ -1,13 +1,7 @@
 package muramasa.antimatter.gui.slot;
 
-import muramasa.antimatter.capability.machine.MachineItemHandler;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.SlotItemHandler;
-import tesseract.api.capability.TesseractGTCapability;
-
-import javax.annotation.Nonnull;
 
 public class SlotEnergy extends AbstractSlot {
 

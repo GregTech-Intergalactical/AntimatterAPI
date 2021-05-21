@@ -46,14 +46,6 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
     public void setRecipe(IRecipeLayout recipeLayout, IIngredients ingredients) {
         IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
         IFocus<?> focus = recipeLayout.getFocus();
-        guiItemStacks.init(craftOutputSlot, false, 94, 18);
-
-        for (int y = 0; y < 3; ++y) {
-            for (int x = 0; x < 3; ++x) {
-                int index = craftInputSlot1 + x + (y * 3);
-                guiItemStacks.init(index, true, x * 18, y * 18);
-            }
-        }
 
         List<List<ItemStack>> inputs = ingredients.getInputs(VanillaTypes.ITEM);
         List<List<ItemStack>> newInputs = new ObjectArrayList<>(inputs);

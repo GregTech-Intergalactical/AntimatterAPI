@@ -2,7 +2,6 @@ package muramasa.antimatter.mixin;
 
 import muramasa.antimatter.AntimatterDynamics;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.item.Item;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.STagsListPacket;
 import org.spongepowered.asm.mixin.Final;

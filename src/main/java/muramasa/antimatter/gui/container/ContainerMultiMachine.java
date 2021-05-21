@@ -2,7 +2,6 @@ package muramasa.antimatter.gui.container;
 
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.entity.player.PlayerInventory;
 
 public class ContainerMultiMachine<T extends TileEntityBasicMultiMachine<T>> extends ContainerMachine<T> {

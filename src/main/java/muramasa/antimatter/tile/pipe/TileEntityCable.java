@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.pipe;
 
+import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
@@ -12,9 +13,10 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTCable;
 
-public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable {
+public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler> {
 
     public TileEntityCable(T type) {
         super(type);
@@ -80,6 +82,16 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
+    }
+
+    @Override
+    public LazyOptional<? extends IEnergyHandler> forSide(Direction side) {
+        return LazyOptional.of(() -> new TesseractGTCapability(this, side));
+    }
+
+    @Override
+    public void refresh() {
+
     }
 
 

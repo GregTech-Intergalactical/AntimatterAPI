@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;

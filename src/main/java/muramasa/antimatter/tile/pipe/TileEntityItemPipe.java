@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.pipe;
 
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.pipe.types.ItemPipe;
@@ -15,8 +14,6 @@ import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
-
-import java.util.Arrays;
 
 public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T> implements IItemPipe, Dispatch.Sided<IItemHandler> {
 

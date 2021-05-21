@@ -3,14 +3,16 @@ package muramasa.antimatter.tile.multi;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.machine.*;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
+import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Arrays;

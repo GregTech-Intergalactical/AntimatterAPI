@@ -1,15 +1,12 @@
 package muramasa.antimatter.gui;
 
+import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.screen.ScreenMachine;
 import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -40,10 +37,8 @@ public abstract class MenuHandlerMachine<T extends TileEntityMachine<T>, U exten
         return null;
     }
 
-    public <V extends Screen & IHasContainer<U>> ScreenManager.IScreenFactory<U, V> screen() {
-        return (a,b,c) -> {
-            ScreenMachine<T,U> machine = new ScreenMachine<>(a, b, c);
-            return (V) machine;
-        };
+    @Override
+    public Object screen() {
+        return ClientData.SCREEN_MACHINE;
     }
 }

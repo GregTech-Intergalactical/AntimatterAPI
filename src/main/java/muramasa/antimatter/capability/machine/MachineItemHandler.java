@@ -28,7 +28,9 @@ import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.*;

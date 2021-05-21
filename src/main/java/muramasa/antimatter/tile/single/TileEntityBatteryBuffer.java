@@ -3,10 +3,8 @@ package muramasa.antimatter.tile.single;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.cover.CoverDynamo;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityStorage;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.util.LazyOptional;
 
 
 public class TileEntityBatteryBuffer<T extends TileEntityBatteryBuffer<T>> extends TileEntityStorage<T> {

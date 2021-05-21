@@ -1,19 +1,15 @@
 package muramasa.antimatter.capability;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.NonNullSupplier;
 
 import java.util.Map;
 
 public class Dispatch {
 
-    private final Map<Capability<?>, Holder<?,?,?>> capabilityHolderMap = new Object2ObjectOpenHashMap<>();
+    private final Map<Capability<?>, Holder<?,?>> capabilityHolderMap = new Object2ObjectOpenHashMap<>();
 
     public Dispatch() {
 

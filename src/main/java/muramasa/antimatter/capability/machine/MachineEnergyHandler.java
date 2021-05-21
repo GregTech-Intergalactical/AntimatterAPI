@@ -22,7 +22,6 @@ import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 
 import java.util.Arrays;
-import java.util.EnumMap;
 import java.util.List;
 
 public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends EnergyHandler implements IMachineHandler, Dispatch.Sided<IEnergyHandler> {

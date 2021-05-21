@@ -69,7 +69,7 @@ public class ClientHandler implements IProxyHandler {
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
         /* Register screens. */
-        AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(), h.screen())));
+        AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(),(ScreenManager.IScreenFactory) h.screen())));
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
             RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.getCutout());

@@ -25,7 +25,6 @@ import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler {
@@ -49,7 +48,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         super(type.getTileType());
         this.type = type;
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
-        this.pipeCapHolder = new Holder<>(this, getCapability(), this.dispatch);
+        this.pipeCapHolder = new Holder<>(getCapability(), this.dispatch);
     }
 
     protected abstract void registerNode(BlockPos pos, Direction side, boolean remove);

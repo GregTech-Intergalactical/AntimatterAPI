@@ -4,7 +4,6 @@ import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
-import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.List;
 
