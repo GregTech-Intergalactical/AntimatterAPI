@@ -32,7 +32,8 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         super(type);
         if (fluidHandler == null) {
             fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0)) : LazyOptional.empty();
-        } 
+        }
+        pipeCapHolder.set(() -> this);
     }
 
     @Override
