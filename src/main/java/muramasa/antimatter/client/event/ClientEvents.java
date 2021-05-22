@@ -71,7 +71,7 @@ public class ClientEvents {
             return;
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
-        AntimatterToolType type = item.getType();
+        AntimatterToolType type = item.getAntimatterToolType();
         if (player.isCrouching() && type != Data.WRENCH && type != Data.ELECTRIC_WRENCH && type != Data.CROWBAR && type != Data.WIRE_CUTTER) return;
         //Perform highlight of wrench
         ActionResultType res = item.onGenericHighlight(player, event);
@@ -127,7 +127,7 @@ public class ClientEvents {
             ItemStack stack = player.getHeldItemMainhand();
             if (!(stack.getItem() instanceof IAntimatterTool)) return;
             IAntimatterTool item = (IAntimatterTool) stack.getItem();
-            if (item.getType().getUseAction() != UseAction.NONE && player.isSwingInProgress) {
+            if (item.getAntimatterToolType().getUseAction() != UseAction.NONE && player.isSwingInProgress) {
                 item.getItem().onUsingTick(stack, player, stack.getCount());
                 player.swingProgress = player.prevSwingProgress;
             }

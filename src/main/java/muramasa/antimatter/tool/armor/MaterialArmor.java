@@ -44,7 +44,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeab
     }
 
     @Override
-    public AntimatterArmorType getType() {
+    public AntimatterArmorType getAntimatterArmorType() {
         return type;
     }
 

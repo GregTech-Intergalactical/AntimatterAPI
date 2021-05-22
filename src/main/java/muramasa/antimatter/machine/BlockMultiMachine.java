@@ -26,7 +26,7 @@ public class BlockMultiMachine extends BlockMachine {
 
     @Override
     protected ActionResultType onBlockActivatedBoth(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        if (player.getHeldItem(hand).getItem() instanceof MaterialTool && ((MaterialTool) player.getHeldItem(hand).getItem()).getType() == HAMMER) {
+        if (player.getHeldItem(hand).getItem() instanceof MaterialTool && ((MaterialTool) player.getHeldItem(hand).getItem()).getAntimatterToolType() == HAMMER) {
             TileEntityBasicMultiMachine machine = (TileEntityBasicMultiMachine) world.getTileEntity(pos);
             if (machine != null) {
                 if (!machine.isStructureValid()) {

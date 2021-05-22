@@ -107,8 +107,8 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
         });
         AntimatterAPI.all(IAntimatterTool.class,domain, tool -> {
-            this.getOrCreateBuilder(tool.getType().getTag()).add(tool.getItem()).replace(replace);
-            this.getOrCreateBuilder(tool.getType().getForgeTag()).add(tool.getItem()).replace(replace);
+            this.getOrCreateBuilder(tool.getAntimatterToolType().getTag()).add(tool.getItem()).replace(replace);
+            this.getOrCreateBuilder(tool.getAntimatterToolType().getForgeTag()).add(tool.getItem()).replace(replace);
         });
         this.copy(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe")), TagUtils.getItemTag(new ResourceLocation(Ref.ID, "item_pipe")));
         this.getOrCreateBuilder(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));

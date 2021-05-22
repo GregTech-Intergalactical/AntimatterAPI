@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IForgeItem {
-    AntimatterArmorType getType();
+    AntimatterArmorType getAntimatterArmorType();
 
     default Material getMaterial(ItemStack stack) {
         return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
@@ -69,7 +69,7 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
 
     default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(new StringTextComponent("Material: " + getMaterial(stack).getDisplayName().getString()));
-        if (getType().getTooltip().size() != 0) tooltip.addAll(getType().getTooltip());
+        if (getAntimatterArmorType().getTooltip().size() != 0) tooltip.addAll(getAntimatterArmorType().getTooltip());
     }
 
     default Ingredient getRepairMaterial(ItemStack stack) {
@@ -100,12 +100,12 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
     @Override
     default Texture[] getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
-        int layers = getType().getOverlayLayers();
-        textures.add(new Texture(getDomain(), "item/tool/".concat(getType().getId())));
-        if (layers == 1) textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getType().getId())));
+        int layers = getAntimatterArmorType().getOverlayLayers();
+        textures.add(new Texture(getDomain(), "item/tool/".concat(getAntimatterArmorType().getId())));
+        if (layers == 1) textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterArmorType().getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
-                textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getType().getId(), "_", Integer.toString(i))));
+                textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getAntimatterArmorType().getId(), "_", Integer.toString(i))));
             }
         }
         return textures.toArray(new Texture[textures.size()]);

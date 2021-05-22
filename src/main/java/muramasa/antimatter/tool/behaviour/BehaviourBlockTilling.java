@@ -36,8 +36,8 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
             if (blockstate == null) return ActionResultType.PASS;
             UseHoeEvent hoeEvent = new UseHoeEvent(c);
             if (MinecraftForge.EVENT_BUS.post(hoeEvent)) return ActionResultType.PASS;
-            c.getItem().damageItem(instance.getType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
-            SoundEvent soundEvent = instance.getType().getUseSound() == null ? SoundEvents.ITEM_HOE_TILL : instance.getType().getUseSound();
+            c.getItem().damageItem(instance.getAntimatterToolType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
+            SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.ITEM_HOE_TILL : instance.getAntimatterToolType().getUseSound();
             c.getWorld().playSound(c.getPlayer(), c.getPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
             if (!c.getWorld().isRemote) c.getWorld().setBlockState(c.getPos(), blockstate, 11);
             return ActionResultType.SUCCESS;

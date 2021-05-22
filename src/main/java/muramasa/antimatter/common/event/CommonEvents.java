@@ -29,7 +29,7 @@ public class CommonEvents {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             if (inv.getStackInSlot(i).getItem() instanceof IAntimatterTool) {
                 IAntimatterTool tool = (IAntimatterTool) inv.getStackInSlot(i).getItem();
-                SoundEvent type = tool.getType().getUseSound();
+                SoundEvent type = tool.getAntimatterToolType().getUseSound();
                 if (type != null) {
                     e.getPlayer().playSound(type, 0.75F, 0.75F);
                 }

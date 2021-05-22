@@ -30,7 +30,7 @@ public abstract class LeavesBlockMixin extends Block {
         ItemStack stack = builder.get(LootParameters.TOOL);
         if (stack != null && !stack.isEmpty() && stack.getItem() instanceof IAntimatterTool){
             IAntimatterTool tool = (IAntimatterTool) stack.getItem();
-            if (tool.getType() == Data.BRANCH_CUTTER){
+            if (tool.getAntimatterToolType() == Data.BRANCH_CUTTER){
                 ResourceLocation resourcelocation = this.getLootTable();
                 if (resourcelocation == LootTables.EMPTY) {
                     return Collections.emptyList();
