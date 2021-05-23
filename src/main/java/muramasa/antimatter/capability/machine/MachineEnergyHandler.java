@@ -29,6 +29,8 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     protected final T tile;
 
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
+    protected int offsetInsert = 0;
+    protected int offsetExtract = 0;
     private final List<LazyOptional<IEnergyHandler>> cache = new ObjectArrayList<>(6);
 
     public MachineEnergyHandler(T tile, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
@@ -145,11 +147,17 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     protected long insertIntoItems(long maxReceive, boolean simulate) {
-        for (IEnergyHandler handler : cachedItems) {
+        int j = 0;
+        for (int i = offsetInsert; j < cachedItems.size(); j++, i = (i == cachedItems.size() -1 ? 0 : (i+1))) {
+            IEnergyHandler handler = cachedItems.get(i);
             long inserted = handler.insert(maxReceive, true);
             if (inserted > 0) {
-                if (!simulate) handler.insert(maxReceive, false);
-                return inserted;
+                if (!simulate) {
+                    offsetInsert = offsetInsert == cachedItems.size() - 1 ? 0 : offsetInsert + 1;
+                    return handler.insert(maxReceive, false);
+                } else {
+                    return inserted;
+                }
             }
         }
         return 0;
@@ -178,10 +186,13 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     protected long extractFromItems(long maxExtract, boolean simulate) {
-        for (IEnergyHandler handler : cachedItems) {
+        int j = 0;
+        for (int i = offsetExtract; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i+1))) {
+            IEnergyHandler handler = cachedItems.get(i);
             long extracted = handler.extract(maxExtract, true);
             if (extracted > 0) {
                 if (!simulate) {
+                    offsetExtract = offsetExtract == cachedItems.size() - 1 ? 0 : offsetExtract + 1;
                     return handler.extract(maxExtract, false);
                 } else {
                     return extracted;
@@ -194,7 +205,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
-            tile.itemHandler.ifPresent(h -> cachedItems = h.getChargeableItems());
+            tile.itemHandler.ifPresent(h -> {
+                cachedItems = h.getChargeableItems();
+                offsetInsert = 0;
+                offsetExtract = 0;
+            });
             //refreshNet();
         }
     }

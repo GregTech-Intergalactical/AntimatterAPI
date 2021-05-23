@@ -6,6 +6,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -129,14 +130,19 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         }
     }
 
-    public <V> LazyOptional<V> map(Function<? super T, ? extends V> mapper) {
+    public <U> LazyOptional<U> lazyMap(Function<? super T, ? extends U> mapper) {
         T value = get();
         return value == null ? LazyOptional.empty() : LazyOptional.of(() -> mapper.apply(value));
     }
 
-    public LazyOptional<T> filter(Predicate<? super T> predicate) {
+    public <U> Optional<U> map(Function<? super T, ? extends U> mapper) {
         T value = get();
-        return value != null && predicate.test(value) ? LazyOptional.of(() -> value)  : LazyOptional.empty();
+        return value == null ? Optional.empty() : Optional.of(mapper.apply(value));
+    }
+
+    public Optional<T> filter(Predicate<? super T> predicate) {
+        T value = get();
+        return value != null && predicate.test(value) ? Optional.of(value)  : Optional.empty();
     }
 
     public LazyOptional<? extends V> side(Direction side) {

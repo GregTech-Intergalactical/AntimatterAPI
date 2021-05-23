@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 
 public class AbstractSlot extends SlotItemHandler {
     protected final int index;
-    protected final SlotType<? extends AbstractSlot> type;
+    public final SlotType<? extends AbstractSlot> type;
     protected final TileEntityMachine<?> holder;
 
     public AbstractSlot(SlotType<? extends AbstractSlot> type, TileEntityMachine<?> tile, IItemHandler stackHandler, int index, int x, int y) {
@@ -32,6 +32,11 @@ public class AbstractSlot extends SlotItemHandler {
     public boolean canTakeStack(PlayerEntity playerIn)
     {
         return !MachineItemHandler.extractFromInput(this.getItemHandler(), index, 1, true).isEmpty();
+    }
+
+    @Override
+    public boolean isItemValid(@Nonnull ItemStack stack) {
+        return this.type.tester.test(this.holder, stack);
     }
 
     @Override

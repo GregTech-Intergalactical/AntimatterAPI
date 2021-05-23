@@ -42,7 +42,7 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEn
     //TODO pass constant StringBuilder
     public List<String> getInfo() {
         List<String> info = new ObjectArrayList<>();
-        info.add("Tile: " + getClass().getName());
+        info.add("Tile: " + getClass().getSimpleName());
         return info;
     }
 

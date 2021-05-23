@@ -13,6 +13,7 @@ public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEnt
 
     @Override
     public void tick() {
+        world.getProfiler().startSection("AntimatterTileTick");
         if (!hadFirstTick) {
             onFirstTick();
             hadFirstTick = true;
@@ -21,6 +22,7 @@ public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEnt
         } else {
             onClientUpdate();
         }
+        world.getProfiler().endSection();
         //requestModelDataUpdate();
     }
 
