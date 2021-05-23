@@ -48,7 +48,7 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
     default ItemStack resolveStack(Material primary) {
         ItemStack stack = new ItemStack(getItem());
         validateTag(stack, primary);
-        Map<Enchantment, Integer> mainEnchants = primary.getEnchantments();
+        Map<Enchantment, Integer> mainEnchants = primary.getArmorEnchantments();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
             return stack;

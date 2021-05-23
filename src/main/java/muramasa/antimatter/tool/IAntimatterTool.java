@@ -95,12 +95,12 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
         ItemStack stack = new ItemStack(getItem());
         validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
-        Map<Enchantment, Integer> mainEnchants = primary.getEnchantments(), handleEnchants = secondary.getEnchantments();
+        Map<Enchantment, Integer> mainEnchants = primary.getToolEnchantments(), handleEnchants = secondary.getHandleEnchantments();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
             //return stack;
         }
-        if (!handleEnchants.isEmpty()) handleEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+        if (!handleEnchants.isEmpty()) handleEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack) && !mainEnchants.containsKey(e.getKey())).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
         return stack;
     }
 

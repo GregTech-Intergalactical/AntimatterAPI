@@ -65,6 +65,8 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     private int handleDurability;
     private float handleSpeed;
     private ImmutableMap<Enchantment, Integer> toolEnchantment;
+    private ImmutableMap<Enchantment, Integer> armorEnchantment;
+    private ImmutableMap<Enchantment, Integer> handleEnchantment;
     private List<AntimatterToolType> toolTypes;
 
     private boolean enabled;
@@ -274,7 +276,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         this.toughness = toughness;
         this.armorDurabilityFactor = armorDurabilityFactor;
         this.knockbackResistance = knockbackResistance;
-        this.toolEnchantment = toolEnchantment;
+        this.armorEnchantment = toolEnchantment;
         return this;
     }
 
@@ -287,18 +289,16 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material addHandleStat(int durability, float speed) {
+        return addHandleStat(durability, speed, ImmutableMap.of());
+    }
+
+    public Material addHandleStat(int durability, float speed, ImmutableMap<Enchantment, Integer> toolEnchantment) {
         if (!has(ROD)) flags(ROD);
         flags(HANDLE);
         this.isHandle = true;
         this.handleDurability = durability;
         this.handleSpeed = speed;
-        this.toolEnchantment = ImmutableMap.of();
-        return this;
-    }
-
-    public Material addHandleStat(int durability, float speed, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        addHandleStat(durability, speed);
-        this.toolEnchantment = toolEnchantment;
+        this.handleEnchantment = toolEnchantment;
         return this;
     }
 
@@ -433,8 +433,16 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         return toolQuality;
     }
     
-    public Map<Enchantment, Integer> getEnchantments() {
+    public Map<Enchantment, Integer> getToolEnchantments() {
     	return toolEnchantment != null ? toolEnchantment : Collections.emptyMap();
+    }
+
+    public Map<Enchantment, Integer> getArmorEnchantments() {
+        return armorEnchantment != null ? armorEnchantment : Collections.emptyMap();
+    }
+
+    public Map<Enchantment, Integer> getHandleEnchantments() {
+        return handleEnchantment != null ? handleEnchantment : Collections.emptyMap();
     }
 
     public int getArmorDurabilityFactor() {
