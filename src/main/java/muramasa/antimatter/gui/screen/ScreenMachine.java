@@ -3,6 +3,7 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.gui.ButtonData;
@@ -101,7 +102,7 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
         if (slot instanceof SlotFakeFluid) {
             SlotFakeFluid fl = (SlotFakeFluid) slot;
             container.getTile().fluidHandler.ifPresent(t -> {
-                FluidStack stack = t.getFluidInTank(fl.getSlotIndex());
+                FluidStack stack = fl.dir == FluidHandler.FluidDirection.INPUT ? t.getInputTanks().getFluidInTank(fl.getSlotIndex()) : t.getOutputTanks().getFluidInTank(fl.getSlotIndex());
                 if (!stack.isEmpty()) {
                     AntimatterJEIPlugin.uses(stack,input.getTranslationKey().equals("key.keyboard.u"));
                 }

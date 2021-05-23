@@ -6,21 +6,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
 
 public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHandler implements ITrackedHandler {
 
     private final T tile;
     private final ContentEvent contentEvent;
     private final boolean output;
-    private final Predicate<ItemStack> validator;
+    private final BiPredicate<TileEntityMachine<?>,ItemStack> validator;
     private final int limit;
 
-    public TrackedItemHandler(T tile, int size, boolean output, Predicate<ItemStack> validator, ContentEvent contentEvent) {
+    public TrackedItemHandler(T tile, int size, boolean output, BiPredicate<TileEntityMachine<?>,ItemStack> validator, ContentEvent contentEvent) {
         this(tile, size, output, validator, contentEvent, 64);
     }
 
-    public TrackedItemHandler(T tile, int size, boolean output, Predicate<ItemStack> validator, ContentEvent contentEvent, int limit) {
+    public TrackedItemHandler(T tile, int size, boolean output, BiPredicate<TileEntityMachine<?>,ItemStack> validator, ContentEvent contentEvent, int limit) {
         super(size);
         this.tile = tile;
         this.output = output;
@@ -47,7 +47,7 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
         if (output)
             return stack;
         if (simulate) {
-            if (!validator.test(stack)) return stack;
+            if (!validator.test(tile, stack)) return stack;
         }
         return super.insertItem(slot, stack, simulate);
     }
@@ -73,6 +73,6 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-        return validator.test(stack);
+        return validator.test(tile, stack);
     }
 }

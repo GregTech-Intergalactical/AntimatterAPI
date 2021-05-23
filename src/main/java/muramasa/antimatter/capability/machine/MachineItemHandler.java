@@ -2,14 +2,15 @@ package muramasa.antimatter.capability.machine;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
+import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -19,7 +20,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -29,39 +29,28 @@ import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.machine.MachineFlag.*;
+import static muramasa.antimatter.machine.MachineFlag.GUI;
 
 public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMachineHandler, INBTSerializable<CompoundNBT>, Dispatch.Sided<IItemHandler> {
 
     protected final T tile;
-    protected final EnumMap<MachineFlag, TrackedItemHandler<T>> inventories = new EnumMap<>(MachineFlag.class); // Use SlotType instead of MachineFlag?
+    protected final Object2ObjectMap<SlotType<?>, TrackedItemHandler<T>> inventories = new Object2ObjectOpenHashMap<>(); // Use SlotType instead of MachineFlag?
 
     public MachineItemHandler(T tile) {
         this.tile = tile;
         if (tile.has(GUI)){
-            if (tile.getMachineType().has(ITEM)) {
-                inventories.put(ITEM_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_IN, tile.getMachineTier()).size(), false, t -> tile.recipeHandler.map(i -> i.accepts(t)).orElse(true), ContentEvent.ITEM_INPUT_CHANGED));
-                inventories.put(ITEM_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.IT_OUT, tile.getMachineTier()).size(), true,t -> true, ContentEvent.ITEM_OUTPUT_CHANGED));
-            }
-            if (tile.getMachineType().has(CELL)) {
-                //TODO: allow multiple?
-                inventories.put(CELL_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), false, t -> t.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED));
-            }
-            if (tile.getMachineType().has(CELL)) {
-                //TODO: allow multiple?
-                inventories.put(CELL_OUTPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_OUT, tile.getMachineTier()).size(), true, t -> t.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED));
-            }
-            //     if (tile.getMachineType().has(FLUID)) {
-            //         inventories.put(FLUID_INPUT, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.CELL_IN, tile.getMachineTier()).size(), ContentEvent.ITEM_CELL_CHANGED));
-            //    }
-            if (tile.getMachineType().has(ENERGY)) {
-                inventories.put(ENERGY, new TrackedItemHandler<>(tile, tile.getMachineType().getGui().getSlots(SlotType.ENERGY, tile.getMachineTier()).size(), false, t -> t.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).isPresent(), ContentEvent.ENERGY_SLOT_CHANGED, 1));
+            Map<SlotType<?>, List<SlotData<?>>> map = tile.getMachineType().getGui().getSlots(tile.getMachineTier()).stream().collect(Collectors.groupingBy(SlotData::getType));
+            for (Map.Entry<SlotType<?>, List<SlotData<?>>> entry : map.entrySet()) {
+                SlotType<?> type = entry.getKey();
+                int count = tile.getMachineType().getGui().getCount(entry.getKey());
+                inventories.put(type, new TrackedItemHandler<T>(tile, count, type.output, type.tester, type.ev));
             }
         }
+        inventories.defaultReturnValue(new TrackedItemHandler<>(tile, 0, false, (a,b) -> false, null));
     }
 
 
@@ -73,13 +62,13 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
-        this.inventories.forEach((f, i) -> nbt.put(f.name(), i.serializeNBT()));
+        this.inventories.forEach((f, i) -> nbt.put(f.getId(), i.serializeNBT()));
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        this.inventories.forEach((f, i) -> i.deserializeNBT(nbt.getCompound(f.name())));
+        this.inventories.forEach((f, i) -> i.deserializeNBT(nbt.getCompound(f.getId())));
     }
 
     public void onUpdate() {
@@ -114,31 +103,25 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         return handler.extractItem(slot, amount, simulate);
     }
 
-    public void onReset() {
-        if (tile.isServerSide()) {
-            refreshNet();
-        }
-    }
-
     /** Handler Access **/
     public ITrackedHandler getInputHandler() {
-        return inventories.get(ITEM_INPUT);
+        return inventories.get(SlotType.IT_IN);
     }
 
     public ITrackedHandler getOutputHandler() {
-        return inventories.get(ITEM_OUTPUT);
+        return inventories.get(SlotType.IT_OUT);
     }
 
     public ITrackedHandler getCellInputHandler() {
-        return inventories.get(CELL_INPUT);
+        return inventories.get(SlotType.CELL_IN);
     }
 
     public ITrackedHandler getCellOutputHandler() {
-        return inventories.get(CELL_OUTPUT);
+        return inventories.get(SlotType.CELL_OUT);
     }
 
     public ITrackedHandler getChargeHandler() {
-        return inventories.get(ENERGY);
+        return inventories.get(SlotType.ENERGY);
     }
 
     public int getInputCount() {
@@ -168,10 +151,6 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     public ItemStack getCellOutput() {
         return getCellInputHandler().getStackInSlot(1);
-    }
-
-    public IItemHandler getHandlerForSide(Direction side) {
-        return new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0]));
     }
 
     /** Gets a list of non empty input Items **/
@@ -304,11 +283,10 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         if (!(handler instanceof TrackedItemHandler)) {
             return 0;
         }
-        IItemHandlerModifiable outputHandler = handler;
         for (ItemStack stack : a) {
-            for (int i = 0; i < outputHandler.getSlots(); i++) {
-                ItemStack item = outputHandler.getStackInSlot(i);
-                if (item.isEmpty() || (Utils.equals(stack, item) && item.getCount() + stack.getCount() <= outputHandler.getSlotLimit(i))) {
+            for (int i = 0; i < handler.getSlots(); i++) {
+                ItemStack item = handler.getStackInSlot(i);
+                if (item.isEmpty() || (Utils.equals(stack, item) && item.getCount() + stack.getCount() <= handler.getSlotLimit(i))) {
                     matchCount++;
                     break;
                 }
@@ -358,96 +336,6 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         }
         return notExported.toArray(new ItemStack[0]);
     }
-/*
-    @Override
-    public int insert(ItemStack stack, boolean simulate) {
-        IItemHandlerModifiable inputHandler = getInputHandler();
-        int slot = getFirstValidSlot(stack);
-        if (slot != -1) {
-            ItemStack inserted = inputHandler.insertItem(slot, stack, simulate);
-            if (!inserted.isEmpty()) {
-                return stack.getCount() - inserted.getCount();
-            }
-        }
-        return 0;
-    }
-
-    @Nullable
-    @Override
-    public ItemStack extract(int slot, int amount, boolean simulate) {
-        ItemStack stack = getOutputHandler().extractItem(slot, amount, simulate);
-        return stack;
-    }
-
-    @Nonnull
-    @Override
-    public IntList getAvailableSlots(Dir direction) {
-        if (canOutput(direction)) {
-            return new IntArrayList(IntStream.range(0, getHandlerForSide(tile.getOutputFacing()).getSlots()).iterator());
-        }
-        return new IntArrayList();
-    }
-
-    @Override
-    public int getOutputAmount(Dir direction) {
-        return 4;
-    }
-
-    @Override
-    public int getPriority(Dir direction) {
-        return priority[direction.getIndex()];
-    }
-
-    @Override
-    public boolean isEmpty(int slot) {
-        return getOutputHandler().getStackInSlot(slot).isEmpty();
-    }
-
-    @Override
-    public boolean canOutput() {
-        return this.inventories.containsKey(ITEM_OUTPUT);
-    }
-
-    @Override
-    public boolean canInput() {
-        return this.inventories.containsKey(ITEM_INPUT);
-    }
-
-    @Override
-    public boolean canOutput(Dir direction) {
-        return tile.getOutputFacing().getIndex() != direction.getIndex();
-    }
-
-    @Override
-    public boolean canInput(ItemStack item, Dir direction) {
-        if (tile.getFacing().getIndex() == direction.getIndex()) return false;
-        return getFirstValidSlot(item) != -1;
-    }*/
-
-   // public boolean connects(Dir direction) {
-   //     return tile.getFacing().getIndex() != direction.getIndex() && !tile.blocksCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.byIndex(direction.getIndex()));
-   // }
-
-    /*private int getFirstValidSlot(ItemStack item) {
-        int slot = -1;
-        IItemHandlerModifiable inputHandler = getInputHandler();
-        for (int i = 0; i < inputHandler.getSlots(); i++) {
-            ItemStack stack = inputHandler.getStackInSlot(i);
-            if (stack.isEmpty()) {
-                slot = i;
-            } else {
-                if (stack.getItem().equals(item.getItem()) && stack.getMaxStackSize() > stack.getCount()) {
-                    return i;
-                }
-            }
-        }
-        return slot;
-    }*/
-
-    public void refreshNet() {
-        Tesseract.ITEM.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
-    }
-
 
     @Override
     public LazyOptional<IItemHandler> forSide(Direction side) {

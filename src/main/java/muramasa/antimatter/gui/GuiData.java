@@ -34,8 +34,8 @@ public class GuiData {
     protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
     protected BarDir side = BarDir.LEFT;
 
-    protected Object2ObjectMap<String, List<SlotData>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
-    protected Object2IntOpenHashMap<SlotType> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
+    protected Object2ObjectMap<String, List<SlotData<?>>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
+    protected Object2IntOpenHashMap<SlotType<?>> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
     protected List<ButtonData> BUTTON_LIST = new ObjectArrayList<>();
 
     public GuiData(String domain, String id) {
@@ -149,19 +149,19 @@ public class GuiData {
     }
 
     /** Adds a slot for ANY **/
-    public GuiData add(SlotType type, int x, int y) {
-        return add(ANY, new SlotData(type, x, y));
+    public GuiData add(SlotType<?> type, int x, int y) {
+        return add(ANY, new SlotData<>(type, x, y));
     }
 
     /** Adds a slot for the given Tier **/
-    public GuiData add(Tier tier, SlotType type, int x, int y) {
-        return add(tier.getId(), new SlotData(type, x, y));
+    public GuiData add(Tier tier, SlotType<?> type, int x, int y) {
+        return add(tier.getId(), new SlotData<>(type, x, y));
     }
 
     /** Copies ALL slots from an existing GuiData **/
     public GuiData add(GuiData data) {
-        List<SlotData> list = data.getAnySlots();
-        for (SlotData slot : list) {
+        List<SlotData<?>> list = data.getAnySlots();
+        for (SlotData<?> slot : list) {
             add(ANY, slot);
         }
         return this;
@@ -169,8 +169,8 @@ public class GuiData {
 
     /** Copies ALL slots from an existing Machine **/
     public GuiData add(Machine<?> type) {
-        List<SlotData> list = type.getGui().getAnySlots();
-        for (SlotData slot : list) {
+        List<SlotData<?>> list = type.getGui().getAnySlots();
+        for (SlotData<?> slot : list) {
             add(ANY, slot);
         }
         return this;
@@ -178,8 +178,8 @@ public class GuiData {
 
     /** Copies ALL slots from type into toTier slots **/
     public GuiData add(Tier toTier, Machine<?> type) {
-        List<SlotData> list = type.getGui().getAnySlots();
-        for (SlotData slot : list) {
+        List<SlotData<?>> list = type.getGui().getAnySlots();
+        for (SlotData<?> slot : list) {
             add(toTier.getId(), slot);
         }
         return this;
@@ -187,14 +187,14 @@ public class GuiData {
 
     /** Copies fromTier slots from type into toTier slots **/
     public GuiData add(Tier toTier, Machine<?> type, Tier fromTier) {
-        List<SlotData> list = type.getGui().getSlots(fromTier);
-        for (SlotData slot : list) {
+        List<SlotData<?>> list = type.getGui().getSlots(fromTier);
+        for (SlotData<?> slot : list) {
             add(toTier.getId(), slot);
         }
         return this;
     }
 
-    public GuiData add(String key, SlotData slot) {
+    public GuiData add(String key, SlotData<?> slot) {
         //TODO figure out better way to do this
         Tier tier = AntimatterAPI.get(Tier.class, key);
         if (tier != null && tier.getVoltage() > highestTier.getVoltage()) highestTier = tier;
@@ -203,7 +203,7 @@ public class GuiData {
         if (SLOT_LOOKUP.containsKey(key)) {
             SLOT_LOOKUP.get(key).add(slot);
         } else {
-            List<SlotData> list = new ObjectArrayList<>();
+            List<SlotData<?>> list = new ObjectArrayList<>();
             list.add(slot);
             SLOT_LOOKUP.put(key, list);
         }
@@ -211,16 +211,16 @@ public class GuiData {
     }
 
     public boolean hasSlots() {
-        List<SlotData> slots = SLOT_LOOKUP.get(ANY);
+        List<SlotData<?>> slots = SLOT_LOOKUP.get(ANY);
         return slots != null && !slots.isEmpty();
     }
 
     public boolean hasSlots(Tier tier) {
-        List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
+        List<SlotData<?>> slots = SLOT_LOOKUP.get(tier.getId());
         return slots != null && !slots.isEmpty();
     }
 
-    public List<SlotData> getAnySlots() {
+    public List<SlotData<?>> getAnySlots() {
         return SLOT_LOOKUP.get(ANY);
     }
 
@@ -228,34 +228,34 @@ public class GuiData {
         return highestTier;
     }
 
-    public List<SlotData> getSlots(Tier tier) {
-        List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
+    public List<SlotData<?>> getSlots(Tier tier) {
+        List<SlotData<?>> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         return slots != null ? slots : new ObjectArrayList<>();
     }
 
-    public List<SlotData> getSlots(SlotType type, Tier tier) {
-        List<SlotData> types = new ObjectArrayList<>();
-        List<SlotData> slots = SLOT_LOOKUP.get(tier.getId());
+    public List<SlotData<?>> getSlots(SlotType<?> type, Tier tier) {
+        List<SlotData<?>> types = new ObjectArrayList<>();
+        List<SlotData<?>> slots = SLOT_LOOKUP.get(tier.getId());
         if (slots == null) slots = SLOT_LOOKUP.get(ANY);
         if (slots == null) return types; //No slots found
-        for (SlotData slot : slots) {
+        for (SlotData<?> slot : slots) {
             if (slot.getType() == type) types.add(slot);
         }
         return types;
     }
 
-    public List<SlotData> getSlots(SlotType type) {
-        List<SlotData> types = new ObjectArrayList<>();
-        List<SlotData> slots = SLOT_LOOKUP.get(ANY);
+    public List<SlotData<?>> getSlots(SlotType<?> type) {
+        List<SlotData<?>> types = new ObjectArrayList<>();
+        List<SlotData<?>> slots = SLOT_LOOKUP.get(ANY);
         if (slots == null) return types; //No slots found
-        for (SlotData slot : slots) {
+        for (SlotData<?> slot : slots) {
             if (slot.getType() == type) types.add(slot);
         }
         return types;
     }
 
-    public boolean hasType(SlotType type) {
+    public boolean hasType(SlotType<?> type) {
         return getCount(type) > 0;
     }
 
@@ -268,7 +268,7 @@ public class GuiData {
     }
 
     //TODO broken
-    public int getCount(SlotType type) {
+    public int getCount(SlotType<?> type) {
         return COUNT_LOOKUP.getInt(type);
     }
 }

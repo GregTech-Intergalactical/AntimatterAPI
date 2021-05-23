@@ -125,7 +125,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     public void setRecipe(IRecipeLayout layout, Recipe recipe, @Nonnull IIngredients ingredients) {
         IGuiItemStackGroup itemGroup = layout.getItemStacks();
         IGuiFluidStackGroup fluidGroup = layout.getFluidStacks();
-        List<SlotData> slots;
+        List<SlotData<?>> slots;
         int groupIndex = 0, slotCount;
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
         int inputItems = 0, inputFluids = 0;

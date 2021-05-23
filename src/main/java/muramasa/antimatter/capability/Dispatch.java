@@ -53,6 +53,10 @@ public class Dispatch {
         if (holder != null) holder.refresh();
     }
 
+    public Holder<?,?> getHolder(Capability<?> cap) {
+        return capabilityHolderMap.get(cap);
+    }
+
     public interface Sided<U> {
         LazyOptional<? extends U> forSide(Direction side);
         void refresh();

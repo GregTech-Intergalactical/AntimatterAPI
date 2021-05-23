@@ -1,23 +1,26 @@
 package muramasa.antimatter.gui;
 
-public class SlotData {
+import muramasa.antimatter.gui.slot.AbstractSlot;
 
-    private SlotType type;
-    private int x, y;
+public class SlotData<T extends AbstractSlot> {
+
+    private final SlotType<T> type;
+    private final int x;
+    private final int y;
     private int data = -1;
 
-    public SlotData(SlotType type, int x, int y) {
+    public SlotData(SlotType<T> type, int x, int y) {
         this.type = type;
         this.x = x;
         this.y = y;
     }
 
-    public SlotData(SlotType type, int x, int y, int data) {
+    public SlotData(SlotType<T> type, int x, int y, int data) {
         this(type, x, y);
         this.data = data;
     }
 
-    public SlotType getType() {
+    public SlotType<?> getType() {
         return type;
     }
 

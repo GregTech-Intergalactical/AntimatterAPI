@@ -32,6 +32,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,12 +49,12 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 public class AntimatterJEIPlugin implements IModPlugin {
 
     protected static class RegistryValue {
-        RecipeMap map;
+        RecipeMap<?> map;
         GuiData gui;
         Tier tier;
         String machine;
 
-        public RegistryValue(RecipeMap map, GuiData gui, Tier tier, String machine) {
+        public RegistryValue(RecipeMap<?> map, GuiData gui, Tier tier, String machine) {
             this.map = map;
             this.gui = gui;
             this.tier = tier;
@@ -63,12 +64,13 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     private static IJeiRuntime runtime;
     private static IJeiHelpers helpers;
-    private static Object2ObjectMap<String, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
+    private static final Object2ObjectMap<String, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
 
     public AntimatterJEIPlugin() {
         Antimatter.LOGGER.debug("AntimatterJEIPlugin created");
     }
 
+    @Nonnull
     @Override
     public ResourceLocation getPluginUid() {
         return new ResourceLocation(Ref.ID, "jei");
@@ -82,7 +84,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return helpers;
     }
     @Override
-    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+    public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
         //Remove fluid "blocks".
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BLOCK_TO_ITEM.get(t.getFluidBlock()))).collect(Collectors.toList()));
@@ -100,18 +102,21 @@ public class AntimatterJEIPlugin implements IModPlugin {
         Set<String> registeredMachineCats = new ObjectOpenHashSet<>();
 
         REGISTRY.forEach((id, tuple) -> {
-            if (!registeredMachineCats.contains(tuple.map.getId())) registry.addRecipeCategories(new RecipeMapCategory(tuple.map,tuple.gui,tuple.tier,tuple.machine));
+            if (!registeredMachineCats.contains(tuple.map.getId())) {
+                registry.addRecipeCategories(new RecipeMapCategory(tuple.map,tuple.gui,tuple.tier,tuple.machine));
+                registeredMachineCats.add(tuple.map.getId());
+            }
         });
     }
     @Override
-    public void registerRecipes(IRecipeRegistration registration) {
+    public void registerRecipes(@Nonnull IRecipeRegistration registration) {
         if (helpers == null) helpers = registration.getJeiHelpers();
         REGISTRY.forEach((id, tuple) -> {
             registration.addRecipes(tuple.map.getRecipes(true), new ResourceLocation(Ref.ID, id));
         });
     }
 
-    public static void showCategory(Machine... types) {
+    public static void showCategory(Machine<?>... types) {
         if (runtime != null) {
             List<ResourceLocation> list = new LinkedList<>();
             for (int i = 0; i < types.length; i++) {
@@ -130,12 +135,15 @@ public class AntimatterJEIPlugin implements IModPlugin {
     //To perform a JEI lookup for fluid. Use defines direction.
     public static void uses(FluidStack val, boolean USE) {
         IFocus.Mode mode = !USE ? IFocus.Mode.OUTPUT : IFocus.Mode.INPUT;
-        runtime.getRecipesGui().show(new IFocus<Object>() {
+        FluidStack v = val.copy();
+        runtime.getRecipesGui().show(new IFocus<FluidStack>() {
+            @Nonnull
             @Override
-            public Object getValue() {
-                return val;
+            public FluidStack getValue() {
+                return v;
             }
 
+            @Nonnull
             @Override
             public Mode getMode() {
                 return mode;
@@ -154,7 +162,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     @Override
-    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+    public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         REGISTRY.forEach((id, tuple) -> {
             Machine<?> machine = Machine.get(tuple.machine);
             if (machine != Data.MACHINE_INVALID){

@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui.slot;
 
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -10,12 +11,10 @@ import javax.annotation.Nonnull;
 
 public class SlotFakeFluid extends AbstractSlot {
 
-    TileEntityMachine tile;
     public final MachineFluidHandler.FluidDirection dir;
 
-    public SlotFakeFluid(TileEntityMachine tile, MachineFluidHandler.FluidDirection dir, int index, int x, int y) {
-        super(new EmptyHandler(), index, x, y);
-        this.tile = tile;
+    public SlotFakeFluid(SlotType<? extends AbstractSlot> type, TileEntityMachine<?> tile, MachineFluidHandler.FluidDirection dir, int index, int x, int y) {
+        super(type, tile, new EmptyHandler(), index, x, y);
         this.dir = dir;
     }
 
