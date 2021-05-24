@@ -566,8 +566,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
 
         public void finish() {
-            NODES.forEach((k,v) -> v.ifRight(Branch::finish));
-            this.NODES = ImmutableMap.<AbstractMapIngredient, Either<List<Recipe>, Branch>>builder().putAll(NODES).build();
+            //NODES.forEach((k,v) -> v.ifRight(Branch::finish));
+            //this.NODES = ImmutableMap.<AbstractMapIngredient, Either<List<Recipe>, Branch>>builder().putAll(NODES).build();
         }
     }
 }
