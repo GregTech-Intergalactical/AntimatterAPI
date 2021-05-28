@@ -282,9 +282,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
            // List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(HANDLE))).collect(Collectors.toList());
 
-            addStackRecipe(consumer, Ref.ID, PLUNGER.getId() + "_", "antimatter_plungers",
+            addToolRecipe(TOOL_BUILDER.get(PLUNGER.getId()), consumer, Ref.ID, PLUNGER.getId() + "_", "antimatter_plungers",
                     "has_wrench", in, PLUNGER.getToolStack(NULL, NULL),
-                    of('W', WIRE_CUTTER.getTag(), 'I', PropertyIngredient.builder("primary").tool(PLUNGER, true).types(PLATE, GEM).build(), 'S', Tags.Items.SLIMEBALLS, 'R',  PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE, RUBBERTOOLS).build(), 'F', FILE.getTag()), "WIS", " RI", "R F");
+                    of('W', WIRE_CUTTER.getTag(), 'R', PropertyIngredient.builder("primary").tool(PLUNGER, true).types(ROD).build(), 'I',  PropertyIngredient.builder("secondary").types(PLATE).tags(HANDLE, RUBBERTOOLS).build(), 'F', FILE.getTag()), "WII", " RI", "R F");
         }
 
 
