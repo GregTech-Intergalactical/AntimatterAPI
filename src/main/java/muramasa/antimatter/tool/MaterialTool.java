@@ -84,7 +84,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Nonnull
     @Override
-    public AntimatterToolType getType() { return type; }
+    public AntimatterToolType getAntimatterToolType() { return type; }
 
     @Nonnull
     @Override

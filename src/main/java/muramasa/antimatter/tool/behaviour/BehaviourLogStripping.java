@@ -42,7 +42,7 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
             }
             c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
             c.getWorld().setBlockState(c.getPos(), stripped);
-            c.getItem().damageItem(instance.getType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
+            c.getItem().damageItem(instance.getAntimatterToolType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;

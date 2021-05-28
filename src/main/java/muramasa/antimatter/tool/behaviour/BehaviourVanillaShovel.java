@@ -23,7 +23,7 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
         BlockState state = c.getWorld().getBlockState(c.getPos());
         BlockState changedState = null;
         if (state.getBlock() == Blocks.GRASS_BLOCK && c.getWorld().isAirBlock(c.getPos().up())) {
-            SoundEvent soundEvent = instance.getType().getUseSound() == null ? SoundEvents.ITEM_SHOVEL_FLATTEN : instance.getType().getUseSound();
+            SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.ITEM_SHOVEL_FLATTEN : instance.getAntimatterToolType().getUseSound();
             c.getWorld().playSound(c.getPlayer(), c.getPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
             changedState = Blocks.GRASS_PATH.getDefaultState();
         }
@@ -33,7 +33,7 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
         }
         if (changedState != null) {
             c.getWorld().setBlockState(c.getPos(), changedState, 11);
-            c.getItem().damageItem(instance.getType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
+            c.getItem().damageItem(instance.getAntimatterToolType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
             return ActionResultType.SUCCESS;
         }
         else return ActionResultType.PASS;

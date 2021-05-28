@@ -743,7 +743,7 @@ public class Utils {
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
     public static boolean isToolEffective(IAntimatterTool tool, BlockState state) {
-        return tool.getType().getEffectiveBlocks().contains(state.getBlock()) || tool.getType().getEffectiveMaterials().contains(state.getMaterial()) || tool.getToolTypes().stream().anyMatch(state::isToolEffective);
+        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) || tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial()) || tool.getToolTypes().stream().anyMatch(state::isToolEffective);
     }
 
     /**
@@ -773,7 +773,7 @@ public class Utils {
                 BlockState state = world.getBlockState(tempPos);
                 if (state.isAir(world, tempPos) || !ForgeHooks.canHarvestBlock(state, player, world, tempPos)) return false;
                 else if (state.getBlock().isIn(BlockTags.LOGS)) {
-                    breakBlock(world, player, stack, tempPos, tool.getType().getUseDurability());
+                    breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability());
                 }
             }
         }
@@ -785,7 +785,7 @@ public class Utils {
             BlockPos pos;
             Direction[] dirs = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
             while (amount > 0) {
-                if (blocks.isEmpty() || (stack.isDamaged() && stack.getDamage() < tool.getType().getUseDurability())) return false;
+                if (blocks.isEmpty() || (stack.isDamaged() && stack.getDamage() < tool.getAntimatterToolType().getUseDurability())) return false;
                 pos = blocks.remove();
                 if (!visited.add(pos)) continue;
                 if (!world.getBlockState(pos).getBlock().isIn(BlockTags.LOGS)) continue;
@@ -801,7 +801,7 @@ public class Utils {
                 }
                 amount--;
                 if (pos.equals(start)) continue;
-                boolean breakBlock = breakBlock(world, player, stack, pos, tool.getType().getUseDurability());
+                boolean breakBlock = breakBlock(world, player, stack, pos, tool.getAntimatterToolType().getUseDurability());
                 if (!breakBlock) break;
             }
         }
@@ -1050,7 +1050,7 @@ public class Utils {
         if (!stack.isEmpty()) {
             Item item = stack.getItem();
             if (item instanceof IAntimatterTool) {
-                return ((IAntimatterTool) item).getType();
+                return ((IAntimatterTool) item).getAntimatterToolType();
             }
         }
         return null;

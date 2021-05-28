@@ -75,7 +75,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     @Nonnull
     @Override
-    public AntimatterToolType getType() {
+    public AntimatterToolType getAntimatterToolType() {
         return type;
     }
 
