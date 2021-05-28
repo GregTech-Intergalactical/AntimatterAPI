@@ -124,6 +124,10 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         return inventories.get(SlotType.ENERGY);
     }
 
+    public ITrackedHandler getHandler(SlotType<?> type){
+        return inventories.get(type);
+    }
+
     public int getInputCount() {
         return getInputHandler().getSlots();
     }
