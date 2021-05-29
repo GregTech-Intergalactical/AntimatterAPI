@@ -190,7 +190,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     @Override
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-        return !type.isPowered();
+        return !type.isPowered() && getTier(toRepair).getRepairMaterial().test(repair);
     }
 
     @Override
