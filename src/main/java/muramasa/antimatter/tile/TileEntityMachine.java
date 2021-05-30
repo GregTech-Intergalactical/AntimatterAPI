@@ -207,9 +207,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             energyHandler.ifPresent(e -> e.onMachineEvent(event, data));
             fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
             recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
-            if (event instanceof ContentEvent && openContainers.size() > 0) {
+            /*if (event instanceof ContentEvent && openContainers.size() > 0) {
                 openContainers.forEach(ContainerMachine::detectAndSendChanges);
-            }
+            }*/
         }
     }
 
