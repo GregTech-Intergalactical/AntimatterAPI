@@ -60,6 +60,10 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
+        detectAndSendLiquidChanges();
+    }
+
+    public void detectAndSendLiquidChanges() {
         tile.fluidHandler.ifPresent(fh -> {
             if (!fh.isDirty()) return;
 
