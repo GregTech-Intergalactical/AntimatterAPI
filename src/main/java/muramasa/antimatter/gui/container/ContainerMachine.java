@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.IContainerListener;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.IWorldPosCallable;
 
 import java.util.ArrayList;
@@ -78,12 +79,12 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
 
     protected void addSlots(TileEntityMachine tile) {
         Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();
-        for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())) {
+        tile.getMachineType().getGui().getSlots(tile.getMachineTier()).forEach(slot -> {
             slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);
-            AbstractSlot supplier = slot.getType().getSlotSupplier().get(slot.getType(), tile, slotIndexMap.getInt(slot.getType().getId()), slot);
+            Slot supplier = slot.getType().getSlotSupplier().get(slot.getType(), tile, slotIndexMap.getInt(slot.getType().getId()), slot);
             addSlot(supplier);
             slotIndexMap.compute(slot.getType().getId(), (k, v) -> v + 1);
-        }
+        });
     }
 
     @Override

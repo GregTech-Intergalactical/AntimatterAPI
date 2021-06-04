@@ -9,11 +9,11 @@ import net.minecraftforge.items.wrapper.EmptyHandler;
 
 import javax.annotation.Nonnull;
 
-public class SlotFakeFluid extends AbstractSlot {
+public class SlotFakeFluid extends AbstractSlot<SlotFakeFluid> {
 
     public final MachineFluidHandler.FluidDirection dir;
 
-    public SlotFakeFluid(SlotType<? extends AbstractSlot> type, TileEntityMachine<?> tile, MachineFluidHandler.FluidDirection dir, int index, int x, int y) {
+    public SlotFakeFluid(SlotType<SlotFakeFluid> type, TileEntityMachine<?> tile, MachineFluidHandler.FluidDirection dir, int index, int x, int y) {
         super(type, tile, new EmptyHandler(), index, x, y);
         this.dir = dir;
     }

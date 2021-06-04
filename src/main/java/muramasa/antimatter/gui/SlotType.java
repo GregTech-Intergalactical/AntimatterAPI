@@ -7,13 +7,14 @@ import muramasa.antimatter.gui.slot.*;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import tesseract.api.capability.TesseractGTCapability;
 
 import java.util.function.BiPredicate;
 
-public class SlotType<T extends AbstractSlot> implements IAntimatterObject {
+public class SlotType<T extends Slot & IAntimatterSlot> implements IAntimatterObject {
 
     public static SlotType<SlotInput> IT_IN = new SlotType<>("item_in", (type, t, i, d) -> new SlotInput(type, t,t.itemHandler.map(MachineItemHandler::getInputHandler).orElse(null), i, d.getX(), d.getY()), (t,i) -> t.recipeHandler.map(rh -> rh.accepts(i)).orElse(true),ContentEvent.ITEM_INPUT_CHANGED, true, false);
     public static SlotType<SlotOutput> IT_OUT = new SlotType<>("item_out", (type, t, i, d) -> new SlotOutput(type, t,t.itemHandler.map(MachineItemHandler::getOutputHandler).orElse(null), i, d.getX(), d.getY()),(t, i) -> false,ContentEvent.ITEM_OUTPUT_CHANGED, false, true);
@@ -53,7 +54,7 @@ public class SlotType<T extends AbstractSlot> implements IAntimatterObject {
         return slotSupplier;
     }
 
-    public interface ISlotSupplier<T extends AbstractSlot> {
+    public interface ISlotSupplier<T extends Slot & IAntimatterSlot> {
         T get(SlotType<T> type, TileEntityMachine<?> tile, int index, SlotData<T> data);
     }
 }
