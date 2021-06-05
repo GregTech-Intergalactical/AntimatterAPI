@@ -71,6 +71,10 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         this.inventories.forEach((f, i) -> i.deserializeNBT(nbt.getCompound(f.getId())));
     }
 
+    public T getTile() {
+        return tile;
+    }
+
     public void onUpdate() {
 
     }

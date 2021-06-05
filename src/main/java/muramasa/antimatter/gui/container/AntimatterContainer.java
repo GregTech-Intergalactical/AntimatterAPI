@@ -145,4 +145,8 @@ public abstract class AntimatterContainer extends Container {
 
         return flag;
     }
+
+    public PlayerInventory getPlayerInv() {
+        return playerInv;
+    }
 }
