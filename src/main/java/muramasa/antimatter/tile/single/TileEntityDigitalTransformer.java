@@ -7,6 +7,7 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.entity.player.PlayerEntity;
 import tesseract.api.capability.TesseractGTCapability;
 
 public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer<T>> extends TileEntityTransformer<T> {
@@ -16,7 +17,7 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, int... data) {
+    public void onGuiEvent(IGuiEvent event, PlayerEntity playerEntity, int... data) {
         if (event == GuiEvent.EXTRA_BUTTON) {
             energyHandler.ifPresent(h -> {
                 boolean shiftHold = data[1] != 0;

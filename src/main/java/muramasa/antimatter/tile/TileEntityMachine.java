@@ -59,6 +59,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
@@ -259,7 +260,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, int... data) {
+    public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
         if (event == ITEM_EJECT || event == FLUID_EJECT) {
             coverHandler.ifPresent(ch -> {
                 ch.get(ch.getOutputFacing()).onMachineEvent(this, event, data);

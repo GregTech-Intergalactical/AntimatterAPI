@@ -22,6 +22,7 @@ import net.minecraft.util.text.ITextComponent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.UUID;
 
 public class CoverStack<T extends TileEntity> implements INamedContainerProvider, IGuiHandler {
 
@@ -79,8 +80,8 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
         cover.onMachineEvent(this, tile, event, data);
     }
 
-    public void onGuiEvent(IGuiEvent event, int... data) {
-        cover.onGuiEvent(this, event, data);
+    public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
+        cover.onGuiEvent(this, event, player, data);
     }
 
     @Override

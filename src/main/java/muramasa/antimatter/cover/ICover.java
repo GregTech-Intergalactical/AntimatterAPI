@@ -51,7 +51,7 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
         //NOOP
     }
 
-    default void onGuiEvent(CoverStack<?> instance, IGuiEvent event, int... data) {
+    default void onGuiEvent(CoverStack<?> instance, IGuiEvent event, PlayerEntity player, int... data) {
         //NOOP
     }
 

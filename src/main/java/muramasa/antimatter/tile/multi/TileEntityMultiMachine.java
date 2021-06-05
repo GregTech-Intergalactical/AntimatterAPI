@@ -12,6 +12,7 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -71,8 +72,8 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, int... data) {
-        super.onGuiEvent(event,data);
+    public void onGuiEvent(IGuiEvent event, PlayerEntity playerEntity, int... data) {
+        super.onGuiEvent(event, playerEntity, data);
         /*if (event == GuiEvent.MULTI_ACTIVATE) {
             checkStructure();
             recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);

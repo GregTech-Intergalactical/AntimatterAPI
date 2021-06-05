@@ -36,7 +36,7 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket{
             if (sender != null) {
                 TileEntity tile = Utils.getTile(sender.getServerWorld(), msg.pos);
                 if (tile instanceof TileEntityMachine) {
-                    ((TileEntityMachine<?>) tile).coverHandler.ifPresent(ch -> ch.get(msg.facing).onGuiEvent(msg.event, msg.data));
+                    ((TileEntityMachine<?>) tile).coverHandler.ifPresent(ch -> ch.get(msg.facing).onGuiEvent(msg.event, sender, msg.data));
                 }
             }
         });

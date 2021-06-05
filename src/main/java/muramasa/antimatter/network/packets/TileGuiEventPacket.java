@@ -33,7 +33,7 @@ public class TileGuiEventPacket extends AbstractGuiEventPacket {
             if (sender != null) {
                 TileEntity tile = Utils.getTile(sender.getServerWorld(), msg.pos);
                 if (tile instanceof IGuiHandler) {
-                    ((IGuiHandler) tile).onGuiEvent(msg.event, msg.data);
+                    ((IGuiHandler) tile).onGuiEvent(msg.event, sender, msg.data);
                 }
             }
         });
