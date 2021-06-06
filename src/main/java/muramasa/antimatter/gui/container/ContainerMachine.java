@@ -79,12 +79,12 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
 
     protected void addSlots(TileEntityMachine tile) {
         Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();
-        tile.getMachineType().getGui().getSlots(tile.getMachineTier()).forEach(slot -> {
+        for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())){
             slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);
             Slot supplier = slot.getType().getSlotSupplier().get(slot.getType(), tile, slotIndexMap.getInt(slot.getType().getId()), slot);
             addSlot(supplier);
             slotIndexMap.compute(slot.getType().getId(), (k, v) -> v + 1);
-        });
+        }
     }
 
     @Override
