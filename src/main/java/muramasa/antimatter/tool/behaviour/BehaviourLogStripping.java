@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -42,7 +43,7 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
             }
             c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
             c.getWorld().setBlockState(c.getPos(), stripped);
-            c.getItem().damageItem(instance.getAntimatterToolType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
+            Utils.damageStack(c.getItem(), c.getPlayer());
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;

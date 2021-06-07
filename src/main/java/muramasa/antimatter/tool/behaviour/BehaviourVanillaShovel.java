@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.CampfireBlock;
@@ -33,7 +34,7 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
         }
         if (changedState != null) {
             c.getWorld().setBlockState(c.getPos(), changedState, 11);
-            c.getItem().damageItem(instance.getAntimatterToolType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
+            Utils.damageStack(c.getItem(), c.getPlayer());
             return ActionResultType.SUCCESS;
         }
         else return ActionResultType.PASS;

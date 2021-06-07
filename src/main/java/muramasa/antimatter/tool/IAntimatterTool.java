@@ -141,7 +141,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default boolean onGenericHitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker, float volume, float pitch) {
         if (getAntimatterToolType().getUseSound() != null) target.getEntityWorld().playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), getAntimatterToolType().getUseSound(), SoundCategory.HOSTILE, volume, pitch);
-        stack.damageItem(getAntimatterToolType().getAttackDurability(), attacker, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        Utils.damageStack(getAntimatterToolType().getAttackDurability(), stack, attacker);
         return true;
     }
 
@@ -152,7 +152,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             if (getAntimatterToolType().getUseSound() != null) player.playSound(getAntimatterToolType().getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
             boolean isToolEffective = Utils.isToolEffective(getAntimatterToolType(), getToolTypes(), state);
             if (state.getBlockHardness(world, pos) != 0.0F) {
-                stack.damageItem(isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1, entity, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+                Utils.damageStack(isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1, stack, entity);
             }
         }
         boolean returnValue = true;

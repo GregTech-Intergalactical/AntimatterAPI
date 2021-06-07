@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -25,7 +26,7 @@ public class BehaviourWaterlogToggle implements IItemUse<IAntimatterTool> {
             if (state.get(BlockStateProperties.WATERLOGGED)) {
                 c.getWorld().setBlockState(c.getPos(), state.with(BlockStateProperties.WATERLOGGED, false), 11);
                 c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                c.getItem().damageItem(instance.getAntimatterToolType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
+                Utils.damageStack(c.getItem(), c.getPlayer());
                 return ActionResultType.SUCCESS;
             }
         }

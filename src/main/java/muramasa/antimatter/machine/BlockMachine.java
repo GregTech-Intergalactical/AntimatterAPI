@@ -20,6 +20,7 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -28,10 +29,12 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.loot.LootContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -55,6 +58,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.network.NetworkHooks;
+import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -137,6 +141,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         if (!player.isCrouching()) {
                             boolean ok = tile.setOutputFacing(player, Utils.getInteractSide(hit));
                             if (ok) {
+                                Utils.damageStack(stack, player);
                                 return ActionResultType.SUCCESS;
                             }
                         }
@@ -150,10 +155,12 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     } else if (type == CROWBAR) {
                         if (!player.isCrouching()){
                             if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
+                                Utils.damageStack(stack, player);
                                 return ActionResultType.SUCCESS;
                             }
                         } else {
                             if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false)) {
+                                Utils.damageStack(stack, player);
                                 return ActionResultType.SUCCESS;
                             }
                         }
@@ -161,6 +168,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(COVER_EMPTY);
                         if (!player.isCrouching()) {
                             if (!instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace())) {
+                                Utils.damageStack(stack, player);
                                 return ActionResultType.SUCCESS;
                             }
                         }

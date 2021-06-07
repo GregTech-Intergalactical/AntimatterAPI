@@ -22,6 +22,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.renderer.model.ModelRotation;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -30,6 +31,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
@@ -163,6 +165,20 @@ public class Utils {
         FluidStack stack = toCopy.copy();
         stack.setAmount(amount);
         return stack;
+    }
+
+    public static void damageStack(ItemStack stack, LivingEntity player){
+        int durability = 1;
+        if (stack.getItem() instanceof IAntimatterTool){
+            durability = ((IAntimatterTool)stack.getItem()).getAntimatterToolType().getUseDurability();
+        }
+        damageStack(durability, stack, player);
+    }
+
+    public static void damageStack(int durability, ItemStack stack, LivingEntity player){
+        stack.damageItem(durability, player, p -> {
+            p.sendBreakAnimation(EquipmentSlotType.MAINHAND);
+        });
     }
 
     public static ItemStack mul(int amount, ItemStack stack) {

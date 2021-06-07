@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -36,7 +37,7 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
             if (blockstate == null) return ActionResultType.PASS;
             UseHoeEvent hoeEvent = new UseHoeEvent(c);
             if (MinecraftForge.EVENT_BUS.post(hoeEvent)) return ActionResultType.PASS;
-            c.getItem().damageItem(instance.getAntimatterToolType().getUseDurability(), c.getPlayer(), (p) -> p.sendBreakAnimation(c.getHand()));
+            Utils.damageStack(c.getItem(), c.getPlayer());
             SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.ITEM_HOE_TILL : instance.getAntimatterToolType().getUseSound();
             c.getWorld().playSound(c.getPlayer(), c.getPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
             if (!c.getWorld().isRemote) c.getWorld().setBlockState(c.getPos(), blockstate, 11);

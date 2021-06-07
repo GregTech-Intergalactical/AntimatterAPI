@@ -19,6 +19,7 @@ import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -28,9 +29,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
@@ -244,8 +247,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             return ActionResultType.PASS;
         }
         if (!world.isRemote && hand == Hand.MAIN_HAND) {
-            if (player.getHeldItem(hand).getItem() instanceof IHaveCover) {
-                ItemStack stack = player.getHeldItem(hand);
+            ItemStack stack = player.getHeldItem(hand);
+            if (stack.getItem() instanceof IHaveCover) {
                 boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,Utils.getInteractSide(hit)).map(i -> i.placeCover(player,Utils.getInteractSide(hit),stack,((IHaveCover) stack.getItem()).getCover())).orElse(false);
                 if (ok) {
                     return ActionResultType.SUCCESS;
@@ -257,14 +260,26 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             }
             if (type == Data.CROWBAR) {
                 if (!player.isCrouching()){
-                    return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                    if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
+                        Utils.damageStack(stack, player);
+                        return ActionResultType.SUCCESS;
+                    }
+                    return ActionResultType.PASS;
                 } else {
-                    return tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                    if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false)) {
+                        Utils.damageStack(stack, player);
+                        return ActionResultType.SUCCESS;
+                    }
+                    return ActionResultType.PASS;
                 }
             } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
                 CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(Data.COVER_EMPTY);
                 if (!player.isCrouching()) {
-                    return !instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, Utils.getInteractSide(hit)) ? ActionResultType.SUCCESS : ActionResultType.PASS;
+                    if (!instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, Utils.getInteractSide(hit))) {
+                        Utils.damageStack(stack, player);
+                        return ActionResultType.SUCCESS;
+                    }
+                    return ActionResultType.PASS;
                 } 
              }
             if (getHarvestTool(state) == type.getToolType()) {
@@ -283,10 +298,12 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                         } else {
                             tile.toggleInteract(side);
                         }
+                        Utils.damageStack(stack, player);
                         return ActionResultType.SUCCESS;
                     }
                 } else if (world.isAirBlock(pos.offset(side))) {
                     tile.toggleConnection(side);
+                    Utils.damageStack(stack, player);
                     return ActionResultType.SUCCESS;
                 }
             }
