@@ -4,18 +4,19 @@ import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class AbstractSlot extends SlotItemHandler {
+public class AbstractSlot<T extends Slot & IAntimatterSlot> extends SlotItemHandler implements IAntimatterSlot {
     protected final int index;
-    public final SlotType<? extends AbstractSlot> type;
+    public final SlotType<T> type;
     protected final TileEntityMachine<?> holder;
 
-    public AbstractSlot(SlotType<? extends AbstractSlot> type, TileEntityMachine<?> tile, IItemHandler stackHandler, int index, int x, int y) {
+    public AbstractSlot(SlotType<T> type, TileEntityMachine<?> tile, IItemHandler stackHandler, int index, int x, int y) {
         super(stackHandler, index, x, y);
         this.index = index;
         this.type = type;

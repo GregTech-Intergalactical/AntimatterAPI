@@ -9,8 +9,8 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 
 //TODO: Should be used on filters
-public class SlotFake extends AbstractSlot {
-    public SlotFake(SlotType<? extends AbstractSlot> type, TileEntityMachine<?> tile, IItemHandler stackHandler, int index, int x, int y) {
+public class SlotFake extends AbstractSlot<SlotFake> {
+    public SlotFake(SlotType<SlotFake> type, TileEntityMachine<?> tile, IItemHandler stackHandler, int index, int x, int y) {
         super(type, tile, stackHandler, index, x, y);
     }
 
