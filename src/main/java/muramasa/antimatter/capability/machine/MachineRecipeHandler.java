@@ -235,7 +235,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     protected long getPower() {
-        return (activeRecipe.getPower() * (1L << overclock));
+        if (overclock == 0) return activeRecipe.getPower();
+        //half the duration => overclock ^ 2.
+        //so if overclock is 2 tiers, we have 1/4 the duration(200 -> 50) but for e.g. 8eu/t this would be
+        //8*4*4 = 128eu/t.
+        return (activeRecipe.getPower() * (1L << overclock) * (1L << overclock));
     }
 
     //called when a new recipe is found, to process overclocking
