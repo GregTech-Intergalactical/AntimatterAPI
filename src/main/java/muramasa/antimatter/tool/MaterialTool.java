@@ -23,6 +23,7 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -244,15 +245,14 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         if (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()) {
             return 0;
         }
-        int durability = damage(stack, amount);
-        if (durability <= 0) {
+        /*if (durability <= 0) {
             onBroken.accept(entity);
             stack.shrink(1);
             if (entity instanceof PlayerEntity) {
                 ((PlayerEntity) entity).addStat(Stats.ITEM_BROKEN.get(stack.getItem()));
             }
-        }
-        return 0;
+        }*/
+        return damage(stack, amount);
     }
 
     @Override

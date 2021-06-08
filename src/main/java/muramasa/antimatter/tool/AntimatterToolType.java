@@ -14,6 +14,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.IItemProvider;
@@ -30,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -41,7 +43,7 @@ public class AntimatterToolType implements IAntimatterObject {
     private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
     private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
-    private ImmutableMap<String, IItemProvider> brokenItems = ImmutableMap.of();
+    private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
     private List<ITextComponent> tooltip = new ObjectArrayList<>();
     private boolean powered, repairable, blockBreakability;
     private long baseMaxEnergy;
@@ -92,7 +94,7 @@ public class AntimatterToolType implements IAntimatterObject {
         this.toolClass = MaterialTool.class;
         this.TOOL_TYPE = ToolType.get(id);
         this.TOOL_TYPES.add(id);
-        setBrokenItems(ImmutableMap.of(id, Items.AIR));
+        setBrokenItems(ImmutableMap.of(id, (i) -> ItemStack.EMPTY));
         AntimatterAPI.register(AntimatterToolType.class, this);
     }
 
@@ -177,7 +179,7 @@ public class AntimatterToolType implements IAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType setBrokenItems(ImmutableMap<String, IItemProvider> map){
+    public AntimatterToolType setBrokenItems(ImmutableMap<String, Function<ItemStack, ItemStack>> map){
         this.brokenItems = map;
         return this;
     }
@@ -326,7 +328,7 @@ public class AntimatterToolType implements IAntimatterObject {
         return tooltip;
     }
 
-    public ImmutableMap<String, IItemProvider> getBrokenItems() {
+    public ImmutableMap<String, Function<ItemStack, ItemStack>> getBrokenItems() {
         return brokenItems;
     }
 

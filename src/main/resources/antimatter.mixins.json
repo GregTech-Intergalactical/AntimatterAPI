@@ -14,7 +14,8 @@
     "IceBlockMixin",
     "RecipeManagerMixin",
     "ServerBlockUpdateMixin",
-    "SimpleReloadableResourceManagerMixin"
+    "SimpleReloadableResourceManagerMixin",
+    "ItemStackMixin"
   ],
   "minVersion": "0.8"
 }

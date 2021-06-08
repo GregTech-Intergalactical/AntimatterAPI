@@ -1,6 +1,7 @@
 package muramasa.antimatter.tool;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
@@ -205,11 +206,11 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             empty = l >= stack.getMaxDamage();
         }
         if (empty){
-            if (!getAntimatterToolType().getBrokenItems().containsKey(this.getId()) || getAntimatterToolType().getBrokenItems().get(this.getId()) == Items.AIR){
+            if (!getAntimatterToolType().getBrokenItems().containsKey(this.getId())){
                 return ItemStack.EMPTY;
             }
-            IItemProvider item = getAntimatterToolType().getBrokenItems().get(this.getId());
-            return new ItemStack(item);
+            ItemStack item = getAntimatterToolType().getBrokenItems().get(this.getId()).apply(oldStack);
+            return item;
         }
         return stack;
     }
@@ -234,6 +235,19 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     default boolean hasEnoughDurability(ItemStack stack, int damage, boolean energy) {
         if (energy && getCurrentEnergy(stack) >= damage * 100) return true;
         return stack.getDamage() >= damage;
+    }
+
+    default void onItemBreak(ItemStack stack, PlayerEntity entity){
+        String name = this.getId();
+        Antimatter.LOGGER.info(name);
+        AntimatterToolType type = getAntimatterToolType();
+        if (!type.getBrokenItems().containsKey(name)) {
+            return;
+        }
+        ItemStack item = type.getBrokenItems().get(name).apply(stack);
+        if (!item.isEmpty() && !entity.addItemStackToInventory(item)) {
+            entity.dropItem(item, true);
+        }
     }
 
     @Override
