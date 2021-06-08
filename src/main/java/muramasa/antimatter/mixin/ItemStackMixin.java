@@ -29,22 +29,8 @@ public abstract class ItemStackMixin extends net.minecraftforge.common.capabilit
         super(baseClass);
     }
 
-    @Shadow
-    public abstract boolean attemptDamageItem(int amount, Random rand, @Nullable ServerPlayerEntity damager);
-
-    /*@Redirect(method = "damageItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;attemptDamageItem(ILjava/util/Random;Lnet/minecraft/entity/player/ServerPlayerEntity;)B"))
-    public<T extends LivingEntity> boolean applyRedirect(ItemStack invoker, int amount, Random rand, @Nullable ServerPlayerEntity damager, int amount2, Consumer<T> consumer, T entity){
-        boolean broke = attemptDamageItem(amount, rand, damager);
-        if (broke && invoker.getItem() instanceof IAntimatterTool){
-            if (entity instanceof PlayerEntity) {
-                ((IAntimatterTool)invoker.getItem()).onItemBreak(invoker, (PlayerEntity) entity);
-            }
-        }
-        return broke;
-    }*/
-
-    @Inject(method = "damageItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;attemptDamageItem(ILjava/util/Random;Lnet/minecraft/entity/player/ServerPlayerEntity;)B", shift = At.Shift.AFTER))
-    public<T extends LivingEntity> void inject(CallbackInfo ci, int amount, Consumer<T> consumer, T entity){
+    @Inject(method = "damageItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;attemptDamageItem(ILjava/util/Random;Lnet/minecraft/entity/player/ServerPlayerEntity;)Z", shift = At.Shift.AFTER))
+    public<T extends LivingEntity> void inject(int amount, T entity, Consumer<T> consumer, CallbackInfo ci){
         ItemStack invoker = ((ItemStack)(Object)this);
         if (invoker.getItem() instanceof IAntimatterTool){
             if (entity instanceof PlayerEntity) {
