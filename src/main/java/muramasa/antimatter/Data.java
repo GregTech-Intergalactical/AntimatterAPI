@@ -440,6 +440,7 @@ public class Data {
         DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1));
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
+        KNIFE.addBehaviour(BehaviourPumpkinCarving.INSTANCE);
         for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
             if (type.getToolTypes().contains("shovel")) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
             if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
