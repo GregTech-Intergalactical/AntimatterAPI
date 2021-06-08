@@ -9,10 +9,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.RotatedPillarBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
 
@@ -36,7 +43,7 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
     @Override
     public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
         BlockState state = c.getWorld().getBlockState(c.getPos());
-        BlockState stripped = STRIPPING_MAP.get(state);
+        BlockState stripped = getToolModifiedState(state, c.getWorld(), c.getPos(), c.getPlayer(), c.getItem(), ToolType.AXE);
         if (stripped != null) {
             if (state.hasProperty(RotatedPillarBlock.AXIS) && stripped.hasProperty(RotatedPillarBlock.AXIS)) {
                 stripped = stripped.with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
@@ -47,6 +54,11 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;
+    }
+
+    private BlockState getToolModifiedState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
+        BlockState eventState = ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, toolType);
+        return eventState != originalState ? eventState : STRIPPING_MAP.get(originalState);
     }
 
     public static void addStrippedBlock(Block from, Block to) {

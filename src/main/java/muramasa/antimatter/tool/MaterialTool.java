@@ -245,13 +245,6 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         if (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()) {
             return 0;
         }
-        /*if (durability <= 0) {
-            onBroken.accept(entity);
-            stack.shrink(1);
-            if (entity instanceof PlayerEntity) {
-                ((PlayerEntity) entity).addStat(Stats.ITEM_BROKEN.get(stack.getItem()));
-            }
-        }*/
         return damage(stack, amount);
     }
 
