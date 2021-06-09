@@ -29,7 +29,7 @@ public abstract class ItemStackMixin extends net.minecraftforge.common.capabilit
         super(baseClass);
     }
 
-    @Inject(method = "damageItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;attemptDamageItem(ILjava/util/Random;Lnet/minecraft/entity/player/ServerPlayerEntity;)Z", shift = At.Shift.AFTER))
+    @Inject(method = "damageItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", ordinal = 1))
     public<T extends LivingEntity> void inject(int amount, T entity, Consumer<T> consumer, CallbackInfo ci){
         ItemStack invoker = ((ItemStack)(Object)this);
         if (invoker.getItem() instanceof IAntimatterTool){

@@ -239,7 +239,6 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default void onItemBreak(ItemStack stack, PlayerEntity entity){
         String name = this.getId();
-        Antimatter.LOGGER.info(name);
         AntimatterToolType type = getAntimatterToolType();
         if (!type.getBrokenItems().containsKey(name)) {
             return;
