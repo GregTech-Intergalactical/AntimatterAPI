@@ -199,7 +199,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             };
         }
         if (baseTexture == null) {
-            baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture()};
+            baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         }
     }
 
