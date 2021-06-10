@@ -147,7 +147,8 @@ public final class AntimatterAPI {
             throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
         }
         INTERNAL_REGISTRAR.onRegistrationEvent(event, side);
-        all(IAntimatterRegistrar.class, r -> r.onRegistrationEvent(event, side));
+        List<IAntimatterRegistrar> list = all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
+        list.forEach(r -> r.onRegistrationEvent(event, side));
         if (CALLBACKS.containsKey(event)) CALLBACKS.get(event).forEach(Runnable::run);
     }
 

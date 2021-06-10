@@ -13,4 +13,8 @@ public interface IAntimatterRegistrar extends IAntimatterObject {
 
     void onRegistrationEvent(RegistrationEvent event, Dist side);
 
+    default int getPriority(){
+        return 1000;
+    }
+
 }
