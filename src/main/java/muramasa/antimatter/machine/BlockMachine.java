@@ -206,7 +206,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     }).orElse(false)) {
                         return ActionResultType.SUCCESS;
                     }
-                    if (getType().has(MachineFlag.GUI) ) {
+                    if (getType().has(MachineFlag.GUI) && tile.canPlayerOpenGui(player)) {
                         NetworkHooks.openGui((ServerPlayerEntity) player, tile, extra -> {
                             extra.writeBlockPos(pos);
                             tile.coverHandler.ifPresent(ch -> {

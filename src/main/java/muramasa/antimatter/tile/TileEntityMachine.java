@@ -361,6 +361,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
     }
 
+    public boolean canPlayerOpenGui(PlayerEntity playerEntity){
+        return true;
+    }
+
     public void refreshCaps() {
         if (isServerSide()) {
             dispatch.refresh();
