@@ -38,7 +38,7 @@ public class GuiData {
     protected boolean barFill = true;
 
     protected Object2ObjectMap<String, List<SlotData<?>>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
-    protected Object2IntOpenHashMap<SlotType<?>> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
+    protected Object2ObjectMap<String, Object2IntOpenHashMap<SlotType<?>>> COUNT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
     protected List<ButtonData> BUTTON_LIST = new ObjectArrayList<>();
 
     public GuiData(String domain, String id) {
@@ -247,7 +247,9 @@ public class GuiData {
         Tier tier = AntimatterAPI.get(Tier.class, key);
         if (tier != null && tier.getVoltage() > highestTier.getVoltage()) highestTier = tier;
 
-        COUNT_LOOKUP.addTo(slot.getType(), 1);
+        if (!COUNT_LOOKUP.containsKey(key)) COUNT_LOOKUP.put(key, new Object2IntOpenHashMap<>());
+
+        COUNT_LOOKUP.get(key).addTo(slot.getType(), 1);
         if (SLOT_LOOKUP.containsKey(key)) {
             SLOT_LOOKUP.get(key).add(slot);
         } else {
@@ -304,7 +306,7 @@ public class GuiData {
     }
 
     public boolean hasType(SlotType<?> type) {
-        return getCount(type) > 0;
+        return getCount(null, type) > 0;
     }
 
     public boolean hasAnyItem(Tier tier) {
@@ -316,7 +318,8 @@ public class GuiData {
     }
 
     //TODO broken
-    public int getCount(SlotType<?> type) {
-        return COUNT_LOOKUP.getInt(type);
+    public int getCount(Tier tier, SlotType<?> type) {
+        String id = tier == null || !COUNT_LOOKUP.containsKey(tier.getId()) ? ANY : tier.getId();
+        return COUNT_LOOKUP.get(id).getInt(type);
     }
 }
