@@ -8,6 +8,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
 
@@ -31,8 +32,10 @@ public class GuiData {
     protected boolean enablePlayerSlots = true;
     protected ResourceLocation buttonLoc;
 
-    protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0);
+    protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0), progress = new int4(78, 24, 20, 18), state = new int4(84, 45, 8, 8);
+    protected int2 progressLocation = new int2(176, 0), stateLocation = new int2(176, 55);
     protected BarDir side = BarDir.LEFT;
+    protected boolean barFill = true;
 
     protected Object2ObjectMap<String, List<SlotData<?>>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
     protected Object2IntOpenHashMap<SlotType<?>> COUNT_LOOKUP = new Object2IntOpenHashMap<>();
@@ -78,8 +81,28 @@ public class GuiData {
         return padding;
     }
 
+    public int4 getProgress() {
+        return progress;
+    }
+
+    public int4 getState() {
+        return state;
+    }
+
+    public int2 getProgressLocation() {
+        return progressLocation;
+    }
+
+    public int2 getStateLocation() {
+        return stateLocation;
+    }
+
     public BarDir getDir() {
         return side;
+    }
+
+    public boolean isBarFill(){
+        return barFill;
     }
 
     public boolean enablePlayerSlots() {
@@ -100,8 +123,33 @@ public class GuiData {
         return this;
     }
 
+    public GuiData setProgress(int x, int y, int l, int w) {
+        progress.set(x, y, l, w);
+        return this;
+    }
+
+    public GuiData setState(int x, int y, int l, int w) {
+        state.set(x, y, l, w);
+        return this;
+    }
+
+    public GuiData setProgressLocation(int x, int y) {
+        progressLocation.set(x, y);
+        return this;
+    }
+
+    public GuiData setStateLocation(int x, int y) {
+        stateLocation.set(x, y);
+        return this;
+    }
+
     public GuiData setDir(BarDir side) {
         this.side = side;
+        return this;
+    }
+
+    public GuiData setBarFill(boolean barFill){
+        this.barFill = barFill;
         return this;
     }
 

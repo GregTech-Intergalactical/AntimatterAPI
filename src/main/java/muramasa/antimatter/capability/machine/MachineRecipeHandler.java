@@ -123,6 +123,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     @OnlyIn(Dist.CLIENT)
+    public int getClientProgressRaw(){
+        return currentProgress;
+    }
+
+    @OnlyIn(Dist.CLIENT)
     public void setClientProgress(int progress) {
         this.currentProgress = progress;
     }

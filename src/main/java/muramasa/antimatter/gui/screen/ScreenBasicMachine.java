@@ -41,7 +41,7 @@ public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends Contai
         //Draw error.
         if (container.getTile().has(MachineFlag.RECIPE)) {
             if (container.getTile().getMachineState() == MachineState.POWER_LOSS) {
-                drawTexture(stack, gui, guiLeft + (xSize / 2) - 4, guiTop + 45, xSize, 55, 8, 8);
+                drawTexture(stack, gui, guiLeft + container.getTile().getMachineType().getGui().getState().x, guiTop + container.getTile().getMachineType().getGui().getState().y, container.getTile().getMachineType().getGui().getStateLocation().x, container.getTile().getMachineType().getGui().getStateLocation().y, container.getTile().getMachineType().getGui().getState().z, container.getTile().getMachineType().getGui().getState().w);
             }
         }
     }
