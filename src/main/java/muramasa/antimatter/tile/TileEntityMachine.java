@@ -461,7 +461,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             if (inputs > 0) slots += (" IT_IN: " + inputs + ",");
             if (outputs > 0) slots += (" IT_OUT: " + outputs + ",");
         }
-        if (getMachineType().has(FLUID)) {
+        if (getMachineType().has(FLUID) && getMachineType().has(GUI)) {
             int inputs = getMachineType().getGui().getSlots(SlotType.FL_IN, getMachineTier()).size();
             int outputs = getMachineType().getGui().getSlots(SlotType.FL_OUT, getMachineTier()).size();
             if (inputs > 0) slots += (" FL_IN: " + inputs + ",");
