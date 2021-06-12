@@ -4,9 +4,12 @@ import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -35,6 +38,11 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
     public final static BiFunction<Direction, TileEntity, Boolean> PIPE_FUNCTION = (dir, tile) -> {
         if (tile instanceof TileEntityPipe) {
             return ((TileEntityPipe)tile).canConnect(dir.getIndex());
+        }
+        if (tile instanceof TileEntityMachine){
+            Direction direction = ((TileEntityMachine)tile).getOutputFacing();
+            if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching()) direction = ((TileEntityMachine)tile).getFacing();
+            return direction != null && direction == dir;
         }
         return false;
     };

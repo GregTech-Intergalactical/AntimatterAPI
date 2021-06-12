@@ -275,7 +275,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     // TODO: Fix
     public Direction getOutputFacing() {
-        if (type.getOutputCover() != null  || type.getOutputCover() != Data.COVERNONE) {
+        if (type.getOutputCover() != null  && type.getOutputCover() != Data.COVERNONE) {
             return coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(getFacing().getOpposite());
         }
         return null;
