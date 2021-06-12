@@ -27,17 +27,17 @@ public class Tier implements IAntimatterObject {
     public static Tier BRONZE = new Tier(Ref.ID, "bronze", 0, TextFormatting.WHITE);
     public static Tier STEEL = new Tier(Ref.ID, "steel", 0, TextFormatting.WHITE);
 
-    private String domain, id;
-    private int voltage;
-    private TextFormatting rarityColor;
-    private Texture baseTexture;
+    private final String domain, id;
+    private final int voltage;
+    private final TextFormatting rarityColor;
+    private final String baseTexture;
 
     public Tier(String domain, String id, int voltage, TextFormatting rarityColor) {
         this.domain = domain;
         this.id = id;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
-        this.baseTexture = new Texture(domain, "block/machine/base/" + id);
+        this.baseTexture = "block/machine/base/" + id;
         AntimatterAPI.register(Tier.class, this);
     }
 
@@ -66,12 +66,9 @@ public class Tier implements IAntimatterObject {
         return rarityColor;
     }
 
-    public Texture getBaseTexture() {
-        return baseTexture;
-    }
 
     public Texture getBaseTexture(String domain) {
-        return new Texture(domain, baseTexture.getPath());
+        return new Texture(domain, baseTexture);
     }
 
     public static Tier[] getSteam() {
@@ -92,14 +89,6 @@ public class Tier implements IAntimatterObject {
 
     public static Tier getMax() {
         return Tier.IV; //TODO update...
-    }
-
-    public static Texture[] getTextures(Tier... tiers) {
-        Texture[] textures = new Texture[tiers.length];
-        for (int i = 0; i < tiers.length; i++) {
-            textures[i] = tiers[i].getBaseTexture();
-        }
-        return textures;
     }
 
     public static Texture[] getTextures(String domain, Tier... tiers) {

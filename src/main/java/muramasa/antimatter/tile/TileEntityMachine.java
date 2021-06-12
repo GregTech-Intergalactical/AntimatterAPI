@@ -218,7 +218,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public Machine<?> getMachineType() {
         if (type != null) return type;
         Block block = getBlockState().getBlock();
-        if (!(block instanceof BlockMachine)) return Data.MACHINE_INVALID;
+        if (!(block instanceof BlockMachine)) return null;
         return ((BlockMachine) block).getType();
     }
 

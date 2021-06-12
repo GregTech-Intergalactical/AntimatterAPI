@@ -374,7 +374,7 @@ public class Data {
     public static final AntimatterArmorType LEGGINGS = new AntimatterArmorType(Ref.ID, "leggings", 40, 5, 0.0F, 0.0F, EquipmentSlotType.LEGS);
     public static final AntimatterArmorType BOOTS = new AntimatterArmorType(Ref.ID, "boots", 40, 2, 0.0F, 0.0F, EquipmentSlotType.FEET);
 
-    public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
+    //public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
     public static BaseCover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
     public static CoverOutput COVEROUTPUT = new CoverOutput();

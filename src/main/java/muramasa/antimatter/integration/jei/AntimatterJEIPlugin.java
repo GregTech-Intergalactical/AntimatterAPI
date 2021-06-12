@@ -33,10 +33,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -92,7 +89,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Stream.concat(DUST_TINY.all().stream().map(t -> DUST_TINY.get(t, 1)),DUST_SMALL.all().stream().map(t -> DUST_SMALL.get(t, 1))).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
-        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));
+        //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));
     }
 
     @Override
@@ -164,19 +161,17 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         REGISTRY.forEach((id, tuple) -> {
-            Machine<?> machine = Machine.get(tuple.machine);
-            if (machine != Data.MACHINE_INVALID){
-                machine.getTiers().forEach(t -> {
-                    ItemStack stack = new ItemStack(machine.getItem(t));
+            Optional<Machine<?>> machine = Machine.get(tuple.machine);
+            machine.ifPresent(mach -> {
+                mach.getTiers().forEach(t -> {
+                    ItemStack stack = new ItemStack(mach.getItem(t));
                     if (!stack.isEmpty()){
                         registration.addRecipeCatalyst(stack, new ResourceLocation(Ref.ID, id));
                     } else {
                         Antimatter.LOGGER.error("machine " + tuple.machine + " has an empty item. Did you do the machine correctly?");
                     }
                 });
-            } //else {
-          //      Antimatter.LOGGER.error("machine " + tuple.machine + " does not exist");
-         //   }
+            });
         });
     }
 }

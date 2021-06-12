@@ -36,10 +36,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -331,9 +328,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     /** Static Methods **/
-    public static Machine<?> get(String name) {
+    public static Optional<Machine<?>> get(String name) {
         Machine<?> machine = AntimatterAPI.get(Machine.class, name);
-        return machine != null ? machine : Data.MACHINE_INVALID;
+        return Optional.ofNullable(machine);
     }
 
     public static Collection<Machine<?>> getTypes(MachineFlag... flags) {
