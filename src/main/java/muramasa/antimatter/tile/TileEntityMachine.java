@@ -316,7 +316,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             disabledState = getMachineState();
             setMachineState(MachineState.DISABLED);
         }
-        setMachineState(getMachineState() == MachineState.DISABLED ? getDefaultMachineState() : MachineState.DISABLED);
     }
 
     public void setMachineState(MachineState newState) {
