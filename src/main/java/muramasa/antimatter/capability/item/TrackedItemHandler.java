@@ -48,9 +48,12 @@ public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHa
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (!input)
             return stack;
-        if (simulate) {
-            if (!validator.test(tile, stack)) return stack;
-        }
+        boolean validate = validator.test(tile, stack);
+        if (!validate)
+            return stack;
+        /*if (simulate) {
+
+        }*/
         return super.insertItem(slot, stack, simulate);
     }
 
