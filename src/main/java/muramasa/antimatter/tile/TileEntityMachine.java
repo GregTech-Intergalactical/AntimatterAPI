@@ -80,6 +80,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     protected Tier tier;
     protected MachineState machineState;
 
+    protected MachineState disabledState;
+
     /** Handlers **/
    /* public LazyOptional<MachineItemHandler<?>> itemHandler;
     public LazyOptional<MachineFluidHandler<?>> fluidHandler;
@@ -307,6 +309,13 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     public void toggleMachine() {
+        if (getMachineState() == MachineState.DISABLED) {
+            setMachineState(disabledState);
+            disabledState = null;
+        } else {
+            disabledState = getMachineState();
+            setMachineState(MachineState.DISABLED);
+        }
         setMachineState(getMachineState() == MachineState.DISABLED ? getDefaultMachineState() : MachineState.DISABLED);
     }
 
@@ -414,6 +423,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         super.read(state, tag);
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
+        if (tag.contains(Ref.KEY_MACHINE_STATE_D)) {
+            disabledState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE_D)];
+        }
         if (tag.contains(Ref.KEY_MACHINE_ITEMS))
             itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         if (tag.contains(Ref.KEY_MACHINE_ENERGY))
@@ -431,6 +443,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         super.write(tag);
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
+        if (disabledState != null)
+            tag.putInt(Ref.KEY_MACHINE_STATE_D, disabledState.ordinal());
         itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serializeNBT()));
         energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serializeNBT()));
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));

@@ -62,6 +62,7 @@ public class Ref {
     public static final String KEY_MACHINE_TIER = "t";
     public static final String KEY_MACHINE_ITEMS = "it";
     public static final String KEY_MACHINE_STATE = "s";
+    public static final String KEY_MACHINE_STATE_D = "sd";
     public static final String KEY_MACHINE_EJECT_FLUID = "mef";
     public static final String KEY_MACHINE_EJECT_ITEM = "mei";
 

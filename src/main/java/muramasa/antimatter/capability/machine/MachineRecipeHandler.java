@@ -167,15 +167,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                     tile.onRecipeStop();
                 }
                 break;
-            case IDLE:
-                break;
-            case INVALID_STRUCTURE:
-                break;
-            case POWER_LOSS:
-                break;
-            case OUTPUT_FULL:
-                break;
-            default:
+            case NO_POWER:
                 state = tickRecipe();
                 if (state != ACTIVE) {
                     tile.setMachineState(tile.getDefaultMachineState());
@@ -184,6 +176,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                     tile.setMachineState(state);
                     tile.onRecipeActivated(activeRecipe);
                 }
+                break;
+            default:
                 break;
         }
         tickingRecipe = false;
@@ -196,6 +190,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 activeRecipe = null;
                 return lastRecipe;
             }
+            activeRecipe = null;
         }
         RecipeMap<?> map = tile.getMachineType().getRecipeMap();
         return map != null ? map.find(tile.itemHandler, tile.fluidHandler, this::validateRecipe) : null;

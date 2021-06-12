@@ -147,10 +147,12 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         }
                         //TODO: Disbling machines isnt working.
                     } else if (type == HAMMER) {
-                     //   tile.toggleMachine();
-                        // TODO: Replace by new TranslationTextComponent()
-                      //  player.sendMessage(new StringTextComponent("Machine was " + (tile.getMachineState() == MachineState.DISABLED ? "disabled" : "enabled")), player.getUniqueID());
-                        player.sendMessage(new StringTextComponent("disabling machines doesnt work yet"), player.getUniqueID());
+                        tile.toggleMachine();
+                        if (tile.getMachineState() == MachineState.DISABLED) {
+                            player.sendMessage(new StringTextComponent("Disabled machine."), player.getUniqueID());
+                        } else {
+                            player.sendMessage(new StringTextComponent("Enabled machine."), player.getUniqueID());
+                        }
                         return ActionResultType.SUCCESS;
                     } else if (type == CROWBAR) {
                         if (!player.isCrouching()){
