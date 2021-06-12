@@ -16,6 +16,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -223,6 +224,6 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public void refresh() {
-
+        Tesseract.FLUID.refreshNode(tile.getWorld(), tile.getPos().toLong());
     }
 }
