@@ -436,8 +436,9 @@ public class Data {
 
     public static void init(Dist side) {
         AXE.addBehaviour(BehaviourLogStripping.INSTANCE, BehaviourTreeFelling.INSTANCE);
+        PICKAXE.addBehaviour(BehaviourTorchPlacing.INSTANCE);
         CHAINSAW.addBehaviour(BehaviourTreeFelling.INSTANCE, BehaviourLogStripping.INSTANCE, new BehaviourAOEBreak(1, 1, 1));
-        DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1));
+        DRILL.addBehaviour(new BehaviourAOEBreak(1, 1, 1), BehaviourTorchPlacing.INSTANCE);
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
         KNIFE.addBehaviour(BehaviourPumpkinCarving.INSTANCE);
