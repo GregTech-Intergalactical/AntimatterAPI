@@ -32,10 +32,11 @@ public class GuiData {
     protected boolean enablePlayerSlots = true;
     protected ResourceLocation buttonLoc;
 
-    protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0), progress = new int4(78, 24, 20, 18), state = new int4(84, 45, 8, 8);
+    protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0), progress = new int4(78, 24, 20, 18), state = new int4(84, 45, 8, 8), io = new int4(9, 64, 14, 14), item = new int4(35, 63, 16, 16), fluid = new int4(53, 63, 16, 16);
     protected int2 progressLocation = new int2(176, 0), stateLocation = new int2(176, 55);
+    protected ButtonOverlay itemLocation = new ButtonOverlay("item_eject", 177, 37, 16, 16), fluidLocation = new ButtonOverlay("fluid_eject", 177, 19, 16, 16);
     protected BarDir side = BarDir.LEFT;
-    protected boolean barFill = true;
+    protected boolean barFill = true, hasIOButton = true;
 
     protected Object2ObjectMap<String, List<SlotData<?>>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
     protected Object2ObjectMap<String, Object2IntOpenHashMap<SlotType<?>>> COUNT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
@@ -101,8 +102,32 @@ public class GuiData {
         return side;
     }
 
+    public int4 getIo() {
+        return io;
+    }
+
+    public int4 getItem() {
+        return item;
+    }
+
+    public int4 getFluid() {
+        return fluid;
+    }
+
     public boolean isBarFill(){
         return barFill;
+    }
+
+    public boolean hasIOButton() {
+        return hasIOButton;
+    }
+
+    public ButtonOverlay getItemLocation() {
+        return itemLocation;
+    }
+
+    public ButtonOverlay getFluidLocation() {
+        return fluidLocation;
     }
 
     public boolean enablePlayerSlots() {
@@ -133,6 +158,21 @@ public class GuiData {
         return this;
     }
 
+    public GuiData setIO(int x, int y, int l, int w) {
+        io.set(x, y, l, w);
+        return this;
+    }
+
+    public GuiData setItem(int x, int y, int l, int w) {
+        item.set(x, y, l, w);
+        return this;
+    }
+
+    public GuiData setFluid(int x, int y, int l, int w) {
+        fluid.set(x, y, l, w);
+        return this;
+    }
+
     public GuiData setProgressLocation(int x, int y) {
         progressLocation.set(x, y);
         return this;
@@ -143,6 +183,16 @@ public class GuiData {
         return this;
     }
 
+    public GuiData setItemLocation(int x, int y, int l, int w) {
+        itemLocation = new ButtonOverlay(itemLocation.id, x, y, l, w);
+        return this;
+    }
+
+    public GuiData setFluidLocation(int x, int y, int l, int w) {
+        fluidLocation = new ButtonOverlay(fluidLocation.id, x, y, l, w);
+        return this;
+    }
+
     public GuiData setDir(BarDir side) {
         this.side = side;
         return this;
@@ -150,6 +200,11 @@ public class GuiData {
 
     public GuiData setBarFill(boolean barFill){
         this.barFill = barFill;
+        return this;
+    }
+
+    public GuiData setHasIOButton(boolean hasIOButton) {
+        this.hasIOButton = hasIOButton;
         return this;
     }
 

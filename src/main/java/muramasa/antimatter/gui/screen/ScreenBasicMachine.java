@@ -3,6 +3,7 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.ButtonOverlay;
+import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.container.ContainerBasicMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.widget.SwitchWidget;
@@ -49,22 +50,22 @@ public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends Contai
     @Override
     protected void init() {
         super.init();
-        ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
-        boolean shouldDrawIO = this.getClass() == ScreenBasicMachine.class && container.getTile().getClass() == TileEntityMachine.class
-                && container.getTile().getMachineTier().getVoltage() > 0;
+        GuiData data = container.getTile().getMachineType().getGui();
+        ResourceLocation loc = data.getButtonLocation();
+        boolean shouldDrawIO = container.getTile().getMachineTier().getVoltage() > 0 && data.hasIOButton();
         if (shouldDrawIO) {
             if (container.getTile().has(MachineFlag.ITEM)) {
-                item = new SwitchWidget(gui, guiLeft + 35, guiTop + 63, 16, 16, ITEM, (b, s) -> {
+                item = new SwitchWidget(gui, guiLeft + data.getItem().x, guiTop + data.getItem().y, data.getItem().z, data.getItem().w, data.getItemLocation(), (b, s) -> {
                     Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
                 }, container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.get(t.getOutputFacing()))).orElse(false));
             }
             if (container.getTile().has(MachineFlag.FLUID)) {
-                fluid = new SwitchWidget(gui, guiLeft + 53, guiTop + 63, 16, 16, FLUID, (b, s) -> {
+                fluid = new SwitchWidget(gui, guiLeft + data.getFluid().x, guiTop + data.getFluid().y, data.getFluid().z, data.getFluid().w, data.getFluidLocation(), (b, s) -> {
                     Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
                 },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
             }
             if (item != null || fluid != null) {
-                addButton(new SwitchWidget(loc, guiLeft + 9, guiTop + 64, 14, 14, ButtonOverlay.INPUT_OUTPUT , (b, s) -> {
+                addButton(new SwitchWidget(loc, guiLeft + data.getIo().x, guiTop + data.getIo().y, data.getIo().z, data.getIo().w, ButtonOverlay.INPUT_OUTPUT , (b, s) -> {
                     if (s) {
                         if (item != null) addButton(item);
                         if (fluid != null) addButton(fluid);
