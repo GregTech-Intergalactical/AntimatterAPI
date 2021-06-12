@@ -146,7 +146,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     @Override
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
-        return false;
+        return covers.get(side).onInteract(player, hand, side, type);
     }
 
     @Override

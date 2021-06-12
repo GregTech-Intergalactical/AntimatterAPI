@@ -175,7 +175,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                             }
                         }
                      }
-                    boolean coverInteract = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.onInteract(player, hand, hit.getFace(), Utils.getToolType(player))).orElse(false);
+                    boolean coverInteract = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.onInteract(player, hand, hit.getFace(), Utils.getToolType(player))).orElse(false);
                     if (coverInteract) return ActionResultType.SUCCESS;
                     //Has gui?
                     if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> {
