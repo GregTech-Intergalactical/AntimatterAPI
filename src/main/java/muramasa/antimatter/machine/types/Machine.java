@@ -79,6 +79,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean allowFrontCovers = false;
     protected ICover outputCover = COVEROUTPUT;
     protected boolean allowVerticalFacing = false;
+
     //TODO get valid covers
 
     public Machine(String domain, String id, Object... data) {
@@ -183,7 +184,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         addFlags(flags.toArray(new MachineFlag[0]));
 
         if (overlayTextures == null) {
-            overlayTextures = (type, state) -> {
+            overlayTextures = (type, state, tier) -> {
                 if (state != MachineState.ACTIVE && state != MachineState.INVALID_STRUCTURE) state = MachineState.IDLE;
                 String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
                 return new Texture[] {
@@ -242,9 +243,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         for (Tier tier : getTiers()) {
             //textures.addAll(Arrays.asList(baseHandler.getBase(this, tier)));
             textures.addAll(Arrays.asList(getBaseTexture(tier)));
+            textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE, tier)));
+            textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE, tier)));
         }
-        textures.addAll(Arrays.asList(getOverlayTextures(MachineState.IDLE)));
-        textures.addAll(Arrays.asList(getOverlayTextures(MachineState.ACTIVE)));
         return textures;
     }
 
@@ -259,8 +260,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
 
+    public Texture[] getOverlayTextures(MachineState state, Tier tier) {
+        return overlayTextures.getOverlays(this, state, tier);
+    }
+
     public Texture[] getOverlayTextures(MachineState state) {
-        return overlayTextures.getOverlays(this, state);
+        return overlayTextures.getOverlays(this, state, this.getFirstTier());
     }
 
     public ResourceLocation getOverlayModel(Direction side) {

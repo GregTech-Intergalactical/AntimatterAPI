@@ -421,7 +421,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 b.texture("base" +  Ref.DIRS[s].getString(), base[s]);
             }
         }
-        Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE);
+        Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE, tier);
         for (int s = 0; s < 6; s++) {
             b.texture("overlay" + Ref.DIRS[s].getString(), overlays[s]);
         }
@@ -438,7 +438,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     }
 
     void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
-        Texture[] overlays = type.getOverlayTextures(state);
+        Texture[] overlays = type.getOverlayTextures(state, tier);
         for (Direction f : Plane.HORIZONTAL) {
             for (Direction o : Ref.DIRS) {
                 builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.getIndex()])).rot(f)));

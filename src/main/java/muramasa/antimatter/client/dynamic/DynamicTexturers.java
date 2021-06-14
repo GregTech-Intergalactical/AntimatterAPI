@@ -32,7 +32,7 @@ public class DynamicTexturers {
         return b.getQuads(t.state, null, t.rand, t.data);
     }, t -> {
         t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(t.dir))));
-        t.model.textures.put("overlay", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_TYPE).getOverlayTextures(t.data.getData(AntimatterProperties.MACHINE_STATE))[
+        t.model.textures.put("overlay", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_TYPE).getOverlayTextures(t.data.getData(AntimatterProperties.MACHINE_STATE), t.source.getMachineTier())[
                 Direction.rotateFace(Utils.getModelRotation(t.source.getBlockState().get(BlockStateProperties.HORIZONTAL_FACING)).getRotation().inverse().getMatrix(), t.dir).getIndex()])));
     });
 }

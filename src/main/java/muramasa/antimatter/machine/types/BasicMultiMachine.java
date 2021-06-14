@@ -50,7 +50,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
     public List<Texture> getTextures() {
         List<Texture> textures = super.getTextures();
         getTiers().forEach(t -> textures.addAll(Arrays.asList(getBaseTexture(t))));
-        textures.addAll(Arrays.asList(getOverlayTextures(MachineState.INVALID_STRUCTURE)));
+        getTiers().forEach(t -> textures.addAll(Arrays.asList(getOverlayTextures(MachineState.INVALID_STRUCTURE, t))));
         return textures;
     }
 }
