@@ -6,8 +6,10 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -41,7 +43,7 @@ public class CoveredBakedModel extends AttachableBakedModel {
         Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE) ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(side) : data.getData(AntimatterProperties.MACHINE_TEXTURE).apply(side);
         CoverStack<?> c = covers.get(side);
         if (c.isEmpty()) return quads;
-        quads = covers.getTexturer(side).getQuads(quads,state,c.getCover(),new BaseCover.DynamicKey(state.get(BlockStateProperties.HORIZONTAL_FACING), tex, c.getCover().getId()), side.getIndex(), data);
+        quads = covers.getTexturer(side).getQuads(quads,state,c.getCover(),new BaseCover.DynamicKey(Utils.dirFromState(state), tex, c.getCover().getId()), side.getIndex(), data);
         return quads;
     }
 }

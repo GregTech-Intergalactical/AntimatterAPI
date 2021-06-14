@@ -35,6 +35,7 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.ParticleTypes;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.tileentity.TileEntity;
@@ -112,6 +113,11 @@ public class Utils {
             if (equals(list.get(i), item)) return i;
         }
         return -1;
+    }
+
+    public static Direction dirFromState(BlockState state) {
+        if (state.hasProperty(BlockStateProperties.FACING)) return state.get(BlockStateProperties.FACING);
+        return state.get(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     public static ItemStack extractAny(IItemHandler handler) {
