@@ -246,15 +246,27 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (state == AIR.getDefaultState()) {
             return Direction.NORTH;
         }
+        if (getMachineType().allowVerticalFacing()){
+            return state.get(BlockStateProperties.FACING);
+        }
         return state.get(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     public boolean setFacing(Direction side) {
         //TODO: Move covers as well?
-        if (side == getFacing() || side.getAxis() == Direction.Axis.Y) return false;
+        if (side == getFacing() || (side.getAxis() == Direction.Axis.Y && !getMachineType().allowVerticalFacing())) return false;
         boolean isEmpty = coverHandler.map(ch -> ch.get(side).isEmpty()).orElse(true);
         if (isEmpty) {
-            getWorld().setBlockState(getPos(), getBlockState().with(BlockStateProperties.HORIZONTAL_FACING, side));
+            BlockState state = getBlockState();
+            if (getMachineType().allowVerticalFacing()){
+                state = state.with(BlockStateProperties.FACING, side);
+                if (side.getAxis() != Direction.Axis.Y){
+                    state = state.with(BlockMachine.HORIZONTAL_FACING, side);
+                }
+            } else {
+                state = state.with(BlockStateProperties.HORIZONTAL_FACING, side);
+            }
+            getWorld().setBlockState(getPos(), state);
             refreshCaps();
             return true;
         }

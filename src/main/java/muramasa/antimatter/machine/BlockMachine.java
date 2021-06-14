@@ -36,6 +36,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootContext;
+import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -72,8 +73,11 @@ import static net.minecraft.util.Direction.*;
 
 public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider {
 
+    public static final DirectionProperty HORIZONTAL_FACING = DirectionProperty.create("horizontal_facing", Direction.Plane.HORIZONTAL);
+
     protected Machine<?> type;
     protected Tier tier;
+    protected final StateContainer<Block, BlockState> stateContainer;
 
     public BlockMachine(Machine<?> type, Tier tier) {
         this(type, tier, Properties.create(WRENCH_MATERIAL).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL).setRequiresTool());
@@ -81,8 +85,12 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     public BlockMachine(Machine<?> type, Tier tier, Properties properties) {
         super(type.getDomain(), type.getId() + "_" + tier.getId(), properties);
+        StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
         this.type = type;
         this.tier = tier;
+        this.fillStateContainer(builder);
+        this.stateContainer = builder.createStateContainer(Block::getDefaultState, BlockState::new);
+        this.setDefaultState(this.stateContainer.getBaseState());
     }
 
     public Machine<?> getType() {
@@ -95,13 +103,27 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(BlockStateProperties.HORIZONTAL_FACING);
+        if (type == null) return; // means this is the first run
+        if (type.allowVerticalFacing()){
+            builder.add(BlockStateProperties.FACING).add(HORIZONTAL_FACING);
+        } else {
+            builder.add(BlockStateProperties.HORIZONTAL_FACING);
+        }
+    }
+
+    @Override
+    public StateContainer<Block, BlockState> getStateContainer() {
+        return stateContainer;
     }
 
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+        if (type.allowVerticalFacing()){
+            return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite()).with(BlockStateProperties.FACING, context.getFace());
+        } else {
+            return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+        }
     }
 
     @Nullable
@@ -252,8 +274,11 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (placer != null) { //Y = 0 , reduce to xz plane
-            Direction dir = getFacingFromVector((float) placer.getLookVec().x, (float) 0, (float) placer.getLookVec().z).getOpposite();
-            world.setBlockState(pos, state.with(BlockStateProperties.HORIZONTAL_FACING, dir));
+            float y = (float) (type.allowVerticalFacing() ? placer.getLookVec().y : 0);
+            Direction dir = getFacingFromVector((float) placer.getLookVec().x, y, (float) placer.getLookVec().z).getOpposite();
+            BlockState state1 = state.with((type.allowVerticalFacing() ? BlockStateProperties.FACING : BlockStateProperties.HORIZONTAL_FACING), dir);
+            if (type.allowVerticalFacing()) state1 = state1.with(HORIZONTAL_FACING, placer.getHorizontalFacing().getOpposite());
+            world.setBlockState(pos, state1);
         }
     }
 
@@ -326,12 +351,23 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
-        Direction facing = state.get(BlockStateProperties.HORIZONTAL_FACING);
+        Direction facing = type.allowVerticalFacing() ? state.get(BlockStateProperties.FACING) : state.get(BlockStateProperties.HORIZONTAL_FACING);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityMachine) {
             MachineState machineState = ((TileEntityMachine) tile).getMachineState();
             if (((TileEntityMachine<?>) tile).coverHandler.isPresent()) {
                 CoverHandler<?> h = ((TileEntityMachine<?>) tile).coverHandler.orElse(null);
+                if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y){
+                    Direction horizontalFacing = state.get(HORIZONTAL_FACING);
+                    return config.set(new int[] {
+                            h.get(DOWN).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(DOWN, facing), machineState) : 0,
+                            h.get(UP).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(UP, facing), machineState) : 0,
+                            h.get(NORTH).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(NORTH, facing), machineState) : 0,
+                            h.get(SOUTH).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(SOUTH, facing), machineState) : 0,
+                            h.get(WEST).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(WEST, facing), machineState) : 0,
+                            h.get(EAST).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(EAST, facing), machineState) : 0
+                    });
+                }
                 return config.set(new int[] {
                     h.get(DOWN).skipRender() ? getModelId(facing, DOWN, machineState) : 0,
                     h.get(UP).skipRender() ? getModelId(facing, UP, machineState) : 0,
@@ -341,17 +377,34 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     h.get(EAST).skipRender() ? getModelId(facing, Utils.coverRotateFacing(EAST,facing), machineState) : 0
                 });
             } else {
+                if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y){
+                    Direction horizontalFacing = state.get(HORIZONTAL_FACING);
+                    int[] configInts = new int[] {
+                            getModelId(facing, horizontalFacing, DOWN, machineState),
+                            getModelId(facing, horizontalFacing, UP, machineState),
+                            getModelId(facing, horizontalFacing, NORTH, machineState),
+                            getModelId(facing, horizontalFacing, SOUTH, machineState),
+                            getModelId(facing, horizontalFacing, WEST, machineState),
+                            getModelId(facing, horizontalFacing, EAST, machineState)
+                    };
+                    return config.set(configInts);
+                }
                 return config.set(new int[] {
-                    getModelId(facing, DOWN, machineState),
-                    getModelId(facing, UP, machineState),
-                    getModelId(facing, NORTH, machineState),
-                    getModelId(facing, SOUTH, machineState),
-                    getModelId(facing, WEST, machineState),
-                    getModelId(facing, EAST, machineState)
+                        getModelId(facing, DOWN, machineState),
+                        getModelId(facing, UP, machineState),
+                        getModelId(facing, NORTH, machineState),
+                        getModelId(facing, SOUTH, machineState),
+                        getModelId(facing, WEST, machineState),
+                        getModelId(facing, EAST, machineState)
                 });
             }
         }
         return config.set(new int[]{0});
+    }
+
+    protected int getModelId(Direction facing, Direction horizontalFacing, Direction overlay, MachineState state) {
+        state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
+        return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + ((horizontalFacing.getIndex() + 1) * 100) + (overlay.getIndex() + 1);
     }
 
     protected int getModelId(Direction facing, Direction overlay, MachineState state) {
@@ -386,9 +439,18 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
         Texture[] overlays = type.getOverlayTextures(state);
-        for (Direction f : Arrays.asList(NORTH, WEST, SOUTH, EAST)) {
+        for (Direction f : Plane.HORIZONTAL) {
             for (Direction o : Ref.DIRS) {
                 builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.getIndex()])).rot(f)));
+            }
+        }
+        if (type.allowVerticalFacing()){
+            for (Direction f : Plane.VERTICAL){
+                for (Direction h : Plane.HORIZONTAL){
+                    for (Direction o : Ref.DIRS) {
+                        builder.config(getModelId(f, h, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.getIndex()])).rot(f, h)));
+                    }
+                }
             }
         }
     }

@@ -78,6 +78,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /** Behaviours **/
     protected boolean allowFrontCovers = false;
     protected ICover outputCover = COVEROUTPUT;
+    protected boolean allowVerticalFacing = false;
     //TODO get valid covers
 
     public Machine(String domain, String id, Object... data) {
@@ -210,6 +211,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    public T setAllowVerticalFacing(boolean allowVerticalFacing) {
+        this.allowVerticalFacing = allowVerticalFacing;
+        return (T) this;
+    }
+
     public String getDomain() {
         return domain;
     }
@@ -325,6 +331,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public Structure getStructure(Tier tier) {
         return structures.get(tier);
+    }
+
+    public boolean allowVerticalFacing() {
+        return allowVerticalFacing;
     }
 
     /** Static Methods **/

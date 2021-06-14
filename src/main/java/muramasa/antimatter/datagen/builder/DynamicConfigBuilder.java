@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen.builder;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.util.Dir;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
@@ -71,6 +72,56 @@ public class DynamicConfigBuilder {
                 break;
             case EAST:
                 this.rotations = new int[]{0, 270, 0};
+                break;
+        }
+        return this;
+    }
+
+    public DynamicConfigBuilder rot(Direction dir, Direction h) {
+        switch (dir) {
+            case NORTH:
+                this.rotations = new int[]{0, 0, 0};
+                break;
+            case WEST:
+                this.rotations = new int[]{0, 90, 0};
+                break;
+            case SOUTH:
+                this.rotations = new int[]{0, 180, 0};
+                break;
+            case EAST:
+                this.rotations = new int[]{0, 270, 0};
+                break;
+            case UP:
+                switch (h){
+                    case NORTH:
+                        this.rotations = new int[]{90, 0, 0};
+                        break;
+                    case WEST:
+                        this.rotations = new int[]{0, 90, 90};
+                        break;
+                    case SOUTH:
+                        this.rotations = new int[]{270, 180, 0};
+                        break;
+                    case EAST:
+                        this.rotations = new int[]{90, 270, 90};
+                        break;
+                }
+                break;
+            case DOWN:
+                switch (h){
+                    case NORTH:
+                        this.rotations = new int[]{270, 0, 0};
+                        break;
+                    case WEST:
+                        this.rotations = new int[]{0, 90, 90};
+                        break;
+                    case SOUTH:
+                        this.rotations = new int[]{90, 180, 0};
+                        break;
+                    case EAST:
+                        this.rotations = new int[]{0, 270, 270};
+                        break;
+                }
                 break;
         }
         return this;
