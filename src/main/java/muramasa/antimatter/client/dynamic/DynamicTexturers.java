@@ -33,6 +33,6 @@ public class DynamicTexturers {
     }, t -> {
         t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(t.dir))));
         t.model.textures.put("overlay", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_TYPE).getOverlayTextures(t.data.getData(AntimatterProperties.MACHINE_STATE), t.source.getMachineTier())[
-                Direction.rotateFace(Utils.getModelRotation(t.source.getBlockState().get(BlockStateProperties.HORIZONTAL_FACING)).getRotation().inverse().getMatrix(), t.dir).getIndex()])));
+                Direction.rotateFace(Utils.getModelRotation(Utils.dirFromState(t.source.getBlockState())).getRotation().inverse().getMatrix(), t.dir).getIndex()])));
     });
 }
