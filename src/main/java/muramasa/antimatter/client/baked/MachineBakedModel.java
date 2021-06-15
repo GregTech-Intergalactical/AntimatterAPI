@@ -8,6 +8,7 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -43,7 +44,7 @@ public class MachineBakedModel extends CoveredBakedModel {
                 MachineCoverHandler<?> covers = t.coverHandler.orElse(null);
                 CoverStack<?> c = covers == null ? null : covers.get(side);
                 if (c == null || c.skipRender()) {
-                    TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, state.get((bm.getType().allowVerticalFacing() ? BlockStateProperties.FACING : BlockStateProperties.HORIZONTAL_FACING)), data.getData(AntimatterProperties.MACHINE_STATE));
+                    TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, Utils.dirFromState(state), data.getData(AntimatterProperties.MACHINE_STATE));
                     quads = t.multiTexturer.getValue().getQuads(quads, state, t, key, side.getIndex(), data);
                     assert quads.size() == 0 || quads.get(0).getFace() == side;
                 }
