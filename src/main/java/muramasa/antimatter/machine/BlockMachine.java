@@ -24,6 +24,7 @@ import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -141,10 +142,13 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     }
 
     @Override
-    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        TileEntityMachine<?> tile = (TileEntityMachine<?>)world.getTileEntity(pos);
-        if (tile != null){
-            tile.onBlockUpdate(neighbor);
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+        if (!worldIn.isRemote){
+            TileEntityMachine<?> tile = (TileEntityMachine<?>)worldIn.getTileEntity(pos);
+            if (tile != null){
+                tile.onBlockUpdate(fromPos);
+            }
         }
     }
 

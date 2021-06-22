@@ -175,10 +175,10 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override // Used to set connection for sides where neighbor has pre-set connection
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        TileEntityPipe tile = getTilePipe(worldIn, pos);
+        TileEntityPipe<?> tile = getTilePipe(worldIn, pos);
         if (tile != null) {
             for (Direction side : Ref.DIRS) {
-                TileEntityPipe neighbor = getTilePipe(worldIn, pos.offset(side));
+                TileEntityPipe<?> neighbor = getTilePipe(worldIn, pos.offset(side));
                 if (tile.blocksSide(side)) return;
                 if (neighbor != null && tile.validateTile(neighbor, side.getOpposite())) {
                     if (neighbor.canConnect(side.getOpposite().getIndex())) {
@@ -191,7 +191,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     // Used to set connection between pipes on which block was placed
     public boolean onBlockPlacedTo(World world, BlockPos pos, Direction face) {
-        TileEntityPipe tile = getTilePipe(world, pos);
+        TileEntityPipe<?> tile = getTilePipe(world, pos);
         if (tile != null) {
             if (tile.blocksSide(face)) return false;
             TileEntity neighbor = world.getTileEntity(pos.offset(face.getOpposite()));
@@ -199,7 +199,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 if (tile.validateTile(neighbor, face)) {
                     tile.setConnection(face.getOpposite());
                     if (neighbor instanceof TileEntityPipe) {
-                        TileEntityPipe pipe = (TileEntityPipe) neighbor;
+                        TileEntityPipe<?> pipe = (TileEntityPipe<?>) neighbor;
                         if (!pipe.canConnect(face.getIndex())) {
                             pipe.setConnection(face);
                         }
@@ -213,11 +213,21 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         return false;
     }
 
+    @Override
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+        if (!worldIn.isRemote){
+            TileEntityPipe<?> tile = (TileEntityPipe<?>)worldIn.getTileEntity(pos);
+            if (tile != null){
+                tile.onBlockUpdate(fromPos);
+            }
+        }
+    }
+
     @Override // Used to clear connection for sides where neighbor was removed
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        TileEntityPipe tile = getTilePipe(world, pos);
+        TileEntityPipe<?> tile = getTilePipe(world, pos);
         if (tile != null) {
-            tile.onBlockUpdate(neighbor);
             for (Direction side : Ref.DIRS) {
                 // Looking for the side where is a neighbor was
                 // Check if the block is actually air or there was another reason for change.
@@ -342,9 +352,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Nullable
-    private static TileEntityPipe getTilePipe(IBlockReader world, BlockPos pos) {
+    private static TileEntityPipe<?> getTilePipe(IBlockReader world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
-        return tile instanceof TileEntityPipe ? (TileEntityPipe) tile : null;
+        return tile instanceof TileEntityPipe ? (TileEntityPipe<?>) tile : null;
     }
 
     @Override
