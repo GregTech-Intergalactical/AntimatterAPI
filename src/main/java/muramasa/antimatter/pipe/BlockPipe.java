@@ -17,6 +17,7 @@ import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -88,8 +89,6 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         recursiveShapeBuild(0, (byte) 0);
         shapes.put(getPipeID(0, 0), VoxelShapes.create(size.getAABB()));
     }
-
-    
 
     @Override
     public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
@@ -218,6 +217,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
+            tile.onBlockUpdate(neighbor);
             for (Direction side : Ref.DIRS) {
                 // Looking for the side where is a neighbor was
                 // Check if the block is actually air or there was another reason for change.

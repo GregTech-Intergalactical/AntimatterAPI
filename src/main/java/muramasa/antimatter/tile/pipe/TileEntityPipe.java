@@ -70,6 +70,11 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         }*/
     }
 
+    public void onBlockUpdate(BlockPos neighbor){
+        Direction facing = Utils.getOffsetFacing(this.getPos(), neighbor);
+        coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate(facing));
+    }
+
     public void ofState(BlockState state) {
         this.size = getPipeSize(state);
         this.type = getPipeType(state);

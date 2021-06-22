@@ -552,6 +552,16 @@ public class Utils {
         return r.getRotation().rotateFace(toRotate);
     }
 
+    public static Direction getOffsetFacing(BlockPos center, BlockPos offset){
+        if (center.getX() > offset.getX()) return Direction.WEST;
+        else if (center.getX() < offset.getX()) return Direction.EAST;
+        else if (center.getZ() > offset.getZ()) return Direction.NORTH;
+        else if (center.getZ() < offset.getZ()) return Direction.SOUTH;
+        else if (center.getY() > offset.getY()) return Direction.DOWN;
+        else if (center.getY() < offset.getY()) return Direction.UP;
+        else return Direction.NORTH;
+    }
+
     final static double INTERACTION_OFFSET = 0.25;
 
     public static Direction getInteractSide(BlockRayTraceResult res) {

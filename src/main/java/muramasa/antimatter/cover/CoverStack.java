@@ -9,6 +9,7 @@ import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.Dir;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -74,6 +75,10 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     //Called on update of the world.
     public void onUpdate(Direction side) {
         cover.onUpdate(this, side);
+    }
+
+    public void onBlockUpdate(Direction side){
+        cover.onBlockUpdate(this, side);
     }
 
     public void onMachineEvent(TileEntityMachine tile, IMachineEvent event, int ...data) {

@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
@@ -164,6 +165,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     //Called in order to validate a found recipe.
     public boolean onRecipeFound(Recipe r) {
         return true;
+    }
+
+    public void onBlockUpdate(BlockPos neighbor){
+        Direction facing = Utils.getOffsetFacing(this.getPos(), neighbor);
+        coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate(facing));
     }
 
     public void ofState(@Nonnull BlockState state) {

@@ -51,6 +51,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
@@ -137,6 +138,14 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public boolean hasTileEntity(BlockState state) {
         return true;
+    }
+
+    @Override
+    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
+        TileEntityMachine<?> tile = (TileEntityMachine<?>)world.getTileEntity(pos);
+        if (tile != null){
+            tile.onBlockUpdate(neighbor);
+        }
     }
 
     @Nonnull
