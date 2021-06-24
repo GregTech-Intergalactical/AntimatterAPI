@@ -45,8 +45,8 @@ public class MaterialTag implements IMaterialTag {
     private Set<Material> materials = new ObjectLinkedOpenHashSet<>();
 
     public MaterialTag(String id) {
-        this.id = id;
-        register(MaterialTag.class, id);
+        this.id = id + "_tag";
+        register(MaterialTag.class, id + "_tag");
     }
     
     @Override
