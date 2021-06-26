@@ -188,6 +188,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                         } else {
                             player.sendMessage(new StringTextComponent("Enabled machine."), player.getUniqueID());
                         }
+                        Utils.damageStack(stack, player);
                         return ActionResultType.SUCCESS;
                     } else if (type == CROWBAR) {
                         if (!player.isCrouching()){
