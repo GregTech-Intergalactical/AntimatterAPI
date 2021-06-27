@@ -555,6 +555,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                     if (tile.getMachineState() == tile.getDefaultMachineState() && activeRecipe != null) {
                         tile.setMachineState(NO_POWER);
                     }
+                    if (tile.getMachineState().allowRecipeCheck() && tile.getMachineState() != POWER_LOSS && tickTimer == 0) {
+                        checkRecipe();
+                    }
                     break;
                 case ENERGY_DRAINED:
                     if (generator && tile.getMachineState() == tile.getDefaultMachineState()) {

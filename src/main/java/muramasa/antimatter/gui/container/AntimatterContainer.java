@@ -1,11 +1,14 @@
 package muramasa.antimatter.gui.container;
 
+import muramasa.antimatter.capability.item.TrackedItemHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 public abstract class AntimatterContainer extends Container {
 
@@ -88,6 +91,13 @@ public abstract class AntimatterContainer extends Container {
                         stack.setCount(0);
                         itemstack.setCount(j);
                         slot.onSlotChanged();
+                        if (slot instanceof SlotItemHandler) {
+                            SlotItemHandler handler = (SlotItemHandler) slot;
+                            IItemHandler handle = handler.getItemHandler();
+                            if (handle instanceof TrackedItemHandler<?>) {
+                                ((TrackedItemHandler<?>)handle).onContentsChanged(slot.slotNumber);
+                            }
+                        }
                         flag = true;
                     } else if (itemstack.getCount() < maxSize) {
                         stack.shrink(maxSize - itemstack.getCount());
