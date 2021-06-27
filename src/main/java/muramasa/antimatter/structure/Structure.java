@@ -76,7 +76,7 @@ public class Structure {
         if (el != null) {
             return el.evaluate(tile, new int3(pos.getX(), pos.getY(), pos.getZ()), res);
         }
-        return false;
+        return true;
     }
 
     public static class Point {

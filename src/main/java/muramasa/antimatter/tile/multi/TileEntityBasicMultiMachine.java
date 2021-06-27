@@ -128,7 +128,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         }
         return ok;
     }
-
+    @Override
     public void onBlockUpdate(BlockPos pos) {
         if (checkingStructure > 0) return;
         if (result != null) {
