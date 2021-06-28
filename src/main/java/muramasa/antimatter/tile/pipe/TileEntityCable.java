@@ -18,8 +18,8 @@ import tesseract.api.gt.IGTCable;
 
 public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler> {
 
-    public TileEntityCable(T type) {
-        super(type);
+    public TileEntityCable(T type, boolean covered) {
+        super(type, covered);
         pipeCapHolder.set(() -> this);
     }
 
@@ -98,7 +98,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     public static class TileEntityCoveredCable<T extends Cable<T>> extends TileEntityCable<T> implements ITickablePipe {
 
         public TileEntityCoveredCable(T type) {
-            super(type);
+            super(type, true);
         }
 
         @Override

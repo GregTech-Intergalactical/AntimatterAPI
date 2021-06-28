@@ -28,8 +28,8 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     protected LazyOptional<PipeFluidHandler> fluidHandler;
 
-    public TileEntityFluidPipe(T type) {
-        super(type);
+    public TileEntityFluidPipe(T type, boolean covered) {
+        super(type, covered);
         if (fluidHandler == null) {
             fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0)) : LazyOptional.empty();
         }
@@ -139,7 +139,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public static class TileEntityCoveredFluidPipe<T extends FluidPipe<T>> extends TileEntityFluidPipe<T> implements ITickablePipe {
 
         public TileEntityCoveredFluidPipe(T type) {
-            super(type);
+            super(type, true);
         }
 
         @Override

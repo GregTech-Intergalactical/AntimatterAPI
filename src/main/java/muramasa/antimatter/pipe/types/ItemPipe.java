@@ -16,7 +16,7 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
     protected int[] caps;
 
     public ItemPipe(String domain, Material material) {
-        super(domain, material, TileEntityItemPipe::new, TileEntityCoveredItemPipe::new);
+        super(domain, material, t -> new TileEntityItemPipe<>(t, false), TileEntityCoveredItemPipe::new);
         material.flags(MaterialTag.ITEMPIPE);
     }
 

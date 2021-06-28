@@ -17,8 +17,8 @@ import tesseract.api.item.IItemPipe;
 
 public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T> implements IItemPipe, Dispatch.Sided<IItemHandler> {
 
-    public TileEntityItemPipe(T type) {
-        super(type);
+    public TileEntityItemPipe(T type, boolean covered) {
+        super(type, covered);
         pipeCapHolder.set(() -> this);
     }
 
@@ -86,7 +86,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     public static class TileEntityCoveredItemPipe<T extends ItemPipe<T>> extends TileEntityItemPipe<T> implements ITickablePipe {
 
         public TileEntityCoveredItemPipe(T type) {
-            super(type);
+            super(type, true);
         }
 
         @Override

@@ -44,8 +44,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     protected Holder pipeCapHolder;
 
-    public TileEntityPipe(T type) {
-        super(type.getTileType());
+    public TileEntityPipe(T type, boolean covered) {
+        super(covered ? type.getCoveredType() : type.getTileType());
         this.type = type;
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
         this.pipeCapHolder = new Holder<>(getCapability(), this.dispatch);

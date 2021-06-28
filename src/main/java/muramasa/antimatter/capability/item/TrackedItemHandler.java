@@ -8,7 +8,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;
 
-public class TrackedItemHandler<T extends TileEntityMachine> extends ItemStackHandler implements ITrackedHandler {
+public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStackHandler implements ITrackedHandler {
 
     private final T tile;
     private final ContentEvent contentEvent;

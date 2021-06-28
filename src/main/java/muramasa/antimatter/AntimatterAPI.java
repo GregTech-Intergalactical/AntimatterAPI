@@ -34,6 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
@@ -71,6 +72,16 @@ public final class AntimatterAPI {
 
     public static void register(Class<?> c, IAntimatterObject o) {
         register(c, o.getId(), o);
+    }
+
+    public static <T extends IAntimatterObject> T registerIfAbsent(Class<? extends T> clazz, String id, Supplier<? extends T> obj) {
+        T o = get(clazz, id);
+        if (o != null) return o;
+        o = obj.get();
+        //the constructor of get() might register.
+        if (get(clazz, id) == null)
+            register(clazz, o);
+        return o;
     }
 
     private static boolean notRegistered(Class<?> c, String id) {
