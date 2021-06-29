@@ -47,6 +47,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -122,7 +123,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         if (type.allowVerticalFacing()){
-            return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite()).with(BlockStateProperties.FACING, context.getFace());
+            Direction dir = context.getNearestLookingDirection().getOpposite();
+            dir = dir.getAxis() == Axis.Y ? dir.getOpposite() : dir;
+            return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite()).with(BlockStateProperties.FACING, dir);
         } else {
             return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
         }
@@ -284,7 +287,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
         }
         return ActionResultType.PASS;
     }
-
+/* //This messes up cover logic.
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (placer != null) { //Y = 0 , reduce to xz plane
@@ -295,7 +298,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
             world.setBlockState(pos, state1);
         }
     }
-
+*/
     @Nullable
     @Override
     public ToolType getHarvestTool(BlockState state) {
