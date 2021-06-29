@@ -45,6 +45,7 @@ public class PipeBakedModel extends DynamicBakedModel {
 
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data) {
+        if (!data.hasProperty(AntimatterProperties.TILE_PROPERTY)) return super.getBlockQuads(state, side, rand, data);
         TileEntityPipe<?> pipe = (TileEntityPipe<?>) data.getData(AntimatterProperties.TILE_PROPERTY);
         PipeCoverHandler<?> covers = pipe.coverHandler.orElse(null);
         List<BakedQuad> quads = super.getBlockQuads(state, side, rand, data);
