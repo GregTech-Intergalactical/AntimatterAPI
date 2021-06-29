@@ -321,6 +321,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
     }
 
+    public int getMaxOutputVoltage() {
+        return energyHandler.map(EnergyHandler::getOutputVoltage).orElse(0);
+    }
+
     /** Helpers **/
     public void resetMachine() {
         setMachineState(getDefaultMachineState());

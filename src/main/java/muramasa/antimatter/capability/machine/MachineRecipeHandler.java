@@ -74,13 +74,14 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     protected Recipe activeRecipe;
     protected boolean consumedResources;
-    protected int currentProgress, maxProgress;
+    protected int currentProgress,
+            maxProgress;
     protected int overclock;
 
     //20 seconds per check.
     static final int WAIT_TIME = 20*20;
     static final int WAIT_TIME_POWER_LOSS = 20*5;
-    static final int WAIT_TIME_OUTPUT_FULL = 20*1;
+    static final int WAIT_TIME_OUTPUT_FULL = 20;
     protected int tickTimer = 0;
 
     //Consuming resources can call into the recipe handler, causing a loop.
@@ -247,8 +248,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //if (canOverclock)
         consumedResources = false;
         maxProgress = activeRecipe.getDuration();
-        overclock = getOverclock();
-        maxProgress = Math.max(1, maxProgress >>= overclock);
+        if (!generator){
+            overclock = getOverclock();
+            maxProgress = Math.max(1, maxProgress >>= overclock);
+        }
         tickTimer = 0;
         if (reset) {
             currentProgress = 0;
@@ -315,7 +318,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (!consumeResourceForRecipe(false)) {
             if ((currentProgress == 0 && tile.getMachineState() == tile.getDefaultMachineState()) || generator) {
                 //Cannot start a recipe :(
-                resetRecipe();
+                if (!(generator && currentProgress > 0)){
+                    resetRecipe();
+                }
                 return tile.getDefaultMachineState();
             } else {
                 //TODO: Hard-mode here?
@@ -360,7 +365,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     protected boolean validateRecipe(Recipe r) {
-        int voltage = this.generator ? Tier.getMax().getVoltage() : tile.getMachineType().amps()*tile.getMaxInputVoltage();
+        int voltage = this.generator ? tile.getMaxOutputVoltage() : tile.getMachineType().amps()*tile.getMaxInputVoltage();
         boolean ok = voltage >= r.getPower()/ r.getAmps();
         List<ItemStack> consumed = this.tile.itemHandler.map(t -> t.consumeInputs(r, true)).orElse(Collections.emptyList());
         return ok && (consumed.size() > 0 || !r.hasInputItems());
@@ -450,13 +455,18 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             throw new RuntimeException("Missing fuel in active generator recipe!");
         }
         long toConsume = calculateGeneratorConsumption(tile.getMachineTier().getVoltage(), activeRecipe);
-        long inserted = (long)((double)toConsume*activeRecipe.getPower()/activeRecipe.getInputFluids()[0].getAmount()*tile.getMachineType().getMachineEfficiency());
+        long inserted;
+        if (toConsume == 0)
+            inserted = (long) ((double) activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
+        else
+            inserted = (long)((double)toConsume*activeRecipe.getPower()/activeRecipe.getInputFluids()[0].getAmount()*tile.getMachineType().getMachineEfficiency());
 
         final long t = inserted;
         long actual = tile.energyHandler.map(h -> h.insertInternal(t,true, true)).orElse(0L);
         //If there isn't enough room for an entire run reduce output.
         //E.g. if recipe is 24 eu per MB then you have to run 2x to match 48 eu/t
         //but eventually it will be too much so reduce output.
+        if (actual < inserted && toConsume == 0) return false;
         while (actual < inserted && actual > 0) {
             toConsume--;
             inserted = (long)((double)toConsume*activeRecipe.getPower()/activeRecipe.getInputFluids()[0].getAmount()*tile.getMachineType().getMachineEfficiency());
@@ -469,7 +479,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         final long actualConsume = toConsume;
         final long actualInsert = inserted;
         //make sure there are fluids avaialble
-        if (tile.fluidHandler.map(h -> {
+        if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             int amount = h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
             if (amount == actualConsume) {
                 if (!simulate)
@@ -489,6 +499,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     protected long calculateGeneratorConsumption(int volt, Recipe r) {
         long power = r.getPower();
         int amount = r.getInputFluids()[0].getAmount();
+        if (currentProgress > 0 && amount == 1){
+            return 0;
+        }
         double offset =  (volt /((double)power/(double) amount));
         if (r.getDuration() > 1)
             offset /= r.getDuration();
