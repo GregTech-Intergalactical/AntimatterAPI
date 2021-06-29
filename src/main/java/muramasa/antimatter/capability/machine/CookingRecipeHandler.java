@@ -21,11 +21,17 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
         super(tile);
     }
 
-    private void consume() {
+    private boolean consume(boolean simulate) {
         List<ItemStack> stack;
+        if (simulate) {
+            stack = tile.itemHandler.map(t -> t.consumeInputs(BURNABLE.get(), true)).orElse(Collections.emptyList());
+            return !stack.isEmpty();
+        }
         if (!(stack = tile.itemHandler.map(t -> t.consumeInputs(BURNABLE.get(), false)).orElse(Collections.emptyList())).isEmpty()) {
             burnDuration += ForgeHooks.getBurnTime(stack.get(0)) / 10;
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -58,9 +64,9 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
 
     @Override
     public boolean consumeResourceForRecipe(boolean simulate) {
-        if (simulate) return true;
+        if (simulate) return consume(true);
         if (burnDuration == 0) {
-            consume();
+            if (!consume(false)) return false;
         } else {
             burnDuration--;
             return burnDuration >= 0;

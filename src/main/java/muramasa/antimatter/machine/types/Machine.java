@@ -3,9 +3,7 @@ package muramasa.antimatter.machine.types;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiData;
@@ -36,7 +34,10 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -82,8 +83,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     //TODO get valid covers
 
-    public Machine(String domain, String id, Object... data) {
-        addData(data);
+    public Machine(String domain, String id) {
         this.domain = domain;
         this.id = id;
         //Default implementation.
@@ -100,7 +100,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             };
         };
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
-
+        tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
     }
 
@@ -128,7 +128,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /**
      * Allows you to configure default covers.
-     * @param covers if null, set n
+     * @param covers if null, disable covers. (Icover[] null, not 1 null cover)
+*               1 cover sets 1 cover + output
+*               6 covers configures all covers.
      * @return
      */
     public T covers(ICover... covers) {
@@ -185,6 +187,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public T setMap(RecipeMap<?> map) {
         this.recipeMap = map;
         addFlags(RECIPE);
+        registerJei();
         return (T) this;
     }
 
@@ -207,7 +210,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         this.group = group;
         return (T) this;
     }
-
+    /*
     @Deprecated
     protected void addData(Object... data) {
         List<Tier> tiers = new ObjectArrayList<>();
@@ -249,7 +252,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         if (baseTexture == null) {
             baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         }
-    }
+    }*/
 
     public T setTile(Function<T, Supplier<? extends TileEntityMachine<?>>> func) {
         this.tileFunc = func;
