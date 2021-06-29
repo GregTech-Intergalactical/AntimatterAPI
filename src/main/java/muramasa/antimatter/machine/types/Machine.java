@@ -86,6 +86,21 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         addData(data);
         this.domain = domain;
         this.id = id;
+        //Default implementation.
+        overlayTextures = (type, state, tier) -> {
+            if (state != MachineState.ACTIVE && state != MachineState.INVALID_STRUCTURE) state = MachineState.IDLE;
+            String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
+            return new Texture[] {
+                    new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
+                    new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "top"),
+                    new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
+                    new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "back"),
+                    new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
+                    new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
+            };
+        };
+        baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
+
         AntimatterAPI.register(Machine.class, this);
     }
 
@@ -160,6 +175,40 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         }
     }
 
+    public T addTier(Tier tier) {
+        Collection<Tier> tiers = getTiers();
+        tiers.add(tier);
+        setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
+        return (T) this;
+    }
+
+    public T setMap(RecipeMap<?> map) {
+        this.recipeMap = map;
+        addFlags(RECIPE);
+        return (T) this;
+    }
+
+    public T baseTexture(Texture tex) {
+        this.baseTexture = (m, state) -> new Texture[]{tex};
+        return (T) this;
+    }
+
+    public T overlayTexture(IOverlayTexturer texturer) {
+        this.overlayTextures = texturer;
+        return (T) this;
+    }
+
+    public T baseTexture(ITextureHandler handler) {
+        this.baseTexture = handler;
+        return (T) this;
+    }
+
+    public T itemGroup(ItemGroup group) {
+        this.group = group;
+        return (T) this;
+    }
+
+    @Deprecated
     protected void addData(Object... data) {
         List<Tier> tiers = new ObjectArrayList<>();
         Set<MachineFlag> flags = new ObjectOpenHashSet<>();
@@ -280,8 +329,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return recipeMap.RB();
     }
 
-    public void addFlags(MachineFlag... flags) {
-        Arrays.stream(flags).forEach(f -> f.add(this));
+    public T addFlags(MachineFlag... flags) {
+        for (MachineFlag flag : flags) {
+            flag.add(this);
+        }
+        return (T)this;
     }
 
     public void setFlags(MachineFlag... flags) {
