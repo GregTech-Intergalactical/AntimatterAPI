@@ -2,6 +2,9 @@ package muramasa.antimatter.recipe.map;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Either;
+
+import org.lwjgl.system.CallbackI.P;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -67,15 +70,17 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     @Nullable
     private Proxy PROXY;
 
+    @Nullable
+    private Object icon;
+
     @OnlyIn(Dist.CLIENT)
     private IRecipeInfoRenderer infoRenderer;
 
     //Data allows you to set related data to the map, e.g. which tier the gui displays.
-    public RecipeMap(String categoryId, B builder, Object... data) {
+    public RecipeMap(String categoryId, B builder) {
         this.id = "gt.recipe_map." + categoryId;
         this.builder = builder;
         this.builder.setMap(this);
-        initMap(data);
         AntimatterAPI.register(RecipeMap.class, this);
     }
 
@@ -100,6 +105,17 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     public Tier getGuiTier() {
         return guiTier;
     }
+    
+    //Object can be an IDrawable or an ItemStack or an IItemProvider.
+    public RecipeMap<B> setIcon(Object object) {
+        this.icon = object;
+        return this;
+    }
+
+    @Nullable
+    public Object getIcon() {
+        return this.icon;
+    }
 
     @Nonnull
     @OnlyIn(Dist.CLIENT)
@@ -113,18 +129,20 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         this.infoRenderer = renderer;
     }
 
-    private void initMap(Object[] data) {
-        for (Object obj : data) {
-            if (obj instanceof Tier) {
-                guiTier = (Tier) obj;
-            }
-            if (obj instanceof GuiData) {
-                this.GUI = (GuiData) obj;
-            }
-            if (obj instanceof Proxy) {
-                this.PROXY = (Proxy) obj;
-            }
-        }
+    public RecipeMap<B> setGuiTier(Tier tier) {
+        this.guiTier = tier;
+        return this;
+    }
+
+    public RecipeMap<B> setGuiData(GuiData gui) {
+        this.GUI = gui;
+        AntimatterAPI.registerJEICategory(this, this.GUI);
+        return this;
+    }
+
+    public RecipeMap<B> setProxy(Proxy proxy) {
+        this.PROXY = proxy;
+        return this;
     }
 
     @Nullable

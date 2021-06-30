@@ -30,6 +30,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -61,9 +62,22 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.getDir().getUV();
         background = guiHelper.drawableBuilder(gui.getTexture(guiTier,"machine"), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
         progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier,"machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
-        Block block = AntimatterAPI.get(BlockMachine.class, blockItemModel == null ? "" : blockItemModel + "_" + defaultTier.getId());
-        if (block == null) block = AntimatterAPI.get(BlockMultiMachine.class, blockItemModel == null ? "" : blockItemModel + "_" + defaultTier.getId());
-        icon = block == null ? guiHelper.createDrawableIngredient(new ItemStack(Data.DEBUG_SCANNER,1)) : guiHelper.createDrawableIngredient(new ItemStack(block.asItem(),1));
+        Object icon = map.getIcon();
+        if (icon != null) {
+            if (icon instanceof ItemStack) {
+                this.icon = guiHelper.createDrawableIngredient((ItemStack)icon);
+            }
+            if (icon instanceof IItemProvider) {
+                this.icon = guiHelper.createDrawableIngredient(new ItemStack((IItemProvider)icon));
+            }
+            if (icon instanceof IDrawable) {
+                this.icon = (IDrawable) icon;
+            }
+        } else {
+            Block block = AntimatterAPI.get(BlockMachine.class, blockItemModel == null ? "" : blockItemModel + "_" + defaultTier.getId());
+            if (block == null) block = AntimatterAPI.get(BlockMultiMachine.class, blockItemModel == null ? "" : blockItemModel + "_" + defaultTier.getId());
+            this.icon = block == null ? guiHelper.createDrawableIngredient(new ItemStack(Data.DEBUG_SCANNER,1)) : guiHelper.createDrawableIngredient(new ItemStack(block.asItem(),1));        
+        }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();
     }
