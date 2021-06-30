@@ -23,6 +23,7 @@ import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -79,35 +80,41 @@ public class AntimatterDynamics {
     }
 
     public static void onRecipeManagerBuild(Consumer<IFinishedRecipe> objectIn) {
-        Antimatter.LOGGER.info("Recipe manager head executing.");
+        Antimatter.LOGGER.info("Antimatter recipe manager running..");
         collectRecipes(objectIn::accept);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
                 if (!AntimatterAPI.isModLoaded(mod)) return;
             }
             t.craftingRecipes(new AntimatterRecipeProvider("Antimatter", "Custom recipes",Ref.BACKGROUND_GEN));
-        });
+        });        
+        Antimatter.LOGGER.info("Antimatter recipe manager done..");
     }
 
     public static void onRecipeCompile(RecipeManager manager, ITagCollectionSupplier tags) {
-        TagUtils.TAG_GETTER = tags;
+        TagUtils.setSupplier(tags);
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
         AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(manager, tags));
+        
         List<Recipe> recipes = manager.getRecipesForType(Recipe.RECIPE_TYPE);
-        recipes.forEach(t -> {
-            RecipeMap<?> map = AntimatterAPI.get(RecipeMap.class, "gt.recipe_map." + t.mapId);
-            if (map != null) map.compileRecipe(t, tags);
-        });
+        Map<String, List<Recipe>> map = recipes.stream().collect(Collectors.groupingBy(recipe -> recipe.mapId));
+        for (Map.Entry<String, List<Recipe>> entry : map.entrySet()) {
+            RecipeMap<?> rmap = AntimatterAPI.get(RecipeMap.class, "gt.recipe_map." + entry.getKey());
+            if (rmap != null) entry.getValue().forEach(rec -> rmap.compileRecipe(rec, tags));
+        }
         time = System.nanoTime()-time;
-        Antimatter.LOGGER.info("Time to compile GT recipes: (ms) " + (time)/(1000*1000));
         int size = AntimatterAPI.all(RecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
+
+        Antimatter.LOGGER.info("Time to compile GT recipes: (ms) " + (time)/(1000*1000));
         Antimatter.LOGGER.info("No. of GT recipes: " + size);
         Antimatter.LOGGER.info("Average loading time / recipe: (µs) " + (size > 0 ? time/size : time)/1000);
-        AntimatterAPI.all(RecipeMap.class, t -> {
+
+        /*AntimatterAPI.all(RecipeMap.class, t -> {
             Antimatter.LOGGER.info("Recipe map " + t.getId() + " compiled " + t.getRecipes(false).size() + " recipes.");
-        });
-        TagUtils.TAG_GETTER = null;
+        });*/
+        //Invalidate old tag getter.
+        TagUtils.resetSupplier();
     }
 
     public static void onResourceReload(boolean server) {

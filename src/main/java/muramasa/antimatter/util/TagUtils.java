@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class TagUtils {
 
     //Initialized in onResourceReload.
-    public static ITagCollectionSupplier TAG_GETTER;
+    private static ITagCollectionSupplier TAG_GETTER;
 
     //A list of all registered tags for all Antimatter mods.
     private static final Map<Class, Map<ResourceLocation, ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
@@ -110,6 +110,17 @@ public class TagUtils {
         return TagCollectionManager.getManager().getItemTags().get(tag);
     }
 
+    public static ITagCollectionSupplier getSupplier() {
+        return TAG_GETTER;
+    }
+
+    public static void resetSupplier() {
+        TAG_GETTER = null;
+    }
+
+    public static void setSupplier(ITagCollectionSupplier supplier) {
+        TAG_GETTER = supplier;
+    }
 
     protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
         ITag.INamedTag<T>[] tag = new ITag.INamedTag[1];
