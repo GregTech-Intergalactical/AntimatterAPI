@@ -22,4 +22,16 @@ public enum Dir {
             default: return side;
         }
     }
+
+    public Direction getRotatedFacing(Direction side, Direction hSide) {
+        switch (this) {
+            case UP: return hSide.getOpposite();
+            case DOWN: return hSide;
+            case LEFT: return hSide.rotateYCCW();
+            case RIGHT: return hSide.rotateY();
+            case FORWARD: return side;
+            case BACK: return side.getOpposite();
+            default: return side;
+        }
+    }
 }

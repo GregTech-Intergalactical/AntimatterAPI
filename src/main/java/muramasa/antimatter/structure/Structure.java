@@ -5,13 +5,18 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -60,7 +65,11 @@ public class Structure {
 
     public StructureResult evaluate(@Nonnull TileEntityMachine tile) {
         StructureResult result = new StructureResult(this);
-        for (Iterator<Point> it = forAllElements(tile.getPos(), tile.getFacing()); it.hasNext(); ) {
+        Direction h = null;
+        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y) {
+            h = tile.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
+        }
+        for (Iterator<Point> it = forAllElements(tile.getPos(), tile.getFacing(), h); it.hasNext(); ) {
             Point point = it.next();
             if (!point.el.evaluate(tile, point.pos, result)) {
                 return result;
@@ -86,9 +95,9 @@ public class Structure {
     }
 
 
-    public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing) {
+    public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing, @Nullable Direction hFacing) {
         return new Iterator<Point>() {
-            final int3 corner = new int3(source, facing).left(size.getX() / 2).back(offset.x).up(offset.y);
+            final int3 corner = hFacing == null ? new int3(source, facing).left(size.getX() / 2).back(offset.x).up(offset.y) : new int3(source, facing, hFacing).left(size.getX() / 2).back(offset.x).up(offset.y);
             final int3 working = new int3(facing);
             final Point point = new Point();
             final Iterator<Map.Entry<int3, StructureElement>> it = elements.entrySet().iterator();
@@ -111,7 +120,11 @@ public class Structure {
 
     public LongList getStructure(TileEntityMachine tile) {
         LongList l = new LongArrayList();
-        for (Iterator<Point> it = forAllElements(tile.getPos(), tile.getFacing()); it.hasNext(); ) {
+        Direction h = null;
+        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y){
+            h = tile.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
+        }
+        for (Iterator<Point> it = forAllElements(tile.getPos(), tile.getFacing(), h); it.hasNext(); ) {
             l.add(it.next().pos.toLong());
         }
         return l;

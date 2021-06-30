@@ -6,8 +6,12 @@ import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.block.BlockState;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Iterator;
@@ -83,7 +87,11 @@ public class StructureResult {
     }
 
     public void build(TileEntityBasicMultiMachine machine, StructureResult result) {
-        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing()); it.hasNext(); ) {
+        Direction h = null;
+        if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
+            h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
+        }
+        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
             Structure.Point point = it.next();
             int count = StructureCache.refCount(machine.getWorld(),point.pos);
             point.el.onBuild(machine, point.pos, result, count);
@@ -91,7 +99,11 @@ public class StructureResult {
     }
 
     public void remove(TileEntityBasicMultiMachine machine, StructureResult result) {
-        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing()); it.hasNext(); ) {
+        Direction h = null;
+        if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
+            h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
+        }
+        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
             Structure.Point point = it.next();
             int count = StructureCache.refCount(machine.getWorld(),point.pos);
             point.el.onRemove(machine, point.pos, result, count);
