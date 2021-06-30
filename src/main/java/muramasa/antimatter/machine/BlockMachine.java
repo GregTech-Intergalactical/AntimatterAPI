@@ -366,6 +366,44 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     }
     */
 
+    //This makes no sense because it is manually derived by testing, to make sure covers render properly.
+    private Direction getDir(Direction hFace, Direction which, Direction face) {
+        if (which.getAxis() == Axis.Y) return which.getOpposite();
+        switch (hFace) {
+            case NORTH:
+                if (which.getAxis() == Axis.Z) return which.getOpposite();
+                break;
+            case SOUTH:
+                if (which.getAxis() == Axis.X) return which.getOpposite();
+                break;
+            case EAST:
+                switch (which) {
+                    case SOUTH:
+                        return EAST;
+                    case EAST:
+                        return SOUTH;
+                    case NORTH:
+                        return WEST;
+                    case WEST:
+                        return NORTH;
+                }
+                break;
+            case WEST:
+                switch (which) {
+                    case SOUTH:
+                        return WEST;
+                    case WEST:
+                        return SOUTH;
+                    case NORTH:
+                        return EAST;
+                    case EAST:
+                        return NORTH;
+                }
+                break;
+        }
+        return which;
+    }
+
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         Direction facing = type.allowVerticalFacing() ? state.get(BlockStateProperties.FACING) : state.get(BlockStateProperties.HORIZONTAL_FACING);
@@ -377,12 +415,12 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                 if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y){
                     Direction horizontalFacing = state.get(HORIZONTAL_FACING);
                     return config.set(new int[] {
-                            h.get(DOWN).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(DOWN, facing), machineState) : 0,
-                            h.get(UP).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(UP, facing), machineState) : 0,
-                            h.get(NORTH).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(NORTH, facing), machineState) : 0,
-                            h.get(SOUTH).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(SOUTH, facing), machineState) : 0,
-                            h.get(WEST).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(WEST, facing), machineState) : 0,
-                            h.get(EAST).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(EAST, facing), machineState) : 0
+                            h.get(DOWN).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, DOWN, facing), facing), machineState) : 0,
+                            h.get(UP).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, UP, facing), facing), machineState) : 0,
+                            h.get(NORTH).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, NORTH, facing), facing), machineState) : 0,
+                            h.get(SOUTH).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, SOUTH, facing), facing), machineState) : 0,
+                            h.get(WEST).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, WEST, facing), facing), machineState) : 0,
+                            h.get(EAST).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, EAST, facing), facing), machineState) : 0
                     });
                 }
                 return config.set(new int[] {

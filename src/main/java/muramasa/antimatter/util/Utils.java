@@ -45,7 +45,10 @@ import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -679,6 +682,14 @@ public class Utils {
         }
         return null;
     }
+
+    public static TransformationMatrix getRotation(Direction dir, Direction face) {
+        int[] vec = rotationVector(dir, face);
+        Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float)(-vec[1]), true);
+        quaternion.multiply(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float)(-vec[0]), true));
+        quaternion.multiply(new Quaternion(new Vector3f(0.0F, 0.0F, 1.0F), (float)(-vec[2]), true));
+        return new TransformationMatrix(null, quaternion, null, null);
+    }
     //All these getRotations, coverRotateFacings. Honestly look into them. I just made
     //something that works but it is really confusing... Some values here are inverted but it works? This is used
     //for multitexturer while getModelRotation is used for all else.
@@ -716,6 +727,47 @@ public class Utils {
                 return ModelRotation.getModelRotation(0,270);
             case WEST:
                 return ModelRotation.getModelRotation(0,90);
+        }
+        return null;
+    }
+
+                /**
+     * Returns a list of x,y,z rotations given two facings.
+     */
+    public static int[] rotationVector(Direction dir, Direction h) {
+        switch (dir) {
+            case NORTH:
+                return new int[]{0, 0, 0};
+            case WEST:
+                return new int[]{0, 90, 0};
+            case SOUTH:
+                return new int[]{0, 180, 0};
+            case EAST:
+                return new int[]{0, 270, 0};
+            case UP:
+                switch (h){
+                    case NORTH://
+                        return new int[]{90, 0, 0};
+                    case WEST:
+                        return new int[]{90, 0, 270};
+                    case SOUTH://
+                        return new int[]{270, 180, 0};
+                    case EAST:
+                        return new int[]{90, 0, 90};
+                }
+                break;
+            case DOWN:
+                switch (h){
+                    case NORTH:// DONE
+                        return new int[]{270, 0, 0};
+                    case WEST:
+                        return new int[]{270, 0, 90};
+                    case SOUTH:// DONE!
+                        return new int[]{90, 180, 0};
+                    case EAST:
+                        return new int[]{270, 0, 270};
+                }
+                break;
         }
         return null;
     }
