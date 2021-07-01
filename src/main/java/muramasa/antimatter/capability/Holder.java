@@ -6,6 +6,10 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -17,6 +21,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
     public final Capability<?> cap;
     private final LazyOptional[] sided;
     private LazyOptional<T> opt = LazyOptional.empty();
+    private List<Consumer<? super T>> consumers = new ObjectArrayList<>();
     private Supplier<? extends T> supplier;
     private T resolved;
     private boolean flag;
@@ -45,6 +50,10 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         this.supplier = supplier;
     }
 
+    public void onInit(Consumer<? super T> consumer) {
+        consumers.add(consumer);
+    }
+
     public void invalidate(Direction side) {
         sided[side.getIndex()].invalidate();
     }
@@ -71,6 +80,9 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
            return null;
        }
        resolved = supplier.get();
+       for (Consumer<? super T> con : consumers) {
+           con.accept(resolved);
+       }
        flag = true;
        return resolved;
     }

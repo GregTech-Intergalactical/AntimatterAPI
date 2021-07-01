@@ -382,9 +382,6 @@ public class Data {
     public static ICover COVERMUFFLER = new CoverMuffler();
     public static ICover COVERDYNAMO = new CoverDynamo("dynamo");
     public static ICover COVERENERGY = new CoverEnergy();
-    public static ICover COVERBUFFERONE = new CoverDynamo("buffer_one");
-    public static ICover COVERBUFFERFOUR = new CoverDynamo("buffer_four");
-    public static ICover COVERBUFFERNINE = new CoverDynamo("buffer_nine");
 
     public static CoverStack<?> COVER_EMPTY = new CoverStack<>(COVERNONE);
     public static CoverStack<?> COVER_OUTPUT = new CoverStack<>(COVEROUTPUT);

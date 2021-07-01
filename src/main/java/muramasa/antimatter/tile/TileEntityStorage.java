@@ -25,7 +25,7 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
         energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
             @Override
             public boolean canOutput(Direction direction) {
-                Direction dir = tile.getOutputFacing();
+                Direction dir = tile.getFacing();
                 return dir != null && dir.getIndex() == direction.getIndex();
             }
 
