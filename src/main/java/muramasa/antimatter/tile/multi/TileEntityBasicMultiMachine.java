@@ -119,15 +119,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent() && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return energyHandler.side(side).cast();
         return LazyOptional.empty();
     }
-
-    @Override
-    public boolean setFacing(Direction side) {
-        boolean ok = super.setFacing(side);
-        if (ok) {
-            checkStructure();
-        }
-        return ok;
-    }
+    
     @Override
     public void onBlockUpdate(BlockPos pos) {
         if (checkingStructure > 0) return;
@@ -138,6 +130,14 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         } else {
             checkStructure();
         }
+    }
+
+    
+
+    @Override
+    public void updateContainingBlockInfo() {
+        super.updateContainingBlockInfo();
+        checkStructure();
     }
 
     protected void invalidateStructure() {

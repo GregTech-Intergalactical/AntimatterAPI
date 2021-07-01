@@ -74,7 +74,7 @@ import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static net.minecraft.util.Direction.*;
 
-public class BlockMachine extends BlockDynamic implements IAntimatterObject, IItemBlockProvider {
+public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
 
     public static final DirectionProperty HORIZONTAL_FACING = DirectionProperty.create("horizontal_facing", Direction.Plane.HORIZONTAL);
 
@@ -176,14 +176,9 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     }
                     //Handle tool types.
                     if (type == WRENCH || type == ELECTRIC_WRENCH) {
-                        if (!player.isCrouching()) {
-                            boolean ok = tile.setOutputFacing(player, Utils.getInteractSide(hit));
-                            if (ok) {
-                                Utils.damageStack(stack, player);
-                                return ActionResultType.SUCCESS;
-                            }
+                        if (tile.wrenchMachine(player, hit, player.isCrouching())) {
+                            return ActionResultType.SUCCESS;
                         }
-                        //TODO: Disbling machines isnt working.
                     } else if (type == HAMMER) {
                         tile.toggleMachine();
                         if (tile.getMachineState() == MachineState.DISABLED) {
@@ -275,7 +270,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
     }
     //This is also a hack. Since the game relies on multiblock checks being done on both sides this method is split out.
     protected ActionResultType onBlockActivatedBoth(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        TileEntityMachine tile = (TileEntityMachine)world.getTileEntity(pos);
+        /*TileEntityMachine tile = (TileEntityMachine)world.getTileEntity(pos);
         if (tile != null) {
             AntimatterToolType type = Utils.getToolType(player);
             if (type == WRENCH || type == ELECTRIC_WRENCH) {
@@ -284,7 +279,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     return ok ? ActionResultType.CONSUME : ActionResultType.PASS;
                 }
             }
-        }
+        }*/
         return ActionResultType.PASS;
     }
 /* //This messes up cover logic.
@@ -459,7 +454,8 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
 
     protected int getModelId(Direction facing, Direction horizontalFacing, Direction overlay, MachineState state) {
         state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
-        return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + ((horizontalFacing.getIndex() + 1) * 100) + (overlay.getIndex() + 1);
+        int id = ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + ((horizontalFacing.getIndex() + 1) * 100) + (overlay.getIndex() + 1);
+        return id;
     }
 
     protected int getModelId(Direction facing, Direction overlay, MachineState state) {
@@ -507,6 +503,7 @@ public class BlockMachine extends BlockDynamic implements IAntimatterObject, IIt
                     }
                 }
             }
+            int x = 1;
         }
     }
 }

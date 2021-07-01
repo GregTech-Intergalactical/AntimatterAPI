@@ -278,6 +278,14 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
         return false;
     }
+    
+    public boolean wrenchMachine(PlayerEntity player, BlockRayTraceResult res, boolean crouch) {
+        if (crouch || getMachineType().getOutputCover() == null) {
+            //Machine has no output
+            return setFacing(Utils.getInteractSide(res));
+        }
+        return setOutputFacing(player, Utils.getInteractSide(res));
+    }
 
     @Override
     public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
