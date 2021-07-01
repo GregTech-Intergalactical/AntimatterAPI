@@ -280,7 +280,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
     
     public boolean wrenchMachine(PlayerEntity player, BlockRayTraceResult res, boolean crouch) {
-        if (crouch || getMachineType().getOutputCover() == null) {
+        if (crouch || getMachineType().getOutputCover() == Data.COVERNONE) {
             //Machine has no output
             return setFacing(Utils.getInteractSide(res));
         }
