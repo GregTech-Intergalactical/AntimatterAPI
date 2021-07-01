@@ -136,8 +136,11 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     @Override
     public void updateContainingBlockInfo() {
+        BlockState old = this.getBlockState();
         super.updateContainingBlockInfo();
-        checkStructure();
+        BlockState newState = this.getBlockState();
+        if (!old.equals(newState))
+            checkStructure();
     }
 
     protected void invalidateStructure() {
