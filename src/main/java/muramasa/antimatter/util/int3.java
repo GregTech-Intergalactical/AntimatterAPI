@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 public class int3 extends BlockPos.Mutable {
 
     public Direction side = Direction.NORTH; //Used for moving in a direction
-    public Direction horizSide = Direction.NORTH;
+    public Direction horizSide = null;
 
     public int3() {
     }
@@ -37,6 +37,11 @@ public class int3 extends BlockPos.Mutable {
 
     public int3(Direction side) {
         this.side = side;
+    }
+
+    public int3(Direction side, Direction hSide) {
+        this.side = side;
+        this.horizSide = hSide;
     }
 
     public int3(BlockPos pos, Direction side) {

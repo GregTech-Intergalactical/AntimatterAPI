@@ -98,7 +98,7 @@ public class Structure {
     public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing, @Nullable Direction hFacing) {
         return new Iterator<Point>() {
             final int3 corner = hFacing == null ? new int3(source, facing).left(size.getX() / 2).back(offset.x).up(offset.y) : new int3(source, facing, hFacing).left(size.getX() / 2).back(offset.x).up(offset.y);
-            final int3 working = new int3(facing);
+            final int3 working = new int3(facing, hFacing);
             final Point point = new Point();
             final Iterator<Map.Entry<int3, StructureElement>> it = elements.entrySet().iterator();
             @Override
