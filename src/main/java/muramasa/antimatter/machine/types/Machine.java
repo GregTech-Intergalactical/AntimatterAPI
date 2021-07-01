@@ -114,8 +114,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public void setOutputCover(ICover cover) {
+    public T setOutputCover(ICover cover) {
         this.outputCover = cover;
+        return (T) this;
     }
 
     public ICover getOutputCover() {
