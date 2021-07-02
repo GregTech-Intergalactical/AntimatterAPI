@@ -1,7 +1,6 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Data;
@@ -60,7 +59,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
@@ -446,8 +444,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return super.getCapability(cap, side);
     }
 
-    public boolean allowsFrontIO() {
-        return getMachineType().allowsFrontCovers();
+    public final boolean allowsFrontIO() {
+        return getMachineType().allowsFrontIO();
     }
 
     @Override

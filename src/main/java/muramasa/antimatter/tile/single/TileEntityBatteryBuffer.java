@@ -17,9 +17,4 @@ public class TileEntityBatteryBuffer<T extends TileEntityBatteryBuffer<T>> exten
     public ICover[] getValidCovers() {
         return new ICover[0];
     }
-
-    @Override
-    public boolean allowsFrontIO() {
-        return true;
-    }
 }

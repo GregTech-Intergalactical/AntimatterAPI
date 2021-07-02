@@ -1,9 +1,4 @@
 {
-	"credit": "Made with Blockbench",
-	"textures": {
-		"base": "gti:block/machine/base/lv",
-		"overlay": "antimatter:block/cover/energy"
-	},
 	"elements": [
 		{
 			"from": [4, 4, -1],

@@ -3,12 +3,11 @@ package muramasa.antimatter.tile.multi;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
-import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
+import muramasa.antimatter.machine.types.HatchMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -19,33 +18,27 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.Data.COVEROUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-//TODO: HATCH SHOULD NOT HAVE TWO OUTPUTS!
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
-    private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional.of(() -> new HatchComponentHandler((T)this));
+    private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional.of(() -> new HatchComponentHandler<>((T)this));
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
+        boolean input = ((HatchMachine)type).input();
         if (type.has(ENERGY)) {
-            energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0,getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
-                    type.getOutputCover() == COVERENERGY ? 2 : 0,type.getOutputCover() == COVERDYNAMO ? 1 : 0){
+            energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0,getMachineTier().getVoltage() * 66L, input ? tier.getVoltage() : 0, !input ? tier.getVoltage() : 0,
+                    input ? 2 : 0,!input ? 1 : 0){
                 @Override
                 public boolean canInput(Direction direction) {
-                    Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
-                    if (out == null) return false;
-                    ICover o = tile.getMachineType().getOutputCover();
-                    return o.equals(COVERENERGY) && direction == out;
+                    return super.canInput() && direction == getFacing();
                 }
 
                 @Override
                 public boolean canOutput(Direction direction) {
-                    Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
-                    if (out == null) return false;
-                    ICover o = tile.getMachineType().getOutputCover();
-                    return o.equals(COVERDYNAMO) && direction == out;
+                    return super.canOutput() && direction == getFacing();
                 }
             });
         }

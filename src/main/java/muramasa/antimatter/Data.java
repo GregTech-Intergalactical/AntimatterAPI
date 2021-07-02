@@ -13,7 +13,6 @@ import muramasa.antimatter.gui.container.*;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
@@ -47,7 +46,10 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.DyeColor;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
@@ -379,9 +381,9 @@ public class Data {
     public static BaseCover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
     public static CoverOutput COVEROUTPUT = new CoverOutput();
     public static ICover COVERINPUT = new CoverInput();
-    public static ICover COVERMUFFLER = new CoverMuffler();
-    public static ICover COVERDYNAMO = new CoverDynamo("dynamo");
-    public static ICover COVERENERGY = new CoverEnergy();
+    //public static ICover COVERMUFFLER = new CoverMuffler();
+    //public static ICover COVERDYNAMO = new CoverDynamo("dynamo");
+    //public static ICover COVERENERGY = new CoverEnergy();
 
     public static CoverStack<?> COVER_EMPTY = new CoverStack<>(COVERNONE);
     public static CoverStack<?> COVER_OUTPUT = new CoverStack<>(COVEROUTPUT);

@@ -15,27 +15,21 @@ import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.network.packets.FluidStackPacket;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.loot.LootContext;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
@@ -47,13 +41,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
@@ -62,11 +54,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.network.NetworkHooks;
-import org.lwjgl.system.CallbackI;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -125,9 +115,9 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         if (type.allowVerticalFacing()){
             Direction dir = context.getNearestLookingDirection().getOpposite();
             dir = dir.getAxis() == Axis.Y ? dir.getOpposite() : dir;
-            return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite()).with(BlockStateProperties.FACING, dir);
+            return this.getDefaultState().with(HORIZONTAL_FACING, type.handlePlacementFacing(context, BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite())).with(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));
         } else {
-            return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+            return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite()));
         }
     }
 

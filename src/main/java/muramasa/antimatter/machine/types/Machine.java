@@ -24,8 +24,10 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.state.Property;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -81,6 +83,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected ICover outputCover = COVEROUTPUT;
     protected boolean allowVerticalFacing = false;
 
+    protected boolean frontIO = false;
+
     //TODO get valid covers
 
     public Machine(String domain, String id) {
@@ -127,6 +131,20 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return allowFrontCovers;
     }
 
+    public boolean allowsFrontIO() {
+        return frontIO;
+    }
+
+    public T allowFrontIO() {
+        this.frontIO = true;
+        return (T) this;
+    }
+
+    public T disableFrontIO() {
+        this.frontIO = false;
+        return (T) this;
+    }
+
     /**
      * Allows you to configure default covers.
      * @param covers if null, disable covers. (Icover[] null, not 1 null cover)
@@ -149,12 +167,21 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    public T noCovers() {
+        covers((ICover[])null);
+        return (T) this;
+    }
+
     public ICover defaultCover(Direction dir) {
         return DEFAULT_COVERS[dir.getIndex()];
     }
 
     public int amps() {
         return amps;
+    }
+
+    public Direction handlePlacementFacing(BlockItemUseContext ctxt, Property<?> which, Direction dir) {
+        return dir;
     }
 
     @Override
