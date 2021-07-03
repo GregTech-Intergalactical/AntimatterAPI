@@ -17,12 +17,15 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Set;
 import java.util.function.LongConsumer;
 
 @Mod.EventBusSubscriber
 public class StructureCache {
 
     private static final Object2ObjectMap<World, DimensionEntry> LOOKUP = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<World, Long2ObjectMap<Set<StructureHandle<?>>>> CALLBACKS = new Object2ObjectOpenHashMap<>();
 
     static {
         AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState, flags) -> {
@@ -48,7 +51,11 @@ public class StructureCache {
         DimensionEntry e = LOOKUP.get(world);
         if (e != null) {
             if (!has(world, pos)) {
-                return e.validate(pos, maxAmount, structure);
+                boolean ok = e.validate(pos, maxAmount, structure);
+                if (ok) {
+                    notifyListenersAdd(world, pos);
+                }
+                return ok;
             }
         }
         return false;
@@ -108,8 +115,10 @@ public class StructureCache {
     public static void invalidate(World world, BlockPos pos, LongList structure) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry != null) {
-            if (has(world, pos))
+            if (has(world, pos)) {
+                notifyListenersRemove(world, pos);
                 entry.invalidate(pos, structure);
+            }
         }
     }
 
@@ -118,9 +127,45 @@ public class StructureCache {
         if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).onBlockUpdate(at);
     }
 
+    public static void addListener(StructureHandle<?> handle, World world, BlockPos pos) {
+        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.computeIfAbsent(world, k -> new Long2ObjectOpenHashMap<>());
+        Set<StructureHandle<?>> set = map.computeIfAbsent(pos.toLong(), k -> new ObjectOpenHashSet<>());
+        set.add(handle);
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile != null) handle.structureCacheAddition(tile);
+    }
+
+    public static void removeListener(StructureHandle<?> handle, World world, BlockPos pos) {
+        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
+        if (map != null) {
+            Set<StructureHandle<?>> set = map.get(pos.toLong());
+            if (set != null) {
+                set.remove(handle);
+            }
+        }
+    }
+
+    private static void notifyListenersAdd(World world, BlockPos pos) {
+        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
+        if (map != null) {
+            TileEntity tile = world.getTileEntity(pos);
+            map.getOrDefault(pos.toLong(), Collections.emptySet()).forEach(handle -> handle.structureCacheAddition(tile));
+        }
+    }
+
+    private static void notifyListenersRemove(World world, BlockPos pos) {
+        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
+        if (map != null) {
+            map.getOrDefault(pos.toLong(), Collections.emptySet()).forEach(handle -> handle.structureCacheRemoval());
+        }
+    }
+
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
         LOOKUP.remove((World)e.getWorld());
+        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.remove((World)e.getWorld());
+        if (map != null)
+            map.forEach((k,v) -> v.forEach(StructureHandle::structureCacheRemoval));
     }
 
     public static class DimensionEntry {

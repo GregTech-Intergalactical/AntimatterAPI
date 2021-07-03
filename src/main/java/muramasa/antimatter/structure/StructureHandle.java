@@ -1,0 +1,86 @@
+package muramasa.antimatter.structure;
+
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.util.Dir;
+import muramasa.antimatter.util.int3;
+import net.minecraft.block.BlockState;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
+    private final boolean debug = true;
+    private final TileEntityBasicMultiMachine<?> source;
+    private final List<int3> offsets;
+    private final Consumer<T> onRemoval;
+    private final Consumer<T> onAdd;
+    private final Class<T> clazz;
+    @Nullable
+    private T object;
+
+    public StructureHandle(Class<T> clazz, TileEntityBasicMultiMachine<?> tile, int3 off,@Nullable Consumer<T> onRemoval,@Nullable Consumer<T> onAdd) {
+        this(clazz, tile, Collections.singletonList(off), onRemoval, onAdd);
+    }
+
+    public StructureHandle(Class<T> clazz, TileEntityBasicMultiMachine<?> tile, List<int3> off, @Nullable Consumer<T> onRemoval, @Nullable Consumer<T> onAdd) {
+        this.source = tile;
+        this.offsets = off;
+        this.onRemoval = onRemoval;
+        this.onAdd = onAdd;
+        this.clazz = clazz;
+        tile.addStructureHandle(this);
+    }
+
+    public TileEntityBasicMultiMachine<?> getSource() {
+        return source;
+    }
+
+    public void register() {
+        BlockState state = source.getBlockState();
+        boolean vertical = source.getMachineType().allowVerticalFacing();
+        Direction facing = vertical ? state.get(BlockStateProperties.FACING) : state.get(BlockStateProperties.HORIZONTAL_FACING);
+        Direction hFacing = vertical ? state.get(BlockMachine.HORIZONTAL_FACING) : null;
+        int3 newOff = new int3(facing, hFacing);
+        for (int3 offset : offsets) {
+            newOff.set(source.getPos()).offset(offset, Dir.RIGHT, Dir.UP, Dir.FORWARD);
+            StructureCache.addListener(this, source.getWorld(), newOff);
+        }
+    }
+
+    public void deregister() {
+        BlockState state = source.getBlockState();
+        boolean vertical = source.getMachineType().allowVerticalFacing();
+        Direction facing = vertical ? state.get(BlockStateProperties.FACING) : state.get(BlockStateProperties.HORIZONTAL_FACING);
+        Direction hFacing = vertical ? state.get(BlockMachine.HORIZONTAL_FACING) : null;
+        int3 newOff = new int3(facing, hFacing);
+        for (int3 offset : offsets) {
+            newOff.set(source.getPos()).offset(offset, Dir.RIGHT, Dir.UP, Dir.FORWARD);
+            StructureCache.removeListener(this, source.getWorld(), newOff);
+        }
+    }
+
+    public void structureCacheRemoval() {
+        Antimatter.LOGGER.debug("removed structure handle");
+        if (this.object != null && onRemoval != null) onRemoval.accept(this.object);
+        this.object = null;
+    }
+
+    public void structureCacheAddition(TileEntity t) {
+        if (!clazz.isInstance(t)) return;
+        Antimatter.LOGGER.debug("added to structure handle");
+        this.object = (T) t;
+        if (onAdd != null) onAdd.accept(this.object);
+    }
+
+    @Nullable
+    public T get() {
+        return object;
+    }
+}

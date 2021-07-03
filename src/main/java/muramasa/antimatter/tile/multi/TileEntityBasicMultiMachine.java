@@ -1,6 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
-import muramasa.antimatter.Antimatter;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
@@ -12,10 +12,7 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.structure.IComponent;
-import muramasa.antimatter.structure.Structure;
-import muramasa.antimatter.structure.StructureCache;
-import muramasa.antimatter.structure.StructureResult;
+import muramasa.antimatter.structure.*;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
@@ -29,6 +26,7 @@ import tesseract.api.capability.TesseractGTCapability;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
@@ -36,6 +34,7 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 /** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
 public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T>> extends TileEntityMachine<T> implements IComponent {
 
+    private final Set<StructureHandle<?>> allHandlers = new ObjectOpenHashSet<>();
     protected StructureResult result = null;
 
     /** To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded from disk. **/
@@ -52,6 +51,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public void onRemove() {
         super.onRemove();
+        //Remove handlers from the structure cache.
+        allHandlers.forEach(StructureHandle::deregister);
         invalidateStructure();
         StructureCache.remove(world, pos);
     }
@@ -66,6 +67,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     @Override
     public void onFirstTick() {
+        //Register handlers to the structure cache.
+        allHandlers.forEach(StructureHandle::register);
         //if INVALID_STRUCTURE was stored to disk don't bother rechecking on first tick.
         //This is not only behavioural but if INVALID_STRUCTURE are checked then maxShares
         //might misbehave.
@@ -89,7 +92,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                     if (onStructureFormed()) {
                         afterStructureFormed();
                         setMachineState(MachineState.IDLE);
-                        Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
+                        //Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
                         this.recipeHandler.ifPresent(t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
                         sidedSync(true);
                         checkingStructure--;
@@ -105,7 +108,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 }
             }
         } else {
-           // Antimatter.LOGGER.info("[Structure Debug] Error " + result.getError());
+           //Antimatter.LOGGER.info("[Structure Debug] Error " + result.getError());
         }
         //if we reached here something went wrong.
         invalidateStructure();
@@ -139,8 +142,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         BlockState old = this.getBlockState();
         super.updateContainingBlockInfo();
         BlockState newState = this.getBlockState();
-        if (!old.equals(newState))
-            checkStructure();
+        if (!old.equals(newState)) checkStructure();
     }
 
     protected void invalidateStructure() {
@@ -238,5 +240,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (getMachineState() == MachineState.INVALID_STRUCTURE) {
             shouldCheckFirstTick = false;
         }
+    }
+
+    public void addStructureHandle(StructureHandle<?> handle) {
+        this.allHandlers.add(handle);
     }
 }

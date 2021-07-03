@@ -169,7 +169,7 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                         if (tile.wrenchMachine(player, hit, player.isCrouching())) {
                             return ActionResultType.SUCCESS;
                         }
-                    } else if (type == HAMMER) {
+                    } else if (type == SOFT_HAMMER) {
                         tile.toggleMachine();
                         if (tile.getMachineState() == MachineState.DISABLED) {
                             player.sendMessage(new StringTextComponent("Disabled machine."), player.getUniqueID());
