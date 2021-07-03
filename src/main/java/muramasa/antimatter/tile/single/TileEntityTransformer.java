@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.function.IntToLongFunction;
 
 import static muramasa.antimatter.Data.HAMMER;
+import static muramasa.antimatter.Data.SOFT_HAMMER;
 
 public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends TileEntityMachine<T> {
 
@@ -72,7 +73,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
 
     @Override
     public ActionResultType onInteract(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit, AntimatterToolType type) {
-        if (type == HAMMER && hand == Hand.MAIN_HAND) {
+        if (type == SOFT_HAMMER && hand == Hand.MAIN_HAND) {
             toggleMachine();
             energyHandler.ifPresent(h -> {
                 int temp = h.getOutputAmperage();
