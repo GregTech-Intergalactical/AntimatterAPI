@@ -3,6 +3,7 @@ package muramasa.antimatter.recipe.map;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Either;
 
+import muramasa.antimatter.machine.types.Machine;
 import org.lwjgl.system.CallbackI.P;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -137,6 +138,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     public RecipeMap<B> setGuiData(GuiData gui) {
         this.GUI = gui;
         AntimatterAPI.registerJEICategory(this, this.GUI);
+        return this;
+    }
+
+    public RecipeMap<B> setGuiData(GuiData gui, Machine<?> machine) {
+        this.GUI = gui;
+        AntimatterAPI.registerJEICategory(this, this.GUI, machine);
         return this;
     }
 
