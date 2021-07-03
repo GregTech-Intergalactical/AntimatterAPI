@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.gui.slot.AbstractSlot;
 import muramasa.antimatter.gui.slot.IAntimatterSlot;
 import net.minecraft.inventory.container.Slot;
 
