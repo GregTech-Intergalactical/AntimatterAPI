@@ -158,6 +158,25 @@ public class Data {
         }
     });
 
+    public static final MaterialRecipe.Provider WOOD_TOOL_BUILDER = MaterialRecipe.registerProvider("wood_tool", id -> new MaterialRecipe.ItemBuilder() {
+
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            Material m = (Material) mats.mats.get("secondary");
+            AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
+            ItemStack stack = type.getToolStack(Material.get("wood"), m == null ? NULL : m);
+            return stack;
+        }
+
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
+            Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
+            Material secondary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
+            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", secondary != null ? secondary : NULL);
+        }
+    });
+
     public static final MaterialRecipe.Provider CROWBAR_BUILDER = MaterialRecipe.registerProvider("crowbar", id -> new MaterialRecipe.ItemBuilder() {
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -360,6 +379,7 @@ public class Data {
     public static final AntimatterToolType FILE = new AntimatterToolType(Ref.ID, "file", 2, 2, 2, -2.0F, -2.4F);
     public static final AntimatterToolType CROWBAR = new AntimatterToolType(Ref.ID, "crowbar", 2, 10, 5, 1.0F, -2.0F).setUseSound(SoundEvents.ENTITY_ITEM_BREAK).setSecondaryRequirement(MaterialTag.RUBBERTOOLS);
     public static final AntimatterToolType DRILL = new AntimatterToolType(Ref.ID, "drill", 2, 2, 10, 3.0F, -3.0F).setPowered(100000, 1, 2, 3).setUseSound(Ref.DRILL).addToolTypes("pickaxe", "shovel").addEffectiveMaterials(PACKED_ICE, IRON, net.minecraft.block.material.Material.ROCK, ANVIL, PISTON, EARTH, CLAY, net.minecraft.block.material.Material.SAND);
+    public static final AntimatterToolType SOFT_HAMMER = new AntimatterToolType(Ref.ID, "soft_hammer", 2, 2, 2, 1.0F, -3.0F);
     public static final AntimatterToolType SCREWDRIVER = new AntimatterToolType(Ref.ID, "screwdriver", 2, 2, 2, 0.0F, -1.0F).setUseSound(Ref.WRENCH);
     public static final AntimatterToolType MORTAR = new AntimatterToolType(Ref.ID, "mortar", 5, 5, 2, -2.0F, 0.0F).setUseSound(SoundEvents.BLOCK_GRINDSTONE_USE).setBlockBreakability(false);
     public static final AntimatterToolType WIRE_CUTTER = new AntimatterToolType(Ref.ID, "wire_cutter", 5, 3, 2, 0.0F, -1.5F).setUseSound(SoundEvents.ENTITY_SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CARPET);

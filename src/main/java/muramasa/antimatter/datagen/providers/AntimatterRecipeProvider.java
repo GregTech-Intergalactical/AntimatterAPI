@@ -26,6 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -196,6 +197,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
             addToolRecipe(TOOL_BUILDER.get(HAMMER.getId()), consumer, Ref.ID, HAMMER.getId() + "_" +"recipe", "antimatter_tools",
                     "has_wrench", in, Collections.singletonList(HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(HAMMER, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
+            addToolRecipe(TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_" +"recipe", "antimatter_tools",
+                    "has_wrench", in, Collections.singletonList(SOFT_HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(SOFT_HAMMER, true).tags(RUBBERTOOLS).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
+            if (Material.get("wood") != NULL) {
+                addToolRecipe(WOOD_TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_" +"recipe", "antimatter_tools",
+                        "has_wrench", in, Collections.singletonList(SOFT_HAMMER.getToolStack(Material.get("wood"), NULL)), of('I', RecipeIngredient.of(ItemTags.PLANKS, 1), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
+            }
 
             addToolRecipe(ARMOR_BUILDER.get(HELMET.getId()), consumer, Ref.ID, HELMET.getId() + "_recipe", "antimatter_helmets",
                     "has_wrench", in, Collections.singletonList(HELMET.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI");
