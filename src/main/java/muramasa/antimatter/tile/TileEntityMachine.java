@@ -344,9 +344,13 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                 recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);
             }
         } else {
-            disabledState = getMachineState();
-            setMachineState(MachineState.DISABLED);
+            disableMachine();
         }
+    }
+
+    protected void disableMachine() {
+        disabledState = getMachineState();
+        setMachineState(MachineState.DISABLED);
     }
 
     public void setMachineState(MachineState newState) {

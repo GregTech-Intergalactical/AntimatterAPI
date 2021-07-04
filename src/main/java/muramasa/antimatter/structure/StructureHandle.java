@@ -68,8 +68,9 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
 
     public void structureCacheRemoval() {
         Antimatter.LOGGER.debug("removed structure handle");
-        if (this.object != null && onRemoval != null) onRemoval.accept(this.object);
+        T obj = this.object;
         this.object = null;
+        if (onRemoval != null) onRemoval.accept(obj);
     }
 
     public void structureCacheAddition(TileEntity t) {
