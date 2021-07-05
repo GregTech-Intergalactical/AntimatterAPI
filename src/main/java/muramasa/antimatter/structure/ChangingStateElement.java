@@ -15,7 +15,6 @@ public class ChangingStateElement extends StructureElement {
     private final IBlockStatePredicate built;
     private final BiFunction<MachineState, BlockState, BlockState> builder;
 
-    public static final ChangingStateElement TEST = new ChangingStateElement((a,b,c) -> c == Data.ANDESITE.getState(), (a,b,c) -> c == Data.GRANITE.getState() || c == Data.BLACKSTONE.getState(), (s,b) -> s == MachineState.ACTIVE ? Data.BLACKSTONE.getState() : ( s ==MachineState.IDLE ? Data.GRANITE.getState() : Data.ANDESITE.getState()));
 
     /**
      * ChangingStateElement allows you to vary the block state between machine texture states(Idle, Active, Invalid Structure).
