@@ -6,17 +6,15 @@ import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -63,7 +61,7 @@ public class Structure {
         return requirements;
     }
 
-    public StructureResult evaluate(@Nonnull TileEntityMachine tile) {
+    public StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile) {
         StructureResult result = new StructureResult(this);
         Direction h = null;
         if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y) {
@@ -80,7 +78,7 @@ public class Structure {
         return result;
     }
 
-    public boolean evaluatePosition(@Nonnull StructureResult res, @Nonnull TileEntityMachine tile, @Nonnull BlockPos pos) {
+    public boolean evaluatePosition(@Nonnull StructureResult res, @Nonnull TileEntityBasicMultiMachine<?> tile, @Nonnull BlockPos pos) {
         StructureElement el = res.get(pos);
         if (el != null) {
             return el.evaluate(tile, new int3(pos.getX(), pos.getY(), pos.getZ()), res);
@@ -118,7 +116,7 @@ public class Structure {
         };
     }
 
-    public LongList getStructure(TileEntityMachine tile) {
+    public LongList getStructure(TileEntityBasicMultiMachine<?> tile) {
         LongList l = new LongArrayList();
         Direction h = null;
         if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y){

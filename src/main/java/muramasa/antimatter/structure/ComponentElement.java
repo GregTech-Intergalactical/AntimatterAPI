@@ -2,7 +2,7 @@ package muramasa.antimatter.structure;
 
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
@@ -21,7 +21,7 @@ public class ComponentElement extends StructureElement {
     }
 
     @Override
-    public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
+    public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
         TileEntity tile = machine.getWorld().getTileEntity(pos);
         if (tile instanceof IComponent) {
             if (((IComponent) tile).getComponentHandler().isPresent()) {

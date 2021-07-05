@@ -10,7 +10,6 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.block.BlockState;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
@@ -32,6 +31,7 @@ public class StructureResult {
     public LongList positions = new LongArrayList();
     //Used to quickly find the element in StructureCache lookup.
     private final Map<BlockPos, StructureElement> ELEMENT_LOOKUP = new Object2ObjectOpenHashMap<>();
+    private final Map<BlockPos, StructureElement> TICKING = new Object2ObjectOpenHashMap<>();
 
     public StructureResult(Structure structure) {
         this.structure = structure;
@@ -44,6 +44,9 @@ public class StructureResult {
 
     public StructureResult register(BlockPos pos, StructureElement el) {
         ELEMENT_LOOKUP.put(pos, el);
+        if (el.ticks()) {
+            TICKING.put(pos, el);
+        }
         return this;
     }
 
@@ -87,7 +90,7 @@ public class StructureResult {
         return true;
     }
 
-    public void build(TileEntityBasicMultiMachine machine, StructureResult result) {
+    public void build(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
         Direction h = null;
         if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
             h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
@@ -99,7 +102,7 @@ public class StructureResult {
         }
     }
 
-    public void remove(TileEntityBasicMultiMachine machine, StructureResult result) {
+    public void remove(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
         Direction h = null;
         if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
             h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
@@ -111,7 +114,7 @@ public class StructureResult {
         }
     }
 
-    public void updateState(TileEntityBasicMultiMachine machine, StructureResult result) {
+    public void updateState(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
         Direction h = null;
         if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
             h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
@@ -121,6 +124,13 @@ public class StructureResult {
             Structure.Point point = it.next();
             int count = StructureCache.refCount(machine.getWorld(),point.pos);
             point.el.onStateChange(machine, proper, point.pos, result, count);
+        }
+    }
+
+    public void tick(TileEntityBasicMultiMachine<?> machine) {
+        if (TICKING.isEmpty()) return;
+        for (Map.Entry<BlockPos, StructureElement> entry : TICKING.entrySet()) {
+            entry.getValue().tick(machine, entry.getKey());
         }
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
-    private final boolean debug = true;
+    private final boolean debug = false;
     private final TileEntityBasicMultiMachine<?> source;
     private final List<int3> offsets;
     private final Consumer<T> onRemoval;
@@ -67,7 +67,7 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
     }
 
     public void structureCacheRemoval() {
-        Antimatter.LOGGER.debug("removed structure handle");
+        if (debug) Antimatter.LOGGER.debug("removed structure handle");
         T obj = this.object;
         this.object = null;
         if (onRemoval != null) onRemoval.accept(obj);
@@ -75,7 +75,7 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
 
     public void structureCacheAddition(TileEntity t) {
         if (!clazz.isInstance(t)) return;
-        Antimatter.LOGGER.debug("added to structure handle");
+        if (debug) Antimatter.LOGGER.debug("added to structure handle");
         this.object = (T) t;
         if (onAdd != null) onAdd.accept(this.object);
     }

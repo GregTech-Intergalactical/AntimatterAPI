@@ -3,7 +3,6 @@ package muramasa.antimatter.structure;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
 import net.minecraft.block.Block;
@@ -40,7 +39,7 @@ public class FakeTileElement extends StructureElement {
     }
 
     @Override
-    public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
+    public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
         BlockState state = machine.getWorld().getBlockState(pos);
         if (state.getBlock().matchesBlock(Data.PROXY_INSTANCE)) {
             TileEntity tile = machine.getWorld().getTileEntity(pos);

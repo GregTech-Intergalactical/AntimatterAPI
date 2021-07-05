@@ -1,7 +1,6 @@
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.math.BlockPos;
@@ -30,19 +29,27 @@ public class StructureElement {
         return exclude;
     }
 
-    public boolean evaluate(TileEntityMachine machine, int3 pos, StructureResult result) {
+    public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
         return false;
     }
 
-    public void onBuild(TileEntityBasicMultiMachine machine, BlockPos pos, StructureResult result, int count) {
+    public void onBuild(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
 
     }
 
-    public void onRemove(TileEntityBasicMultiMachine machine, BlockPos pos, StructureResult result, int count) {
+    public void onRemove(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
 
     }
 
-    public void onStateChange(TileEntityBasicMultiMachine machine, MachineState newState, BlockPos pos, StructureResult result, int count) {
+    public void onStateChange(TileEntityBasicMultiMachine<?> machine, MachineState newState, BlockPos pos, StructureResult result, int count) {
+
+    }
+
+    public boolean ticks() {
+        return false;
+    }
+
+    public void tick(TileEntityBasicMultiMachine<?> machine, BlockPos pos) {
 
     }
 }

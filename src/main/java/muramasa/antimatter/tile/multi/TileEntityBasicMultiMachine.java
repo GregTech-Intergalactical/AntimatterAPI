@@ -116,6 +116,12 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         return false;
     }
 
+    @Override
+    public void onServerUpdate() {
+        super.onServerUpdate();
+        if (result != null) result.tick(this);
+    }
+
     public <T> LazyOptional<T> getCapabilityFromFake(Capability<T> cap, BlockPos pos, Direction side, ICover coverPresent) {
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent() && (coverPresent instanceof CoverInput)) return itemHandler.side(side).cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent() && (coverPresent instanceof CoverInput)) return fluidHandler.side(side).cast();
