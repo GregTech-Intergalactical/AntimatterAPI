@@ -44,7 +44,7 @@ public class ChangingStateElement extends StructureElement {
         super.onBuild(machine, pos, result, count);
         if (count > 1) return;
         World world = machine.getWorld();
-
+        //No need to test here because we know it already matches.
         world.setBlockState(pos, builder.apply(MachineState.IDLE, world.getBlockState(pos)), 2 | 8);
     }
 
@@ -53,7 +53,12 @@ public class ChangingStateElement extends StructureElement {
         super.onRemove(machine, pos, result, count);
         if (count == 0)  {
             World world = machine.getWorld();
-            world.setBlockState(pos, builder.apply(MachineState.INVALID_STRUCTURE, world.getBlockState(pos)), 2 | 8);
+            BlockState state = world.getBlockState(pos);
+            //Make sure that the old blockstate actually matches, since e.g. if this block is removed it will be air
+            //and setting it again will cause it to loop.
+            if (built.evaluate(machine.getWorld(), pos, state)) {
+                world.setBlockState(pos, builder.apply(MachineState.INVALID_STRUCTURE, world.getBlockState(pos)), 2 | 8);
+            }
         }
     }
 
