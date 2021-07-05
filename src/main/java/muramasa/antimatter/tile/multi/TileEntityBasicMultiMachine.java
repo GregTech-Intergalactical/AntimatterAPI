@@ -135,7 +135,12 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         }
     }
 
-    
+    @Override
+    public void setMachineState(MachineState newState) {
+        super.setMachineState(newState);
+        if (result != null)
+            result.updateState(this, result);
+    }
 
     @Override
     public void updateContainingBlockInfo() {

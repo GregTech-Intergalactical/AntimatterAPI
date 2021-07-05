@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 
 public class BlockStateElement extends StructureElement {
 
+    public static BlockStateElement AIR = new BlockStateElement("air", (r, p, s) -> s.isAir(r, p)); //Air check
     protected IBlockStatePredicate predicate;
 
     public BlockStateElement(String elementId, IBlockStatePredicate predicate) {

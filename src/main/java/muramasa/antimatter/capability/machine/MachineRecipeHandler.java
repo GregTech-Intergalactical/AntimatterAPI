@@ -409,11 +409,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     public boolean accepts(ItemStack stack) {
-        return this.tile.getMachineType().getRecipeMap().acceptsItem(stack);
+        RecipeMap<?> map = this.tile.getMachineType().getRecipeMap();
+        return map == null || map.acceptsItem(stack);
     }
 
     public boolean accepts(FluidStack stack) {
-        return this.tile.getMachineType().getRecipeMap().acceptsFluid(stack);
+        RecipeMap<?> map = this.tile.getMachineType().getRecipeMap();
+        return map == null || map.acceptsFluid(stack);
     }
 
     @Nullable

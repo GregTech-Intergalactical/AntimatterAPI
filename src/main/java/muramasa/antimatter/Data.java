@@ -25,6 +25,7 @@ import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
+import muramasa.antimatter.structure.BlockStateElement;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.texture.Texture;
@@ -66,142 +67,6 @@ import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.block.material.Material.*;
 
 public class Data {
-
-    /** RECIPE BUILDERS **/
-
-    public static final MaterialRecipe.Provider ARMOR_BUILDER = MaterialRecipe.registerProvider("armor",id -> new MaterialRecipe.ItemBuilder() {
-
-       @Override
-       public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-           return AntimatterAPI.get(AntimatterArmorType.class, id).getToolStack((Material) mats.mats.get("primary"));
-       }
-
-       @Override
-       public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-           CompoundNBT nbt = stack.getTag(). getCompound(Ref.TAG_TOOL_DATA);
-           Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-           return ImmutableMap.of("primary", primary != null ? primary : NULL);
-       }
-   });
-
-    public static final MaterialRecipe.Provider ITEM_PIPE_BUILDER = MaterialRecipe.registerProvider("pipe", id  -> new MaterialRecipe.ItemBuilder() {
-
-        @Override
-        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            PipeSize size = PipeSize.valueOf(id.toUpperCase(Locale.ENGLISH));
-            Material mat = (Material) mats.mats.get("primary");
-            PipeType p = AntimatterAPI.get(ItemPipe.class, "item_" + mat.getId());
-            int amount = size == PipeSize.TINY ? 12 : size == PipeSize.SMALL ? 6 : size == PipeSize.NORMAL ? 2 : 1;
-            return new ItemStack(p.getBlock(size), amount);
-        }
-
-        @Override
-        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
-        }
-    });
-
-    public static final MaterialRecipe.Provider DUST_BUILDER = MaterialRecipe.registerProvider("dust", id -> new MaterialRecipe.ItemBuilder() {
-        final MaterialTypeItem type = AntimatterAPI.get(MaterialTypeItem.class, id);
-        @Override
-        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            Material mat = (Material) mats.mats.get("primary");
-            return type.get(mat, 1);
-        }
-
-        @Override
-        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            if (stack.getItem() instanceof MaterialItem) {
-                return ImmutableMap.of("primary", ((MaterialItem)stack.getItem()).getMaterial());
-            }
-            Material mat = type.tryMaterialFromItem(stack);
-            if (mat != null) {
-                return ImmutableMap.of("primary", mat);
-            }
-            return null;
-        }
-    });
-
-    public static final MaterialRecipe.Provider FLUID_PIPE_BUILDER = MaterialRecipe.registerProvider("fluid", id  -> new MaterialRecipe.ItemBuilder() {
-
-        @Override
-        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            PipeSize size = PipeSize.valueOf(id.toUpperCase(Locale.ENGLISH));
-            Material mat = (Material) mats.mats.get("primary");
-            PipeType p = AntimatterAPI.get(FluidPipe.class, "fluid_" + mat.getId());
-            int amount = size == PipeSize.TINY ? 12 : size == PipeSize.SMALL ? 6 : size == PipeSize.NORMAL ? 2 : 1;
-            return new ItemStack(p.getBlock(size), amount);
-        }
-
-        @Override
-        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
-        }
-    });
-
-    public static final MaterialRecipe.Provider TOOL_BUILDER = MaterialRecipe.registerProvider("tool", id -> new MaterialRecipe.ItemBuilder() {
-
-        @Override
-        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            Material m = (Material) mats.mats.get("secondary");
-            AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
-            ItemStack stack = type.getToolStack((Material) mats.mats.get("primary"), m == null ? NULL : m);
-            return stack;
-        }
-
-        @Override
-        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
-            Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-            Material secondary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
-            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", secondary != null ? secondary : NULL);
-        }
-    });
-
-    public static final MaterialRecipe.Provider WOOD_TOOL_BUILDER = MaterialRecipe.registerProvider("wood_tool", id -> new MaterialRecipe.ItemBuilder() {
-
-        @Override
-        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            Material m = (Material) mats.mats.get("secondary");
-            AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
-            ItemStack stack = type.getToolStack(Material.get("wood"), m == null ? NULL : m);
-            return stack;
-        }
-
-        @Override
-        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
-            Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-            Material secondary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
-            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", secondary != null ? secondary : NULL);
-        }
-    });
-
-    public static final MaterialRecipe.Provider CROWBAR_BUILDER = MaterialRecipe.registerProvider("crowbar", id -> new MaterialRecipe.ItemBuilder() {
-        @Override
-        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            int dye = ((DyeColor) mats.mats.get("secondary")).getColorValue();
-            AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
-            ItemStack stack = type.getToolStack(((Material) mats.mats.get("primary")), NULL);
-            stack.getChildTag(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, dye);
-            return stack;
-        }
-
-        @Override
-        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
-            Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-            int secondary = nbt.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
-            Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getColorValue() == secondary).findFirst();
-            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", color.orElse(DyeColor.WHITE));
-        }
-    });
-
-    static {
-        PropertyIngredient.addGetter(Tags.Items.DYES.getName(), DyeColor::getColor);
-    }
-
-    /** END RECIPE BUILDERS **/
 
     public static final net.minecraft.block.material.Material WRENCH_MATERIAL = new net.minecraft.block.material.Material(MaterialColor.IRON, false, true, true, true, false, false, PushReaction.NORMAL);
 
@@ -296,7 +161,7 @@ public class Data {
     public static StoneType ENDSTONE = new StoneType(Ref.ID, "endstone", Endstone, new Texture("minecraft", "block/end_stone"), SoundType.STONE, false).setState(Blocks.END_STONE).setHardnessAndResistance(3.0F, 9.0F);
 
     static {
-        StructureBuilder.addGlobalElement("A", StructureElement.AIR);
+        StructureBuilder.addGlobalElement("A", BlockStateElement.AIR);
         StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
         NULL.remove(ROD);
 

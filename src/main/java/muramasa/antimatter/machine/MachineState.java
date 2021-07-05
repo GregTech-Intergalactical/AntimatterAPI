@@ -56,4 +56,13 @@ public enum MachineState implements IAntimatterObject {
     public String getId() {
         return name().toLowerCase(Locale.ENGLISH);
     }
+
+    public MachineState getTextureState() {
+        switch (this) {
+            case ACTIVE:
+            case INVALID_STRUCTURE:
+                return this;
+        }
+        return IDLE;
+    }
 }

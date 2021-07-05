@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.properties.BlockStateProperties;
@@ -107,6 +108,19 @@ public class StructureResult {
             Structure.Point point = it.next();
             int count = StructureCache.refCount(machine.getWorld(),point.pos);
             point.el.onRemove(machine, point.pos, result, count);
+        }
+    }
+
+    public void updateState(TileEntityBasicMultiMachine machine, StructureResult result) {
+        Direction h = null;
+        if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
+            h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
+        }
+        MachineState proper = machine.getMachineState().getTextureState();
+        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
+            Structure.Point point = it.next();
+            int count = StructureCache.refCount(machine.getWorld(),point.pos);
+            point.el.onStateChange(machine, proper, point.pos, result, count);
         }
     }
 }
