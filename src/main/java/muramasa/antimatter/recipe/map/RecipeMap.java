@@ -135,18 +135,34 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return this;
     }
 
+    /**
+     * Sets the gui data and overrides the data in JEI.
+     * @param gui the guidata.
+     * @return this
+     */
     public RecipeMap<B> setGuiData(GuiData gui) {
         this.GUI = gui;
         AntimatterAPI.registerJEICategory(this, this.GUI);
         return this;
     }
 
+    /**
+     * Sets the gui data and overrides the data in JEI.
+     * @param gui the guidata.
+     * @param machine the machine.
+     * @return this
+     */
     public RecipeMap<B> setGuiData(GuiData gui, Machine<?> machine) {
         this.GUI = gui;
         AntimatterAPI.registerJEICategory(this, this.GUI, machine, true);
         return this;
     }
 
+    /**
+     * Sets a proxy for this recipe map that is used to build recipes from other maps.
+     * @param proxy the proxy.
+     * @return this.
+     */
     public RecipeMap<B> setProxy(Proxy proxy) {
         this.PROXY = proxy;
         return this;
@@ -189,7 +205,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     /**
-     * Adds a recipe to this map. If the recipe is empty or collides with another recipe it is not added.
+     * Adds a recipe to this map. If the recipe is empty it is not added. If it collides with another recipe it is added
+     * to the collection and the first recipe that matches a predicate is returned upon find.
      *
      * @param recipe the recipe to add.
      */
@@ -223,14 +240,10 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         }
         List<List<AbstractMapIngredient>> items = fromRecipe(recipe, tags, true);
 
-        Recipe r = recurseItemTreeFind(items, map, rr -> true);
-        if (r != null) {
-            Antimatter.LOGGER.warn("Recipe collision, adding both but only first is available.");
-            //Utils.onInvalidData("RECIPE COLLISION! (Map: " + this.id + ")");
-            //Utils.onInvalidData("RECIPE ALREADY IN MAP: \n " + r);
-            //Utils.onInvalidData("\n + RECIPE BEING ADDED " + recipe);
-            //return;
-        }
+        //Recipe r = recurseItemTreeFind(items, map, rr -> true);
+        //if (r != null) {
+            //Antimatter.LOGGER.warn("Recipe collision, adding both but only first is available.");
+        //}
         if (recurseItemTreeAdd(recipe, items, map, 0, 0)) {
             items.forEach(t -> t.forEach(ing -> {
                 if (!ing.isSpecial())

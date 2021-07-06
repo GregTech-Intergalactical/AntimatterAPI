@@ -290,19 +290,6 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         return Data.WRENCH.getToolType();
     }
 
-//    @Override
-//    public void breakBlock(World world, BlockPos pos, BlockState state) {
-//        TileEntity tile = Utils.getTile(world, pos);
-//        if (tile instanceof TileEntityMachine) {
-//            TileEntityMachine machine = (TileEntityMachine) tile;
-//            machine.itemHandler.ifPresent(h -> {
-//                h.getInputList().forEach(i -> Utils.spawnItems(world, pos, null, i));
-//                h.getOutputList().forEach(i -> Utils.spawnItems(world, pos, null, i));
-//            });
-//        }
-//    }
-
-
     @Override
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         return super.getDrops(state, builder);
@@ -342,16 +329,8 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         }
     }
 
-    /* TODO: needed?
-    @Override
-    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
-        if (!(state.getBlock() instanceof BlockMachine) && world == null || pos == null) return -1;
-        TileEntity tile = Utils.getTile(world, pos);
-        return tile instanceof TileEntityMachine && i == 0 ? /*((TileEntityMachine) tile).getTextureData().getTint() -1 : -1;
-    }
-    */
-
     //This makes no sense because it is manually derived by testing, to make sure covers render properly.
+    //Probably needs a rewrite of the model logic to get rid of this mess.
     private Direction getDir(Direction hFace, Direction which, Direction face) {
         if (which.getAxis() == Axis.Y) return which.getOpposite();
         switch (hFace) {
@@ -493,7 +472,6 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                     }
                 }
             }
-            int x = 1;
         }
     }
 }

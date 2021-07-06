@@ -49,6 +49,11 @@ import static muramasa.antimatter.Data.COVEROUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
+/**
+ * Machine represents the base class for an Antimatter Machine. It provides tile entities, blocks as well as
+ * features to configure machines such as vertical facing, the recipe map and smaller behaviours like if front IO is allowed.
+ * @param <T> this class as a generic argument.
+ */
 public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider {
 
     /** Basic Members **/
@@ -80,12 +85,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /** Behaviours **/
     protected boolean allowFrontCovers = false;
-    protected ICover outputCover = COVEROUTPUT;
     protected boolean allowVerticalFacing = false;
-
     protected boolean frontIO = false;
 
-    //TODO get valid covers
+    /** Covers **/
+    protected ICover outputCover = COVEROUTPUT;
 
     public Machine(String domain, String id) {
         this.domain = domain;
@@ -108,16 +112,31 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         AntimatterAPI.register(Machine.class, this);
     }
 
+    /**
+     * Sets the required amps for this machine.
+     * @param amps amperage
+     * @return this.
+     */
     public T amps(int amps) {
         this.amps = amps;
         return (T) this;
     }
 
+    /**
+     * Can you place covers on the front face of this machine?
+     * @return this.
+     */
     public T frontCovers() {
         allowFrontCovers = true;
         return (T) this;
     }
 
+    /**
+     * Sets the output cover fort his machine, which is per default placed on the opposite side of the machine
+     * upon placement.
+     * @param cover the cover.
+     * @return this.
+     */
     public T setOutputCover(ICover cover) {
         this.outputCover = cover;
         return (T) this;
@@ -150,7 +169,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @param covers if null, disable covers. (Icover[] null, not 1 null cover)
 *               1 cover sets 1 cover + output
 *               6 covers configures all covers.
-     * @return
+     * @return this
      */
     public T covers(ICover... covers) {
         if (covers == null) {
@@ -194,11 +213,19 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected Block getBlock(Machine<T> type, Tier tier) {
         return new BlockMachine(type, tier);
     }
-    //Call only after registration!
+
+    /**
+     * Returns the item variant of this machine given the tier. Only use after registration or this is null!
+     * @param tier the tier to get.
+     * @return this as an item.
+     */
     public Item getItem(Tier tier) {
         return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMachine.class,this.getId() + "_" + tier.getId()));
     }
 
+    /**
+     * Registers the recipemap into JEI. This can be overriden in RecipeMap::setGuiData.
+     */
     public void registerJei() {
         if (this.guiData != null && recipeMap != null) {
             //If the recipe map has another GUI present don't register it.
@@ -214,6 +241,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    /**
+     * Sets the recipe map this machine uses for lookup. This will also register it in JEI
+     * but it can be overriden by setGuiData in the RecipeMap.
+     * @param map the recipe map.
+     * @return this.
+     */
     public T setMap(RecipeMap<?> map) {
         this.recipeMap = map;
         addFlags(RECIPE);
@@ -226,11 +259,23 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    /**
+     * Set the getter for overlayTextures. All AM machines are base + overlay textures, this represents the getter for overlay texture. See default
+     * behaviour in constructor.
+     * @param texturer the texture handler
+     * @return this
+     */
     public T overlayTexture(IOverlayTexturer texturer) {
         this.overlayTextures = texturer;
         return (T) this;
     }
 
+    /**
+     * Set the getter for baseTexture. All AM machines are base + overlay textures, this represents the getter for base texture. See default
+     * behaviour in constructor.
+     * @param handler the texture handler
+     * @return this
+     */
     public T baseTexture(ITextureHandler handler) {
         this.baseTexture = handler;
         return (T) this;
@@ -240,49 +285,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         this.group = group;
         return (T) this;
     }
-    /*
-    @Deprecated
-    protected void addData(Object... data) {
-        List<Tier> tiers = new ObjectArrayList<>();
-        Set<MachineFlag> flags = new ObjectOpenHashSet<>();
-        for (Object o : data) {
-            if (o instanceof RecipeMap) {
-                recipeMap = (RecipeMap<?>) o;
-                flags.add(RECIPE);
-            }
-            if (o instanceof Tier) tiers.add((Tier) o);
-            if (o instanceof MachineFlag) flags.add((MachineFlag) o);
-            if (o instanceof Texture) baseTexture = (m, state) -> new Texture[]{(Texture) o};
-            if (o instanceof IOverlayTexturer) overlayTextures = (IOverlayTexturer) o;
-            if (o instanceof ITextureHandler) baseTexture = (ITextureHandler) o;
-            if (o instanceof ItemGroup) group = (ItemGroup) o;
-            if (o instanceof ICover) {
-                covers(COVERNONE,COVERNONE,((ICover)o),COVERNONE,COVERNONE,COVERNONE);
-                setOutputCover((ICover) o);
-            }
-            //if (data[i] instanceof ITextureHandler) baseData = ((ITextureHandler) data[i]);
-        }
-        setTiers(tiers.size() > 0 ? tiers.toArray(new Tier[0]) : Tier.getStandard());
-        addFlags(flags.toArray(new MachineFlag[0]));
-
-        if (overlayTextures == null) {
-            overlayTextures = (type, state, tier) -> {
-                if (state != MachineState.ACTIVE && state != MachineState.INVALID_STRUCTURE) state = MachineState.IDLE;
-                String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
-                return new Texture[] {
-                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
-                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "top"),
-                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
-                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "back"),
-                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
-                        new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
-                };
-            };
-        }
-        if (baseTexture == null) {
-            baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
-        }
-    }*/
 
     public T setTile(Function<T, Supplier<? extends TileEntityMachine<?>>> func) {
         this.tileFunc = func;
@@ -379,20 +381,38 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
+    /**
+     * Sets this machines GUI handler which provides containers and screens.
+     * @param menuHandler the menu handler.
+     */
     public void setGUI(MenuHandler<?> menuHandler) {
         guiData = new GuiData(this, menuHandler);
 
         registerJei();
     }
 
+    /**
+     * Set the multiblock structure for this machine, for all tiers.
+     * Useless if the tile is not a multiblock.
+     * @param func the function to build a structure.
+     */
     public void setStructure(Function<StructureBuilder, Structure> func) {
         getTiers().forEach(t -> setStructure(t, func));
     }
-
+    /**
+     * Set the multiblock structure for this machine, for one tier.
+     * Useless if the tile is not a multiblock.
+     * @param func the function to build a structure.
+     */
     public void setStructure(Tier tier, Function<StructureBuilder, Structure> func) {
         structures.put(tier, func.apply(new StructureBuilder()));
     }
 
+    /**
+     * Whether or not this machine has the given machine flag.
+     * @param flag the flag.
+     * @return if it has it.
+     */
     public boolean has(MachineFlag flag) {
         return flag.getTypes().contains(this);
     }

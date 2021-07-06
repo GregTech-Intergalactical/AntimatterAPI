@@ -21,6 +21,11 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.function.LongConsumer;
 
+/**
+ * StructureCache represents an efficient cache of multiblock structures in Antimatter. It listens to block updates to send updates to controllers.
+ * StructureCache also ensures MAX_SHARES in multiblocks are handled.
+ * It also supports listeners for positions to keep track of valid multiblocks.
+ */
 @Mod.EventBusSubscriber
 public class StructureCache {
 
@@ -30,7 +35,7 @@ public class StructureCache {
     static {
         AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState, flags) -> {
             if (oldState == newState) return;  // TODO: better checks?
-            //if no block update is actually queried, ignore
+            //if no block update is actually queried, ignore it here.
             if ((flags & (1 << 0)) == 0) {
                 return;
             }
@@ -47,6 +52,14 @@ public class StructureCache {
         });
     }
 
+    /**
+     * Validates a multiblock (To ensure max shares is not exceeded).
+     * @param world tile world.
+     * @param pos controller position.
+     * @param structure a packed list of multiblock positions.
+     * @param maxAmount maximum number of shares allowed (0 == none).
+     * @return if it was successfully added.
+     */
     public static boolean validate(World world, BlockPos pos, LongList structure, int maxAmount) {
         DimensionEntry e = LOOKUP.get(world);
         if (e != null) {
@@ -61,12 +74,24 @@ public class StructureCache {
         return false;
     }
 
+    /**
+     * Returns the number of multiblocks using this position.
+     * @param world the controller world.
+     * @param pos the position.
+     * @return the amount of usage.
+     */
     public static int refCount(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return 0;
         return entry.get(pos).values().stream().mapToInt(t -> t ? 1 : 0).sum();
     }
 
+    /**
+     * Is there a structure using this position?
+     * @param world Controller world.
+     * @param pos Relevant position.
+     * @return if it is active.
+     */
     public static boolean has(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return false;
@@ -76,14 +101,28 @@ public class StructureCache {
         return entry.STRUCTURE_TO_CONTROLLER.get(l.iterator().nextLong()).getBoolean(pos);
     }
 
+    /**
+     * Returns all controller positions for the @pos parameter.
+     * @param world relevant world.
+     * @param pos structure position.
+     * @return a mapping of positions, where boolean is the validity state. (True = formed).
+     */
     @Nullable
     public static Object2BooleanMap<BlockPos> get(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         return entry != null ? entry.get(pos) : null;
     }
 
+    /**
+     * Attempts to get a multiblock that is of class clazz from the given structure position.
+     * @param world the controller world.
+     * @param pos the structure position.
+     * @param clazz the tile class.
+     * @param <T> any relevant multi tile.
+     * @return a nullable Tile Entity.
+     */
     @Nullable
-    public static <T extends TileEntityMachine> T getAnyMulti(World world, BlockPos pos, Class<T> clazz) {
+    public static <T extends TileEntityBasicMultiMachine> T getAnyMulti(World world, BlockPos pos, Class<T> clazz) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return null;
         Object2BooleanMap<BlockPos> list = entry.get(pos);
@@ -106,12 +145,23 @@ public class StructureCache {
         entry.add(pos, structure);
     }
 
+    /**
+     * Remove a controller from the structure cache, either valid or invalid.
+     * @param world the controller world.
+     * @param pos the controller position.
+     */
     public static void remove(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return;
         entry.remove(pos);
     }
 
+    /**
+     * Invalidates a multiblock, keeping it in the cache but setting it as invalid.
+     * @param world controller world.
+     * @param pos controller position.
+     * @param structure packed multi structure.
+     */
     public static void invalidate(World world, BlockPos pos, LongList structure) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry != null) {
@@ -127,6 +177,13 @@ public class StructureCache {
         if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).onBlockUpdate(at);
     }
 
+    /**
+     * Adds a structure listener to the cache. This listener is notified if there is a multiblock present at pos, either added
+     * or removed.
+     * @param handle the structurehandle to call.
+     * @param world the tile world.
+     * @param pos the position to listen at.
+     */
     public static void addListener(StructureHandle<?> handle, World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.computeIfAbsent(world, k -> new Long2ObjectOpenHashMap<>());
         Set<StructureHandle<?>> set = map.computeIfAbsent(pos.toLong(), k -> new ObjectOpenHashSet<>());
@@ -135,6 +192,12 @@ public class StructureCache {
         if (tile != null) handle.structureCacheAddition(tile);
     }
 
+    /**
+     * Removes a structurelistener, stopping all callbacks.
+     * @param handle the handle
+     * @param world the relevant world.
+     * @param pos the blockpos.
+     */
     public static void removeListener(StructureHandle<?> handle, World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
         if (map != null) {
