@@ -16,6 +16,11 @@ import net.minecraft.world.World;
 import java.util.Arrays;
 import java.util.EnumMap;
 
+/**
+ * FakeTileElement represents a fake block for this multiblock. It takes on the appearance of another block
+ * as well as rendering possible covers on it. It also forwards capability calls to the master controller.
+ * (In the case of multiple controllers, it returns the first one that is non-empty).
+ */
 public class FakeTileElement extends StructureElement {
 
     private final IBlockStatePredicate[] preds;
