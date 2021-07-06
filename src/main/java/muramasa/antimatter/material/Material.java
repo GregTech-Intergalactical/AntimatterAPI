@@ -95,8 +95,8 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
         AntimatterAPI.register(Material.class, this);
     }
 
-    public Material(String domain, String id, int rgb, TextureSet set, Element element) {
-        this(domain, id, rgb, set);
+    public Material(String domain, String id, int rgb, TextureSet set, Element element, String... modIds) {
+        this(domain, id, rgb, set, modIds);
         this.element = element;
     }
 
@@ -312,7 +312,6 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     public Material flags(IMaterialTag... tags) {
         if (!enabled) return this;
         for (IMaterialTag t : tags) {
-            if (t == ORE) flags(ORE_SMALL);
             if (t == ORE || t == ORE_SMALL || t == ORE_STONE) flags(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
             t.add(this);
         }
