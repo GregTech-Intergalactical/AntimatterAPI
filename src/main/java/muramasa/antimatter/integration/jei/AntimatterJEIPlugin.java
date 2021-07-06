@@ -73,8 +73,8 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return new ResourceLocation(Ref.ID, "jei");
     }
 
-    public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, String itemModel) {
-        if (REGISTRY.containsKey(map.getId())) {
+    public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, String itemModel, boolean override) {
+        if (REGISTRY.containsKey(map.getId()) && !override) {
             Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
             return;
         }

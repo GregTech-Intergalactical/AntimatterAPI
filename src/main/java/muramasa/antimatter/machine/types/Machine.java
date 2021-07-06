@@ -203,7 +203,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         if (this.guiData != null && recipeMap != null) {
             //If the recipe map has another GUI present don't register it.
             if (recipeMap.getGui() == null)
-                AntimatterAPI.registerJEICategory(this.recipeMap,this.guiData, this);
+                AntimatterAPI.registerJEICategory(this.recipeMap,this.guiData, this, false);
         }
     }
 

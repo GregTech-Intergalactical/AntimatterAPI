@@ -186,20 +186,21 @@ public final class AntimatterAPI {
     }
 
     /** JEI Registry Section **/
-    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, String model) {
+
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, String model, boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
-            AntimatterJEIPlugin.registerCategory(map, gui,tier, model);
+            AntimatterJEIPlugin.registerCategory(map, gui,tier, model, override);
         }
     }
 
-    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Machine<?> machine) {
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Machine<?> machine, boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
-            AntimatterJEIPlugin.registerCategory(map, gui, machine.getFirstTier(), machine.getId());
+            AntimatterJEIPlugin.registerCategory(map, gui, machine.getFirstTier(), machine.getId(), override);
         }
     }
 
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
-       registerJEICategory(map,gui,Tier.LV, null);
+       registerJEICategory(map,gui,Tier.LV, null, true);
     }
 
     public static IRecipeRegistrate getRecipeRegistrate() {

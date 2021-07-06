@@ -143,7 +143,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     public RecipeMap<B> setGuiData(GuiData gui, Machine<?> machine) {
         this.GUI = gui;
-        AntimatterAPI.registerJEICategory(this, this.GUI, machine);
+        AntimatterAPI.registerJEICategory(this, this.GUI, machine, true);
         return this;
     }
 
