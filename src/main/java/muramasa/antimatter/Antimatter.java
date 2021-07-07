@@ -9,6 +9,7 @@ import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
+import muramasa.antimatter.recipe.RecipeBuilders;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraftforge.api.distmarker.Dist;
@@ -97,6 +98,7 @@ public class Antimatter extends AntimatterMod {
     @Override
     public void onRegistrationEvent(RegistrationEvent event, Dist side) {
         if (event == RegistrationEvent.DATA_INIT) {
+            RecipeBuilders.init();
             Data.init(side);
         }
     }
