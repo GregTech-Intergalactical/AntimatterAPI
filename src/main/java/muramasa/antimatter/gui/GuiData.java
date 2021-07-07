@@ -41,6 +41,7 @@ public class GuiData {
     protected Object2ObjectMap<String, List<SlotData<?>>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
     protected Object2ObjectMap<String, Object2IntOpenHashMap<SlotType<?>>> COUNT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
     protected List<ButtonData> BUTTON_LIST = new ObjectArrayList<>();
+    protected ResourceLocation override = null;
 
     public GuiData(String domain, String id) {
         this.loc = new ResourceLocation(domain, id);
@@ -63,6 +64,7 @@ public class GuiData {
     //Type represents what type of texture this data is representing.
     //TODO: store this in e.g. IAntimatterobject instead of hardcoded.
     public ResourceLocation getTexture(Tier tier, String type) {
+        if (override != null) return override;
         if (hasSlots(tier) && type.equals("machine")) {
             return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + tier.getId() + ".png");
         } else {
@@ -205,6 +207,11 @@ public class GuiData {
 
     public GuiData setHasIOButton(boolean hasIOButton) {
         this.hasIOButton = hasIOButton;
+        return this;
+    }
+
+    public GuiData setOverrideLocation(ResourceLocation override) {
+        this.override = override;
         return this;
     }
 
