@@ -16,7 +16,7 @@ public class ScreenHatch<T extends TileEntityHatch<T>, U extends ContainerHatch<
 
     public ScreenHatch(U container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        gui = new ResourceLocation(container.getTile().getDomain(), "textures/gui/machine/hatch.png");
+        gui = new ResourceLocation(container.getTile().getMachineType().getDomain(), "textures/gui/machine/hatch.png");
     }
 
     @Override
