@@ -98,14 +98,14 @@ public final class AntimatterAPI {
     }
 
     @Nonnull
-    public static <T> T getOrDefault(Class<T> c, String id, NonNullSupplier<T> supplier) {
+    public static <T> T getOrDefault(Class<T> c, String id, NonNullSupplier<? extends T> supplier) {
         Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         T t = map != null ? c.cast(map.get(id)) : null;
         return t != null ? t : supplier.get();
     }
 
     @Nonnull
-    public static <T> T getOrThrow(Class<T> c, String id, Supplier<RuntimeException> supplier) {
+    public static <T> T getOrThrow(Class<T> c, String id, Supplier<? extends RuntimeException> supplier) {
         Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         T t = map != null ? c.cast(map.get(id)) : null;
         if (t == null) throw supplier.get();
