@@ -30,6 +30,10 @@ import java.util.Optional;
 import static muramasa.antimatter.Data.NULL;
 
 public class RecipeBuilders {
+
+    public static void init() {
+
+    }
     /** RECIPE BUILDERS **/
 
     public static final MaterialRecipe.Provider ARMOR_BUILDER = MaterialRecipe.registerProvider("armor", id -> new MaterialRecipe.ItemBuilder() {
