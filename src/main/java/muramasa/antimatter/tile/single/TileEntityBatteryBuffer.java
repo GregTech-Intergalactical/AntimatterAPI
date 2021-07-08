@@ -10,7 +10,6 @@ public class TileEntityBatteryBuffer<T extends TileEntityBatteryBuffer<T>> exten
 
     public TileEntityBatteryBuffer(Machine<?> type) {
         super(type);
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0L, 0L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0, 0));
     }
 
     @Override
