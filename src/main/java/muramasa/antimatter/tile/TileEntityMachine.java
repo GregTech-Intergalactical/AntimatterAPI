@@ -235,9 +235,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return ((BlockMachine) block).getTier();
     }
 
-    //Returns the tier level for recipes.
+    //Returns the tier level for recipe overclocking.
     public Tier getPowerLevel() {
-        return Tier.getTier(type.amps()*getMachineTier().getVoltage());
+        return getMachineTier();
     }
 
     public boolean has(MachineFlag flag) {

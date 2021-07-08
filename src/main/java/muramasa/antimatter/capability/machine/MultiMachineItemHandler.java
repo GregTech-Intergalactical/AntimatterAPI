@@ -3,6 +3,7 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
@@ -17,6 +18,11 @@ public class MultiMachineItemHandler<T extends TileEntityMultiMachine<T>> extend
     public MultiMachineItemHandler(T tile) {
         //TODO: Won't work otherwise, requires TEM tile as argument to this constructor. Not sure why! Feel free to fix, this works thoguh
         super(tile);
+    }
+
+    @Override
+    public boolean canOutputsFit(ItemStack[] a) {
+        return outputs.isPresent() && a != null && this.outputs.get().getSlots() >= a.length;
     }
 
     @Override

@@ -106,6 +106,9 @@ public class RecipeIngredient {
         if (!setStacks) {
             setStacksCounts(v);
             setStacks = true;
+            for (ItemStack stack : v.getMatchingStacks()) {
+                if (stack.isEmpty()) throw new RuntimeException("Empty item matched in RecipeIngredient");
+            }
         }
         return v;
     }

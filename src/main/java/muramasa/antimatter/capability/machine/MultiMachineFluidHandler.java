@@ -19,8 +19,6 @@ import java.util.stream.Collectors;
 
 public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> extends MachineFluidHandler<T> {
 
-    private FluidTanks EMPTY;
-
     MachineFluidHandler<?>[] inputs = new MachineFluidHandler[0];
     MachineFluidHandler<?>[] outputs = new MachineFluidHandler[0];
 
@@ -34,7 +32,11 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
 
     public MultiMachineFluidHandler(T tile) {
         super(tile);
-        EMPTY = new FluidTanks(new FluidTank(0));
+    }
+
+    @Override
+    public boolean canOutputsFit(FluidStack[] outputs) {
+        return outputs != null && this.outputs != null && this.outputs.length >= outputs.length;
     }
 
     protected void cacheInputs() {

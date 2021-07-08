@@ -23,6 +23,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
@@ -31,6 +32,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
@@ -93,6 +95,21 @@ public final class AntimatterAPI {
     public static <T> T get(Class<T> c, String id) {
         Object2ObjectMap<String, Object> map = OBJECTS.get(c);
         return map != null ? c.cast(map.get(id)) : null;
+    }
+
+    @Nonnull
+    public static <T> T getOrDefault(Class<T> c, String id, NonNullSupplier<T> supplier) {
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
+        T t = map != null ? c.cast(map.get(id)) : null;
+        return t != null ? t : supplier.get();
+    }
+
+    @Nonnull
+    public static <T> T getOrThrow(Class<T> c, String id, Supplier<RuntimeException> supplier) {
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
+        T t = map != null ? c.cast(map.get(id)) : null;
+        if (t == null) throw supplier.get();
+        return t;
     }
 
     public static <T> boolean has(Class<T> c, String id) {
