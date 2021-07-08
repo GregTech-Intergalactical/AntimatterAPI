@@ -21,5 +21,6 @@ public class HatchMachine extends Machine<HatchMachine> {
         setAllowVerticalFacing(true);
         covers(COVERNONE,COVERNONE,cover,COVERNONE,COVERNONE,COVERNONE);
         setOutputCover(cover);
+        frontCovers();
     }
 }
