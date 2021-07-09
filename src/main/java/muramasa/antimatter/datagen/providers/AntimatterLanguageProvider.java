@@ -17,6 +17,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.FluidPipe;
@@ -124,6 +125,10 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             if (o.getOreType() == ORE)
                 add(o, String.join("", getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
             else add(o, String.join("", "Small ",getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
+        });
+
+        AntimatterAPI.all(BlockOreStone.class, domain, o -> {
+            add(o,  getLocalizedType(o.getMaterial()));
         });
 
         AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
