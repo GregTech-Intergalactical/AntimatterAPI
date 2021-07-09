@@ -72,7 +72,6 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
                 }
 
                 ItemStack output = item instanceof IAntimatterTool ? ((IAntimatterTool)item).asItemStack(((IAntimatterTool)item).getPrimaryMaterial(a), ((IAntimatterTool)item).getSecondaryMaterial(a)) : ((IAntimatterArmor)item).asItemStack(((IAntimatterArmor)item).getMaterial(a));
-                output.removeChildTag("Enchantments");
                 output.setDamage(i1);
 
                 Map<Enchantment, Integer> map = Maps.newHashMap();
