@@ -34,6 +34,8 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVERNONE;
 import static muramasa.antimatter.Data.COVER_EMPTY;
+import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
+import static muramasa.antimatter.Data.WRENCH;
 
 public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
@@ -162,7 +164,11 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         if (!onlyRemove && !canRemoveCover(oldCover)) return false;
         if (get(side).isEmpty() || !set(side, Data.COVERNONE, !onlyRemove)) return false;
         if (!onlyRemove && !player.isCreative()) player.dropItem(oldCover.getDroppedStack(), false);
-        player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != ELECTRIC_WRENCH){
+            player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        } else {
+            player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        }
         return true;
     }
 

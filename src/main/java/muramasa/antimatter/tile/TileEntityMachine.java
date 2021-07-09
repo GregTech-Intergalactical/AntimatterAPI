@@ -272,15 +272,22 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             }
             getWorld().setBlockState(getPos(), state);
             refreshCaps();
+
             return true;
         }
         return false;
+    }
+
+    protected boolean setFacing(PlayerEntity player, Direction side){
+        boolean setFacing = setFacing(side);
+        if (setFacing) player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        return setFacing;
     }
     
     public boolean wrenchMachine(PlayerEntity player, BlockRayTraceResult res, boolean crouch) {
         if (crouch || getMachineType().getOutputCover() == Data.COVERNONE) {
             //Machine has no output
-            return setFacing(Utils.getInteractSide(res));
+            return setFacing(player, Utils.getInteractSide(res));
         }
         return setOutputFacing(player, Utils.getInteractSide(res));
     }
