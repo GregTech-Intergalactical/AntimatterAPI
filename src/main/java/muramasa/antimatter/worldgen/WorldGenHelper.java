@@ -1,6 +1,5 @@
 package muramasa.antimatter.worldgen;
 
-import com.google.common.base.Predicate;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -21,6 +20,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.Heightmap;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+
+import java.util.function.Predicate;
 
 public class WorldGenHelper {
 
