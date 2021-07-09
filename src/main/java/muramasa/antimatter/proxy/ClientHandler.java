@@ -1,5 +1,6 @@
 package muramasa.antimatter.proxy;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.Data;
@@ -19,9 +20,12 @@ import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -32,6 +36,8 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+
+import java.util.Set;
 
 import static muramasa.antimatter.Data.COVERNONE;
 
@@ -69,7 +75,15 @@ public class ClientHandler implements IProxyHandler {
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
         /* Register screens. */
-        AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(MenuHandler.class, h -> ScreenManager.registerFactory(h.getContainerType(),(ScreenManager.IScreenFactory) h.screen())));
+        AntimatterAPI.runLaterClient(() -> {
+            Set<ContainerType> registered = new ObjectOpenHashSet<>();
+            AntimatterAPI.all(MenuHandler.class, h -> {
+                if (!registered.contains(h.getContainerType())) {
+                    registered.add(h.getContainerType());
+                    ScreenManager.registerFactory(h.getContainerType(), (ScreenManager.IScreenFactory)h.screen());
+                }
+            });
+        });
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
             RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.getCutout());

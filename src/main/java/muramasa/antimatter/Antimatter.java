@@ -76,14 +76,28 @@ public class Antimatter extends AntimatterMod {
         ClientHandler.setup(e);
         //AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
-        AntimatterAPI.getClientDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
-    }
+        e.enqueueWork(() -> AntimatterAPI.getClientDeferredQueue().ifPresent(t -> {
+            for (Runnable r : t) {
+                try {
+                    r.run();
+                } catch (Exception ex) {
+                    Antimatter.LOGGER.warn("Caught error during client setup: " + ex.getMessage());
+                }
+            }
+        }));    }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
-        AntimatterAPI.getCommonDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+        e.enqueueWork(() -> AntimatterAPI.getCommonDeferredQueue().ifPresent(t -> {
+            for (Runnable r : t) {
+                try {
+                    r.run();
+                } catch (Exception ex) {
+                    Antimatter.LOGGER.warn("Caught error during common setup: " + ex.getMessage());
+                }
+            }
+        }));        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
             AntimatterKubeJS.init();
         }
     }
@@ -92,7 +106,15 @@ public class Antimatter extends AntimatterMod {
         ServerHandler.setup(e);
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
-        AntimatterAPI.getServerDeferredQueue().ifPresent(q -> q.iterator().forEachRemaining(e::enqueueWork));
+        e.enqueueWork(() -> AntimatterAPI.getServerDeferredQueue().ifPresent(t -> {
+            for (Runnable r : t) {
+                try {
+                    r.run();
+                } catch (Exception ex) {
+                    Antimatter.LOGGER.warn("Caught error during server setup: " + ex.getMessage());
+                }
+            }
+        }));
     }
 
     @Override

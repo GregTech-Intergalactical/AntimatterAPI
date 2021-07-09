@@ -10,6 +10,7 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
@@ -111,7 +112,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
             if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> new BlockSurfaceRock(s.getDomain(), this, s));
             if (has(ORE)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE));
             if (has(ORE_SMALL)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE_SMALL));
-            //if (has(ORE_STONE)) new BlockOreStone(domain, this);
+            if (has(ORE_STONE)) new BlockOreStone(domain, this);
         }
     }
 

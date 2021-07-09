@@ -13,16 +13,14 @@ import java.util.Collection;
 import java.util.List;
 
 public class StructureBuilder {
-
+    public static void addGlobalElement(String key, StructureElement element) {
+        globalElementLookup.put(key, element);
+    }
     private static final Object2ObjectMap<String, StructureElement> globalElementLookup = new Object2ObjectOpenHashMap<>();
 
     private final List<String[]> slices = new ObjectArrayList<>();
     private final Object2ObjectMap<String, StructureElement> elementLookup = new Object2ObjectOpenHashMap<>();
 
-    //TODO, probably move to StructureElement?
-    public static void addGlobalElement(String key, StructureElement element) {
-        globalElementLookup.put(key, element);
-    }
 
     public StructureBuilder of(String... slices) {
         this.slices.add(slices);

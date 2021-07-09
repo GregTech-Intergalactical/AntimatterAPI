@@ -46,12 +46,11 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, this.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
+        event.withFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, this.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
     }
 
     @Override
     public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        //TODO: this is size 0
         List<WorldGenStoneLayer> stones = AntimatterWorldGenerator.all(WorldGenStoneLayer.class, world.getWorld().getDimensionKey());
         if (stones.size() == 0) return false;
         WorldGenStoneLayer[] layers = new WorldGenStoneLayer[7];

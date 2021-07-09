@@ -43,16 +43,18 @@ public class AntimatterWorldGenerator {
         new FeatureVeinLayer();
         new FeatureOre();
         new FeatureOreSmall();
-        //new FeatureStoneLayer();
+        new FeatureStoneLayer();
         new FeatureSurfaceRock();
-        //if (!AntimatterConfig.WORLD.VANILLA_STONE_GEN) removeStoneFeatures();
-       // if (!AntimatterConfig.WORLD.VANILLA_ORE_GEN) removeOreFeatures();
         AntimatterAPI.runLaterCommon(() -> {
-            AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(f -> {
-                f.onDataOverride(new JsonObject());
-                f.init();
-            });
             WorldGenHelper.init();
+            try {
+                AntimatterAPI.all(AntimatterFeature.class).stream().filter(AntimatterFeature::enabled).forEach(f -> {
+                    f.onDataOverride(new JsonObject());
+                    f.init();
+                });
+            } catch (Exception ex) {
+                Antimatter.LOGGER.warn("Caught exception during World generator later init: " + ex.toString());
+            }
         });
         MinecraftForge.EVENT_BUS.addListener(AntimatterWorldGenerator::reloadEvent);
         /*

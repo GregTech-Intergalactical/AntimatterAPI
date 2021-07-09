@@ -23,10 +23,10 @@ import static muramasa.antimatter.util.Dir.*;
 
 public class Structure {
 
-    private ImmutableMap<int3, StructureElement> elements;
-    private Object2ObjectMap<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
-    private int3 size;
-    private int2 offset = new int2();
+    private final ImmutableMap<int3, StructureElement> elements;
+    private final Object2ObjectMap<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
+    private final int3 size;
+    private final int2 offset = new int2();
 
     public Structure(int3 size, ImmutableMap<int3, StructureElement> elements) {
         this.size = size;

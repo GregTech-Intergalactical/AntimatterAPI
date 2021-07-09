@@ -24,11 +24,12 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
 
-    private MaterialType<?> oreType;
+    private final MaterialType<?> oreType;
 
     public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType, Block.Properties properties) {
         super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId().replaceAll("stone_", ""), material, stoneType, getOreProperties(properties, stoneType));
@@ -39,6 +40,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
         this(domain, material, stoneType, oreType, getOreProperties(Block.Properties.create(stoneType.getBlockMaterial()), stoneType));
     }
 
+    @Nonnull
     @Override
     public String getTranslationKey() {
         return getId();
@@ -194,7 +196,6 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     public static Block.Properties getOreProperties(Block.Properties properties, StoneType type) {
         if (AntimatterConfig.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.notSolid().setLightLevel(b -> 15);
-        //TODO: hardness
         properties.hardnessAndResistance(type.getHardness() * 2, type.getResistence() / 2).harvestTool(type.getToolType()).sound(type.getSoundType());
         if (type.doesRequireTool()) properties.setRequiresTool();
         return properties;
