@@ -241,7 +241,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     , "PFP", "HPS", "R R");
             addToolRecipe(TOOL_BUILDER.get(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_screw", "antimatter_files",
                     "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
-                            b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                            b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).tool(SCREWDRIVER, true).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
                                     .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
                     , "PFP", "HPS", "RWR");
 
@@ -252,7 +252,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     , "PFP", "PSP", "R R");
             addToolRecipe(TOOL_BUILDER.get(BRANCH_CUTTER.getId()), consumer, Ref.ID, BRANCH_CUTTER.getId() + "_recipe_screw", "antimatter_files",
                     "has_wrench", in, BRANCH_CUTTER.getToolStack(NULL, NULL), b ->
-                            b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag())
+                            b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).tool(SCREWDRIVER, true).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag())
                                     .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
                     , "PFP", "PSP", "RWR");
 
