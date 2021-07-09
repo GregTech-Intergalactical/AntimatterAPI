@@ -154,8 +154,6 @@ public class Data {
     public static StoneType BLACKSTONE = new StoneType(Ref.ID, "blackstone", Blackstone, new Texture("minecraft", "block/blackstone"), SoundType.STONE, false).setState(Blocks.BLACKSTONE);
 
     public static StoneType NETHERRACK = new StoneType(Ref.ID, "netherrack", Netherrack, new Texture("minecraft", "block/netherrack"), SoundType.NETHERRACK, false).setState(Blocks.NETHERRACK).setHardnessAndResistance(0.4F);
-    public static StoneType SOUL_SAND = new StoneType(Ref.ID, "soul_sand", NULL, new Texture("minecraft", "block/soul_sand"), SoundType.SOUL_SAND, false).setState(Blocks.SOUL_SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL);
-    public static StoneType SOUL_SOIL = new StoneType(Ref.ID, "soul_soil", NULL, new Texture("minecraft", "block/soul_soil"), SoundType.SOUL_SOIL, false).setState(Blocks.SOUL_SOIL).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL);
     public static StoneType ENDSTONE = new StoneType(Ref.ID, "endstone", Endstone, new Texture("minecraft", "block/end_stone"), SoundType.STONE, false).setState(Blocks.END_STONE).setHardnessAndResistance(3.0F, 9.0F);
 
     static {
