@@ -15,7 +15,9 @@
     "RecipeManagerMixin",
     "ServerBlockUpdateMixin",
     "SimpleReloadableResourceManagerMixin",
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "GrindstoneContainerMixin",
+    "RepairItemRecipeMixin"
   ],
   "minVersion": "0.8"
 }
