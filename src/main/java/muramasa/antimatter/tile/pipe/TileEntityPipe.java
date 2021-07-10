@@ -21,13 +21,14 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.IConnectable;
 import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, IConnectable {
 
     /** Pipe Data **/
     protected T type;
@@ -51,23 +52,16 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         this.pipeCapHolder = new Holder<>(getCapability(), this.dispatch);
     }
 
+    @Override
+    public boolean interacts(Direction direction) {
+        return Connectivity.has(interaction, direction.getIndex());
+    }
+
     protected abstract void registerNode(BlockPos pos, Direction side, boolean remove);
 
     @Override
     public void onLoad() {
         if (isServerSide()) initTesseract();
-        /*CoverStack<?>[] covers = this.getAllCovers();
-        if (covers.length == 0) return;
-        for (Direction side : Ref.DIRS) {
-            if (Connectivity.has(interaction, side.getIndex())) {
-                TileEntity neighbor = Utils.getTile(this.getWorld(), this.getPos().offset(side));
-                if (Utils.isForeignTile(neighbor)) { // Check that entity is not GT one
-                    PipeCache.update(this.getPipeType(), this.getWorld(), side, neighbor, covers[side.getIndex()].getCover());
-                } else {
-                    interaction = Connectivity.clear(interaction, side.getIndex());
-                }
-            }
-        }*/
     }
 
     public void onBlockUpdate(BlockPos neighbor){

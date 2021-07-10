@@ -41,8 +41,13 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
     private Material[] materials;
     private String primary, secondary, between, sporadic;
-    private int minY, maxY, weight, density, size;
+    private final int minY;
+    private final int maxY;
+    private final int weight;
+    private final int density;
+    private final int size;
 
+    @SafeVarargs
     public WorldGenVeinLayer(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, RegistryKey<World>... dimensions) {
         super(id, WorldGenVeinLayer.class, dimensions);
         this.minY = minY;
