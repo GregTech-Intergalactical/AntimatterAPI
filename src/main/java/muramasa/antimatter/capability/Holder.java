@@ -80,10 +80,10 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
            return null;
        }
        resolved = supplier.get();
-       for (Consumer<? super T> con : consumers) {
+        flag = true;
+        for (Consumer<? super T> con : consumers) {
            con.accept(resolved);
        }
-       flag = true;
        return resolved;
     }
 
