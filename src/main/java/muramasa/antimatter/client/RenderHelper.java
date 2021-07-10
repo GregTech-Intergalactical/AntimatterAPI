@@ -4,6 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.pipe.PipeSize;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -18,9 +20,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.vector.Matrix4f;
@@ -28,7 +33,10 @@ import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.DrawHighlightEvent;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 import tesseract.graph.Connectivity;
 
 import java.util.List;
@@ -56,6 +64,13 @@ public class RenderHelper {
 //        return Minecraft.getInstance().getTextureMap().getSprite(fluid.getAttributes().getStillTexture());
 //    }*/
 
+
+    public static void registerBatteryPropertyOverrides(ItemBattery battery) {
+        ItemModelsProperties.registerProperty(battery, new ResourceLocation(Ref.ID,"battery"), (stack, world, living) -> {
+            LazyOptional<IEnergyHandler> handler = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
+            return handler.map(h -> (float)(h.getEnergy() /  h.getCapacity())).orElse(1.0F);
+        });
+    }
 
     public static void drawFluid(MatrixStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
         if (stack == null) return;

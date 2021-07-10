@@ -125,6 +125,22 @@ public class RecipeBuilders {
         }
     });
 
+    public static final MaterialRecipe.Provider PROBE_BUILDER = MaterialRecipe.registerProvider("probe", id -> new MaterialRecipe.ItemBuilder() {
+
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            ItemStack helmet = ((ItemStack) mats.mats.get("helmet")).copy();
+            CompoundNBT nbt = helmet.getOrCreateTag();
+            nbt.putBoolean("theoneprobe", true);
+            return helmet;
+        }
+
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            return ImmutableMap.of();
+        }
+    });
+
     public static final MaterialRecipe.Provider WOOD_TOOL_BUILDER = MaterialRecipe.registerProvider("wood_tool", id -> new MaterialRecipe.ItemBuilder() {
 
         @Override
