@@ -46,7 +46,7 @@ public class AntimatterToolType implements IAntimatterObject {
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
     private List<ITextComponent> tooltip = new ObjectArrayList<>();
-    private boolean powered, repairable, blockBreakability;
+    private boolean powered, repairable, blockBreakability, hasContainer;
     private long baseMaxEnergy;
     private int[] energyTiers;
     private final int useDurability, attackDurability, craftingDurability;
@@ -81,6 +81,7 @@ public class AntimatterToolType implements IAntimatterObject {
         this.useSound = null;
         this.repairable = true;
         this.blockBreakability = true;
+        this.hasContainer = true;
         this.baseQuality = 0;
         this.useDurability = useDurability;
         this.attackDurability = attackDurability;
@@ -201,6 +202,11 @@ public class AntimatterToolType implements IAntimatterObject {
         this.powered = true;
         this.baseMaxEnergy = baseMaxEnergy;
         this.energyTiers = energyTiers;
+        return this;
+    }
+
+    public AntimatterToolType setHasContainer(boolean container) {
+        this.hasContainer = container;
         return this;
     }
 
@@ -335,6 +341,10 @@ public class AntimatterToolType implements IAntimatterObject {
 
     public boolean isPowered() {
         return powered;
+    }
+
+    public boolean hasContainer() {
+        return hasContainer;
     }
 
     public long getBaseMaxEnergy() {

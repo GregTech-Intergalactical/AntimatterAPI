@@ -205,7 +205,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     @Override
     public boolean hasContainerItem(ItemStack stack) {
-        return true;
+        return type.hasContainer();
     }
 
     @Override

@@ -24,21 +24,48 @@ public abstract class GrindstoneContainerMixin extends Container {
     protected GrindstoneContainerMixin(@Nullable ContainerType<?> type, int id) {
         super(type, id);
     }
+
+    @Shadow
+    private ItemStack copyEnchantments(ItemStack copyTo, ItemStack copyFrom){
+        throw new AssertionError();
+    }
+
+    @Shadow
+    private ItemStack removeEnchantments(ItemStack stack, int damage, int count){
+        throw new AssertionError();
+    }
+
     @Inject(method = "updateRecipeOutput", at = @At(value = "HEAD"), cancellable = true)
     private void checkTools(CallbackInfo ci){
-        ItemStack itemstack = this.inputInventory.getStackInSlot(0);
-        ItemStack itemstack1 = this.inputInventory.getStackInSlot(1);
+        ItemStack a = this.inputInventory.getStackInSlot(0);
+        ItemStack b = this.inputInventory.getStackInSlot(1);
         boolean match = true;
-        if (itemstack.getItem() == itemstack1.getItem()){
-            if (itemstack.getItem() instanceof IAntimatterTool){
-                IAntimatterTool tool = (IAntimatterTool) itemstack.getItem();
-                IAntimatterTool tool1 = (IAntimatterTool) itemstack1.getItem();
-                match = tool.getPrimaryMaterial(itemstack) == tool1.getPrimaryMaterial(itemstack1) && tool.getSecondaryMaterial(itemstack) == tool1.getSecondaryMaterial(itemstack1);
-            } else if (itemstack.getItem() instanceof IAntimatterArmor){
-                IAntimatterArmor tool = (IAntimatterArmor) itemstack.getItem();
-                IAntimatterArmor tool1 = (IAntimatterArmor) itemstack1.getItem();
-                match = tool.getMaterial(itemstack) == tool1.getMaterial(itemstack1);
+        if (a.getItem() == b.getItem()){
+            if (a.getItem() instanceof IAntimatterTool){
+                IAntimatterTool tool = (IAntimatterTool) a.getItem();
+                match = tool.getPrimaryMaterial(a) == tool.getPrimaryMaterial(b) && tool.getSecondaryMaterial(a) == tool.getSecondaryMaterial(b);
+                if (match){
+                    int k = a.getMaxDamage() - a.getDamage();
+                    int l = a.getMaxDamage() - b.getDamage();
+                    int i1 = k + l + a.getMaxDamage() * 5 / 100;
+                    int i = Math.max(a.getMaxDamage() - i1, 0);
+                    ItemStack copy = this.copyEnchantments(a, b);
+                    if (tool.getAntimatterToolType().isPowered()) {
+                        this.outputInventory.setInventorySlotContents(0, ItemStack.EMPTY);
+                        this.detectAndSendChanges();
+                        ci.cancel();
+                        return;
+                    }
+                    this.outputInventory.setInventorySlotContents(0, this.removeEnchantments(copy, i, 1));
+                    this.detectAndSendChanges();
+                    ci.cancel();
+                    return;
+                }
+            } else if (a.getItem() instanceof IAntimatterArmor){
+                IAntimatterArmor tool = (IAntimatterArmor) a.getItem();
+                match = tool.getMaterial(a) == tool.getMaterial(b);
             }
+
         }
         if (!match){
             this.outputInventory.setInventorySlotContents(0, ItemStack.EMPTY);
