@@ -55,7 +55,7 @@ public class PropertyIngredient extends Ingredient {
     private final boolean inverse;
 
     protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type,Set<ITag.INamedTag<Item>> itemTags, Set<IItemProvider> items, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
-        Stream<IItemList> stream = Stream.concat(itemTags.stream().map(t -> new StackList(TagUtils.nc(t).getAllElements().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new StackList((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
+        Stream<IItemList> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new StackList(TagUtils.nc(t).getAllElements().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new StackList((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
             boolean ok = t.has(tags);
             boolean types = true;
             if (tools.size() > 0) {
@@ -68,7 +68,7 @@ public class PropertyIngredient extends Ingredient {
                 return !ok && types;
             }
             return ok && types;
-        }).map(mat -> i.get(mat, 1)).collect(Collectors.toList()))));
+        }).map(mat -> i.get(mat, 1)).collect(Collectors.toList())))), Stream.of(new StackList(items.stream().map(ItemStack::new).collect(Collectors.toList()))));
         return new PropertyIngredient(stream, type, itemTags, items, id, tags, fixedMats, inverse, tools);
     }
 

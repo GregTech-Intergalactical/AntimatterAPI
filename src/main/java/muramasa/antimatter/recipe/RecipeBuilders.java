@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import static muramasa.antimatter.Data.HELMET;
 import static muramasa.antimatter.Data.NULL;
 
 public class RecipeBuilders {
@@ -129,8 +130,10 @@ public class RecipeBuilders {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
-            ItemStack helmet = ((ItemStack) mats.mats.get("helmet")).copy();
+            Object h = mats.mats.get("helmet");
+            ItemStack helmet = ((ItemStack) h).copy();
             CompoundNBT nbt = helmet.getOrCreateTag();
+            if (nbt.contains("theoneprobe") && nbt.getBoolean("theoneprobe")) return ItemStack.EMPTY;
             nbt.putBoolean("theoneprobe", true);
             return helmet;
         }

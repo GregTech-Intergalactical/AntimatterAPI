@@ -198,7 +198,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
 
             if (AntimatterAPI.isModLoaded(Ref.MOD_TOP)){
-                addToolRecipe(PROBE_BUILDER.get(HELMET.getId() + "_probe"), consumer, Ref.ID, "helmet_with_probe", "antimatter_armor",
+                addToolRecipe(PROBE_BUILDER.get(HELMET.getId()), consumer, Ref.ID, "helmet_with_probe", "antimatter_armor",
                         "has_helmet", this.hasSafeItem(HELMET.getToolStack(NULL).getItem()), Collections.singletonList(HELMET.getToolStack(NULL)), of('H', PropertyIngredient.builder("helmet").itemStacks(HELMET.getToolStack(NULL).getItem()).build(), 'P', ForgeRegistries.ITEMS.getValue(new ResourceLocation(Ref.MOD_TOP, "probe"))), "HP");
             }
 
