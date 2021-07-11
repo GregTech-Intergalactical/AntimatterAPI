@@ -3,12 +3,17 @@ package muramasa.antimatter.datagen.providers;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.block.BlockStone;
+import muramasa.antimatter.block.BlockStoneSlab;
+import muramasa.antimatter.block.BlockStoneStair;
+import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.pipe.BlockPipe;
 import net.minecraft.advancements.criterion.EnchantmentPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
@@ -64,6 +69,16 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
         AntimatterAPI.all(BlockMultiMachine.class,providerDomain, this::add);
         AntimatterAPI.all(BlockPipe.class,providerDomain, this::add);
         AntimatterAPI.all(BlockStorage.class,providerDomain, this::add);
+        AntimatterAPI.all(BlockStone.class, providerDomain, b -> {
+            if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()){
+                tables.put(b, b2 -> droppingWithSilkTouch(b, ((CobbleStoneType)b.getType()).getBlock("cobble")));
+                return;
+            }
+            this.add(b);
+        });
+        AntimatterAPI.all(BlockStoneSlab.class, providerDomain, b -> tables.put(b, BlockLootTables::droppingSlab));
+        AntimatterAPI.all(BlockStoneStair.class, providerDomain, this::add);
+        AntimatterAPI.all(BlockStoneWall.class, providerDomain, this::add);
         AntimatterAPI.all(BlockOre.class,providerDomain, this::add);
     }
 

@@ -1,5 +1,6 @@
 package muramasa.antimatter.block;
 
+import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
@@ -7,10 +8,18 @@ import net.minecraft.block.Block;
 public class BlockStone extends BlockBasic {
 
     protected StoneType type;
+    protected String suffix;
 
     public BlockStone(StoneType type) {
         super(type.getDomain(), type.getId(), getProps(type));
         this.type = type;
+        this.suffix = "";
+    }
+
+    public BlockStone(StoneType type, String suffix) {
+        super(type.getDomain(), type.getId() + "_" + suffix, getProps(type));
+        this.type = type;
+        this.suffix = suffix;
     }
 
     private static Properties getProps(StoneType type){
@@ -25,8 +34,15 @@ public class BlockStone extends BlockBasic {
         return type;
     }
 
+    public String getSuffix() {
+        return suffix;
+    }
+
     @Override
     public Texture[] getTextures() {
+        if (type instanceof CobbleStoneType){
+            return new Texture[]{new Texture(type.getDomain(), ((CobbleStoneType)type).getBeginningPath() + type.getId().replace("stone_", "") + "/" + (suffix.isEmpty() ? "stone" : suffix))};
+        }
         return new Texture[]{type.getTexture()};
     }
 }

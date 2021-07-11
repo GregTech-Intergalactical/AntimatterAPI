@@ -5,6 +5,9 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
+import muramasa.antimatter.block.BlockStoneSlab;
+import muramasa.antimatter.block.BlockStoneStair;
+import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
@@ -145,6 +148,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         });
 
         AntimatterAPI.all(BlockStone.class, domain).forEach(s -> add(s, getLocalizedType(s)));
+        AntimatterAPI.all(BlockStoneSlab.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
+        AntimatterAPI.all(BlockStoneStair.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
+        AntimatterAPI.all(BlockStoneWall.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
         AntimatterAPI.all(BlockPipe.class, domain).forEach(s -> {
             String str = s.getSize().getId();
             //hmmmm

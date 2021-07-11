@@ -7,6 +7,9 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
+import muramasa.antimatter.block.BlockStoneSlab;
+import muramasa.antimatter.block.BlockStoneStair;
+import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
@@ -16,6 +19,7 @@ import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -75,8 +79,23 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
             if (o.getOreType() == Data.ORE) this.getOrCreateBuilder(Tags.Blocks.ORES).add(o);
         });
         AntimatterAPI.all(BlockStone.class,domain, s -> {
-            this.getOrCreateBuilder(Tags.Blocks.STONE).add(s);
+            if (s.getSuffix().isEmpty()){
+                this.getOrCreateBuilder(Tags.Blocks.STONE).add(s);
+            } else if (s.getSuffix().equals("cobble")){
+                this.getOrCreateBuilder(Tags.Blocks.COBBLESTONE).add(s);
+            } else if (s.getSuffix().contains("bricks")){
+                this.getOrCreateBuilder(BlockTags.STONE_BRICKS).add(s);
+            }
             this.getOrCreateBuilder(getBlockTag(new ResourceLocation("antimatter", "blocks/".concat(s.getId())))).add(s).replace(replace);
+        });
+        AntimatterAPI.all(BlockStoneWall.class, domain, b -> {
+            this.getOrCreateBuilder(BlockTags.WALLS).add(b);
+        });
+        AntimatterAPI.all(BlockStoneSlab.class, domain, b -> {
+            this.getOrCreateBuilder(BlockTags.SLABS).add(b);
+        });
+        AntimatterAPI.all(BlockStoneStair.class, domain, b -> {
+            this.getOrCreateBuilder(BlockTags.STAIRS).add(b);
         });
         AntimatterAPI.all(BlockOreStone.class,domain, s -> {
             // String id = getConventionalMaterialType(MaterialType.ORE_STONE);
