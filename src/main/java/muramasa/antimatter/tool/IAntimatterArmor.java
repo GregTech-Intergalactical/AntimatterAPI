@@ -15,6 +15,7 @@ import muramasa.antimatter.util.TagUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -25,11 +26,15 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.extensions.IForgeItem;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+
+import static muramasa.antimatter.Data.HELMET;
 
 public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IForgeItem {
     AntimatterArmorType getAntimatterArmorType();
@@ -94,7 +99,7 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
 
     @Override
     default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 && getMaterial(stack) != null ? getMaterial(stack).getRGB() : 10511680;
+        return i == 0 && getMaterial(stack) != null ? getMaterial(stack).getRGB() : -1;
     }
 
     @Override
@@ -113,6 +118,21 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
 
     @Override
     default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+        if (this.getAntimatterArmorType().getSlot() == EquipmentSlotType.HEAD){
+            String id = this.getId();
+            ItemModelBuilder builder = prov.getBuilder(id +"_probe");
+            builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation("minecraft","item/handheld")));
+            Texture[] textures = getTextures();
+            for (int i = 0; i < textures.length + 1; i++) {
+                if (i == textures.length){
+                    builder.texture("layer" + i, new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterArmorType().getId()).concat("_probe")));
+                    continue;
+                }
+                builder.texture("layer" + i, textures[i]);
+            }
+            prov.tex(item, "minecraft:item/handheld", getTextures()).override().predicate(new ResourceLocation(Ref.ID, "probe"), 1).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"_probe")));
+            return;
+        }
         prov.tex(item, "minecraft:item/handheld", getTextures());
     }
 

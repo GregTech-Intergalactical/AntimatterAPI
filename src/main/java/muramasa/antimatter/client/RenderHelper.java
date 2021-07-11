@@ -7,6 +7,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.tool.armor.MaterialArmor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -22,6 +23,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemModelsProperties;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -69,6 +71,13 @@ public class RenderHelper {
         ItemModelsProperties.registerProperty(battery, new ResourceLocation(Ref.ID,"battery"), (stack, world, living) -> {
             LazyOptional<IEnergyHandler> handler = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
             return handler.map(h -> (float)(h.getEnergy() /  h.getCapacity())).orElse(1.0F);
+        });
+    }
+
+    public static void registerProbePropertyOverrides(MaterialArmor armor) {
+        ItemModelsProperties.registerProperty(armor, new ResourceLocation(Ref.ID,"probe"), (stack, world, living) -> {
+            CompoundNBT nbt = stack.getTag();
+            return nbt != null && nbt.contains("theoneprobe") && nbt.getBoolean("theoneprobe") ? 1.0F : 0.0F;
         });
     }
 

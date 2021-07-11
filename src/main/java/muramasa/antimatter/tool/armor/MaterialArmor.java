@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import net.minecraft.client.util.ITooltipFlag;
@@ -16,13 +17,16 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.IDyeableArmorItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
+import static muramasa.antimatter.Data.HELMET;
 import static muramasa.antimatter.Data.NULL;
 
 public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeableArmorItem {
@@ -36,6 +40,9 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeab
         this.domain = domain;
         this.type = type;
         AntimatterAPI.register(IAntimatterArmor.class, getId(), this);
+        if (type.getSlot() == EquipmentSlotType.HEAD && FMLEnvironment.dist.isClient()){
+            RenderHelper.registerProbePropertyOverrides(this);
+        }
     }
 
     @Override
@@ -84,7 +91,12 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeab
     @Nullable
     @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
-        return Ref.ID + ":textures/models/armor_layer_" + (slot == EquipmentSlotType.LEGS ? 2 : 1) + (type == null ? "" : "_"  + type) + ".png";
+        String extra = "";
+        if (slot == EquipmentSlotType.HEAD && type != null){
+            CompoundNBT nbt = stack.getTag();
+            if (nbt != null && nbt.contains("theoneprobe") && nbt.getBoolean("theoneprobe")) extra = "_probe";
+        }
+        return Ref.ID + ":textures/models/armor_layer_" + (slot == EquipmentSlotType.LEGS ? 2 : 1) + (type == null ? "" : "_"  + type + extra) + ".png";
     }
 
     @Override
