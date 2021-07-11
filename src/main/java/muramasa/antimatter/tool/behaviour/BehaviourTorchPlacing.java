@@ -36,13 +36,13 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
         ItemStack stack = ItemStack.EMPTY;
         if (c.getPlayer() == null) return ActionResultType.PASS;
         for (ItemStack stack1 : c.getPlayer().inventory.mainInventory){
-            if (stack1.getItem() == Items.TORCH){
+            if (stack1.getItem() == Items.TORCH || stack1.getItem() == Items.SOUL_TORCH){
                 stack = stack1;
                 break;
             }
         }
         if (!stack.isEmpty() || c.getPlayer().isCreative()){
-            ActionResultType resultType = tryPlace(new BlockItemUseContext(c));
+            ActionResultType resultType = tryPlace(new BlockItemUseContext(c), stack);
             if (resultType.isSuccessOrConsume()){
                 if (!c.getPlayer().isCreative()) stack.shrink(1);
                 return resultType;
@@ -51,11 +51,11 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
         return ActionResultType.PASS;
     }
 
-    public ActionResultType tryPlace(BlockItemUseContext context) {
+    public ActionResultType tryPlace(BlockItemUseContext context, ItemStack torch) {
         if (!context.canPlace()) {
             return ActionResultType.FAIL;
         } else {
-            BlockState blockstate = this.getStateForPlacement(context);
+            BlockState blockstate = this.getStateForPlacement(context, torch);
             if (blockstate == null) {
                 return ActionResultType.FAIL;
             } else if (!this.placeBlock(context, blockstate)) {
@@ -122,15 +122,15 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
     }
 
     @Nullable
-    protected BlockState getStateForPlacement(BlockItemUseContext context) {
-        BlockState blockstate = Blocks.WALL_TORCH.getStateForPlacement(context);
+    protected BlockState getStateForPlacement(BlockItemUseContext context, ItemStack torch) {
+        BlockState blockstate = torch.getItem() == Items.SOUL_TORCH ? Blocks.SOUL_WALL_TORCH.getStateForPlacement(context) : Blocks.WALL_TORCH.getStateForPlacement(context);
         BlockState blockstate1 = null;
         IWorldReader iworldreader = context.getWorld();
         BlockPos blockpos = context.getPos();
 
         for(Direction direction : context.getNearestLookingDirections()) {
             if (direction != Direction.UP) {
-                BlockState blockstate2 = direction == Direction.DOWN ? Blocks.TORCH.getStateForPlacement(context) : blockstate;
+                BlockState blockstate2 = direction == Direction.DOWN ? (torch.getItem() == Items.SOUL_TORCH ? Blocks.SOUL_TORCH.getStateForPlacement(context) : Blocks.TORCH.getStateForPlacement(context)) : blockstate;
                 if (blockstate2 != null && blockstate2.isValidPosition(iworldreader, blockpos)) {
                     blockstate1 = blockstate2;
                     break;

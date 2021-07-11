@@ -61,7 +61,7 @@ public class BlockStoneSlab extends SlabBlock implements IAntimatterObject, ITex
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         BlockModelBuilder top = prov.models().getBuilder(getId() + "_top").parent(prov.existing("minecraft", "block/slab_top")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
         BlockModelBuilder bottom = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/slab")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
-        ModelFile.ExistingModelFile both = prov.existing(type.getDomain(),"block/" + type.getId() + "_" + this.suffix);
+        ModelFile.ExistingModelFile both = prov.existing(type.getDomain(),"block/" + this.getId().replace("_slab", ""));
         prov.getVariantBuilder(block).forAllStates(s -> {
             if (s.get(TYPE) == SlabType.DOUBLE){
                 return ConfiguredModel.builder().modelFile(both).build();
