@@ -8,6 +8,7 @@ import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
@@ -199,5 +201,13 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
         properties.hardnessAndResistance(type.getHardness() * 2, type.getResistence() / 2).harvestTool(type.getToolType()).sound(type.getSoundType());
         if (type.doesRequireTool()) properties.setRequiresTool();
         return properties;
+    }
+
+    @Override
+    public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) {
+        if (silktouch == 0 && material.getExpRange() != null){
+            return material.getExpRange().getRandomWithinRange(RANDOM);
+        }
+        return 0;
     }
 }

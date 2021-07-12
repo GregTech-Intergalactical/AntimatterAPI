@@ -19,6 +19,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.RangedInteger;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
@@ -69,6 +70,9 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     private ImmutableMap<Enchantment, Integer> armorEnchantment;
     private ImmutableMap<Enchantment, Integer> handleEnchantment;
     private List<AntimatterToolType> toolTypes;
+
+    /** Ore members **/
+    private RangedInteger expRange = null;
 
     private boolean enabled;
 
@@ -166,6 +170,33 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     public Material asMetal(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
         asSolid(meltingPoint, blastFurnaceTemp, tags);
         flags(METAL);
+        return this;
+    }
+
+    public Material asOre(int minXp, int maxXp, boolean small, IMaterialTag... tags){
+        this.expRange = new RangedInteger(minXp, maxXp);
+        return asOre(small, tags);
+    }
+
+    public Material asOre(IMaterialTag... tags){
+        return asOre(true, tags);
+    }
+
+    public Material asOre(boolean small, IMaterialTag... tags){
+        asDust(ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
+        if (small) flags(ORE_SMALL);
+        flags(tags);
+        return this;
+    }
+
+    public Material asOreStone(int minXp, int maxXp, IMaterialTag... tags){
+        this.expRange = new RangedInteger(minXp, maxXp);
+        return asOreStone(tags);
+    }
+
+    public Material asOreStone(IMaterialTag... tags){
+        asDust(ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
+        flags(tags);
         return this;
     }
 
@@ -313,9 +344,19 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     public Material flags(IMaterialTag... tags) {
         if (!enabled) return this;
         for (IMaterialTag t : tags) {
-            if (t == ORE || t == ORE_SMALL || t == ORE_STONE) flags(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
+            //if (t == ORE || t == ORE_SMALL || t == ORE_STONE) flags(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
             t.add(this);
         }
+        return this;
+    }
+
+    public Material setExpRange(RangedInteger expRange) {
+        this.expRange = expRange;
+        return this;
+    }
+
+    public Material setExpRange(int min, int max) {
+        this.expRange = new RangedInteger(min, max);
         return this;
     }
 
@@ -470,6 +511,10 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     public int getHandleDurability() { return handleDurability; }
 
     public float getHandleSpeed() { return handleSpeed; }
+
+    public RangedInteger getExpRange() {
+        return expRange;
+    }
 
     /** Fluid/Gas/Plasma Getters **/
     public Fluid getLiquid() {
