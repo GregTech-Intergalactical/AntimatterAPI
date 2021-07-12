@@ -20,7 +20,7 @@ public class CobbleStoneType extends StoneType {
     Map<String, Block> blocks = new LinkedHashMap<>();
     public static final String[] SUFFIXES = {"bricks_chiseled", "bricks_cracked", "bricks_mossy", "cobble_mossy", "bricks", "cobble", "smooth", "", "bricks_mossy_slab", "cobble_mossy_slab", "bricks_slab", "cobble_slab", "smooth_slab", "slab", "bricks_mossy_stairs", "cobble_mossy_stairs", "bricks_stairs", "cobble_stairs", "smooth_stairs", "stairs", "bricks_mossy_wall", "cobble_mossy_wall", "bricks_wall", "cobble_wall", "smooth_wall", "wall"};
     public CobbleStoneType(String domain, String id, Material material, String beginningPath, SoundType soundType, boolean generateBlock) {
-        super(domain, id, material, new Texture(domain, beginningPath  + id), soundType, generateBlock);
+        super(domain, id, material, new Texture(domain, beginningPath  + id + "/stone"), soundType, generateBlock);
         this.beginningPath = beginningPath;
     }
 

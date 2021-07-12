@@ -40,8 +40,8 @@ public class BlockStone extends BlockBasic {
 
     @Override
     public Texture[] getTextures() {
-        if (type instanceof CobbleStoneType){
-            return new Texture[]{new Texture(type.getDomain(), ((CobbleStoneType)type).getBeginningPath() + type.getId().replace("stone_", "") + "/" + (suffix.isEmpty() ? "stone" : suffix))};
+        if (type instanceof CobbleStoneType && !suffix.isEmpty()){
+            return new Texture[]{new Texture(type.getDomain(), ((CobbleStoneType)type).getBeginningPath() + type.getId().replace("stone_", "") + "/" + suffix)};
         }
         return new Texture[]{type.getTexture()};
     }
