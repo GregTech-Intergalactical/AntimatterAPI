@@ -147,7 +147,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
         });
 
-        AntimatterAPI.all(BlockStone.class, domain).forEach(s -> add(s, getLocalizedType(s)));
+        AntimatterAPI.all(BlockStone.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
         AntimatterAPI.all(BlockStoneSlab.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
         AntimatterAPI.all(BlockStoneStair.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
         AntimatterAPI.all(BlockStoneWall.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
