@@ -281,4 +281,8 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         }
     }
 
+    public void override(String key, String value){
+        data.put(key, value);
+    }
+
 }
