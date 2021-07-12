@@ -1,5 +1,7 @@
 package muramasa.antimatter.ore;
 
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -12,6 +14,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
@@ -27,6 +30,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Random;
 
 public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
@@ -206,6 +210,10 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) {
         if (silktouch == 0 && material.getExpRange() != null){
+            List<ItemStack> self = getDrops(state, ((ServerWorld)world), pos, world.getTileEntity(pos));
+            if (self.stream().anyMatch(i -> i.getItem() == this.asItem())){
+                return 0;
+            }
             return material.getExpRange().getRandomWithinRange(RANDOM);
         }
         return 0;
