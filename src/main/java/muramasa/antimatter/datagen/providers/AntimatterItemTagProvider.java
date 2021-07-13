@@ -11,6 +11,7 @@ import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.item.ItemFluidCell;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
@@ -105,6 +106,12 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             this.getOrCreateBuilder(item.getType().getTag()).add(item).replace(replace);
             this.getOrCreateBuilder(item.getTag()).add(item).replace(replace).replace(replace);
             //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
+        });
+        AntimatterAPI.all(MaterialType.class, domain, t -> {
+            t.getOVERRIDES().forEach((m, i) -> {
+                this.getOrCreateBuilder(t.getMaterialTag((Material) m)).add(i);
+                this.getOrCreateBuilder(t.getTag()).add(i);
+            });
         });
         AntimatterAPI.all(IAntimatterTool.class,domain, tool -> {
             this.getOrCreateBuilder(tool.getAntimatterToolType().getTag()).add(tool.getItem()).replace(replace);

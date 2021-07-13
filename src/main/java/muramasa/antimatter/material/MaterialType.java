@@ -127,4 +127,8 @@ public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
     public String toString() {
         return getId();
     }
+
+    public BiMap<Material, Item> getOVERRIDES() {
+        return OVERRIDES;
+    }
 }
