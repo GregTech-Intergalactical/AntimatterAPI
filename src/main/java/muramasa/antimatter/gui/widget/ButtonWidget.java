@@ -4,6 +4,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
+import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.container.AntimatterContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
@@ -11,27 +13,19 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 
 public class ButtonWidget extends Button {
-    private ResourceLocation res;
-    private ButtonBody body;
-    private ButtonOverlay overlay;
+    private final ResourceLocation res;
+    private final ButtonBody body;
+    private final ButtonOverlay overlay;
 
-    public ButtonWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay, String text, Button.IPressable onPress) {
-        super(x, y, w, h, new StringTextComponent(text), onPress);
+    protected ButtonWidget(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Button.IPressable onPress) {
+        super(0,0,0,0, new StringTextComponent(""), onPress);
         this.res = res;
         this.body = body;
         this.overlay = overlay;
     }
 
-    public ButtonWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, String text, Button.IPressable onPress) {
-        this(res, x, y, w, h, body, null, text, onPress);
-    }
-
-    public ButtonWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay, Button.IPressable onPress) {
-        this(res, x, y, w, h, body, overlay, "", onPress);
-    }
-
-    public ButtonWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody body, Button.IPressable onPress) {
-        this(res, x, y, w, h, body, null, "", onPress);
+    public static <T extends AntimatterContainer> GuiData.WidgetProvider<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Button.IPressable onPress) {
+        return screen -> new ButtonWidget(res, body, overlay, onPress);
     }
 
     public void renderWidget(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {

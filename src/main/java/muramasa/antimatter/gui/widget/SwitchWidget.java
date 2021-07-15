@@ -12,16 +12,18 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nonnull;
+
 public class SwitchWidget extends AbstractButton {
 
-    private ResourceLocation res;
+    private final ResourceLocation res;
     private ButtonBody on, off;
     private ButtonOverlay body;
     private boolean state;
 
     protected final SwitchWidget.ISwitchable onSwitch;
 
-    public SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
+    protected SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
         super(x, y, w, h, new StringTextComponent(""));
         this.res = res;
         this.on = on;
@@ -29,7 +31,7 @@ public class SwitchWidget extends AbstractButton {
         this.onSwitch = onSwitch;
     }
 
-    public SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
+    protected SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
         super(x, y, w, h, new StringTextComponent(""));
         this.res = res;
         this.body = body;
@@ -37,7 +39,7 @@ public class SwitchWidget extends AbstractButton {
         this.state = defaultState;
     }
 
-    public SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {
+    protected SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {
         super(x, y, w, h, new StringTextComponent(text));
         this.res = res;
         this.body = body;
@@ -45,7 +47,7 @@ public class SwitchWidget extends AbstractButton {
     }
 
     @Override
-    public void renderWidget(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+    public void renderWidget(@Nonnull MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bindTexture(res);
         RenderSystem.disableDepthTest();

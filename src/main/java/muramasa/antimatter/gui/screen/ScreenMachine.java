@@ -43,7 +43,6 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
 
     protected U container;
     protected String name;
-    protected ResourceLocation gui;
 
     public ScreenMachine(U container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
@@ -148,7 +147,9 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-        drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+        if (gui != null) {
+            drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+        }
     }
 
     protected void drawProgress(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {

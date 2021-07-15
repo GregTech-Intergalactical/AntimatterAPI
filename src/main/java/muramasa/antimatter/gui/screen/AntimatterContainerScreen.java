@@ -3,6 +3,7 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.gui.container.AntimatterContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -17,7 +18,10 @@ import net.minecraft.util.text.Style;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AntimatterContainerScreen<T extends Container> extends ContainerScreen<T> implements IHasContainer<T> {
+public abstract class AntimatterContainerScreen<T extends AntimatterContainer> extends ContainerScreen<T> implements IHasContainer<T> {
+
+    protected ResourceLocation gui;
+    protected final List<Widget> widgetsFromData = new ObjectArrayList<>();
 
     public AntimatterContainerScreen(T container, PlayerInventory invPlayer, ITextComponent title) {
         super(container, invPlayer, title);
@@ -27,7 +31,14 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
+        for (Widget widget : widgetsFromData) {
+            widget.render(stack, mouseX, mouseY, partialTicks);
+        }
         this.renderHoveredTooltip(stack, mouseX, mouseY);
+    }
+
+    public ResourceLocation sourceGui() {
+        return gui;
     }
 
     public void drawTexture(MatrixStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
@@ -60,33 +71,6 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     public boolean isInGui(int x, int y, int xSize, int ySize, double mouseX, double mouseY) {
         return isInRect(x, y, xSize, ySize, mouseX - guiLeft, mouseY - guiTop);
     }
-
-//    public void drawContainedFluids(int mouseX, int mouseY) {
-//        tile.fluidHandler.ifPresent(h -> {
-//            FluidStack[] fluids;
-//            List<SlotData> slots;
-//
-//            //TODO this should use getInputsRaw to preserve ordering
-//            fluids = h.getInputs();
-//            slots = tile.getType().getGui().getSlots(SlotType.FL_IN, tile.getTier());
-//            if (fluids != null) {
-//                for (int i = 0; i < fluids.length; i++) {
-//                    if (i >= slots.size()) continue;
-//                    RenderHelper.drawFluid(mc, slots.get(i).x, slots.get(i).y, 16, 16, 16, fluids[i]);
-//                    drawTooltipInArea(FluidStackRenderer.getFluidTooltip(fluids[i]), mouseX, mouseY, slots.get(i).x, slots.get(i).y, 16, 16);
-//                }
-//            }
-//            fluids = h.getOutputs();
-//            slots = tile.getType().getGui().getSlots(SlotType.FL_OUT, tile.getTier());
-//            if (fluids != null) {
-//                for (int i = 0; i < fluids.length; i++) {
-//                    if (i >= slots.size()) continue;
-//                    RenderHelper.drawFluid(mc, slots.get(i).x, slots.get(i).y, 16, 16, 16, fluids[i]);
-//                    drawTooltipInArea(FluidStackRenderer.getFluidTooltip(fluids[i]), mouseX, mouseY, slots.get(i).x, slots.get(i).y, 16, 16);
-//                }
-//            }
-//        });
-//    }
 
     protected void removeButton(Widget widget) {
         buttons.removeIf(f -> f.equals(widget));

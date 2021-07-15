@@ -1,13 +1,16 @@
 package muramasa.antimatter.machine.types;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.screen.ScreenMachine;
+import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -36,10 +39,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -54,7 +54,7 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
  * features to configure machines such as vertical facing, the recipe map and smaller behaviours like if front IO is allowed.
  * @param <T> this class as a generic argument.
  */
-public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider {
+public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>> {
 
     /** Basic Members **/
     protected TileEntityType<?> tileType;
@@ -68,7 +68,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected RecipeMap<?> recipeMap;
 
     /** GUI Members **/
-    protected GuiData guiData;
+    protected GuiData<? extends ContainerMachine<?>> guiData;
     protected ItemGroup group = Ref.TAB_MACHINES;
 
     /** Texture Members **/
@@ -387,7 +387,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     public void setGUI(MenuHandler<?> menuHandler) {
         guiData = new GuiData(this, menuHandler);
-
         registerJei();
     }
 
@@ -431,7 +430,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tiers.get(0);
     }
 
-    public GuiData getGui() {
+    public GuiData<? extends ContainerMachine<?>> getGui() {
         return guiData;
     }
 
@@ -447,6 +446,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return allowVerticalFacing;
     }
 
+
     /** Static Methods **/
     public static Optional<Machine<?>> get(String name) {
         Machine<?> machine = AntimatterAPI.get(Machine.class, name);
@@ -459,5 +459,15 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             types.addAll(flag.getTypes());
         }
         return types;
+    }
+
+    @Override
+    public Map<String, Object2IntOpenHashMap<SlotType<?>>> getCountLookup() {
+        return getGui().getCountLookup();
+    }
+
+    @Override
+    public Map<String, List<SlotData<?>>> getSlotLookup() {
+        return getGui().getSlotLookup();
     }
 }
