@@ -312,7 +312,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         }
         return null;
     }
-    private LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
+    private LazyOptional<ToolEnergyHandler> getCastedHandler(ItemStack stack) {
         return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).cast();
     }
 
