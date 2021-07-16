@@ -308,7 +308,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         if (type.isPowered()) {
             //TODO: not lv
-            return new ItemEnergyHandler.Provider(() -> new ItemEnergyHandler(type.getBaseMaxEnergy(), 32, 32, 1, 1));
+            return new ItemEnergyHandler.Provider(() -> new ToolEnergyHandler(getMaxEnergy(stack), 32 * (4 ^ (this.energyTier - 1)), 32 * (4 ^ (this.energyTier - 1)), 1, 1));
         }
         return null;
     }
@@ -323,7 +323,11 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         CompoundNBT inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
         if (inner != null) {
             if (nbt == null) nbt = new CompoundNBT();
-            nbt.put("E", inner);
+            if (nbt.contains(Ref.TAG_TOOL_DATA)){
+                nbt.getCompound(Ref.TAG_TOOL_DATA).merge(inner);
+            } else {
+                nbt.put(Ref.TAG_TOOL_DATA, inner);
+            }
         }
         return nbt;
     }
@@ -332,7 +336,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
         super.readShareTag(stack, nbt);
         if (nbt != null) {
-            getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound("E")));
+            getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound(Ref.TAG_TOOL_DATA)));
         }
     }
 }
