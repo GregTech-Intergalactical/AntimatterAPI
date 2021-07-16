@@ -12,6 +12,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
 
+import javax.annotation.Nonnull;
+
 public class ButtonWidget extends Button {
     private final ResourceLocation res;
     private final ButtonBody body;
@@ -24,11 +26,11 @@ public class ButtonWidget extends Button {
         this.overlay = overlay;
     }
 
-    public static <T extends AntimatterContainer> GuiData.WidgetProvider<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Button.IPressable onPress) {
+    public static <T extends AntimatterContainer> WidgetSupplier.WidgetProvider<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Button.IPressable onPress) {
         return screen -> new ButtonWidget(res, body, overlay, onPress);
     }
 
-    public void renderWidget(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         //super.renderWidget(stack, mouseX, mouseY, partialTicks);
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bindTexture(res);

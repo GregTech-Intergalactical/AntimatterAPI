@@ -13,6 +13,5 @@ public class GeneratorMachine extends Machine<GeneratorMachine> {
         setGUI(Data.BASIC_MENU_HANDLER);
         noCovers();
         setAllowVerticalFacing(true);
-        getGui().setHasIOButton(false);
     }
 }

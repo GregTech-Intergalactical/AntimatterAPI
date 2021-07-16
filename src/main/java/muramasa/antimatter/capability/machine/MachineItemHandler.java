@@ -43,10 +43,10 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     public MachineItemHandler(T tile) {
         this.tile = tile;
         if (tile.has(GUI)){
-            Map<SlotType<?>, List<SlotData<?>>> map = tile.getMachineType().getGui().getSlots(tile.getMachineTier()).stream().collect(Collectors.groupingBy(SlotData::getType));
+            Map<SlotType<?>, List<SlotData<?>>> map = tile.getMachineType().getSlots(tile.getMachineTier()).stream().collect(Collectors.groupingBy(SlotData::getType));
             for (Map.Entry<SlotType<?>, List<SlotData<?>>> entry : map.entrySet()) {
                 SlotType<?> type = entry.getKey();
-                int count = tile.getMachineType().getGui().getCount(tile.getMachineTier(), entry.getKey());
+                int count = tile.getMachineType().getCount(tile.getMachineTier(), entry.getKey());
                 inventories.put(type, new TrackedItemHandler<>(tile, count, type.output, type.input, type.tester, type.ev));
             }
         }

@@ -6,7 +6,10 @@ import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.util.int4;
+
+import javax.annotation.Nonnull;
 
 public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWidget<T> {
     public final BarDir direction;
@@ -19,12 +22,12 @@ public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWid
         this.progressLocation = loc;
     }
 
-    public static <T extends ContainerMachine<?>> GuiData.WidgetProvider<T> build(BarDir dir, int x, int y, int width, int height) {
-        return screen -> new ProgressWidget<>(new int4(78, 24, 20, 18), dir, screen, x, y, width, height);
+    public static <T extends ContainerMachine<?>> WidgetSupplier<T> build(BarDir dir) {
+        return builder(screen -> new ProgressWidget<>(dir.getUV(), dir, screen, dir.getPos().x, dir.getPos().y, Math.abs(dir.getUV().x - dir.getPos().x), Math.abs(dir.getUV().y - dir.getPos().y)));
     }
 
     @Override
-    public void renderWidget(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         if (container().getTile().recipeHandler.map(MachineRecipeHandler::getClientProgressRaw).orElse(0) <= 0){
             return;
         }
@@ -68,5 +71,11 @@ public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWid
                 break;
         }
         drawTexture(matrixStack, screen().sourceGui(), screen().getGuiLeft() + x, screen().getGuiTop() + y, xLocation, yLocation, length, width);
+    }
+
+    @Override
+    public void onClick(double mouseX, double mouseY) {
+        super.onClick(mouseX, mouseY);
+        AntimatterJEIPlugin.showCategory(container().getTile().getMachineType());
     }
 }

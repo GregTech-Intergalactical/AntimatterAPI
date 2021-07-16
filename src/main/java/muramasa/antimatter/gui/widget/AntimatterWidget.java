@@ -50,46 +50,7 @@ public abstract class AntimatterWidget<T extends AntimatterContainer> extends Wi
         blit(stack, left, top, x, y, sizeX, sizeY);
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier<T> builder(GuiData.WidgetProvider<T> source) {
+    public static <T extends AntimatterContainer> WidgetSupplier<T> builder(WidgetSupplier.WidgetProvider<T> source) {
         return new WidgetSupplier<>(source);
     }
-
-    public static class WidgetSupplier<T extends AntimatterContainer> {
-
-        private final GuiData.WidgetProvider<T> source;
-
-        private Consumer<AntimatterWidget<T>> root;
-
-        public WidgetSupplier(GuiData.WidgetProvider<T> source) {
-            this.source = source;
-            this.root = a -> {};
-        }
-
-        public WidgetSupplier<T> setPos(int x, int y) {
-            this.root = a -> {
-                a.x = x;
-                a.y = y;
-                this.root.accept(a);
-            };
-            return this;
-        }
-
-        public WidgetSupplier<T> setWH(int w, int h) {
-            this.root = a -> {
-                a.setWidth(w);
-                a.setHeight(h);
-                this.root.accept(a);
-            };
-            return this;
-        }
-
-        public GuiData.WidgetProvider<T> build() {
-            return screen -> {
-                AntimatterWidget<T> widget = this.source.get(screen);
-                root.accept(widget);
-                return widget;
-            };
-        }
-    }
-
 }

@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,10 @@ public abstract class AntimatterContainerScreen<T extends AntimatterContainer> e
 
     public AntimatterContainerScreen(T container, PlayerInventory invPlayer, ITextComponent title) {
         super(container, invPlayer, title);
+    }
+
+    public void addWidget(Widget widget) {
+        this.widgetsFromData.add(widget);
     }
 
     @Override
@@ -60,6 +65,16 @@ public abstract class AntimatterContainerScreen<T extends AntimatterContainer> e
     public void drawTooltipInArea(MatrixStack stack, List<String> lines, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
         if (isInGui(x, y, sizeX, sizeY, mouseX, mouseY)) {
             renderTooltip(stack, lines.stream().map(t -> IReorderingProcessor.fromString(t, Style.EMPTY)).collect(Collectors.toList()), mouseX - guiLeft, mouseY - guiTop);
+        }
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int x, int y) {
+        for(Widget widget : this.widgetsFromData) {
+            if (widget.isHovered()) {
+                widget.renderToolTip(matrixStack, x - this.guiLeft, y - this.guiTop);
+                break;
+            }
         }
     }
 

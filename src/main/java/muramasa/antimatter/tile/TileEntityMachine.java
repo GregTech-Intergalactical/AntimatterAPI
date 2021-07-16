@@ -511,14 +511,14 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         info.add("State: " + getMachineState().getId());
         String slots = "";
         if (getMachineType().has(ITEM)) {
-            int inputs = getMachineType().getGui().getSlots(SlotType.IT_IN, getMachineTier()).size();
-            int outputs = getMachineType().getGui().getSlots(SlotType.IT_OUT, getMachineTier()).size();
+            int inputs = getMachineType().getSlots(SlotType.IT_IN, getMachineTier()).size();
+            int outputs = getMachineType().getSlots(SlotType.IT_OUT, getMachineTier()).size();
             if (inputs > 0) slots += (" IT_IN: " + inputs + ",");
             if (outputs > 0) slots += (" IT_OUT: " + outputs + ",");
         }
         if (getMachineType().has(FLUID) && getMachineType().has(GUI)) {
-            int inputs = getMachineType().getGui().getSlots(SlotType.FL_IN, getMachineTier()).size();
-            int outputs = getMachineType().getGui().getSlots(SlotType.FL_OUT, getMachineTier()).size();
+            int inputs = getMachineType().getSlots(SlotType.FL_IN, getMachineTier()).size();
+            int outputs = getMachineType().getSlots(SlotType.FL_OUT, getMachineTier()).size();
             if (inputs > 0) slots += (" FL_IN: " + inputs + ",");
             if (outputs > 0) slots += (" FL_OUT: " + outputs + ",");
         }

@@ -11,7 +11,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 
 public class ButtonType {
-
+/*
     public static ButtonType EMPTY_BODY = new ButtonType("empty_body", (l, t, h, i, r, b) -> new ButtonWidget(r, l + b.getX(), t + b.getY(), b.getW(), b.getH(), b.getBody(0), getPressable(h, i, b))); // Empty button with body
     public static ButtonType TEXT_ON_BODY = new ButtonType("text_body", (l, t, h, i, r, b) -> new ButtonWidget(r, l + b.getX(), t + b.getY(), b.getW(), b.getH(), b.getBody(0), b.getText(), getPressable(h, i, b))); // Button with body and text above
     public static ButtonType OVERLAY_ON_BODY = new ButtonType("over_body", (l, t, h, i, r, b) -> new ButtonWidget(r, l + b.getX(), t + b.getY(), b.getW(), b.getH(), b.getBody(0), b.getOverlay(0), getPressable(h, i, b))); // Button with body and overlay above
@@ -36,7 +36,6 @@ public class ButtonType {
     }
 
     public interface IButtonSupplier {
-
         AbstractButton get(int l, int t, IGuiHandler handler, PlayerInventory inv, ResourceLocation res, ButtonData button);
     }
 
@@ -54,5 +53,5 @@ public class ButtonType {
             handler.onGuiEvent(GuiEvent.EXTRA_SWITCH, inv.player, button.getId(), shiftHold, s ? 1 : 0);
             Antimatter.NETWORK.sendToServer(handler.createGuiPacket(GuiEvent.EXTRA_SWITCH, button.getId(), shiftHold, s ? 1 : 0));
         };
-    }
+    }*/
 }

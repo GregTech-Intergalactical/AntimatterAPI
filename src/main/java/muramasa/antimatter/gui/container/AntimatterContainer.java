@@ -32,6 +32,7 @@ public abstract class AntimatterContainer extends Container {
             this.addSlot(new Slot(playerInv, k, 8 + k * 18, 142));
         }
     }
+
     @Override
     public ItemStack transferStackInSlot(PlayerEntity player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;

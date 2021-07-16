@@ -4,13 +4,11 @@ import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.MenuHandler;
-import muramasa.antimatter.gui.SlotData;
-import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.screen.ScreenMachine;
 import muramasa.antimatter.gui.slot.ISlotProvider;
+import muramasa.antimatter.gui.widget.MachineStateWidget;
+import muramasa.antimatter.gui.widget.ProgressWidget;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -90,6 +88,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /** Covers **/
     protected ICover outputCover = COVEROUTPUT;
+
+    /** Slots **/
+    private final Map<String, Object2IntOpenHashMap<SlotType<?>>> countLookup = new Object2ObjectOpenHashMap<>();
+    private final Map<String, List<SlotData<?>>> slotLookup = new Object2ObjectOpenHashMap<>();
 
     public Machine(String domain, String id) {
         this.domain = domain;
@@ -208,6 +210,13 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         if (registry != ForgeRegistries.BLOCKS) return;
         tileType = new TileEntityType<>(tileFunc.apply((T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
+    }
+
+    public void onClientSetup() {
+        if (has(RECIPE)) {
+            getGui().widget(ProgressWidget.build(BarDir.LEFT))
+                    .widget(MachineStateWidget.build().setPos(32, 32).setWH(16, 16).cast());
+        }
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {
@@ -446,7 +455,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return allowVerticalFacing;
     }
 
-
     /** Static Methods **/
     public static Optional<Machine<?>> get(String name) {
         Machine<?> machine = AntimatterAPI.get(Machine.class, name);
@@ -463,11 +471,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     @Override
     public Map<String, Object2IntOpenHashMap<SlotType<?>>> getCountLookup() {
-        return getGui().getCountLookup();
+        return countLookup;
     }
 
     @Override
     public Map<String, List<SlotData<?>>> getSlotLookup() {
-        return getGui().getSlotLookup();
+        return slotLookup;
     }
 }

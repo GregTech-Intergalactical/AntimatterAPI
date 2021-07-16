@@ -10,8 +10,8 @@ public enum BarDir {
     LEFT(new int4(176, 0, 20, 18), new int2(72, 18)),
     RIGHT(new int4(176, 0, 20, 18), new int2(72, 18));
 
-    private int4 uv;
-    private int2 pos;
+    private final int4 uv;
+    private final int2 pos;
 
     BarDir(int4 uv, int2 pos) {
         this.uv = uv;

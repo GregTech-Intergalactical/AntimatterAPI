@@ -4,46 +4,34 @@ import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.slot.ISlotProvider;
-import muramasa.antimatter.gui.widget.AntimatterWidget;
+import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static muramasa.antimatter.gui.ButtonType.*;
-
-public class GuiData<T extends AntimatterContainer> implements ISlotProvider<GuiData<T>> {
-
-    @Override
-    public Map<String, Object2IntOpenHashMap<SlotType<?>>> getCountLookup() {
-        return slots.getCountLookup();
-    }
-
-    @Override
-    public Map<String, List<SlotData<?>>> getSlotLookup() {
-        return slots.getSlotLookup();
-    }
-
-    @FunctionalInterface
-    public interface WidgetProvider<T extends AntimatterContainer> {
-        AntimatterWidget<T> get(AntimatterContainerScreen<? extends T> screen);
-    }
+@OnlyIn(Dist.CLIENT)
+public class GuiData<T extends AntimatterContainer> {
 
     protected ResourceLocation loc;
     protected ResourceLocation override = null;
 
     protected MenuHandler<T> menuHandler;
-    protected boolean tieredGui = true;
+    protected boolean tieredGui = false;
 
     protected boolean enablePlayerSlots = true;
     protected int4 area = new int4(3, 3, 170, 80);
     protected int4 padding = new int4(0, 55, 0, 0);
+    public final int4 progress = new int4(78, 24, 20, 18);
+    public BarDir dir = BarDir.RIGHT;
    // protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0), progress = new int4(78, 24, 20, 18), state = new int4(84, 45, 8, 8), io = new int4(9, 64, 14, 14), item = new int4(35, 63, 16, 16), fluid = new int4(53, 63, 16, 16);
    //  protected int2 progressLocation = new int2(176, 0), stateLocation = new int2(176, 55);
    // protected ButtonOverlay itemLocation = new ButtonOverlay("item_eject", 177, 37, 16, 16), fluidLocation = new ButtonOverlay("fluid_eject", 177, 19, 16, 16);
@@ -53,8 +41,9 @@ public class GuiData<T extends AntimatterContainer> implements ISlotProvider<Gui
     //don't use WidgetProvider as you shouldn't be forced to use AntimatterWidget.
 
     //This uses Object instead of Tier for instance, for mapping widgets to things other than a tier.
-    protected Map<Object, Function<AntimatterContainerScreen<? extends T>, Widget>> objectWidgets = new Object2ObjectOpenHashMap<>();
-    protected List<Function<AntimatterContainerScreen<? extends T>, Widget>> widgets = new ObjectArrayList<>();
+    protected final Map<Object, List<Function<AntimatterContainerScreen<? extends T>, Widget>>> objectWidgets = new Object2ObjectOpenHashMap<>();
+    protected final List<Function<AntimatterContainerScreen<? extends T>, Widget>> widgets = new ObjectArrayList<>();
+
 
     private ISlotProvider<?> slots;
 
@@ -107,37 +96,11 @@ public class GuiData<T extends AntimatterContainer> implements ISlotProvider<Gui
         return padding;
     }
 
-    public void screenCreationCallBack(AntimatterContainerScreen<T> screen, @Nullable Object lookup) {
-        this.widgets.forEach(t -> screen.);
+    public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, @Nullable Object lookup) {
+        this.widgets.forEach(t -> screen.addWidget(t.apply(screen)));
+        List<Function<AntimatterContainerScreen<? extends T>, Widget>> wid = this.objectWidgets.get(lookup);
+        if (wid != null) wid.forEach(t -> t.apply(screen));
     }
-
-    /*public int4 getIo() {
-        return io;
-    }*/
-    /*
-    public int4 getItem() {
-        return item;
-    }
-
-    public int4 getFluid() {
-        return fluid;
-    }
-
-    public boolean isBarFill(){
-        return barFill;
-    }
-
-    public boolean hasIOButton() {
-        return hasIOButton;
-    }
-
-    public ButtonOverlay getItemLocation() {
-        return itemLocation;
-    }
-
-    public ButtonOverlay getFluidLocation() {
-        return fluidLocation;
-    }*/
 
     public boolean enablePlayerSlots() {
         return enablePlayerSlots;
@@ -154,6 +117,37 @@ public class GuiData<T extends AntimatterContainer> implements ISlotProvider<Gui
 
     public GuiData<T> setPadding(int x, int y, int z, int w) {
         padding.set(x, y, z, w);
+        return this;
+    }
+
+    public GuiData<T> widget(WidgetSupplier<T> provider) {
+        return widget(provider.cast(), null);
+    }
+
+    public GuiData<T> widget(WidgetSupplier.WidgetProvider<T> provider, Object data) {
+        if (data == null) {
+            this.widgets.add(provider::get);
+        } else {
+            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add(provider::get);
+        }
+        return this;
+    }
+
+    public GuiData<T> widget(Function<AntimatterContainerScreen<? extends T>, Widget> provider) {
+        return widget(provider, null);
+    }
+
+    public GuiData<T> widget(Function<AntimatterContainerScreen<? extends T>, Widget> provider, Object data) {
+        if (data == null) {
+            this.widgets.add(provider);
+        } else {
+            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add(provider);
+        }
+        return this;
+    }
+
+    public GuiData<T> widget(WidgetSupplier.WidgetProvider<T> build) {
+        widget(build, null);
         return this;
     }
 

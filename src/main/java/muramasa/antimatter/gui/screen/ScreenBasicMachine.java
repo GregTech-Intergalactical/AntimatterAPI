@@ -38,18 +38,12 @@ public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends Contai
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
-        drawProgress(stack, partialTicks, mouseX, mouseY);
-        //Draw error.
-        if (container.getTile().has(MachineFlag.RECIPE)) {
-            if (container.getTile().getMachineState() == MachineState.POWER_LOSS) {
-                drawTexture(stack, gui, guiLeft + container.getTile().getMachineType().getGui().getState().x, guiTop + container.getTile().getMachineType().getGui().getState().y, container.getTile().getMachineType().getGui().getStateLocation().x, container.getTile().getMachineType().getGui().getStateLocation().y, container.getTile().getMachineType().getGui().getState().z, container.getTile().getMachineType().getGui().getState().w);
-            }
-        }
     }
 
     @Override
     protected void init() {
         super.init();
+        /*
         GuiData data = container.getTile().getMachineType().getGui();
         ResourceLocation loc = data.getButtonLocation();
         boolean shouldDrawIO = container.getTile().getMachineTier().getVoltage() > 0 && data.hasIOButton();
@@ -75,6 +69,6 @@ public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends Contai
                     }
                 }, false));
             }
-        }
+        }*/
     }
 }

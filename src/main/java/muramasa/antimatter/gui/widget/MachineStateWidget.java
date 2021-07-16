@@ -27,7 +27,7 @@ public class MachineStateWidget<T extends ContainerMachine<?>> extends Antimatte
         }
     }
 
-    public static <T extends ContainerMachine<?>> GuiData.WidgetProvider<T> build() {
-        return MachineStateWidget::new;
+    public static <T extends ContainerMachine<?>> WidgetSupplier<T> build() {
+        return builder(MachineStateWidget::new);
     }
 }
