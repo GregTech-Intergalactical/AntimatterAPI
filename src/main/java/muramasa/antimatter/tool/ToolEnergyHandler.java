@@ -19,6 +19,7 @@ public class ToolEnergyHandler extends ItemEnergyHandler {
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.putLong(Ref.KEY_TOOL_DATA_ENERGY, this.energy);
+        nbt.putLong(Ref.KEY_TOOL_DATA_MAX_ENERGY, this.maxEnergy);
         nbt.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, this.discharge);
         return nbt;
     }
