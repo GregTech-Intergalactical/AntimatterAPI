@@ -11,6 +11,10 @@ public class ToolEnergyHandler extends ItemEnergyHandler {
         maxEnergy = capacity;
     }
 
+    public void setMaxEnergy(long maxEnergy) {
+        this.maxEnergy = maxEnergy;
+    }
+
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
