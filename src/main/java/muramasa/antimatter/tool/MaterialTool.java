@@ -308,7 +308,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         if (type.isPowered()) {
             //TODO: not lv
-            return new ItemEnergyHandler.Provider(() -> new ToolEnergyHandler(100000L * this.energyTier, 8 * (int)Math.pow(4, this.energyTier), 8 * (int)Math.pow(4, this.energyTier), 1, 1));
+            return new ItemEnergyHandler.Provider(() -> new ToolEnergyHandler(stack, maxEnergy, 8 * (int)Math.pow(4, this.energyTier), 8 * (int)Math.pow(4, this.energyTier), 1, 1));
         }
         return null;
     }
