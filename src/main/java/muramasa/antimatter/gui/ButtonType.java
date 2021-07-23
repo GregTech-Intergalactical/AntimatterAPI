@@ -1,15 +1,5 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.event.GuiEvent;
-import muramasa.antimatter.gui.widget.ButtonWidget;
-import muramasa.antimatter.gui.widget.SwitchWidget;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.AbstractButton;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-
 public class ButtonType {
 /*
     public static ButtonType EMPTY_BODY = new ButtonType("empty_body", (l, t, h, i, r, b) -> new ButtonWidget(r, l + b.getX(), t + b.getY(), b.getW(), b.getH(), b.getBody(0), getPressable(h, i, b))); // Empty button with body

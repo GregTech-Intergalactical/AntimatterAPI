@@ -50,7 +50,7 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
 
     protected void buildWidgets() {
         GuiData<U> data = (GuiData<U>) container.getTile().getMachineType().getGui();
-        data.screenCreationCallBack(this, null);
+        data.screenCreationCallBack(this, this.container.getTile(), null);
     }
 
     protected void drawTitle(MatrixStack stack, int mouseX, int mouseY) {

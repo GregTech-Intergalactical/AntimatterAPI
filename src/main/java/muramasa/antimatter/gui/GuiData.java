@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui;
 
 import it.unimi.dsi.fastutil.objects.*;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.slot.ISlotProvider;
@@ -16,6 +17,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
@@ -41,8 +43,8 @@ public class GuiData<T extends AntimatterContainer> {
     //don't use WidgetProvider as you shouldn't be forced to use AntimatterWidget.
 
     //This uses Object instead of Tier for instance, for mapping widgets to things other than a tier.
-    protected final Map<Object, List<Function<AntimatterContainerScreen<? extends T>, Widget>>> objectWidgets = new Object2ObjectOpenHashMap<>();
-    protected final List<Function<AntimatterContainerScreen<? extends T>, Widget>> widgets = new ObjectArrayList<>();
+    protected final Map<Object, List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>>> objectWidgets = new Object2ObjectOpenHashMap<>();
+    protected final List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> widgets = new ObjectArrayList<>();
 
 
     private ISlotProvider<?> slots;
@@ -96,10 +98,10 @@ public class GuiData<T extends AntimatterContainer> {
         return padding;
     }
 
-    public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, @Nullable Object lookup) {
-        this.widgets.forEach(t -> screen.addWidget(t.apply(screen)));
-        List<Function<AntimatterContainerScreen<? extends T>, Widget>> wid = this.objectWidgets.get(lookup);
-        if (wid != null) wid.forEach(t -> t.apply(screen));
+    public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
+        this.widgets.forEach(t -> screen.addWidget(t.apply(screen, handler)));
+        List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> wid = this.objectWidgets.get(lookup);
+        if (wid != null) wid.forEach(t -> t.apply(screen, handler));
     }
 
     public boolean enablePlayerSlots() {
@@ -133,11 +135,11 @@ public class GuiData<T extends AntimatterContainer> {
         return this;
     }
 
-    public GuiData<T> widget(Function<AntimatterContainerScreen<? extends T>, Widget> provider) {
+    public GuiData<T> widget(BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> provider) {
         return widget(provider, null);
     }
 
-    public GuiData<T> widget(Function<AntimatterContainerScreen<? extends T>, Widget> provider, Object data) {
+    public GuiData<T> widget(BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> provider, Object data) {
         if (data == null) {
             this.widgets.add(provider);
         } else {

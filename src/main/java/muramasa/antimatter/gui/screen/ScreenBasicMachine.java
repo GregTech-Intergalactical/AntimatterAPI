@@ -1,22 +1,12 @@
 package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.ButtonOverlay;
-import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.container.ContainerBasicMachine;
-import muramasa.antimatter.gui.event.GuiEvent;
-import muramasa.antimatter.gui.widget.SwitchWidget;
-import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-
-import static muramasa.antimatter.Data.COVEROUTPUT;
 
 public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends ContainerBasicMachine<T>> extends ScreenMachine<T,U> {
 
@@ -31,8 +21,8 @@ public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends Contai
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(stack, mouseX, mouseY);
-        if (container.getTile().has(MachineFlag.RECIPE))
-            drawTooltipInArea(stack, container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
+        //if (container.getTile().has(MachineFlag.RECIPE))
+        //    drawTooltipInArea(stack, container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
     }
 
     @Override

@@ -9,6 +9,7 @@ import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.MachineStateWidget;
 import muramasa.antimatter.gui.widget.ProgressWidget;
+import muramasa.antimatter.gui.widget.AbstractSwitchWidget;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -213,10 +214,18 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public void onClientSetup() {
+        if (this.guiData != null) setupGui();
+    }
+
+    /**
+     * Setups gui widgets for this machine type.
+     */
+    protected void setupGui() {
         if (has(RECIPE)) {
             getGui().widget(ProgressWidget.build(BarDir.LEFT))
-                    .widget(MachineStateWidget.build().setPos(32, 32).setWH(16, 16).cast());
+                    .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
         }
+        getGui().widget(AbstractSwitchWidget.build(null, null, (a, b) -> a.screen.wid))
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {
@@ -396,6 +405,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     public void setGUI(MenuHandler<?> menuHandler) {
         guiData = new GuiData(this, menuHandler);
+        guiData.setSlots(this);
         registerJei();
     }
 

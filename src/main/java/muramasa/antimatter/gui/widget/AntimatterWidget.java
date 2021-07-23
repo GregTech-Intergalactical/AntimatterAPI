@@ -2,33 +2,37 @@ package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
+import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-import java.util.function.Consumer;
-
 public abstract class AntimatterWidget<T extends AntimatterContainer> extends Widget {
     private final AntimatterContainerScreen<? extends T> screen;
+    private final IGuiHandler handler;
+    protected int4 uv;
     private ResourceLocation guiLoc;
 
-    public AntimatterWidget(AntimatterContainerScreen<? extends T> screen, int x, int y, int width, int height, ITextComponent title) {
+    public AntimatterWidget(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, int x, int y, int width, int height, ITextComponent title) {
         super(x, y, width, height, title);
         this.screen = screen;
+        this.handler = handler;
     }
 
-    public AntimatterWidget(AntimatterContainerScreen<? extends T> screen, int x, int y, int width, int height) {
-        this(screen, x, y, width, height, StringTextComponent.EMPTY);
+    public AntimatterWidget(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, int x, int y, int width, int height) {
+        this(screen, handler, x, y, width, height, StringTextComponent.EMPTY);
     }
 
-    public AntimatterWidget(AntimatterContainerScreen<? extends T> screen) {
+    public AntimatterWidget(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler) {
         super(0, 0, 0,0, StringTextComponent.EMPTY);
         this.screen = screen;
+        this.handler = handler;
     }
 
     protected T container() {
@@ -42,6 +46,10 @@ public abstract class AntimatterWidget<T extends AntimatterContainer> extends Wi
     public AntimatterWidget<T> setGuiLoc(ResourceLocation loc) {
         this.guiLoc = loc;
         return this;
+    }
+
+    protected IGuiHandler handler() {
+        return handler;
     }
 
     protected void drawTexture(MatrixStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {

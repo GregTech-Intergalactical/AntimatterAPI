@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public abstract class AntimatterContainerScreen<T extends AntimatterContainer> extends ContainerScreen<T> implements IHasContainer<T> {
 
     protected ResourceLocation gui;
-    protected final List<Widget> widgetsFromData = new ObjectArrayList<>();
+    public final List<Widget> widgetsFromData = new ObjectArrayList<>();
 
     public AntimatterContainerScreen(T container, PlayerInventory invPlayer, ITextComponent title) {
         super(container, invPlayer, title);
@@ -30,6 +30,49 @@ public abstract class AntimatterContainerScreen<T extends AntimatterContainer> e
 
     public void addWidget(Widget widget) {
         this.widgetsFromData.add(widget);
+        super.children.add(widget);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        super.mouseClicked(mouseX, mouseY, button);
+        for (Widget widget : widgetsFromData) {
+            if (widget.mouseClicked(mouseX - guiLeft, mouseY - guiTop, button)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (!super.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
+            for (Widget wid : widgetsFromData) {
+                if (wid.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (!super.mouseReleased(mouseX, mouseY, button)) {
+            for (Widget wid : widgetsFromData) {
+                if (wid.mouseReleased(mouseX, mouseY, button)) return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (!super.keyPressed(keyCode, scanCode, modifiers)) {
+            for (Widget wid : widgetsFromData) {
+                if (wid.keyPressed(keyCode, scanCode, modifiers)) return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -40,6 +83,16 @@ public abstract class AntimatterContainerScreen<T extends AntimatterContainer> e
             widget.render(stack, mouseX, mouseY, partialTicks);
         }
         this.renderHoveredTooltip(stack, mouseX, mouseY);
+    }
+
+    @Override
+    protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
+        super.renderHoveredTooltip(matrixStack, x, y);
+        for (Widget widget : widgetsFromData) {
+            if (widget.isHovered() || widget.isMouseOver(x - guiLeft , y - guiTop)) {
+                widget.renderToolTip(matrixStack, x, y);
+            }
+        }
     }
 
     public ResourceLocation sourceGui() {

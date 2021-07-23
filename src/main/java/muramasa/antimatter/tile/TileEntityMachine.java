@@ -62,6 +62,7 @@ import java.util.Set;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
+
 import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -302,7 +303,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
-    public AbstractGuiEventPacket createGuiPacket(GuiEvent event, int... data) {
+    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
         return new TileGuiEventPacket(event, getPos(), data);
     }
 

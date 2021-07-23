@@ -88,7 +88,7 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     }
 
     @Override
-    public AbstractGuiEventPacket createGuiPacket(GuiEvent event, int... data) {
+    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
        return new CoverGuiEventPacket(event, this.getTile().getPos(),this.getFacing(), data);
     }
 

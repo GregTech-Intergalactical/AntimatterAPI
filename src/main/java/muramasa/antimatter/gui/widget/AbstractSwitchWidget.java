@@ -2,8 +2,12 @@ package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
+import muramasa.antimatter.gui.container.AntimatterContainer;
+import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.util.ResourceLocation;
@@ -14,36 +18,44 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-public class SwitchWidget extends AbstractButton {
+public abstract class AbstractSwitchWidget extends AbstractButton {
 
     private final ResourceLocation res;
     private ButtonBody on, off;
     private ButtonOverlay body;
     private boolean state;
+    public final AntimatterContainerScreen<?> screen;
+    private final IGuiHandler handler;
 
-    protected final SwitchWidget.ISwitchable onSwitch;
+    protected final AbstractSwitchWidget.ISwitchable onSwitch;
 
-    protected SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
-        super(x, y, w, h, new StringTextComponent(""));
+    protected AbstractSwitchWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, ResourceLocation res, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
+        super(0,0,0,0, new StringTextComponent(""));
         this.res = res;
         this.on = on;
         this.off = off;
         this.onSwitch = onSwitch;
+        this.screen = screen;
+        this.handler = handler;
     }
 
-    protected SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
-        super(x, y, w, h, new StringTextComponent(""));
+    protected AbstractSwitchWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, ResourceLocation res, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
+        super(0,0,0,0, new StringTextComponent(""));
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
         this.state = defaultState;
+        this.screen = screen;
+        this.handler = handler;
     }
 
-    protected SwitchWidget(ResourceLocation res, int x, int y, int w, int h, ButtonOverlay body, String text, ISwitchable onSwitch) {
-        super(x, y, w, h, new StringTextComponent(text));
+    protected AbstractSwitchWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, ResourceLocation res, ButtonOverlay body, String text, ISwitchable onSwitch) {
+        super(0,0,0,0, new StringTextComponent(text));
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
+        this.screen = screen;
+        this.handler = handler;
     }
 
     @Override
@@ -84,6 +96,6 @@ public class SwitchWidget extends AbstractButton {
 
     @OnlyIn(Dist.CLIENT)
     public interface ISwitchable {
-        void onSwitch(SwitchWidget button, boolean state);
+        void onSwitch(AbstractSwitchWidget button, boolean state);
     }
 }

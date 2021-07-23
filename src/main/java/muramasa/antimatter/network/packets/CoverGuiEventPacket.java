@@ -1,6 +1,7 @@
 package muramasa.antimatter.network.packets;
 
 import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -14,20 +15,20 @@ import java.util.function.Supplier;
 
 public class CoverGuiEventPacket extends AbstractGuiEventPacket{
     Direction facing;
-    public CoverGuiEventPacket(GuiEvent event, BlockPos pos, Direction facing, int... data) {
+    public CoverGuiEventPacket(IGuiEvent event, BlockPos pos, Direction facing, int... data) {
         super(event, pos, data);
         this.facing = facing;
     }
 
     public static void encode(CoverGuiEventPacket msg, PacketBuffer buf) {
-        buf.writeEnumValue(msg.event);
+        msg.event.write(buf);
         buf.writeBlockPos(msg.pos);
         buf.writeEnumValue(msg.facing);
         buf.writeVarIntArray(msg.data);
     }
 
     public static CoverGuiEventPacket decode(PacketBuffer buf) {
-        return new CoverGuiEventPacket(buf.readEnumValue(GuiEvent.class), buf.readBlockPos(), buf.readEnumValue(Direction.class), buf.readVarIntArray());
+        return new CoverGuiEventPacket(IGuiEvent.read(buf), buf.readBlockPos(), buf.readEnumValue(Direction.class), buf.readVarIntArray());
     }
 
     public static void handle(final CoverGuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
