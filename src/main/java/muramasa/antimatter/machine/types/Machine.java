@@ -7,6 +7,7 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.slot.ISlotProvider;
+import muramasa.antimatter.gui.widget.IOWidget;
 import muramasa.antimatter.gui.widget.MachineStateWidget;
 import muramasa.antimatter.gui.widget.ProgressWidget;
 import muramasa.antimatter.gui.widget.AbstractSwitchWidget;
@@ -225,7 +226,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             getGui().widget(ProgressWidget.build(BarDir.LEFT))
                     .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
         }
-        getGui().widget(AbstractSwitchWidget.build(null, null, (a, b) -> a.screen.wid))
+        getGui().widget(IOWidget.build(null, null));
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {
