@@ -20,9 +20,10 @@ public class IOWidget extends AbstractSwitchWidget {
 
     protected final Widget item;
     protected final Widget fluid;
-    private final int4 itemLoc = new int4(174, 17, 16, 16), fluidLoc = new int4(175, 35, 16, 16);
+    private final int4 fluidLoc = new int4(176, 16, 18, 18), itemLoc = new int4(176, 36, 18, 18);
 
     protected IOWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, int x, int y, int w, int h) {
+        //TODO: Move textures around
         super(screen, handler, new ResourceLocation("gti", "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, ((ContainerMachine<?>)screen.getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
         this.x = x;
         this.y = y;
@@ -34,8 +35,7 @@ public class IOWidget extends AbstractSwitchWidget {
         ((ButtonWidget)fluid).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false));
         item.active = false;
         fluid.active = false;
-        screen.widgetsFromData.add(item);
-        screen.widgetsFromData.add(fluid);
+        screen.addWidgets(item, fluid);
     }
 
     private static void handler(AbstractSwitchWidget widget, boolean state) {

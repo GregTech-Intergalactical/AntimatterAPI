@@ -125,6 +125,7 @@ public class ButtonWidget extends Button {
             ScreenWidget.blit(stack, screen().getGuiLeft() + x, screen.getGuiTop() + y, width, height, resLoc.x, resLoc.y, resLoc.z, resLoc.w, 256, 256);
         }
         RenderSystem.enableDepthTest();
+        RenderSystem.color4f(1,1,1,1);
         String text = getMessage().getString();
         if (!text.isEmpty()) drawCenteredString(stack, minecraft.fontRenderer, text, x + width / 2, y + (height - 8) / 2, getFGColor() | MathHelper.ceil(alpha * 255.0F) << 24);
     }
