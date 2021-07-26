@@ -226,7 +226,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             getGui().widget(ProgressWidget.build(BarDir.LEFT))
                     .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
         }
-        getGui().widget(IOWidget.build(null, null));
+        getGui().widget(IOWidget.build(9,63,16,16).cast());
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {

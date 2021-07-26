@@ -1,6 +1,5 @@
 package muramasa.antimatter.network.packets;
 
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;

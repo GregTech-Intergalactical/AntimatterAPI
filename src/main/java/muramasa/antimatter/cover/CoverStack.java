@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
@@ -27,8 +28,7 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
 
     public static final CoverStack<?>[] EMPTY_COVER_ARRAY = new CoverStack[0];
 
-
-    private ICover cover;
+    private final ICover cover;
     private CompoundNBT nbt;
     private T tile;
     private Direction facing;
@@ -79,7 +79,7 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
         cover.onBlockUpdate(this, side);
     }
 
-    public void onMachineEvent(TileEntityMachine tile, IMachineEvent event, int ...data) {
+    public void onMachineEvent(TileEntityMachine<?> tile, IMachineEvent event, int ...data) {
         cover.onMachineEvent(this, tile, event, data);
     }
 

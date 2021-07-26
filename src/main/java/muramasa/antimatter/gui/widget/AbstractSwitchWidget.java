@@ -58,6 +58,10 @@ public abstract class AbstractSwitchWidget extends AbstractButton {
         this.handler = handler;
     }
 
+    protected boolean state() {
+        return state;
+    }
+
     @Override
     public void renderWidget(@Nonnull MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -77,7 +81,7 @@ public abstract class AbstractSwitchWidget extends AbstractButton {
             int yTex = body.getY();
             float f = isSwitched() ? 1.0F : isHovered() ? 0.75F : 0.5F;
             RenderSystem.color4f(f, f, f, 1.0F);
-            ScreenWidget.blit(stack, x, y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
+            ScreenWidget.blit(stack, screen.getGuiLeft() + this.x, screen.getGuiTop() + this.y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
         }
         RenderSystem.enableDepthTest();
         String text = getMessage().getString();

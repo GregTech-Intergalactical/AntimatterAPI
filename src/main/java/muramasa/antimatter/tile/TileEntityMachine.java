@@ -297,7 +297,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
         if (event == ITEM_EJECT || event == FLUID_EJECT) {
             coverHandler.ifPresent(ch -> {
-                ch.get(ch.getOutputFacing()).onMachineEvent(this, event, data);
+                ch.get(ch.getOutputFacing()).onGuiEvent(event,player, data);
             });
         }
     }

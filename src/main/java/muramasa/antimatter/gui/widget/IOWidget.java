@@ -1,27 +1,41 @@
 package muramasa.antimatter.gui.widget;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.container.ContainerMachine;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nonnull;
+
 import static muramasa.antimatter.Data.COVEROUTPUT;
+import static muramasa.antimatter.gui.widget.AntimatterWidget.builder;
 
 public class IOWidget extends AbstractSwitchWidget {
 
     protected final Widget item;
     protected final Widget fluid;
-    private final int4 ioLoc = new int4(9, 64, 14, 14), itemLoc = new int4(35, 63, 16, 16), fluidLoc = new int4(53, 63, 16, 16);
+    private final int4 itemLoc = new int4(174, 17, 16, 16), fluidLoc = new int4(175, 35, 16, 16);
 
-    protected IOWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, ResourceLocation res, ButtonOverlay overlay) {
-        super(screen, handler, res, overlay, IOWidget::handler, ((ContainerMachine<?>)screen.getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
-        this.item = ButtonWidget.build(res, null, null, null).get(screen, handler);
-        this.fluid = ButtonWidget.build(res, null, null, null).get(screen, handler);
+    protected IOWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, int x, int y, int w, int h) {
+        super(screen, handler, new ResourceLocation("gti", "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, ((ContainerMachine<?>)screen.getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+        this.item = ButtonWidget.build(new ResourceLocation("gti", "textures/gui/button/gui_buttons.png"), screen.sourceGui(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(x+26, y, w, h).cast().get(screen, handler);
+        this.fluid = ButtonWidget.build(new ResourceLocation("gti", "textures/gui/button/gui_buttons.png"), screen.sourceGui(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(x+44, y, w, h).cast().get(screen, handler);
+        ((ButtonWidget)item).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false));
+        ((ButtonWidget)fluid).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false));
+        item.active = false;
+        fluid.active = false;
+        screen.widgetsFromData.add(item);
+        screen.widgetsFromData.add(fluid);
     }
 
     private static void handler(AbstractSwitchWidget widget, boolean state) {
@@ -30,31 +44,16 @@ public class IOWidget extends AbstractSwitchWidget {
         wid.fluid.active = state;
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier.WidgetProvider<T> build(ResourceLocation res, ButtonOverlay overlay) {
-        return (screen, handler) -> new IOWidget(screen, handler, res, overlay);
+    public static <T extends AntimatterContainer> WidgetSupplier<T> build(int x, int y, int w, int h) {
+        return builder(((screen1, handler) -> new IOWidget(screen1, handler, x, y, w, h)));
     }
-    /*
 
-     if (container.getTile().has(MachineFlag.ITEM)) {
-                item = new SwitchWidget(gui, guiLeft + data.getItem().x, guiTop + data.getItem().y, data.getItem().z, data.getItem().w, data.getItemLocation(), (b, s) -> {
-                    Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.ITEM_EJECT, container.getTile().getPos(), s ? 1 : 0));
-                }, container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.get(t.getOutputFacing()))).orElse(false));
-            }
-            if (container.getTile().has(MachineFlag.FLUID)) {
-                fluid = new SwitchWidget(gui, guiLeft + data.getFluid().x, guiTop + data.getFluid().y, data.getFluid().z, data.getFluid().w, data.getFluidLocation(), (b, s) -> {
-                    Antimatter.NETWORK.sendToServer(new TileGuiEventPacket(GuiEvent.FLUID_EJECT, container.getTile().getPos(), s ? 1 : 0));
-                },container.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
-            }
-            if (item != null || fluid != null) {
-                addButton(new SwitchWidget(loc, guiLeft + data.getIo().x, guiTop + data.getIo().y, data.getIo().z, data.getIo().w, ButtonOverlay.INPUT_OUTPUT , (b, s) -> {
-                    if (s) {
-                        if (item != null) addButton(item);
-                        if (fluid != null) addButton(fluid);
-                    } else {
-                        if (item != null) removeButton(item);
-                        if (fluid != null) removeButton(fluid);
-                    }
-                }, false));
-            }
-     */
+    @Override
+    public void renderWidget(@Nonnull MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+        super.renderWidget(stack, p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
+        if (state()) {
+            item.renderWidget(stack, p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
+            fluid.renderWidget(stack, p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
+        }
+    }
 }
