@@ -18,5 +18,5 @@ public interface IGuiHandler {
      * @param data the input data.
      * @return a packet to send.
      */
-    AbstractGuiEventPacket createGuiPacket(GuiEvent event, int... data);
+    AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data);
 }

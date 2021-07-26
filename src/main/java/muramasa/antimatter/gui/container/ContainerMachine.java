@@ -23,7 +23,7 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
     protected List<ServerPlayerEntity> listeners = new ArrayList<>();
 
     public ContainerMachine(T tile, PlayerInventory playerInv, MenuHandlerMachine<T, ContainerMachine<T>> menuHandler, int windowId) {
-        super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
+        super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getSlots(tile.getMachineTier()).size());
         this.tile = tile;
         addSlots(tile);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
@@ -34,6 +34,7 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
         }
         tile.addOpenContainer(this);
     }
+
 
     public T getTile() {
         return tile;
@@ -76,9 +77,9 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
 
 
 
-    protected void addSlots(TileEntityMachine tile) {
+    protected void addSlots(TileEntityMachine<?> tile) {
         Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();
-        for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())){
+        for (SlotData slot : tile.getMachineType().getSlots(tile.getMachineTier())){
             slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);
             Slot supplier = slot.getType().getSlotSupplier().get(slot.getType(), tile, slotIndexMap.getInt(slot.getType().getId()), slot);
             addSlot(supplier);

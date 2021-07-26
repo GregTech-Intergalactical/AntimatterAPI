@@ -14,7 +14,7 @@ public class ContainerPipe extends AntimatterContainer {
 
     public ContainerPipe(TileEntityPipe tile, PlayerInventory playerInv, MenuHandlerMachine<?, ?> menuHandler, int windowId) {
         super(menuHandler.getContainerType(), windowId, playerInv, 0);
-        //super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getGui().getSlots(tile.getMachineTier()).size());
+        //super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getSlots(tile.getMachineTier()).size());
         //addSlots(tile);
         //if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
         this.tile = tile;
@@ -27,7 +27,7 @@ public class ContainerPipe extends AntimatterContainer {
     protected void addSlots(TileEntityMachine tile) {
         /*tile.itemHandler.ifPresent(h -> {
             int inputIndex = 0, outputIndex = 0, cellIndex = 0;
-            for (SlotData slot : tile.getMachineType().getGui().getSlots(tile.getMachineTier())) {
+            for (SlotData slot : tile.getMachineType().getSlots(tile.getMachineTier())) {
                 switch (slot.type) {
                     case IT_IN:
                         addSlot(new SlotInput(h.getInputWrapper(), inputIndex++, slot.x, slot.y));

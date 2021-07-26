@@ -48,9 +48,7 @@ public abstract class MenuHandler<T extends Container> implements IAntimatterObj
         return containerType;
     }
 
-    public T onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data) {
-        return null;
-    }
+    public abstract T onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data);
     //This has to be Object or else the runtime dist cleaner murders antimatter. It should actually return
     //the appropriate IScreenManager.IScreenFactory
     @OnlyIn(Dist.CLIENT)

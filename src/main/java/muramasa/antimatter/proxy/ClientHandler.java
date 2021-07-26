@@ -14,6 +14,7 @@ import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.registration.IColorHandler;
@@ -84,6 +85,7 @@ public class ClientHandler implements IProxyHandler {
                 }
             });
         });
+        AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(Machine.class, Machine::onClientSetup));
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
             RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.getCutout());

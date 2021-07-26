@@ -52,13 +52,4 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
             drawTexture(stack, gui, guiLeft + mode.getX(), guiTop + mode.getY(), coverModeHandler.getOverlayX(), coverModeHandler.getOverlayY(), 18, 18);
         }
     }
-
-    @Override
-    protected void init() {
-        super.init();
-        ResourceLocation loc = container.getCover().getCover().getGui().getButtonLocation();
-        for (ButtonData button : container.getCover().getCover().getGui().getButtons()) {
-            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getCover(), playerInventory, loc, button));
-        }
-    }
 }

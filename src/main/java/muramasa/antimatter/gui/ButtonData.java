@@ -2,11 +2,14 @@ package muramasa.antimatter.gui;
 
 public class ButtonData {
 
-    private int id;
-    private ButtonType type;
-    private int x, y, w, h;
-    private ButtonOverlay[] data;
-    private String text;
+    private final int id;
+    private final ButtonType type;
+    private final int x;
+    private final int y;
+    private final int w;
+    private final int h;
+    private final ButtonOverlay[] data;
+    private final String text;
 
     public ButtonData(int id, ButtonType type, int x, int y, int w, int h, String text, ButtonOverlay... data) {
         this.id = id;

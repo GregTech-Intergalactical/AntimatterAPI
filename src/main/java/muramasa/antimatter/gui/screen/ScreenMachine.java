@@ -2,11 +2,8 @@ package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.FluidHandler;
-import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.client.RenderHelper;
-import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.container.ContainerMachine;
@@ -21,13 +18,11 @@ import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import java.text.NumberFormat;
@@ -43,48 +38,39 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
 
     protected U container;
     protected String name;
-    protected ResourceLocation gui;
 
     public ScreenMachine(U container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
         this.name = name.getString();
         gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
-        //if (container.getTile().isClientSide()) container.getTile().recipeHandler.ifPresent(rh -> rh.setClientProgress(0));
+        buildWidgets();
+        int x =1;
+    }
+
+    protected void buildWidgets() {
+        GuiData<U> data = (GuiData<U>) container.getTile().getMachineType().getGui();
+        data.screenCreationCallBack(this, this.container.getTile(), null);
     }
 
     protected void drawTitle(MatrixStack stack, int mouseX, int mouseY) {
         Minecraft.getInstance().fontRenderer.drawString(stack, name, getCenteredStringX(name), 4, 0x404040);
     }
 
-
-
-    @Override
-    protected void init() {
-        super.init();
-        ResourceLocation loc = container.getTile().getMachineType().getGui().getButtonLocation();
-        for (ButtonData button : container.getTile().getMachineType().getGui().getButtons()) {
-            addButton(button.getType().getButtonSupplier().get(guiLeft, guiTop, container.getTile(), playerInventory, loc, button));
-        }
-    }
-
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
         drawTitle(stack, mouseX, mouseY);
-        if (container.getTile().has(MachineFlag.RECIPE)) {
-            drawTooltipInArea(stack,"Show Recipes", mouseX, mouseY, container.getTile().getMachineType().getGui().getProgress().x, container.getTile().getMachineType().getGui().getProgress().y, container.getTile().getMachineType().getGui().getProgress().z, container.getTile().getMachineType().getGui().getProgress().w);
-        }
         if (container.getTile().has(MachineFlag.FLUID)) {
             //TODO
             container.getTile().fluidHandler.ifPresent(t -> {
                 int[] index = new int[]{0};
                 FluidStack[] inputs = t.getInputs();
-                container.getTile().getMachineType().getGui().getSlots(FL_IN, this.container.getTile().getMachineTier()).forEach(sl -> {
+                container.getTile().getMachineType().getSlots(FL_IN, this.container.getTile().getMachineTier()).forEach(sl -> {
                     renderFluid(stack, inputs[index[0]++], sl,mouseX,mouseY);
                 });
                 index[0] = 0;
                 FluidStack[] outputs = t.getOutputs();
-                container.getTile().getMachineType().getGui().getSlots(FL_OUT, this.container.getTile().getMachineTier()).forEach(sl -> {
+                container.getTile().getMachineType().getSlots(FL_OUT, this.container.getTile().getMachineTier()).forEach(sl -> {
                     renderFluid(stack, outputs[index[0]++], sl, mouseX,mouseY);
                 });
             });
@@ -148,9 +134,11 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-        drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+        if (gui != null) {
+            drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+        }
     }
-
+    /*
     protected void drawProgress(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         GuiData data = container.getTile().getMachineType().getGui();
 
@@ -197,15 +185,5 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
         }
         drawTexture(stack, gui, guiLeft + x, guiTop + y, xLocation, yLocation, length, width);
     }
-
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        if ((!ModList.get().isLoaded(Ref.MOD_JEI) && !ModList.get().isLoaded(Ref.MOD_REI)) || !container.getTile().has(MachineFlag.RECIPE)) return false;
-        if (isInGui(container.getTile().getMachineType().getGui().getProgress().x, container.getTile().getMachineType().getGui().getProgress().y, container.getTile().getMachineType().getGui().getProgress().z, container.getTile().getMachineType().getGui().getProgress().w, mouseX, mouseY)) {
-            AntimatterJEIPlugin.showCategory(container.getTile().getMachineType());
-            return true;
-        }
-        return false;
-    }
+    */
 }

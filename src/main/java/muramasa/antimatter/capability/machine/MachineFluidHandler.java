@@ -34,8 +34,8 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     private int lastCellSlot = 0;
 
     public MachineFluidHandler(T tile, int capacity, int pressure) {
-        super(tile, capacity, pressure, tile.has(GUI) ? tile.getMachineType().getGui().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0,
-            tile.has(GUI) ? tile.getMachineType().getGui().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0);
+        super(tile, capacity, pressure, tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0,
+            tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0);
     }
 
     public MachineFluidHandler(T tile) {

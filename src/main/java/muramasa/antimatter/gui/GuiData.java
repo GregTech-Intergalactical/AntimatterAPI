@@ -1,71 +1,85 @@
 package muramasa.antimatter.gui;
 
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
+import it.unimi.dsi.fastutil.objects.*;
+import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.gui.container.AntimatterContainer;
+import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
+import muramasa.antimatter.gui.slot.ISlotProvider;
+import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int4;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
-import static muramasa.antimatter.gui.ButtonType.*;
-
-//GuiData with a type parameter T representing a GUI-able type,
-//e.g. machine o r cover.
-public class GuiData {
-
-    //TODO This whole class needs rethought
-    //TODO make sure addons can redirect gui opening now that Mod instance isn't used
-
-    private static final String ANY = "any";
+@OnlyIn(Dist.CLIENT)
+public class GuiData<T extends AntimatterContainer> {
 
     protected ResourceLocation loc;
-    protected MenuHandler<?> menuHandler;
-
-    protected Tier highestTier = Tier.LV;
-    protected boolean enablePlayerSlots = true;
-    protected ResourceLocation buttonLoc;
-
-    protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0), progress = new int4(78, 24, 20, 18), state = new int4(84, 45, 8, 8), io = new int4(9, 64, 14, 14), item = new int4(35, 63, 16, 16), fluid = new int4(53, 63, 16, 16);
-    protected int2 progressLocation = new int2(176, 0), stateLocation = new int2(176, 55);
-    protected ButtonOverlay itemLocation = new ButtonOverlay("item_eject", 177, 37, 16, 16), fluidLocation = new ButtonOverlay("fluid_eject", 177, 19, 16, 16);
-    protected BarDir side = BarDir.LEFT;
-    protected boolean barFill = true, hasIOButton = true;
-
-    protected Object2ObjectMap<String, List<SlotData<?>>> SLOT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
-    protected Object2ObjectMap<String, Object2IntOpenHashMap<SlotType<?>>> COUNT_LOOKUP = new Object2ObjectLinkedOpenHashMap<>();
-    protected List<ButtonData> BUTTON_LIST = new ObjectArrayList<>();
     protected ResourceLocation override = null;
+
+    protected MenuHandler<T> menuHandler;
+    protected boolean tieredGui = false;
+
+    protected boolean enablePlayerSlots = true;
+    protected int4 area = new int4(3, 3, 170, 80);
+    protected int4 padding = new int4(0, 55, 0, 0);
+    public final int4 progress = new int4(78, 24, 20, 18);
+    public BarDir dir = BarDir.RIGHT;
+   // protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0), progress = new int4(78, 24, 20, 18), state = new int4(84, 45, 8, 8), io = new int4(9, 64, 14, 14), item = new int4(35, 63, 16, 16), fluid = new int4(53, 63, 16, 16);
+   //  protected int2 progressLocation = new int2(176, 0), stateLocation = new int2(176, 55);
+   // protected ButtonOverlay itemLocation = new ButtonOverlay("item_eject", 177, 37, 16, 16), fluidLocation = new ButtonOverlay("fluid_eject", 177, 19, 16, 16);
+   // protected BarDir side = BarDir.LEFT;
+   // protected boolean barFill = true, hasIOButton = true;
+
+    //don't use WidgetProvider as you shouldn't be forced to use AntimatterWidget.
+
+    //This uses Object instead of Tier for instance, for mapping widgets to things other than a tier.
+    protected final Map<Object, List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>>> objectWidgets = new Object2ObjectOpenHashMap<>();
+    protected final List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> widgets = new ObjectArrayList<>();
+
+
+    private ISlotProvider<?> slots;
 
     public GuiData(String domain, String id) {
         this.loc = new ResourceLocation(domain, id);
     }
 
-    public GuiData(String domain, String id, MenuHandler<?> menuHandler) {
+    public GuiData(String domain, String id, MenuHandler<T> menuHandler) {
         this(domain, id);
         this.menuHandler = menuHandler;
     }
 
-    public GuiData(IAntimatterObject type, MenuHandler<?> menuHandler) {
+    public GuiData(IAntimatterObject type, MenuHandler<T> menuHandler) {
         this(type.getDomain(), type.getId());
         this.menuHandler = menuHandler;
+    }
+
+    public GuiData<T> setSlots(ISlotProvider<?> slots) {
+        this.slots = slots;
+        return this;
+    }
+
+    public ISlotProvider<?> getSlots() {
+        if (slots == null) throw new IllegalStateException("Called GuiData::getSlots without setting it first");
+        return slots;
     }
 
     public MenuHandler<?> getMenuHandler() {
         return this.menuHandler;
     }
 
-    //Type represents what type of texture this data is representing.
-    //TODO: store this in e.g. IAntimatterobject instead of hardcoded.
     public ResourceLocation getTexture(Tier tier, String type) {
         if (override != null) return override;
-        if (hasSlots(tier) && type.equals("machine")) {
+        if (tieredGui) {
             return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + tier.getId() + ".png");
         } else {
             return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + ".png");
@@ -84,52 +98,10 @@ public class GuiData {
         return padding;
     }
 
-    public int4 getProgress() {
-        return progress;
-    }
-
-    public int4 getState() {
-        return state;
-    }
-
-    public int2 getProgressLocation() {
-        return progressLocation;
-    }
-
-    public int2 getStateLocation() {
-        return stateLocation;
-    }
-
-    public BarDir getDir() {
-        return side;
-    }
-
-    public int4 getIo() {
-        return io;
-    }
-
-    public int4 getItem() {
-        return item;
-    }
-
-    public int4 getFluid() {
-        return fluid;
-    }
-
-    public boolean isBarFill(){
-        return barFill;
-    }
-
-    public boolean hasIOButton() {
-        return hasIOButton;
-    }
-
-    public ButtonOverlay getItemLocation() {
-        return itemLocation;
-    }
-
-    public ButtonOverlay getFluidLocation() {
-        return fluidLocation;
+    public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
+        this.widgets.forEach(t -> screen.addWidget(t.apply(screen, handler)));
+        List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> wid = this.objectWidgets.get(lookup);
+        if (wid != null) wid.forEach(t -> t.apply(screen, handler));
     }
 
     public boolean enablePlayerSlots() {
@@ -140,48 +112,49 @@ public class GuiData {
         this.enablePlayerSlots = enablePlayerSlots;
     }
 
-    public GuiData setArea(int x, int y, int z, int w) {
+    public GuiData<T> setArea(int x, int y, int z, int w) {
         area.set(x, y, z, w);
         return this;
     }
 
-    public GuiData setPadding(int x, int y, int z, int w) {
+    public GuiData<T> setPadding(int x, int y, int z, int w) {
         padding.set(x, y, z, w);
         return this;
     }
 
-    public GuiData setProgress(int x, int y, int l, int w) {
+    public GuiData<T> widget(WidgetSupplier<T> provider) {
+        return widget(provider.cast(), null);
+    }
+
+    public GuiData<T> widget(WidgetSupplier.WidgetProvider<T> provider, Object data) {
+        if (data == null) {
+            this.widgets.add(provider::get);
+        } else {
+            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add(provider::get);
+        }
+        return this;
+    }
+
+    public GuiData<T> widget(BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> provider) {
+        return widget(provider, null);
+    }
+
+    public GuiData<T> widget(BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> provider, Object data) {
+        if (data == null) {
+            this.widgets.add(provider);
+        } else {
+            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add(provider);
+        }
+        return this;
+    }
+
+    public GuiData<T> widget(WidgetSupplier.WidgetProvider<T> build) {
+        widget(build, null);
+        return this;
+    }
+
+    /*public GuiData setProgress(int x, int y, int l, int w) {
         progress.set(x, y, l, w);
-        return this;
-    }
-
-    public GuiData setState(int x, int y, int l, int w) {
-        state.set(x, y, l, w);
-        return this;
-    }
-
-    public GuiData setIO(int x, int y, int l, int w) {
-        io.set(x, y, l, w);
-        return this;
-    }
-
-    public GuiData setItem(int x, int y, int l, int w) {
-        item.set(x, y, l, w);
-        return this;
-    }
-
-    public GuiData setFluid(int x, int y, int l, int w) {
-        fluid.set(x, y, l, w);
-        return this;
-    }
-
-    public GuiData setProgressLocation(int x, int y) {
-        progressLocation.set(x, y);
-        return this;
-    }
-
-    public GuiData setStateLocation(int x, int y) {
-        stateLocation.set(x, y);
         return this;
     }
 
@@ -205,16 +178,11 @@ public class GuiData {
         return this;
     }
 
-    public GuiData setHasIOButton(boolean hasIOButton) {
-        this.hasIOButton = hasIOButton;
-        return this;
-    }
-
     public GuiData setOverrideLocation(ResourceLocation override) {
         this.override = override;
         return this;
-    }
-
+    }*/
+    /*
     public GuiData addButton(int x, int y, int w, int h, ButtonBody body) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, x, y, w, h, body));
         return this;
@@ -258,130 +226,8 @@ public class GuiData {
         return buttonLoc;
     }
 
-    /** Adds a slot for ANY **/
-    public GuiData add(SlotType<?> type, int x, int y) {
-        return add(ANY, new SlotData<>(type, x, y));
-    }
-
-    /** Adds a slot for the given Tier **/
-    public GuiData add(Tier tier, SlotType<?> type, int x, int y) {
-        return add(tier.getId(), new SlotData<>(type, x, y));
-    }
-
-    /** Copies ALL slots from an existing GuiData **/
-    public GuiData add(GuiData data) {
-        List<SlotData<?>> list = data.getAnySlots();
-        for (SlotData<?> slot : list) {
-            add(ANY, slot);
-        }
-        return this;
-    }
-
-    /** Copies ALL slots from an existing Machine **/
-    public GuiData add(Machine<?> type) {
-        List<SlotData<?>> list = type.getGui().getAnySlots();
-        for (SlotData<?> slot : list) {
-            add(ANY, slot);
-        }
-        return this;
-    }
-
-    /** Copies ALL slots from type into toTier slots **/
-    public GuiData add(Tier toTier, Machine<?> type) {
-        List<SlotData<?>> list = type.getGui().getAnySlots();
-        for (SlotData<?> slot : list) {
-            add(toTier.getId(), slot);
-        }
-        return this;
-    }
-
-    /** Copies fromTier slots from type into toTier slots **/
-    public GuiData add(Tier toTier, Machine<?> type, Tier fromTier) {
-        List<SlotData<?>> list = type.getGui().getSlots(fromTier);
-        for (SlotData<?> slot : list) {
-            add(toTier.getId(), slot);
-        }
-        return this;
-    }
-
-    public GuiData add(String key, SlotData<?> slot) {
-        //TODO figure out better way to do this
-        Tier tier = AntimatterAPI.get(Tier.class, key);
-        if (tier != null && tier.getVoltage() > highestTier.getVoltage()) highestTier = tier;
-
-        if (!COUNT_LOOKUP.containsKey(key)) COUNT_LOOKUP.put(key, new Object2IntOpenHashMap<>());
-
-        COUNT_LOOKUP.get(key).addTo(slot.getType(), 1);
-        if (SLOT_LOOKUP.containsKey(key)) {
-            SLOT_LOOKUP.get(key).add(slot);
-        } else {
-            List<SlotData<?>> list = new ObjectArrayList<>();
-            list.add(slot);
-            SLOT_LOOKUP.put(key, list);
-        }
-        return this;
-    }
-
-    public boolean hasSlots() {
-        List<SlotData<?>> slots = SLOT_LOOKUP.get(ANY);
-        return slots != null && !slots.isEmpty();
-    }
-
-    public boolean hasSlots(Tier tier) {
-        List<SlotData<?>> slots = SLOT_LOOKUP.get(tier.getId());
-        return slots != null && !slots.isEmpty();
-    }
-
-    public List<SlotData<?>> getAnySlots() {
-        return SLOT_LOOKUP.get(ANY);
-    }
-
-    public Tier getHighestTier() {
-        return highestTier;
-    }
-
-    public List<SlotData<?>> getSlots(Tier tier) {
-        List<SlotData<?>> slots = SLOT_LOOKUP.get(tier.getId());
-        if (slots == null) slots = SLOT_LOOKUP.get(ANY);
-        return slots != null ? slots : new ObjectArrayList<>();
-    }
-
-    public List<SlotData<?>> getSlots(SlotType<?> type, Tier tier) {
-        List<SlotData<?>> types = new ObjectArrayList<>();
-        List<SlotData<?>> slots = SLOT_LOOKUP.get(tier.getId());
-        if (slots == null) slots = SLOT_LOOKUP.get(ANY);
-        if (slots == null) return types; //No slots found
-        for (SlotData<?> slot : slots) {
-            if (slot.getType() == type) types.add(slot);
-        }
-        return types;
-    }
-
-    public List<SlotData<?>> getSlots(SlotType<?> type) {
-        List<SlotData<?>> types = new ObjectArrayList<>();
-        List<SlotData<?>> slots = SLOT_LOOKUP.get(ANY);
-        if (slots == null) return types; //No slots found
-        for (SlotData<?> slot : slots) {
-            if (slot.getType() == type) types.add(slot);
-        }
-        return types;
-    }
-
     public boolean hasType(SlotType<?> type) {
         return getCount(null, type) > 0;
-    }
+    }*/
 
-    public boolean hasAnyItem(Tier tier) {
-        return !getSlots(SlotType.IT_IN, tier).isEmpty() || !getSlots(SlotType.IT_OUT, tier).isEmpty() || !getSlots(SlotType.CELL_IN,tier).isEmpty() || !getSlots(SlotType.CELL_OUT,tier).isEmpty();
-    }
-
-    public boolean hasAnyFluid(Tier tier) {
-        return !getSlots(SlotType.FL_IN, tier).isEmpty() || !getSlots(SlotType.FL_OUT, tier).isEmpty();
-    }
-
-    //TODO broken
-    public int getCount(Tier tier, SlotType<?> type) {
-        String id = tier == null || !COUNT_LOOKUP.containsKey(tier.getId()) ? ANY : tier.getId();
-        return COUNT_LOOKUP.get(id).getInt(type);
-    }
 }

@@ -2,10 +2,12 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.fluids.FluidUtil;
@@ -87,17 +89,21 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
-    public void onMachineEvent(CoverStack<?> instance, TileEntityMachine<?> tile, IMachineEvent event, int... data) {
+    public void onGuiEvent(CoverStack<?> instance, IGuiEvent event, PlayerEntity player, int... data) {
         if (event == GuiEvent.ITEM_EJECT) {
             instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_ITEM, !instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_ITEM));
-            processItemOutput(instance,tile);
-            return;
+            processItemOutput(instance, (TileEntityMachine<?>) instance.getTile());
+            Utils.markTileForNBTSync(instance.getTile());
         }
         if (event == GuiEvent.FLUID_EJECT) {
             instance.getNbt().putBoolean(Ref.KEY_MACHINE_EJECT_FLUID, !instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_FLUID));
-            processFluidOutput(instance,tile);
-            return;
+            processFluidOutput(instance, (TileEntityMachine<?>) instance.getTile());
+            Utils.markTileForNBTSync(instance.getTile());
         }
+    }
+
+    @Override
+    public void onMachineEvent(CoverStack<?> instance, TileEntityMachine<?> tile, IMachineEvent event, int... data) {
         //TODO: Tesseract stuff?
         if (event == MachineEvent.ITEMS_OUTPUTTED && instance.getNbt().getBoolean(Ref.KEY_MACHINE_EJECT_ITEM)) {
             processItemOutput(instance,tile);

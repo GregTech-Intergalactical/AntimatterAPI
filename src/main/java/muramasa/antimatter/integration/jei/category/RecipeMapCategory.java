@@ -59,7 +59,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         id = map.getId();
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getString();
-        int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.getDir().getUV();
+        int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.dir.getUV();
         background = guiHelper.drawableBuilder(gui.getTexture(guiTier,"machine"), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
         progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier,"machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
         Object icon = map.getIcon();
@@ -131,7 +131,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     @Override
     public void draw(Recipe recipe, MatrixStack stack, double mouseX, double mouseY) {
         if (progressBar != null)
-            progressBar.draw(stack, gui.getDir().getPos().x + gui.getArea().x, gui.getDir().getPos().y + gui.getArea().y);
+            progressBar.draw(stack, gui.dir.getPos().x + gui.getArea().x, gui.dir.getPos().y + gui.getArea().y);
         infoRenderer.render(stack, recipe, Minecraft.getInstance().fontRenderer, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z/2);
     }
 
@@ -144,7 +144,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
         int inputItems = 0, inputFluids = 0;
         if (recipe.hasInputItems()) {
-            slots = gui.getSlots(SlotType.IT_IN, guiTier);
+            slots = gui.getSlots().getSlots(SlotType.IT_IN, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
                 int s = 0;
@@ -167,7 +167,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             }
         }
         if (recipe.hasOutputItems()) {
-            slots = gui.getSlots(SlotType.IT_OUT, guiTier);
+            slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
                 List<List<ItemStack>> stacks = ingredients.getOutputs(VanillaTypes.ITEM);
@@ -181,7 +181,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 
         groupIndex = 0;
         if (recipe.hasInputFluids()) {
-            slots = gui.getSlots(SlotType.FL_IN, guiTier);
+            slots = gui.getSlots().getSlots(SlotType.FL_IN, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
                 FluidStack[] fluids = recipe.getInputFluids();
@@ -194,7 +194,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             }
         }
         if (recipe.hasOutputFluids()) {
-            slots = gui.getSlots(SlotType.FL_OUT, guiTier);
+            slots = gui.getSlots().getSlots(SlotType.FL_OUT, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
                 FluidStack[] fluids = recipe.getOutputFluids();

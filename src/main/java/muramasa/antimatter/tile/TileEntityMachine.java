@@ -62,6 +62,7 @@ import java.util.Set;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
+
 import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -296,13 +297,13 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
         if (event == ITEM_EJECT || event == FLUID_EJECT) {
             coverHandler.ifPresent(ch -> {
-                ch.get(ch.getOutputFacing()).onMachineEvent(this, event, data);
+                ch.get(ch.getOutputFacing()).onGuiEvent(event,player, data);
             });
         }
     }
 
     @Override
-    public AbstractGuiEventPacket createGuiPacket(GuiEvent event, int... data) {
+    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
         return new TileGuiEventPacket(event, getPos(), data);
     }
 
@@ -511,14 +512,14 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         info.add("State: " + getMachineState().getId());
         String slots = "";
         if (getMachineType().has(ITEM)) {
-            int inputs = getMachineType().getGui().getSlots(SlotType.IT_IN, getMachineTier()).size();
-            int outputs = getMachineType().getGui().getSlots(SlotType.IT_OUT, getMachineTier()).size();
+            int inputs = getMachineType().getSlots(SlotType.IT_IN, getMachineTier()).size();
+            int outputs = getMachineType().getSlots(SlotType.IT_OUT, getMachineTier()).size();
             if (inputs > 0) slots += (" IT_IN: " + inputs + ",");
             if (outputs > 0) slots += (" IT_OUT: " + outputs + ",");
         }
         if (getMachineType().has(FLUID) && getMachineType().has(GUI)) {
-            int inputs = getMachineType().getGui().getSlots(SlotType.FL_IN, getMachineTier()).size();
-            int outputs = getMachineType().getGui().getSlots(SlotType.FL_OUT, getMachineTier()).size();
+            int inputs = getMachineType().getSlots(SlotType.FL_IN, getMachineTier()).size();
+            int outputs = getMachineType().getSlots(SlotType.FL_OUT, getMachineTier()).size();
             if (inputs > 0) slots += (" FL_IN: " + inputs + ",");
             if (outputs > 0) slots += (" FL_OUT: " + outputs + ",");
         }
