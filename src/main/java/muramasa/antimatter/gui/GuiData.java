@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui;
 
+import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.AntimatterContainer;
@@ -27,7 +28,7 @@ public class GuiData<T extends AntimatterContainer> {
     protected ResourceLocation override = null;
 
     protected MenuHandler<T> menuHandler;
-    protected boolean tieredGui = false;
+    protected ImmutableMap<Tier, Tier> guiTiers;
 
     protected boolean enablePlayerSlots = true;
     protected int4 area = new int4(3, 3, 170, 80);
@@ -68,6 +69,11 @@ public class GuiData<T extends AntimatterContainer> {
         return this;
     }
 
+    public GuiData<T> setTieredGui(ImmutableMap.Builder<Tier, Tier> guiTiers) {
+        this.guiTiers = guiTiers.build();
+        return this;
+    }
+
     public ISlotProvider<?> getSlots() {
         if (slots == null) throw new IllegalStateException("Called GuiData::getSlots without setting it first");
         return slots;
@@ -79,8 +85,8 @@ public class GuiData<T extends AntimatterContainer> {
 
     public ResourceLocation getTexture(Tier tier, String type) {
         if (override != null) return override;
-        if (tieredGui) {
-            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + tier.getId() + ".png");
+        if (guiTiers != null && guiTiers.get(tier) != null) {
+            return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + "_" + guiTiers.get(tier).getId() + ".png");
         } else {
             return new ResourceLocation(loc.getNamespace(), "textures/gui/" + type + "/" + loc.getPath() + ".png");
         }

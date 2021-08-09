@@ -76,13 +76,13 @@ public final class AntimatterAPI {
         register(c, o.getId(), o);
     }
 
-    public static <T extends IAntimatterObject> T registerIfAbsent(Class<? extends T> clazz, String id, Supplier<? extends T> obj) {
+    public static <T> T registerIfAbsent(Class<? extends T> clazz, String id, Supplier<? extends T> obj) {
         T o = get(clazz, id);
         if (o != null) return o;
         o = obj.get();
         //the constructor of get() might register.
         if (get(clazz, id) == null)
-            register(clazz, o);
+            register(clazz, id, o);
         return o;
     }
 

@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine.types;
 
+import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -10,7 +11,6 @@ import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.IOWidget;
 import muramasa.antimatter.gui.widget.MachineStateWidget;
 import muramasa.antimatter.gui.widget.ProgressWidget;
-import muramasa.antimatter.gui.widget.AbstractSwitchWidget;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -226,7 +226,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             getGui().widget(ProgressWidget.build(BarDir.LEFT))
                     .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
         }
-        getGui().widget(IOWidget.build(9,63,16,16).cast());
+        if (has(BASIC))
+            getGui().widget(IOWidget.build(9,63,16,16).cast());
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {
@@ -408,6 +409,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         guiData = new GuiData(this, menuHandler);
         guiData.setSlots(this);
         registerJei();
+    }
+
+    public T setGuiTiers(ImmutableMap.Builder<Tier, Tier> tiers) {
+        guiData.setTieredGui(tiers);
+        return (T) this;
     }
 
     /**

@@ -23,7 +23,7 @@ public abstract class MenuHandler<T extends Container> implements IAntimatterObj
         loc = new ResourceLocation(domain, id);
         AntimatterAPI.register(MenuHandler.class, this);
         ContainerType<?> type = getContainerType();
-        AntimatterAPI.register(ContainerType.class, type.getRegistryName().toString(), type);
+        AntimatterAPI.registerIfAbsent(ContainerType.class, type.getRegistryName().toString(), () -> type);
     }
 
     @Override

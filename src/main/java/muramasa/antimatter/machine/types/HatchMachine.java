@@ -22,5 +22,6 @@ public class HatchMachine extends Machine<HatchMachine> {
         covers(COVERNONE,COVERNONE,cover,COVERNONE,COVERNONE,COVERNONE);
         setOutputCover(cover);
         frontCovers();
+        allowFrontIO();
     }
 }

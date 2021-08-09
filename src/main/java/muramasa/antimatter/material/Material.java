@@ -190,12 +190,13 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material asOreStone(int minXp, int maxXp, IMaterialTag... tags){
-        this.expRange = new RangedInteger(minXp, maxXp);
-        return asOreStone(tags);
+        asOre(minXp, maxXp, false, tags);
+        flags(ORE_STONE);
+        return this;
     }
 
     public Material asOreStone(IMaterialTag... tags){
-        asDust(ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
+        asDust(ORE_STONE, ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
         flags(tags);
         return this;
     }

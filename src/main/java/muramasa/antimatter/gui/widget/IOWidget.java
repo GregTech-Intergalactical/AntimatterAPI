@@ -20,7 +20,7 @@ public class IOWidget extends AbstractSwitchWidget {
 
     protected final Widget item;
     protected final Widget fluid;
-    private final int4 itemLoc = new int4(174, 17, 16, 16), fluidLoc = new int4(175, 35, 16, 16);
+    private static final int4 itemLoc = new int4(174, 17, 16, 16), fluidLoc = new int4(175, 35, 16, 16);
 
     protected IOWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, int x, int y, int w, int h) {
         super(screen, handler, new ResourceLocation("gti", "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, ((ContainerMachine<?>)screen.getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
