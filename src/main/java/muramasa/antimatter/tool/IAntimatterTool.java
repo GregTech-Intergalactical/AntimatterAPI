@@ -1,11 +1,14 @@
 package muramasa.antimatter.tool;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.behaviour.IItemUse;
+import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -39,6 +42,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeItem;
+import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -113,6 +118,11 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (!getAntimatterToolType().isPowered()) return dataTag;
         dataTag.putLong(Ref.KEY_TOOL_DATA_ENERGY, startingEnergy);
         dataTag.putLong(Ref.KEY_TOOL_DATA_MAX_ENERGY, maxEnergy);
+        IEnergyHandler h = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(t -> t).orElse(null);
+        if (h instanceof ToolEnergyHandler){
+            ((ToolEnergyHandler)h).setEnergy(startingEnergy);
+            ((ToolEnergyHandler)h).setMaxEnergy(maxEnergy);
+        }
         return dataTag;
     }
 
@@ -218,17 +228,22 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default int damage(ItemStack stack, int amount) {
         if (!getAntimatterToolType().isPowered()) return amount;
-        CompoundNBT tag = getDataTag(stack);
-        long currentEnergy = tag.getLong(Ref.KEY_TOOL_DATA_ENERGY);
+        IEnergyHandler h = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(t -> t).orElse(null);
+        if (!(h instanceof ItemEnergyHandler)){
+            return amount;
+        }
+        long currentEnergy = h.getEnergy();
         int multipliedDamage = amount * 100;
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {
-            tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, currentEnergy - multipliedDamage); // Otherwise take energy off of tool if energy is larger than multiplied damage
+            ((ItemEnergyHandler)h).extractInternal(multipliedDamage, false, true);
+            //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, currentEnergy - multipliedDamage); // Otherwise take energy off of tool if energy is larger than multiplied damage
             return 0; // Nothing is taken away from main durability
         }
         else { // Lastly, set energy to 0 and take leftovers off of tool durability itself
             int leftOver = (int) (multipliedDamage - currentEnergy);
-            tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
+            ((ItemEnergyHandler)h).extractInternal(currentEnergy, false, true);
+            //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
             return Math.max(1, leftOver / 100);
         }
     }

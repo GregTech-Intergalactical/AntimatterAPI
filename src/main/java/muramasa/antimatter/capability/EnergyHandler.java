@@ -35,7 +35,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
                 return 0;
             }
         }
-        long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
+        long toInsert = Math.max(Math.min(getCapacity() - energy, maxReceive), 0);
         if (ignore || getState().receive(true, 1, toInsert)) {
             if (!simulate) {
                 energy += toInsert;

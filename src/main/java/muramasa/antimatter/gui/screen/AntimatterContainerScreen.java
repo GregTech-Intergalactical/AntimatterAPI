@@ -33,6 +33,12 @@ public abstract class AntimatterContainerScreen<T extends AntimatterContainer> e
         super.children.add(widget);
     }
 
+    public void addWidgets(Widget... widget) {
+        for (Widget w : widget) {
+            addWidget(w);
+        }
+    }
+
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);

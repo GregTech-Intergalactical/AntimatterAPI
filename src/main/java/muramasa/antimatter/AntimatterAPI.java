@@ -38,6 +38,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 
@@ -118,21 +119,29 @@ public final class AntimatterAPI {
     }
 
     public static <T> List<T> all(Class<T> c) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
-        return map != null ? map.values().stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
+        return allInternal(c).collect(Collectors.toList());
     }
 
     public static <T> List<T> all(Class<T> c, String domain) {
+        return allInternal(c, domain).collect(Collectors.toList());
+    }
+
+    private static <T> Stream<T> allInternal(Class<T> c) {
+        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
+        return map == null ? Stream.empty() : map.values().stream().map(c::cast);
+    }
+
+    private static <T> Stream<T> allInternal(Class<T> c, @Nonnull String domain) {
         return all(c).stream().filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain) ||
-            o instanceof IForgeRegistryEntry && ((IForgeRegistryEntry<?>) o).getRegistryName() != null && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain)).collect(Collectors.toList());
+                o instanceof IForgeRegistryEntry && ((IForgeRegistryEntry<?>) o).getRegistryName() != null && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain));
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
-        all(c).forEach(consumer);
+        allInternal(c).forEach(consumer);
     }
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
-        all(c, domain).forEach(consumer);
+        allInternal(c, domain).forEach(consumer);
     }
 
     private static void runProvider(IAntimatterProvider provider) {
