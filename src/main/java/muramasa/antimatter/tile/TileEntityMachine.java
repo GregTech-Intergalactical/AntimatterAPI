@@ -258,7 +258,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     public boolean setFacing(Direction side) {
-        //TODO: Move covers as well?
         if (side == getFacing() || (side.getAxis() == Direction.Axis.Y && !getMachineType().allowVerticalFacing())) return false;
         boolean isEmpty = coverHandler.map(ch -> ch.get(side).isEmpty()).orElse(true);
         if (isEmpty) {

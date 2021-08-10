@@ -68,7 +68,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public long getCapacity() {
         if (canChargeItem()) {
-            return super.getCapacity() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getCapacity).sum() : 0);
+            return super.getCapacity(); //+ (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getCapacity).sum() : 0);
         }
         return super.getCapacity();
     }

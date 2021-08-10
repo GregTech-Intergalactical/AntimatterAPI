@@ -40,6 +40,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -94,6 +95,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /** Slots **/
     private final Map<String, Object2IntOpenHashMap<SlotType<?>>> countLookup = new Object2ObjectOpenHashMap<>();
     private final Map<String, List<SlotData<?>>> slotLookup = new Object2ObjectOpenHashMap<>();
+
+    private final List<Consumer<T>> guiCallbacks = new ObjectArrayList<>(1);
 
     public Machine(String domain, String id) {
         this.domain = domain;
@@ -215,19 +218,15 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public void onClientSetup() {
-        if (this.guiData != null) setupGui();
+        if (this.guiData != null) {
+            T t = (T)this;
+            guiCallbacks.forEach(c -> c.accept(t));
+        }
     }
 
-    /**
-     * Setups gui widgets for this machine type.
-     */
-    protected void setupGui() {
-        if (has(RECIPE)) {
-            getGui().widget(ProgressWidget.build(BarDir.LEFT))
-                    .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
-        }
-        if (has(BASIC))
-            getGui().widget(IOWidget.build(9,63,16,16).cast());
+    public T addGuiCallback(Consumer<T> callback) {
+        this.guiCallbacks.add(callback);
+        return (T) this;
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {
