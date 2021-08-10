@@ -19,7 +19,7 @@ public class BasicMachine extends Machine<BasicMachine> {
 
         addGuiCallback(t -> {
             if (has(RECIPE)) {
-                getGui().widget(ProgressWidget.build(BarDir.LEFT))
+                getGui().widget(ProgressWidget.build(BarDir.LEFT, true))
                         .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
             }
             getGui().widget(IOWidget.build(9,63,16,16).cast());
