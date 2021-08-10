@@ -223,7 +223,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     protected void setupGui() {
         if (has(RECIPE)) {
-            getGui().widget(ProgressWidget.build(BarDir.LEFT))
+            getGui().widget(ProgressWidget.build(BarDir.LEFT, true))
                     .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
         }
         if (has(BASIC))
