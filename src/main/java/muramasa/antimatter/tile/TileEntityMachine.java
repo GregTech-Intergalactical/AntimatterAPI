@@ -139,6 +139,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
+
+    @Override
+    public String getDomain() {
+        return getMachineType().getDomain();
+    }
+
     /** RECIPE UTILITY METHODS **/
 
     //Called before a recipe ticks.

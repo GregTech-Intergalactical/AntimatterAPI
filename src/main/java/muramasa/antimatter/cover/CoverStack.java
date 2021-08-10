@@ -57,6 +57,11 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
         return facing;
     }
 
+    @Override
+    public String getDomain() {
+        return cover.getDomain();
+    }
+
     /** Events **/
     public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         return cover.onInteract(this, player, hand, side, type);
