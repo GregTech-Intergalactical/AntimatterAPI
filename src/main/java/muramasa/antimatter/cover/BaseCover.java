@@ -5,6 +5,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.texture.Texture;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -18,7 +19,7 @@ import java.util.function.BiConsumer;
 //The base Cover class. All cover classes extend from this.
 public abstract class BaseCover implements ICover {
 
-    protected GuiData gui;
+    protected GuiData<?> gui;
     @Nullable
     private Item item;
     //For multi-covers.
@@ -32,7 +33,7 @@ public abstract class BaseCover implements ICover {
 
     public BaseCover() {
         if (hasGui()) {
-            this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
+            this.gui = new GuiData<>(this, Data.COVER_MENU_HANDLER);
             gui.setEnablePlayerSlots(true);
         }
     }
@@ -45,17 +46,17 @@ public abstract class BaseCover implements ICover {
     protected BaseCover(String id) {
         this.id = id;
         if (hasGui()) {
-            this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
+            this.gui = new GuiData<>(this, Data.COVER_MENU_HANDLER);
             gui.setEnablePlayerSlots(true);
         }
     }
 
-    public void setGui(GuiData setGui) {
+    public void setGui(GuiData<? extends Container> setGui) {
         this.gui = setGui;
     }
 
     @Override
-    public GuiData getGui() {
+    public GuiData<? extends Container> getGui() {
         return gui;
     }
 

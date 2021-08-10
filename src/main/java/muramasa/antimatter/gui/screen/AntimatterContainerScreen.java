@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AntimatterContainerScreen<T extends AntimatterContainer> extends ContainerScreen<T> implements IHasContainer<T> {
+public abstract class AntimatterContainerScreen<T extends Container> extends ContainerScreen<T> implements IHasContainer<T> {
 
     protected ResourceLocation gui;
     public final List<Widget> widgetsFromData = new ObjectArrayList<>();

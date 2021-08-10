@@ -11,6 +11,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,7 +23,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiData<T extends AntimatterContainer> {
+public class GuiData<T extends Container> {
 
     protected ResourceLocation loc;
     protected ResourceLocation override = null;

@@ -91,8 +91,8 @@ public class ButtonWidget extends Button {
         return builder((screen, handler) -> new ButtonWidget(screen, handler, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.handler.createGuiPacket(ev, id))));
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier.WidgetProvider<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return (screen, handler) -> new ButtonWidget(screen, handler, res, body, overlay, but -> Antimatter.NETWORK.sendToServer(but.handler.createGuiPacket(ev, id)));
+    public static <T extends AntimatterContainer> WidgetSupplier<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
+        return builder((screen, handler) -> new ButtonWidget(screen, handler, res, body, overlay, but -> Antimatter.NETWORK.sendToServer(but.handler.createGuiPacket(ev, id))));
     }
 
     public AntimatterContainerScreen<?> screen() {

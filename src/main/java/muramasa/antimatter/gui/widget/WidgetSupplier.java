@@ -5,13 +5,14 @@ import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.inventory.container.Container;
 
 import java.util.function.Consumer;
 
-public class WidgetSupplier<T extends AntimatterContainer> {
+public class WidgetSupplier<T extends Container> {
 
     @FunctionalInterface
-    public interface WidgetProvider<T extends AntimatterContainer> {
+    public interface WidgetProvider<T extends Container> {
         Widget get(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler);
     }
 
@@ -48,7 +49,7 @@ public class WidgetSupplier<T extends AntimatterContainer> {
         return this;
     }
 
-    public <U extends AntimatterContainer> WidgetProvider<U> cast() {
+    public <U extends Container> WidgetProvider<U> cast() {
         return (screen, handler) -> {
             Widget widget = this.source.get((AntimatterContainerScreen<? extends T>) screen, handler);
             root.accept(widget);
