@@ -59,7 +59,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
     }
 
     public void invalidate() {
-        for (LazyOptional opt : sided) {
+        for (LazyOptional<?> opt : sided) {
             opt.invalidate();
         }
     }

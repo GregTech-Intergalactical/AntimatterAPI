@@ -72,6 +72,11 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         //if INVALID_STRUCTURE was stored to disk don't bother rechecking on first tick.
         //This is not only behavioural but if INVALID_STRUCTURE are checked then maxShares
         //might misbehave.
+        Structure s = getMachineType().getStructure(getMachineTier());
+        if (s == null) {
+            super.onFirstTick();
+            return;
+        }
         StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).getStructure(this));
         if (!isStructureValid() && shouldCheckFirstTick) {
             checkStructure();
