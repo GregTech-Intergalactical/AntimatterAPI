@@ -9,11 +9,12 @@ import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 
-public abstract class AntimatterWidget<T extends AntimatterContainer> extends Widget {
+public abstract class AntimatterWidget<T extends Container> extends Widget {
     private final AntimatterContainerScreen<? extends T> screen;
     private final IGuiHandler handler;
     protected int4 uv;
@@ -58,7 +59,7 @@ public abstract class AntimatterWidget<T extends AntimatterContainer> extends Wi
         blit(stack, left, top, x, y, sizeX, sizeY);
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier<T> builder(WidgetSupplier.WidgetProvider<T> source) {
+    public static <T extends Container> WidgetSupplier<T> builder(WidgetSupplier.WidgetProvider<T> source) {
         return new WidgetSupplier<>(source);
     }
 }

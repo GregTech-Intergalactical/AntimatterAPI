@@ -14,6 +14,7 @@ import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.StringTextComponent;
@@ -79,19 +80,19 @@ public class ButtonWidget extends Button {
         this.bodyLoc = bodyLoc;
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
+    public static <T extends Container> WidgetSupplier<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
         return builder((screen, handler) -> new ButtonWidget(screen, handler, res, body, overlay, onPress));
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier<T> build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
+    public static <T extends Container> WidgetSupplier<T> build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
         return builder((screen, handler) -> new ButtonWidget(screen, handler, res, bodyLoc, loc, overlay, onPress));
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier<T> build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent ev, int id) {
+    public static <T extends Container> WidgetSupplier<T> build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent ev, int id) {
         return builder((screen, handler) -> new ButtonWidget(screen, handler, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.handler.createGuiPacket(ev, id))));
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
+    public static <T extends Container> WidgetSupplier<T> build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
         return builder((screen, handler) -> new ButtonWidget(screen, handler, res, body, overlay, but -> Antimatter.NETWORK.sendToServer(but.handler.createGuiPacket(ev, id))));
     }
 

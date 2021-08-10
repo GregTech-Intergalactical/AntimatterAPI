@@ -9,6 +9,7 @@ import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -44,7 +45,7 @@ public class IOWidget extends AbstractSwitchWidget {
         wid.fluid.active = state;
     }
 
-    public static <T extends AntimatterContainer> WidgetSupplier<T> build(int x, int y, int w, int h) {
+    public static <T extends Container> WidgetSupplier<T> build(int x, int y, int w, int h) {
         return builder(((screen1, handler) -> new IOWidget(screen1, handler, x, y, w, h)));
     }
 

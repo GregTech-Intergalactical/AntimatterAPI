@@ -17,6 +17,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -159,6 +160,20 @@ public class GuiData<T extends Container> {
         widget(build, null);
         return this;
     }
+/*
+    public GuiData<T> copyWidgets(GuiData<? extends T> other){
+
+        for (BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> function : other.widgets){
+
+        }
+        this.widgets.addAll((Collection<? extends BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>>) other.widgets);
+        this.objectWidgets.keySet().forEach(o -> {
+            if (other.objectWidgets.containsKey(o)) {
+                this.objectWidgets.get(o).addAll((Collection<? extends BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>>) other.objectWidgets.get(o));
+            }
+        });
+        return this;
+    }*/
 
     public GuiData<T> removeWidget(int index, Object data){
         if (data == null){
