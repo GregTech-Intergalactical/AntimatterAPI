@@ -159,6 +159,18 @@ public class GuiData<T extends AntimatterContainer> {
         return this;
     }
 
+    public GuiData<T> removeWidget(int index, Object data){
+        if (data == null){
+            this.widgets.remove(index);
+        } else {
+            this.objectWidgets.computeIfPresent(data, (k, v) -> {
+                v.remove(index);
+                return v;
+            });
+        }
+        return this;
+    }
+
     /*public GuiData setProgress(int x, int y, int l, int w) {
         progress.set(x, y, l, w);
         return this;
@@ -182,12 +194,12 @@ public class GuiData<T extends AntimatterContainer> {
     public GuiData setBarFill(boolean barFill){
         this.barFill = barFill;
         return this;
-    }
+    }*/
 
-    public GuiData setOverrideLocation(ResourceLocation override) {
+    public GuiData<T> setOverrideLocation(ResourceLocation override) {
         this.override = override;
         return this;
-    }*/
+    }
     /*
     public GuiData addButton(int x, int y, int w, int h, ButtonBody body) {
         BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, x, y, w, h, body));

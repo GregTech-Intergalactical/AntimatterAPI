@@ -24,13 +24,13 @@ public class IOWidget extends AbstractSwitchWidget {
 
     protected IOWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, int x, int y, int w, int h) {
         //TODO: Move textures around
-        super(screen, handler, new ResourceLocation("gti", "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, ((ContainerMachine<?>)screen.getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
+        super(screen, handler, new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, ((ContainerMachine<?>)screen.getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
         this.x = x;
         this.y = y;
         this.width = w;
         this.height = h;
-        this.item = ButtonWidget.build(new ResourceLocation("gti", "textures/gui/button/gui_buttons.png"), screen.sourceGui(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(x+26, y, w, h).cast().get(screen, handler);
-        this.fluid = ButtonWidget.build(new ResourceLocation("gti", "textures/gui/button/gui_buttons.png"), screen.sourceGui(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(x+44, y, w, h).cast().get(screen, handler);
+        this.item = ButtonWidget.build(new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), screen.sourceGui(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(x+26, y, w, h).cast().get(screen, handler);
+        this.fluid = ButtonWidget.build(new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), screen.sourceGui(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(x+44, y, w, h).cast().get(screen, handler);
         ((ButtonWidget)item).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false));
         ((ButtonWidget)fluid).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false));
         item.active = false;

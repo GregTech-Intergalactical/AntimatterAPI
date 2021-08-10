@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
@@ -11,6 +12,10 @@ public interface IGuiHandler {
 
     default void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
         //NOOP
+    }
+
+    default String getDomain(){
+        return Ref.ID;
     }
 
     /**

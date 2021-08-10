@@ -15,16 +15,17 @@ import javax.annotation.Nonnull;
 
 public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWidget<T> {
     public final BarDir direction;
-    public final boolean barFill = true;
+    public final boolean barFill;
 
-    public ProgressWidget(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, int4 loc, BarDir dir, int x, int y, int width, int height) {
+    public ProgressWidget(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, int4 loc, BarDir dir, int x, int y, int width, int height, boolean barFill) {
         super(screen, handler, x, y, width, height);
         this.direction = dir;
         this.uv = loc;
+        this.barFill = barFill;
     }
 
-    public static <T extends ContainerMachine<?>> WidgetSupplier<T> build(BarDir dir) {
-        return builder((screen, handler) -> new ProgressWidget<>(screen, handler, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w));
+    public static <T extends ContainerMachine<?>> WidgetSupplier<T> build(BarDir dir, boolean barFill) {
+        return builder((screen, handler) -> new ProgressWidget<>(screen, handler, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
     }
 
     @Override
