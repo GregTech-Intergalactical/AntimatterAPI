@@ -211,7 +211,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             if (Ref.debugOreVein)
                 Antimatter.LOGGER.info("Valid oreVeinSeed="+ oreVeinSeed + " VALID_VEINS.size()=" + VALID_VEINS.size() + " ");
             WorldGenVeinLayer vein = VALID_VEINS.get(oreVeinSeed);
-            oreVeinRNG.setSeed(oreVeinSeed ^ vein.primary.hashCode());  // Reset RNG to only be based on oreseed X/Z and type of vein
+            if (vein == null) throw new IllegalStateException("Valid veins returned null in WorldGenVeinlayer. This is an error");
+            if (vein.primary != null)
+                oreVeinRNG.setSeed(oreVeinSeed ^ vein.primary.hashCode());  // Reset RNG to only be based on oreseed X/Z and type of vein
             VeinLayerResult placementResult = vein.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16);
             switch (placementResult) {
                 case NO_ORE_IN_BOTTOM_LAYER:
