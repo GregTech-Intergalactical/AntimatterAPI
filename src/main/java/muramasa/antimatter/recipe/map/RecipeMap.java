@@ -65,7 +65,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private final List<AbstractMapIngredient> ROOT_SPECIAL = new ObjectArrayList<>();
 
     @Nullable
-    private GuiData GUI;
+    private GuiData<?> GUI;
     @Nullable
     private Tier guiTier;
     @Nullable
@@ -140,7 +140,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @param gui the guidata.
      * @return this
      */
-    public RecipeMap<B> setGuiData(GuiData gui) {
+    public RecipeMap<B> setGuiData(GuiData<?> gui) {
         this.GUI = gui;
         AntimatterAPI.registerJEICategory(this, this.GUI);
         return this;
@@ -152,7 +152,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @param machine the machine.
      * @return this
      */
-    public RecipeMap<B> setGuiData(GuiData gui, Machine<?> machine) {
+    public RecipeMap<B> setGuiData(GuiData<?> gui, Machine<?> machine) {
         this.GUI = gui;
         AntimatterAPI.registerJEICategory(this, this.GUI, machine, true);
         return this;
@@ -169,7 +169,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     @Nullable
-    public GuiData getGui() {
+    public GuiData<?> getGui() {
         return GUI;
     }
 
@@ -212,7 +212,6 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      */
     public void compileRecipe(Recipe recipe, ITagCollectionSupplier tags) {
         if (recipe == null) return;
-        Branch map = LOOKUP;
 
         if (recipe.hasOutputItems()) {
             for (ItemStack stack : recipe.getOutputItems()) {
@@ -244,7 +243,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         //if (r != null) {
             //Antimatter.LOGGER.warn("Recipe collision, adding both but only first is available.");
         //}
-        if (recurseItemTreeAdd(recipe, items, map, 0, 0)) {
+        if (recurseItemTreeAdd(recipe, items, LOOKUP, 0, 0)) {
             items.forEach(t -> t.forEach(ing -> {
                 if (!ing.isSpecial())
                     ROOT.add(ing);
@@ -515,7 +514,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
             regular.forEach(t -> compileRecipe(t, tags));
         }
         if (PROXY != null) {
-            List<IRecipe<?>> recipes = reg.getRecipesForType(PROXY.loc);
+            List<IRecipe<?>> recipes = (List<IRecipe<?>>) reg.getRecipesForType(PROXY.loc);
             recipes.forEach(recipe -> {
                 Recipe r = PROXY.handler.apply(recipe, RB());
                 if (r != null) compileRecipe(r, tags);

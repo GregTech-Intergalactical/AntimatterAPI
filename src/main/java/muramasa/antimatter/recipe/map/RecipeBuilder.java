@@ -1,5 +1,6 @@
 package muramasa.antimatter.recipe.map;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
@@ -17,9 +18,9 @@ import java.util.Set;
 public class RecipeBuilder {
 
     private RecipeMap<? extends RecipeBuilder> recipeMap;
-    protected ItemStack[] itemsOutput;
-    protected List<RecipeIngredient> ingredientInput;
-    protected FluidStack[] fluidsInput, fluidsOutput;
+    protected List<ItemStack> itemsOutput = new ObjectArrayList<>();
+    protected List<RecipeIngredient> ingredientInput = new ObjectArrayList<>();
+    protected List<FluidStack> fluidsInput, fluidsOutput = new ObjectArrayList<>();
     protected int[] chances;
     protected int duration, special;
     protected long power;
@@ -42,35 +43,32 @@ public class RecipeBuilder {
      * @return the recipe.
      */
     public Recipe build(int duration, long power, int special, int amps) {
-        if (itemsOutput != null && !Utils.areItemsValid(itemsOutput)) {
+        if (itemsOutput != null && itemsOutput.size() > 0 && !Utils.areItemsValid(itemsOutput.toArray(new ItemStack[0]))) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
             return Utils.getEmptyRecipe();
         }
-        if (fluidsInput != null && fluidsInput.length > 0 && !Utils.areFluidsValid(fluidsInput)) {
+        if (fluidsInput != null && fluidsInput.size() > 0 && !Utils.areFluidsValid(fluidsInput.toArray(new FluidStack[0]))) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
         }
-        if (fluidsOutput != null && fluidsOutput.length > 0 && !Utils.areFluidsValid(fluidsOutput)) {
+        if (fluidsOutput != null && fluidsOutput.size() > 0 && !Utils.areFluidsValid(fluidsOutput.toArray(new FluidStack[0]))) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
         }
 
-        if (/*AntimatterConfig.RECIPE.ENABLE_RECIPE_UNIFICATION && */itemsOutput != null) {
-            for (int i = 0; i < itemsOutput.length; i++) {
-                itemsOutput[i] = Unifier.get(itemsOutput[i]);
+        /*if (itemsOutput != null) {
+            for (int i = 0; i < itemsOutput.size(); i++) {
+                itemsOutput.add(i, Unifier.get(itemsOutput.get(i)));
             }
-        }
+        }*/
 
-        //TODO validate item/fluid inputs/outputs do not exceed machine gui values
-        //TODO get a recipe build method to machine type so it can be overriden?
-        //otherwise we get NPEs everywhere :S so keep this non-null
         if (ingredientInput == null) ingredientInput = Collections.emptyList();
         if (amps < 1) amps = 1;
         Recipe recipe = new Recipe(
                 ingredientInput,
-                itemsOutput != null ? itemsOutput.clone() : null,
-                fluidsInput != null ? fluidsInput.clone() : null,
-                fluidsOutput != null ? fluidsOutput.clone() : null,
+                itemsOutput != null ? itemsOutput.toArray(new ItemStack[0]) : null,
+                fluidsInput != null ? fluidsInput.toArray(new FluidStack[0]) : null,
+                fluidsOutput != null ? fluidsOutput.toArray(new FluidStack[0]) : null,
                 duration, power, special,amps
         );
         if (chances != null) recipe.addChances(chances);
@@ -92,7 +90,6 @@ public class RecipeBuilder {
         return add();
     }
 
-
     public Recipe add(long duration, long power) {
         return add(duration, power, 0);
     }
@@ -102,27 +99,42 @@ public class RecipeBuilder {
     }
 
     public RecipeBuilder ii(RecipeIngredient... stacks) {
-        ingredientInput = Arrays.asList(stacks);
+        ingredientInput.addAll(Arrays.asList(stacks));
         return this;
     }
 
     public RecipeBuilder ii(List<RecipeIngredient> stacks) {
-        ingredientInput = stacks;
+        ingredientInput.addAll(stacks);
         return this;
     }
 
     public RecipeBuilder io(ItemStack... stacks) {
-        itemsOutput = stacks;
+        itemsOutput.addAll(Arrays.asList(stacks));
+        return this;
+    }
+
+    public RecipeBuilder io(List<ItemStack> stacks) {
+        itemsOutput.addAll(stacks);
         return this;
     }
 
     public RecipeBuilder fi(FluidStack... stacks) {
-        fluidsInput = stacks;
+        fluidsInput.addAll(Arrays.asList(stacks));
+        return this;
+    }
+
+    public RecipeBuilder fi(List<FluidStack> stacks) {
+        fluidsInput.addAll(stacks);
         return this;
     }
 
     public RecipeBuilder fo(FluidStack... stacks) {
-        fluidsOutput = stacks;
+        fluidsOutput.addAll(Arrays.asList(stacks));
+        return this;
+    }
+
+    public RecipeBuilder fo(List<FluidStack> stacks) {
+        fluidsOutput.addAll(stacks);
         return this;
     }
 
@@ -143,9 +155,10 @@ public class RecipeBuilder {
     }
 
     public void clear() {
-        itemsOutput = null;
-        ingredientInput = null;
-        fluidsInput = fluidsOutput = null;
+        itemsOutput = new ObjectArrayList<>();
+        ingredientInput = new ObjectArrayList<>();
+        fluidsInput = new ObjectArrayList<>();
+        fluidsOutput = new ObjectArrayList<>();
         chances = null;
         duration = special = 0;
         power = 0;
@@ -153,11 +166,11 @@ public class RecipeBuilder {
         tags.clear();
     }
 
-    public RecipeMap getMap() {
+    public RecipeMap<?> getMap() {
         return recipeMap;
     }
 
-    public void setMap(RecipeMap recipeMap) {
+    public void setMap(RecipeMap<?> recipeMap) {
         this.recipeMap = recipeMap;
     }
 }

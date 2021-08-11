@@ -8,8 +8,6 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Tier implements IAntimatterObject {
 
-    //TODO move Tiers to GT?
-
     /** Electricity Tiers **/
     public static Tier ULV = new Tier(Ref.ID, "ulv", 8, TextFormatting.WHITE); //Tier 1
     public static Tier LV = new Tier(Ref.ID, "lv", 32, TextFormatting.WHITE); //Tier 2

@@ -61,6 +61,10 @@ public class MaterialTag implements IMaterialTag {
         return this;
     }
 
+    public Set<Material> allSub(SubTag sub) {
+        return TAG_MAP.getOrDefault(sub, Collections.emptySet());
+    }
+
     public boolean has(SubTag tag, Material mat) {
         return TAG_MAP.getOrDefault(tag, Collections.emptySet()).contains(mat);
     }

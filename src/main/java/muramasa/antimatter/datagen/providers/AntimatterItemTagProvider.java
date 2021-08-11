@@ -14,7 +14,10 @@ import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.material.SubTag;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.types.Wire;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.block.Block;
@@ -22,6 +25,7 @@ import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -29,9 +33,11 @@ import net.minecraftforge.common.Tags;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static muramasa.antimatter.Data.BLOCK;
 import static muramasa.antimatter.Data.FRAME;
+import static muramasa.antimatter.material.MaterialTag.WIRE;
 import static muramasa.antimatter.util.TagUtils.*;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
@@ -73,6 +79,11 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     @Override
     public void registerTags() {
         processTags(providerDomain);
+        if (this.providerDomain.equals(Ref.ID)) antimatterTags();
+    }
+
+    private void antimatterTags() {
+        this.getOrCreateBuilder(TagUtils.getForgeItemTag("pistons")).add(Items.PISTON, Items.STICKY_PISTON);
     }
 
     protected void processTags(String domain) {
@@ -119,6 +130,17 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         });
         this.copy(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe")), TagUtils.getItemTag(new ResourceLocation(Ref.ID, "item_pipe")));
         this.getOrCreateBuilder(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
+        processSubtags(domain);
+    }
+
+    protected void processSubtags(String domain) {
+        for (PipeSize value : PipeSize.values()) {
+            Set<Material> mats = WIRE.allSub(SubTag.COPPER_WIRE);
+            if (mats.size() > 0) {
+                this.getOrCreateBuilder(TagUtils.getItemTag(new ResourceLocation(Ref.ID,SubTag.COPPER_WIRE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
+                        AntimatterAPI.get(Wire.class, "wire_"+ t.getId())).filter(t -> t != null && t.getDomain().equals(domain)).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
+            }
+        }
     }
 
     @Override

@@ -76,6 +76,7 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == 256) return super.keyPressed(keyCode, scanCode, modifiers);
         if (!super.keyPressed(keyCode, scanCode, modifiers)) {
             for (Widget wid : widgetsFromData) {
                 if (!wid.active) continue;
