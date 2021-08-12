@@ -20,10 +20,9 @@ import java.util.List;
 public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
 
     protected final T tile;
-    protected List<ServerPlayerEntity> listeners = new ArrayList<>();
 
     public ContainerMachine(T tile, PlayerInventory playerInv, MenuHandlerMachine<T, ContainerMachine<T>> menuHandler, int windowId) {
-        super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getSlots(tile.getMachineTier()).size());
+        super(tile, menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getSlots(tile.getMachineTier()).size());
         this.tile = tile;
         addSlots(tile);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
@@ -35,15 +34,8 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
         tile.addOpenContainer(this);
     }
 
-
     public T getTile() {
         return tile;
-    }
-
-    @Override
-    public void addListener(IContainerListener listener) {
-        super.addListener(listener);
-        if (listener instanceof ServerPlayerEntity) listeners.add((ServerPlayerEntity)listener);
     }
 
     @Override
@@ -53,29 +45,9 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
     }
 
     @Override
-    public void removeListener(IContainerListener listener) {
-        super.removeListener(listener);
-        if (listener instanceof ServerPlayerEntity) listeners.remove(listener);
-    }
-
-    @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        detectAndSendLiquidChanges();
     }
-
-    public void detectAndSendLiquidChanges() {
-        tile.fluidHandler.ifPresent(fh -> {
-            if (!fh.isDirty()) return;
-
-            FluidStackPacket pkt = new FluidStackPacket(tile.getPos(),fh.getInputs(), fh.getOutputs());
-            listeners.forEach(t -> Antimatter.NETWORK.sendTo(pkt,t));
-
-            fh.markSynced();
-        });
-    }
-
-
 
     protected void addSlots(TileEntityMachine<?> tile) {
         Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();

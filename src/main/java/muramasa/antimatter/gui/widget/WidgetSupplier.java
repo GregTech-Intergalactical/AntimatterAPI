@@ -1,59 +1,58 @@
 package muramasa.antimatter.gui.widget;
 
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.container.AntimatterContainer;
-import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.Widget;
 import net.minecraft.inventory.container.Container;
 
 import java.util.function.Consumer;
 
-public class WidgetSupplier<T extends Container> {
+public class WidgetSupplier {
 
     @FunctionalInterface
-    public interface WidgetProvider<T extends Container> {
-        Widget get(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler);
+    public interface WidgetProvider {
+        Widget get(final GuiInstance gui);
     }
 
-    private final WidgetProvider<T> source;
+    private final WidgetProvider source;
 
     private Consumer<Widget> root;
 
-    public WidgetSupplier(WidgetProvider<T> source) {
+    public WidgetSupplier(WidgetProvider source) {
         this.source = source;
         this.root = a -> {};
     }
 
-    public WidgetSupplier<T> setPos(int x, int y) {
+    public WidgetSupplier setPos(int x, int y) {
         Consumer<Widget> old = this.root;
         this.root = a -> {
-            a.x = x;
-            a.y = y;
+            a.setX(x);
+            a.setY(y);
             old.accept(a);
         };
         return this;
     }
 
-    public WidgetSupplier<T> setSize(int x, int y, int width, int height) {
+    public WidgetSupplier setSize(int x, int y, int width, int height) {
         return setPos(x,y).setWH(width, height);
     }
 
-    public WidgetSupplier<T> setWH(int w, int h) {
+    public WidgetSupplier setWH(int w, int h) {
         Consumer<Widget> old = this.root;
         this.root = a -> {
-            a.setWidth(w);
-            a.setHeight(h);
+            a.setW(w);
+            a.setH(h);
             old.accept(a);
         };
         return this;
     }
 
-    public <U extends Container> WidgetProvider<U> cast() {
-        return (screen, handler) -> {
-            Widget widget = this.source.get((AntimatterContainerScreen<? extends T>) screen, handler);
-            root.accept(widget);
-            return widget;
+    public WidgetProvider get() {
+        return a -> {
+            Widget w = this.source.get(a);
+            root.accept(w);
+            return w;
         };
     }
 }

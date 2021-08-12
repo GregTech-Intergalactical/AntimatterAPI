@@ -32,7 +32,7 @@ public abstract class MenuHandlerMachine<T extends TileEntityMachine<T>, U exten
                 }
             });
             FluidStackPacket.decode(data).executePacket();
-            return getMenu(tile, inv, windowId);
+            return getMenu(machine, inv, windowId);
         }
         return null;
     }

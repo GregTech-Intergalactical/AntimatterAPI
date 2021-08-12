@@ -65,7 +65,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private final List<AbstractMapIngredient> ROOT_SPECIAL = new ObjectArrayList<>();
 
     @Nullable
-    private GuiData<?> GUI;
+    private GuiData GUI;
     @Nullable
     private Tier guiTier;
     @Nullable
@@ -140,7 +140,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @param gui the guidata.
      * @return this
      */
-    public RecipeMap<B> setGuiData(GuiData<?> gui) {
+    public RecipeMap<B> setGuiData(GuiData gui) {
         this.GUI = gui;
         AntimatterAPI.registerJEICategory(this, this.GUI);
         return this;
@@ -152,7 +152,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @param machine the machine.
      * @return this
      */
-    public RecipeMap<B> setGuiData(GuiData<?> gui, Machine<?> machine) {
+    public RecipeMap<B> setGuiData(GuiData gui, Machine<?> machine) {
         this.GUI = gui;
         AntimatterAPI.registerJEICategory(this, this.GUI, machine, true);
         return this;
@@ -169,7 +169,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     @Nullable
-    public GuiData<?> getGui() {
+    public GuiData getGui() {
         return GUI;
     }
 

@@ -13,7 +13,7 @@ public class ContainerPipe extends AntimatterContainer {
     private int lastState = -1;
 
     public ContainerPipe(TileEntityPipe tile, PlayerInventory playerInv, MenuHandlerMachine<?, ?> menuHandler, int windowId) {
-        super(menuHandler.getContainerType(), windowId, playerInv, 0);
+        super(null, menuHandler.getContainerType(), windowId, playerInv, 0);
         //super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getSlots(tile.getMachineTier()).size());
         //addSlots(tile);
         //if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();

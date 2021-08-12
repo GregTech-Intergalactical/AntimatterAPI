@@ -59,7 +59,7 @@ public abstract class AntimatterWidget<T extends Container> extends Widget {
         blit(stack, left, top, x, y, sizeX, sizeY);
     }
 
-    public static <T extends Container> WidgetSupplier<T> builder(WidgetSupplier.WidgetProvider<T> source) {
-        return new WidgetSupplier<>(source);
+    public static <T extends Container> WidgetSupplier builder(WidgetSupplier.WidgetProvider source) {
+        return new WidgetSupplier(source);
     }
 }

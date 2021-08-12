@@ -3,6 +3,7 @@ package muramasa.antimatter.cover;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -60,6 +61,16 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     @Override
     public String getDomain() {
         return cover.getDomain();
+    }
+
+    @Override
+    public GuiData getStatic() {
+        return cover.getGui();
+    }
+
+    @Override
+    public boolean isRemote() {
+        return this.tile.getWorld().isRemote;
     }
 
     /** Events **/

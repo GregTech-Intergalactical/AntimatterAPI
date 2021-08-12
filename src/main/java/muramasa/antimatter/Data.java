@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.block.BlockProxy;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.cover.*;
 import muramasa.antimatter.fluid.AntimatterFluid;
@@ -275,7 +276,7 @@ public class Data {
     public static MenuHandlerMachine<? extends TileEntityMachine, ? extends ContainerBasicMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_basic") {
         @Nullable
         @Override
-        public ContainerMachine<?> getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+        public ContainerMachine<?> getMenu(IGuiHandler tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine<?>) tile, playerInv, this, windowId) : null;
         }
         @Override
@@ -286,14 +287,14 @@ public class Data {
 
     public static MenuHandlerCover<ContainerCover> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
         @Override
-        public ContainerCover getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+        public ContainerCover getMenu(IGuiHandler tile, PlayerInventory playerInv, int windowId) {
             return new ContainerCover((CoverStack<?>) tile, playerInv, this, windowId);
         }
     };
 
     public static MenuHandlerMachine<? extends TileEntityMultiMachine, ? extends ContainerMultiMachine> MULTI_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_multi") {
         @Override
-        public ContainerMultiMachine getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+        public ContainerMultiMachine getMenu(IGuiHandler tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine<?>) tile, playerInv, this, windowId) : null;
         }
 
@@ -305,7 +306,7 @@ public class Data {
 
     public static MenuHandlerMachine<? extends TileEntityHatch, ? extends ContainerHatch> HATCH_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_hatch") {
         @Override
-        public ContainerHatch getMenu(Object tile, PlayerInventory playerInv, int windowId) {
+        public ContainerHatch getMenu(IGuiHandler tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityHatch ? new ContainerHatch((TileEntityHatch<?>) tile, playerInv, this, windowId) : null;
         }
         @Override

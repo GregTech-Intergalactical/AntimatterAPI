@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
@@ -12,10 +13,11 @@ import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.gui.widget.FluidSlotWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
@@ -145,6 +147,27 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getMachineType().getDomain();
     }
 
+    @Override
+    public GuiData getStatic() {
+        return getMachineType().getGui();
+    }
+
+    @Override
+    public boolean isRemote() {
+        return world.isRemote;
+    }
+
+    @Override
+    public void addWidgets(GuiInstance instance) {
+        int index = 0;
+        for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_IN, getMachineTier())) {
+            instance.addWidget(FluidSlotWidget.build(index++, slot));
+        }
+        for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_OUT, getMachineTier())) {
+            instance.addWidget(FluidSlotWidget.build(index++, slot));
+        }
+    }
+
     /** RECIPE UTILITY METHODS **/
 
     //Called before a recipe ticks.
@@ -222,7 +245,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
             recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
             if (event instanceof ContentEvent && openContainers.size() > 0) {
-                openContainers.forEach(ContainerMachine::detectAndSendLiquidChanges);
+                //openContainers.forEach(ContainerMachine::detectAndSendLiquidChanges);
             }
         }
     }

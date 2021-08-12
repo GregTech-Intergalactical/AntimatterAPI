@@ -4,20 +4,21 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "antimatter.refmap.json",
   "client": [
+    "ChunkReaderAccessor",
     "ClientBlockUpdateMixin",
-    "ClientPlayNetHandlerMixin",
-    "ChunkReaderAccessor"
+    "ClientPlayNetHandlerMixin"
   ],
   "mixins": [
     "BlockLootTablesAccessor",
-    "LeavesBlockMixin",
-    "IceBlockMixin",
-    "RecipeManagerMixin",
-    "ServerBlockUpdateMixin",
-    "SimpleReloadableResourceManagerMixin",
-    "ItemStackMixin",
     "GrindstoneContainerMixin",
-    "RepairItemRecipeMixin"
+    "IceBlockMixin",
+    "IContainerListeners",
+    "ItemStackMixin",
+    "LeavesBlockMixin",
+    "RecipeManagerMixin",
+    "RepairItemRecipeMixin",
+    "ServerBlockUpdateMixin",
+    "SimpleReloadableResourceManagerMixin"
   ],
   "minVersion": "0.8"
 }

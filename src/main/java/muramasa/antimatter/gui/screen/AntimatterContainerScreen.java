@@ -3,11 +3,12 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.gui.container.AntimatterContainer;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.Widget;
+import muramasa.antimatter.gui.container.IAntimatterContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.IReorderingProcessor;
@@ -19,32 +20,21 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AntimatterContainerScreen<T extends Container> extends ContainerScreen<T> implements IHasContainer<T> {
+public abstract class AntimatterContainerScreen<T extends Container & IAntimatterContainer> extends ContainerScreen<T> implements IHasContainer<T>, IGuiElement {
 
     protected ResourceLocation gui;
-    public final List<Widget> widgetsFromData = new ObjectArrayList<>();
 
     public AntimatterContainerScreen(T container, PlayerInventory invPlayer, ITextComponent title) {
         super(container, invPlayer, title);
-    }
-
-    public void addWidget(Widget widget) {
-        this.widgetsFromData.add(widget);
-        super.children.add(widget);
-    }
-
-    public void addWidgets(Widget... widget) {
-        for (Widget w : widget) {
-            addWidget(w);
-        }
+        container.source().root(this);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         super.mouseClicked(mouseX, mouseY, button);
-        for (Widget widget : widgetsFromData) {
-            if (!widget.active) continue;
-            if (widget.mouseClicked(mouseX - guiLeft, mouseY - guiTop, button)) {
+        for (Widget widget : container.source().widgets()) {
+            if (!widget.isEnabled()) continue;
+            if (widget.mouseClicked(mouseX - guiLeft, mouseY - guiTop)) {
                 return true;
             }
         }
@@ -52,11 +42,12 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
         return false;
     }
 
+
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         if (!super.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
-            for (Widget wid : widgetsFromData) {
-                if (!wid.active) continue;
+            for (Widget wid : container.source().widgets()) {
+                if (!wid.isEnabled()) continue;
                 if (wid.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
             }
         }
@@ -66,8 +57,8 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (!super.mouseReleased(mouseX, mouseY, button)) {
-            for (Widget wid : widgetsFromData) {
-                if (!wid.active) continue;
+            for (Widget wid : container.source().widgets()) {
+                if (!wid.isEnabled()) continue;
                 if (wid.mouseReleased(mouseX, mouseY, button)) return true;
             }
         }
@@ -78,8 +69,8 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (keyCode == 256) return super.keyPressed(keyCode, scanCode, modifiers);
         if (!super.keyPressed(keyCode, scanCode, modifiers)) {
-            for (Widget wid : widgetsFromData) {
-                if (!wid.active) continue;
+            for (Widget wid : container.source().widgets()) {
+                if (!wid.isEnabled()) continue;
                 if (wid.keyPressed(keyCode, scanCode, modifiers)) return true;
             }
         }
@@ -90,9 +81,9 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
-        for (Widget widget : widgetsFromData) {
-            if (!widget.active) continue;
-            widget.render(stack, mouseX, mouseY, partialTicks);
+        for (Widget widget : container.source().widgets()) {
+            if (!widget.isEnabled()) continue;
+            widget.renderGui(stack, mouseX, mouseY, partialTicks);
         }
         this.renderHoveredTooltip(stack, mouseX, mouseY);
     }
@@ -100,9 +91,9 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     @Override
     protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
         super.renderHoveredTooltip(matrixStack, x, y);
-        for (Widget widget : widgetsFromData) {
-            if (!widget.active) continue;
-            if (widget.isHovered() || widget.isMouseOver(x - guiLeft , y - guiTop)) {
+        for (Widget widget : container.source().widgets()) {
+            if (!widget.isEnabled()) continue;
+            if (widget.isInside(x - guiLeft , y - guiTop)) {
                 widget.renderToolTip(matrixStack, x, y);
             }
         }
@@ -136,8 +127,8 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
 
     @Override
     protected void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int x, int y) {
-        for(Widget widget : this.widgetsFromData) {
-            if (widget.isHovered()) {
+        for(Widget widget : this.container.source().widgets()) {
+            if (widget.isInside(x - this.guiLeft, y - this.guiTop)) {
                 widget.renderToolTip(matrixStack, x - this.guiLeft, y - this.guiTop);
                 break;
             }
@@ -156,5 +147,49 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     protected void removeButton(Widget widget) {
         buttons.removeIf(f -> f.equals(widget));
         children.removeIf(f -> f.equals(widget));
+    }
+
+    @Override
+    public int getX() {
+        return guiLeft;
+    }
+
+    @Override
+    public int getY() {
+        return guiTop;
+    }
+
+    @Override
+    public int getW() {
+        return this.container.source().handler.getStatic().getArea().w;
+    }
+
+    @Override
+    public int getH() {
+        return this.container.source().handler.getStatic().getArea().z;
+    }
+
+    @Override
+    public IGuiElement parent() {
+        return null;
+    }
+
+    @Override
+    public void setX(int x) {
+        throw new IllegalStateException("Cannot set X on root gui");
+    }
+
+    @Override
+    public void setY(int y) {
+        throw new IllegalStateException("Cannot set X on root gui");
+    }
+
+    @Override
+    public void setW(int w) {
+        throw new IllegalStateException("Cannot set X on root gui");
+    }
+    @Override
+    public void setH(int h) {
+        throw new IllegalStateException("Cannot set X on root gui");
     }
 }

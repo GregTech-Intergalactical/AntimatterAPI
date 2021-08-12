@@ -44,13 +44,6 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
         this.container = container;
         this.name = name.getString();
         gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
-        buildWidgets();
-        int x =1;
-    }
-
-    protected void buildWidgets() {
-        GuiData<U> data = (GuiData<U>) container.getTile().getMachineType().getGui();
-        data.screenCreationCallBack(this, this.container.getTile(), null);
     }
 
     protected void drawTitle(MatrixStack stack, int mouseX, int mouseY) {
@@ -60,7 +53,7 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
         drawTitle(stack, mouseX, mouseY);
-        if (container.getTile().has(MachineFlag.FLUID)) {
+        /*if (container.getTile().has(MachineFlag.FLUID)) {
             //TODO
             container.getTile().fluidHandler.ifPresent(t -> {
                 int[] index = new int[]{0};
@@ -74,7 +67,7 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
                     renderFluid(stack, outputs[index[0]++], sl, mouseX,mouseY);
                 });
             });
-        }
+        }*/
     }
 
     @Override

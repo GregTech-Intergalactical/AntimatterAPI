@@ -69,7 +69,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected RecipeMap<?> recipeMap;
 
     /** GUI Members **/
-    protected GuiData<? extends ContainerMachine<?>> guiData;
+    protected GuiData guiData;
     protected ItemGroup group = Ref.TAB_MACHINES;
 
     /** Texture Members **/
@@ -455,7 +455,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tiers.get(0);
     }
 
-    public GuiData<? extends ContainerMachine<?>> getGui() {
+    public GuiData getGui() {
         return guiData;
     }
 

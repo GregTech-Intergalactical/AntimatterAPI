@@ -19,7 +19,7 @@ import java.util.function.BiConsumer;
 //The base Cover class. All cover classes extend from this.
 public abstract class BaseCover implements ICover {
 
-    protected GuiData<?> gui;
+    protected GuiData gui;
     @Nullable
     private Item item;
     //For multi-covers.
@@ -33,7 +33,7 @@ public abstract class BaseCover implements ICover {
 
     public BaseCover() {
         if (hasGui()) {
-            this.gui = new GuiData<>(this, Data.COVER_MENU_HANDLER);
+            this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
             gui.setEnablePlayerSlots(true);
         }
     }
@@ -46,17 +46,17 @@ public abstract class BaseCover implements ICover {
     protected BaseCover(String id) {
         this.id = id;
         if (hasGui()) {
-            this.gui = new GuiData<>(this, Data.COVER_MENU_HANDLER);
+            this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
             gui.setEnablePlayerSlots(true);
         }
     }
 
-    public void setGui(GuiData<? extends Container> setGui) {
+    public void setGui(GuiData setGui) {
         this.gui = setGui;
     }
 
     @Override
-    public GuiData<? extends Container> getGui() {
+    public GuiData getGui() {
         return gui;
     }
 

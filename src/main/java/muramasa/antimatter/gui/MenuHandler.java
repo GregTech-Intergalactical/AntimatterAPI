@@ -2,7 +2,9 @@ package muramasa.antimatter.gui;
 
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
@@ -37,7 +39,7 @@ public abstract class MenuHandler<T extends Container> implements IAntimatterObj
     }
 
     @MethodsReturnNonnullByDefault
-    public abstract T getMenu(Object tile, PlayerInventory playerInv, int windowId);
+    public abstract T getMenu(IGuiHandler source, PlayerInventory playerInv, int windowId);
 
     @MethodsReturnNonnullByDefault
     public ContainerType<T> getContainerType() {

@@ -24,8 +24,8 @@ public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWid
         this.barFill = barFill;
     }
 
-    public static <T extends ContainerMachine<?>> WidgetSupplier<T> build(BarDir dir, boolean barFill) {
-        return builder((screen, handler) -> new ProgressWidget<>(screen, handler, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
+    public static <T extends ContainerMachine<?>> WidgetSupplier build(BarDir dir, boolean barFill) {
+        return null;//builder((screen, handler) -> new ProgressWidget(screen, handler, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
     }
 
     @Override

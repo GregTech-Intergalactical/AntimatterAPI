@@ -19,8 +19,8 @@ import static muramasa.antimatter.gui.widget.AntimatterWidget.builder;
 
 public class IOWidget extends AbstractSwitchWidget {
 
-    protected final Widget item;
-    protected final Widget fluid;
+    protected Widget item;
+    protected Widget fluid;
     private static final int4 itemLoc = new int4(174, 17, 16, 16), fluidLoc = new int4(175, 35, 16, 16);
 
     protected IOWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, int x, int y, int w, int h) {
@@ -30,13 +30,13 @@ public class IOWidget extends AbstractSwitchWidget {
         this.y = y;
         this.width = w;
         this.height = h;
-        this.item = ButtonWidget.build(new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), screen.sourceGui(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(x+26, y, w, h).cast().get(screen, handler);
-        this.fluid = ButtonWidget.build(new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), screen.sourceGui(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(x+44, y, w, h).cast().get(screen, handler);
+        /*this.item = ButtonWidget.build(new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), screen.sourceGui(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(x+26, y, w, h).get().get(screen, handler);
+        this.fluid = ButtonWidget.build(new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), screen.sourceGui(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(x+44, y, w, h).get().get(screen, handler);
         ((ButtonWidget)item).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false));
         ((ButtonWidget)fluid).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false));
         item.active = false;
         fluid.active = false;
-        screen.addWidgets(item, fluid);
+        screen.addWidgets(item, fluid);*/
     }
 
     private static void handler(AbstractSwitchWidget widget, boolean state) {
@@ -45,8 +45,8 @@ public class IOWidget extends AbstractSwitchWidget {
         wid.fluid.active = state;
     }
 
-    public static <T extends Container> WidgetSupplier<T> build(int x, int y, int w, int h) {
-        return builder(((screen1, handler) -> new IOWidget(screen1, handler, x, y, w, h)));
+    public static WidgetSupplier build(int x, int y, int w, int h) {
+        return null;//builder(((screen1, handler) -> new IOWidget(screen1, handler, x, y, w, h)));
     }
 
     @Override

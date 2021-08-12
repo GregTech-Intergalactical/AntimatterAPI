@@ -36,7 +36,7 @@ public class MachineStateWidget<T extends ContainerMachine<?>> extends Antimatte
             screen().renderTooltip(matrixStack, new StringTextComponent(container().getTile().getMachineState().getDisplayName()), mouseX, mouseY);
     }
 
-    public static <T extends ContainerMachine<?>> WidgetSupplier<T> build() {
-        return builder(MachineStateWidget::new);
+    public static <T extends ContainerMachine<?>> WidgetSupplier build() {
+        return null;//builder(MachineStateWidget::new);
     }
 }

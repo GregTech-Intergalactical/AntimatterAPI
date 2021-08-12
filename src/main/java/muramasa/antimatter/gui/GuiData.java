@@ -3,52 +3,39 @@ package muramasa.antimatter.gui;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int4;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nullable;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiData<T extends Container> {
+public class GuiData {
 
     protected ResourceLocation loc;
     protected ResourceLocation override = null;
 
-    protected MenuHandler<T> menuHandler;
+    protected MenuHandler<?> menuHandler;
     protected ImmutableMap<Tier, Tier> guiTiers;
 
     protected boolean enablePlayerSlots = true;
     protected int4 area = new int4(3, 3, 170, 80);
     protected int4 padding = new int4(0, 55, 0, 0);
-    public final int4 progress = new int4(78, 24, 20, 18);
     public BarDir dir = BarDir.RIGHT;
-   // protected int4 area = new int4(3, 3, 170, 80), padding = new int4(0, 55, 0, 0), progress = new int4(78, 24, 20, 18), state = new int4(84, 45, 8, 8), io = new int4(9, 64, 14, 14), item = new int4(35, 63, 16, 16), fluid = new int4(53, 63, 16, 16);
-   //  protected int2 progressLocation = new int2(176, 0), stateLocation = new int2(176, 55);
-   // protected ButtonOverlay itemLocation = new ButtonOverlay("item_eject", 177, 37, 16, 16), fluidLocation = new ButtonOverlay("fluid_eject", 177, 19, 16, 16);
-   // protected BarDir side = BarDir.LEFT;
-   // protected boolean barFill = true, hasIOButton = true;
-
-    //don't use WidgetProvider as you shouldn't be forced to use AntimatterWidget.
 
     //This uses Object instead of Tier for instance, for mapping widgets to things other than a tier.
-    protected final Map<Object, List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>>> objectWidgets = new Object2ObjectOpenHashMap<>();
-    protected final List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> widgets = new ObjectArrayList<>();
-
+    protected final Map<Object, List<Function<GuiInstance, Widget>>> objectWidgets = new Object2ObjectOpenHashMap<>();
+    protected final List<Function<GuiInstance, Widget>> widgets = new ObjectArrayList<>();
 
     private ISlotProvider<?> slots;
 
@@ -56,22 +43,22 @@ public class GuiData<T extends Container> {
         this.loc = new ResourceLocation(domain, id);
     }
 
-    public GuiData(String domain, String id, MenuHandler<T> menuHandler) {
+    public GuiData(String domain, String id, MenuHandler menuHandler) {
         this(domain, id);
         this.menuHandler = menuHandler;
     }
 
-    public GuiData(IAntimatterObject type, MenuHandler<T> menuHandler) {
+    public GuiData(IAntimatterObject type, MenuHandler menuHandler) {
         this(type.getDomain(), type.getId());
         this.menuHandler = menuHandler;
     }
 
-    public GuiData<T> setSlots(ISlotProvider<?> slots) {
+    public GuiData setSlots(ISlotProvider<?> slots) {
         this.slots = slots;
         return this;
     }
 
-    public GuiData<T> setTieredGui(ImmutableMap.Builder<Tier, Tier> guiTiers) {
+    public GuiData setTieredGui(ImmutableMap.Builder<Tier, Tier> guiTiers) {
         this.guiTiers = guiTiers.build();
         return this;
     }
@@ -106,10 +93,14 @@ public class GuiData<T extends Container> {
         return padding;
     }
 
-    public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
+    /*public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
         this.widgets.forEach(t -> screen.addWidget(t.apply(screen, handler)));
         List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> wid = this.objectWidgets.get(lookup);
         if (wid != null) wid.forEach(t -> t.apply(screen, handler));
+    }*/
+
+    public void createWidgets(GuiInstance instance) {
+        this.widgets.forEach(t -> instance.addWidget(t.apply(instance)));
     }
 
     public boolean enablePlayerSlots() {
@@ -120,34 +111,34 @@ public class GuiData<T extends Container> {
         this.enablePlayerSlots = enablePlayerSlots;
     }
 
-    public GuiData<T> setArea(int x, int y, int z, int w) {
+    public GuiData setArea(int x, int y, int z, int w) {
         area.set(x, y, z, w);
         return this;
     }
 
-    public GuiData<T> setPadding(int x, int y, int z, int w) {
+    public GuiData setPadding(int x, int y, int z, int w) {
         padding.set(x, y, z, w);
         return this;
     }
 
-    public GuiData<T> widget(WidgetSupplier<T> provider) {
-        return widget(provider.cast(), null);
+    public GuiData widget(WidgetSupplier provider) {
+        return widget(provider.get(), null);
     }
 
-    public GuiData<T> widget(WidgetSupplier.WidgetProvider<T> provider, Object data) {
+    public GuiData widget(WidgetSupplier.WidgetProvider provider, Object data) {
         if (data == null) {
-            this.widgets.add(provider::get);
+            this.widgets.add(a -> provider.get(a));
         } else {
-            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add(provider::get);
+            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add((a) -> provider.get(a));
         }
         return this;
     }
 
-    public GuiData<T> widget(BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> provider) {
+    public GuiData widget(Function<GuiInstance, Widget> provider) {
         return widget(provider, null);
     }
 
-    public GuiData<T> widget(BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> provider, Object data) {
+    public GuiData widget(Function<GuiInstance, Widget> provider, Object data) {
         if (data == null) {
             this.widgets.add(provider);
         } else {
@@ -156,12 +147,12 @@ public class GuiData<T extends Container> {
         return this;
     }
 
-    public GuiData<T> widget(WidgetSupplier.WidgetProvider<T> build) {
+    public GuiData widget(WidgetSupplier.WidgetProvider build) {
         widget(build, null);
         return this;
     }
 /*
-    public GuiData<T> copyWidgets(GuiData<? extends T> other){
+    public GuiData copyWidgets(GuiData<? extends T> other){
 
         for (BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> function : other.widgets){
 
@@ -175,7 +166,7 @@ public class GuiData<T extends Container> {
         return this;
     }*/
 
-    public GuiData<T> removeWidget(int index, Object data){
+    public GuiData removeWidget(int index, Object data){
         if (data == null){
             this.widgets.remove(index);
         } else {
@@ -212,7 +203,7 @@ public class GuiData<T extends Container> {
         return this;
     }*/
 
-    public GuiData<T> setOverrideLocation(ResourceLocation override) {
+    public GuiData setOverrideLocation(ResourceLocation override) {
         this.override = override;
         return this;
     }

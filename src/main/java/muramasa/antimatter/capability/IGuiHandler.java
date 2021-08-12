@@ -1,6 +1,9 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
@@ -16,6 +19,14 @@ public interface IGuiHandler {
 
     default String getDomain(){
         return Ref.ID;
+    }
+
+    GuiData getStatic();
+
+    boolean isRemote();
+
+    default void addWidgets(GuiInstance instance) {
+
     }
 
     /**

@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.container;
 
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,7 +16,7 @@ public class ContainerCover extends AntimatterContainer {
     private MenuHandlerCover<?> m;
 
     public ContainerCover(CoverStack<?> on, PlayerInventory playerInv, MenuHandlerCover<?> menuHandler, int windowId) {
-        super(menuHandler.getContainerType(), windowId, playerInv, 0);
+        super(on, menuHandler.getContainerType(), windowId, playerInv, 0);
         this.c =  on;
         this.m = menuHandler;
         if (c.getCover().getGui().enablePlayerSlots()) addPlayerSlots();
