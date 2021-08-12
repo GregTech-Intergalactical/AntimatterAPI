@@ -22,7 +22,9 @@ public class BasicMachine extends Machine<BasicMachine> {
                 getGui().widget(ProgressWidget.build(BarDir.LEFT, true))
                         .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
             }
-            getGui().widget(IOWidget.build(9,63,16,16).cast());
+            if (has(ITEM) || has(FLUID)) {
+                getGui().widget(IOWidget.build(9,63,16,16).cast());
+            }
         });
     }
 }
