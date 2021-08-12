@@ -112,7 +112,7 @@ public class ButtonWidget extends Button {
                 xTex += body.getX2();
                 yTex += body.getY2();
             }
-            ScreenWidget.blit(stack, x, y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
+            ScreenWidget.blit(stack, screen().getGuiLeft() + x, screen.getGuiTop() + y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
         }
         boolean isActive = activeHandler == null || activeHandler.apply(this);
         float color = isActive ? 1.0f : pressed ? 0.75f : 0.5f;

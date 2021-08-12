@@ -75,7 +75,7 @@ public abstract class AbstractSwitchWidget extends AbstractButton {
                 xTex += body.getX2();
                 yTex += body.getY2();
             }
-            ScreenWidget.blit(stack, x, y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
+            ScreenWidget.blit(stack, screen.getGuiLeft() + x, screen.getGuiTop() + y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
         } else {
             int xTex = body.getX();
             int yTex = body.getY();
