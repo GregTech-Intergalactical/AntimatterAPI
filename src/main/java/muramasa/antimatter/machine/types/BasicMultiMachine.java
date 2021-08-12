@@ -3,6 +3,10 @@ package muramasa.antimatter.machine.types;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.gui.BarDir;
+import muramasa.antimatter.gui.widget.IOWidget;
+import muramasa.antimatter.gui.widget.MachineStateWidget;
+import muramasa.antimatter.gui.widget.ProgressWidget;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
@@ -18,6 +22,7 @@ import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.MULTI;
+import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T> {
     @Override
@@ -37,6 +42,12 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((ICover[]) null);
         this.baseTexture((ITextureHandler) (type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
+        addGuiCallback(t -> {
+            if (has(RECIPE)) {
+                getGui().widget(ProgressWidget.build(BarDir.LEFT, true))
+                        .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
+            }
+        });
     }
 
     @Override
