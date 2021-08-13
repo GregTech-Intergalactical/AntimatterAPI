@@ -2,10 +2,7 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.gui.BarDir;
-import muramasa.antimatter.gui.widget.BackgroundWidget;
-import muramasa.antimatter.gui.widget.IOWidget;
-import muramasa.antimatter.gui.widget.MachineStateWidget;
-import muramasa.antimatter.gui.widget.ProgressWidget;
+import muramasa.antimatter.gui.widget.*;
 import muramasa.antimatter.tile.TileEntityMachine;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -19,12 +16,12 @@ public class BasicMachine extends Machine<BasicMachine> {
         setGUI(Data.BASIC_MENU_HANDLER);
 
         addGuiCallback(t -> {
-            getGui().widget(i -> new BackgroundWidget(i, i.handler.guiSize(), i.handler.guiHeight()));
+            t.addWidget(TextWidget.build(t.title.getString(), 4210752).setPos(9, 5));
             if (has(RECIPE)) {
-                getGui().widget(ProgressWidget.build(BarDir.LEFT, true))
-                        .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8));
+                t.addWidget(ProgressWidget.build(BarDir.LEFT, true))
+                        .addWidget(MachineStateWidget.build().setPos(84,46).setWH(8,8));
             }
-            if ((has(ITEM) || has(FLUID)))getGui().widget(IOWidget.build(9,63,16,16));
+            if ((has(ITEM) || has(FLUID))) t.addWidget(IOWidget.build(9,63,16,16));
         });
     }
 }

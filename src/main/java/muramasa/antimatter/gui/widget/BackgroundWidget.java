@@ -9,7 +9,7 @@ public class BackgroundWidget extends Widget {
 
     private final int xSize, ySize;
 
-    public BackgroundWidget(GuiInstance instance, int xSize, int ySize) {
+    protected BackgroundWidget(GuiInstance instance, int xSize, int ySize) {
         super(instance);
         this.xSize = xSize;
         this.ySize = ySize;
@@ -21,6 +21,11 @@ public class BackgroundWidget extends Widget {
         super.setParent(parent);
         this.setDepth(parent.depth()-1);
     }
+
+    public static WidgetSupplier build(int w, int h) {
+        return builder(gui -> new BackgroundWidget(gui, w, h)).clientSide();
+    }
+
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {

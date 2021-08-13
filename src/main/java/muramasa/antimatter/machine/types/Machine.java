@@ -8,6 +8,7 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.slot.ISlotProvider;
+import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.gui.widget.IOWidget;
 import muramasa.antimatter.gui.widget.MachineStateWidget;
 import muramasa.antimatter.gui.widget.ProgressWidget;
@@ -96,7 +97,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     private final Map<String, Object2IntOpenHashMap<SlotType<?>>> countLookup = new Object2ObjectOpenHashMap<>();
     private final Map<String, List<SlotData<?>>> slotLookup = new Object2ObjectOpenHashMap<>();
 
-    private final List<Consumer<T>> guiCallbacks = new ObjectArrayList<>(1);
+    private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>(1);
 
     public Machine(String domain, String id) {
         this.domain = domain;
@@ -117,6 +118,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
+        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.guiSize(), t.handler.guiHeight())));
     }
 
     /**
@@ -217,16 +219,13 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
     }
 
-    public void onClientSetup() {
-        if (this.guiData != null) {
-            T t = (T)this;
-            guiCallbacks.forEach(c -> c.accept(t));
-        }
-    }
-
-    public T addGuiCallback(Consumer<T> callback) {
+    public T addGuiCallback(Consumer<GuiInstance> callback) {
         this.guiCallbacks.add(callback);
         return (T) this;
+    }
+
+    public List<Consumer<GuiInstance>> getGuiCallbacks() {
+        return guiCallbacks;
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {

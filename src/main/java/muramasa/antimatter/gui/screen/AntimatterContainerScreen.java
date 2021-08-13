@@ -28,6 +28,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     @Override
     protected void init() {
         super.init();
+        container.source().setScreen(this);
         container.source().setRootElement(this);
     }
 
@@ -127,7 +128,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-        this.font.drawText(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
+        //this.font.drawText(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
     }
 
     protected void removeButton(Widget widget) {
@@ -177,6 +178,16 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     @Override
     public void setH(int h) {
         throw new IllegalStateException("Cannot set X on root gui");
+    }
+
+    @Override
+    public int realX() {
+        return getX();
+    }
+
+    @Override
+    public int realY() {
+        return getY();
     }
 
     @Override

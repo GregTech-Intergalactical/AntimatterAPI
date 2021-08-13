@@ -22,8 +22,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 public abstract class Widget implements IGuiElement {
     public final GuiInstance gui;
@@ -35,12 +37,18 @@ public abstract class Widget implements IGuiElement {
     protected boolean isClicking = false;
     private int depth;
     private ITextComponent message = StringTextComponent.EMPTY;
+    public Consumer<Widget> onParent;
 
     private int realX, realY;
 
     protected Widget(final GuiInstance gui) {
         this.gui = gui;
         this.isRemote = gui.isRemote;
+    }
+
+    public Widget setOnParent(Consumer<Widget> onParent) {
+        this.onParent = onParent;
+        return this;
     }
 
     public void setMessage(ITextComponent message) {
@@ -95,8 +103,8 @@ public abstract class Widget implements IGuiElement {
     }
 
     public void updateSize() {
-        realX = parent != null ? parent.getX() + this.x : this.x;
-        realY = parent != null ? parent.getY() + this.y : this.y;
+        realX = parent != null ? parent.realX() + this.x : this.x;
+        realY = parent != null ? parent.realY() + this.y : this.y;
     }
 
     public boolean isInside(double mouseX, double mouseY) {
@@ -121,10 +129,12 @@ public abstract class Widget implements IGuiElement {
         return gui.isOnTop(this, (int)mouseX, (int)mouseY);
     }
 
+    @Override
     public int realX() {
         return realX;
     }
 
+    @Override
     public int realY() {
         return realY;
     }
@@ -257,12 +267,17 @@ public abstract class Widget implements IGuiElement {
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected void drawText(List<? extends ITextProperties> textLines, int x, int y, FontRenderer font, MatrixStack matrixStack) {
+    protected void drawHoverText(List<? extends ITextProperties> textLines, int x, int y, FontRenderer font, MatrixStack matrixStack) {
         if (!isOnTop(x, y)) {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
         GuiUtils.drawHoveringText(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getMainWindow().getScaledWidth(), minecraft.getMainWindow().getScaledHeight(), -1, font);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public int drawText(MatrixStack matrixStack, ITextComponent text, float x, float y, int color) {
+        return Minecraft.getInstance().fontRenderer.drawText(matrixStack, text, x, y, color);
     }
 
     @OnlyIn(Dist.CLIENT)

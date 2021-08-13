@@ -16,12 +16,12 @@ public class WidgetSupplier {
     }
 
     private final WidgetProvider source;
+    private boolean clientOnly = false;
 
-    private Consumer<Widget> root;
+    private Consumer<Widget> root = a -> {};
 
     public WidgetSupplier(WidgetProvider source) {
         this.source = source;
-        this.root = a -> {};
     }
 
     public WidgetSupplier setPos(int x, int y) {
@@ -31,6 +31,11 @@ public class WidgetSupplier {
             a.setY(y);
             old.accept(a);
         };
+        return this;
+    }
+
+    public WidgetSupplier clientSide() {
+        clientOnly = true;
         return this;
     }
 
@@ -46,6 +51,10 @@ public class WidgetSupplier {
             old.accept(a);
         };
         return this;
+    }
+
+    public boolean shouldAdd(GuiInstance instance) {
+        return !instance.isRemote & clientOnly;
     }
 
     public WidgetProvider get() {

@@ -11,5 +11,8 @@ public interface IGuiElement {
     void setW(int w);
     void setH(int h);
 
+    int realX();
+    int realY();
+
     int depth();
 }

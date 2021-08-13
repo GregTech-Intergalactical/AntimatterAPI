@@ -28,20 +28,20 @@ public class IOWidget extends AbstractSwitchWidget {
         this.setH(h);
         ContainerMachine<?> m = (ContainerMachine<?>) instance.container;
         if (m.getTile().getMachineType().has(ITEM)) {
-            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(x+26, y, w, h).get().get(instance);
+            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(26, 0, w, h).get().get(instance);
             this.item.setParent(this);
             item.setEnabled(false);
             item.setStateHandler(wid -> itemState);
-            item.setDepth(depth()+1);
             instance.addWidget(item);
+            item.setDepth(depth()+1);
         }
         if (m.getTile().getMachineType().has(FLUID)) {
-            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(x+44, y, w, h).get().get(instance);
+            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(44, 0, w, h).get().get(instance);
             fluid.setStateHandler(wid -> fluidState);
             fluid.setEnabled(false);
             this.fluid.setParent(this);
-            fluid.setDepth(depth()+1);
             instance.addWidget(fluid);
+            fluid.setDepth(depth()+1);
         }
     }
 
@@ -51,6 +51,13 @@ public class IOWidget extends AbstractSwitchWidget {
         ContainerMachine<?> m = (ContainerMachine<?>) gui.container;
         if (item != null) gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false)), this::setItem);
         if (fluid != null) gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false)), this::setFluid);
+    }
+
+    @Override
+    public void updateSize() {
+        super.updateSize();
+        if (item != null) item.updateSize();
+        if (fluid != null) fluid.updateSize();
     }
 
     private static void handler(AbstractSwitchWidget widget, boolean state) {

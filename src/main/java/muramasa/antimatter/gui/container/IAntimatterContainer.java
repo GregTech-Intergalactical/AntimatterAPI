@@ -7,6 +7,6 @@ public interface IAntimatterContainer {
     GuiInstance source();
 
     default void init() {
-        source().init((Container) this);
+        source().init();
     }
 }

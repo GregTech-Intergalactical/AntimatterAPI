@@ -85,7 +85,6 @@ public class ClientHandler implements IProxyHandler {
                 }
             });
         });
-        AntimatterAPI.runLaterClient(() -> AntimatterAPI.all(Machine.class, Machine::onClientSetup));
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
             RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.getCutout());

@@ -61,6 +61,7 @@ public class ButtonWidget extends Widget {
 
     @Override
     public void onClick(double mouseX, double mouseY, int button) {
+        if (button != 0) return;
         this.pressed = true;
         super.onClick(mouseX, mouseY, button);
         if (this.onPress != null) this.onPress.accept(this);

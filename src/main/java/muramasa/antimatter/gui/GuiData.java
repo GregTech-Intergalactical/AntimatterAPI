@@ -33,11 +33,6 @@ public class GuiData {
     public BarDir dir = BarDir.RIGHT;
 
     private int buttons = 0;
-
-    //This uses Object instead of Tier for instance, for mapping widgets to things other than a tier.
-    protected final Map<Object, List<Function<GuiInstance, Widget>>> objectWidgets = new Object2ObjectOpenHashMap<>();
-    protected final List<Function<GuiInstance, Widget>> widgets = new ObjectArrayList<>();
-
     private ISlotProvider<?> slots;
 
     public GuiData(String domain, String id) {
@@ -100,10 +95,6 @@ public class GuiData {
         if (wid != null) wid.forEach(t -> t.apply(screen, handler));
     }*/
 
-    public void createWidgets(GuiInstance instance) {
-        this.widgets.forEach(t -> instance.addWidget(t.apply(instance)));
-    }
-
     public boolean enablePlayerSlots() {
         return enablePlayerSlots;
     }
@@ -119,53 +110,6 @@ public class GuiData {
 
     public GuiData setPadding(int x, int y, int z, int w) {
         padding.set(x, y, z, w);
-        return this;
-    }
-
-    public GuiData addButton(int x, int y, int w, int h, ButtonBody body) {
-        this.widgets.add(i -> ButtonWidget.build(new ResourceLocation(i.handler.getDomain(), "textures/gui/button/gui_buttons.png"), body, null,GuiEvent.EXTRA_BUTTON, buttons++).setSize(x,y,w,h).get().get(i));
-        //BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, x, y, w, h, body));
-        return this;
-    }
-
-
-    public GuiData widget(WidgetSupplier provider) {
-        return widget(provider.get(), null);
-    }
-
-    public GuiData widget(WidgetSupplier.WidgetProvider provider, Object data) {
-        if (data == null) {
-            this.widgets.add(provider::get);
-        } else {
-            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add(provider::get);
-        }
-        return this;
-    }
-
-    public GuiData widget(WidgetSupplier.WidgetProvider build) {
-        widget(build, null);
-        return this;
-    }
-
-    public GuiData copyWidgets(GuiData other){
-        this.widgets.addAll(other.widgets);
-        this.objectWidgets.keySet().forEach(o -> {
-            if (other.objectWidgets.containsKey(o)) {
-                this.objectWidgets.get(o).addAll(other.objectWidgets.get(o));
-            }
-        });
-        return this;
-    }
-
-    public GuiData removeWidget(int index, Object data){
-        if (data == null){
-            this.widgets.remove(index);
-        } else {
-            this.objectWidgets.computeIfPresent(data, (k, v) -> {
-                v.remove(index);
-                return v;
-            });
-        }
         return this;
     }
 

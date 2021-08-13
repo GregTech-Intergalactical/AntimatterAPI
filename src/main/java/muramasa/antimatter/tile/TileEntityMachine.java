@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
@@ -37,6 +38,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -166,6 +168,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_OUT, getMachineTier())) {
             instance.addWidget(FluidSlotWidget.build(index++, slot));
         }
+        this.getMachineType().getGuiCallbacks().forEach(t -> t.accept(instance));
     }
 
     @Override
