@@ -2,20 +2,14 @@ package muramasa.antimatter.gui.container;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
-import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.IWorldPosCallable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
 

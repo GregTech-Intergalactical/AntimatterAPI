@@ -2,13 +2,13 @@ package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.RenderHelper;
-import muramasa.antimatter.gui.*;
-import muramasa.antimatter.gui.slot.ISlotProvider;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.container.Container;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -40,23 +40,23 @@ public class FluidSlotWidget extends Widget {
     }
 
     public static WidgetSupplier.WidgetProvider build(int slot, SlotData<?> slots) {
-        return a -> new FluidSlotWidget(a,slot, slots);
+        return a -> new FluidSlotWidget(a,slot,slots);
     }
 
     @Override
-    public void init(IGuiHandler source, ICanSyncData data, Container container) {
-        super.init(source, data, container);
-        ICapabilityProvider provider = (ICapabilityProvider) source;
-        data.syncFluidStack(() -> provider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack);
+    public void init() {
+        super.init();
+        ICapabilityProvider provider = (ICapabilityProvider) this.gui.handler;
+        this.gui.syncFluidStack(() -> provider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack);
     }
 
     @Override
-    protected void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        renderFluid(matrixStack, this.stack, this.slots, realX(), realY(), mouseX, mouseY);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        renderFluid(matrixStack, this.stack, realX(), realY(), mouseX, mouseY);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void renderFluid(MatrixStack stack, FluidStack fluid, SlotData slot, int x, int y, int mouseX, int mouseY) {
+    public void renderFluid(MatrixStack stack, FluidStack fluid, int x, int y, int mouseX, int mouseY) {
         if (fluid.isEmpty()) return;
         RenderHelper.drawFluid(stack, Minecraft.getInstance(), x, y, getW(), getH(), 16, fluid);
         if (this.isInside(mouseX, mouseY)) {
@@ -70,7 +70,17 @@ public class FluidSlotWidget extends Widget {
             str.add(new StringTextComponent(fluid.getDisplayName().getString()));
             str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
             AntimatterJEIPlugin.addModDescriptor(str, fluid);
-            drawText(str, mouseX, mouseY+getH(), Minecraft.getInstance().fontRenderer, stack);
+            drawText(str, mouseX, mouseY, Minecraft.getInstance().fontRenderer, stack);
         }
     }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers, int mouseX, int mouseY) {
+        if (!isInside(mouseX, mouseY)) return super.keyPressed(keyCode, scanCode, modifiers, mouseX, mouseY);
+        InputMappings.Input input = InputMappings.getInputByCode(keyCode, scanCode);
+        if (!(input.getTranslationKey().equals("key.keyboard.u") || input.getTranslationKey().equals("key.keyboard.r"))) return false;
+        AntimatterJEIPlugin.uses(stack,input.getTranslationKey().equals("key.keyboard.u"));
+        return true;
+    }
+
 }

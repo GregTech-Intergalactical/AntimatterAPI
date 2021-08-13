@@ -23,13 +23,13 @@ public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHan
         if (tile != null) {
             Direction dir = Direction.byIndex(data.readInt());
             LazyOptional<ICoverHandler> coverHandler = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, dir);
-            return getMenu(coverHandler.map(ch -> ch.get(dir)).orElse(null), inv, windowId);
+            return menu(coverHandler.map(ch -> ch.get(dir)).orElse(null), inv, windowId);
         }
         return null;
     }
 
     @Override
     public Object screen() {
-        return ClientData.SCREEN_COVER;
+        return ClientData.SCREEN_DEFAULT;
     }
 }

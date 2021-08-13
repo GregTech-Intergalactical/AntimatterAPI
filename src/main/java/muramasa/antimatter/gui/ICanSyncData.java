@@ -4,14 +4,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nullable;
 import java.util.function.*;
 
 public interface ICanSyncData {
     <T> void bind(Supplier<T> supplier, Consumer<T> consumer, Function<PacketBuffer, T> reader, BiConsumer<PacketBuffer, T> writer,BiFunction<Object, Object, Boolean> equality);
 
     default void syncInt(Supplier<Integer> source, Consumer<Integer> onChange) {
-        bind(source,onChange,PacketBuffer::readVarInt, PacketBuffer::writeInt, Object::equals);
+        bind(source,onChange,PacketBuffer::readVarInt, PacketBuffer::writeVarInt, Object::equals);
     }
     default void syncDouble(Supplier<Double> source, Consumer<Double> onChange) {
         bind(source,onChange,PacketBuffer::readDouble, PacketBuffer::writeDouble, Object::equals);
@@ -32,7 +31,7 @@ public interface ICanSyncData {
     default void syncItemStack(Supplier<ItemStack> source, Consumer<ItemStack> onChange) {
         bind(source,onChange,PacketBuffer::readItemStack, PacketBuffer::writeItemStack, Object::equals);
     }
-    /*<T extends Enum<T>> void syncEnum(Supplier<T> source, Consumer<T> onChange) {
-
-    }*/
+    default <T extends Enum<T>> void syncEnum(Supplier<T> source, Consumer<T> onChange, Class<T> clazz) {
+        bind(source,onChange,b -> b.readEnumValue(clazz), PacketBuffer::writeEnumValue, Object::equals);
+    }
 }

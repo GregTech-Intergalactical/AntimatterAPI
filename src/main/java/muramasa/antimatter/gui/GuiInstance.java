@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui;
 
-import com.google.common.collect.Iterators;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -14,28 +13,49 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.network.PacketBuffer;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.function.*;
 
 public class GuiInstance implements ICanSyncData {
 
     public final IGuiHandler handler;
+    public final Container container;
     public final boolean isRemote;
     private final List<SyncHolder> syncData = new ObjectArrayList<>();
     private int indexCounter = 0;
     private final Map<Class<? extends Widget>, List<Widget>> widgets = new Object2ObjectLinkedOpenHashMap<>();
     private Supplier<List<IContainerListener>> listeners;
 
-    public GuiInstance(IGuiHandler handler, boolean isRemote) {
+    private final PriorityQueue<Widget> sortedWidgetSet = new PriorityQueue<>((a,b) -> Integer.compare(b.depth(), a.depth()));
+
+    public GuiInstance(IGuiHandler handler, Container container, boolean isRemote) {
         this.handler = handler;
         this.isRemote = isRemote;
+        this.container = container;
     }
 
-    public void root(IGuiElement parent) {
-        widgets().forEach(t -> t.parent = parent);
+    public void setRootElement(IGuiElement parent) {
+        new ArrayList<>(this.sortedWidgetSet).forEach(t -> t.setParent(parent));
+    }
+
+    public boolean isOnTop(Widget wid, int mouseX, int mouseY) {
+        Rectangle r = new Rectangle(wid.realX(), wid.realY(), wid.getW(), wid.getH());
+
+        for (Widget widget : sortedWidgetSet) {
+            if (widget.isEnabled() && widget.isVisible() && widget.depth() > wid.depth()) {
+                Rectangle inner = new Rectangle(widget.realX(), widget.realY(), widget.getW(), widget.getH());
+                if (r.intersects(inner)) {
+                    if (inner.contains(mouseX, mouseY)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     public void init(Container source) {
@@ -44,13 +64,19 @@ public class GuiInstance implements ICanSyncData {
         data.createWidgets(this);
         handler.addWidgets(this);
         for (List<Widget> value : this.widgets.values()) {
-            value.forEach(t -> t.init(handler, this, source));
+            value.forEach(Widget::init);
         }
+    }
+
+    public void recomputeDepth(Widget widget) {
+        sortedWidgetSet.remove(widget);
+        sortedWidgetSet.add(widget);
     }
 
     public void addWidget(Widget widget) {
         Class<? extends Widget> clazz = widget.getClass();
         widgets.computeIfAbsent(clazz, a -> new ObjectArrayList<>()).add(widget);
+        sortedWidgetSet.add(widget);
     }
 
     public void addWidget(WidgetSupplier.WidgetProvider provider) {
@@ -58,7 +84,7 @@ public class GuiInstance implements ICanSyncData {
     }
 
     public Iterable<Widget> widgets() {
-        return widgets.size() > 0 ? () -> widgets.values().stream().map(List::iterator).reduce(Iterators::concat).get() : Collections::emptyIterator;
+        return sortedWidgetSet;
     }
 
     public void update() {

@@ -3,13 +3,10 @@ package muramasa.antimatter.capability;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.IGuiElement;
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import net.minecraft.entity.player.PlayerEntity;
-
-import java.util.UUID;
+import net.minecraft.util.ResourceLocation;
 
 public interface IGuiHandler {
 
@@ -27,6 +24,16 @@ public interface IGuiHandler {
 
     default void addWidgets(GuiInstance instance) {
 
+    }
+
+    ResourceLocation getGuiTexture();
+
+    default int guiSize() {
+        return 176;
+    }
+
+    default int guiHeight() {
+        return 166;
     }
 
     /**

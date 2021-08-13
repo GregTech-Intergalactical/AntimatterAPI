@@ -10,4 +10,6 @@ public interface IGuiElement {
     void setY(int y);
     void setW(int w);
     void setH(int h);
+
+    int depth();
 }

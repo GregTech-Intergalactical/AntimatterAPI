@@ -1,22 +1,21 @@
 package muramasa.antimatter.gui;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.*;
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.slot.ISlotProvider;
+import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int4;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
@@ -32,6 +31,8 @@ public class GuiData {
     protected int4 area = new int4(3, 3, 170, 80);
     protected int4 padding = new int4(0, 55, 0, 0);
     public BarDir dir = BarDir.RIGHT;
+
+    private int buttons = 0;
 
     //This uses Object instead of Tier for instance, for mapping widgets to things other than a tier.
     protected final Map<Object, List<Function<GuiInstance, Widget>>> objectWidgets = new Object2ObjectOpenHashMap<>();
@@ -121,28 +122,22 @@ public class GuiData {
         return this;
     }
 
+    public GuiData addButton(int x, int y, int w, int h, ButtonBody body) {
+        this.widgets.add(i -> ButtonWidget.build(new ResourceLocation(i.handler.getDomain(), "textures/gui/button/gui_buttons.png"), body, null,GuiEvent.EXTRA_BUTTON, buttons++).setSize(x,y,w,h).get().get(i));
+        //BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, x, y, w, h, body));
+        return this;
+    }
+
+
     public GuiData widget(WidgetSupplier provider) {
         return widget(provider.get(), null);
     }
 
     public GuiData widget(WidgetSupplier.WidgetProvider provider, Object data) {
         if (data == null) {
-            this.widgets.add(a -> provider.get(a));
+            this.widgets.add(provider::get);
         } else {
-            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add((a) -> provider.get(a));
-        }
-        return this;
-    }
-
-    public GuiData widget(Function<GuiInstance, Widget> provider) {
-        return widget(provider, null);
-    }
-
-    public GuiData widget(Function<GuiInstance, Widget> provider, Object data) {
-        if (data == null) {
-            this.widgets.add(provider);
-        } else {
-            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add(provider);
+            this.objectWidgets.computeIfAbsent(data, k -> new ObjectArrayList<>()).add(provider::get);
         }
         return this;
     }
@@ -151,20 +146,16 @@ public class GuiData {
         widget(build, null);
         return this;
     }
-/*
-    public GuiData copyWidgets(GuiData<? extends T> other){
 
-        for (BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget> function : other.widgets){
-
-        }
-        this.widgets.addAll((Collection<? extends BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>>) other.widgets);
+    public GuiData copyWidgets(GuiData other){
+        this.widgets.addAll(other.widgets);
         this.objectWidgets.keySet().forEach(o -> {
             if (other.objectWidgets.containsKey(o)) {
-                this.objectWidgets.get(o).addAll((Collection<? extends BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>>) other.objectWidgets.get(o));
+                this.objectWidgets.get(o).addAll(other.objectWidgets.get(o));
             }
         });
         return this;
-    }*/
+    }
 
     public GuiData removeWidget(int index, Object data){
         if (data == null){

@@ -15,8 +15,8 @@ public class ScreenMultiMachine<T extends TileEntityBasicMultiMachine<T>, U exte
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
-        if (container.getTile().getMachineState().getOverlayId() == 2) {
-            drawTexture(stack, gui, guiLeft + (xSize / 2) - 4, guiTop + 44, xSize, 54, 8, 9);
-        }
+       // if (container.getTile().getMachineState().getOverlayId() == 2) {
+       //     drawTexture(stack, gui, guiLeft + (xSize / 2) - 4, guiTop + 44, xSize, 54, 8, 9);
+        //}
     }
 }

@@ -4,12 +4,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.client.RenderHelper;
-import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.slot.SlotFakeFluid;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
-import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -30,9 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static muramasa.antimatter.gui.SlotType.FL_IN;
-import static muramasa.antimatter.gui.SlotType.FL_OUT;
-
 // TODO - recipe stuff only when tile.getMachineType().has(MachineFlag.RECIPE)
 public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMachine<T>> extends AntimatterContainerScreen<U> implements IHasContainer<U> {
 
@@ -43,7 +38,7 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
         super(container, inv, name);
         this.container = container;
         this.name = name.getString();
-        gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
+        //gui = container.getTile().getMachineType().getGui().getTexture(container.getTile().getMachineTier(), "machine");
     }
 
     protected void drawTitle(MatrixStack stack, int mouseX, int mouseY) {
@@ -127,9 +122,9 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-        if (gui != null) {
-            drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
-        }
+        //if (gui != null) {
+        //    drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
+        //}
     }
     /*
     protected void drawProgress(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {

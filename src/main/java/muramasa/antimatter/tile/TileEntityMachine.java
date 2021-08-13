@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
@@ -13,9 +12,11 @@ import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.*;
+import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.FluidSlotWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
@@ -64,7 +65,6 @@ import java.util.Set;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
-
 import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -166,6 +166,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_OUT, getMachineTier())) {
             instance.addWidget(FluidSlotWidget.build(index++, slot));
         }
+    }
+
+    @Override
+    public ResourceLocation getGuiTexture() {
+        return getMachineType().getGui().getTexture(this.getMachineTier(), "machine");
     }
 
     /** RECIPE UTILITY METHODS **/
@@ -437,7 +442,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     @Nullable
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
-        return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
+        return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().menu(this, inv, windowId) : null;
     }
 
     public boolean canPlayerOpenGui(PlayerEntity playerEntity){

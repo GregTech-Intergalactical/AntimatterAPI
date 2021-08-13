@@ -1,44 +1,55 @@
 package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.BarDir;
-import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.text.StringTextComponent;
 
-import javax.annotation.Nonnull;
 
-public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWidget<T> {
+
+public class ProgressWidget extends Widget {
     public final BarDir direction;
     public final boolean barFill;
+    private final int4 uv;
+    private int progress = 0;
+    private int maxProgress = 0;
 
-    public ProgressWidget(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, int4 loc, BarDir dir, int x, int y, int width, int height, boolean barFill) {
-        super(screen, handler, x, y, width, height);
+    public ProgressWidget(GuiInstance instance, int4 loc, BarDir dir, int x, int y, int width, int height, boolean barFill) {
+        super(instance);
         this.direction = dir;
         this.uv = loc;
         this.barFill = barFill;
-    }
-
-    public static <T extends ContainerMachine<?>> WidgetSupplier build(BarDir dir, boolean barFill) {
-        return null;//builder((screen, handler) -> new ProgressWidget(screen, handler, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
+        setX(x);
+        setY(y);
+        setW(width);
+        setH(height);
     }
 
     @Override
-    public void renderWidget(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        if (container().getTile().recipeHandler.map(MachineRecipeHandler::getClientProgressRaw).orElse(0) <= 0){
-            return;
-        }
-        ContainerMachine<?> container = container();
+    public void init() {
+        super.init();
+        gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getClientProgressRaw).orElse(0), i -> this.progress = i);
+        gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(rec -> rec.getActiveRecipe() == null ? 0 : rec.getActiveRecipe().getDuration()).orElse(0), i -> this.maxProgress = i);
+    }
+
+    public static WidgetSupplier build(BarDir dir, boolean barFill) {
+        return builder(gui -> new ProgressWidget(gui, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
+    }
+
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         int progressTime;
-        int x = this.x, y = this.y, xLocation = uv.x, yLocation = uv.y, length = uv.z, width = uv.w;
+        int x = this.realX(), y = this.realY(), xLocation = uv.x, yLocation = uv.y, length = uv.z, width = uv.w;
+        float progress = this.progress / (float) this.maxProgress;
         switch (direction){
             case TOP:
-                progressTime = (int) (uv.w * container.getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F));
+                progressTime = (int) (uv.w * progress);
                 if (!barFill) {
                     progressTime = width - progressTime;
                 }
@@ -47,7 +58,7 @@ public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWid
                 width = progressTime;
                 break;
             case LEFT:
-                progressTime = (int) (uv.z * container.getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F));
+                progressTime = (int) (uv.z * progress);
                 if (barFill){
                     length = progressTime;
                 } else {
@@ -55,7 +66,7 @@ public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWid
                 }
                 break;
             case BOTTOM:
-                progressTime = (int) (uv.w * container.getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F));
+                progressTime = (int) (uv.w * progress);
                 if (barFill){
                     width = progressTime;
                 } else {
@@ -63,7 +74,7 @@ public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWid
                 }
                 break;
             default:
-                progressTime = (int) (uv.z * container.getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F));
+                progressTime = (int) (uv.z * progress);
                 if (!barFill) {
                     progressTime = length - progressTime;
                 }
@@ -72,18 +83,18 @@ public class ProgressWidget<T extends ContainerMachine<?>> extends AntimatterWid
                 length = progressTime;
                 break;
         }
-        drawTexture(matrixStack, screen().sourceGui(), screen().getGuiLeft() + x, screen().getGuiTop() + y, xLocation, yLocation, length, width);
+        drawTexture(matrixStack, gui.handler.getGuiTexture(), realX(), realY(), xLocation, yLocation, length, width);
+        if (isInside(mouseX, mouseY)) {
+            renderTooltip(matrixStack, new StringTextComponent("Show Recipes"), mouseX, mouseY);
+        }
     }
 
-    @Override
-    public void onClick(double mouseX, double mouseY) {
-        super.onClick(mouseX, mouseY);
-        AntimatterJEIPlugin.showCategory(container().getTile().getMachineType());
-    }
 
     @Override
-    public void renderToolTip(MatrixStack matrixStack, int mouseX, int mouseY) {
-        super.renderToolTip(matrixStack, mouseX, mouseY);
-        screen().renderTooltip(matrixStack, new StringTextComponent("Show Recipes"), mouseX, mouseY);
+    public void onClick(double mouseX, double mouseY, int button) {
+        super.onClick(mouseX, mouseY, button);
+        if (this.gui.handler instanceof TileEntityMachine) {
+            AntimatterJEIPlugin.showCategory(((TileEntityMachine<?>)this.gui.handler).getMachineType());
+        }
     }
 }

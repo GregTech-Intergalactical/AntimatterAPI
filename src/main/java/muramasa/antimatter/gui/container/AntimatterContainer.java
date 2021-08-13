@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui.container;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
@@ -15,9 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public abstract class AntimatterContainer extends Container implements IAntimatterContainer {
 
@@ -30,8 +27,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
         super(containerType, windowId);
         this.playerInv = playerInv;
         this.invSize = invSize;
-        this.handler = new GuiInstance(handler, handler.isRemote());
-        this.handler.init(this);
+        this.handler = new GuiInstance(handler, this, handler.isRemote());
     }
 
     @Override
