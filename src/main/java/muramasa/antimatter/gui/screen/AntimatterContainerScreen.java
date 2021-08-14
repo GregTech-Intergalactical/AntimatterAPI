@@ -79,21 +79,22 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        RenderSystem.disableBlend();
-        this.renderBackground(stack);
-        super.render(stack, mouseX, mouseY, partialTicks);
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef((float)-this.guiLeft, (float)-this.guiTop, 0.0F);
         for (Widget widget : container.source().reverseWidgets()) {
-            if (!widget.isEnabled() || !widget.isVisible()) continue;
-            widget.render(stack, mouseX, mouseY, partialTicks);
+            if (!widget.isEnabled() || !widget.isVisible() || widget.depth() < this.depth()) continue;
+            widget.render(matrixStack, x, y, Minecraft.getInstance().getRenderPartialTicks());
         }
-        this.renderHoveredTooltip(stack, mouseX, mouseY);
-        RenderSystem.enableBlend();
+        RenderSystem.popMatrix();
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
-
+        for (Widget widget : container.source().reverseWidgets()) {
+            if (!widget.isEnabled() || !widget.isVisible() || widget.depth() >= this.depth()) continue;
+            widget.render(matrixStack, x, y, Minecraft.getInstance().getRenderPartialTicks());
+        }
     }
 
 
@@ -126,11 +127,6 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     public boolean isInGui(int x, int y, int xSize, int ySize, double mouseX, double mouseY) {
         return isInRect(x, y, xSize, ySize, mouseX - guiLeft, mouseY - guiTop);
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-        //this.font.drawText(matrixStack, this.title, (float)this.titleX, (float)this.titleY, 4210752);
     }
 
     protected void removeButton(Widget widget) {
