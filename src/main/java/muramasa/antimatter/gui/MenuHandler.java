@@ -44,7 +44,8 @@ public abstract class MenuHandler<T extends Container & IAntimatterContainer> im
     @MethodsReturnNonnullByDefault
     public final T menu(IGuiHandler source, PlayerInventory playerInv, int windowId) {
         T t = getMenu(source, playerInv, windowId);
-        t.init();
+        //Gui Entrypoint for server.
+        if (!source.isRemote()) t.source().init();
         return t;
     }
 

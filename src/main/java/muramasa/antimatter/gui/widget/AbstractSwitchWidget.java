@@ -5,13 +5,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 public abstract class AbstractSwitchWidget extends ButtonWidget {
 
@@ -22,8 +18,8 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
 
     protected final AbstractSwitchWidget.ISwitchable onSwitch;
 
-    protected AbstractSwitchWidget(GuiInstance instance, ResourceLocation res, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
-        super(instance, res, on, off, null);
+    protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
+        super(instance, parent, res, on, off, null);
         this.res = res;
         this.on = on;
         this.off = off;
@@ -31,8 +27,8 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
         this.setClick(b -> onPress());
     }
 
-    protected AbstractSwitchWidget(GuiInstance instance, ResourceLocation res, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
-        super(instance, res, null, body, null);
+    protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
+        super(instance, parent, res, null, body, null);
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
@@ -40,8 +36,8 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
         this.setClick(b -> onPress());
     }
 
-    protected AbstractSwitchWidget(GuiInstance instance, ResourceLocation res, ButtonOverlay body, String text, ISwitchable onSwitch) {
-        super(instance, res, null, body, null);
+    protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonOverlay body, String text, ISwitchable onSwitch) {
+        super(instance, parent, res, null, body, null);
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
@@ -91,7 +87,6 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
         this.onSwitch.onSwitch(this, isSwitched());
     }
 
-    @OnlyIn(Dist.CLIENT)
     public interface ISwitchable {
         void onSwitch(AbstractSwitchWidget button, boolean state);
     }

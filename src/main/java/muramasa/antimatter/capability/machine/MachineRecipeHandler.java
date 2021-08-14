@@ -6,7 +6,6 @@ import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -123,8 +122,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return ((float) currentProgress / (float) maxProgress);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public int getClientProgressRaw(){
+    public int getCurrentProgress(){
         return currentProgress;
     }
 

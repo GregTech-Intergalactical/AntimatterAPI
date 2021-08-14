@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
@@ -29,8 +30,8 @@ public class FluidSlotWidget extends Widget {
     private final SlotData<?> slots;
     private FluidStack stack = FluidStack.EMPTY;
 
-    protected FluidSlotWidget(GuiInstance gui, int fluidSlot, SlotData<?> slots) {
-        super(gui);
+    protected FluidSlotWidget(GuiInstance gui, IGuiElement parent, int fluidSlot, SlotData<?> slots) {
+        super(gui, parent);
         this.slot = fluidSlot;
         this.slots = slots;
         setX(slots.getX());
@@ -39,8 +40,8 @@ public class FluidSlotWidget extends Widget {
         setH(16);
     }
 
-    public static WidgetSupplier.WidgetProvider build(int slot, SlotData<?> slots) {
-        return a -> new FluidSlotWidget(a,slot,slots);
+    public static WidgetSupplier build(int slot, SlotData<?> slots) {
+        return builder((a,b) -> new FluidSlotWidget(a,b,slot,slots));
     }
 
     @Override

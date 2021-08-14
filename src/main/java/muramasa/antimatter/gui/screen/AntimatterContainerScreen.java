@@ -23,13 +23,19 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     public AntimatterContainerScreen(T container, PlayerInventory invPlayer, ITextComponent title) {
         super(container, invPlayer, title);
+        container.source().initClient(this);
     }
 
     @Override
     protected void init() {
         super.init();
-        container.source().setScreen(this);
-        container.source().setRootElement(this);
+        container.source().rescale(this);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        container.source().widgets().forEach(Widget::update);
     }
 
     @Override
@@ -37,7 +43,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
         for (Widget widget : container.source().widgets()) {
             if (!widget.isEnabled()) continue;
             if (widget.mouseClicked(mouseX, mouseY, button)) {
-                return true;
+                    return true;
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
@@ -76,12 +82,8 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.disableBlend();
         this.renderBackground(stack);
-        for (Widget widget : container.source().widgets()) {
-            if (!widget.isEnabled() || !widget.isVisible()) continue;
-            widget.renderBackground(stack, mouseX, mouseY, partialTicks);
-        }
         super.render(stack, mouseX, mouseY, partialTicks);
-        for (Widget widget : container.source().widgets()) {
+        for (Widget widget : container.source().reverseWidgets()) {
             if (!widget.isEnabled() || !widget.isVisible()) continue;
             widget.render(stack, mouseX, mouseY, partialTicks);
         }

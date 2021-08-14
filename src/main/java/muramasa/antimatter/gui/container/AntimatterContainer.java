@@ -60,6 +60,8 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
         source().update();
     }
 
+
+
     @Override
     public ItemStack transferStackInSlot(PlayerEntity player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;

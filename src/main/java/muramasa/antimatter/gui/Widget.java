@@ -22,10 +22,11 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiFunction;
 
 public abstract class Widget implements IGuiElement {
     public final GuiInstance gui;
@@ -37,18 +38,14 @@ public abstract class Widget implements IGuiElement {
     protected boolean isClicking = false;
     private int depth;
     private ITextComponent message = StringTextComponent.EMPTY;
-    public Consumer<Widget> onParent;
 
     private int realX, realY;
 
-    protected Widget(final GuiInstance gui) {
+    protected Widget(@Nonnull final GuiInstance gui, @Nullable final IGuiElement parent) {
         this.gui = gui;
         this.isRemote = gui.isRemote;
-    }
-
-    public Widget setOnParent(Consumer<Widget> onParent) {
-        this.onParent = onParent;
-        return this;
+        this.parent = parent;
+        updateSize();
     }
 
     public void setMessage(ITextComponent message) {
@@ -85,8 +82,9 @@ public abstract class Widget implements IGuiElement {
     }
 
     public void setDepth(int depth) {
+        int old = this.depth;
         this.depth = depth;
-        this.gui.recomputeDepth(this);
+        this.gui.recomputeDepth(old, this);
     }
 
     public void setEnabled(boolean enabled) {
@@ -111,7 +109,6 @@ public abstract class Widget implements IGuiElement {
         int realX = realX();
         int realY = realY();
         return ((mouseX >= realX && mouseX <= realX + getW()) && (mouseY >= realY && mouseY <= realY + getH()));
-        //return x >= (double)realX && y >= (double)realY && x < (double)(realX + this.w) && y < (double)(realY + this.h);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -163,11 +160,6 @@ public abstract class Widget implements IGuiElement {
     @OnlyIn(Dist.CLIENT)
     public abstract void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks);
 
-    @OnlyIn(Dist.CLIENT)
-    public void renderBackground(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-
-    }
-
     public boolean isEnabled() {
         return enabled;
     }
@@ -192,8 +184,13 @@ public abstract class Widget implements IGuiElement {
         return true;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void clickSound(SoundHandler handler) {
         handler.play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+    }
+
+    public void update() {
+
     }
 
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
@@ -288,7 +285,7 @@ public abstract class Widget implements IGuiElement {
         AbstractGui.blit(stack, left, top, 0, x, y, sizeX, sizeY, 256, 256);
     }
 
-    public static WidgetSupplier builder(WidgetSupplier.WidgetProvider source) {
+    public static WidgetSupplier builder(BiFunction<GuiInstance, IGuiElement, Widget> source) {
         return new WidgetSupplier(source);
     }
 }

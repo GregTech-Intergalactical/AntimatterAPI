@@ -1,36 +1,32 @@
 package muramasa.antimatter.gui.widget;
 
-import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
-import net.minecraft.inventory.container.Container;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class WidgetSupplier {
 
-    @FunctionalInterface
-    public interface WidgetProvider {
-        Widget get(final GuiInstance gui);
-    }
-
-    private final WidgetProvider source;
+    private final BiFunction<GuiInstance, IGuiElement, Widget> builder;
     private boolean clientOnly = false;
 
     private Consumer<Widget> root = a -> {};
 
-    public WidgetSupplier(WidgetProvider source) {
-        this.source = source;
+    public WidgetSupplier(BiFunction<GuiInstance, IGuiElement, Widget> source) {
+        this.builder = source;
+    }
+
+    public static WidgetSupplier build(BiFunction<GuiInstance, IGuiElement, Widget> b) {
+        return new WidgetSupplier(b);
     }
 
     public WidgetSupplier setPos(int x, int y) {
-        Consumer<Widget> old = this.root;
-        this.root = a -> {
+        this.root = this.root.andThen(a -> {
             a.setX(x);
             a.setY(y);
-            old.accept(a);
-        };
+        });
         return this;
     }
 
@@ -44,22 +40,25 @@ public class WidgetSupplier {
     }
 
     public WidgetSupplier setWH(int w, int h) {
-        Consumer<Widget> old = this.root;
-        this.root = a -> {
+        this.root = this.root.andThen(a -> {
             a.setW(w);
             a.setH(h);
-            old.accept(a);
-        };
+        });
         return this;
     }
 
     public boolean shouldAdd(GuiInstance instance) {
-        return !instance.isRemote & clientOnly;
+        if (instance.isRemote) return true;
+        return !clientOnly;
     }
 
-    public WidgetProvider get() {
-        return a -> {
-            Widget w = this.source.get(a);
+    public Widget get(GuiInstance instance, IGuiElement parent) {
+        return get().apply(instance, parent);
+    }
+
+    public BiFunction<GuiInstance, IGuiElement, Widget> get() {
+        return (a,b) -> {
+            Widget w = this.builder.apply(a,b);
             root.accept(w);
             return w;
         };

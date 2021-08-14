@@ -1,24 +1,13 @@
 package muramasa.antimatter.gui;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.slot.ISlotProvider;
-import muramasa.antimatter.gui.widget.ButtonWidget;
-import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
-@OnlyIn(Dist.CLIENT)
+//@OnlyIn(Dist.CLIENT)
 public class GuiData {
 
     protected ResourceLocation loc;

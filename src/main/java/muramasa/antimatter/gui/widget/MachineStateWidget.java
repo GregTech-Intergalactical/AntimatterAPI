@@ -2,6 +2,7 @@ package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.machine.MachineFlag;
@@ -18,8 +19,8 @@ public class MachineStateWidget extends Widget {
     /* Synced machine state. */
     protected MachineState machineState = MachineState.IDLE;
 
-    protected MachineStateWidget(GuiInstance gui) {
-        super(gui);
+    protected MachineStateWidget(GuiInstance gui, IGuiElement parent) {
+        super(gui, parent);
         this.isRecipe = ((TileEntityMachine<?>)gui.handler).has(MachineFlag.RECIPE);
     }
 

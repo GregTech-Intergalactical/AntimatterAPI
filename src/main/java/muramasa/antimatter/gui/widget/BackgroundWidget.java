@@ -9,8 +9,8 @@ public class BackgroundWidget extends Widget {
 
     private final int xSize, ySize;
 
-    protected BackgroundWidget(GuiInstance instance, int xSize, int ySize) {
-        super(instance);
+    protected BackgroundWidget(GuiInstance instance, IGuiElement parent, int xSize, int ySize) {
+        super(instance, parent);
         this.xSize = xSize;
         this.ySize = ySize;
         setDepth(-1);
@@ -23,18 +23,12 @@ public class BackgroundWidget extends Widget {
     }
 
     public static WidgetSupplier build(int w, int h) {
-        return builder(gui -> new BackgroundWidget(gui, w, h)).clientSide();
+        return builder((a,b) -> new BackgroundWidget(a,b, w, h)).clientSide();
     }
 
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-
-    }
-
-    @Override
-    public void renderBackground(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        super.renderBackground(stack, mouseX, mouseY, partialTicks);
-        drawTexture(stack, gui.handler.getGuiTexture(), realX(),realY(), 0,0, xSize, ySize);
+        drawTexture(matrixStack, gui.handler.getGuiTexture(), realX(),realY(), 0,0, xSize, ySize);
     }
 }

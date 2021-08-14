@@ -20,6 +20,7 @@ public class GuiSyncPacket {
 
     public GuiSyncPacket(final ByteBuf data) {
         this.clientData = data;
+
     }
 
     public static void encode(GuiSyncPacket msg, PacketBuffer buf) {

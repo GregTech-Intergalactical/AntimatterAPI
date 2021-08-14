@@ -16,7 +16,7 @@ public interface ICanSyncData {
         bind(source,onChange,PacketBuffer::readDouble, PacketBuffer::writeDouble, Object::equals);
     }
     default void syncString(Supplier<String> source, Consumer<String> onChange) {
-        bind(source,onChange,PacketBuffer::readString, PacketBuffer::writeString, Object::equals);
+        bind(source,onChange,a -> a.readString(32767), PacketBuffer::writeString, Object::equals);
     }
     default void syncBoolean(Supplier<Boolean> source, Consumer<Boolean> onChange) {
         bind(source,onChange,PacketBuffer::readBoolean, PacketBuffer::writeBoolean, Object::equals);

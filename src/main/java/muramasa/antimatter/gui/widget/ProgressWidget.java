@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
@@ -20,8 +21,8 @@ public class ProgressWidget extends Widget {
     private int progress = 0;
     private int maxProgress = 0;
 
-    public ProgressWidget(GuiInstance instance, int4 loc, BarDir dir, int x, int y, int width, int height, boolean barFill) {
-        super(instance);
+    public ProgressWidget(GuiInstance instance, IGuiElement parent, int4 loc, BarDir dir, int x, int y, int width, int height, boolean barFill) {
+        super(instance, parent);
         this.direction = dir;
         this.uv = loc;
         this.barFill = barFill;
@@ -34,12 +35,12 @@ public class ProgressWidget extends Widget {
     @Override
     public void init() {
         super.init();
-        gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getClientProgressRaw).orElse(0), i -> this.progress = i);
+        gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getCurrentProgress).orElse(0), i -> this.progress = i);
         gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(rec -> rec.getActiveRecipe() == null ? 0 : rec.getActiveRecipe().getDuration()).orElse(0), i -> this.maxProgress = i);
     }
 
     public static WidgetSupplier build(BarDir dir, boolean barFill) {
-        return builder(gui -> new ProgressWidget(gui, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
+        return builder((a,b) -> new ProgressWidget(a,b, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
     }
 
     @Override

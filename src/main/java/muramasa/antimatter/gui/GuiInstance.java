@@ -1,8 +1,10 @@
 package muramasa.antimatter.gui;
 
+import com.google.common.collect.ImmutableList;
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.event.GuiEvent;
@@ -14,20 +16,14 @@ import muramasa.antimatter.network.packets.GuiSyncPacket;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.IContainerListener;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.function.*;
 
 public class GuiInstance implements ICanSyncData {
@@ -38,25 +34,19 @@ public class GuiInstance implements ICanSyncData {
     public final boolean isRemote;
     private final List<SyncHolder> syncData = new ObjectArrayList<>();
     private int indexCounter = 0;
-    private final Map<Class<? extends Widget>, List<Widget>> widgets = new Object2ObjectLinkedOpenHashMap<>();
-    public final ITextComponent title;
 
     @OnlyIn(Dist.CLIENT)
     @Nullable
     public AntimatterContainerScreen<?> screen;
 
-    private final PriorityQueue<Widget> sortedWidgetSet = new PriorityQueue<>((a,b) -> Integer.compare(b.depth(), a.depth()));
+    private final List<WidgetSupplier> builders = new ObjectArrayList<>();
+    private final TreeMap<Integer, Set<Widget>> sortedWidgetSet = new TreeMap<>(Comparator.reverseOrder());
     private final Rectangle mutableRectangle = new Rectangle();
 
     public GuiInstance(IGuiHandler handler, Container container, boolean isRemote) {
         this.handler = handler;
         this.isRemote = isRemote;
         this.container = container;
-        if (handler instanceof INamedContainerProvider) {
-            this.title = ((INamedContainerProvider)handler).getDisplayName();
-        } else {
-            this.title = StringTextComponent.EMPTY;
-        }
     }
 
     public void setRootElement(IGuiElement parent) {
@@ -65,15 +55,16 @@ public class GuiInstance implements ICanSyncData {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void setScreen(AntimatterContainerScreen<?> screen) {
-        this.screen = screen;
+    public void rescale(IGuiElement root) {
+        for (Widget w : mutableWidgets()) {
+            if (w.parent == root) w.updateSize();
+        }
     }
 
     public boolean isOnTop(Widget wid, int mouseX, int mouseY) {
         Rectangle r = new Rectangle(wid.realX(), wid.realY(), wid.getW(), wid.getH());
-
-        for (Widget widget : sortedWidgetSet) {
+        for (Iterator<Widget> w = this.sortedWidgetSet.headMap(wid.depth()).values().stream().flatMap(t -> t.stream()).iterator(); w.hasNext(); ) {
+            Widget widget = w.next();
             if (widget.isEnabled() && widget.isVisible() && widget.depth() > wid.depth()) {
                 mutableRectangle.setBounds(widget.realX(), widget.realY(), widget.getW(), widget.getH());
                 if (r.intersects(mutableRectangle)) {
@@ -86,52 +77,64 @@ public class GuiInstance implements ICanSyncData {
         return true;
     }
 
-    private void initWidgets() {
-        handler.addWidgets(this);
-        for (List<Widget> value : this.widgets.values()) {
-            value.forEach(Widget::init);
+    private void initWidgets(IGuiElement parent) {
+        handler.addWidgets(this, parent);
+        for (WidgetSupplier builder : builders) {
+            if (!builder.shouldAdd(this)) continue;
+            Widget w = builder.get(this, parent);
+            putWidget(w);
+            w.init();
         }
     }
 
-    public void init() {
-        initWidgets();
+    private void putWidget(Widget w) {
+        this.sortedWidgetSet.computeIfAbsent(w.depth(), t -> new ObjectOpenHashSet<>()).add(w);
     }
 
-    public void recomputeDepth(Widget widget) {
-        if (sortedWidgetSet.remove(widget)) {
-            sortedWidgetSet.add(widget);
+    public void init() {
+        initWidgets(null);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public void initClient(AntimatterContainerScreen<?> parent) {
+        this.screen = parent;
+        initWidgets(parent);
+        for (Widget mut : widgets()) {
+            if (mut.parent == null) mut.setParent(parent);
+        }
+    }
+
+    public void recomputeDepth(int old, Widget widget) {
+        if (this.sortedWidgetSet.getOrDefault(old, Collections.emptySet()).remove(widget)) {
+            putWidget(widget);
         }
     }
 
     public GuiInstance addWidget(Widget widget) {
-        Class<? extends Widget> clazz = widget.getClass();
-        widgets.computeIfAbsent(clazz, a -> new ObjectArrayList<>()).add(widget);
-        sortedWidgetSet.add(widget);
+        putWidget(widget);
         return this;
     }
-
-    public GuiInstance addWidget(WidgetSupplier.WidgetProvider provider) {
-        addWidget(provider.get(this));
-        return this;
-    }
-
 
     public GuiInstance addWidget(WidgetSupplier provider) {
-        addWidget(provider.get());
+        builders.add(provider);
         return this;
     }
 
     public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body) {
-        addWidget(i -> ButtonWidget.build(new ResourceLocation(i.handler.getDomain(), "textures/gui/button/gui_buttons.png"), body, null, GuiEvent.EXTRA_BUTTON, buttonCounter++).setSize(x,y,w,h).get().get(i));
+        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvent.EXTRA_BUTTON, buttonCounter++).setSize(x,y,w,h));
         return this;
     }
 
     public Iterable<Widget> widgets() {
-        return sortedWidgetSet;
+        return () -> sortedWidgetSet.values().stream().flatMap(Collection::stream).iterator();
     }
 
+    public Iterable<Widget> reverseWidgets() {
+        return () -> sortedWidgetSet.descendingMap().values().stream().flatMap(Collection::stream).iterator();
+    }
+    //It says mutableWidgets, but it means that you can modify the actual map of widgets during iteration.
     public Iterable<Widget> mutableWidgets() {
-        return new ArrayList<>(this.sortedWidgetSet);
+        return ImmutableList.copyOf(widgets());
     }
 
     public void update() {

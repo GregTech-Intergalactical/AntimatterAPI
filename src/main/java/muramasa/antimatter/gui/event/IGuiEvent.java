@@ -13,6 +13,6 @@ public interface IGuiEvent extends IMachineEvent, IAntimatterObject {
         buffer.writeString(this.getId());
     }
     static IGuiEvent read(PacketBuffer buffer) {
-        return AntimatterAPI.get(IGuiEvent.class, buffer.readString());
+        return AntimatterAPI.get(IGuiEvent.class, buffer.readString(32767));
     }
 }

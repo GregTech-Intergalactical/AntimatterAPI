@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
@@ -13,10 +12,7 @@ import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.SlotData;
-import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.FluidSlotWidget;
@@ -38,7 +34,6 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -160,7 +155,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
-    public void addWidgets(GuiInstance instance) {
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
         int index = 0;
         for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_IN, getMachineTier())) {
             instance.addWidget(FluidSlotWidget.build(index++, slot));

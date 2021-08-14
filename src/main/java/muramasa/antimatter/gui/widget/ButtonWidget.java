@@ -3,16 +3,12 @@ package muramasa.antimatter.gui.widget;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.gui.ButtonBody;
-import muramasa.antimatter.gui.ButtonOverlay;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.Widget;
+import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
@@ -35,8 +31,8 @@ public class ButtonWidget extends Widget {
     private Consumer<ButtonWidget> onPress;
     protected boolean pressed = false;
 
-    protected ButtonWidget(GuiInstance instance, ResourceLocation res, @Nullable ButtonBody body, @Nullable ButtonOverlay overlay, @Nullable Consumer<ButtonWidget> onPress) {
-        super(instance);
+    public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ButtonBody body, @Nullable ButtonOverlay overlay, @Nullable Consumer<ButtonWidget> onPress) {
+        super(instance, parent);
         this.res = res;
         this.body = body;
         this.overlay = overlay;
@@ -100,8 +96,8 @@ public class ButtonWidget extends Widget {
         }
     }
 
-    protected ButtonWidget(GuiInstance instance, ResourceLocation res, @Nullable ResourceLocation bodyLoc, @Nullable int4 loc, @Nullable ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        super(instance);
+    public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ResourceLocation bodyLoc, @Nullable int4 loc, @Nullable ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
+        super(instance, parent);
         this.res = res;
         this.body = null;
         this.overlay = overlay;
@@ -111,19 +107,19 @@ public class ButtonWidget extends Widget {
     }
 
     public static WidgetSupplier build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        return builder(i -> new ButtonWidget(i, res, body, overlay, onPress));
+        return builder((a,b) -> new ButtonWidget(a,b, res, body, overlay, onPress)).clientSide();
     }
 
     public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        return builder(i -> new ButtonWidget(i, res, bodyLoc, loc, overlay, onPress));
+        return builder((a,b)  -> new ButtonWidget(a,b, res, bodyLoc, loc, overlay, onPress)).clientSide();
     }
 
     public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder(i -> new ButtonWidget(i, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Minecraft.getInstance().player.isCrouching() ? 1 : 0))));
+        return builder((a,b)  -> new ButtonWidget(a,b, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Minecraft.getInstance().player.isCrouching() ? 1 : 0)))).clientSide();
     }
 
-    public static WidgetSupplier build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder((i -> new ButtonWidget(i, res, body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Minecraft.getInstance().player.isCrouching() ? 1 : 0)))));
+    public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
+        return builder(((a,b) -> new ButtonWidget(a,b, new ResourceLocation(a.handler.getDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Minecraft.getInstance().player.isCrouching() ? 1 : 0))))).clientSide();
     }
 
 }

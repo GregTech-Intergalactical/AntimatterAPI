@@ -2,6 +2,7 @@ package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import net.minecraft.client.Minecraft;
@@ -10,8 +11,8 @@ public class InfoRenderWidget extends Widget {
 
     final IInfoRenderer renderer;
 
-    protected InfoRenderWidget(GuiInstance gui, IInfoRenderer renderer) {
-        super(gui);
+    protected InfoRenderWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer renderer) {
+        super(gui, parent);
         this.renderer = renderer;
     }
 
@@ -21,10 +22,10 @@ public class InfoRenderWidget extends Widget {
     }
 
     public static WidgetSupplier build(IInfoRenderer renderer) {
-        return builder(t -> new InfoRenderWidget(t, renderer));
+        return builder((a,b) -> new InfoRenderWidget(a,b,renderer));
     }
 
     public static WidgetSupplier build() {
-        return builder(t -> new InfoRenderWidget(t, (IInfoRenderer) t.handler));
+        return builder((a,b) -> new InfoRenderWidget(a,b, (IInfoRenderer) a.handler));
     }
 }
