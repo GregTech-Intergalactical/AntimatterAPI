@@ -5,6 +5,7 @@ import muramasa.antimatter.block.BlockProxy;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.cover.*;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
@@ -291,6 +292,11 @@ public class Data {
         @Override
         public ContainerHatch getMenu(IGuiHandler tile, PlayerInventory playerInv, int windowId) {
             return tile instanceof TileEntityHatch ? new ContainerHatch((TileEntityHatch<?>) tile, playerInv, this, windowId) : null;
+        }
+
+        @Override
+        public Object screen() {
+            return ClientData.SCREEN_HATCH;
         }
     };
 
