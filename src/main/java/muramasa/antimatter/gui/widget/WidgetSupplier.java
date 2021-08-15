@@ -6,6 +6,7 @@ import muramasa.antimatter.gui.Widget;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class WidgetSupplier {
 
@@ -13,6 +14,7 @@ public class WidgetSupplier {
     private boolean clientOnly = false;
 
     private Consumer<Widget> root = a -> {};
+    private Predicate<GuiInstance> validator = a -> true;
 
     public WidgetSupplier(BiFunction<GuiInstance, IGuiElement, Widget> source) {
         this.builder = source;
@@ -35,6 +37,11 @@ public class WidgetSupplier {
         return this;
     }
 
+    public WidgetSupplier onlyIf(Predicate<GuiInstance> predicate) {
+        this.validator = this.validator.and(predicate);
+        return this;
+    }
+
     public WidgetSupplier setSize(int x, int y, int width, int height) {
         return setPos(x,y).setWH(width, height);
     }
@@ -48,6 +55,7 @@ public class WidgetSupplier {
     }
 
     public boolean shouldAdd(GuiInstance instance) {
+        if (!validator.test(instance)) return false;
         if (instance.isRemote) return true;
         return !clientOnly;
     }
