@@ -49,6 +49,14 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
+    public double mouseX() {
+        return minecraft.mouseHelper.getMouseX() * (double)this.minecraft.getMainWindow().getScaledWidth() / (double)this.minecraft.getMainWindow().getWidth();
+    }
+
+    public double mouseY() {
+        return minecraft.mouseHelper.getMouseY() * (double)this.minecraft.getMainWindow().getScaledHeight() / (double)this.minecraft.getMainWindow().getHeight();
+    }
+
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         for (Widget wid : container.source().widgets()) {
@@ -69,13 +77,19 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        int mouseX = (int) Minecraft.getInstance().mouseHelper.getMouseX();
-        int mouseY = (int) Minecraft.getInstance().mouseHelper.getMouseX();
+        int x = (int) mouseX();
+        int y = (int) mouseY();
         for (Widget wid : container.source().widgets()) {
             if (!wid.isEnabled()) continue;
-            if (wid.keyPressed(keyCode, scanCode, modifiers, mouseX, mouseY)) return true;
+            if (wid.keyPressed(keyCode, scanCode, modifiers, x,y)) return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
@@ -91,6 +105,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+        this.renderBackground(matrixStack);
         for (Widget widget : container.source().reverseWidgets()) {
             if (!widget.isEnabled() || !widget.isVisible() || widget.depth() >= this.depth()) continue;
             widget.render(matrixStack, x, y, Minecraft.getInstance().getRenderPartialTicks());

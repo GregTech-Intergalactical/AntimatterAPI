@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
@@ -8,10 +9,14 @@ import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
 import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.gui.widget.InfoRenderWidget;
+import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.MachineFlag;
+import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -22,7 +27,7 @@ import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends TileEntityBasicMultiMachine<T> {
+public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends TileEntityBasicMultiMachine<T> implements IInfoRenderer<InfoRenderWidget.MultiRenderWidget> {
 
     protected long EUt;
 
@@ -205,5 +210,17 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     public int getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents("hatch_energy");
         return hatches.size() >= 1 ? hatches.stream().mapToInt(t -> t.getEnergyHandler().map(eh -> eh.getInputAmperage()*eh.getInputVoltage()).orElse(0)).sum() : Ref.V[0];
+    }
+
+    @Override
+    public void drawInfo(InfoRenderWidget.MultiRenderWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+        renderer.drawString(stack,this.getDisplayName().getString(), left,top, 16448255);
+        if (getMachineState() != MachineState.ACTIVE) {
+            renderer.drawString(stack, "Inactive.", left, top+8, 16448255);
+        } else {
+            renderer.drawString(stack,"Progress: " + instance.currentProgress + "/" + instance.maxProgress, left, top+ 8, 16448255);
+            renderer.drawString(stack,"Overclock: " + instance.overclock, left,top+ 16, 16448255);
+            renderer.drawString(stack,"EU/t", left,top+24, 16448255);
+        }
     }
 }

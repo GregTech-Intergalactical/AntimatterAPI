@@ -12,6 +12,9 @@ public interface ICanSyncData {
     default void syncInt(Supplier<Integer> source, Consumer<Integer> onChange) {
         bind(source,onChange,PacketBuffer::readVarInt, PacketBuffer::writeVarInt, Object::equals);
     }
+    default void syncLong(Supplier<Long> source, Consumer<Long> onChange) {
+        bind(source,onChange,PacketBuffer::readLong, PacketBuffer::writeLong, Object::equals);
+    }
     default void syncDouble(Supplier<Double> source, Consumer<Double> onChange) {
         bind(source,onChange,PacketBuffer::readDouble, PacketBuffer::writeDouble, Object::equals);
     }

@@ -4,7 +4,9 @@ import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
+import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.registration.IAntimatterObject;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
@@ -62,5 +64,7 @@ public abstract class MenuHandler<T extends Container & IAntimatterContainer> im
     //This has to be Object or else the runtime dist cleaner murders antimatter. It should actually return
     //the appropriate IScreenManager.IScreenFactory
     @OnlyIn(Dist.CLIENT)
-    public abstract Object screen();
+    public Object screen() {
+        return (ScreenManager.IScreenFactory)(a,b,c) -> new AntimatterContainerScreen(a,b,c);
+    }
 }

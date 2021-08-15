@@ -2,9 +2,12 @@ package muramasa.antimatter.network.packets;
 
 import io.netty.buffer.ByteBuf;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -37,8 +40,11 @@ public class GuiSyncPacket {
 
     public static void handle(final GuiSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            GuiInstance instance = ((IAntimatterContainer) ((AntimatterContainerScreen) Minecraft.getInstance().currentScreen).getContainer()).source();
-            instance.receivePacket(msg);
+            Screen s = Minecraft.getInstance().currentScreen;
+            Container c = Minecraft.getInstance().player.openContainer;
+            if (c instanceof IAntimatterContainer) {
+                ((AntimatterContainer)c).handler.receivePacket(msg);
+            }
         });
         ctx.get().setPacketHandled(true);
     }

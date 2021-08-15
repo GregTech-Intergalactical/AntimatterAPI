@@ -1,17 +1,16 @@
 package muramasa.antimatter.machine.types;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.*;
-import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
-import muramasa.antimatter.gui.widget.IOWidget;
-import muramasa.antimatter.gui.widget.MachineStateWidget;
-import muramasa.antimatter.gui.widget.ProgressWidget;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -118,7 +117,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
-        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.guiSize(), t.handler.guiHeight())));
+        setupGui();
+    }
+
+    protected void setupGui() {
+        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(),t.handler.guiSize(), t.handler.guiHeight())));
     }
 
     /**

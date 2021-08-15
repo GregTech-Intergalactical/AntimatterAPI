@@ -2,7 +2,6 @@ package muramasa.antimatter.gui;
 
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.gui.container.ContainerCover;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerInventory;
@@ -26,10 +25,5 @@ public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHan
             return menu(coverHandler.map(ch -> ch.get(dir)).orElse(null), inv, windowId);
         }
         return null;
-    }
-
-    @Override
-    public Object screen() {
-        return ClientData.SCREEN_DEFAULT;
     }
 }

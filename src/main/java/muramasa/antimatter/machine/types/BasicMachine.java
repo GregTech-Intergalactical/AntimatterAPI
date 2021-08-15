@@ -15,7 +15,11 @@ public class BasicMachine extends Machine<BasicMachine> {
         addFlags(BASIC, ENERGY, COVERABLE);
         setTile(() -> new TileEntityMachine<>(this));
         setGUI(Data.BASIC_MENU_HANDLER);
+    }
 
+    @Override
+    protected void setupGui() {
+        super.setupGui();
         addGuiCallback(t -> {
             t.addWidget(WidgetSupplier.build((a, b) -> TextWidget.build(((AntimatterContainerScreen<?>)b).getTitle().getString(), 4210752).get(a,b)).setPos(9, 5).clientSide());
             if (has(RECIPE)) {

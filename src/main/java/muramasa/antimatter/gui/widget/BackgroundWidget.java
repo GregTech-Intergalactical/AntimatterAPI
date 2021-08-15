@@ -4,15 +4,18 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
+import net.minecraft.util.ResourceLocation;
 
 public class BackgroundWidget extends Widget {
 
     private final int xSize, ySize;
+    private final ResourceLocation loc;
 
-    protected BackgroundWidget(GuiInstance instance, IGuiElement parent, int xSize, int ySize) {
+    protected BackgroundWidget(GuiInstance instance, IGuiElement parent, ResourceLocation loc, int xSize, int ySize) {
         super(instance, parent);
         this.xSize = xSize;
         this.ySize = ySize;
+        this.loc = loc;
         setDepth(-1);
     }
 
@@ -22,13 +25,13 @@ public class BackgroundWidget extends Widget {
         this.setDepth(parent.depth()-1);
     }
 
-    public static WidgetSupplier build(int w, int h) {
-        return builder((a,b) -> new BackgroundWidget(a,b, w, h)).clientSide();
+    public static WidgetSupplier build(ResourceLocation loc, int w, int h) {
+        return builder((a,b) -> new BackgroundWidget(a,b, loc, w, h)).clientSide();
     }
 
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        drawTexture(matrixStack, gui.handler.getGuiTexture(), realX(),realY(), 0,0, xSize, ySize);
+        drawTexture(matrixStack, loc, realX(),realY(), 0,0, xSize, ySize);
     }
 }

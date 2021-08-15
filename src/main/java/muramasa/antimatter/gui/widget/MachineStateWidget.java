@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
-import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -17,7 +16,7 @@ public class MachineStateWidget extends Widget {
     /* If the container contains recipe flag. */
     protected final boolean isRecipe;
     /* Synced machine state. */
-    protected MachineState machineState = MachineState.IDLE;
+    //protected MachineState machineState = MachineState.IDLE;
 
     protected MachineStateWidget(GuiInstance gui, IGuiElement parent) {
         super(gui, parent);
@@ -27,12 +26,14 @@ public class MachineStateWidget extends Widget {
     @Override
     public void init() {
         super.init();
-        gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().getMachineState().ordinal(), v -> this.machineState = MachineState.values()[v]);
+        //gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().getMachineState().ordinal(), v -> this.machineState = MachineState.values()[v]);
     }
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         //Draw error.
+        //No need to sync machine state.
+        MachineState machineState = ((TileEntityMachine<?>)gui.handler).getMachineState();
         if (isRecipe) {
             if (machineState == MachineState.POWER_LOSS) {
                 drawTexture(matrixStack, this.gui.handler.getGuiTexture(), realX(), realY(), this.state.x, this.state.y, this.state.z, this.state.w);

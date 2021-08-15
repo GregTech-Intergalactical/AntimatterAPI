@@ -1,14 +1,12 @@
 package muramasa.antimatter.tile.single;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import tesseract.api.capability.TesseractGTCapability;
 
@@ -92,7 +90,7 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
             });
         }
     }
-
+/*
     @Override
     public void drawInfo(GuiInstance instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
         renderer.drawString(stack,"Control Panel", left + 43, top + 21, 16448255);
@@ -100,11 +98,11 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
         renderer.drawString(stack,"TIER: " + Tier.getTier(voltage < 0 ? -voltage : voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);
         renderer.drawString(stack,"AMP: " + amperage, left + 43, top + 56, 16448255);
         renderer.drawString(stack,"SUM: " + (long)(amperage * voltage), left + 43, top + 64, 16448255);
-    }
+    }*/
 
     @Override
-    public void addWidgets(GuiInstance instance) {
-        super.addWidgets(instance);
-        instance.addWidget(InfoRenderWidget.build().get());
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
+        super.addWidgets(instance, parent);
+        instance.addWidget(InfoRenderWidget.build());
     }
 }

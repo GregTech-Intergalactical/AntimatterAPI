@@ -8,7 +8,6 @@ import muramasa.antimatter.gui.widget.ProgressWidget;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.block.Block;
@@ -39,7 +38,12 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((ICover[]) null);
         this.baseTexture((type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
-        addGuiCallback(t -> t.addWidget(ProgressWidget.build(BarDir.LEFT, true)));
+    }
+
+    @Override
+    protected void setupGui() {
+        super.setupGui();
+        if (!(this instanceof MultiMachine)) addGuiCallback(t -> t.addWidget(ProgressWidget.build(BarDir.LEFT, true)));
     }
 
     @Override

@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -23,10 +22,5 @@ public abstract class MenuHandlerMachine<T extends TileEntityMachine<T>, U exten
             return menu(machine, inv, windowId);
         }
         return null;
-    }
-
-    @Override
-    public Object screen() {
-        return ClientData.SCREEN_MACHINE;
     }
 }
