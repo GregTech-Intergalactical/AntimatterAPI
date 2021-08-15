@@ -92,7 +92,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     @Override
     public void addWidgets(GuiInstance instance, IGuiElement parent) {
         super.addWidgets(instance, parent);
-        instance.addWidget(InfoRenderWidget.TesseractItemWidget.build());
+        instance.addWidget(InfoRenderWidget.TesseractItemWidget.build().setPos(10,10));
     }
 
     @Override
