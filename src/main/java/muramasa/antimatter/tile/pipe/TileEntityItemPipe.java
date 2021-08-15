@@ -3,6 +3,8 @@ package muramasa.antimatter.tile.pipe;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.ItemPipe;
@@ -85,6 +87,12 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     @Override
     public void refresh() {
 
+    }
+
+    @Override
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
+        super.addWidgets(instance, parent);
+        instance.addWidget(InfoRenderWidget.TesseractItemWidget.build());
     }
 
     @Override
