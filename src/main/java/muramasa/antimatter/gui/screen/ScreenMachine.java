@@ -45,26 +45,7 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
         Minecraft.getInstance().fontRenderer.drawString(stack, name, getCenteredStringX(name), 4, 0x404040);
     }
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
-        drawTitle(stack, mouseX, mouseY);
-        /*if (container.getTile().has(MachineFlag.FLUID)) {
-            //TODO
-            container.getTile().fluidHandler.ifPresent(t -> {
-                int[] index = new int[]{0};
-                FluidStack[] inputs = t.getInputs();
-                container.getTile().getMachineType().getSlots(FL_IN, this.container.getTile().getMachineTier()).forEach(sl -> {
-                    renderFluid(stack, inputs[index[0]++], sl,mouseX,mouseY);
-                });
-                index[0] = 0;
-                FluidStack[] outputs = t.getOutputs();
-                container.getTile().getMachineType().getSlots(FL_OUT, this.container.getTile().getMachineTier()).forEach(sl -> {
-                    renderFluid(stack, outputs[index[0]++], sl, mouseX,mouseY);
-                });
-            });
-        }*/
-    }
-
+    /*
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (super.keyPressed(keyCode, scanCode, modifiers)) {
@@ -84,27 +65,8 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
             });
         }
         return false;
-    }
+    }*/
 
-    public void renderFluid(MatrixStack stack, FluidStack fluid, SlotData slot, int mouseX, int mouseY) {
-        int x = slot.getX();
-        int y = slot.getY();
-        if (fluid.isEmpty()) return;
-        RenderHelper.drawFluid(stack, minecraft, x, y, 16, 16, 16, fluid);
-        if (this.isSlotSelected(slot.getX(), slot.getY(), mouseX, mouseY)) {
-            RenderSystem.disableDepthTest();
-            RenderSystem.colorMask(true, true, true, false);
-            int slotColor = -2130706433;
-            this.fillGradient(stack, x, y, x + 16, y + 16, slotColor, slotColor);
-            RenderSystem.colorMask(true, true, true, true);
-            RenderSystem.enableDepthTest();
-            List<ITextComponent> str = new ArrayList<>();
-            str.add(new StringTextComponent(fluid.getDisplayName().getString()));
-            str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
-            AntimatterJEIPlugin.addModDescriptor(str, fluid);
-            drawText(str, mouseX-guiLeft, mouseY-guiTop, minecraft.fontRenderer, stack);
-        }
-    }
     //@Nonnull final ItemStack stack, MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font
     protected void drawText(List<? extends ITextProperties> textLines, int x, int y, FontRenderer font, MatrixStack matrixStack) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -118,13 +80,6 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         super.render(stack, mouseX, mouseY, partialTicks);
         //container.getTile().drawInfo(stack, Minecraft.getInstance().fontRenderer, guiLeft, guiTop);
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-        //if (gui != null) {
-        //    drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
-        //}
     }
     /*
     protected void drawProgress(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
