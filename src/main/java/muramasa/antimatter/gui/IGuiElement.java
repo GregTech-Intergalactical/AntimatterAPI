@@ -5,7 +5,7 @@ public interface IGuiElement {
     int getY();
     int getW();
     int getH();
-    IGuiElement parent();
+
     void setX(int x);
     void setY(int y);
     void setW(int w);
@@ -13,6 +13,10 @@ public interface IGuiElement {
 
     int realX();
     int realY();
-
     int depth();
+
+    IGuiElement parent();
+    default void onChildSizeChange(IGuiElement element) {
+
+    }
 }

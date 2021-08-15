@@ -220,7 +220,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         } else {
             renderer.drawString(stack,"Progress: " + instance.currentProgress + "/" + instance.maxProgress, left, top+ 8, 16448255);
             renderer.drawString(stack,"Overclock: " + instance.overclock, left,top+ 16, 16448255);
-            renderer.drawString(stack,"EU/t", left,top+24, 16448255);
+            renderer.drawString(stack,"EU/t: " + instance.euT, left,top+24, 16448255);
         }
     }
 }

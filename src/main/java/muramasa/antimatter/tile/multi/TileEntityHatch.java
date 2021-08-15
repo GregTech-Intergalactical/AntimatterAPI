@@ -13,6 +13,7 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -91,6 +92,11 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
         coverHandler.ifPresent(t -> {
             COVEROUTPUT.setEjects(t.get(t.getOutputFacing()), has(FLUID), has(ITEM));
         });
+    }
+
+    @Override
+    public ResourceLocation getGuiTexture() {
+        return new ResourceLocation(getMachineType().getDomain(), "textures/gui/machine/hatch.png");
     }
 
     @Nonnull

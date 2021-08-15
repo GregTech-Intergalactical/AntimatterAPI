@@ -1,13 +1,15 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public interface IGuiHandler {
 
@@ -18,8 +20,6 @@ public interface IGuiHandler {
     default String getDomain(){
         return Ref.ID;
     }
-
-    GuiData getStatic();
 
     boolean isRemote();
 
@@ -43,4 +43,12 @@ public interface IGuiHandler {
      * @return a packet to send.
      */
     AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data);
+
+    interface IHaveWidgets {
+        List<Consumer<GuiInstance>> getCallbacks();
+        default IHaveWidgets addGuiCallback(Consumer<GuiInstance> gui) {
+            getCallbacks().add(gui);
+            return this;
+        }
+    }
 }

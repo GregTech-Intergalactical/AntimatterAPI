@@ -2,7 +2,6 @@ package muramasa.antimatter.gui;
 
 import com.google.common.collect.ImmutableList;
 import io.netty.buffer.ByteBuf;
-import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
@@ -81,14 +80,14 @@ public class GuiInstance implements ICanSyncData {
         handler.addWidgets(this, parent);
         for (WidgetSupplier builder : builders) {
             if (!builder.shouldAdd(this)) continue;
-            Widget w = builder.get(this, parent);
-            putWidget(w);
-            w.init();
+            builder.buildAndAdd(this, parent);
         }
     }
 
     private void putWidget(Widget w) {
-        this.sortedWidgetSet.computeIfAbsent(w.depth(), t -> new ObjectOpenHashSet<>()).add(w);
+        if (this.sortedWidgetSet.computeIfAbsent(w.depth(), t -> new ObjectOpenHashSet<>()).add(w)) {
+            w.init();
+        }
     }
 
     public void init() {

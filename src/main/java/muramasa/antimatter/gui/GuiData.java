@@ -102,81 +102,8 @@ public class GuiData {
         return this;
     }
 
-    /*public GuiData setProgress(int x, int y, int l, int w) {
-        progress.set(x, y, l, w);
-        return this;
-    }
-
-    public GuiData setItemLocation(int x, int y, int l, int w) {
-        itemLocation = new ButtonOverlay(itemLocation.id, x, y, l, w);
-        return this;
-    }
-
-    public GuiData setFluidLocation(int x, int y, int l, int w) {
-        fluidLocation = new ButtonOverlay(fluidLocation.id, x, y, l, w);
-        return this;
-    }
-
-    public GuiData setDir(BarDir side) {
-        this.side = side;
-        return this;
-    }
-
-    public GuiData setBarFill(boolean barFill){
-        this.barFill = barFill;
-        return this;
-    }*/
-
     public GuiData setOverrideLocation(ResourceLocation override) {
         this.override = override;
         return this;
     }
-    /*
-    public GuiData addButton(int x, int y, int w, int h, ButtonBody body) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), EMPTY_BODY, x, y, w, h, body));
-        return this;
-    }
-
-    public GuiData addButton(int x, int y, int w, int h, ButtonBody body, String text) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_BODY, x, y, w, h, text, body));
-        return this;
-    }
-
-    public GuiData addButton(int x, int y, int w, int h, ButtonBody body, ButtonOverlay overlay) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), OVERLAY_ON_BODY, x, y, w, h, body, overlay));
-        return this;
-    }
-
-    public GuiData addSwitch(int x, int y, int w, int h, ButtonBody on, ButtonBody off) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), DOUBLE_SWITCH_BODY, x, y, w, h, on, off));
-        return this;
-    }
-
-    public GuiData addSwitch(int x, int y, int w, int h, ButtonOverlay body) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), SINGLE_SWITCH_BODY, x, y, w, h, body));
-        return this;
-    }
-
-    public GuiData addSwitch(int x, int y, int w, int h, ButtonOverlay body, String text) {
-        BUTTON_LIST.add(new ButtonData(BUTTON_LIST.size(), TEXT_ON_SWITCH, x, y, w, h, text, body));
-        return this;
-    }
-
-    public List<ButtonData> getButtons() {
-        return BUTTON_LIST;
-    }
-
-    public boolean hasButtons() {
-        return !BUTTON_LIST.isEmpty();
-    }
-
-    public ResourceLocation getButtonLocation() {
-        if (buttonLoc == null) buttonLoc = new ResourceLocation(loc.getNamespace(), "textures/gui/button/gui_buttons.png");
-        return buttonLoc;
-    }
-
-    public boolean hasType(SlotType<?> type) {
-        return getCount(null, type) > 0;
-    }*/
-
 }

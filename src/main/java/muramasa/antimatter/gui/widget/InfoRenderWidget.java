@@ -7,7 +7,12 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.Minecraft;
+import tesseract.Tesseract;
+import tesseract.api.ITickingController;
+import tesseract.api.gt.GTController;
+import tesseract.api.item.ItemController;
 
 public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
 
@@ -54,6 +59,79 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
 
         public static WidgetSupplier build() {
             return builder((a,b) -> new MultiRenderWidget(a,b, (IInfoRenderer) a.handler));
+        }
+    }
+
+    public static class TesseractGTWidget extends InfoRenderWidget<TesseractGTWidget> {
+
+        public double voltAverage = 0;
+        public double ampAverage = 0;
+        public int cableAverage = 0;
+
+        protected TesseractGTWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TesseractGTWidget> renderer) {
+            super(gui, parent, renderer);
+        }
+
+        @Override
+        public void init() {
+            super.init();
+            TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
+            final long pos = pipe.getPos().toLong();
+            gui.syncDouble(() -> {
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
+                if (controller == null) return 0d;
+                GTController gt = (GTController) controller;
+                return gt.voltageAverage();
+            }, a -> this.voltAverage = a);
+            gui.syncDouble(() -> {
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
+                if (controller == null) return 0d;
+                GTController gt = (GTController) controller;
+                return gt.ampAverage();
+            }, a -> this.ampAverage = a);
+            gui.syncInt(() -> {
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
+                if (controller == null) return 0;
+                GTController gt = (GTController) controller;
+                return gt.cableFrameAverage(pos);
+            }, a -> this.cableAverage = a);
+        }
+
+        public static WidgetSupplier build() {
+            return builder((a,b) -> new TesseractGTWidget(a,b, (IInfoRenderer<TesseractGTWidget>) a.handler));
+        }
+    }
+
+    public static class TesseractItemWidget extends InfoRenderWidget<TesseractItemWidget> {
+
+        public int transferred = 0;
+        public int cableTransferred = 0;
+
+        protected TesseractItemWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TesseractItemWidget> renderer) {
+            super(gui, parent, renderer);
+        }
+
+        @Override
+        public void init() {
+            super.init();
+            TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
+            final long pos = pipe.getPos().toLong();
+            gui.syncInt(() -> {
+                ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(),pipe.getPos().toLong());
+                if (controller == null) return 0;
+                ItemController<?> gt = (ItemController<?>) controller;
+                return gt.getTransferred();
+            }, a -> this.transferred = a);
+            gui.syncInt(() -> {
+                ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(),pipe.getPos().toLong());
+                if (controller == null) return 0;
+                ItemController<?> gt = (ItemController<?>) controller;
+                return gt.getCableTransferred(pipe.getPos().toLong());
+            }, a -> this.cableTransferred = a);
+        }
+
+        public static WidgetSupplier build() {
+            return builder((a,b) -> new TesseractItemWidget(a,b, (IInfoRenderer<TesseractItemWidget>) a.handler));
         }
     }
 }

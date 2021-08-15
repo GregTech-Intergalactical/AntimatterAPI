@@ -26,6 +26,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.InventoryHelper;
@@ -49,6 +50,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -279,6 +281,12 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                     return ActionResultType.PASS;
                 }
             } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
+                if (player.isCrouching()) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, extra -> {
+                        extra.writeBlockPos(pos);
+                    });
+                    return ActionResultType.SUCCESS;
+                }
                 CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(Data.COVER_EMPTY);
                 if (!player.isCrouching()) {
                     if (!instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, Utils.getInteractSide(hit))) {

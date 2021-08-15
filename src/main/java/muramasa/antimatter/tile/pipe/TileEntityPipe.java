@@ -1,24 +1,34 @@
 package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.CoverHandler;
-import muramasa.antimatter.capability.Holder;
-import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.gui.widget.BackgroundWidget;
+import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.IConnectable;
@@ -28,7 +38,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, IConnectable {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, INamedContainerProvider, IGuiHandler, IConnectable {
 
     /** Pipe Data **/
     protected T type;
@@ -303,5 +313,37 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         info.add("Pipe Type: " + getPipeType().getId());
         info.add("Pipe Size: " + getPipeSize().getId());
         return info;
+    }
+
+    @Override
+    public boolean isRemote() {
+        return this.getWorld().isRemote;
+    }
+
+    @Override
+    public ResourceLocation getGuiTexture() {
+        return new ResourceLocation(Ref.ID, "textures/gui/empty_multi.png");
+    }
+
+    @Override
+    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
+        return null;
+    }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new StringTextComponent(this.type.getTypeName());
+    }
+
+    @Nullable
+    @Override
+    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+        return Data.PIPE_MENU_HANDLER.menu(this, p_createMenu_2_, p_createMenu_1_);
+    }
+
+    @Override
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
+        //instance.addWidget(WidgetSupplier.build((a,b) -> TextWidget.build(a.screen.getTitle().getString(), 4210752).setPos(10,10).build(a,b)).clientSide());
+        instance.addWidget(BackgroundWidget.build(instance.handler.getGuiTexture(),  instance.handler.guiSize(), instance.handler.guiHeight()));
     }
 }

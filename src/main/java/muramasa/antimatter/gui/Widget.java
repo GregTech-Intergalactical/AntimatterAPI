@@ -103,7 +103,9 @@ public abstract class Widget implements IGuiElement {
     public void updateSize() {
         realX = parent != null ? parent.realX() + this.x : this.x;
         realY = parent != null ? parent.realY() + this.y : this.y;
+        if (parent != null) parent.onChildSizeChange(this);
     }
+
 
     public boolean isInside(double mouseX, double mouseY) {
         int realX = realX();

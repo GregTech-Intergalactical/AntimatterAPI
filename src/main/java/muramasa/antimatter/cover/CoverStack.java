@@ -2,7 +2,8 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -59,11 +60,6 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     @Override
     public String getDomain() {
         return cover.getDomain();
-    }
-
-    @Override
-    public GuiData getStatic() {
-        return cover.getGui();
     }
 
     @Override
@@ -158,6 +154,13 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
         return cover.getGui() != null && cover.getGui().getMenuHandler() != null ? cover.getGui().getMenuHandler().menu(this, inv, windowId) : null;
+    }
+
+    @Override
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
+        if (this.cover instanceof IHaveWidgets) {
+            ((IHaveWidgets)this.cover).getCallbacks().forEach(t -> t.accept(instance));
+        }
     }
 
     public CompoundNBT serialize() {

@@ -1,10 +1,16 @@
 package muramasa.antimatter.tile.pipe;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.widget.InfoRenderWidget;
+import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.EnergyTileWrapper;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -16,7 +22,7 @@ import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTCable;
 
-public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler> {
+public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 
     public TileEntityCable(T type, boolean covered) {
         super(type, covered);
@@ -92,6 +98,19 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public void refresh() {
 
+    }
+
+    @Override
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
+        super.addWidgets(instance, parent);
+        instance.addWidget(InfoRenderWidget.TesseractGTWidget.build().setPos(10,10));
+    }
+
+    @Override
+    public void drawInfo(InfoRenderWidget.TesseractGTWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+        renderer.drawString(stack,"Current average: " + instance.voltAverage, left, top, 16448255);
+        renderer.drawString(stack,"Amp average: " + instance.ampAverage, left, top+ 8, 16448255);
+        renderer.drawString(stack,"Cable average: " + instance.cableAverage, left, top+ 16, 16448255);
     }
 
 

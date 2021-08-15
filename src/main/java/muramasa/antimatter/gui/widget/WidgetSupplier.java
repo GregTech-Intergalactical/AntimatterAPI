@@ -60,11 +60,17 @@ public class WidgetSupplier {
         return !clientOnly;
     }
 
-    public Widget get(GuiInstance instance, IGuiElement parent) {
-        return get().apply(instance, parent);
+    public Widget buildAndAdd(GuiInstance instance, IGuiElement parent) {
+        Widget wid = build().apply(instance, parent);
+        instance.addWidget(wid);
+        return wid;
     }
 
-    public BiFunction<GuiInstance, IGuiElement, Widget> get() {
+    public Widget build(GuiInstance instance, IGuiElement parent) {
+        return build().apply(instance, parent);
+    }
+
+    private BiFunction<GuiInstance, IGuiElement, Widget> build() {
         return (a,b) -> {
             Widget w = this.builder.apply(a,b);
             root.accept(w);

@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.slot.ISlotProvider;
@@ -55,7 +56,7 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
  * features to configure machines such as vertical facing, the recipe map and smaller behaviours like if front IO is allowed.
  * @param <T> this class as a generic argument.
  */
-public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>> {
+public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>>, IGuiHandler.IHaveWidgets {
 
     /** Basic Members **/
     protected TileEntityType<?> tileType;
@@ -222,13 +223,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
     }
 
-    public T addGuiCallback(Consumer<GuiInstance> callback) {
-        this.guiCallbacks.add(callback);
-        return (T) this;
-    }
-
-    public List<Consumer<GuiInstance>> getGuiCallbacks() {
-        return guiCallbacks;
+    @Override
+    public List<Consumer<GuiInstance>> getCallbacks() {
+        return this.guiCallbacks;
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {

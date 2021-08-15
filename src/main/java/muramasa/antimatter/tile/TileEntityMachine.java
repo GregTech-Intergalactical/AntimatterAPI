@@ -12,7 +12,10 @@ import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.*;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.FluidSlotWidget;
@@ -144,11 +147,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
-    public GuiData getStatic() {
-        return getMachineType().getGui();
-    }
-
-    @Override
     public boolean isRemote() {
         return world.isRemote;
     }
@@ -162,7 +160,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_OUT, getMachineTier())) {
             instance.addWidget(FluidSlotWidget.build(index++, slot));
         }
-        this.getMachineType().getGuiCallbacks().forEach(t -> t.accept(instance));
+        this.getMachineType().getCallbacks().forEach(t -> t.accept(instance));
     }
 
     @Override

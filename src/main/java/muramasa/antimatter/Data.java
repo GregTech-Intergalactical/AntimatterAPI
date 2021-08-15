@@ -9,6 +9,7 @@ import muramasa.antimatter.cover.*;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
+import muramasa.antimatter.gui.MenuHandlerPipe;
 import muramasa.antimatter.gui.container.*;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemFluidCell;
@@ -269,6 +270,8 @@ public class Data {
             return tile instanceof TileEntityMachine ? new ContainerBasicMachine((TileEntityMachine<?>) tile, playerInv, this, windowId) : null;
         }
     };
+
+    public static MenuHandlerPipe<?> PIPE_MENU_HANDLER = new MenuHandlerPipe<>(Ref.ID, "container_pipe");
 
     public static MenuHandlerCover<ContainerCover> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
         @Override
