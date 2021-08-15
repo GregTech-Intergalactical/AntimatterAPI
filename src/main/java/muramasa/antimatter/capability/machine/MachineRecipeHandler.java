@@ -6,7 +6,6 @@ import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
@@ -123,8 +122,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return ((float) currentProgress / (float) maxProgress);
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public int getClientProgressRaw(){
+    public int getCurrentProgress(){
         return currentProgress;
     }
 
@@ -214,7 +212,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return null;
     }
 
-    protected int getOverclock() {
+    public int getOverclock() {
+        if (activeRecipe == null) return 0;
         int oc = 0;
         if (activeRecipe.getPower() > 0 && this.tile.getPowerLevel().getVoltage() > activeRecipe.getPower()) {
             long voltage = this.activeRecipe.getPower();
@@ -235,7 +234,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return oc;
     }
 
-    protected long getPower() {
+    public long getPower() {
+        if (activeRecipe == null) return 0;
         if (overclock == 0) return activeRecipe.getPower();
         //half the duration => overclock ^ 2.
         //so if overclock is 2 tiers, we have 1/4 the duration(200 -> 50) but for e.g. 8eu/t this would be

@@ -1,11 +1,13 @@
 package muramasa.antimatter.cover;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -15,11 +17,14 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 //The base Cover class. All cover classes extend from this.
-public abstract class BaseCover implements ICover {
+public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
-    protected GuiData<?> gui;
+    private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>();
+
+    protected GuiData gui;
     @Nullable
     private Item item;
     //For multi-covers.
@@ -33,7 +38,7 @@ public abstract class BaseCover implements ICover {
 
     public BaseCover() {
         if (hasGui()) {
-            this.gui = new GuiData<>(this, Data.COVER_MENU_HANDLER);
+            this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
             gui.setEnablePlayerSlots(true);
         }
     }
@@ -46,17 +51,17 @@ public abstract class BaseCover implements ICover {
     protected BaseCover(String id) {
         this.id = id;
         if (hasGui()) {
-            this.gui = new GuiData<>(this, Data.COVER_MENU_HANDLER);
+            this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
             gui.setEnablePlayerSlots(true);
         }
     }
 
-    public void setGui(GuiData<? extends Container> setGui) {
+    public void setGui(GuiData setGui) {
         this.gui = setGui;
     }
 
     @Override
-    public GuiData<? extends Container> getGui() {
+    public GuiData getGui() {
         return gui;
     }
 
@@ -100,6 +105,11 @@ public abstract class BaseCover implements ICover {
     //The default cover model with depth, see Output and Conveyor cover.
     public static ResourceLocation getBasicDepthModel() {
         return new ResourceLocation(Ref.ID + ":block/cover/basic_depth");
+    }
+
+    @Override
+    public List<Consumer<GuiInstance>> getCallbacks() {
+        return this.guiCallbacks;
     }
 
     @Override

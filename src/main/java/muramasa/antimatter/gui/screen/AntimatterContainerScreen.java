@@ -3,11 +3,12 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.gui.container.AntimatterContainer;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.Widget;
+import muramasa.antimatter.gui.container.IAntimatterContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.IReorderingProcessor;
@@ -15,102 +16,102 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class AntimatterContainerScreen<T extends Container> extends ContainerScreen<T> implements IHasContainer<T> {
-
-    protected ResourceLocation gui;
-    public final List<Widget> widgetsFromData = new ObjectArrayList<>();
+public class AntimatterContainerScreen<T extends Container & IAntimatterContainer> extends ContainerScreen<T> implements IHasContainer<T>, IGuiElement {
 
     public AntimatterContainerScreen(T container, PlayerInventory invPlayer, ITextComponent title) {
         super(container, invPlayer, title);
+        container.source().initClient(this);
     }
 
-    public void addWidget(Widget widget) {
-        this.widgetsFromData.add(widget);
-        super.children.add(widget);
+    @Override
+    protected void init() {
+        super.init();
+        container.source().rescale(this);
     }
 
-    public void addWidgets(Widget... widget) {
-        for (Widget w : widget) {
-            addWidget(w);
-        }
+    @Override
+    public void tick() {
+        super.tick();
+        container.source().widgets().forEach(Widget::update);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        super.mouseClicked(mouseX, mouseY, button);
-        for (Widget widget : widgetsFromData) {
-            if (!widget.active) continue;
-            if (widget.mouseClicked(mouseX - guiLeft, mouseY - guiTop, button)) {
-                return true;
+        for (Widget widget : container.source().widgets()) {
+            if (!widget.isEnabled()) continue;
+            if (widget.mouseClicked(mouseX, mouseY, button)) {
+                    return true;
             }
         }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
 
-        return false;
+    public double mouseX() {
+        return minecraft.mouseHelper.getMouseX() * (double)this.minecraft.getMainWindow().getScaledWidth() / (double)this.minecraft.getMainWindow().getWidth();
+    }
+
+    public double mouseY() {
+        return minecraft.mouseHelper.getMouseY() * (double)this.minecraft.getMainWindow().getScaledHeight() / (double)this.minecraft.getMainWindow().getHeight();
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if (!super.mouseDragged(mouseX, mouseY, button, dragX, dragY)) {
-            for (Widget wid : widgetsFromData) {
-                if (!wid.active) continue;
-                if (wid.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
-            }
+        for (Widget wid : container.source().widgets()) {
+            if (!wid.isEnabled()) continue;
+            if (wid.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
         }
-        return false;
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (!super.mouseReleased(mouseX, mouseY, button)) {
-            for (Widget wid : widgetsFromData) {
-                if (!wid.active) continue;
-                if (wid.mouseReleased(mouseX, mouseY, button)) return true;
-            }
+        for (Widget wid : container.source().widgets()) {
+            if (!wid.isEnabled()) continue;
+            if (wid.mouseReleased(mouseX, mouseY, button)) return true;
         }
-        return false;
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256) return super.keyPressed(keyCode, scanCode, modifiers);
-        if (!super.keyPressed(keyCode, scanCode, modifiers)) {
-            for (Widget wid : widgetsFromData) {
-                if (!wid.active) continue;
-                if (wid.keyPressed(keyCode, scanCode, modifiers)) return true;
-            }
+        int x = (int) mouseX();
+        int y = (int) mouseY();
+        for (Widget wid : container.source().widgets()) {
+            if (!wid.isEnabled()) continue;
+            if (wid.keyPressed(keyCode, scanCode, modifiers, x,y)) return true;
         }
-        return false;
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(stack);
-        super.render(stack, mouseX, mouseY, partialTicks);
-        for (Widget widget : widgetsFromData) {
-            if (!widget.active) continue;
-            widget.render(stack, mouseX, mouseY, partialTicks);
-        }
-        this.renderHoveredTooltip(stack, mouseX, mouseY);
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
-        super.renderHoveredTooltip(matrixStack, x, y);
-        for (Widget widget : widgetsFromData) {
-            if (!widget.active) continue;
-            if (widget.isHovered() || widget.isMouseOver(x - guiLeft , y - guiTop)) {
-                widget.renderToolTip(matrixStack, x, y);
-            }
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        RenderSystem.pushMatrix();
+        RenderSystem.translatef((float)-this.guiLeft, (float)-this.guiTop, 0.0F);
+        for (Widget widget : container.source().reverseWidgets()) {
+            if (!widget.isEnabled() || !widget.isVisible() || widget.depth() < this.depth()) continue;
+            widget.render(matrixStack, x, y, Minecraft.getInstance().getRenderPartialTicks());
+        }
+        RenderSystem.popMatrix();
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+        this.renderBackground(matrixStack);
+        for (Widget widget : container.source().reverseWidgets()) {
+            if (!widget.isEnabled() || !widget.isVisible() || widget.depth() >= this.depth()) continue;
+            widget.render(matrixStack, x, y, Minecraft.getInstance().getRenderPartialTicks());
         }
     }
 
-    public ResourceLocation sourceGui() {
-        return gui;
-    }
 
     public void drawTexture(MatrixStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
         RenderSystem.color4f(1, 1, 1, 1);
@@ -134,16 +135,6 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
         }
     }
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrixStack, int x, int y) {
-        for(Widget widget : this.widgetsFromData) {
-            if (widget.isHovered()) {
-                widget.renderToolTip(matrixStack, x - this.guiLeft, y - this.guiTop);
-                break;
-            }
-        }
-    }
-
     // Returns true if the given x,y coordinates are within the given rectangle
     public boolean isInRect(int x, int y, int xSize, int ySize, double mouseX, double mouseY) {
         return ((mouseX >= x && mouseX <= x+xSize) && (mouseY >= y && mouseY <= y+ySize));
@@ -156,5 +147,64 @@ public abstract class AntimatterContainerScreen<T extends Container> extends Con
     protected void removeButton(Widget widget) {
         buttons.removeIf(f -> f.equals(widget));
         children.removeIf(f -> f.equals(widget));
+    }
+
+    @Override
+    public int getX() {
+        return guiLeft;
+    }
+
+    @Override
+    public int getY() {
+        return guiTop;
+    }
+
+    @Override
+    public int getW() {
+        return this.width;
+    }
+
+    @Override
+    public int getH() {
+        return this.height;
+    }
+
+    @Override
+    public IGuiElement parent() {
+        return null;
+    }
+
+    @Override
+    public void setX(int x) {
+        throw new IllegalStateException("Cannot set X on root gui");
+    }
+
+    @Override
+    public void setY(int y) {
+        throw new IllegalStateException("Cannot set X on root gui");
+    }
+
+    @Override
+    public void setW(int w) {
+        throw new IllegalStateException("Cannot set X on root gui");
+    }
+    @Override
+    public void setH(int h) {
+        throw new IllegalStateException("Cannot set X on root gui");
+    }
+
+    @Override
+    public int realX() {
+        return getX();
+    }
+
+    @Override
+    public int realY() {
+        return getY();
+    }
+
+    @Override
+    public int depth() {
+        return 0;
     }
 }

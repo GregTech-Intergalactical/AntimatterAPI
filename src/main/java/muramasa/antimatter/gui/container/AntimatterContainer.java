@@ -1,24 +1,45 @@
 package muramasa.antimatter.gui.container;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
+import muramasa.antimatter.gui.GuiInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-public abstract class AntimatterContainer extends Container {
+import java.util.Set;
+
+public abstract class AntimatterContainer extends Container implements IAntimatterContainer {
 
     protected PlayerInventory playerInv;
     protected int invSize;
+    public final GuiInstance handler;
+    public final Set<IContainerListener> listeners = new ObjectOpenHashSet<>();
 
-    public AntimatterContainer(ContainerType<?> containerType, int windowId, PlayerInventory playerInv, int invSize) {
+    public AntimatterContainer(IGuiHandler handler, ContainerType<?> containerType, int windowId, PlayerInventory playerInv, int invSize) {
         super(containerType, windowId);
         this.playerInv = playerInv;
         this.invSize = invSize;
+        this.handler = new GuiInstance(handler, this, handler.isRemote());
+    }
+
+    @Override
+    public void addListener(IContainerListener listener) {
+        super.addListener(listener);
+        this.listeners.add(listener);
+    }
+
+    @Override
+    public void removeListener(IContainerListener listener) {
+        super.removeListener(listener);
+        this.listeners.remove(listener);
     }
 
     protected void addPlayerSlots() {
@@ -32,6 +53,14 @@ public abstract class AntimatterContainer extends Container {
             this.addSlot(new Slot(playerInv, k, 8 + k * 18, 142));
         }
     }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        source().update();
+    }
+
+
 
     @Override
     public ItemStack transferStackInSlot(PlayerEntity player, int index) {
@@ -159,5 +188,10 @@ public abstract class AntimatterContainer extends Container {
 
     public PlayerInventory getPlayerInv() {
         return playerInv;
+    }
+
+    @Override
+    public GuiInstance source() {
+        return handler;
     }
 }

@@ -1,10 +1,11 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
-import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
@@ -18,6 +19,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nonnull;
@@ -25,8 +27,6 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class CoverStack<T extends TileEntity> implements INamedContainerProvider, IGuiHandler {
-
-    public static final CoverStack<?>[] EMPTY_COVER_ARRAY = new CoverStack[0];
 
     private final ICover cover;
     private CompoundNBT nbt;
@@ -60,6 +60,20 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     @Override
     public String getDomain() {
         return cover.getDomain();
+    }
+
+    @Override
+    public boolean isRemote() {
+        return this.tile.getWorld().isRemote;
+    }
+
+    @Override
+    public ResourceLocation getGuiTexture() {
+        if (this.getCover() instanceof CoverTiered) {
+             return getCover().getGui().getTexture(((CoverTiered)getCover()).getTier(),"cover");
+        } else {
+             return getCover().getGui().getTexture(Tier.LV,"cover");
+        }
     }
 
     /** Events **/
@@ -139,7 +153,14 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
     @Nullable
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
-        return cover.getGui() != null && cover.getGui().getMenuHandler() != null ? cover.getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
+        return cover.getGui() != null && cover.getGui().getMenuHandler() != null ? cover.getGui().getMenuHandler().menu(this, inv, windowId) : null;
+    }
+
+    @Override
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
+        if (this.cover instanceof IHaveWidgets) {
+            ((IHaveWidgets)this.cover).getCallbacks().forEach(t -> t.accept(instance));
+        }
     }
 
     public CompoundNBT serialize() {

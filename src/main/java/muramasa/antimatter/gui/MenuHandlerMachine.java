@@ -1,10 +1,6 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.client.ClientData;
-import muramasa.antimatter.cover.CoverOutput;
-import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,22 +19,8 @@ public abstract class MenuHandlerMachine<T extends TileEntityMachine<T>, U exten
         boolean isMachine = tile instanceof TileEntityMachine;
         if (isMachine) {
             TileEntityMachine<?> machine = (TileEntityMachine) tile;
-            machine.coverHandler.ifPresent(ch -> {
-                //TODO This better
-                CoverStack<?> stack = ch.get(ch.getOutputFacing());
-                if (stack.getCover() instanceof CoverOutput) {
-                    CoverOutput co = (CoverOutput) stack.getCover();
-                    co.setEjects(stack, data.readBoolean(), data.readBoolean());
-                }
-            });
-            FluidStackPacket.decode(data).executePacket();
-            return getMenu(tile, inv, windowId);
+            return menu(machine, inv, windowId);
         }
         return null;
-    }
-
-    @Override
-    public Object screen() {
-        return ClientData.SCREEN_MACHINE;
     }
 }

@@ -1,16 +1,17 @@
 package muramasa.antimatter.machine.types;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.*;
-import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.slot.ISlotProvider;
-import muramasa.antimatter.gui.widget.IOWidget;
-import muramasa.antimatter.gui.widget.MachineStateWidget;
-import muramasa.antimatter.gui.widget.ProgressWidget;
+import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -55,7 +56,7 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
  * features to configure machines such as vertical facing, the recipe map and smaller behaviours like if front IO is allowed.
  * @param <T> this class as a generic argument.
  */
-public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>> {
+public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>>, IGuiHandler.IHaveWidgets {
 
     /** Basic Members **/
     protected TileEntityType<?> tileType;
@@ -69,7 +70,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected RecipeMap<?> recipeMap;
 
     /** GUI Members **/
-    protected GuiData<? extends ContainerMachine<?>> guiData;
+    protected GuiData guiData;
     protected ItemGroup group = Ref.TAB_MACHINES;
 
     /** Texture Members **/
@@ -96,7 +97,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     private final Map<String, Object2IntOpenHashMap<SlotType<?>>> countLookup = new Object2ObjectOpenHashMap<>();
     private final Map<String, List<SlotData<?>>> slotLookup = new Object2ObjectOpenHashMap<>();
 
-    private final List<Consumer<T>> guiCallbacks = new ObjectArrayList<>(1);
+    private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>(1);
 
     public Machine(String domain, String id) {
         this.domain = domain;
@@ -117,6 +118,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
+        setupGui();
+    }
+
+    protected void setupGui() {
+        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(),t.handler.guiSize(), t.handler.guiHeight())));
     }
 
     /**
@@ -217,16 +223,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
     }
 
-    public void onClientSetup() {
-        if (this.guiData != null) {
-            T t = (T)this;
-            guiCallbacks.forEach(c -> c.accept(t));
-        }
-    }
-
-    public T addGuiCallback(Consumer<T> callback) {
-        this.guiCallbacks.add(callback);
-        return (T) this;
+    @Override
+    public List<Consumer<GuiInstance>> getCallbacks() {
+        return this.guiCallbacks;
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {
@@ -455,7 +454,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return tiers.get(0);
     }
 
-    public GuiData<? extends ContainerMachine<?>> getGui() {
+    public GuiData getGui() {
         return guiData;
     }
 

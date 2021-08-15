@@ -12,11 +12,13 @@ import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
-import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
+import muramasa.antimatter.gui.widget.FluidSlotWidget;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
@@ -62,7 +64,6 @@ import java.util.Set;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
-
 import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -70,7 +71,7 @@ import static net.minecraft.block.Blocks.AIR;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements INamedContainerProvider, IInfoRenderer, IMachineHandler, IGuiHandler, IDynamicModelProvider {
+public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements INamedContainerProvider, IMachineHandler, IGuiHandler, IDynamicModelProvider {
 
     /** Open container. Allows for better syncing **/
     protected final Set<ContainerMachine<T>> openContainers = new ObjectOpenHashSet<>();
@@ -143,6 +144,28 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     @Override
     public String getDomain() {
         return getMachineType().getDomain();
+    }
+
+    @Override
+    public boolean isRemote() {
+        return world.isRemote;
+    }
+
+    @Override
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
+        int index = 0;
+        for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_IN, getMachineTier())) {
+            instance.addWidget(FluidSlotWidget.build(index++, slot));
+        }
+        for (SlotData<?> slot : this.getMachineType().getGui().getSlots().getSlots(SlotType.FL_OUT, getMachineTier())) {
+            instance.addWidget(FluidSlotWidget.build(index++, slot));
+        }
+        this.getMachineType().getCallbacks().forEach(t -> t.accept(instance));
+    }
+
+    @Override
+    public ResourceLocation getGuiTexture() {
+        return getMachineType().getGui().getTexture(this.getMachineTier(), "machine");
     }
 
     /** RECIPE UTILITY METHODS **/
@@ -222,7 +245,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
             recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
             if (event instanceof ContentEvent && openContainers.size() > 0) {
-                openContainers.forEach(ContainerMachine::detectAndSendLiquidChanges);
+                //openContainers.forEach(ContainerMachine::detectAndSendLiquidChanges);
             }
         }
     }
@@ -414,7 +437,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     @Nullable
     @Override
     public Container createMenu(int windowId, @Nonnull PlayerInventory inv, @Nonnull PlayerEntity player) {
-        return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().getMenu(this, inv, windowId) : null;
+        return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().menu(this, inv, windowId) : null;
     }
 
     public boolean canPlayerOpenGui(PlayerEntity playerEntity){

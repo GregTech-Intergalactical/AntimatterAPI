@@ -1,59 +1,80 @@
 package muramasa.antimatter.gui.widget;
 
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.container.AntimatterContainer;
-import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.inventory.container.Container;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.Widget;
 
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-public class WidgetSupplier<T extends Container> {
+public class WidgetSupplier {
 
-    @FunctionalInterface
-    public interface WidgetProvider<T extends Container> {
-        Widget get(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler);
+    private final BiFunction<GuiInstance, IGuiElement, Widget> builder;
+    private boolean clientOnly = false;
+
+    private Consumer<Widget> root = a -> {};
+    private Predicate<GuiInstance> validator = a -> true;
+
+    public WidgetSupplier(BiFunction<GuiInstance, IGuiElement, Widget> source) {
+        this.builder = source;
     }
 
-    private final WidgetProvider<T> source;
-
-    private Consumer<Widget> root;
-
-    public WidgetSupplier(WidgetProvider<T> source) {
-        this.source = source;
-        this.root = a -> {};
+    public static WidgetSupplier build(BiFunction<GuiInstance, IGuiElement, Widget> b) {
+        return new WidgetSupplier(b);
     }
 
-    public WidgetSupplier<T> setPos(int x, int y) {
-        Consumer<Widget> old = this.root;
-        this.root = a -> {
-            a.x = x;
-            a.y = y;
-            old.accept(a);
-        };
+    public WidgetSupplier setPos(int x, int y) {
+        this.root = this.root.andThen(a -> {
+            a.setX(x);
+            a.setY(y);
+        });
         return this;
     }
 
-    public WidgetSupplier<T> setSize(int x, int y, int width, int height) {
+    public WidgetSupplier clientSide() {
+        clientOnly = true;
+        return this;
+    }
+
+    public WidgetSupplier onlyIf(Predicate<GuiInstance> predicate) {
+        this.validator = this.validator.and(predicate);
+        return this;
+    }
+
+    public WidgetSupplier setSize(int x, int y, int width, int height) {
         return setPos(x,y).setWH(width, height);
     }
 
-    public WidgetSupplier<T> setWH(int w, int h) {
-        Consumer<Widget> old = this.root;
-        this.root = a -> {
-            a.setWidth(w);
-            a.setHeight(h);
-            old.accept(a);
-        };
+    public WidgetSupplier setWH(int w, int h) {
+        this.root = this.root.andThen(a -> {
+            a.setW(w);
+            a.setH(h);
+        });
         return this;
     }
 
-    public <U extends Container> WidgetProvider<U> cast() {
-        return (screen, handler) -> {
-            Widget widget = this.source.get((AntimatterContainerScreen<? extends T>) screen, handler);
-            root.accept(widget);
-            return widget;
+    public boolean shouldAdd(GuiInstance instance) {
+        if (!validator.test(instance)) return false;
+        if (instance.isRemote) return true;
+        return !clientOnly;
+    }
+
+    public Widget buildAndAdd(GuiInstance instance, IGuiElement parent) {
+        Widget wid = build().apply(instance, parent);
+        instance.addWidget(wid);
+        return wid;
+    }
+
+    public Widget build(GuiInstance instance, IGuiElement parent) {
+        return build().apply(instance, parent);
+    }
+
+    private BiFunction<GuiInstance, IGuiElement, Widget> build() {
+        return (a,b) -> {
+            Widget w = this.builder.apply(a,b);
+            root.accept(w);
+            return w;
         };
     }
 }

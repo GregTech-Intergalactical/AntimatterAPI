@@ -2,60 +2,46 @@ package muramasa.antimatter.gui.widget;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
-import muramasa.antimatter.gui.container.AntimatterContainer;
-import muramasa.antimatter.gui.event.IGuiEvent;
-import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.button.AbstractButton;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nonnull;
-
-public abstract class AbstractSwitchWidget extends AbstractButton {
+public abstract class AbstractSwitchWidget extends ButtonWidget {
 
     private final ResourceLocation res;
     private ButtonBody on, off;
     private ButtonOverlay body;
     private boolean state;
-    public final AntimatterContainerScreen<?> screen;
-    private final IGuiHandler handler;
 
     protected final AbstractSwitchWidget.ISwitchable onSwitch;
 
-    protected AbstractSwitchWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, ResourceLocation res, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
-        super(0,0,0,0, new StringTextComponent(""));
+    protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
+        super(instance, parent, res, on, off, null);
         this.res = res;
         this.on = on;
         this.off = off;
         this.onSwitch = onSwitch;
-        this.screen = screen;
-        this.handler = handler;
+        this.setClick(b -> onPress());
     }
 
-    protected AbstractSwitchWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, ResourceLocation res, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
-        super(0,0,0,0, new StringTextComponent(""));
+    protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
+        super(instance, parent, res, null, body, null);
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
         this.state = defaultState;
-        this.screen = screen;
-        this.handler = handler;
+        this.setClick(b -> onPress());
     }
 
-    protected AbstractSwitchWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, ResourceLocation res, ButtonOverlay body, String text, ISwitchable onSwitch) {
-        super(0,0,0,0, new StringTextComponent(text));
+    protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonOverlay body, String text, ISwitchable onSwitch) {
+        super(instance, parent, res, null, body, null);
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
-        this.screen = screen;
-        this.handler = handler;
+        this.setClick(b -> onPress());
     }
 
     protected boolean state() {
@@ -63,42 +49,44 @@ public abstract class AbstractSwitchWidget extends AbstractButton {
     }
 
     @Override
-    public void renderWidget(@Nonnull MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bindTexture(res);
         RenderSystem.disableDepthTest();
+        boolean mouseOver = isInside(mouseX, mouseY);
         if (body == null) {
             ButtonBody body = isSwitched() ? on : off;
             int xTex = body.getX();
             int yTex = body.getY();
-            if (isHovered()) {
+            if (mouseOver) {
                 xTex += body.getX2();
                 yTex += body.getY2();
             }
-            ScreenWidget.blit(stack, screen.getGuiLeft() + x, screen.getGuiTop() + y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
+            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), xTex, yTex, body.getW(), body.getH(), 256, 256);
         } else {
             int xTex = body.getX();
             int yTex = body.getY();
-            float f = isSwitched() ? 1.0F : isHovered() ? 0.75F : 0.5F;
+            float f = isSwitched() ? 1.0F : mouseOver ? 0.75F : 0.5F;
             RenderSystem.color4f(f, f, f, 1.0F);
-            ScreenWidget.blit(stack, screen.getGuiLeft() + this.x, screen.getGuiTop() + this.y, width, height, xTex, yTex, body.getW(), body.getH(), 256, 256);
+            ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), xTex, yTex, body.getW(), body.getH(), 256, 256);
         }
         RenderSystem.enableDepthTest();
-        String text = getMessage().getString();
-        if (!text.isEmpty()) drawCenteredString(stack, minecraft.fontRenderer, text, x + width / 2, y + (height - 8) / 2, getFGColor() | MathHelper.ceil(alpha * 255.0F) << 24);
     }
-
     public boolean isSwitched() {
         return state;
     }
 
     @Override
+    public void onClick(double mouseX, double mouseY, int button) {
+        super.onClick(mouseX, mouseY, button);
+    }
+
     public void onPress() {
         this.state = !this.state;
         this.onSwitch.onSwitch(this, isSwitched());
     }
 
-    @OnlyIn(Dist.CLIENT)
     public interface ISwitchable {
         void onSwitch(AbstractSwitchWidget button, boolean state);
     }

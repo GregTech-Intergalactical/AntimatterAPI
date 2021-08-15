@@ -2,7 +2,11 @@ package muramasa.antimatter.gui;
 
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.gui.container.IAntimatterContainer;
+import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.registration.IAntimatterObject;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
@@ -14,7 +18,7 @@ import net.minecraftforge.common.extensions.IForgeContainerType;
 
 
 //An arbitrary menu handler for e.g. guiclass.
-public abstract class MenuHandler<T extends Container> implements IAntimatterObject {
+public abstract class MenuHandler<T extends Container & IAntimatterContainer> implements IAntimatterObject {
 
     protected ResourceLocation loc;
     private ContainerType<T> containerType;
@@ -37,7 +41,15 @@ public abstract class MenuHandler<T extends Container> implements IAntimatterObj
     }
 
     @MethodsReturnNonnullByDefault
-    public abstract T getMenu(Object tile, PlayerInventory playerInv, int windowId);
+    protected abstract T getMenu(IGuiHandler source, PlayerInventory playerInv, int windowId);
+
+    @MethodsReturnNonnullByDefault
+    public final T menu(IGuiHandler source, PlayerInventory playerInv, int windowId) {
+        T t = getMenu(source, playerInv, windowId);
+        //Gui Entrypoint for server.
+        if (!source.isRemote()) t.source().init();
+        return t;
+    }
 
     @MethodsReturnNonnullByDefault
     public ContainerType<T> getContainerType() {
@@ -52,5 +64,7 @@ public abstract class MenuHandler<T extends Container> implements IAntimatterObj
     //This has to be Object or else the runtime dist cleaner murders antimatter. It should actually return
     //the appropriate IScreenManager.IScreenFactory
     @OnlyIn(Dist.CLIENT)
-    public abstract Object screen();
+    public Object screen() {
+        return (ScreenManager.IScreenFactory)(a,b,c) -> new AntimatterContainerScreen(a,b,c);
+    }
 }

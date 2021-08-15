@@ -16,12 +16,12 @@ public class ScreenHatch<T extends TileEntityHatch<T>, U extends ContainerHatch<
 
     public ScreenHatch(U container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
-        gui = new ResourceLocation(container.getTile().getMachineType().getDomain(), "textures/gui/machine/hatch.png");
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         super.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
+        ResourceLocation gui = container.source().handler.getGuiTexture();
         List<SlotData<?>> list = container.getTile().getMachineType().getSlots(container.getTile().getMachineTier());
         for (SlotData<?> slot : list) {
             if (slot.getType() == SlotType.IT_IN || slot.getType() == SlotType.IT_OUT) {
@@ -35,10 +35,5 @@ public class ScreenHatch<T extends TileEntityHatch<T>, U extends ContainerHatch<
         if (container.getTile().getMachineType().has(MachineFlag.FLUID)) {
             drawTexture(stack, gui, guiLeft + 8, guiTop + 21, xSize, 36, 18, 54);
         }
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(stack, mouseX, mouseY);
     }
 }

@@ -1,60 +1,77 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.ButtonOverlay;
-import muramasa.antimatter.gui.container.AntimatterContainer;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvent;
-import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.util.int4;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nonnull;
-
 import static muramasa.antimatter.Data.COVEROUTPUT;
-import static muramasa.antimatter.gui.widget.AntimatterWidget.builder;
+import static muramasa.antimatter.machine.MachineFlag.FLUID;
+import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
 public class IOWidget extends AbstractSwitchWidget {
 
-    protected final Widget item;
-    protected final Widget fluid;
-    private static final int4 itemLoc = new int4(174, 17, 16, 16), fluidLoc = new int4(175, 35, 16, 16);
+    protected ButtonWidget item;
+    protected ButtonWidget fluid;
+    private static final int4 fluidLoc = new int4(176, 18, 18, 18), itemLoc = new int4(176, 36, 18, 18);
 
-    protected IOWidget(AntimatterContainerScreen<?> screen, IGuiHandler handler, int x, int y, int w, int h) {
-        //TODO: Move textures around
-        super(screen, handler, new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, ((ContainerMachine<?>)screen.getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.get(t.getOutputFacing()))).orElse(false));
-        this.x = x;
-        this.y = y;
-        this.width = w;
-        this.height = h;
-        this.item = ButtonWidget.build(new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), screen.sourceGui(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(x+26, y, w, h).cast().get(screen, handler);
-        this.fluid = ButtonWidget.build(new ResourceLocation(handler.getDomain(), "textures/gui/button/gui_buttons.png"), screen.sourceGui(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(x+44, y, w, h).cast().get(screen, handler);
-        ((ButtonWidget)item).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false));
-        ((ButtonWidget)fluid).setStateHandler(wid -> ((ContainerMachine<?>) wid.screen().getContainer()).getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false));
-        item.active = false;
-        fluid.active = false;
-        screen.addWidgets(item, fluid);
+    private boolean itemState = false;
+    private boolean fluidState = false;
+
+    protected IOWidget(GuiInstance instance, IGuiElement parent, int x, int y, int w, int h) {
+        super(instance, parent, new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, false);
+        this.setX(x);
+        this.setY(y);
+        this.setW(w);
+        this.setH(h);
+        ContainerMachine<?> m = (ContainerMachine<?>) instance.container;
+        if (m.getTile().getMachineType().has(ITEM)) {
+            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(26, 0, w, h).buildAndAdd(instance, this);
+            item.setEnabled(false);
+            item.setStateHandler(wid -> itemState);
+            item.setDepth(depth()+1);
+        }
+        if (m.getTile().getMachineType().has(FLUID)) {
+            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(44, 0, w, h).buildAndAdd(instance, this);
+            fluid.setStateHandler(wid -> fluidState);
+            fluid.setEnabled(false);
+            fluid.setDepth(depth()+1);
+        }
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        ContainerMachine<?> m = (ContainerMachine<?>) gui.container;
+        if (item != null) gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false)), this::setItem);
+        if (fluid != null) gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false)), this::setFluid);
+    }
+
+    @Override
+    public void updateSize() {
+        super.updateSize();
+        if (item != null) item.updateSize();
+        if (fluid != null) fluid.updateSize();
     }
 
     private static void handler(AbstractSwitchWidget widget, boolean state) {
         IOWidget wid = (IOWidget) widget;
-        wid.item.active = state;
-        wid.fluid.active = state;
+        if (wid.item != null) wid.item.setEnabled(state);
+        if (wid.fluid != null) wid.fluid.setEnabled(state);
     }
 
-    public static <T extends Container> WidgetSupplier<T> build(int x, int y, int w, int h) {
-        return builder(((screen1, handler) -> new IOWidget(screen1, handler, x, y, w, h)));
+    private void setItem(boolean item) {
+        this.itemState = item;
     }
 
-    @Override
-    public void renderWidget(@Nonnull MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
-        super.renderWidget(stack, p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
-        if (state()) {
-            item.renderWidget(stack, p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
-            fluid.renderWidget(stack, p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
-        }
+    private void setFluid(boolean item) {
+        this.fluidState = item;
+    }
+
+    public static WidgetSupplier build(int x, int y, int w, int h) {
+        return builder((a,b) -> new IOWidget(a,b, x, y, w, h));
     }
 }

@@ -4,13 +4,10 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.BarDir;
-import muramasa.antimatter.gui.widget.IOWidget;
-import muramasa.antimatter.gui.widget.MachineStateWidget;
 import muramasa.antimatter.gui.widget.ProgressWidget;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.block.Block;
@@ -37,17 +34,17 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
 
     public BasicMultiMachine(String domain, String name) {
         super(domain, name);
-        setTile(() -> new TileEntityBasicMultiMachine(this));
+        setTile(() -> new TileEntityBasicMultiMachine<>(this));
         addFlags(MULTI, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((ICover[]) null);
-        this.baseTexture((ITextureHandler) (type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
-        addGuiCallback(t -> {
-            if (has(RECIPE)) {
-                getGui().widget(ProgressWidget.build(BarDir.LEFT, true))
-                        .widget(MachineStateWidget.build().setPos(84,46).setWH(8,8).cast());
-            }
-        });
+        this.baseTexture((type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
+    }
+
+    @Override
+    protected void setupGui() {
+        super.setupGui();
+        if (!(this instanceof MultiMachine)) addGuiCallback(t -> t.addWidget(ProgressWidget.build(BarDir.LEFT, true)));
     }
 
     @Override

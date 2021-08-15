@@ -5,7 +5,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
@@ -14,7 +13,6 @@ import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.network.packets.FluidStackPacket;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -50,7 +48,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fluids.FluidActionResult;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -237,18 +234,6 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                     if (getType().has(MachineFlag.GUI) && tile.canPlayerOpenGui(player)) {
                         NetworkHooks.openGui((ServerPlayerEntity) player, tile, extra -> {
                             extra.writeBlockPos(pos);
-                            tile.coverHandler.ifPresent(ch -> {
-                                CoverStack<?> cover = ch.get(ch.getOutputFacing());
-                                if (cover != null && cover.getCover().isEqual(COVEROUTPUT)) {
-                                    CoverOutput cov = (CoverOutput) cover.getCover();
-                                    extra.writeBoolean(cov.shouldOutputFluids(cover));
-                                    extra.writeBoolean(cov.shouldOutputItems(cover));
-                                }
-                            });
-                            if (tile.fluidHandler.isPresent())
-                                tile.fluidHandler.ifPresent(fh -> FluidStackPacket.encode(new FluidStackPacket(tile.getPos(),fh.getInputs(), fh.getOutputs()), extra));
-                            else
-                                FluidStackPacket.encode(new FluidStackPacket(tile.getPos(), new FluidStack[0], new FluidStack[0]), extra);
                         });
                         return ActionResultType.SUCCESS;
                     }
