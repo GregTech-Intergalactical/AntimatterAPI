@@ -6,11 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockStone;
-import muramasa.antimatter.block.BlockStoneSlab;
-import muramasa.antimatter.block.BlockStoneStair;
-import muramasa.antimatter.block.BlockStoneWall;
-import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.block.*;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.ore.BlockOre;
@@ -19,6 +15,7 @@ import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DirectoryCache;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
@@ -55,6 +52,11 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
         registerTags();
         tagToBuilder.forEach(this::addTag);
         b.forEach(tagToBuilder::put);
+    }
+
+    @Override
+    public void act(DirectoryCache cache) {
+
     }
 
     @Override

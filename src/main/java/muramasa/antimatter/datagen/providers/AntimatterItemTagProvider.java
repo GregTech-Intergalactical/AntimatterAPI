@@ -23,6 +23,7 @@ import muramasa.antimatter.util.TagUtils;
 import net.minecraft.block.Block;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
@@ -64,6 +65,11 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         //TagUtils.getTags(Item.class).forEach((k,v) -> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
         tagToBuilder.forEach(this::addTag);
         b.forEach(tagToBuilder::put);
+    }
+
+    @Override
+    public void act(DirectoryCache cache) {
+
     }
 
     @Override

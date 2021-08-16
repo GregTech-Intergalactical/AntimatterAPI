@@ -11,6 +11,7 @@ import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.material.Material;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DirectoryCache;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -43,6 +44,11 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
         //TagUtils.getTags(Fluid.class).forEach((k,v)-> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
         tagToBuilder.forEach(this::addTag);
         b.forEach(tagToBuilder::put);
+    }
+
+    @Override
+    public void act(DirectoryCache cache) {
+
     }
 
     @Override
