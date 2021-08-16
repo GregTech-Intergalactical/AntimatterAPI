@@ -5,7 +5,6 @@ import muramasa.antimatter.recipe.ingredient.impl.Ingredients;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.IIntArray;
 import net.minecraftforge.common.ForgeHooks;
 
 import java.util.Collections;
@@ -34,7 +33,7 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
         return false;
     }
 
-    @Override
+    /*@Override
     public IIntArray getProgressData() {
         IIntArray sup = super.getProgressData();
         return new IIntArray() {
@@ -60,7 +59,7 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
                 return sup.size() + 1;
             }
         };
-    }
+    }*/
 
     @Override
     public boolean consumeResourceForRecipe(boolean simulate) {

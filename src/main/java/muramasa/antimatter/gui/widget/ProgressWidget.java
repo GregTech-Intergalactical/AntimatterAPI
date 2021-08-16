@@ -44,7 +44,7 @@ public class ProgressWidget extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         int progressTime;
         int x = this.realX(), y = this.realY(), xLocation = uv.x, yLocation = uv.y, length = uv.z, width = uv.w;
         float progress = this.progress / (float) this.maxProgress;
@@ -85,11 +85,15 @@ public class ProgressWidget extends Widget {
                 break;
         }
         drawTexture(matrixStack, gui.handler.getGuiTexture(), realX(), realY(), xLocation, yLocation, length, width);
-        if (isInside(mouseX, mouseY)) {
-            renderTooltip(matrixStack, new StringTextComponent("Show Recipes"), mouseX, mouseY);
-        }
     }
 
+    @Override
+    public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
+        super.mouseOver(stack, mouseX, mouseY, partialTicks);
+        if (isInside(mouseX, mouseY)) {
+            renderTooltip(stack, new StringTextComponent("Show Recipes"), mouseX, mouseY);
+        }
+    }
 
     @Override
     public void onClick(double mouseX, double mouseY, int button) {

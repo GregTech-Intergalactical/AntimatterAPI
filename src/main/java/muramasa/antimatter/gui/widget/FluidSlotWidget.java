@@ -52,31 +52,36 @@ public class FluidSlotWidget extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        renderFluid(matrixStack, this.stack, realX(), realY(), mouseX, mouseY);
+    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+        renderFluid(matrixStack, this.stack, realX(), realY());
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void renderFluid(MatrixStack stack, FluidStack fluid, int x, int y, int mouseX, int mouseY) {
+    public void renderFluid(MatrixStack stack, FluidStack fluid, int x, int y) {
         if (fluid.isEmpty()) return;
         RenderHelper.drawFluid(stack, Minecraft.getInstance(), x, y, getW(), getH(), 16, fluid);
-        if (this.isInside(mouseX, mouseY)) {
-            RenderSystem.disableDepthTest();
-            RenderSystem.colorMask(true, true, true, false);
-            int slotColor = -2130706433;
-            this.fillGradient(stack, x, y, x + 16, y + 16, slotColor, slotColor);
-            RenderSystem.colorMask(true, true, true, true);
-            RenderSystem.enableDepthTest();
-            List<ITextComponent> str = new ArrayList<>();
-            str.add(new StringTextComponent(fluid.getDisplayName().getString()));
-            str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
-            AntimatterJEIPlugin.addModDescriptor(str, fluid);
-            drawHoverText(str, mouseX, mouseY, Minecraft.getInstance().fontRenderer, stack);
-        }
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers, int mouseX, int mouseY) {
+    public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
+        super.mouseOver(stack, mouseX, mouseY, partialTicks);
+        int x = realX();
+        int y = realY();
+        RenderSystem.disableDepthTest();
+        RenderSystem.colorMask(true, true, true, false);
+        int slotColor = -2130706433;
+        this.fillGradient(stack, x, y, x + 16, y + 16, slotColor, slotColor);
+        RenderSystem.colorMask(true, true, true, true);
+        RenderSystem.enableDepthTest();
+        List<ITextComponent> str = new ArrayList<>();
+        str.add(new StringTextComponent(this.stack.getDisplayName().getString()));
+        str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(this.stack.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
+        AntimatterJEIPlugin.addModDescriptor(str, this.stack);
+        drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().fontRenderer, stack);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers, double mouseX, double mouseY) {
         if (!isInside(mouseX, mouseY)) return super.keyPressed(keyCode, scanCode, modifiers, mouseX, mouseY);
         InputMappings.Input input = InputMappings.getInputByCode(keyCode, scanCode);
         if (!(input.getTranslationKey().equals("key.keyboard.u") || input.getTranslationKey().equals("key.keyboard.r"))) return false;

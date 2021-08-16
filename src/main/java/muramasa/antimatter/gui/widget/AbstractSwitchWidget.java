@@ -49,7 +49,7 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bindTexture(res);

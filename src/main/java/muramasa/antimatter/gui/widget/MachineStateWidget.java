@@ -30,7 +30,7 @@ public class MachineStateWidget extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         //Draw error.
         //No need to sync machine state.
         MachineState machineState = ((TileEntityMachine<?>)gui.handler).getMachineState();
@@ -39,8 +39,14 @@ public class MachineStateWidget extends Widget {
                 drawTexture(matrixStack, this.gui.handler.getGuiTexture(), realX(), realY(), this.state.x, this.state.y, this.state.z, this.state.w);
             }
         }
-        if (isRecipe && isInside(mouseX, mouseY)) {
-           renderTooltip(matrixStack, new StringTextComponent(machineState.getDisplayName()), mouseX, mouseY);
+    }
+
+    @Override
+    public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
+        super.mouseOver(stack, mouseX, mouseY, partialTicks);
+        MachineState machineState = ((TileEntityMachine<?>)gui.handler).getMachineState();
+        if (isRecipe) {
+            renderTooltip(stack, new StringTextComponent(machineState.getDisplayName()), mouseX, mouseY);
         }
     }
 

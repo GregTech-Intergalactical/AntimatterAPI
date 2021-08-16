@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.IIntArray;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
@@ -40,36 +39,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
      * Indices:
      * 1 -> Progress of recipe
      */
-    protected final IIntArray GUI_SYNC_DATA = new IIntArray() {
-
-        @Override
-        public int get(int index) {
-            switch (index) {
-                case 0:
-                    return MachineRecipeHandler.this.currentProgress;
-                case 1:
-                    return MachineRecipeHandler.this.maxProgress;
-            }
-            return 0;
-        }
-
-        @Override
-        public void set(int index, int value) {
-            switch (index) {
-                case 0:
-                    MachineRecipeHandler.this.currentProgress = value;
-                    break;
-                case 1:
-                    MachineRecipeHandler.this.maxProgress = value;
-                    break;
-            }
-        }
-
-        @Override
-        public int size() {
-            return 2;
-        }
-    };
 
     protected Recipe activeRecipe;
     protected boolean consumedResources;
@@ -94,13 +63,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     public MachineRecipeHandler(T tile) {
         this.tile = tile;
-        GUI_SYNC_DATA.set(0,0);
         this.generator = tile.getMachineType().has(MachineFlag.GENERATOR);
     }
 
-    public IIntArray getProgressData() {
-        return GUI_SYNC_DATA;
-    }
 
     public void getInfo(List<String> builder) {
         if (activeRecipe != null) {

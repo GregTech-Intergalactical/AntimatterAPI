@@ -82,13 +82,14 @@ public abstract class Widget implements IGuiElement {
     }
 
     public void setDepth(int depth) {
-        int old = this.depth;
         this.depth = depth;
-        this.gui.recomputeDepth(old, this);
     }
 
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        if (enabled != this.enabled) {
+            this.enabled = enabled;
+            gui.updateWidgetStatus(this);
+        }
     }
 
     public void setVisible(boolean visible) {
@@ -101,8 +102,11 @@ public abstract class Widget implements IGuiElement {
     }
 
     public void updateSize() {
+        int oldX = realX;
+        int oldY = realY;
         realX = parent != null ? parent.realX() + this.x : this.x;
         realY = parent != null ? parent.realY() + this.y : this.y;
+        gui.rescaleWidget(this, oldX, oldY, getW(), getH());
         if (parent != null) parent.onChildSizeChange(this);
     }
 
@@ -114,18 +118,8 @@ public abstract class Widget implements IGuiElement {
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected void renderTooltip(MatrixStack matrixStack, ITextComponent text, int mouseX, int mouseY) {
-        if (!isOnTop(mouseX, mouseY)) return;
-        net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, Arrays.asList(text), mouseX, mouseY, parent.getW(), parent.getH(), -1, Minecraft.getInstance().fontRenderer);
-    }
-
-    protected boolean isOnTop(int mouseX, int mouseY) {
-        return gui.isOnTop(this, mouseX, mouseY);
-    }
-
-
-    protected boolean isOnTop(double mouseX, double mouseY) {
-        return gui.isOnTop(this, (int)mouseX, (int)mouseY);
+    protected void renderTooltip(MatrixStack matrixStack, ITextComponent text, double mouseX, double mouseY) {
+        net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, Arrays.asList(text),(int) mouseX, (int) mouseY, parent.getW(), parent.getH(), -1, Minecraft.getInstance().fontRenderer);
     }
 
     @Override
@@ -150,17 +144,17 @@ public abstract class Widget implements IGuiElement {
 
     }
 
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers, int mouseX, int mouseY) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers, double mouseX, double mouseY) {
         return false;
     }
 
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers, int mouseX, int mouseY) {
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers, double mouseX, double mouseY) {
         return false;
     }
 
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks);
+    public abstract void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks);
 
     public boolean isEnabled() {
         return enabled;
@@ -170,6 +164,8 @@ public abstract class Widget implements IGuiElement {
         return shouldRender;
     }
 
+
+    @OnlyIn(Dist.CLIENT)
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.isEnabled() && isInside(mouseX, mouseY)) {
             this.clickSound(Minecraft.getInstance().getSoundHandler());
@@ -179,6 +175,7 @@ public abstract class Widget implements IGuiElement {
         return false;
     }
 
+    @OnlyIn(Dist.CLIENT)
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (!isInside(mouseX, mouseY)) return false;
         isClicking = false;
@@ -187,14 +184,21 @@ public abstract class Widget implements IGuiElement {
     }
 
     @OnlyIn(Dist.CLIENT)
+    public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
+
+    }
+
+    @OnlyIn(Dist.CLIENT)
     public void clickSound(SoundHandler handler) {
         handler.play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
+    @OnlyIn(Dist.CLIENT)
     public void update() {
 
     }
 
+    @OnlyIn(Dist.CLIENT)
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         this.onDrag(mouseX, mouseY, dragX, dragY);
         return true;
@@ -267,9 +271,6 @@ public abstract class Widget implements IGuiElement {
 
     @OnlyIn(Dist.CLIENT)
     protected void drawHoverText(List<? extends ITextProperties> textLines, int x, int y, FontRenderer font, MatrixStack matrixStack) {
-        if (!isOnTop(x, y)) {
-            return;
-        }
         Minecraft minecraft = Minecraft.getInstance();
         GuiUtils.drawHoveringText(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getMainWindow().getScaledWidth(), minecraft.getMainWindow().getScaledHeight(), -1, font);
     }

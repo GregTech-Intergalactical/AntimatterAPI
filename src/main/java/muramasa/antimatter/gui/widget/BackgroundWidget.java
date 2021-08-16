@@ -31,7 +31,7 @@ public class BackgroundWidget extends Widget {
 
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         drawTexture(matrixStack, loc, realX(),realY(), 0,0, xSize, ySize);
     }
 }

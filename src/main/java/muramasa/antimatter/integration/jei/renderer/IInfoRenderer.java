@@ -7,6 +7,15 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface IInfoRenderer<T extends InfoRenderWidget<T>> {
+    /**
+     *
+     * @param instance
+     * @param stack
+     * @param renderer
+     * @param left
+     * @param top
+     * @return offset that was rendered.
+     */
     @OnlyIn(Dist.CLIENT)
-    void drawInfo(T instance, MatrixStack stack, FontRenderer renderer, int left, int top);
+    int drawInfo(T instance, MatrixStack stack, FontRenderer renderer, int left, int top);
 }

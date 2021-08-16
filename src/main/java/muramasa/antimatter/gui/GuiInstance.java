@@ -1,11 +1,11 @@
 package muramasa.antimatter.gui;
 
-import com.google.common.collect.ImmutableList;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.gui.core.RTree;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.widget.ButtonWidget;
@@ -20,10 +20,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.List;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.Stream;
 
 public class GuiInstance implements ICanSyncData {
 
@@ -39,8 +38,11 @@ public class GuiInstance implements ICanSyncData {
     public AntimatterContainerScreen<?> screen;
 
     private final List<WidgetSupplier> builders = new ObjectArrayList<>();
-    private final TreeMap<Integer, Set<Widget>> sortedWidgetSet = new TreeMap<>(Comparator.reverseOrder());
-    private final Rectangle mutableRectangle = new Rectangle();
+    private final RTree<Widget> widgetLookup = new RTree<>();
+    private final Set<Widget> widgets = new ObjectOpenHashSet<>();
+
+    //TODO:
+    private IGuiElement focus;
 
     public GuiInstance(IGuiHandler handler, Container container, boolean isRemote) {
         this.handler = handler;
@@ -48,32 +50,71 @@ public class GuiInstance implements ICanSyncData {
         this.container = container;
     }
 
-    public void setRootElement(IGuiElement parent) {
-        for (Widget mutableWidget : mutableWidgets()) {
-            if (mutableWidget.parent == null || mutableWidget.parent == parent) mutableWidget.setParent(parent);
-        }
-    }
-
+    /**
+     * Rescales the GUI window, sets all root widgets.
+     * @param root top level widget, e.g. screen.
+     */
     public void rescale(IGuiElement root) {
-        for (Widget w : mutableWidgets()) {
+        for (Widget w : unsortedWidgets()) {
             if (w.parent == root) w.updateSize();
         }
     }
 
-    public boolean isOnTop(Widget wid, int mouseX, int mouseY) {
-        Rectangle r = new Rectangle(wid.realX(), wid.realY(), wid.getW(), wid.getH());
-        for (Iterator<Widget> w = this.sortedWidgetSet.headMap(wid.depth()).values().stream().flatMap(t -> t.stream()).iterator(); w.hasNext(); ) {
-            Widget widget = w.next();
-            if (widget.isEnabled() && widget.isVisible() && widget.depth() > wid.depth()) {
-                mutableRectangle.setBounds(widget.realX(), widget.realY(), widget.getW(), widget.getH());
-                if (r.intersects(mutableRectangle)) {
-                    if (widget.isInside(mouseX, mouseY)) {
-                        return false;
-                    }
-                }
-            }
+    /**
+     * Returns all widgets under the mouse.
+     * @param mouseX x position
+     * @param mouseY y position
+     * @return iterable widget list
+     */
+    public Iterable<Widget> getWidgets(double mouseX, double mouseY) {
+        return () -> {
+            Stream<Widget> stream = this.widgetLookup.search(new float[]{(float) mouseX, (float) mouseY}, new float[]{0f,0f}).stream();
+            return stream.sorted((a,b) -> Integer.compare(b.depth(), a.depth())).iterator();
+        };
+    }
+
+    public Optional<Widget> getTopLevelWidget(double mouseX, double mouseY) {
+        Iterator<Widget> iterator = getWidgets(mouseX, mouseY).iterator();
+        return iterator.hasNext() ? Optional.of(iterator.next()) : Optional.empty();
+    }
+
+    /**
+     * Returns all widgets available in reverse depth order (for e.g. rendering).
+     * @return iterable widget list
+     */
+    public Iterable<Widget> getReverseWidgets() {
+        return () -> this.widgets.stream().sorted(Comparator.comparing(Widget::depth)).iterator();
+    }
+
+    /**
+     * Is the widget top level widget at this mouse position?
+     * @param wid widget to check
+     * @param mouseX mouse X
+     * @param mouseY mouse Y
+     * @return if it is on top.
+     */
+    public boolean isOnTop(Widget wid, double mouseX, double mouseY) {
+        return this.getWidgets(mouseX, mouseY).iterator().next() == wid;
+    }
+
+    public void rescaleWidget(Widget wid, int oldX, int oldY, int oldW, int oldH) {
+        if (!wid.isEnabled()) return;
+        if (!widgets.contains(wid)) return;
+        float x = (float) oldX;
+        float y = (float) oldY;
+        float w = (float) oldW;
+        float h = (float) oldH;
+        if (widgetLookup.delete(new float[]{x,y}, new float[]{w,h}, wid)) {
+            widgetLookup.insert(wid);
         }
-        return true;
+    }
+
+    public void updateWidgetStatus(Widget wid) {
+        if (wid.isEnabled()) {
+            widgetLookup.insert(wid);
+        } else {
+            widgetLookup.delete(wid);
+        }
     }
 
     private void initWidgets(IGuiElement parent) {
@@ -85,9 +126,9 @@ public class GuiInstance implements ICanSyncData {
     }
 
     private void putWidget(Widget w) {
-        if (this.sortedWidgetSet.computeIfAbsent(w.depth(), t -> new ObjectOpenHashSet<>()).add(w)) {
-            w.init();
-        }
+        this.widgets.add(w);
+        updateWidgetStatus(w);
+        w.init();
     }
 
     public void init() {
@@ -98,14 +139,8 @@ public class GuiInstance implements ICanSyncData {
     public void initClient(AntimatterContainerScreen<?> parent) {
         this.screen = parent;
         initWidgets(parent);
-        for (Widget mut : widgets()) {
+        for (Widget mut : unsortedWidgets()) {
             if (mut.parent == null) mut.setParent(parent);
-        }
-    }
-
-    public void recomputeDepth(int old, Widget widget) {
-        if (this.sortedWidgetSet.getOrDefault(old, Collections.emptySet()).remove(widget)) {
-            putWidget(widget);
         }
     }
 
@@ -124,16 +159,8 @@ public class GuiInstance implements ICanSyncData {
         return this;
     }
 
-    public Iterable<Widget> widgets() {
-        return () -> sortedWidgetSet.values().stream().flatMap(Collection::stream).iterator();
-    }
-
-    public Iterable<Widget> reverseWidgets() {
-        return () -> sortedWidgetSet.descendingMap().values().stream().flatMap(Collection::stream).iterator();
-    }
-    //It says mutableWidgets, but it means that you can modify the actual map of widgets during iteration.
-    public Iterable<Widget> mutableWidgets() {
-        return ImmutableList.copyOf(widgets());
+    public Iterable<Widget> unsortedWidgets() {
+        return widgets;
     }
 
     public void update() {
@@ -147,6 +174,11 @@ public class GuiInstance implements ICanSyncData {
         }
         if (toSync.size() > 0)
             write(toSync);
+    }
+
+    @Nullable
+    public IGuiElement getFocus() {
+        return focus;
     }
 
     public void receivePacket(GuiSyncPacket packet) {

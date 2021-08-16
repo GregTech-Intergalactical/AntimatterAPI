@@ -7,7 +7,6 @@ import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.IWorldPosCallable;
 
@@ -20,11 +19,10 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
         this.tile = tile;
         addSlots(tile);
         if (tile.getMachineType().getGui().enablePlayerSlots()) addPlayerSlots();
-        tile.recipeHandler.ifPresent(r -> trackIntArray(r.getProgressData()));
         //Ugly hack but syncing is broken otherwise.
-        if (!(playerInv.player instanceof ServerPlayerEntity)) {
-            tile.recipeHandler.ifPresent(t -> t.setClientProgress(0));
-        }
+        //if (!(playerInv.player instanceof ServerPlayerEntity)) {
+        //    tile.recipeHandler.ifPresent(t -> t.setClientProgress(0));
+        //}
         tile.addOpenContainer(this);
     }
 

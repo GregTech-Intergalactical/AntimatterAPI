@@ -35,12 +35,12 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     @Override
     public void tick() {
         super.tick();
-        container.source().widgets().forEach(Widget::update);
+        container.source().unsortedWidgets().forEach(Widget::update);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (Widget widget : container.source().widgets()) {
+        for (Widget widget : container.source().getWidgets(mouseX, mouseY)) {
             if (!widget.isEnabled()) continue;
             if (widget.mouseClicked(mouseX, mouseY, button)) {
                     return true;
@@ -59,7 +59,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        for (Widget wid : container.source().widgets()) {
+        for (Widget wid : container.source().getWidgets(mouseX, mouseY)) {
             if (!wid.isEnabled()) continue;
             if (wid.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
         }
@@ -68,7 +68,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        for (Widget wid : container.source().widgets()) {
+        for (Widget wid : container.source().getWidgets(mouseX, mouseY)) {
             if (!wid.isEnabled()) continue;
             if (wid.mouseReleased(mouseX, mouseY, button)) return true;
         }
@@ -77,9 +77,9 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        int x = (int) mouseX();
-        int y = (int) mouseY();
-        for (Widget wid : container.source().widgets()) {
+        double x = mouseX();
+        double y = mouseY();
+        for (Widget wid : container.source().getWidgets(x,y)) {
             if (!wid.isEnabled()) continue;
             if (wid.keyPressed(keyCode, scanCode, modifiers, x,y)) return true;
         }
@@ -94,20 +94,23 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        float ticks = Minecraft.getInstance().getRenderPartialTicks();
         RenderSystem.pushMatrix();
         RenderSystem.translatef((float)-this.guiLeft, (float)-this.guiTop, 0.0F);
-        for (Widget widget : container.source().reverseWidgets()) {
+        for (Widget widget : container.source().getReverseWidgets()) {
             if (!widget.isEnabled() || !widget.isVisible() || widget.depth() < this.depth()) continue;
-            widget.render(matrixStack, x, y, Minecraft.getInstance().getRenderPartialTicks());
+            widget.render(matrixStack, x, y, ticks);
         }
+        container.source().getTopLevelWidget(x, y).ifPresent(t -> t.mouseOver(matrixStack,x,y, ticks));
         RenderSystem.popMatrix();
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         this.renderBackground(matrixStack);
-        for (Widget widget : container.source().reverseWidgets()) {
-            if (!widget.isEnabled() || !widget.isVisible() || widget.depth() >= this.depth()) continue;
+        for (Widget widget : container.source().getReverseWidgets()) {
+            if (!widget.isEnabled() || !widget.isVisible()) continue;
+            if (widget.depth() >= this.depth()) return;
             widget.render(matrixStack, x, y, Minecraft.getInstance().getRenderPartialTicks());
         }
     }

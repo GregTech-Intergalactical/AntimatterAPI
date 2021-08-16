@@ -64,7 +64,7 @@ public class ButtonWidget extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bindTexture(res);
         RenderSystem.disableDepthTest();

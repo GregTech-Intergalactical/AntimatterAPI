@@ -24,7 +24,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         renderer.drawInfo((T)this, matrixStack, Minecraft.getInstance().fontRenderer, realX(), realY());
     }
 
@@ -64,9 +64,10 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
 
     public static class TesseractGTWidget extends InfoRenderWidget<TesseractGTWidget> {
 
-        public double voltAverage = 0;
-        public double ampAverage = 0;
+        public long voltAverage = 0;
+        public long ampAverage = 0;
         public int cableAverage = 0;
+        public long loss = 0;
 
         protected TesseractGTWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TesseractGTWidget> renderer) {
             super(gui, parent, renderer);
@@ -77,17 +78,17 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             super.init();
             TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
             final long pos = pipe.getPos().toLong();
-            gui.syncDouble(() -> {
+            gui.syncLong(() -> {
                 ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
-                if (controller == null) return 0d;
+                if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
-                return gt.voltageAverage();
+                return gt.getTotalVoltage();
             }, a -> this.voltAverage = a);
-            gui.syncDouble(() -> {
+            gui.syncLong(() -> {
                 ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
-                if (controller == null) return 0d;
+                if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
-                return gt.ampAverage();
+                return gt.totalAmps();
             }, a -> this.ampAverage = a);
             gui.syncInt(() -> {
                 ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
@@ -95,6 +96,12 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 GTController gt = (GTController) controller;
                 return gt.cableFrameAverage(pos);
             }, a -> this.cableAverage = a);
+            gui.syncLong(() -> {
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
+                if (controller == null) return 0L;
+                GTController gt = (GTController) controller;
+                return gt.totalLoss();
+            }, a -> this.loss = a);
         }
 
         public static WidgetSupplier build() {

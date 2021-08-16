@@ -96,9 +96,10 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
-    public void drawInfo(InfoRenderWidget.TesseractItemWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+    public int drawInfo(InfoRenderWidget.TesseractItemWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
         renderer.drawString(stack,"Total transferred in net: " + instance.transferred, left, top, 16448255);
         renderer.drawString(stack,"Cable transfers (stacks): " + instance.cableTransferred, left, top+ 8, 16448255);
+        return 16;
     }
 
     public static class TileEntityCoveredItemPipe<T extends ItemPipe<T>> extends TileEntityItemPipe<T> implements ITickablePipe {
