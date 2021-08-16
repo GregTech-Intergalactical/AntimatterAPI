@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.slot;
 
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -11,12 +12,12 @@ import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class AbstractSlot<T extends Slot & IAntimatterSlot> extends SlotItemHandler implements IAntimatterSlot {
+public class AbstractSlot<T extends Slot> extends SlotItemHandler {
     protected final int index;
     public final SlotType<T> type;
-    protected final TileEntityMachine<?> holder;
+    protected final IGuiHandler holder;
 
-    public AbstractSlot(SlotType<T> type, TileEntityMachine<?> tile, IItemHandler stackHandler, int index, int x, int y) {
+    public AbstractSlot(SlotType<T> type, IGuiHandler tile, IItemHandler stackHandler, int index, int x, int y) {
         super(stackHandler, index, x, y);
         this.index = index;
         this.type = type;

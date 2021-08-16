@@ -1,9 +1,8 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.gui.slot.IAntimatterSlot;
 import net.minecraft.inventory.container.Slot;
 
-public class SlotData<T extends Slot & IAntimatterSlot> {
+public class SlotData<T extends Slot> {
 
     private final SlotType<T> type;
     private final int x;

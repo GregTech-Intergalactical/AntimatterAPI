@@ -2,13 +2,17 @@ package muramasa.antimatter.gui.container;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.IWorldPosCallable;
+
+import java.util.Collections;
 
 public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
 
@@ -43,9 +47,9 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
 
     protected void addSlots(TileEntityMachine<?> tile) {
         Object2IntMap<String> slotIndexMap = new Object2IntOpenHashMap<>();
-        for (SlotData slot : tile.getMachineType().getSlots(tile.getMachineTier())){
+        for (SlotData<?> slot : tile.getMachineType().getSlots(tile.getMachineTier())){
             slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);
-            Slot supplier = slot.getType().getSlotSupplier().get(slot.getType(), tile, slotIndexMap.getInt(slot.getType().getId()), slot);
+            Slot supplier = slot.getType().getSlotSupplier().get((SlotType) slot.getType(), tile, tile.itemHandler.map(MachineItemHandler::getAll).orElse(null), slotIndexMap.getInt(slot.getType().getId()), (SlotData) slot);
             addSlot(supplier);
             slotIndexMap.compute(slot.getType().getId(), (k, v) -> v + 1);
         }

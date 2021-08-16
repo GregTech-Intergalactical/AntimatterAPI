@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.item;
 
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.ItemStack;
@@ -14,14 +15,14 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
     private final ContentEvent contentEvent;
     private final boolean output;
     private final boolean input;
-    private final BiPredicate<TileEntityMachine<?>,ItemStack> validator;
+    private final BiPredicate<IGuiHandler,ItemStack> validator;
     private final int limit;
 
-    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<TileEntityMachine<?>,ItemStack> validator, ContentEvent contentEvent) {
+    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler,ItemStack> validator, ContentEvent contentEvent) {
         this(tile, size, output, input, validator, contentEvent, 64);
     }
 
-    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<TileEntityMachine<?>,ItemStack> validator, ContentEvent contentEvent, int limit) {
+    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler,ItemStack> validator, ContentEvent contentEvent, int limit) {
         super(size);
         this.tile = tile;
         this.output = output;

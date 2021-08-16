@@ -112,7 +112,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         renderer.drawString(stack,"Cable average: " + instance.cableAverage, left, top+ 8, 16448255);
         renderer.drawString(stack,"Average extracted: " + ((double) instance.voltAverage)/20, left, top + 16, 16448255);
         renderer.drawString(stack,"Average inserted: " + ((double) (instance.voltAverage - instance.loss))/20, left, top + 24, 16448255);
-        renderer.drawString(stack,"Loss average: " + instance.loss/20, left, top + 32, 16448255);
+        renderer.drawString(stack,"Loss average: " + (double)instance.loss/20, left, top + 32, 16448255);
         return 40;
     }
 

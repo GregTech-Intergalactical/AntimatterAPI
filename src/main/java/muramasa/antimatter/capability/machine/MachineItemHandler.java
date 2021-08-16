@@ -53,6 +53,9 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         inventories.defaultReturnValue(new TrackedItemHandler<>(tile, 0, false, false, (a,b) -> false, null));
     }
 
+    public Map<SlotType<?>, IItemHandler> getAll() {
+        return (Map<SlotType<?>, IItemHandler>) (Object) inventories;
+    }
 
     @Override
     public void init() {
