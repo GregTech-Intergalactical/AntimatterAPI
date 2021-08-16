@@ -108,12 +108,12 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     public int drawInfo(InfoRenderWidget.TesseractGTWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
-        renderer.drawString(stack,"Amp average: " + instance.ampAverage, left, top+ 8, 16448255);
-        renderer.drawString(stack,"Cable average: " + instance.cableAverage, left, top+ 16, 16448255);
-        renderer.drawString(stack,"Average extracted: " + instance.voltAverage/20, left, top, 16448255);
-        renderer.drawString(stack,"Average inserted: " + (instance.voltAverage - instance.loss)/20, left, top, 16448255);
-        renderer.drawString(stack,"Loss average: " + instance.loss/20, left, top + 24, 16448255);
-        return 32;
+        renderer.drawString(stack,"Amp average: " + instance.ampAverage, left, top, 16448255);
+        renderer.drawString(stack,"Cable average: " + instance.cableAverage, left, top+ 8, 16448255);
+        renderer.drawString(stack,"Average extracted: " + ((double) instance.voltAverage)/20, left, top + 16, 16448255);
+        renderer.drawString(stack,"Average inserted: " + ((double) (instance.voltAverage - instance.loss))/20, left, top + 24, 16448255);
+        renderer.drawString(stack,"Loss average: " + instance.loss/20, left, top + 32, 16448255);
+        return 40;
     }
 
 
