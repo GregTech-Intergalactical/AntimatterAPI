@@ -77,6 +77,9 @@ def getEnv() {
     return s
 }
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.api.JavaVersion
+import org.gradle.api.tasks.compile.JavaCompile
+
 def getPathSeparator() {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         return ";"
@@ -201,6 +204,14 @@ dependencies {
     implementation fg.deobf("curse.maven:top-245211:${top_file}")
 }
 
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    def targetVersion = 8
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.release = targetVersion
+    }
+}
 
 // Example configuration to allow publishing using the maven-publish task
 // This is the preferred method to reobfuscate your jar file
