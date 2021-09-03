@@ -23,14 +23,14 @@ public class ItemMultiTextureBattery extends ItemBattery{
     @Override
     public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
         String id = this.getId();
-        ItemModelBuilder builders[] = new ItemModelBuilder[6];
-        for (int i = 0; i < 6; i++){
+        ItemModelBuilder builders[] = new ItemModelBuilder[8];
+        for (int i = 0; i < 8; i++){
             ItemModelBuilder builder = prov.getBuilder(id + i);
             builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation("minecraft","item/handheld")));
             builder.texture("layer0", new Texture(getDomain(), "item/basic/" + getId() + "/" + i));
             builders[i] = builder;
         }
 
-        prov.tex(item, "minecraft:item/handheld", new Texture(getDomain(), "item/basic/" + getId() + "/1")).override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.0F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"0"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.2F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"1"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.4F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"2"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.6F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"3"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.8F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"4"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 1.0F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"5")));
+        prov.tex(item, "minecraft:item/handheld", new Texture(getDomain(), "item/basic/" + getId() + "/1")).override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.0F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"0"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.01F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"1"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.173F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"2"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.336F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"3"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.499F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"4"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.662F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"5"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.825F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"6"))).end().override().predicate(new ResourceLocation(Ref.ID, "battery"), 0.99F).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"7")));
     }
 }
