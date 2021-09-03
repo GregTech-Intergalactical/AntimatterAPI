@@ -97,7 +97,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public Holder<MachineRecipeHandler, MachineRecipeHandler<T>> recipeHandler = new Holder<>(RECIPE_HANDLER_CAPABILITY, dispatch);
 
     /** Texture related areas. **/
-    public LazyValue<DynamicTexturer<TileEntityMachine, DynamicKey>> multiTexturer;
+    public LazyValue<DynamicTexturer<TileEntityMachine<?>, DynamicKey>> multiTexturer;
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());

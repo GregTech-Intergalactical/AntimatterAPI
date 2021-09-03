@@ -122,11 +122,11 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
     }
 
     default List<BakedQuad> transformQuads(BlockState state, List<BakedQuad> quads) {
-        if (state.getBlock() instanceof IColorHandler) {
+        /*if (state.getBlock() instanceof IColorHandler) {
             quads.forEach(t -> {
                 RenderHelper.colorQuad(t, ((IColorHandler)state.getBlock()).getBlockColor(state, null, null, t.getTintIndex()));
             });
-        }
+        }*/
         return quads;
     }
     /**

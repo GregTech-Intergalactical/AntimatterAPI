@@ -25,9 +25,8 @@ public class DynamicTexturers {
         t.source.setTextures((name, texture) -> t.model.textures.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
     });
 
-    public static final DynamicTextureProvider<TileEntityMachine, TileEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<TileEntityMachine, TileEntityMachine.DynamicKey>(t -> {
+    public static final DynamicTextureProvider<TileEntityMachine<?>, TileEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<TileEntityMachine<?>, TileEntityMachine.DynamicKey>(t -> {
         IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(), new SimpleModelTransform(Utils.getModelRotationCoverClient(Utils.dirFromState(t.state)).getRotation().inverse()), new ResourceLocation(t.source.getId()));
-        assert b != null;
         return b.getQuads(t.state, null, t.rand, t.data);
     }, t -> {
         t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(t.dir))));
