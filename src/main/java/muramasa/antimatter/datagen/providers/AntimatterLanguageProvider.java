@@ -115,6 +115,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         AntimatterAPI.all(DebugScannerItem.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemCover.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
+        AntimatterAPI.all(ItemMultiTextureBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(Machine.class, domain).forEach(i -> {
             Collection<Tier> tiers =  i.getTiers();
             if (i.has(MachineFlag.BASIC)) {
