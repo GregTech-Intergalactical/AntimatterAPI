@@ -8,6 +8,7 @@ import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
@@ -115,11 +116,11 @@ public class ButtonWidget extends Widget {
     }
 
     public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder((a,b)  -> new ButtonWidget(a,b, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Minecraft.getInstance().player.isCrouching() ? 1 : 0)))).clientSide();
+        return builder((a,b)  -> new ButtonWidget(a,b, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0)))).clientSide();
     }
 
     public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder(((a,b) -> new ButtonWidget(a,b, new ResourceLocation(a.handler.getDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Minecraft.getInstance().player.isCrouching() ? 1 : 0))))).clientSide();
+        return builder(((a,b) -> new ButtonWidget(a,b, new ResourceLocation(a.handler.getDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0))))).clientSide();
     }
 
 }
