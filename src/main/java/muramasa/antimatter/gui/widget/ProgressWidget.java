@@ -20,6 +20,7 @@ public class ProgressWidget extends Widget {
     private final int4 uv;
     private int progress = 0;
     private int maxProgress = 0;
+    private float percent = 0.0F;
 
     public ProgressWidget(GuiInstance instance, IGuiElement parent, int4 loc, BarDir dir, int x, int y, int width, int height, boolean barFill) {
         super(instance, parent);
@@ -35,6 +36,7 @@ public class ProgressWidget extends Widget {
     @Override
     public void init() {
         super.init();
+        gui.syncFloat(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F), i -> this.percent = i);
         gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getCurrentProgress).orElse(0), i -> this.progress = i);
         gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(rec -> rec.getActiveRecipe() == null ? 0 : rec.getActiveRecipe().getDuration()).orElse(0), i -> this.maxProgress = i);
     }
@@ -47,10 +49,9 @@ public class ProgressWidget extends Widget {
     public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         int progressTime;
         int x = this.realX(), y = this.realY(), xLocation = uv.x, yLocation = uv.y, length = uv.z, width = uv.w;
-        float progress = this.progress / (float) this.maxProgress;
         switch (direction){
             case TOP:
-                progressTime = (int) (uv.w * progress);
+                progressTime = (int) (uv.w * percent);
                 if (!barFill) {
                     progressTime = width - progressTime;
                 }
@@ -59,7 +60,7 @@ public class ProgressWidget extends Widget {
                 width = progressTime;
                 break;
             case LEFT:
-                progressTime = (int) (uv.z * progress);
+                progressTime = (int) (uv.z * percent);
                 if (barFill){
                     length = progressTime;
                 } else {
@@ -67,7 +68,7 @@ public class ProgressWidget extends Widget {
                 }
                 break;
             case BOTTOM:
-                progressTime = (int) (uv.w * progress);
+                progressTime = (int) (uv.w * percent);
                 if (barFill){
                     width = progressTime;
                 } else {
@@ -75,7 +76,7 @@ public class ProgressWidget extends Widget {
                 }
                 break;
             default:
-                progressTime = (int) (uv.z * progress);
+                progressTime = (int) (uv.z * percent);
                 if (!barFill) {
                     progressTime = length - progressTime;
                 }
@@ -84,7 +85,9 @@ public class ProgressWidget extends Widget {
                 length = progressTime;
                 break;
         }
-        drawTexture(matrixStack, gui.handler.getGuiTexture(), realX(), realY(), xLocation, yLocation, length, width);
+        if (progress > 0) {
+            drawTexture(matrixStack, gui.handler.getGuiTexture(), realX(), realY(), xLocation, yLocation, length, width);
+        }
     }
 
     @Override

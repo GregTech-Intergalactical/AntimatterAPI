@@ -5,7 +5,6 @@ import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
