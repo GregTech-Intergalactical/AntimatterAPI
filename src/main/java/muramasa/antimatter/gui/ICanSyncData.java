@@ -3,6 +3,7 @@ package muramasa.antimatter.gui;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fluids.FluidStack;
+import org.lwjgl.system.CallbackI;
 
 import java.util.function.*;
 
@@ -17,6 +18,9 @@ public interface ICanSyncData {
     }
     default void syncDouble(Supplier<Double> source, Consumer<Double> onChange) {
         bind(source,onChange,PacketBuffer::readDouble, PacketBuffer::writeDouble, Object::equals);
+    }
+    default void syncFloat(Supplier<Float> source, Consumer<Float> onChange) {
+        bind(source,onChange,PacketBuffer::readFloat, PacketBuffer::writeFloat, Object::equals);
     }
     default void syncString(Supplier<String> source, Consumer<String> onChange) {
         bind(source,onChange,a -> a.readString(32767), PacketBuffer::writeString, Object::equals);

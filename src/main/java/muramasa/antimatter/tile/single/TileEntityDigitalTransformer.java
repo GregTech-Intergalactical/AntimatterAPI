@@ -1,16 +1,22 @@
 package muramasa.antimatter.tile.single;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
+import muramasa.antimatter.gui.widget.WidgetSupplier;
+import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import tesseract.api.capability.TesseractGTCapability;
 
-public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer<T>> extends TileEntityTransformer<T> {
+public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer<T>> extends TileEntityTransformer<T> implements IInfoRenderer<TileEntityDigitalTransformer.DigitalTransformerWidget> {
 
     public TileEntityDigitalTransformer(Machine<?> type) {
         super(type, 0, (v) -> (8192L + v * 64L));
@@ -90,19 +96,39 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
             });
         }
     }
-/*
+
     @Override
-    public void drawInfo(GuiInstance instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+    public int drawInfo(DigitalTransformerWidget widget, MatrixStack stack, FontRenderer renderer, int left, int top) {
         renderer.drawString(stack,"Control Panel", left + 43, top + 21, 16448255);
-        renderer.drawString(stack,"VOLT: " + voltage, left + 43, top + 40, 16448255);
-        renderer.drawString(stack,"TIER: " + Tier.getTier(voltage < 0 ? -voltage : voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);
-        renderer.drawString(stack,"AMP: " + amperage, left + 43, top + 56, 16448255);
-        renderer.drawString(stack,"SUM: " + (long)(amperage * voltage), left + 43, top + 64, 16448255);
-    }*/
+        renderer.drawString(stack,"VOLT: " + widget.voltage, left + 43, top + 40, 16448255);
+        renderer.drawString(stack,"TIER: " + Tier.getTier(widget.voltage < 0 ? -widget.voltage : widget.voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);
+        renderer.drawString(stack,"AMP: " + widget.amperage, left + 43, top + 56, 16448255);
+        renderer.drawString(stack,"SUM: " + (long)(widget.amperage * widget.voltage), left + 43, top + 64, 16448255);
+        return 72;
+    }
 
     @Override
     public void addWidgets(GuiInstance instance, IGuiElement parent) {
         super.addWidgets(instance, parent);
-        instance.addWidget(InfoRenderWidget.build());
+        instance.addWidget(DigitalTransformerWidget.build());
+    }
+
+    public static class DigitalTransformerWidget extends InfoRenderWidget<DigitalTransformerWidget>{
+        public int amperage = 0, voltage = 0;
+        protected DigitalTransformerWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<DigitalTransformerWidget> renderer) {
+            super(gui, parent, renderer);
+        }
+
+        @Override
+        public void init() {
+            super.init();
+            TileEntityDigitalTransformer<?> m = (TileEntityDigitalTransformer<?>) gui.handler;
+            gui.syncInt(() -> m.amperage, i -> amperage = i);
+            gui.syncInt(() -> m.voltage, i -> voltage = i);
+        }
+
+        public static WidgetSupplier build() {
+            return builder((a,b) -> new DigitalTransformerWidget(a,b, (IInfoRenderer) a.handler));
+        }
     }
 }
