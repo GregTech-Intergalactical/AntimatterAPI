@@ -39,6 +39,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IGTNode;
 import tesseract.graph.Connectivity;
 
 import java.util.List;
@@ -70,7 +71,7 @@ public class RenderHelper {
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
         ItemModelsProperties.registerProperty(battery, new ResourceLocation(Ref.ID,"battery"), (stack, world, living) -> {
             LazyOptional<IEnergyHandler> handler = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
-            return handler.map(h -> (float)(h.getEnergy() /  h.getCapacity())).orElse(1.0F);
+            return handler.map(h -> ((float)h.getEnergy() /  (float)h.getCapacity())).orElse(1.0F);
         });
     }
 
