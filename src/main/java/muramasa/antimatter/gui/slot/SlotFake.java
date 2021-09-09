@@ -46,4 +46,13 @@ public class SlotFake extends AbstractSlot<SlotFake> {
     @Override
     public void onSlotChange(@Nonnull ItemStack p_75220_1_, @Nonnull ItemStack p_75220_2_) {
     }
+
+    @Override
+    public void putStack(@Nonnull ItemStack stack) {
+        super.putStack(stack);
+    }
+
+    public boolean isSettable() {
+        return settable;
+    }
 }
