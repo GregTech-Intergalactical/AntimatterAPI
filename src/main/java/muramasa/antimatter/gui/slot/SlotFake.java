@@ -1,8 +1,9 @@
 package muramasa.antimatter.gui.slot;
 
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -24,16 +25,25 @@ public class SlotFake extends AbstractSlot<SlotFake> {
 
     @Override
     public boolean canTakeStack(PlayerEntity playerIn) {
-        return false;
+        return settable;
+    }
+
+    @Override
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
+        if (settable){
+            return stack.getMaxStackSize();
+        }
+        return super.getItemStackLimit(stack);
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack decrStackSize(int amount) {
+        if (!settable || !(this.getItemHandler() instanceof FakeTrackedItemHandler)) return super.decrStackSize(amount);
+        return MachineItemHandler.extractFromInput(this.getItemHandler(), index, amount, false);
     }
 
     @Override
     public void onSlotChange(@Nonnull ItemStack p_75220_1_, @Nonnull ItemStack p_75220_2_) {
-    }
-
-    @Override
-    public void putStack(@Nonnull ItemStack stack) {
-        ItemStack stack1 = settable ? stack.copy() : stack;
-        super.putStack(stack1);
     }
 }

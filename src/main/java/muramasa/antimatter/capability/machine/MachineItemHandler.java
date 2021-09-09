@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
 import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotData;
@@ -47,7 +48,12 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
             for (Map.Entry<SlotType<?>, List<SlotData<?>>> entry : map.entrySet()) {
                 SlotType<?> type = entry.getKey();
                 int count = tile.getMachineType().getCount(tile.getMachineTier(), entry.getKey());
-                inventories.put(type, new TrackedItemHandler<>(tile, count, type.output, type.input, type.tester, type.ev));
+                if (type == SlotType.DISPLAY_SETTABLE){
+                    inventories.put(type, new FakeTrackedItemHandler<>(tile, count, type.output, type.input, type.tester, type.ev));
+                } else {
+                    inventories.put(type, new TrackedItemHandler<>(tile, count, type.output, type.input, type.tester, type.ev));
+                }
+
             }
         }
         inventories.defaultReturnValue(new TrackedItemHandler<>(tile, 0, false, false, (a,b) -> false, null));
