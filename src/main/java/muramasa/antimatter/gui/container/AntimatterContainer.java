@@ -5,6 +5,9 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.slot.SlotFake;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.crash.ReportedException;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ClickType;
@@ -13,6 +16,7 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -24,12 +28,14 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
     protected int invSize;
     public final GuiInstance handler;
     public final Set<IContainerListener> listeners = new ObjectOpenHashSet<>();
+    private final ContainerType<?> containerType;
 
     public AntimatterContainer(IGuiHandler handler, ContainerType<?> containerType, int windowId, PlayerInventory playerInv, int invSize) {
         super(containerType, windowId);
         this.playerInv = playerInv;
         this.invSize = invSize;
         this.handler = new GuiInstance(handler, this, handler.isRemote());
+        this.containerType = containerType;
     }
 
     @Override
@@ -62,139 +68,140 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
         source().update();
     }
 
-    public ItemStack func_241440_b_(int slotID, int clickedButton, ClickType clickType, PlayerEntity playerEntity){
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        if (slotId > 0 && this.getSlot(slotId) instanceof SlotFake && ((SlotFake)this.getSlot(slotId)).isSettable()){
+            try {
+                return this.clickSlot(slotId, dragType, clickTypeIn, player);
+            } catch (Exception exception) {
+                CrashReport crashreport = CrashReport.makeCrashReport(exception, "Container click");
+                CrashReportCategory crashreportcategory = crashreport.makeCategory("Click info");
+                crashreportcategory.addDetail("Menu Type", () -> {
+                    return this.containerType != null ? Registry.MENU.getKey(this.containerType).toString() : "<no type>";
+                });
+                crashreportcategory.addDetail("Menu Class", () -> {
+                    return this.getClass().getCanonicalName();
+                });
+                crashreportcategory.addDetail("Slot Count", this.inventorySlots.size());
+                crashreportcategory.addDetail("Slot", slotId);
+                crashreportcategory.addDetail("Button", dragType);
+                crashreportcategory.addDetail("Type", clickTypeIn);
+                throw new ReportedException(crashreport);
+            }
+        }
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
+    }
+
+    public ItemStack clickSlot(int slotID, int clickedButton, ClickType clickType, PlayerEntity playerEntity){
         PlayerInventory playerinventory = playerEntity.inventory;
-        ItemStack itemstack = ItemStack.EMPTY;
-        if ((clickType == ClickType.PICKUP || clickType == ClickType.QUICK_MOVE) && (clickedButton == 0 || clickedButton == 1)) {
-            if (clickType == ClickType.QUICK_MOVE) {
-                if (slotID < 0) {
-                    return ItemStack.EMPTY;
-                }
-
-                Slot slot5 = this.inventorySlots.get(slotID);
-                if (slot5 == null || !slot5.canTakeStack(playerEntity)) {
-                    return ItemStack.EMPTY;
-                }
-
-                if (!(slot5 instanceof SlotFake) || !((SlotFake)slot5).isSettable()){
-                    return super.func_241440_b_(slotID, clickedButton, clickType, playerEntity);
-                }
-
-                for(ItemStack itemstack8 = this.transferStackInSlot(playerEntity, slotID); !itemstack8.isEmpty() && ItemStack.areItemsEqual(slot5.getStack(), itemstack8); itemstack8 = this.transferStackInSlot(playerEntity, slotID)) {
-                    itemstack = itemstack8.copy();
-                }
-            } else {
-                if (slotID < 0) {
-                    return ItemStack.EMPTY;
-                }
-
-                Slot slot6 = this.inventorySlots.get(slotID);
-
-                if (!(slot6 instanceof SlotFake) || !((SlotFake)slot6).isSettable()){
-                    return super.func_241440_b_(slotID, clickedButton, clickType, playerEntity);
-                }
-                ItemStack itemstack9 = slot6.getStack();
-                ItemStack itemstack11 = playerinventory.getItemStack();
-                if (!itemstack9.isEmpty()) {
-                    itemstack = itemstack9.copy();
-                }
-
-                if (itemstack9.isEmpty()) {
-                    if (!itemstack11.isEmpty() && slot6.isItemValid(itemstack11)) {
-                        int j2 = clickedButton == 0 ? itemstack11.getCount() : 1;
-                        if (j2 > slot6.getItemStackLimit(itemstack11)) {
-                            j2 = slot6.getItemStackLimit(itemstack11);
-                        }
-
-                        slot6.putStack(itemstack11.split(j2));
-                    }
-                } else if (slot6.canTakeStack(playerEntity)) {
-                    if (itemstack11.isEmpty()) {
-                        if (itemstack9.isEmpty()) {
-                            slot6.putStack(ItemStack.EMPTY);
-                            playerinventory.setItemStack(ItemStack.EMPTY);
-                        } else {
-                            int k2 = clickedButton == 0 ? itemstack9.getCount() : (itemstack9.getCount() + 1) / 2;
-                            playerinventory.setItemStack(slot6.decrStackSize(k2));
-                            if (itemstack9.isEmpty()) {
-                                slot6.putStack(ItemStack.EMPTY);
-                            }
-
-                            slot6.onTake(playerEntity, playerinventory.getItemStack());
-                        }
-                    } else if (slot6.isItemValid(itemstack11)) {
-                        if (areItemsAndTagsEqual(itemstack9, itemstack11)) {
-                            int l2 = clickedButton == 0 ? itemstack11.getCount() : 1;
-                            if (l2 > slot6.getItemStackLimit(itemstack11) - itemstack9.getCount()) {
-                                l2 = slot6.getItemStackLimit(itemstack11) - itemstack9.getCount();
-                            }
-
-                            if (l2 > itemstack11.getMaxStackSize() - itemstack9.getCount()) {
-                                l2 = itemstack11.getMaxStackSize() - itemstack9.getCount();
-                            }
-
-                            itemstack11.shrink(l2);
-                            itemstack9.grow(l2);
-                        } else if (itemstack11.getCount() <= slot6.getItemStackLimit(itemstack11)) {
-                            slot6.putStack(itemstack11);
-                            playerinventory.setItemStack(itemstack9);
-                        }
-                    } else if (itemstack11.getMaxStackSize() > 1 && areItemsAndTagsEqual(itemstack9, itemstack11) && !itemstack9.isEmpty()) {
-                        int i3 = itemstack9.getCount();
-                        if (i3 + itemstack11.getCount() <= itemstack11.getMaxStackSize()) {
-                            itemstack11.grow(i3);
-                            itemstack9 = slot6.decrStackSize(i3);
-                            if (itemstack9.isEmpty()) {
-                                slot6.putStack(ItemStack.EMPTY);
-                            }
-
-                            slot6.onTake(playerEntity, playerinventory.getItemStack());
-                        }
-                    }
-                }
-
-                slot6.onSlotChanged();
-                return itemstack;
+        ItemStack itemstack = playerinventory.getItemStack().copy();
+        if (clickType == ClickType.PICKUP && (clickedButton == 0 || clickedButton == 1)) {
+            if (slotID < 0) {
+                return ItemStack.EMPTY;
             }
-        } /*else if (clickType == ClickType.SWAP) {
-            Slot slot = this.inventorySlots.get(slotID);
-            ItemStack itemstack1 = playerinventory.getStackInSlot(clickedButton);
-            ItemStack itemstack2 = slot.getStack();
-            if (!itemstack1.isEmpty() || !itemstack2.isEmpty()) {
-                if (itemstack1.isEmpty()) {
-                    if (slot.canTakeStack(playerEntity)) {
-                        playerinventory.setInventorySlotContents(clickedButton, itemstack2);
-                        slot.onSwapCraft(itemstack2.getCount());
-                        slot.putStack(ItemStack.EMPTY);
-                        slot.onTake(playerEntity, itemstack2);
+
+            Slot slot6 = this.inventorySlots.get(slotID);
+
+            ItemStack slotStack = slot6.getStack();
+            ItemStack heldStack = playerinventory.getItemStack().copy();
+            if (!slotStack.isEmpty()) {
+                itemstack = slotStack.copy();
+            }
+
+            if (slotStack.isEmpty()) {
+                if (!heldStack.isEmpty() && slot6.isItemValid(heldStack)) {
+                    int j2 = clickedButton == 0 ? heldStack.getCount() : 1;
+                    if (j2 > slot6.getItemStackLimit(heldStack)) {
+                        j2 = slot6.getItemStackLimit(heldStack);
                     }
-                } else if (itemstack2.isEmpty()) {
-                    if (slot.isItemValid(itemstack1)) {
-                        int i = slot.getItemStackLimit(itemstack1);
-                        if (itemstack1.getCount() > i) {
-                            slot.putStack(itemstack1.split(i));
-                        } else {
-                            slot.putStack(itemstack1);
-                            playerinventory.setInventorySlotContents(clickedButton, ItemStack.EMPTY);
-                        }
-                    }
-                } else if (slot.canTakeStack(playerEntity) && slot.isItemValid(itemstack1)) {
-                    int l1 = slot.getItemStackLimit(itemstack1);
-                    if (itemstack1.getCount() > l1) {
-                        slot.putStack(itemstack1.split(l1));
-                        slot.onTake(playerEntity, itemstack2);
-                        if (!playerinventory.addItemStackToInventory(itemstack2)) {
-                            playerEntity.dropItem(itemstack2, true);
-                        }
+
+                    slot6.putStack(heldStack.split(j2));
+                }
+            } else if (slot6.canTakeStack(playerEntity)) {
+                if (heldStack.isEmpty()) {
+                    if (slotStack.isEmpty()) {
+                        slot6.putStack(ItemStack.EMPTY);
+                        playerinventory.setItemStack(ItemStack.EMPTY);
                     } else {
-                        slot.putStack(itemstack1);
-                        playerinventory.setInventorySlotContents(clickedButton, itemstack2);
-                        slot.onTake(playerEntity, itemstack2);
+                        int k2 = clickedButton == 0 ? slotStack.getCount() : (slotStack.getCount() + 1) / 2;
+                        playerinventory.setItemStack(slot6.decrStackSize(k2));
+                        if (slotStack.isEmpty()) {
+                            slot6.putStack(ItemStack.EMPTY);
+                        }
+
+                        slot6.onTake(playerEntity, playerinventory.getItemStack());
+                    }
+                } else if (slot6.isItemValid(heldStack)) {
+                    if (areItemsAndTagsEqual(slotStack, heldStack)) {
+                        int l2 = clickedButton == 0 ? heldStack.getCount() : 1;
+                        if (l2 > slot6.getItemStackLimit(heldStack) - slotStack.getCount()) {
+                            l2 = slot6.getItemStackLimit(heldStack) - slotStack.getCount();
+                        }
+
+                        if (l2 > heldStack.getMaxStackSize() - slotStack.getCount()) {
+                            l2 = heldStack.getMaxStackSize() - slotStack.getCount();
+                        }
+
+                        heldStack.shrink(l2);
+                        slotStack.grow(l2);
+                    } else if (heldStack.getCount() <= slot6.getItemStackLimit(heldStack)) {
+                        slot6.putStack(heldStack);
+                        playerinventory.setItemStack(slotStack);
+                    }
+                } else if (heldStack.getMaxStackSize() > 1 && areItemsAndTagsEqual(slotStack, heldStack) && !slotStack.isEmpty()) {
+                    int i3 = slotStack.getCount();
+                    if (i3 + heldStack.getCount() <= heldStack.getMaxStackSize()) {
+                        heldStack.grow(i3);
+                        slotStack = slot6.decrStackSize(i3);
+                        if (slotStack.isEmpty()) {
+                            slot6.putStack(ItemStack.EMPTY);
+                        }
+
+                        slot6.onTake(playerEntity, playerinventory.getItemStack());
                     }
                 }
             }
-        }*/
-        return super.func_241440_b_(slotID, clickedButton, clickType, playerEntity);
+
+            slot6.onSlotChanged();
+        } else if (clickType == ClickType.SWAP) {
+            Slot slot = this.inventorySlots.get(slotID);
+            ItemStack playerStack = playerinventory.getStackInSlot(clickedButton).copy();
+            ItemStack slotStack = slot.getStack();
+            if (!playerStack.isEmpty() || !slotStack.isEmpty()) {
+                if (playerStack.isEmpty()) {
+                    if (slot.canTakeStack(playerEntity)) {
+                        //playerinventory.setInventorySlotContents(clickedButton, slotStack);
+                        //slot.onSwapCraft(slotStack.getCount());
+                        slot.putStack(ItemStack.EMPTY);
+                        slot.onTake(playerEntity, slotStack);
+                    }
+                } else if (slotStack.isEmpty()) {
+                    if (slot.isItemValid(playerStack)) {
+                        int i = slot.getItemStackLimit(playerStack);
+                        if (playerStack.getCount() > i) {
+                            slot.putStack(playerStack.split(i));
+                        } else {
+                            slot.putStack(playerStack);
+                            //playerinventory.setInventorySlotContents(clickedButton, ItemStack.EMPTY);
+                        }
+                    }
+                } else if (slot.canTakeStack(playerEntity) && slot.isItemValid(playerStack)) {
+                    int l1 = slot.getItemStackLimit(playerStack);
+                    if (playerStack.getCount() > l1) {
+                        slot.putStack(playerStack.split(l1));
+                        slot.onTake(playerEntity, slotStack);
+                        /*if (!playerinventory.addItemStackToInventory(slotStack)) {
+                            playerEntity.dropItem(slotStack, true);
+                        }*/
+                    } else {
+                        slot.putStack(playerStack);
+                        playerinventory.setInventorySlotContents(clickedButton, slotStack);
+                        slot.onTake(playerEntity, slotStack);
+                    }
+                }
+            }
+        }
+        return itemstack;
+        //return super.func_241440_b_(slotID, clickedButton, clickType, playerEntity);
     }
 
     @Override
@@ -246,7 +253,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                 }
 
                 Slot slot = this.inventorySlots.get(i);
-                if (!slot.isItemValid(stack))
+                if (!slot.isItemValid(stack) || slot instanceof SlotFake)
                     break;
                 ItemStack itemstack = slot.getStack();
                 if (!itemstack.isEmpty() && areItemsAndTagsEqual(stack, itemstack)) {
