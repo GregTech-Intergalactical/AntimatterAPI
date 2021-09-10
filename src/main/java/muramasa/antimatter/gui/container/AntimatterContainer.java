@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.slot.SlotFake;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.crash.ReportedException;
@@ -94,7 +95,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
     public ItemStack clickSlot(int slotID, int clickedButton, ClickType clickType, PlayerEntity playerEntity){
         PlayerInventory playerinventory = playerEntity.inventory;
         ItemStack itemstack = playerinventory.getItemStack().copy();
-        if (clickType == ClickType.PICKUP && (clickedButton == 0 || clickedButton == 1)) {
+        if ((clickType == ClickType.PICKUP || clickType == ClickType.SWAP) && (clickedButton == 0 || clickedButton == 1)) {
             if (slotID < 0) {
                 return ItemStack.EMPTY;
             }
@@ -106,99 +107,8 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
             if (!slotStack.isEmpty()) {
                 itemstack = slotStack.copy();
             }
-
-            if (slotStack.isEmpty()) {
-                if (!heldStack.isEmpty() && slot6.isItemValid(heldStack)) {
-                    int j2 = clickedButton == 0 ? heldStack.getCount() : 1;
-                    if (j2 > slot6.getItemStackLimit(heldStack)) {
-                        j2 = slot6.getItemStackLimit(heldStack);
-                    }
-
-                    slot6.putStack(heldStack.split(j2));
-                }
-            } else if (slot6.canTakeStack(playerEntity)) {
-                if (heldStack.isEmpty()) {
-                    if (slotStack.isEmpty()) {
-                        slot6.putStack(ItemStack.EMPTY);
-                        playerinventory.setItemStack(ItemStack.EMPTY);
-                    } else {
-                        int k2 = clickedButton == 0 ? slotStack.getCount() : (slotStack.getCount() + 1) / 2;
-                        playerinventory.setItemStack(slot6.decrStackSize(k2));
-                        if (slotStack.isEmpty()) {
-                            slot6.putStack(ItemStack.EMPTY);
-                        }
-
-                        slot6.onTake(playerEntity, playerinventory.getItemStack());
-                    }
-                } else if (slot6.isItemValid(heldStack)) {
-                    if (areItemsAndTagsEqual(slotStack, heldStack)) {
-                        int l2 = clickedButton == 0 ? heldStack.getCount() : 1;
-                        if (l2 > slot6.getItemStackLimit(heldStack) - slotStack.getCount()) {
-                            l2 = slot6.getItemStackLimit(heldStack) - slotStack.getCount();
-                        }
-
-                        if (l2 > heldStack.getMaxStackSize() - slotStack.getCount()) {
-                            l2 = heldStack.getMaxStackSize() - slotStack.getCount();
-                        }
-
-                        heldStack.shrink(l2);
-                        slotStack.grow(l2);
-                    } else if (heldStack.getCount() <= slot6.getItemStackLimit(heldStack)) {
-                        slot6.putStack(heldStack);
-                        playerinventory.setItemStack(slotStack);
-                    }
-                } else if (heldStack.getMaxStackSize() > 1 && areItemsAndTagsEqual(slotStack, heldStack) && !slotStack.isEmpty()) {
-                    int i3 = slotStack.getCount();
-                    if (i3 + heldStack.getCount() <= heldStack.getMaxStackSize()) {
-                        heldStack.grow(i3);
-                        slotStack = slot6.decrStackSize(i3);
-                        if (slotStack.isEmpty()) {
-                            slot6.putStack(ItemStack.EMPTY);
-                        }
-
-                        slot6.onTake(playerEntity, playerinventory.getItemStack());
-                    }
-                }
-            }
-
+            slot6.putStack(heldStack.isEmpty() ? ItemStack.EMPTY : Utils.ca(slot6.getItemStackLimit(heldStack), heldStack));
             slot6.onSlotChanged();
-        } else if (clickType == ClickType.SWAP) {
-            Slot slot = this.inventorySlots.get(slotID);
-            ItemStack playerStack = playerinventory.getStackInSlot(clickedButton).copy();
-            ItemStack slotStack = slot.getStack();
-            if (!playerStack.isEmpty() || !slotStack.isEmpty()) {
-                if (playerStack.isEmpty()) {
-                    if (slot.canTakeStack(playerEntity)) {
-                        //playerinventory.setInventorySlotContents(clickedButton, slotStack);
-                        //slot.onSwapCraft(slotStack.getCount());
-                        slot.putStack(ItemStack.EMPTY);
-                        slot.onTake(playerEntity, slotStack);
-                    }
-                } else if (slotStack.isEmpty()) {
-                    if (slot.isItemValid(playerStack)) {
-                        int i = slot.getItemStackLimit(playerStack);
-                        if (playerStack.getCount() > i) {
-                            slot.putStack(playerStack.split(i));
-                        } else {
-                            slot.putStack(playerStack);
-                            //playerinventory.setInventorySlotContents(clickedButton, ItemStack.EMPTY);
-                        }
-                    }
-                } else if (slot.canTakeStack(playerEntity) && slot.isItemValid(playerStack)) {
-                    int l1 = slot.getItemStackLimit(playerStack);
-                    if (playerStack.getCount() > l1) {
-                        slot.putStack(playerStack.split(l1));
-                        slot.onTake(playerEntity, slotStack);
-                        /*if (!playerinventory.addItemStackToInventory(slotStack)) {
-                            playerEntity.dropItem(slotStack, true);
-                        }*/
-                    } else {
-                        slot.putStack(playerStack);
-                        playerinventory.setInventorySlotContents(clickedButton, slotStack);
-                        slot.onTake(playerEntity, slotStack);
-                    }
-                }
-            }
         }
         return itemstack;
         //return super.func_241440_b_(slotID, clickedButton, clickType, playerEntity);

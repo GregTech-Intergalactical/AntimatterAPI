@@ -31,7 +31,7 @@ public class SlotFake extends AbstractSlot<SlotFake> {
     @Override
     public int getItemStackLimit(@Nonnull ItemStack stack) {
         if (settable){
-            return stack.getMaxStackSize();
+            return 1;
         }
         return super.getItemStackLimit(stack);
     }
