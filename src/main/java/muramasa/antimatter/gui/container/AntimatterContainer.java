@@ -69,7 +69,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
     }
 
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        if (slotId > 0 && this.getSlot(slotId) instanceof SlotFake && ((SlotFake)this.getSlot(slotId)).isSettable()){
+        if (slotId >= 0 && this.getSlot(slotId) instanceof SlotFake && ((SlotFake)this.getSlot(slotId)).isSettable()){
             try {
                 return this.clickSlot(slotId, dragType, clickTypeIn, player);
             } catch (Exception exception) {
