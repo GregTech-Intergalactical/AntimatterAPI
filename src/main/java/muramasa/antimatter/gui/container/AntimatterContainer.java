@@ -210,19 +210,19 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
         Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
+            ItemStack slotStack = slot.getStack();
+            itemstack = slotStack.copy();
 
             if (index < invSize) {
-                if (!this.mergeItemStack(itemstack1, invSize, this.inventorySlots.size(), true)) {
+                if (!this.mergeItemStack(slotStack, invSize, this.inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
             }
-            else if (!this.mergeItemStack(itemstack1, 0, invSize, false)) {
+            else if (!this.mergeItemStack(slotStack, 0, invSize, false)) {
                 return ItemStack.EMPTY;
             }
 
-            if (itemstack1.getCount() == 0) {
+            if (slotStack.getCount() == 0) {
                 slot.putStack(ItemStack.EMPTY);
             }
             else {
@@ -253,10 +253,12 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                 }
 
                 Slot slot = this.inventorySlots.get(i);
-                if (!slot.isItemValid(stack) || slot instanceof SlotFake)
-                    break;
+                boolean continueLoop = false;
+                if (slot instanceof SlotFake || !slot.isItemValid(stack)){
+                    continueLoop = true;
+                }
                 ItemStack itemstack = slot.getStack();
-                if (!itemstack.isEmpty() && areItemsAndTagsEqual(stack, itemstack)) {
+                if (!continueLoop && !itemstack.isEmpty() && areItemsAndTagsEqual(stack, itemstack)) {
                     int j = itemstack.getCount() + stack.getCount();
                     int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
                     if (j <= maxSize) {
@@ -304,8 +306,12 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                 }
 
                 Slot slot1 = this.inventorySlots.get(i);
+                boolean continueLoop = false;
+                if (slot1 instanceof SlotFake){
+                    continueLoop = true;
+                }
                 ItemStack itemstack1 = slot1.getStack();
-                if (itemstack1.isEmpty() && slot1.isItemValid(stack)) {
+                if (!continueLoop && itemstack1.isEmpty() && slot1.isItemValid(stack)) {
                     if (stack.getCount() > slot1.getSlotStackLimit()) {
                         slot1.putStack(stack.split(slot1.getSlotStackLimit()));
                     } else {
