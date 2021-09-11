@@ -311,7 +311,8 @@ public class Utils {
         return matchCount >= a.length;
     }
 
-    public static void transferItems(IItemHandler from, IItemHandler to, boolean once) {
+    public static boolean transferItems(IItemHandler from, IItemHandler to, boolean once) {
+        boolean successful = false;
         for (int i = 0; i < from.getSlots(); i++) {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
             if (toInsert.isEmpty()) {
@@ -323,9 +324,11 @@ public class Utils {
                 toInsert.setCount(toInsert.getCount()-inserted.getCount());
                 ItemHandlerHelper.insertItem(to, toInsert, false);
                 from.extractItem(i, actual, false);
+                if (!successful) successful = true;
                 if (once) break;
             }
         }
+        return successful;
     }
 
     /**
