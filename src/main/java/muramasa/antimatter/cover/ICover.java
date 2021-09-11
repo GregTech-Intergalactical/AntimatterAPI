@@ -69,6 +69,14 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
         return true;
     }
 
+    default int getWeakPower(CoverStack<?> instance, Direction side){
+        return 0;
+    }
+
+    default int getStrongPower(CoverStack<?> instance, Direction side){
+        return 0;
+    }
+
     /**
      * Fires once per Side. Return defines whether or not to consume the interaction.
      **/

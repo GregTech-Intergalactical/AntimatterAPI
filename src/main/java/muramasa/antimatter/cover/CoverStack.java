@@ -106,6 +106,14 @@ public class CoverStack<T extends TileEntity> implements INamedContainerProvider
         cover.onGuiEvent(this, event, player, data);
     }
 
+    public int getWeakPower(Direction side){
+        return cover.getWeakPower(this, side);
+    }
+
+    public int getStrongPower(Direction side){
+        return cover.getStrongPower(this, side);
+    }
+
     @Override
     public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
        return new CoverGuiEventPacket(event, this.getTile().getPos(),this.getFacing(), data);

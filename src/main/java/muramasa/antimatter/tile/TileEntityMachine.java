@@ -274,6 +274,20 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getMachineType().has(flag);
     }
 
+    public int getWeakRedstonePower(Direction facing){
+        if (facing != null && !this.getCover(facing).isEmpty()){
+            return this.getCover(facing).getWeakPower(facing);
+        }
+        return 0;
+    }
+
+    public int getStrongRedstonePower(Direction facing){
+        if (facing != null && !this.getCover(facing).isEmpty()){
+            return this.getCover(facing).getStrongPower(facing);
+        }
+        return 0;
+    }
+
     public Direction getFacing() {
         if (this.world == null) return Direction.NORTH;
         BlockState state = getBlockState();

@@ -459,4 +459,24 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
             }
         }
     }
+
+    @Override
+    public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+        TileEntity entity = blockAccess.getTileEntity(pos);
+        if (entity instanceof TileEntityMachine){
+            TileEntityMachine<?> machine = (TileEntityMachine<?>) entity;
+            return machine.getWeakRedstonePower(side);
+        }
+        return super.getWeakPower(blockState, blockAccess, pos, side);
+    }
+
+    @Override
+    public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+        TileEntity entity = blockAccess.getTileEntity(pos);
+        if (entity instanceof TileEntityMachine){
+            TileEntityMachine<?> machine = (TileEntityMachine<?>) entity;
+            return machine.getStrongRedstonePower(side);
+        }
+        return super.getStrongPower(blockState, blockAccess, pos, side);
+    }
 }
