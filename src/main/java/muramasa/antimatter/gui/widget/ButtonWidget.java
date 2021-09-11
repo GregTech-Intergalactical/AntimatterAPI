@@ -17,19 +17,19 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ButtonWidget extends Widget {
-    private final ResourceLocation res;
+    protected final ResourceLocation res;
     @Nullable
-    private final ResourceLocation bodyLoc;
+    protected final ResourceLocation bodyLoc;
     @Nullable
-    private final int4 resLoc;
+    protected final int4 resLoc;
     @Nullable
-    private final ButtonBody body;
+    protected final ButtonBody body;
     @Nullable
-    private final ButtonOverlay overlay;
+    protected final ButtonOverlay overlay;
     @Nullable
     protected String message;
-    private Function<ButtonWidget, Boolean> activeHandler;
-    private Consumer<ButtonWidget> onPress;
+    protected Function<ButtonWidget, Boolean> activeHandler;
+    protected Consumer<ButtonWidget> onPress;
     protected boolean pressed = false;
 
     public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ButtonBody body, @Nullable ButtonOverlay overlay, @Nullable Consumer<ButtonWidget> onPress) {
