@@ -165,7 +165,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
             get();
         }
         if (side == null) {
-            return nullSide().cast();
+            return resolved.forNullSide();
         }
         LazyOptional<? extends V> t = sided[side.getIndex()];
         if (!t.isPresent()) {

@@ -94,6 +94,11 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     }
 
     @Override
+    public LazyOptional<? extends ICoverHandler> forNullSide() {
+        return LazyOptional.of(() -> this);
+    }
+
+    @Override
     public void refresh() {
 
     }

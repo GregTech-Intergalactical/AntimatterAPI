@@ -48,7 +48,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
             for (Map.Entry<SlotType<?>, List<SlotData<?>>> entry : map.entrySet()) {
                 SlotType<?> type = entry.getKey();
                 int count = tile.getMachineType().getCount(tile.getMachineTier(), entry.getKey());
-                if (type == SlotType.DISPLAY_SETTABLE){
+                if (type == SlotType.DISPLAY_SETTABLE || type == SlotType.DISPLAY){
                     inventories.put(type, new FakeTrackedItemHandler<>(tile, count, type.output, type.input, type.tester, type.ev));
                 } else {
                     inventories.put(type, new TrackedItemHandler<>(tile, count, type.output, type.input, type.tester, type.ev));
@@ -357,6 +357,11 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     @Override
     public LazyOptional<IItemHandler> forSide(Direction side) {
         return LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0])));
+    }
+
+    @Override
+    public LazyOptional<? extends IItemHandler> forNullSide() {
+        return LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
     }
 
     @Override

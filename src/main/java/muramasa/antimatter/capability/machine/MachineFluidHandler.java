@@ -223,6 +223,11 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     }
 
     @Override
+    public LazyOptional<? extends IFluidHandler> forNullSide() {
+        return LazyOptional.of(() -> this);
+    }
+
+    @Override
     public void refresh() {
         Tesseract.FLUID.refreshNode(tile.getWorld(), tile.getPos().toLong());
     }

@@ -370,7 +370,8 @@ public class Utils {
         return false;
     }
 
-    public static void transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
+    public static boolean transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
+        boolean successful = false;
         for (int i = 0; i < to.getTanks(); i++) {
             //if (i >= from.getTanks()) break;
             FluidStack toInsert = FluidStack.EMPTY;
@@ -391,13 +392,15 @@ public class Utils {
                 if (filled > 0) {
                     toInsert.setAmount(filled);
                     to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
+                    successful = true;
                 }
             }
         }
+        return successful;
     }
 
-    public static void transferFluids(IFluidHandler from, IFluidHandler to) {
-        transferFluids(from,to,-1);
+    public static boolean transferFluids(IFluidHandler from, IFluidHandler to) {
+        return transferFluids(from,to,-1);
     }
 
     /**

@@ -221,6 +221,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     @Override
+    public LazyOptional<? extends IEnergyHandler> forNullSide() {
+        return LazyOptional.of(() -> this);
+    }
+
+    @Override
     public void refresh() {
         Tesseract.GT_ENERGY.refreshNode(tile.getWorld(), tile.getPos().toLong());
     }

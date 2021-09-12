@@ -22,31 +22,6 @@ public class FakeTrackedItemHandler<T extends TileEntityMachine<T>> extends Trac
         return ItemStack.EMPTY;
     }
 
-    @Nonnull
-    public ItemStack insertItemFromGui(int slot, @Nonnull ItemStack stack, boolean simulate){
-        if (stack.isEmpty())
-            return ItemStack.EMPTY;
-
-        if (!isItemValid(slot, stack))
-            return stack;
-
-        validateSlotIndex(slot);
-
-        ItemStack copy = stack.copy();
-
-        int limit = getStackLimit(slot, copy);
-
-        boolean reachedLimit = copy.getCount() > limit;
-
-        if (!simulate)
-        {
-            this.stacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(copy, limit) : copy);
-            onContentsChanged(slot);
-        }
-
-        return stack;
-    }
-
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         super.setStackInSlot(slot, stack.copy());
