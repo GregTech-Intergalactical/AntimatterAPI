@@ -25,6 +25,7 @@ import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.ItemTagsProvider;
+import net.minecraft.data.TagsProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
@@ -51,7 +52,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, BlockTagsProvider p, ExistingFileHelperOverride fh) {
-        super(gen, p, "antimatter", fh);
+        super(gen, p, providerDomain, fh);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
@@ -120,14 +121,16 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             this.copy(getForgeBlockTag(name), getForgeItemTag(name));
         });
         AntimatterAPI.all(MaterialItem.class,domain, item -> {
-            this.getOrCreateBuilder(item.getType().getTag()).add(item).replace(replace);
-            this.getOrCreateBuilder(item.getTag()).add(item).replace(replace).replace(replace);
+            ITag.INamedTag<Item> type = item.getType().getTag();
+            TagsProvider.Builder<Item> provider = this.getOrCreateBuilder(type);
+            provider.add(item).replace(replace);
+            this.getOrCreateBuilder(item.getTag()).add(item).replace(replace);
             //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
         });
         AntimatterAPI.all(MaterialType.class, domain, t -> {
             t.getOVERRIDES().forEach((m, i) -> {
-                this.getOrCreateBuilder(t.getMaterialTag((Material) m)).add(i);
-                this.getOrCreateBuilder(t.getTag()).add(i);
+                this.getOrCreateBuilder(t.getMaterialTag((Material) m)).add(i).replace(replace);
+                this.getOrCreateBuilder(t.getTag()).add(i).replace(replace);
             });
         });
         AntimatterAPI.all(IAntimatterTool.class,domain, tool -> {

@@ -39,7 +39,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, ExistingFileHelper helper) {
-        super(gen, "antimatter", helper);
+        super(gen, providerDomain, helper);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
