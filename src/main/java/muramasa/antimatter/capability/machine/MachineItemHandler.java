@@ -9,6 +9,8 @@ import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
 import muramasa.antimatter.capability.item.ITrackedHandler;
+import muramasa.antimatter.capability.item.ROCombinedInvWrapper;
+import muramasa.antimatter.capability.item.SidedCombinedInvWrapper;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
@@ -356,12 +358,12 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     @Override
     public LazyOptional<IItemHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().toArray(new IItemHandlerModifiable[0])));
+        return LazyOptional.of(() -> new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().toArray(new IItemHandlerModifiable[0])));
     }
 
     @Override
     public LazyOptional<? extends IItemHandler> forNullSide() {
-        return LazyOptional.of(() -> new CombinedInvWrapper(this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
+        return LazyOptional.of(() -> new ROCombinedInvWrapper(this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
     }
 
     @Override

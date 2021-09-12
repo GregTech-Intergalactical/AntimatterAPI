@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.fluid;
 
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.FluidHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -10,13 +11,13 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
-public class FluidHandlerSidedWrapper<T extends TileEntity> implements IFluidHandler {
+public class FluidHandlerSidedWrapper implements IFluidHandler {
     protected FluidHandler<?> fluidHandler;
-    protected T tile;
     protected Direction side;
-    public FluidHandlerSidedWrapper(FluidHandler<?> fluidHandler, T tile, Direction side){
+    CoverHandler<?> coverHandler;
+    public FluidHandlerSidedWrapper(FluidHandler<?> fluidHandler, CoverHandler<?> coverHandler, Direction side){
         this.fluidHandler = fluidHandler;
-        this.tile = tile;
+        this.coverHandler = coverHandler;
         this.side = side;
     }
 
@@ -43,7 +44,10 @@ public class FluidHandlerSidedWrapper<T extends TileEntity> implements IFluidHan
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, side).map(c -> c.get(side).getCover().blocksInput(c.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)).orElse(false)){
+        if (coverHandler != null && coverHandler.get(side).getCover().blocksInput(coverHandler.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
+            return 0;
+        }
+        if (!fluidHandler.canInput(resource, side) || !fluidHandler.canInput(side)){
             return 0;
         }
         return fluidHandler.fill(resource, action);
@@ -52,18 +56,20 @@ public class FluidHandlerSidedWrapper<T extends TileEntity> implements IFluidHan
     @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
-        if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, side).map(c -> c.get(side).getCover().blocksOutput(c.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)).orElse(false)){
+        if (coverHandler != null && coverHandler.get(side).getCover().blocksOutput(coverHandler.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
             return FluidStack.EMPTY;
         }
+        if (!fluidHandler.canOutput(side)) return FluidStack.EMPTY;
         return fluidHandler.drain(resource, action);
     }
 
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
-        if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, side).map(c -> c.get(side).getCover().blocksOutput(c.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)).orElse(false)){
+        if (coverHandler != null && coverHandler.get(side).getCover().blocksOutput(coverHandler.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
             return FluidStack.EMPTY;
         }
+        if (!fluidHandler.canOutput(side)) return FluidStack.EMPTY;
         return fluidHandler.drain(maxDrain, action);
     }
 }

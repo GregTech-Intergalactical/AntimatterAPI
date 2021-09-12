@@ -36,16 +36,10 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     private boolean fillingCell = false;
     private boolean filledLastTick = false;
     private int lastCellSlot = 0;
-    protected Map<Direction, LazyOptional<IFluidHandler>> sidedCaps = new LinkedHashMap<>();
-    protected LazyOptional<IFluidHandler> nullCap;
 
     public MachineFluidHandler(T tile, int capacity, int pressure) {
         super(tile, capacity, pressure, tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0,
             tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0);
-        for (Direction dir : Direction.values()){
-            sidedCaps.put(dir, LazyOptional.of(() -> new FluidHandlerSidedWrapper<>(this, tile, dir)));
-        }
-        nullCap = LazyOptional.of(() -> new FluidHandlerNullSideWrapper(this));
     }
 
     public MachineFluidHandler(T tile) {
@@ -229,14 +223,12 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public LazyOptional<? extends IFluidHandler> forNullSide() {
-        if (nullCap.isPresent()) return nullCap.cast();
-        return LazyOptional.empty();
+        return LazyOptional.of(() -> new FluidHandlerNullSideWrapper(this));
     }
 
     @Override
     public LazyOptional<IFluidHandler> forSide(Direction side) {
-        if (sidedCaps.get(side).isPresent()) return sidedCaps.get(side).cast();
-        return LazyOptional.empty();
+        return LazyOptional.of(() -> new FluidHandlerSidedWrapper(this, tile.coverHandler.map(c -> c).orElse(null), side));
     }
 
     @Override
