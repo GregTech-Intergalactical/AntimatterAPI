@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.slot.IClickableSlot;
 import muramasa.antimatter.gui.slot.SlotFake;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.crash.CrashReport;
@@ -70,9 +71,9 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
     }
 
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        if (slotId >= 0 && this.getSlot(slotId) instanceof SlotFake && ((SlotFake)this.getSlot(slotId)).isSettable()){
+        if (slotId >= 0 && this.getSlot(slotId) instanceof IClickableSlot){
             try {
-                return this.clickSlot(slotId, dragType, clickTypeIn, player);
+                return ((IClickableSlot)this.getSlot(slotId)).clickSlot(dragType, clickTypeIn, player, this);
             } catch (Exception exception) {
                 CrashReport crashreport = CrashReport.makeCrashReport(exception, "Container click");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Click info");
@@ -90,28 +91,6 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
             }
         }
         return super.slotClick(slotId, dragType, clickTypeIn, player);
-    }
-
-    public ItemStack clickSlot(int slotID, int clickedButton, ClickType clickType, PlayerEntity playerEntity){
-        PlayerInventory playerinventory = playerEntity.inventory;
-        ItemStack itemstack = playerinventory.getItemStack().copy();
-        if ((clickType == ClickType.PICKUP || clickType == ClickType.SWAP) && (clickedButton == 0 || clickedButton == 1)) {
-            if (slotID < 0) {
-                return ItemStack.EMPTY;
-            }
-
-            Slot slot6 = this.inventorySlots.get(slotID);
-
-            ItemStack slotStack = slot6.getStack();
-            ItemStack heldStack = playerinventory.getItemStack().copy();
-            if (!slotStack.isEmpty()) {
-                itemstack = slotStack.copy();
-            }
-            slot6.putStack(heldStack.isEmpty() ? ItemStack.EMPTY : Utils.ca(slot6.getItemStackLimit(heldStack), heldStack));
-            slot6.onSlotChanged();
-        }
-        return itemstack;
-        //return super.func_241440_b_(slotID, clickedButton, clickType, playerEntity);
     }
 
     @Override

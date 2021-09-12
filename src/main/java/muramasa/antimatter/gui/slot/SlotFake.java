@@ -4,14 +4,19 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
 //TODO: Should be used on filters
-public class SlotFake extends AbstractSlot<SlotFake> {
+public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     final boolean settable;
     public SlotFake(SlotType<SlotFake> type, IGuiHandler tile, IItemHandler stackHandler, int index, int x, int y, boolean settable) {
         super(type, tile, stackHandler, index, x, y);
@@ -54,5 +59,22 @@ public class SlotFake extends AbstractSlot<SlotFake> {
 
     public boolean isSettable() {
         return settable;
+    }
+
+    public ItemStack clickSlot(int clickedButton, ClickType clickType, PlayerEntity playerEntity, Container container){
+        if (!settable) return ItemStack.EMPTY;
+        PlayerInventory playerinventory = playerEntity.inventory;
+        ItemStack itemstack = playerinventory.getItemStack().copy();
+        if ((clickType == ClickType.PICKUP || clickType == ClickType.SWAP) && (clickedButton == 0 || clickedButton == 1)) {
+
+            ItemStack slotStack = this.getStack();
+            ItemStack heldStack = playerinventory.getItemStack().copy();
+            if (!slotStack.isEmpty()) {
+                itemstack = slotStack.copy();
+            }
+            this.putStack(heldStack.isEmpty() ? ItemStack.EMPTY : Utils.ca(this.getItemStackLimit(heldStack), heldStack));
+            this.onSlotChanged();
+        }
+        return itemstack;
     }
 }
