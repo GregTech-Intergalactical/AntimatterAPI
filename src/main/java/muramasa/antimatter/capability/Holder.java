@@ -29,10 +29,12 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
     public Holder(Capability<?> cap, Dispatch dispatch, Supplier<T> source) {
         this.dispatch = dispatch;
         this.cap = cap;
-        this.sided = new LazyOptional[Ref.DIRS.length];
+        //7th side is null side
+        this.sided = new LazyOptional[Ref.DIRS.length + 1];
         for (Direction dir : Ref.DIRS) {
             sided[dir.getIndex()] = LazyOptional.empty();
         }
+        sided[6] = LazyOptional.empty();
         this.flag = false;
         this.supplier = source;
         dispatch.registerHolder(this);
@@ -55,6 +57,10 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
     }
 
     public void invalidate(Direction side) {
+        if (side == null){
+            sided[6].invalidate();
+            return;
+        }
         sided[side.getIndex()].invalidate();
     }
 
@@ -164,12 +170,10 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         if (resolved == null) {
             get();
         }
-        if (side == null) {
-            return resolved.forNullSide();
-        }
-        LazyOptional<? extends V> t = sided[side.getIndex()];
+        int index = side == null ? 6 : side.getIndex();
+        LazyOptional<? extends V> t = sided[index];
         if (!t.isPresent()) {
-            sided[side.getIndex()] = (t = resolved.forSide(side));
+            sided[index] = (t = (side == null ? resolved.forNullSide() : resolved.forSide(side)));
         }
         return t;
     }
