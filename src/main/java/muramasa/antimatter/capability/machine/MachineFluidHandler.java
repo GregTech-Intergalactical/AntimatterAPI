@@ -3,6 +3,8 @@ package muramasa.antimatter.capability.machine;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
+import muramasa.antimatter.capability.fluid.FluidHandlerNullSideWrapper;
+import muramasa.antimatter.capability.fluid.FluidHandlerSidedWrapper;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -20,7 +22,9 @@ import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 import static muramasa.antimatter.machine.MachineFlag.GUI;
@@ -32,10 +36,16 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     private boolean fillingCell = false;
     private boolean filledLastTick = false;
     private int lastCellSlot = 0;
+    protected Map<Direction, LazyOptional<IFluidHandler>> sidedCaps = new LinkedHashMap<>();
+    protected LazyOptional<IFluidHandler> nullCap;
 
     public MachineFluidHandler(T tile, int capacity, int pressure) {
         super(tile, capacity, pressure, tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0,
             tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0);
+        for (Direction dir : Direction.values()){
+            sidedCaps.put(dir, LazyOptional.of(() -> new FluidHandlerSidedWrapper<>(this, tile, dir)));
+        }
+        nullCap = LazyOptional.of(() -> new FluidHandlerNullSideWrapper(this));
     }
 
     public MachineFluidHandler(T tile) {
@@ -218,13 +228,15 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
 
     @Override
-    public LazyOptional<IFluidHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> this);
+    public LazyOptional<? extends IFluidHandler> forNullSide() {
+        if (nullCap.isPresent()) return nullCap.cast();
+        return LazyOptional.empty();
     }
 
     @Override
-    public LazyOptional<? extends IFluidHandler> forNullSide() {
-        return LazyOptional.of(() -> this);
+    public LazyOptional<IFluidHandler> forSide(Direction side) {
+        if (sidedCaps.get(side).isPresent()) return sidedCaps.get(side).cast();
+        return LazyOptional.empty();
     }
 
     @Override
