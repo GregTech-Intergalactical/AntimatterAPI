@@ -74,6 +74,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
+import java.util.function.Predicate;
 
 import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.UNBOUNDED;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
@@ -312,10 +313,14 @@ public class Utils {
     }
 
     public static boolean transferItems(IItemHandler from, IItemHandler to, boolean once) {
+        return transferItems(from, to, once, stack -> true);
+    }
+
+    public static boolean transferItems(IItemHandler from, IItemHandler to, boolean once, Predicate<ItemStack> filter) {
         boolean successful = false;
         for (int i = 0; i < from.getSlots(); i++) {
             ItemStack toInsert = from.extractItem(i, from.getStackInSlot(i).getCount(), true);
-            if (toInsert.isEmpty()) {
+            if (toInsert.isEmpty() || !filter.test(toInsert)) {
                 continue;
             }
             ItemStack inserted = ItemHandlerHelper.insertItem(to, toInsert, true);
@@ -370,7 +375,7 @@ public class Utils {
         return false;
     }
 
-    public static boolean transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
+    public static boolean transferFluids(IFluidHandler from, IFluidHandler to, int cap, Predicate<FluidStack> filter) {
         boolean successful = false;
         for (int i = 0; i < to.getTanks(); i++) {
             //if (i >= from.getTanks()) break;
@@ -378,7 +383,7 @@ public class Utils {
             for (int j = 0; j < from.getTanks(); j++) {
                 if (cap > 0) {
                     FluidStack fluid = from.getFluidInTank(j);
-                    if (fluid.isEmpty()) {
+                    if (fluid.isEmpty() || !filter.test(fluid)) {
                         continue;
                     }
                     fluid = fluid.copy();
@@ -397,6 +402,10 @@ public class Utils {
             }
         }
         return successful;
+    }
+
+    public static boolean transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
+        return transferFluids(from, to, cap, fluidStack -> true);
     }
 
     public static boolean transferFluids(IFluidHandler from, IFluidHandler to) {
