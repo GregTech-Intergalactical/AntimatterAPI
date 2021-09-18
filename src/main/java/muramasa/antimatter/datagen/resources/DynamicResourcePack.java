@@ -95,7 +95,10 @@ public class DynamicResourcePack implements IResourcePack {
 
 
     public static void addTag(String type, ResourceLocation loc, JsonObject obj) {
-        DATA.putIfAbsent(getTagLoc(type, loc), obj);
+        JsonObject object = DATA.putIfAbsent(getTagLoc(type, loc), obj);
+        if (object != null){
+            object.getAsJsonArray("values").addAll(obj.getAsJsonArray("values"));
+        }
     }
 
     public static void ensureTagAvailable(String id, ResourceLocation loc) {
