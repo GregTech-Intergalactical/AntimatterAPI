@@ -2,7 +2,6 @@ package muramasa.antimatter.material;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
@@ -12,6 +11,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 import java.util.LinkedHashSet;
 import java.util.Map;

@@ -1,10 +1,5 @@
 package muramasa.antimatter.capability.machine;
 
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
@@ -26,6 +21,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import speiger.src.collections.ints.sets.IntOpenHashSet;
+import speiger.src.collections.ints.sets.IntSet;
+import speiger.src.collections.objects.lists.ObjectArrayList;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
+import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
@@ -58,7 +58,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
             }
         }
-        inventories.defaultReturnValue(new TrackedItemHandler<>(tile, 0, false, false, (a,b) -> false, null));
+        inventories.setDefaultReturnValue(new TrackedItemHandler<>(tile, 0, false, false, (a,b) -> false, null));
     }
 
     public Map<SlotType<?>, IItemHandler> getAll() {

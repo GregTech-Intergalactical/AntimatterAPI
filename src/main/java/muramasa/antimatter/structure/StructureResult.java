@@ -1,10 +1,6 @@
 package muramasa.antimatter.structure;
 
 import com.google.common.collect.Lists;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongList;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineState;
@@ -13,6 +9,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
+import speiger.src.collections.longs.lists.LongArrayList;
+import speiger.src.collections.longs.lists.LongList;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
+import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import java.util.Iterator;
 import java.util.List;

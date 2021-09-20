@@ -1,6 +1,5 @@
 package muramasa.antimatter.client;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -19,6 +18,7 @@ import net.minecraftforge.client.model.QuadTransformer;
 import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.common.model.TransformationHelper;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 import java.util.Arrays;
 import java.util.List;

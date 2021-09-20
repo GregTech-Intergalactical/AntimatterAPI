@@ -2,8 +2,6 @@ package muramasa.antimatter.worldgen.feature;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
@@ -11,6 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.IFeatureConfig;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
+import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import java.util.List;
 

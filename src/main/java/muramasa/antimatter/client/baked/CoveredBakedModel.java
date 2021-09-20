@@ -1,6 +1,5 @@
 package muramasa.antimatter.client.baked;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
@@ -15,6 +14,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.data.IModelData;
+import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

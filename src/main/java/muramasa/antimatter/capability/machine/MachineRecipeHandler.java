@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability.machine;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
@@ -22,6 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

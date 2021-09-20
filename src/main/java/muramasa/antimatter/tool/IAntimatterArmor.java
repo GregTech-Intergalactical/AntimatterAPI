@@ -1,6 +1,5 @@
 package muramasa.antimatter.tool;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -29,6 +28,7 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.extensions.IForgeItem;
+import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nullable;
 import java.util.List;

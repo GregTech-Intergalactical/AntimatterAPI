@@ -1,7 +1,5 @@
 package muramasa.antimatter.client.baked;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import net.minecraft.block.BlockState;
@@ -10,6 +8,8 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.data.IModelData;
+import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
+import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

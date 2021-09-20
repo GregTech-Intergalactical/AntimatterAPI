@@ -1,6 +1,5 @@
 package muramasa.antimatter.datagen.providers;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStone;
@@ -29,6 +28,7 @@ import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.MatchTool;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 import java.io.IOException;
 import java.nio.file.Path;

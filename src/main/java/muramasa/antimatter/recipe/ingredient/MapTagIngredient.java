@@ -1,9 +1,9 @@
 package muramasa.antimatter.recipe.ingredient;
 
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.ResourceLocation;
+import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import java.util.Arrays;
 import java.util.Optional;

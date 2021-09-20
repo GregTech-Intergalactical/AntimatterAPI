@@ -4,10 +4,9 @@ import muramasa.antimatter.Ref;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nullable;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.List;
 import java.util.Optional;

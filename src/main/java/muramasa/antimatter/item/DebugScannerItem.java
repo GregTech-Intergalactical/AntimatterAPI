@@ -1,6 +1,5 @@
 package muramasa.antimatter.item;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStone;
@@ -22,6 +21,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -1,7 +1,5 @@
 package muramasa.antimatter.gui.container;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
@@ -11,6 +9,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.IWorldPosCallable;
+import speiger.src.collections.objects.maps.impl.hash.Object2IntOpenHashMap;
+import speiger.src.collections.objects.maps.interfaces.Object2IntMap;
 
 import java.util.Collections;
 

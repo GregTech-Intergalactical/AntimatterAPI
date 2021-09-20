@@ -1,9 +1,9 @@
 package muramasa.antimatter.datagen;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IDataProvider;
+import speiger.src.collections.objects.lists.ObjectArrayList;
+import speiger.src.collections.objects.lists.ObjectList;
 
 import java.io.File;
 import java.io.IOException;

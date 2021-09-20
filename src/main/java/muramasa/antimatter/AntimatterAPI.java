@@ -1,8 +1,5 @@
 package muramasa.antimatter;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
@@ -31,6 +28,13 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
+import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
+import speiger.src.collections.ints.maps.interfaces.Int2ObjectMap;
+import speiger.src.collections.objects.lists.ObjectArrayList;
+import speiger.src.collections.objects.lists.ObjectList;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectLinkedOpenHashMap;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
+import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

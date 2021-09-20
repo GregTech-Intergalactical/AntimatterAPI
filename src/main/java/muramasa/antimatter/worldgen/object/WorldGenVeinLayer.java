@@ -1,7 +1,6 @@
 package muramasa.antimatter.worldgen.object;
 
 import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Data;
@@ -18,6 +17,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import speiger.src.collections.longs.maps.impl.hash.Long2ObjectOpenHashMap;
 
 import java.util.List;
 

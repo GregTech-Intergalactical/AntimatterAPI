@@ -1,8 +1,8 @@
 package muramasa.antimatter.recipe;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.ItemStack;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 public class Unifier {
 

@@ -2,8 +2,6 @@ package muramasa.antimatter.datagen.resources;
 
 import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.Ref;
 import net.minecraft.data.IFinishedRecipe;
@@ -16,6 +14,8 @@ import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
 import net.minecraftforge.client.model.generators.ModelBuilder;
+import speiger.src.collections.objects.sets.ObjectOpenHashSet;
+import speiger.src.collections.objects.sets.ObjectSet;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;

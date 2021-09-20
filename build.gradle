@@ -212,7 +212,7 @@ dependencies {
     implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
     implementation fg.deobf("curse.maven:top-245211:${top_file}")
 
-    compileOnly 'de.speiger:Primitive-Collections:0.4.0'
+    compile 'de.speiger:Primitive-Collections:0.4.0'
     shadowCommon 'de.speiger:Primitive-Collections:0.4.0'
 }
 
@@ -275,9 +275,12 @@ jar {
     }
 }
 
+/*configurations.compile {
+    exclude group: 'it.unimi.dsi', module: 'fastutil'
+}*/
+
 shadowJar {
     configurations = [project.configurations.shadowCommon]
-    relocate 'speiger.src.collections', 'muramasa.antimatter.repack_antimatter.primitive_collections'
     classifier ''
 }
 

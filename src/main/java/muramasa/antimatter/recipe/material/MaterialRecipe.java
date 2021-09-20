@@ -1,9 +1,6 @@
 package muramasa.antimatter.recipe.material;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import net.minecraft.inventory.CraftingInventory;
@@ -14,6 +11,9 @@ import net.minecraft.item.crafting.ShapedRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
+import speiger.src.collections.ints.maps.interfaces.Int2ObjectMap;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

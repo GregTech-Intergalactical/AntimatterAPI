@@ -1,6 +1,5 @@
 package muramasa.antimatter.client.baked;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
@@ -20,6 +19,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
+import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
 
 import java.util.LinkedList;
 import java.util.List;

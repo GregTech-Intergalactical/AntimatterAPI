@@ -1,7 +1,6 @@
 package muramasa.antimatter.datagen.providers;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -34,6 +33,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.registries.ForgeRegistries;
+import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import java.util.Collections;
 import java.util.List;

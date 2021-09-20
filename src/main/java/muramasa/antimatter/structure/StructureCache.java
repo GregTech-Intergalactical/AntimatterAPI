@@ -1,10 +1,5 @@
 package muramasa.antimatter.structure;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongList;
-import it.unimi.dsi.fastutil.longs.LongLists;
-import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -14,6 +9,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import speiger.src.collections.longs.lists.LongList;
+import speiger.src.collections.longs.maps.impl.hash.Long2ObjectOpenHashMap;
+import speiger.src.collections.longs.maps.interfaces.Long2ObjectMap;
+import speiger.src.collections.longs.utils.LongLists;
+import speiger.src.collections.objects.maps.impl.hash.Object2BooleanOpenHashMap;
+import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
+import speiger.src.collections.objects.maps.interfaces.Object2BooleanMap;
+import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
+import speiger.src.collections.objects.sets.ObjectOpenHashSet;
+import speiger.src.collections.objects.utils.maps.Object2BooleanMaps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -237,8 +242,8 @@ public class StructureCache {
         private final Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
 
         public DimensionEntry() {
-            STRUCTURE_TO_CONTROLLER.defaultReturnValue(Object2BooleanMaps.emptyMap());
-            CONTROLLER_TO_STRUCTURE.defaultReturnValue(LongLists.EMPTY_LIST);
+            STRUCTURE_TO_CONTROLLER.setDefaultReturnValue(Object2BooleanMaps.empty());
+            CONTROLLER_TO_STRUCTURE.setDefaultReturnValue(LongLists.empty());
         }
 
         @Nonnull
@@ -265,14 +270,14 @@ public class StructureCache {
             int i = structure.stream().mapToInt(t -> this.STRUCTURE_TO_CONTROLLER.get((long)t).values().stream().mapToInt(j -> j ? 1 : 0).sum()).max().orElse(0);
             if (i <= maxAmount) {
                 LongList old = this.CONTROLLER_TO_STRUCTURE.remove(at);
-                old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
+                old.forEach(l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
                     if (v == null) return null;
                     if (v.size() == 1) return null;
-                    v.removeBoolean(pos);
+                    v.remove(pos);
                     return v;
                 }));
                 this.CONTROLLER_TO_STRUCTURE.put(at, structure);
-                structure.forEach((LongConsumer) t -> this.STRUCTURE_TO_CONTROLLER.compute(t, (k,v) -> {
+                structure.forEach(t -> this.STRUCTURE_TO_CONTROLLER.compute(t, (k,v) -> {
                     if (v == null) {
                         v = new Object2BooleanOpenHashMap<>();
                     }
@@ -287,10 +292,10 @@ public class StructureCache {
         public void invalidate(BlockPos pos, LongList structure) {
             long at = pos.toLong();
             LongList old = this.CONTROLLER_TO_STRUCTURE.put(at, structure);
-            old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
+            old.forEach(l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
                 if (v == null) return null;
                 if (v.size() == 1) return null;
-                v.removeBoolean(pos);
+                v.remove(pos);
                 return v;
             }));
             for (long s : structure) {
@@ -311,7 +316,7 @@ public class StructureCache {
                 STRUCTURE_TO_CONTROLLER.compute(s, (k,v) -> {
                     if (v == null) return null;
                     if (v.size() == 1) return null;
-                    v.removeBoolean(pos);
+                    v.remove(pos);
                     return v;
                 } );
             }
