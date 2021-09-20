@@ -7,6 +7,10 @@ buildscript {
             url = 'https://repo.spongepowered.org/maven'
         }
         maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        maven {
             name = 'forge'
             url = 'https://files.minecraftforge.net/maven'
         }
@@ -17,9 +21,20 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+configurations {
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+}
+
 repositories {
     //JEI
     maven { url 'https://dvs1.progwml6.com/files/maven' }
+    maven {
+        url = "https://maven.speiger.com/repository/main"
+    }
     //GT.
     maven { url 'https://jitpack.io' }
 
@@ -196,6 +211,9 @@ dependencies {
     implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
     implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
     implementation fg.deobf("curse.maven:top-245211:${top_file}")
+
+    compileOnly 'de.speiger:Primitive-Collections:0.4.0'
+    shadowCommon 'de.speiger:Primitive-Collections:0.4.0'
 }
 
 
@@ -256,3 +274,17 @@ jar {
         ])
     }
 }
+
+shadowJar {
+    configurations = [project.configurations.shadowCommon]
+    relocate 'speiger.src.collections', 'muramasa.antimatter.repack_antimatter.primitive_collections'
+    classifier ''
+}
+
+jar.classifier = 'nodep'
+
+reobf {
+    shadowJar {}
+}
+
+build.dependsOn reobfShadowJar
