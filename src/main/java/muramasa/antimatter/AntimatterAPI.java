@@ -63,11 +63,11 @@ public final class AntimatterAPI {
 
     /** Internal Registry Section **/
 
-    private static void registerInternal(Class<?> c, String id, Object o) {
-        OBJECTS.putIfAbsent(c, new Object2ObjectLinkedOpenHashMap<>());
-        Object key = OBJECTS.get(c).get(id);
-        if (key != null) throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", key.toString()));
-        OBJECTS.get(c).put(id, o);
+    private synchronized static void registerInternal(Class<?> c, String id, Object o) {
+        Object present = null;
+        if((present = OBJECTS.computeIfAbsent(c, t -> new Object2ObjectLinkedOpenHashMap<>()).putIfAbsent(id, o)) != null) {
+            throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", present.toString()));
+        }
     }
 
     public static void register(Class<?> c, String id, Object o) {
