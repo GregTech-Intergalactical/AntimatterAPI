@@ -18,7 +18,8 @@
     "RecipeManagerMixin",
     "RepairItemRecipeMixin",
     "ServerBlockUpdateMixin",
-    "SimpleReloadableResourceManagerMixin"
+    "SimpleReloadableResourceManagerMixin",
+    "GameDataMixin"
   ],
   "minVersion": "0.8"
 }
