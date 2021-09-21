@@ -27,6 +27,9 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public final class AntimatterRegistration {
     public static Dist side;
 
@@ -34,10 +37,14 @@ public final class AntimatterRegistration {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void onRegister(final RegistryEvent.Register<?> e) {
         final String domain = ModLoadingContext.get().getActiveNamespace();
-        if (e.getRegistry() == ForgeRegistries.BLOCKS && domain.equals(Ref.ID)) {
-            AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
+        if (domain.equals(Ref.ID)) {
+            if (e.getRegistry() == ForgeRegistries.BLOCKS) {
+                AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
+            }
+            AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));
+            List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
+            list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(e.getRegistry())));
         }
-        AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, b -> {
                 if (b instanceof IAntimatterObject && b.getRegistryName() == null) b.setRegistryName(domain, ((IAntimatterObject) b).getId());
