@@ -148,6 +148,12 @@ public final class AntimatterAPI {
         allInternal(c, domain).forEach(consumer);
     }
 
+    public static <T> void all(Class<T> c, String[] domains, Consumer<T> consumer) {
+        for (String domain : domains) {
+            allInternal(c, domain).forEach(consumer);
+        }
+    }
+
     private static void runProvider(IAntimatterProvider provider) {
         LogManager.getLogger().debug("Running " + provider.getName());
         provider.run();

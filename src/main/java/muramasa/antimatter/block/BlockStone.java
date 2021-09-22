@@ -1,9 +1,12 @@
 package muramasa.antimatter.block;
 
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
+import net.minecraft.util.IItemProvider;
 
 public class BlockStone extends BlockBasic {
 
@@ -44,5 +47,12 @@ public class BlockStone extends BlockBasic {
             return new Texture[]{new Texture(type.getDomain(), ((CobbleStoneType)type).getBeginningPath() + type.getId().replace("stone_", "") + "/" + suffix)};
         }
         return new Texture[]{type.getTexture()};
+    }
+
+    @Override
+    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+        if (!this.getDomain().equals(Ref.MOD_KJS)){
+            super.onItemModelBuild(item, prov);
+        }
     }
 }

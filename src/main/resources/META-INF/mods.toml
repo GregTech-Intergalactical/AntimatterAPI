@@ -16,17 +16,23 @@ description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
     modId="forge"
     mandatory=true
     versionRange="[36.1.0,)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"
 [[dependencies.antimatter]]
     modId="tesseract"
     mandatory=true
     versionRange="[0.0.4,)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"
 [[dependencies.antimatter]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.16.5,)"
-    ordering="NONE"
+    ordering="AFTER"
     side="BOTH"
+[[dependencies.antimatter]]
+modId="kubejs"
+mandatory=false
+versionRange="[1605,)"
+ordering="AFTER"
+side="BOTH"

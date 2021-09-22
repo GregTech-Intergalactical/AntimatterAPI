@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
@@ -40,19 +41,25 @@ public final class AntimatterRegistration {
         if (domain.equals(Ref.ID)) {
             if (e.getRegistry() == ForgeRegistries.BLOCKS) {
                 AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
+                if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
+                    AntimatterKubeJS.loadStartupScripts();
+                }
             }
             AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));
             List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
             list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(e.getRegistry())));
+            AntimatterAPI.all(IRegistryEntryProvider.class, Ref.MOD_KJS, p -> p.onRegistryBuild(e.getRegistry()));
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
-            AntimatterAPI.all(Block.class, domain, b -> {
+            String[] domains = domain.equals(Ref.ID) ? new String[]{domain, Ref.MOD_KJS} : new String[]{domain};
+            AntimatterAPI.all(Block.class, domains, b -> {
                 if (b instanceof IAntimatterObject && b.getRegistryName() == null) b.setRegistryName(domain, ((IAntimatterObject) b).getId());
                 AntimatterAPI.register(Item.class, b.getRegistryName().toString(), b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock() : new AntimatterItemBlock(b));
                 ((IForgeRegistry) e.getRegistry()).register(b);
             });
         } else if (e.getRegistry() == ForgeRegistries.ITEMS) {
-            AntimatterAPI.all(Item.class, domain, i -> {
+            String[] domains = domain.equals(Ref.ID) ? new String[]{domain, Ref.MOD_KJS} : new String[]{domain};
+            AntimatterAPI.all(Item.class, domains, i -> {
                 if (i instanceof IAntimatterObject && i.getRegistryName() == null) i.setRegistryName(domain, ((IAntimatterObject) i).getId());
                 ((IForgeRegistry) e.getRegistry()).register(i);
             });
@@ -60,7 +67,8 @@ public final class AntimatterRegistration {
         } else if (e.getRegistry() == ForgeRegistries.TILE_ENTITIES) {
             AntimatterAPI.all(TileEntityType.class, domain, t -> ((IForgeRegistry) e.getRegistry()).register(t));
         } else if (e.getRegistry() == ForgeRegistries.FLUIDS) {
-            AntimatterAPI.all(AntimatterFluid.class, domain, f -> {
+            String[] domains = domain.equals(Ref.ID) ? new String[]{domain, Ref.MOD_KJS} : new String[]{domain};
+            AntimatterAPI.all(AntimatterFluid.class, domains, f -> {
                 ((IForgeRegistry) e.getRegistry()).registerAll(f.getFluid(), f.getFlowingFluid());
             });
         } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {

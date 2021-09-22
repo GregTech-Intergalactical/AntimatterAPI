@@ -2,6 +2,7 @@ package muramasa.antimatter.integration.kubejs;
 
 import dev.latvian.kubejs.recipe.RegisterRecipeHandlersEvent;
 import dev.latvian.kubejs.script.BindingsEvent;
+import dev.latvian.kubejs.script.ScriptType;
 import muramasa.antimatter.Ref;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -18,5 +19,9 @@ public class AntimatterKubeJS {
     public static void registerRecipeHandlers(RegisterRecipeHandlersEvent event)
     {
         event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
+    }
+
+    public static void loadStartupScripts(){
+        new AMCreationEvent().post(ScriptType.STARTUP, "antimatter.creation");
     }
 }

@@ -2,7 +2,11 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.registration.IAntimatterObject;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class Element implements IAntimatterObject {
+    public static final Map<String, Element> ELEMENTS = new LinkedHashMap<>();
 
     public static Element H = new Element(1, 0, 0, -1, null, "hydrogen", "H", false);
     public static Element D = new Element(1, 1, 0, -1, "H", "deuterium", "D", true);
@@ -151,6 +155,7 @@ public class Element implements IAntimatterObject {
         this.id = id;
         this.element = element;
         this.isIsotope = isIsotope;
+        ELEMENTS.put(element, this);
     }
 
     @Override
@@ -172,5 +177,9 @@ public class Element implements IAntimatterObject {
 
     public int getMass() {
         return protons + neutrons + additionalMass;
+    }
+
+    public static Element getFromElementId(String element){
+        return ELEMENTS.get(element);
     }
 }

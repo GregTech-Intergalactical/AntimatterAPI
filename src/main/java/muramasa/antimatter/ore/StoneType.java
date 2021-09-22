@@ -89,6 +89,11 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
         return this;
     }
 
+    public StoneType setToolType(String toolType) {
+        this.toolType = ToolType.get(toolType);
+        return this;
+    }
+
     public StoneType setBlockMaterial(net.minecraft.block.material.Material material){
         this.blockMaterial = material;
         return this;
