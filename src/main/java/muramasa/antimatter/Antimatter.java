@@ -4,6 +4,7 @@ import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
+import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -57,6 +58,7 @@ public class Antimatter extends AntimatterMod {
         providers();
         AntimatterAPI.init();
         AntimatterWorldGenerator.init();
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) new KubeJSRegistrar();
     }
 
     private void providers() {

@@ -48,7 +48,6 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));
             List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
             list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(e.getRegistry())));
-            AntimatterAPI.all(IRegistryEntryProvider.class, Ref.MOD_KJS, p -> p.onRegistryBuild(e.getRegistry()));
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             String[] domains = domain.equals(Ref.ID) ? new String[]{domain, Ref.MOD_KJS} : new String[]{domain};
