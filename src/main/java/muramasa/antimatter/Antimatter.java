@@ -5,6 +5,7 @@ import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.network.AntimatterNetwork;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,6 +52,7 @@ public class Antimatter extends AntimatterMod {
         eventBus.addListener(this::clientSetup);
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::serverSetup);
+        eventBus.addListener(this::loadComplete);
 
         providers();
         AntimatterAPI.init();
@@ -115,6 +118,10 @@ public class Antimatter extends AntimatterMod {
                 }
             }
         }));
+    }
+
+    private void loadComplete(FMLLoadCompleteEvent event){
+        AntimatterAPI.all(StoneType.class, StoneType::initSuppliedState);
     }
 
     @Override

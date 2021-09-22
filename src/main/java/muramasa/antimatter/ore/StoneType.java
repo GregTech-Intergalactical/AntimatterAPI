@@ -16,6 +16,7 @@ import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
 
@@ -27,6 +28,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     private final Texture texture;
     private final SoundType soundType;
     private BlockState state;
+    private Supplier<BlockState> stateSupplier;
     private int harvestLevel, fallingDustColor;
     private float hardness, resistence;
     private ToolType toolType;
@@ -151,6 +153,11 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
         this.state = blockState;
         return this;
     }
+
+    public StoneType setStateSupplier(Supplier<BlockState> blockState) {
+        this.stateSupplier = blockState;
+        return this;
+    }
     
     public int getHarvestLevel() {
         return harvestLevel;
@@ -179,6 +186,12 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     //TODO collection
     public static StoneType[] getAllGeneratingBlock() {
         return AntimatterAPI.all(StoneType.class).stream().filter(s -> s.generateBlock).toArray(StoneType[]::new);
+    }
+
+    public void initSuppliedState(){
+        if (state == null && stateSupplier != null){
+            state = stateSupplier.get();
+        }
     }
     
     public static StoneType get(String id) {
