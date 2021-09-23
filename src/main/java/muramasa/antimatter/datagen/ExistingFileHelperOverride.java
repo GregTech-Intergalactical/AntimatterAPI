@@ -1,6 +1,8 @@
 package muramasa.antimatter.datagen;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -17,8 +19,8 @@ public class ExistingFileHelperOverride extends ExistingFileHelper {
 
     static {
         GLOBAL_EXCLUDED_DOMAINS.add(Ref.ID);
-        GLOBAL_EXCLUDED_DOMAINS.add("gti");
         GLOBAL_EXCLUDED_DOMAINS.add("minecraft");
+        AntimatterAPI.all(IAntimatterRegistrar.class, r -> GLOBAL_EXCLUDED_DOMAINS.add(r.getDomain()));
     }
 
     Set<String> excludedDomains = new ObjectOpenHashSet<>();
