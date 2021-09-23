@@ -7,6 +7,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.*;
@@ -74,7 +75,10 @@ public final class AntimatterAPI {
         registerInternal(c, id, o);
         if (o instanceof Block && notRegistered(Block.class, id)) registerInternal(Block.class, id, o);
         else if (o instanceof Item && notRegistered(Item.class, id)) registerInternal(Item.class, id, o);
-        else if (o instanceof IRegistryEntryProvider && notRegistered(IRegistryEntryProvider.class, id)) registerInternal(IRegistryEntryProvider.class, id, o);
+        else if (o instanceof IRegistryEntryProvider) {
+            String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
+            if (notRegistered(IRegistryEntryProvider.class, changedId)) registerInternal(IRegistryEntryProvider.class, changedId, o);
+        }
     }
 
     public static void register(Class<?> c, IAntimatterObject o) {
