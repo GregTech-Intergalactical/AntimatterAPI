@@ -18,6 +18,6 @@ public class KubeJSRegistrar extends AntimatterMod {
 
     @Override
     public int getPriority() {
-        return Integer.MAX_VALUE;
+        return Integer.MIN_VALUE;
     }
 }

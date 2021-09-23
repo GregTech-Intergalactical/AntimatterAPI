@@ -50,15 +50,14 @@ public final class AntimatterRegistration {
             list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(e.getRegistry())));
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
-            String[] domains = domain.equals(Ref.ID) ? new String[]{domain, Ref.MOD_KJS} : new String[]{domain};
-            AntimatterAPI.all(Block.class, domains, b -> {
+            AntimatterAPI.all(Block.class, domain, b -> {
                 if (b instanceof IAntimatterObject && b.getRegistryName() == null) b.setRegistryName(domain, ((IAntimatterObject) b).getId());
                 AntimatterAPI.register(Item.class, b.getRegistryName().toString(), b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock() : new AntimatterItemBlock(b));
                 ((IForgeRegistry) e.getRegistry()).register(b);
             });
+
         } else if (e.getRegistry() == ForgeRegistries.ITEMS) {
-            String[] domains = domain.equals(Ref.ID) ? new String[]{domain, Ref.MOD_KJS} : new String[]{domain};
-            AntimatterAPI.all(Item.class, domains, i -> {
+            AntimatterAPI.all(Item.class, domain, i -> {
                 if (i instanceof IAntimatterObject && i.getRegistryName() == null) i.setRegistryName(domain, ((IAntimatterObject) i).getId());
                 ((IForgeRegistry) e.getRegistry()).register(i);
             });
@@ -66,8 +65,7 @@ public final class AntimatterRegistration {
         } else if (e.getRegistry() == ForgeRegistries.TILE_ENTITIES) {
             AntimatterAPI.all(TileEntityType.class, domain, t -> ((IForgeRegistry) e.getRegistry()).register(t));
         } else if (e.getRegistry() == ForgeRegistries.FLUIDS) {
-            String[] domains = domain.equals(Ref.ID) ? new String[]{domain, Ref.MOD_KJS} : new String[]{domain};
-            AntimatterAPI.all(AntimatterFluid.class, domains, f -> {
+            AntimatterAPI.all(AntimatterFluid.class, domain, f -> {
                 ((IForgeRegistry) e.getRegistry()).registerAll(f.getFluid(), f.getFlowingFluid());
             });
         } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {
