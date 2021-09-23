@@ -123,7 +123,6 @@ public class Antimatter extends AntimatterMod {
     }
 
     private void loadComplete(FMLLoadCompleteEvent event){
-        AntimatterAPI.all(StoneType.class, StoneType::initSuppliedState);
     }
 
     @Override

@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.*;
@@ -70,6 +72,9 @@ public class AntimatterWorldGenerator {
     public static void setup() {
         Antimatter.LOGGER.info("AntimatterAPI WorldGen Initialization Stage...");
         AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
+            AntimatterKubeJS.loadWorldgenScripts();
+        }
     }
 
     public static void register(Class<?> c, WorldGenBase<?> base) {

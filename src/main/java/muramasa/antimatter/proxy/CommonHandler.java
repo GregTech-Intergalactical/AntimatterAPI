@@ -1,7 +1,9 @@
 package muramasa.antimatter.proxy;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,6 +21,7 @@ public class CommonHandler implements IProxyHandler {
 
     @SuppressWarnings("unused")
     public static void setup(FMLCommonSetupEvent e) {
+        AntimatterAPI.all(StoneType.class, StoneType::initSuppliedState);
         AntimatterCaps.register();
         AntimatterWorldGenerator.setup();
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, CommonHandler::reload);

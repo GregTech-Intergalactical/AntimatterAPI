@@ -24,4 +24,7 @@ public class AntimatterKubeJS {
     public static void loadStartupScripts(){
         new AMCreationEvent().post(ScriptType.STARTUP, "antimatter.creation");
     }
+    public static void loadWorldgenScripts(){
+        new AMWorldEvent().post(ScriptType.STARTUP, "antimatter.world");
+    }
 }
