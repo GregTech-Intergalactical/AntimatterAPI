@@ -33,11 +33,18 @@ import java.util.stream.Collectors;
 
 public final class AntimatterRegistration {
     public static Dist side;
-
     @SubscribeEvent
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public static void onRegister(final RegistryEvent.Register<?> e) {
+    public static void onRegister(final RegistryEvent.Register<?> e){
         final String domain = ModLoadingContext.get().getActiveNamespace();
+        onRegister(domain, e);
+        if (domain.equals(Ref.ID)){
+            onRegister(Ref.MOD_KJS, e);
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static void onRegister(final String domain, final RegistryEvent.Register<?> e) {
+
         if (domain.equals(Ref.ID)) {
             if (e.getRegistry() == ForgeRegistries.BLOCKS) {
                 AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);

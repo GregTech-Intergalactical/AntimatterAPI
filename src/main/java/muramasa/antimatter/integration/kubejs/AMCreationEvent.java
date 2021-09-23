@@ -16,19 +16,19 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class AMCreationEvent extends EventJS {
     public StoneType createStoneType(String id, String material, String texture, SoundType soundType, boolean generateBlock){
-        return new StoneType(Ref.ID, id, Material.get(material), new Texture(texture), soundType, generateBlock);
+        return new StoneType(Ref.MOD_KJS, id, Material.get(material), new Texture(texture), soundType, generateBlock);
     }
 
     public StoneType createStoneType(String id, String material, String texture, SoundType soundType, String stoneState){
-        return new StoneType(Ref.ID, id, Material.get(material), new Texture(texture), soundType, false).setStateSupplier(() -> ForgeRegistries.BLOCKS.getValue(new ResourceLocation(stoneState)).getDefaultState());
+        return new StoneType(Ref.MOD_KJS, id, Material.get(material), new Texture(texture), soundType, false).setStateSupplier(() -> ForgeRegistries.BLOCKS.getValue(new ResourceLocation(stoneState)).getDefaultState());
     }
 
     public Material createMaterial(String id, int rgb, String textureSet){
-        return new Material(Ref.ID, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet));
+        return new Material(Ref.MOD_KJS, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet));
     }
 
     public Material createMaterial(String id, int rgb, String textureSet, String element){
-        return new Material(Ref.ID, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet), Element.getFromElementId(element));
+        return new Material(Ref.MOD_KJS, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet), Element.getFromElementId(element));
     }
 
     public MaterialType type(String type) {
