@@ -36,7 +36,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     
     public StoneType(String domain, String id, Material material, Texture texture, SoundType soundType, boolean generateBlock) {
         this.domain = domain;
-        this.id = "stone_" + id;
+        this.id = id;
         this.material = material;
         this.texture = texture;
         this.soundType = soundType;
@@ -200,6 +200,6 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     }
     
     public static StoneType get(String id) {
-        return AntimatterAPI.get(StoneType.class, "stone_" + id);
+        return AntimatterAPI.get(StoneType.class, id);
     }
 }

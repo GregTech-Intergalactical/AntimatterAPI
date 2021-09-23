@@ -61,7 +61,7 @@ public class BlockStoneWall extends WallBlock implements IAntimatterObject, ITex
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(type.getDomain(), type.getBeginningPath() + type.getId().replace("stone_", "") + "/" + (suffix.isEmpty() ? "stone" : suffix))};
+        return new Texture[]{new Texture(type.getDomain(), type.getBeginningPath() + type.getId() + "/" + (suffix.isEmpty() ? "stone" : suffix))};
     }
 
     @Override

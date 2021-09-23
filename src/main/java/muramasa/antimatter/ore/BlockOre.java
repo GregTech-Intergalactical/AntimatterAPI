@@ -38,7 +38,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     private final MaterialType<?> oreType;
 
     public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType, Block.Properties properties) {
-        super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId().replaceAll("stone_", ""), material, stoneType, getOreProperties(properties, stoneType));
+        super(domain, oreType.getId() + "_" + material.getId() + "_" + stoneType.getId(), material, stoneType, getOreProperties(properties, stoneType));
         this.oreType = oreType;
     }
 
@@ -58,7 +58,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (stoneType.getId().equals("stone_stone")) items.add(new ItemStack(this)); //todo move stonetype to antimatter
+        if (stoneType.getId().equals("stone")) items.add(new ItemStack(this)); //todo move stonetype to antimatter
     }
 
     //    @Override

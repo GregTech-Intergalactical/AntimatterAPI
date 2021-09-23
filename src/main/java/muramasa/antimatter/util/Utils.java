@@ -1041,7 +1041,6 @@ public class Utils {
 
     public static String getConventionalStoneType(StoneType type) {
         String string = type.getId();
-        string = string.replaceAll("stone_", "");
         // breaks generation in stones with underscores cause the stones are generated without the 2 below lines in the name
         /*int index = string.indexOf("_");
         if (index != -1) return String.join("", string.substring(index + 1), "_", string.substring(0, index));*/
@@ -1095,17 +1094,6 @@ public class Utils {
     }
 
     public static String getLocalizeStoneType(StoneType type) {
-        if (type.getId().contains("stone_")) return getLocalizedType(new IAntimatterObject() {
-            @Override
-            public String getId() {
-                return type.getId().replace("stone_", "");
-            }
-
-            @Override
-            public String getDomain() {
-                return type.getDomain();
-            }
-        });
         return getLocalizedType(type);
     }
 

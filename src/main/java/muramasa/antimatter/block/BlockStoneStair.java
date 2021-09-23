@@ -59,7 +59,7 @@ public class BlockStoneStair extends StairsBlock implements IAntimatterObject, I
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(type.getDomain(), type.getBeginningPath() + type.getId().replace("stone_", "") + "/" + (suffix.isEmpty() ? "stone" : suffix))};
+        return new Texture[]{new Texture(type.getDomain(), type.getBeginningPath() + type.getId() + "/" + (suffix.isEmpty() ? "stone" : suffix))};
     }
 
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
