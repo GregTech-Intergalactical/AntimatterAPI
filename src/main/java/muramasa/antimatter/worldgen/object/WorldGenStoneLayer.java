@@ -25,37 +25,55 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
     private StoneType stoneType;
     private BlockState stoneState;
     private StoneLayerOre[] ores = new StoneLayerOre[0];
+    private int minY, maxY;
 
     @SafeVarargs
-    protected WorldGenStoneLayer(BlockState state, RegistryKey<World>... dims) {
+    protected WorldGenStoneLayer(BlockState state, int minY, int maxY, RegistryKey<World>... dims) {
         super("world_gen_stone_layer", WorldGenStoneLayer.class, dims);
         if (state == null || state.isAir()) throw new IllegalStateException("WorldGenStoneLayer has been passed a null stone block state!");
         this.stoneState = state;
+        this.minY = minY;
+        this.maxY = maxY;
     }
     @SafeVarargs
-    protected WorldGenStoneLayer(Block block, RegistryKey<World>... dims) {
-        this(block.getDefaultState(), dims);
+    protected WorldGenStoneLayer(Block block, int minY, int maxY, RegistryKey<World>... dims) {
+        this(block.getDefaultState(), minY, maxY, dims);
     }
 
     @SafeVarargs
-    protected WorldGenStoneLayer(StoneType stoneType, RegistryKey<World>... dims) {
-        this(stoneType.getState(), dims);
+    protected WorldGenStoneLayer(StoneType stoneType, int minY, int maxY, RegistryKey<World>... dims) {
+        this(stoneType.getState(), minY, maxY, dims);
         this.stoneType = stoneType;
     }
 
     @SafeVarargs
     public static List<WorldGenStoneLayer> add(Block block, int weight, RegistryKey<World>... dims) {
-        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.getDefaultState(), dims)).collect(Collectors.toList());
+        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.getDefaultState(), 0, 256, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs
     public static List<WorldGenStoneLayer> add(BlockState state, int weight, RegistryKey<World>... dims) {
-        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(state, dims)).collect(Collectors.toList());
+        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(state, 0, 256, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs
     public static List<WorldGenStoneLayer> add(StoneType stoneType, int weight, RegistryKey<World>... dims) {
-        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(stoneType, dims)).collect(Collectors.toList());
+        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(stoneType, 0, 256, dims)).collect(Collectors.toList());
+    }
+
+    @SafeVarargs
+    public static List<WorldGenStoneLayer> add(Block block, int weight, int minY, int maxY, RegistryKey<World>... dims) {
+        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.getDefaultState(), minY, maxY, dims)).collect(Collectors.toList());
+    }
+
+    @SafeVarargs
+    public static List<WorldGenStoneLayer> add(BlockState state, int weight, int minY, int maxY, RegistryKey<World>... dims) {
+        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(state, minY, maxY, dims)).collect(Collectors.toList());
+    }
+
+    @SafeVarargs
+    public static List<WorldGenStoneLayer> add(StoneType stoneType, int weight, int minY, int maxY, RegistryKey<World>... dims) {
+        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(stoneType, minY, maxY, dims)).collect(Collectors.toList());
     }
 
     public WorldGenStoneLayer addOres(StoneLayerOre... ores) {
@@ -73,6 +91,14 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
 
     public BlockState getStoneState() {
         return stoneState;
+    }
+
+    public int getMinY() {
+        return minY;
+    }
+
+    public int getMaxY() {
+        return maxY;
     }
 
     public StoneLayerOre[] getOres() {

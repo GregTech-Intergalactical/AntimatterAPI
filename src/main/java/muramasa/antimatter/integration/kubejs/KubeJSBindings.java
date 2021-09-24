@@ -6,6 +6,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.ore.StoneType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -70,6 +71,14 @@ public class KubeJSBindings {
             return mat.stream().map(item::get).collect(Collectors.toList());
         }
         return Collections.emptyList();
+    }
+
+    public List<StoneType> allStoneTypes(String domain) {
+        return AntimatterAPI.all(StoneType.class, domain);
+    }
+
+    public List<StoneType> allStoneTypes() {
+        return AntimatterAPI.all(StoneType.class);
     }
 
     public Material getMat(ItemStackJS stack) {
