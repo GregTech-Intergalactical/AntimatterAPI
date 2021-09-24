@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Tuple;
@@ -61,6 +62,6 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, this.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
+        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.SURFACE_ROCK);
     }
 }

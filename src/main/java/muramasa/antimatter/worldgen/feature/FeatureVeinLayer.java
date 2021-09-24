@@ -1,6 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -69,6 +70,6 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, this.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
+        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.VEIN_LAYER);
     }
 }

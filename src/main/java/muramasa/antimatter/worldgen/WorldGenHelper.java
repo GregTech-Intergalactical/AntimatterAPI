@@ -47,6 +47,8 @@ public class WorldGenHelper {
         STONE_SET.add(Blocks.GRANITE.getDefaultState());
         STONE_SET.add(Blocks.ANDESITE.getDefaultState());
         STONE_SET.add(Blocks.DIORITE.getDefaultState());
+        STONE_SET.add(Blocks.END_STONE.getDefaultState());
+        STONE_SET.add(Blocks.NETHERRACK.getDefaultState());
 
         STONE_SET.add(Blocks.COAL_ORE.getDefaultState());
         STONE_SET.add(Blocks.IRON_ORE.getDefaultState());

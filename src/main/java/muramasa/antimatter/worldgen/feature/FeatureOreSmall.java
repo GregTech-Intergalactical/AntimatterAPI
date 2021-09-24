@@ -2,6 +2,7 @@ package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.object.WorldGenOreSmall;
@@ -39,7 +40,7 @@ public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, this.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
+        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.ORE_SMALL);
     }
 
     @Override

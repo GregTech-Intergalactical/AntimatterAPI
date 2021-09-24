@@ -2,6 +2,7 @@ package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.NoiseGenerator;
 import muramasa.antimatter.worldgen.StoneLayerOre;
@@ -46,7 +47,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, this.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
+        event.withFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, AntimatterConfiguredFeatures.STONE_LAYER);
     }
 
     @Override

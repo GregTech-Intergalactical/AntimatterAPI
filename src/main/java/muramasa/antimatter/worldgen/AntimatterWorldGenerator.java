@@ -31,6 +31,12 @@ import java.util.stream.Collectors;
 
 public class AntimatterWorldGenerator {
 
+    static final AntimatterFeature<NoFeatureConfig> VEIN_LAYER = new FeatureVeinLayer();
+    static final AntimatterFeature<NoFeatureConfig> ORE = new FeatureOre();
+    static final AntimatterFeature<NoFeatureConfig> ORE_SMALL = new FeatureOreSmall();
+    static final AntimatterFeature<NoFeatureConfig> STONE_LAYER = new FeatureStoneLayer();
+    static final AntimatterFeature<NoFeatureConfig> SURFACE_ROCK = new FeatureSurfaceRock();
+
     protected static class GenHandler {
         public final Consumer<BiomeLoadingEvent> consumer;
         public final Predicate<Biome.Category> validator;
@@ -42,11 +48,6 @@ public class AntimatterWorldGenerator {
     }
 
     public static void init() {
-        new FeatureVeinLayer();
-        new FeatureOre();
-        new FeatureOreSmall();
-        new FeatureStoneLayer();
-        new FeatureSurfaceRock();
         AntimatterAPI.runLaterCommon(() -> {
             WorldGenHelper.init();
             try {
