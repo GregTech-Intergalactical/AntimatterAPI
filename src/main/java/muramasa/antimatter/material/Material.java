@@ -184,6 +184,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
 
     public Material asOre(boolean small, IMaterialTag... tags){
         asDust(ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
+        if (!has(GEM) && Arrays.stream(tags).noneMatch(r -> r == GEM)) flags(RAW_ORE);
         if (small) flags(ORE_SMALL);
         flags(tags);
         return this;

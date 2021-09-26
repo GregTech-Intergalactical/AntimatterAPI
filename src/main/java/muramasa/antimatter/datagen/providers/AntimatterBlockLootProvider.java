@@ -23,9 +23,12 @@ import net.minecraft.data.IDataProvider;
 import net.minecraft.data.loot.BlockLootTables;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.Item;
 import net.minecraft.loot.*;
 import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraft.loot.conditions.MatchTool;
+import net.minecraft.loot.functions.ApplyBonus;
+import net.minecraft.loot.functions.SetCount;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
@@ -79,7 +82,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
         AntimatterAPI.all(BlockStoneSlab.class, providerDomain, b -> tables.put(b, BlockLootTables::droppingSlab));
         AntimatterAPI.all(BlockStoneStair.class, providerDomain, this::add);
         AntimatterAPI.all(BlockStoneWall.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockOre.class,providerDomain, this::add);
+        AntimatterAPI.all(BlockOre.class,providerDomain, this::addToFortune);
     }
 
     @Override
@@ -105,6 +108,15 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
 
     private static Path getPath(Path root, ResourceLocation id) {
         return root.resolve("data/" + id.getNamespace() + "/loot_tables/blocks/" + id.getPath() + ".json");
+    }
+
+    protected void addToFortune(BlockOre block){
+        if ((block.getMaterial().has(Data.RAW_ORE) || block.getMaterial().has(Data.GEM)) && block.getOreType() == Data.ORE){
+            Item item = block.getMaterial().has(Data.GEM) ? Data.GEM.get(block.getMaterial()) : Data.RAW_ORE.get(block.getMaterial());
+            tables.put(block, b -> droppingItemWithFortune(b, item));
+            return;
+        }
+        add(block);
     }
 
     protected void add(Block block) {
