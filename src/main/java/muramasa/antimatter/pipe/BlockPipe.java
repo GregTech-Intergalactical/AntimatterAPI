@@ -65,8 +65,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     protected PipeSize size;
 
     protected final int modelId;
-    protected Texture side = new Texture(Ref.ID, "block/pipe/pipe_side");
-    protected Texture[] faces = new Texture[]{new Texture(Ref.ID, "block/pipe/pipe_vtiny"), new Texture(Ref.ID, "block/pipe/pipe_tiny"), new Texture(Ref.ID, "block/pipe/pipe_small"), new Texture(Ref.ID, "block/pipe/pipe_normal"), new Texture(Ref.ID, "block/pipe/pipe_large"), new Texture(Ref.ID, "block/pipe/pipe_huge")};
+    protected Texture side;
+    protected Texture[] faces;
 
     public static final BooleanProperty COVERED = BooleanProperty.create("cover");
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
@@ -77,6 +77,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         super(type.getDomain(), prefix + "_" + type.getMaterial().getId() + "_" + size.getId(), properties);
         this.type = type;
         this.size = size;
+        side = new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_side");
+        faces = new Texture[]{new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_vtiny"), new Texture(type.getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_tiny"), new Texture(type.getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_small"), new Texture(type.getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_normal"), new Texture(type.getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_large"), new Texture(type.getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_huge")};
         AntimatterAPI.register(BlockPipe.class, getId(), this);
         setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false).with(COVERED, false));
         this.modelId = modelId;

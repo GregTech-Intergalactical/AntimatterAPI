@@ -18,6 +18,11 @@ public class TextureSet implements IAntimatterObject {
     }
 
     @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    @Override
     public String getId() {
         return id;
     }
@@ -25,6 +30,10 @@ public class TextureSet implements IAntimatterObject {
     public Texture getTexture(MaterialType<?> type, int layer) {
         //TODO return different numbered overlay based on current layer
         return new Texture(domain, "material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"/*"_overlay_" + layer*/));
+    }
+
+    public String getPath(){
+        return "material/" + id;
     }
 
     public Texture[] getTextures(MaterialType<?> type) {
