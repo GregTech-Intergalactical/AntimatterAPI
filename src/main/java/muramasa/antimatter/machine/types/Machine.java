@@ -33,6 +33,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import speiger.src.collections.objects.lists.ObjectArrayList;
@@ -118,7 +119,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
-        setupGui();
+        if (FMLEnvironment.dist.isClient()) {
+            setupGui();
+        }
     }
 
     protected void setupGui() {
