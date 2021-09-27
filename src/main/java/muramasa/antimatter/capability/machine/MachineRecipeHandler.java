@@ -82,7 +82,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return activeRecipe != null;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public float getClientProgress() {
         return ((float) currentProgress / (float) maxProgress);
     }
