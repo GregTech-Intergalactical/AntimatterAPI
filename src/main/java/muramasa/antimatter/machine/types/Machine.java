@@ -119,9 +119,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
-        if (FMLEnvironment.dist.isClient()) {
+        //if (FMLEnvironment.dist.isClient()) {
             setupGui();
-        }
+        //}
     }
 
     protected void setupGui() {

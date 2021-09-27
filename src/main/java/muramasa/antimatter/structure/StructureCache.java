@@ -47,7 +47,7 @@ public class StructureCache {
             StructureCache.DimensionEntry entry = LOOKUP.get(world);
             if (entry == null) return;
             Object2BooleanMap<BlockPos> controllerPos = entry.get(pos);
-            if (controllerPos.size() > 0) {
+            if (controllerPos != null && controllerPos.size() > 0) {
                 controllerPos.forEach((p, valid) -> {
                     if (!p.equals(pos)) {
                         refreshController(world, p, pos);
@@ -88,7 +88,9 @@ public class StructureCache {
     public static int refCount(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return 0;
-        return entry.get(pos).values().stream().mapToInt(t -> t ? 1 : 0).sum();
+
+        Object2BooleanMap<BlockPos> e = entry.get(pos);
+        return e == null ? 0 : e.values().stream().mapToInt(t -> t ? 1 : 0).sum();
     }
 
     /**
@@ -131,7 +133,7 @@ public class StructureCache {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return null;
         Object2BooleanMap<BlockPos> list = entry.get(pos);
-        if (list.size() == 0) return null;
+        if (list == null || list.size() == 0) return null;
         for (Object2BooleanMap.Entry<BlockPos> e : list.object2BooleanEntrySet()) {
             TileEntity tile = world.getTileEntity(e.getKey());
             if (tile != null && clazz.isInstance(tile) && e.getBooleanValue()) return (T) tile;
@@ -224,7 +226,7 @@ public class StructureCache {
     private static void notifyListenersRemove(World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
         if (map != null) {
-            map.getOrDefault(pos.toLong(), Collections.emptySet()).forEach(handle -> handle.structureCacheRemoval());
+            map.getOrDefault(pos.toLong(), Collections.emptySet()).forEach(StructureHandle::structureCacheRemoval);
         }
     }
 
@@ -242,11 +244,11 @@ public class StructureCache {
         private final Long2ObjectMap<LongList> CONTROLLER_TO_STRUCTURE = new Long2ObjectOpenHashMap<>(); //Controller Pos -> All Structure Positions
 
         public DimensionEntry() {
-            STRUCTURE_TO_CONTROLLER.setDefaultReturnValue(Object2BooleanMaps.empty());
+            //STRUCTURE_TO_CONTROLLER.setDefaultReturnValue(Object2BooleanMaps.empty());
             CONTROLLER_TO_STRUCTURE.setDefaultReturnValue(LongLists.empty());
         }
 
-        @Nonnull
+        @Nullable
         public Object2BooleanMap<BlockPos> get(BlockPos pos) {
             return STRUCTURE_TO_CONTROLLER.get(pos.toLong());
         }
