@@ -6,6 +6,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.CompoundNBT;
@@ -40,6 +41,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         if (hasGui()) {
             this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
             gui.setEnablePlayerSlots(true);
+            this.addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(),t.handler.guiSize(), t.handler.guiHeight())));
         }
     }
 
