@@ -26,7 +26,9 @@ import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.data.TagsProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
@@ -109,6 +111,13 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         });
         AntimatterAPI.all(BlockStone.class, domain, s -> {
             String id = "blocks/".concat(s.getId());
+            if (s.getSuffix().isEmpty()){
+                this.getOrCreateBuilder(Tags.Items.STONE).add(s.asItem());
+            } else if (s.getSuffix().equals("cobble")){
+                this.getOrCreateBuilder(Tags.Items.COBBLESTONE).add(s.asItem());
+            } else if (s.getSuffix().contains("bricks")){
+                this.getOrCreateBuilder(ItemTags.STONE_BRICKS).add(s.asItem());
+            }
             this.copy(getBlockTag(new ResourceLocation(Ref.ID, id)), getItemTag(new ResourceLocation(Ref.ID, id)));
         });
         // AntimatterAPI.all(BlockOreStone.class, domain, s -> {
