@@ -78,16 +78,16 @@ public class MaterialRecipe extends ShapedRecipe {
     private Result build(CraftingInventory inv, boolean regularTest) {
         for(int i = 0; i <= inv.getWidth() - this.getWidth(); ++i) {
             for(int j = 0; j <= inv.getHeight() - this.getHeight(); ++j) {
-                Result m = this.build(inv, i, j,regularTest, true);
-                if (m != null) return m;
-                m = this.build(inv, i, j,regularTest, false);
+                //Result m = this.build(inv, i, j,regularTest, true);
+                //if (m != null) return m;
+                Result m = this.build(inv, i, j,regularTest, false);
                 if (m != null) return m;
             }
         }
         return null;
     }
 
-    private Result build(CraftingInventory inv, int width, int height, boolean regularTest, boolean someBooleanIDunno) {
+    private Result build(CraftingInventory inv, int width, int height, boolean regularTest, boolean mirrored) {
         Int2ObjectMap<Object> result = new Int2ObjectOpenHashMap<>(size);
         Map<String, Object> ret = new Object2ObjectOpenHashMap<>(5, 0.25f);
         Map<Ingredient, ItemStack> whichStacks = new Object2ObjectOpenHashMap<>(5, 0.25f);
@@ -98,7 +98,7 @@ public class MaterialRecipe extends ShapedRecipe {
                 Ingredient ingredient;
                 if (k >= 0 && l >= 0 && k < getWidth() && l < getHeight()) {
                     int offset;
-                    if (someBooleanIDunno)
+                    if (mirrored)
                         offset = this.getRecipeWidth() - k - 1 + l * this.getRecipeWidth();
                     else
                         offset = k + l * this.getRecipeWidth();
