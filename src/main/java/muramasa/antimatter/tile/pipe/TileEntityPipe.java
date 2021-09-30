@@ -62,6 +62,10 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         this.pipeCapHolder = new Holder<>(getCapability(), this.dispatch);
     }
 
+    public Holder getPipeCapHolder() {
+        return pipeCapHolder;
+    }
+
     @Override
     public boolean interacts(Direction direction) {
         return Connectivity.has(interaction, direction.getIndex());
