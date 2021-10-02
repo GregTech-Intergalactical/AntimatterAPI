@@ -62,10 +62,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         this.pipeCapHolder = new Holder<>(getCapability(), this.dispatch);
     }
 
-    public Holder getPipeCapHolder() {
-        return pipeCapHolder;
-    }
-
     @Override
     public boolean interacts(Direction direction) {
         return Connectivity.has(interaction, direction.getIndex());
@@ -261,6 +257,17 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         if (side == null) return LazyOptional.empty();
         if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
         if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
+        if (cap == getCapability()) {
+            return pipeCapHolder.side(side).cast();
+        }
+        return LazyOptional.empty();
+    }
+
+    //For covers
+    @Nonnull
+    public <U> LazyOptional<U> getCapabilityWithoutConnectionCheck(@Nonnull Capability<U> cap, @Nullable Direction side) {
+        if (side == null) return LazyOptional.empty();
+        if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
         if (cap == getCapability()) {
             return pipeCapHolder.side(side).cast();
         }
