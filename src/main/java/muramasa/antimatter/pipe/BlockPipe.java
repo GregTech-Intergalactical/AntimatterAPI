@@ -317,7 +317,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                         Utils.damageStack(stack, player);
                         return ActionResultType.SUCCESS;
                     }
-                } else if (world.isAirBlock(pos.offset(side))) {
+                } else/* if (world.isAirBlock(pos.offset(side))) */{
                     tile.toggleConnection(side);
                     Utils.damageStack(stack, player);
                     return ActionResultType.SUCCESS;
