@@ -23,7 +23,6 @@ import java.util.Collections;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
-//TODO: HATCH SHOULD NOT HAVE TWO OUTPUTS!
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
     private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional.of(() -> new HatchComponentHandler((T)this));
