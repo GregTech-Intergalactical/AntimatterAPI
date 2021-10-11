@@ -1,5 +1,6 @@
 package muramasa.antimatter.structure;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -269,7 +270,14 @@ public class StructureCache {
 
         public boolean validate(BlockPos pos, int maxAmount, LongList structure) {
             long at = pos.toLong();
-            int i = structure.stream().mapToInt(t -> this.STRUCTURE_TO_CONTROLLER.get((long)t).values().stream().mapToInt(j -> j ? 1 : 0).sum()).max().orElse(0);
+            int i = structure.stream().mapToInt(t -> {
+                Object2BooleanMap<BlockPos> map = this.STRUCTURE_TO_CONTROLLER.get((long) t);
+                if (map == null) {
+                    Antimatter.LOGGER.warn("Invalid state in StructureCache, map should not be null");//throw new RuntimeException("Invalid state in StructureCache, map should not be null");
+                    return Integer.MAX_VALUE;
+                }
+               return map.values().stream().mapToInt(j -> j ? 1 : 0).sum();
+            }).max().orElse(0);
             if (i <= maxAmount) {
                 LongList old = this.CONTROLLER_TO_STRUCTURE.remove(at);
                 old.forEach(l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {

@@ -3,6 +3,7 @@ package muramasa.antimatter.structure;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Direction;
@@ -116,13 +117,13 @@ public class Structure {
         };
     }
 
-    public LongList getStructure(TileEntityBasicMultiMachine<?> tile) {
+    public LongList getStructure(TileEntityBasicMultiMachine<?> tile, Direction face) {
         LongList l = new LongArrayList();
         Direction h = null;
         if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y){
             h = tile.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
         }
-        for (Iterator<Point> it = forAllElements(tile.getPos(), tile.getFacing(), h); it.hasNext(); ) {
+        for (Iterator<Point> it = forAllElements(tile.getPos(), face, h); it.hasNext(); ) {
             l.add(it.next().pos.toLong());
         }
         return l;

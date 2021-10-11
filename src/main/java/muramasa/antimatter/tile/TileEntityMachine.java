@@ -582,7 +582,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
-    public ResourceLocation getModel(Direction dir, Direction facing) {
+    public ResourceLocation getModel(String type, Direction dir, Direction facing) {
         return this.getMachineType().getOverlayModel(Utils.coverRotateFacing(dir, facing));
     }
 

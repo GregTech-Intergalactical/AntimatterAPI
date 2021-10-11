@@ -41,6 +41,12 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     protected boolean shouldCheckFirstTick = true;
     //Number of calls into checkStructure, invalidateStructure. if > 0 ignore callbacks from structurecache.
     private int checkingStructure = 0;
+    /**
+     * Used whenever a machine might be rotated and is checking structure, since the facing is changed before checkStructure()
+     * is called and it needs to properly offset in recipeStop
+     */
+    public BlockState oldState;
+    private Direction facingOverride;
 
     protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
@@ -77,11 +83,16 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             super.onFirstTick();
             return;
         }
-        StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).getStructure(this));
+        StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).getStructure(this, getFacing()));
         if (!isStructureValid() && shouldCheckFirstTick) {
             checkStructure();
         }
         super.onFirstTick();
+    }
+
+    @Override
+    public Direction getFacing() {
+        return facingOverride != null ? facingOverride : super.getFacing();
     }
 
     public boolean checkStructure() {
@@ -158,7 +169,18 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         BlockState old = this.getBlockState();
         super.updateContainingBlockInfo();
         BlockState newState = this.getBlockState();
-        if (!old.equals(newState)) checkStructure();
+        if (!old.equals(newState)) {
+            oldState = old;
+            checkStructure();
+            oldState = null;
+            facingOverride = null;
+        }
+    }
+
+    @Override
+    public void onRecipeStop() {
+        super.onRecipeStop();
+        this.facingOverride = Utils.dirFromState(oldState);
     }
 
     protected void invalidateStructure() {
@@ -170,7 +192,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             return;
         }
         checkingStructure++;
-        StructureCache.invalidate(this.getWorld(), getPos(), getMachineType().getStructure(getMachineTier()).getStructure(this));
+        StructureCache.invalidate(this.getWorld(), getPos(), getMachineType().getStructure(getMachineTier()).getStructure(this, oldState != null ? Utils.dirFromState(oldState) : getFacing()));
         if (isServerSide()) {
             onStructureInvalidated();
             result.remove(this, result);

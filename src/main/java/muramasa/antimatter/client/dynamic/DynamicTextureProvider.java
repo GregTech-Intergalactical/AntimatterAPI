@@ -47,8 +47,9 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider,U> {
         public T source;
         public U key;
         public Direction currentDir;
+        public String type;
 
-        public BuilderData(Random r, BlockState s, IModelData d, T t, U u, IUnbakedModel sourceModel, Direction dir) {
+        public BuilderData(String type, Random r, BlockState s, IModelData d, T t, U u, IUnbakedModel sourceModel, Direction dir) {
             rand = r;
             state = s;
             data = d;
@@ -56,6 +57,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider,U> {
             this.sourceModel = sourceModel;
             this.key = u;
             this.currentDir = dir;
+            this.type = type;
         }
     }
     //The weak-reference backed hashmap.
@@ -69,23 +71,23 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider,U> {
         this.builder = builder;
     }
 
-    public List<BakedQuad>[] getQuads(BlockState state, T t, U key, IModelData data) {
+    public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, IModelData data) {
         return MODEL_CACHE.compute(t.getId(), (k,v) -> {
             if (v == null) v = new WeakHashMap<>();
-            v.computeIfAbsent(key, (k1) -> bakeQuads(state,t, key,data));
+            v.computeIfAbsent(key, (k1) -> bakeQuads(type, state,t, key,data));
             return v;
         }).get(key);
     }
 
-    private List<BakedQuad>[] bakeQuads(BlockState state, T c, U key, IModelData data) {
+    private List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, IModelData data) {
         List<BakedQuad>[] bakedArray = new List[Ref.DIRS.length];
         for (Direction dir : Ref.DIRS) {
-            IUnbakedModel m = ModelLoader.instance().getUnbakedModel(c.getModel(dir, dirFromState(state, dir)));
+            IUnbakedModel m = ModelLoader.instance().getUnbakedModel(c.getModel(type, dir, dirFromState(state, dir)));
             if (m instanceof BlockModel) {
                 BlockModel bm = (BlockModel) m;
                 texturer.accept(new ModelData(bm, dir, data,c, key));
             }
-            bakedArray[dir.getIndex()] = builder.apply(new BuilderData(Ref.RNG, state, data, c,key, m, dir));
+            bakedArray[dir.getIndex()] = builder.apply(new BuilderData(type, Ref.RNG, state, data, c,key, m, dir));
         }
         return bakedArray;
     }
