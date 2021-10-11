@@ -494,13 +494,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 }
             }
         } else {
+            if (activeRecipe != null) tile.onRecipeStop();
             if (hardcore) {
-                if (activeRecipe != null) tile.onRecipeStop();
                 resetRecipe();
-            } else {
-                if (activeRecipe != null) tile.onRecipeStop();
-                tile.resetMachine();
             }
+            tile.resetMachine();
         }
     }
 
