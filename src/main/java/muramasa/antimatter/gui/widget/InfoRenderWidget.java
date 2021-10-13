@@ -126,13 +126,13 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             gui.syncInt(() -> {
                 ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(),pipe.getPos().toLong());
                 if (controller == null) return 0;
-                ItemController<?> gt = (ItemController<?>) controller;
+                ItemController gt = (ItemController) controller;
                 return gt.getTransferred();
             }, a -> this.transferred = a);
             gui.syncInt(() -> {
                 ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(),pipe.getPos().toLong());
                 if (controller == null) return 0;
-                ItemController<?> gt = (ItemController<?>) controller;
+                ItemController gt = (ItemController) controller;
                 return gt.getCableTransferred(pipe.getPos().toLong());
             }, a -> this.cableTransferred = a);
         }

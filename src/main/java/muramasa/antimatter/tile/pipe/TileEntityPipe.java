@@ -5,6 +5,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
+import muramasa.antimatter.cover.CoverNone;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
@@ -192,13 +193,17 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         if (this.canConnect(side.getIndex())) {
             BlockPos pos = this.pos.offset(side);
             TileEntity tile = world.getTileEntity(pos);
-            if (!(tile instanceof TileEntityPipe)) {
-                clearConnection(side);
-                clearInteract(side);
-                if (tile != null && validateTile(tile, side.getOpposite())) {
-                    setConnection(side);
-                    setInteract(side);
+            if (tile != null) {
+                if (!(tile instanceof TileEntityPipe)) {
+                    clearConnection(side);
+                    clearInteract(side);
+                    if (validateTile(tile, side.getOpposite())) {
+                        setConnection(side);
+                        setInteract(side);
+                    }
                 }
+            } else {
+                clearInteract(side);
             }
         }
     }
@@ -209,8 +214,26 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         sidedSync(true);
     }
 
+    @Override
+    public boolean registerAsNode() {
+        return this.coverHandler.map(t -> {
+            for (CoverStack<?> coverStack : t.getAll()) {
+                if (coverStack.getCover().ticks()) return true;
+            }
+            return false;
+        }).orElse(false);
+    }
 
-    public void onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, CoverStack<? extends TileEntityPipe> old, CoverStack<? extends TileEntityPipe> stack) {
+    /**
+     * Handles cover updates, to check if the tile has to be replaced.
+     * @param remove if a cover was removed.
+     * @param hasNonEmpty if there is at least one cover still present.
+     * @param side which side the cover was removed on.
+     * @param old the old coverstack, can be empty.
+     * @param stack the new coverstack, can be empty.
+     * @return if the tile was updated.
+     */
+    public boolean onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, CoverStack<? extends TileEntityPipe> old, CoverStack<? extends TileEntityPipe> stack) {
         if (stack.getCover().blocksCapability(stack, getCapability(), side)) {
             this.clearConnection(side);
             this.clearInteract(side);
@@ -223,6 +246,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
                 if (pipe != this) {
                     pipe.read(pipe.getBlockState(), nbt);
                 }
+                return true;
             }
         } else if (!remove && hasNonEmpty) {
             //set this to be covered.
@@ -232,7 +256,9 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
             if (pipe != this) {
                 pipe.read(pipe.getBlockState(), nbt);
             }
+            return true;
         }
+        return false;
     }
 
     public ICover[] getValidCovers() {
@@ -265,11 +291,11 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     //For covers
     @Nonnull
-    public <U> LazyOptional<U> getCapabilityWithoutConnectionCheck(@Nonnull Capability<U> cap, @Nullable Direction side) {
+    public <U> LazyOptional<U> getCoverCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
         if (side == null) return LazyOptional.empty();
-        if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
+        if (!this.canConnect(side.getIndex())) return LazyOptional.empty();
         if (cap == getCapability()) {
-            return pipeCapHolder.side(side).cast();
+            return pipeCapHolder.side(null).cast();
         }
         return LazyOptional.empty();
     }

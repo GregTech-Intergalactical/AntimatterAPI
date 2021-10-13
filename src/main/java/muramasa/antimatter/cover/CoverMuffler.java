@@ -18,4 +18,9 @@ public class CoverMuffler extends BaseCover {
         if (type.equals("pipe")) return PIPE_COVER_MODEL;
         return getBasicModel();
     }
+
+    @Override
+    public boolean ticks() {
+        return false;
+    }
 }

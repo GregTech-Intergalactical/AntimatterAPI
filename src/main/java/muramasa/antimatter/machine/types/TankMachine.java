@@ -12,5 +12,7 @@ public class TankMachine extends Machine<TankMachine> {
         setTile(() -> new TileEntityTank(this));
         addFlags(ITEM, FLUID, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);
+        frontCovers();
+        allowFrontIO();
     }
 }

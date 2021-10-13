@@ -19,6 +19,12 @@ public class CoverEnergy extends BaseCover{
 //        return getBasicModel();
 //    }
 
+
+    @Override
+    public boolean ticks() {
+        return false;
+    }
+
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
         super.onPlace(instance, side);

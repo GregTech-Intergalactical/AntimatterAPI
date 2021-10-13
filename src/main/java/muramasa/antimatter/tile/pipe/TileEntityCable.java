@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
@@ -47,8 +48,8 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.GT_ENERGY.remove(getWorld(), pos.toLong());
         super.onRemove();
+        if (isServerSide()) Tesseract.GT_ENERGY.remove(getWorld(), pos.toLong());
     }
 
     @Override
@@ -93,6 +94,11 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public LazyOptional<? extends IEnergyHandler> forSide(Direction side) {
         return LazyOptional.of(() -> new TesseractGTCapability(this, side));
+    }
+
+    @Override
+    public LazyOptional<? extends IEnergyHandler> forNullSide() {
+        return forSide(null);
     }
 
     @Override

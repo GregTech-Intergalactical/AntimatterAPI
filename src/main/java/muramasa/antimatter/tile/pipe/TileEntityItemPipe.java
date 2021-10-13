@@ -15,6 +15,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
@@ -60,8 +61,8 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.ITEM.remove(getWorld(), pos.toLong());
         super.onRemove();
+        if (isServerSide()) Tesseract.ITEM.remove(getWorld(), pos.toLong());
     }
 
     @Override
@@ -82,6 +83,11 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     @Override
     public LazyOptional<IItemHandler> forSide(Direction side) {
         return LazyOptional.of(() -> new TesseractItemCapability(this, side));
+    }
+
+    @Override
+    public LazyOptional<? extends IItemHandler> forNullSide() {
+        return forSide(null);
     }
 
     @Override

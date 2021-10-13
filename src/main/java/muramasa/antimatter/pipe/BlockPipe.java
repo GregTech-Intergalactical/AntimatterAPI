@@ -232,15 +232,15 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 // Looking for the side where is a neighbor was
                 // Check if the block is actually air or there was another reason for change.
                 if (pos.offset(side).equals(neighbor)) {
-                    if (isAir(world.getBlockState(neighbor), world, pos)) {
+                    BlockState other = world.getBlockState(neighbor);
+                    if (other.getBlock() instanceof BlockPipe) return;
+                    if (isAir(other, world, pos) || world.getTileEntity(neighbor) == null) {
                         tile.clearInteract(side);
                         return;
-                    } else {
-                        tile.refreshSide(side);
+                    }
                     }
                 }
             }
-        }
     }
 
     @Override

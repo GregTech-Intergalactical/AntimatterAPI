@@ -91,6 +91,10 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
     return false;
   }
 
+  default boolean ticks() {
+    return true;
+  }
+
   void deserialize(CoverStack<?> stack, CompoundNBT nbt);
 
   void serialize(CoverStack<?> stack, CompoundNBT nbt);

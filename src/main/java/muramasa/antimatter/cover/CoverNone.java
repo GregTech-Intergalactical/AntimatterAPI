@@ -8,6 +8,11 @@ public class CoverNone extends BaseCover {
     }
 
     @Override
+    public boolean ticks() {
+        return false;
+    }
+
+    @Override
     public String getId() {
         return "none";
     }

@@ -4,6 +4,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
+import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
 import net.minecraft.block.BlockState;
@@ -57,8 +58,6 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         super.refreshConnection();
     }
 
-    
-
     @Override
     public void read(BlockState state, CompoundNBT tag) {
         super.read(state, tag);
@@ -83,10 +82,10 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public void onRemove() {
-        if (isServerSide()) Tesseract.FLUID.remove(getWorld(), pos.toLong());
         fluidHandler.ifPresent(t -> t.onRemove());
         fluidHandler.invalidate();
         super.onRemove();
+        if (isServerSide()) Tesseract.FLUID.remove(getWorld(), pos.toLong());
     }
 
     @Override
@@ -129,6 +128,11 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
             return LazyOptional.of(() -> new TesseractFluidCapability(this, side));
         }
         return fluidHandler;
+    }
+
+    @Override
+    public LazyOptional<? extends IFluidHandler> forNullSide() {
+        return forSide(null);
     }
 
     @Override

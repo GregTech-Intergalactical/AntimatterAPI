@@ -34,6 +34,11 @@ public class CoverPlate extends CoverMaterial {
     }
 
     @Override
+    public boolean ticks() {
+        return false;
+    }
+
+    @Override
     public ResourceLocation getModel(String type, Direction dir, Direction facing) {
         if (type.equals("pipe")) return PIPE_COVER_MODEL;
         return getBasicModel();

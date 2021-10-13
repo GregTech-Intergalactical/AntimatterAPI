@@ -138,7 +138,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     @Override
     public void onUpdate() {
-        covers.forEach((s, c) -> c.getCover().onUpdate(c, s));
+        covers.forEach((s, c) -> {
+           if (c.getCover().ticks()) { c.getCover().onUpdate(c, s);};
+        });
     }
 
     @Override

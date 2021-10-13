@@ -20,10 +20,10 @@ public class CoverDynamo extends BaseCover {
         return "dynamo";
     }
 
-    //@Override
-    //public ResourceLocation getModel(Direction dir, Direction facing) {
-    //    return getBasicModel();
-    //}
+    @Override
+    public boolean ticks() {
+        return false;
+    }
 
     @Override
     public void onPlace(CoverStack<?> instance, Direction side) {
