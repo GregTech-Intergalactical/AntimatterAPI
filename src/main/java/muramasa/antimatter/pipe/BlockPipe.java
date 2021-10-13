@@ -234,6 +234,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 if (pos.offset(side).equals(neighbor)) {
                     BlockState other = world.getBlockState(neighbor);
                     if (other.getBlock() instanceof BlockPipe) return;
+                    if (tile.connects(side) && !tile.interacts(side) && tile.validateTile(tile, side)) {
+                        tile.setInteract(side);
+                    }
                     if (isAir(other, world, pos) || world.getTileEntity(neighbor) == null) {
                         tile.clearInteract(side);
                         return;

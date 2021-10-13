@@ -52,7 +52,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             super.init();
             TileEntityMultiMachine<?> m = (TileEntityMultiMachine<?>) gui.handler;
             gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getCurrentProgress).orElse(0), i -> this.currentProgress = i);
-            gui.syncInt(() -> m.recipeHandler.map(t -> t.getActiveRecipe() == null ? 0 : t.getActiveRecipe().getDuration()).orElse(0), i -> this.maxProgress = i);
+            gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getMaxProgress).orElse(0), i -> this.maxProgress = i);
             gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getOverclock).orElse(0), i -> this.overclock = i);
             gui.syncLong(() -> m.recipeHandler.map(MachineRecipeHandler::getPower).orElse(0L), i -> this.euT = i);
         }

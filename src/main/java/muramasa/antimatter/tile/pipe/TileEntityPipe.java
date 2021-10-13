@@ -94,6 +94,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     public void onInvalidate(Direction side) {
+        if (this.removed) return;
         if (!Connectivity.has(interaction, side.getIndex())) return;
         clearInteract(side);
         TileEntity tile = this.world.getTileEntity(pos.offset(side));
@@ -162,6 +163,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     public void setInteract(Direction side) {
         if (blocksSide(side)) return;
+        if (!connects(side)) return;
         byte oldInteract = interaction;
         interaction = Connectivity.set(interaction, side.getIndex());
         if (isServerSide() && oldInteract != interaction)

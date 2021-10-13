@@ -90,9 +90,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return currentProgress;
     }
 
-    @OnlyIn(Dist.CLIENT)
-    public void setClientProgress(int progress) {
-        this.currentProgress = progress;
+    public int getMaxProgress() {
+        return maxProgress;
     }
 
     @Override
