@@ -178,8 +178,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
-    public void onRecipeStop() {
-        super.onRecipeStop();
+    public void onMachineStop() {
+        super.onMachineStop();
         if (oldState != null)  {
             this.facingOverride = Utils.dirFromState(oldState);
         }

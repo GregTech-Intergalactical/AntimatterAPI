@@ -181,18 +181,13 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     //Called whenever a recipe is stopped.
-    public void onRecipeStop() {
+    public void onMachineStop() {
 
     }
 
     //Called whenever a recipe is activated, might be the same as before (e.g. no new recipe).
-    public void onRecipeActivated(Recipe r) {
+    public void onMachineStarted(Recipe r) {
 
-    }
-
-    //Called in order to validate a found recipe.
-    public boolean onRecipeFound(Recipe r) {
-        return true;
     }
 
     public void onBlockUpdate(BlockPos neighbor){
@@ -405,9 +400,15 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     public void setMachineState(MachineState newState) {
         if (this.machineState != newState) {
+            MachineState old = this.machineState;
             this.machineState = newState;
             if (world != null) {
                 sidedSync(true);
+                if (old == MachineState.ACTIVE) {
+                    this.onMachineStop();
+                } else if (newState == MachineState.ACTIVE){
+                    this.onMachineStarted(recipeHandler.map(MachineRecipeHandler::getActiveRecipe).orElse(null));
+                }
             }
             markDirty();
         }
