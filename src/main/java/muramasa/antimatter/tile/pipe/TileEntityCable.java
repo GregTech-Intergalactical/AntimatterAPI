@@ -17,8 +17,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.Tesseract;
+import tesseract.api.GraphWrapper;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTCable;
@@ -31,39 +32,28 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
-    public void refreshConnection() {
-        if (isServerSide()) {
-            if (Tesseract.GT_ENERGY.remove(getWorld(), pos.toLong())) {
-                Tesseract.GT_ENERGY.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
+    public void addNode(Direction side) {
+        Tesseract.GT_ENERGY.registerNode(this, world, pos.offset(side).toLong(), side.getOpposite(), getPos -> {
+            TileEntity tile = world.getTileEntity(BlockPos.fromLong(getPos));
+            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side.getOpposite());
+            if (capability.isPresent()) {
+                capability.addListener(o -> this.onSideCapInvalidate(side));
+                return capability.resolve().get();
+            } else {
+                LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, side.getOpposite());
+                if (cap.isPresent()) {
+                    EnergyTileWrapper node = new EnergyTileWrapper(tile, cap.orElse(null));
+                    cap.addListener(o -> this.onSideCapInvalidate(side));
+                    return node;
+                }
             }
-        }
-        super.refreshConnection();
+            return null;
+        });
     }
 
     @Override
-    protected void initTesseract() {
-        if (isServerSide()) Tesseract.GT_ENERGY.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
-        super.initTesseract();
-    }
-
-    @Override
-    public void onRemove() {
-        super.onRemove();
-        if (isServerSide()) Tesseract.GT_ENERGY.remove(getWorld(), pos.toLong());
-    }
-
-    @Override
-    public void registerNode(BlockPos pos, Direction side, boolean remove) {
-        if (!remove) {
-            EnergyTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
-        } else {
-           Tesseract.GT_ENERGY.remove(getWorld(), pos.toLong());
-        }
-    }
-
-    @Override
-    public boolean validateTile(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityCable || tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, side).isPresent();
+    protected GraphWrapper getWrapper() {
+        return Tesseract.GT_ENERGY;
     }
 
     @Override
@@ -89,6 +79,14 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
+    }
+
+    @Override
+    public boolean validate(Direction dir) {
+        if (!super.validate(dir)) return false;
+        TileEntity tile = world.getTileEntity(getPos().offset(dir));
+        if (tile == null) return false;
+        return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
     }
 
     @Override

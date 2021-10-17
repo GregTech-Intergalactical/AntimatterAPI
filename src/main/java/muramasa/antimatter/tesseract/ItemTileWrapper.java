@@ -1,49 +1,21 @@
 package muramasa.antimatter.tesseract;
 
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import tesseract.Tesseract;
 import tesseract.api.item.IItemNode;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 public class ItemTileWrapper implements IItemNode {
 
     private final TileEntity tile;
     private final IItemHandler handler;
 
-    private ItemTileWrapper(TileEntity tile, IItemHandler handler) {
+    public ItemTileWrapper(TileEntity tile, IItemHandler handler) {
         this.tile = tile;
         this.handler = handler;
-    }
-
-    @Nullable
-    public static void wrap(TileEntityPipe pipe, World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
-        Tesseract.ITEM.registerNode(world, pos.toLong(), () -> {
-            TileEntity tile = supplier.get();
-            if (tile == null) {
-                pipe.clearInteract(side);
-                return null;
-            }
-            LazyOptional<IItemHandler> capability = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite());
-            if (capability.isPresent()) {
-                ItemTileWrapper node = new ItemTileWrapper(tile, capability.orElse(null));
-                capability.addListener(o -> pipe.onInvalidate(side));
-                return node;
-            } else {
-                pipe.clearInteract(side);
-                return null;
-            }
-        });
     }
 
     @Override

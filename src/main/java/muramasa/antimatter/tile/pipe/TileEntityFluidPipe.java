@@ -4,7 +4,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
-import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
 import net.minecraft.block.BlockState;
@@ -18,6 +17,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
+import tesseract.api.GraphWrapper;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
 import tesseract.api.fluid.IFluidNode;
@@ -38,24 +38,8 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    protected void initTesseract() {
-        if (isServerSide()) Tesseract.FLUID.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
-        super.initTesseract();
-    }
-
-    @Override
-    public boolean validateTile(TileEntity tile, Direction side) {
-        return tile instanceof TileEntityFluidPipe || tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side).isPresent();
-    }
-
-    @Override
-    public void refreshConnection() {
-        if (isServerSide()) {
-            if (Tesseract.FLUID.remove(getWorld(), pos.toLong())) {
-                Tesseract.FLUID.registerConnector(getWorld(), pos.toLong(), this); // this is connector class
-            }
-        }
-        super.refreshConnection();
+    protected GraphWrapper getWrapper() {
+        return Tesseract.FLUID;
     }
 
     @Override
@@ -72,12 +56,21 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public void registerNode(BlockPos pos, Direction side, boolean remove) {
-        if (!remove) {
-            FluidTileWrapper.wrap(this, getWorld(), pos, side, () -> world.getTileEntity(pos));
-        } else {
-            Tesseract.FLUID.remove(getWorld(), pos.toLong());
-        }
+    public void addNode(Direction side) {
+        Tesseract.FLUID.registerNode(this, getWorld(), pos.offset(side).toLong(), side.getOpposite(), pos -> {
+            TileEntity tile = world.getTileEntity(BlockPos.fromLong(pos));
+            if (tile == null) {
+                return null;
+            }
+            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+            if (capability.isPresent()) {
+                FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
+                capability.addListener(o -> this.onSideCapInvalidate(side));
+                return node;
+            } else {
+                return null;
+            }
+        });
     }
 
     @Override
@@ -85,7 +78,6 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         fluidHandler.ifPresent(t -> t.onRemove());
         fluidHandler.invalidate();
         super.onRemove();
-        if (isServerSide()) Tesseract.FLUID.remove(getWorld(), pos.toLong());
     }
 
     @Override
@@ -111,6 +103,14 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public boolean connects(Direction direction) {
         return canConnect(direction.getIndex());
+    }
+
+    @Override
+    public boolean validate(Direction dir) {
+        if (!super.validate(dir)) return false;
+        TileEntity tile = world.getTileEntity(getPos().offset(dir));
+        if (tile == null) return false;
+        return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir).isPresent();
     }
 
     @Override

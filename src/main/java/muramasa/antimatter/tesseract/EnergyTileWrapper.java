@@ -1,21 +1,12 @@
 package muramasa.antimatter.tesseract;
 
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import tesseract.Tesseract;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTConsumer;
 import tesseract.api.gt.IEnergyHandler;
-
-import java.util.function.Supplier;
 
 public class EnergyTileWrapper implements IEnergyHandler {
 
@@ -29,29 +20,6 @@ public class EnergyTileWrapper implements IEnergyHandler {
         this.storage = storage;
     }
 
-    public static void wrap(TileEntityPipe pipe, World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
-        Tesseract.GT_ENERGY.registerNode(world, pos.toLong(), () -> {
-            TileEntity tile = supplier.get();
-            if (tile == null) {
-                pipe.clearInteract(side);
-                return null;
-            }
-            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side.getOpposite());
-            if (capability.isPresent()) {
-                capability.addListener(o -> pipe.onInvalidate(side));
-                return capability.resolve().get();
-            } else {
-                LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, side.getOpposite());
-                if (cap.isPresent()) {
-                    EnergyTileWrapper node = new EnergyTileWrapper(tile, cap.orElse(null));
-                    cap.addListener(o -> pipe.onInvalidate(side));
-                    return node;
-                }
-            }
-            pipe.clearInteract(side);
-            return null;
-        });
-    }
     @Override
     public long insert(long maxReceive, boolean simulate) {
         if (state.receive(simulate, getInputAmperage(), maxReceive)) {

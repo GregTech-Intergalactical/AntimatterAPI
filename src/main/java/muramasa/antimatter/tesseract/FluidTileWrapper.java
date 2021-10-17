@@ -1,49 +1,21 @@
 package muramasa.antimatter.tesseract;
 
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import tesseract.Tesseract;
 import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 public class FluidTileWrapper implements IFluidNode {
 
     private final TileEntity tile;
     private final IFluidHandler handler;
 
-    private FluidTileWrapper(TileEntity tile, IFluidHandler handler) {
+    public FluidTileWrapper(TileEntity tile, IFluidHandler handler) {
         this.tile = tile;
         this.handler = handler;
-    }
-
-    @Nullable
-    public static void wrap(TileEntityPipe pipe, World world, BlockPos pos, Direction side, Supplier<TileEntity> supplier) {
-       Tesseract.FLUID.registerNode(world, pos.toLong(), () -> {
-            TileEntity tile = supplier.get();
-            if (tile == null) {
-                pipe.clearInteract(side);
-                return null;
-            }
-            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
-            if (capability.isPresent()) {
-                FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
-                capability.addListener(o -> pipe.onInvalidate(side));
-                return node;
-            } else {
-                pipe.clearInteract(side);
-                return null;
-            }
-        });
     }
 
     @Override

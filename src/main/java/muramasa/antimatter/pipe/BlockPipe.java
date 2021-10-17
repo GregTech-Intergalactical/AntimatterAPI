@@ -51,6 +51,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.network.NetworkHooks;
+import tesseract.api.IPipe;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -59,7 +60,7 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable {
+public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable, IPipe.IPipeBlock {
 
     protected T type;
     protected PipeSize size;
@@ -178,12 +179,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         TileEntityPipe<?> tile = getTilePipe(worldIn, pos);
         if (tile != null) {
             for (Direction side : Ref.DIRS) {
-                TileEntityPipe<?> neighbor = getTilePipe(worldIn, pos.offset(side));
-                if (tile.blocksSide(side)) return;
-                if (neighbor != null && tile.validateTile(neighbor, side.getOpposite())) {
-                    if (neighbor.canConnect(side.getOpposite().getIndex())) {
-                        tile.setConnection(side);
-                    }
+                IPipe neighbour = tile.getValidPipe(side);
+                if (neighbour != null && neighbour.connects(side.getOpposite())) {
+                    tile.setConnection(side);
                 }
             }
         }
@@ -193,22 +191,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public boolean onBlockPlacedTo(World world, BlockPos pos, Direction face) {
         TileEntityPipe<?> tile = getTilePipe(world, pos);
         if (tile != null) {
-            if (tile.blocksSide(face)) return false;
-            TileEntity neighbor = world.getTileEntity(pos.offset(face.getOpposite()));
-            if (neighbor != null) {
-                if (tile.validateTile(neighbor, face)) {
-                    tile.setConnection(face.getOpposite());
-                    if (neighbor instanceof TileEntityPipe) {
-                        TileEntityPipe<?> pipe = (TileEntityPipe<?>) neighbor;
-                        if (!pipe.canConnect(face.getIndex())) {
-                            pipe.setConnection(face);
-                        }
-                    } else {
-                        tile.setInteract(face.getOpposite());
-                    }
-                    return true;
-                }
-            }
+            if (!world.getBlockState(pos.offset(face.getOpposite())).hasTileEntity()) return false;
+            tile.setConnection(face.getOpposite());
+            return true;
         }
         return false;
     }
@@ -226,24 +211,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override // Used to clear connection for sides where neighbor was removed
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        TileEntityPipe<?> tile = getTilePipe(world, pos);
-        if (tile != null) {
-            for (Direction side : Ref.DIRS) {
-                // Looking for the side where is a neighbor was
-                // Check if the block is actually air or there was another reason for change.
-                if (pos.offset(side).equals(neighbor)) {
-                    BlockState other = world.getBlockState(neighbor);
-                    if (other.getBlock() instanceof BlockPipe) return;
-                    if (tile.connects(side) && !tile.interacts(side) && tile.validateTile(tile, side)) {
-                        tile.setInteract(side);
-                    }
-                    if (isAir(other, world, pos) || world.getTileEntity(neighbor) == null) {
-                        tile.clearInteract(side);
-                        return;
-                    }
-                    }
-                }
-            }
+        this.sideChange(world, pos, neighbor);
     }
 
     @Override
@@ -303,28 +271,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
              }
             if (getHarvestTool(state) == type.getToolType()) {
                 Direction side = Utils.getInteractSide(hit);
-                TileEntity target = world.getTileEntity(pos.offset(side));
                 if (tile.blocksSide(side)) return ActionResultType.CONSUME;
-                if (target != null) {
-                    if (tile.validateTile(target, side.getOpposite())) {
-                        tile.toggleConnection(side);
-                        if (target instanceof TileEntityPipe) {
-                            if (tile.canConnect(side.getIndex())) {
-                                ((TileEntityPipe)target).setConnection(side.getOpposite());
-                            } else {
-                                ((TileEntityPipe)target).clearConnection(side.getOpposite());
-                            }
-                        } else {
-                            tile.toggleInteract(side);
-                        }
-                        Utils.damageStack(stack, player);
-                        return ActionResultType.SUCCESS;
-                    }
-                } else/* if (world.isAirBlock(pos.offset(side))) */{
-                    tile.toggleConnection(side);
-                    Utils.damageStack(stack, player);
-                    return ActionResultType.SUCCESS;
-                }
+                tile.toggleConnection(side);
+                return ActionResultType.SUCCESS;
             }
         }
         return ActionResultType.PASS;
