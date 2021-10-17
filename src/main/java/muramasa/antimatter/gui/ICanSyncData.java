@@ -29,14 +29,14 @@ public interface ICanSyncData {
         bind(source,onChange,PacketBuffer::readBoolean, PacketBuffer::writeBoolean, Object::equals);
     }
     default void syncFluidStack(Supplier<FluidStack> source, Consumer<FluidStack> onChange) {
-        bind(source,onChange,FluidStack::readFromPacket, (a,b) -> b.writeToPacket(a),(a,b) -> {
+        bind(() -> source.get().copy(),onChange,FluidStack::readFromPacket, (a,b) -> b.writeToPacket(a),(a,b) -> {
             FluidStack f = (FluidStack) a;
             if (!(b instanceof FluidStack)) return false;
             return a.equals(b) && ((FluidStack)b).getAmount() == f.getAmount();
         });
     }
     default void syncItemStack(Supplier<ItemStack> source, Consumer<ItemStack> onChange) {
-        bind(source,onChange,PacketBuffer::readItemStack, PacketBuffer::writeItemStack, Object::equals);
+        bind(() -> source.get().copy(),onChange,PacketBuffer::readItemStack, PacketBuffer::writeItemStack, Object::equals);
     }
     default <T extends Enum<T>> void syncEnum(Supplier<T> source, Consumer<T> onChange, Class<T> clazz) {
         bind(source,onChange,b -> b.readEnumValue(clazz), PacketBuffer::writeEnumValue, Object::equals);
