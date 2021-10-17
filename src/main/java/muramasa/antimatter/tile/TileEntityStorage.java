@@ -22,7 +22,7 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
                     calculateAmperage();
             }
         });
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0L, getMachineTier().getVoltage() * 64L, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0L, 0/*getMachineTier().getVoltage() * 64L*/, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.getFacing();
