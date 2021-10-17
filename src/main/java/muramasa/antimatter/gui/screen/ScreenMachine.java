@@ -1,32 +1,18 @@
 package muramasa.antimatter.gui.screen;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import muramasa.antimatter.capability.FluidHandler;
-import muramasa.antimatter.client.RenderHelper;
-import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.slot.SlotFakeFluid;
-import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IHasContainer;
-import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 // TODO - recipe stuff only when tile.getMachineType().has(MachineFlag.RECIPE)
 public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMachine<T>> extends AntimatterContainerScreen<U> implements IHasContainer<U> {

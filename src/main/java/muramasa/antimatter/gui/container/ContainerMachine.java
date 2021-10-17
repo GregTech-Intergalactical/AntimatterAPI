@@ -12,8 +12,6 @@ import net.minecraft.util.IWorldPosCallable;
 import speiger.src.collections.objects.maps.impl.hash.Object2IntOpenHashMap;
 import speiger.src.collections.objects.maps.interfaces.Object2IntMap;
 
-import java.util.Collections;
-
 public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
 
     protected final T tile;

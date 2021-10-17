@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.cover.CoverTiered;
 import muramasa.antimatter.cover.ICoverMode;
 import muramasa.antimatter.cover.ICoverModeHandler;
-import muramasa.antimatter.gui.ButtonData;
 import muramasa.antimatter.gui.container.ContainerCover;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.client.Minecraft;

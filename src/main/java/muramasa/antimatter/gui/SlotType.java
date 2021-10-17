@@ -3,7 +3,6 @@ package muramasa.antimatter.gui;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
-import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.slot.*;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.registration.IAntimatterObject;

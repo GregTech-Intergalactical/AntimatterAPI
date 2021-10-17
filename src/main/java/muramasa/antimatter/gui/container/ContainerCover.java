@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui.container;
 
-import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import net.minecraft.entity.player.PlayerEntity;
