@@ -16,8 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -125,18 +123,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             case ACTIVE:
                 state = tickRecipe();
                 tile.setMachineState(state);
-                if (state != ACTIVE) {
-                    tile.onRecipeStop();
-                }
                 break;
             case NO_POWER:
                 state = tickRecipe();
                 if (state != ACTIVE) {
                     tile.setMachineState(tile.getDefaultMachineState());
-                    tile.onRecipeStop();
                 } else {
                     tile.setMachineState(state);
-                    tile.onRecipeActivated(activeRecipe);
                 }
                 break;
             default:
@@ -206,19 +199,21 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return (activeRecipe.getPower() * (1L << overclock) * (1L << overclock));
     }
 
-    //called when a new recipe is found, to process overclocking
-    protected void activateRecipe(boolean reset) {
-        //if (canOverclock)
-        consumedResources = false;
+    protected void calculateDurations() {
         maxProgress = activeRecipe.getDuration();
         if (!generator){
             overclock = getOverclock();
             maxProgress = Math.max(1, maxProgress >>= overclock);
         }
+    }
+
+    //called when a new recipe is found, to process overclocking
+    protected void activateRecipe(boolean reset) {
+        //if (canOverclock)
+        consumedResources = false;
         tickTimer = 0;
         if (reset) {
             currentProgress = 0;
-            tile.onRecipeActivated(activeRecipe);
         }
         lastRecipe = activeRecipe;
     }
@@ -258,6 +253,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             checkRecipe();
             return activeRecipe != null ? ACTIVE : tile.getDefaultMachineState();
         } else {
+            calculateDurations();
             activateRecipe(true);
             return ACTIVE;
         }
@@ -292,8 +288,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             tickTimer += WAIT_TIME_POWER_LOSS;
             return POWER_LOSS;
         }
-        if (currentProgress == 0 && !consumedResources && shouldConsumeResources())
-            this.consumeInputs();
+        if (currentProgress == 0 && !consumedResources && shouldConsumeResources()) {
+            if (!this.consumeInputs()) {
+
+            }
+        }
         this.currentProgress++;
         tile.onRecipePostTick();
         return ACTIVE;
@@ -347,6 +346,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             if (!tile.getMachineState().allowRecipeCheck()) return;
             activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), r -> true);
             if (activeRecipe == null) return;
+            calculateDurations();
             activateRecipe(false);
             if (canOutput()) tile.setMachineState(ACTIVE);
             return;
@@ -358,7 +358,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                     activeRecipe = null;
                     return;
                 }
-                if (!consumeResourceForRecipe(true) || !canRecipeContinue() || (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1)) || !tile.onRecipeFound(activeRecipe)) {
+                calculateDurations();
+                if (!consumeResourceForRecipe(true) || !canRecipeContinue() || (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1))) {
                     activeRecipe = null;
                     tile.setMachineState(tile.getDefaultMachineState());
                     //wait half a second after trying again.
@@ -386,20 +387,24 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return activeRecipe;
     }
 
-    public void consumeInputs() {
-        if (!tile.hadFirstTick()) return;
+    public boolean consumeInputs() {
+        boolean flag = true;
+        if (!tile.hadFirstTick()) return true;
         if (activeRecipe.hasInputItems()) {
-            tile.itemHandler.ifPresent(h -> {
+            flag &= tile.itemHandler.map(h -> {
                 this.itemInputs = h.consumeInputs(activeRecipe,false);
-            });
+                return !this.itemInputs.isEmpty();
+            }).orElse(true);
         }
         if (activeRecipe.hasInputFluids()) {
-            tile.fluidHandler.ifPresent(h -> {
+            flag &= tile.fluidHandler.map(h -> {
                 h.consumeAndReturnInputs(Arrays.asList(activeRecipe.getInputFluids()), false);
                 this.fluidInputs = Arrays.asList(activeRecipe.getInputFluids());
-            });
+                return !this.fluidInputs.isEmpty();
+            }).orElse(true);
         }
-        consumedResources = true;
+        if (flag) consumedResources = true;
+        return flag;
     }
 
     public boolean canOutput() {
@@ -493,7 +498,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 }
             }
         } else {
-            if (activeRecipe != null) tile.onRecipeStop();
+            if (activeRecipe != null) tile.onMachineStop();
             if (hardcore) {
                 resetRecipe();
             }
@@ -502,7 +507,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     public void onRemove() {
-        tile.onRecipeStop();
         resetRecipe();
     }
 
