@@ -4,7 +4,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tool.armor.MaterialArmor;
@@ -21,7 +20,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -39,7 +37,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
-import tesseract.api.gt.IGTNode;
 import tesseract.graph.Connectivity;
 
 import java.util.List;
@@ -219,7 +216,6 @@ public class RenderHelper {
         BlockRayTraceResult result = player.getEntityWorld().rayTraceBlocks(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
         BlockState state = player.getEntityWorld().getBlockState(result.getPos());
         if (!validator.apply(state.getBlock())) return ActionResultType.PASS;
-
         //Build up view & matrix.
         Vector3d viewPosition = ev.getInfo().getProjectedView();
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
@@ -228,7 +224,11 @@ public class RenderHelper {
         MatrixStack matrix = ev.getMatrix();
         double modX = result.getPos().getX() - viewX, modY = result.getPos().getY() - viewY, modZ = result.getPos().getZ() - viewZ;
         matrix.push();
+        long time = player.getEntityWorld().getGameTime();
+        float r = Math.abs(time % ((255 >> 2)*2) - (255 >> 2))*(1 << 2);
 
+        float g = r;
+        float b = g;
         // VoxelShape shape = player.getEntityWorld().getBlockState(pos).getShape(player.getEntityWorld(), pos, ISelectionContext.forEntity(player));
         float X = 1;//(float) shape.getEnd(Direction.Axis.X);
         float Y = 1;//(float) shape.getEnd(Direction.Axis.Y);
@@ -265,29 +265,29 @@ public class RenderHelper {
 
         //TODO: Use SHAPE to get actual size of box.
 
-        builderLines.pos(matrix4f, (float) (INDENTATION_SIDE), (float) (0), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (INDENTATION_SIDE), (float) (Y), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builderLines.pos(matrix4f, INDENTATION_SIDE, (float) (0), (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, INDENTATION_SIDE, Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (0), (float) (0 + INDENTATION_SIDE), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (X), (float) (0 + INDENTATION_SIDE), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), 0 + INDENTATION_SIDE, (float) (0)).color(r,g,b,  0.4F).endVertex();
+        builderLines.pos(matrix4f, X, 0 + INDENTATION_SIDE, (float) (0)).color(r,g,b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (X - INDENTATION_SIDE), (float) (0), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (X - INDENTATION_SIDE), (float) (Y), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X - INDENTATION_SIDE, (float) (0), (float) (0)).color(r,g,b,  0.4F).endVertex();
+        builderLines.pos(matrix4f, X - INDENTATION_SIDE, Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (0), (float) (Y - INDENTATION_SIDE), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (X), (float) (Y - INDENTATION_SIDE), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), Y - INDENTATION_SIDE, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, Y - INDENTATION_SIDE, (float) (0)).color(r,g,b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (0), (float) (0), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (0), (float) (Y), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), (float) (0), (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (0), (float) (0), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (X), (float) (0), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), (float) (0), (float) (0)).color(r,g,b,  0.4F).endVertex();
+        builderLines.pos(matrix4f, X, (float) (0), (float) (0)).color(r,g,b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (X), (float) (Y), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (X), (float) (0), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, (float) (0), (float) (0)).color(r,g,b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (X), (float) (Y), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (0), (float) (Y), (float) (0)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
         TileEntity tile = player.getEntityWorld().getTileEntity(result.getPos());
         if (tile != null) {
             byte sides = 0;
@@ -324,25 +324,25 @@ public class RenderHelper {
                 down = Connectivity.has(sides, 0);
             }
             if (back) {
-                drawX(builderLines, matrix4f, 0, 0, INDENTATION_SIDE, INDENTATION_SIDE);
-                drawX(builderLines, matrix4f, X, 0, X - INDENTATION_SIDE, INDENTATION_SIDE);
-                drawX(builderLines, matrix4f, X, Y, X - INDENTATION_SIDE, Y - INDENTATION_SIDE);
-                drawX(builderLines, matrix4f, 0, Y, INDENTATION_SIDE, Y - INDENTATION_SIDE);
+                drawX(builderLines, matrix4f, 0, 0, INDENTATION_SIDE, INDENTATION_SIDE, r,g,b);
+                drawX(builderLines, matrix4f, X, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r,g,b);
+                drawX(builderLines, matrix4f, X, Y, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
+                drawX(builderLines, matrix4f, 0, Y, INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
             }
             if (left) {
-                drawX(builderLines, matrix4f, X, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE);
+                drawX(builderLines, matrix4f, X, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
             }
             if (right) {
-                drawX(builderLines, matrix4f, 0, INDENTATION_SIDE, INDENTATION_SIDE, Y - INDENTATION_SIDE);
+                drawX(builderLines, matrix4f, 0, INDENTATION_SIDE, INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
             }
             if (up) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, Y - INDENTATION_SIDE, X - INDENTATION_SIDE, Y);
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, Y - INDENTATION_SIDE, X - INDENTATION_SIDE, Y, r,g,b);
             }
             if (down) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, 0, X - INDENTATION_SIDE, INDENTATION_SIDE);
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r,g,b);
             }
             if (front) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, INDENTATION_SIDE,X - INDENTATION_SIDE, Y - INDENTATION_SIDE);
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, INDENTATION_SIDE,X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
             }
         }
         matrix.pop();
@@ -350,10 +350,14 @@ public class RenderHelper {
     }
 
     private static void drawX(IVertexBuilder builder, Matrix4f matrix, float x1, float y1, float x2, float y2) {
-        builder.pos(matrix, x1, y1, 0).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builder.pos(matrix, x2, y2, 0).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+        drawX(builder, matrix, x1, y1, x2, y2, 0, 0, 0);
+    }
 
-        builder.pos(matrix, x2, y1, 0).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-        builder.pos(matrix, x1, y2, 0).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+    private static void drawX(IVertexBuilder builder, Matrix4f matrix, float x1, float y1, float x2, float y2, float r, float g, float b) {
+        builder.pos(matrix, x1, y1, 0).color(r,g,b,0.4F).endVertex();
+        builder.pos(matrix, x2, y2, 0).color(r,g,b, 0.4F).endVertex();
+
+        builder.pos(matrix, x2, y1, 0).color(r,g,b, 0.4F).endVertex();
+        builder.pos(matrix, x1, y2, 0).color(r,g,b,  0.4F).endVertex();
     }
 }
