@@ -404,10 +404,15 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             this.machineState = newState;
             if (world != null) {
                 sidedSync(true);
-                if (old == MachineState.ACTIVE) {
-                    this.onMachineStop();
-                } else if (newState == MachineState.ACTIVE){
-                    this.onMachineStarted(recipeHandler.map(MachineRecipeHandler::getActiveRecipe).orElse(null));
+                if (!world.isRemote) {
+                    if (old == MachineState.ACTIVE) {
+                        this.onMachineStop();
+                    } else if (newState == MachineState.ACTIVE){
+                        if (recipeHandler.isPresent()) {
+                            MachineRecipeHandler<?> handler = recipeHandler.get();
+                            this.onMachineStarted(handler.getActiveRecipe());
+                        }
+                    }
                 }
             }
             markDirty();
