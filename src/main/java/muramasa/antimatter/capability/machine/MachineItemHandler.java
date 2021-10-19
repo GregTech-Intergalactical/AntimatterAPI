@@ -263,8 +263,8 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         }
         for (ItemStack output : outputs) {
             for (int i = 0; i < outputHandler.getSlots(); i++) {
-                ItemStack result = insertIntoOutput(outputHandler, i, output.copy(), false);
-                if (result.isEmpty()) {
+                output = insertIntoOutput(outputHandler, i, output.copy(), false);
+                if (output.isEmpty()) {
                     break;
                 }
             }

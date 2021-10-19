@@ -49,7 +49,10 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
             slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);
             Slot supplier = slot.getType().getSlotSupplier().get((SlotType) slot.getType(), tile, tile.itemHandler.map(MachineItemHandler::getAll).orElse(null), slotIndexMap.getInt(slot.getType().getId()), (SlotData) slot);
             addSlot(supplier);
-            slotIndexMap.put(slot.getType().getId(), 1);
+            slotIndexMap.computeInt(slot.getType().getId(),(a,b) -> {
+                if (b == null) return 0;
+                return b + 1;
+            });
         }
     }
 
