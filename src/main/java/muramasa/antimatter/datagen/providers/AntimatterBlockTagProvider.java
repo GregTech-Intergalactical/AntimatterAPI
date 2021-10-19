@@ -1,6 +1,8 @@
 package muramasa.antimatter.datagen.providers;
 
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -20,8 +22,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import java.util.HashMap;
 import java.util.Map;

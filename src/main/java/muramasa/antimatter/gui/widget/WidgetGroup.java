@@ -1,9 +1,9 @@
 package muramasa.antimatter.gui.widget;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

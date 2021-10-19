@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -10,7 +11,6 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;

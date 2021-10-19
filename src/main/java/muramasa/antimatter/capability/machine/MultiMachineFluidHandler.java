@@ -1,15 +1,14 @@
 package muramasa.antimatter.capability.machine;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidTank;
-import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
-import speiger.src.collections.ints.maps.interfaces.Int2ObjectMap;
-import speiger.src.collections.objects.maps.impl.hash.Object2IntOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2IntMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

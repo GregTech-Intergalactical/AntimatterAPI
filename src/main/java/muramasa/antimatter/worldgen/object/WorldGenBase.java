@@ -1,12 +1,12 @@
 package muramasa.antimatter.worldgen.object;
 
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import java.util.Arrays;
 import java.util.Set;

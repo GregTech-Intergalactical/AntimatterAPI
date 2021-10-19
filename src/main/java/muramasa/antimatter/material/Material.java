@@ -1,6 +1,7 @@
 package muramasa.antimatter.material;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
@@ -24,7 +25,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -9,11 +9,11 @@ import dev.latvian.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
 import dev.latvian.kubejs.util.MapJS;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.recipe.serializer.RecipeSerializer;
 import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.util.JSONUtils;
 import net.minecraftforge.fluids.FluidStack;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import java.util.List;
 

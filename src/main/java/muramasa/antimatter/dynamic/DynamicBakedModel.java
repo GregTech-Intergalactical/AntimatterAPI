@@ -1,5 +1,6 @@
 package muramasa.antimatter.dynamic;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.client.baked.AntimatterBakedModel;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -14,7 +15,6 @@ import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
-import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

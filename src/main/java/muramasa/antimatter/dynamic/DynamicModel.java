@@ -1,6 +1,8 @@
 package muramasa.antimatter.dynamic;
 
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.model.AntimatterModel;
 import net.minecraft.client.renderer.model.*;
@@ -10,8 +12,6 @@ import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
-import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import java.util.Arrays;
 import java.util.Collection;

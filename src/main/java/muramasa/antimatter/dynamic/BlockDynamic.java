@@ -1,5 +1,6 @@
 package muramasa.antimatter.dynamic;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.block.IInfoProvider;
@@ -12,7 +13,6 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import speiger.src.collections.ints.maps.impl.hash.Int2ObjectLinkedOpenHashMap;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

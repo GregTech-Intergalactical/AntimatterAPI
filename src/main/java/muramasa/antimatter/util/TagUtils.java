@@ -1,11 +1,11 @@
 package muramasa.antimatter.util;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.tags.*;
 import net.minecraft.util.ResourceLocation;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 import java.util.Collections;
 import java.util.Map;

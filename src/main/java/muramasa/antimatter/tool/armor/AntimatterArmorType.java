@@ -1,5 +1,6 @@
 package muramasa.antimatter.tool.armor;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
@@ -15,7 +16,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import org.apache.commons.lang3.StringUtils;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

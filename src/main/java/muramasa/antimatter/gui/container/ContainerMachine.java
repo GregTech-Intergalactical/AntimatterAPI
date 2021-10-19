@@ -1,5 +1,7 @@
 package muramasa.antimatter.gui.container;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
@@ -9,8 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.IWorldPosCallable;
-import speiger.src.collections.objects.maps.impl.hash.Object2IntOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2IntMap;
 
 public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
 
@@ -49,7 +49,7 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
             slotIndexMap.computeIntIfAbsent(slot.getType().getId(), k -> 0);
             Slot supplier = slot.getType().getSlotSupplier().get((SlotType) slot.getType(), tile, tile.itemHandler.map(MachineItemHandler::getAll).orElse(null), slotIndexMap.getInt(slot.getType().getId()), (SlotData) slot);
             addSlot(supplier);
-            slotIndexMap.addTo(slot.getType().getId(), 1);
+            slotIndexMap.put(slot.getType().getId(), 1);
         }
     }
 

@@ -2,6 +2,8 @@ package muramasa.antimatter.client;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
 import muramasa.antimatter.client.baked.MachineBakedModel;
@@ -21,8 +23,6 @@ import net.minecraft.item.Item;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
-import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

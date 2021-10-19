@@ -1,12 +1,9 @@
 package muramasa.antimatter.recipe.map;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Either;
-
-import muramasa.antimatter.machine.types.Machine;
-import org.lwjgl.system.CallbackI.P;
-
-import muramasa.antimatter.Antimatter;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.Holder;
@@ -16,6 +13,7 @@ import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jei.renderer.InfoRenderers;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.*;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -40,9 +38,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import speiger.src.collections.objects.lists.ObjectArrayList;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

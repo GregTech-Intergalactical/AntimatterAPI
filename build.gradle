@@ -32,9 +32,9 @@ configurations {
 repositories {
     //JEI
     maven { url 'https://dvs1.progwml6.com/files/maven' }
-    maven {
+    /*maven {
         url = "https://maven.speiger.com/repository/main"
-    }
+    }*/
     //GT.
     maven { url 'https://jitpack.io' }
 
@@ -212,8 +212,8 @@ dependencies {
     implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
     implementation fg.deobf("curse.maven:top-245211:${top_file}")
 
-    compile 'de.speiger:Primitive-Collections:0.4.0'
-    shadowCommon 'de.speiger:Primitive-Collections:0.4.0'
+    //compile 'de.speiger:Primitive-Collections:0.4.0'
+    //shadowCommon 'de.speiger:Primitive-Collections:0.4.0'
 }
 
 
@@ -279,15 +279,15 @@ jar {
     exclude group: 'it.unimi.dsi', module: 'fastutil'
 }*/
 
-shadowJar {
+/*shadowJar {
     configurations = [project.configurations.shadowCommon]
     classifier ''
-}
+}*/
 
 jar.classifier = 'nodep'
 
-reobf {
+/*reobf {
     shadowJar {}
 }
 
-build.dependsOn reobfShadowJar
+build.dependsOn reobfShadowJar*/

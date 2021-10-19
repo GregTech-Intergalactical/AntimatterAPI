@@ -1,6 +1,8 @@
 package muramasa.antimatter.gui;
 
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.core.RTree;
@@ -16,8 +18,6 @@ import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import speiger.src.collections.objects.lists.ObjectArrayList;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import javax.annotation.Nullable;
 import java.util.*;

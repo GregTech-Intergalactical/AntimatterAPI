@@ -1,5 +1,7 @@
 package muramasa.antimatter.tool;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.TagUtils;
@@ -7,8 +9,6 @@ import net.minecraft.item.IItemTier;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
-import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
-import speiger.src.collections.ints.maps.interfaces.Int2ObjectMap;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

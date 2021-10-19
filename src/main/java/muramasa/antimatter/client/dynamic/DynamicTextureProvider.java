@@ -1,5 +1,7 @@
 package muramasa.antimatter.client.dynamic;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -9,8 +11,6 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.data.IModelData;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

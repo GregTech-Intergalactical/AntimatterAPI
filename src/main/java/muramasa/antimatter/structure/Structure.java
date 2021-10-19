@@ -1,18 +1,17 @@
 package muramasa.antimatter.structure;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
-import speiger.src.collections.longs.lists.LongArrayList;
-import speiger.src.collections.longs.lists.LongList;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

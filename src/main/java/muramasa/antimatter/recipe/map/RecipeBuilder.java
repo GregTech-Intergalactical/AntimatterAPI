@@ -1,14 +1,13 @@
 package muramasa.antimatter.recipe.map;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
-import muramasa.antimatter.recipe.Unifier;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
-import speiger.src.collections.objects.lists.ObjectArrayList;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -1,8 +1,8 @@
 package muramasa.antimatter.cover;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.machine.Tier;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 import java.util.Arrays;
 import java.util.Map;

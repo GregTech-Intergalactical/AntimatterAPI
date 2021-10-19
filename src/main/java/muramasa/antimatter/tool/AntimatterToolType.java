@@ -1,6 +1,10 @@
 package muramasa.antimatter.tool;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
@@ -21,10 +25,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.ToolType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
-import speiger.src.collections.objects.lists.ObjectArrayList;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;

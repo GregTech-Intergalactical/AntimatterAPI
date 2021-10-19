@@ -1,8 +1,8 @@
 package muramasa.antimatter.machine;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.machine.types.Machine;
-import speiger.src.collections.objects.lists.ObjectArrayList;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import java.util.Collection;
 import java.util.List;

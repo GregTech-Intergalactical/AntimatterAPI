@@ -1,5 +1,7 @@
 package muramasa.antimatter.worldgen.object;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.StoneLayerOre;
@@ -7,8 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
-import speiger.src.collections.ints.maps.impl.hash.Int2ObjectOpenHashMap;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

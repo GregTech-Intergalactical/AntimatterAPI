@@ -1,5 +1,8 @@
 package muramasa.antimatter.integration.jei;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -28,9 +31,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fluids.FluidStack;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectLinkedOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import javax.annotation.Nonnull;
 import java.util.*;

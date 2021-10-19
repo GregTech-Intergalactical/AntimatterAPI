@@ -1,5 +1,8 @@
 package muramasa.antimatter.worldgen;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
@@ -17,9 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.gen.Heightmap;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
-import speiger.src.collections.objects.lists.ObjectArrayList;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import java.util.function.Predicate;
 

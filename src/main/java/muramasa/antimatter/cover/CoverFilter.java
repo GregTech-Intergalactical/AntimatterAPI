@@ -1,7 +1,7 @@
 package muramasa.antimatter.cover;
 
 
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.Collection;
 import java.util.Set;

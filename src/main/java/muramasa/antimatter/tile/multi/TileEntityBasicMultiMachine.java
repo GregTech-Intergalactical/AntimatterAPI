@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
@@ -20,7 +21,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 import tesseract.api.capability.TesseractGTCapability;
 
 import javax.annotation.Nonnull;

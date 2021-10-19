@@ -1,5 +1,6 @@
 package muramasa.antimatter.item;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
@@ -10,7 +11,6 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 
 import java.util.Arrays;
 import java.util.Set;

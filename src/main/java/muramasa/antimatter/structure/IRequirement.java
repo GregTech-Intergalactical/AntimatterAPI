@@ -1,8 +1,8 @@
 package muramasa.antimatter.structure;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import net.minecraft.block.BlockState;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import java.util.List;
 

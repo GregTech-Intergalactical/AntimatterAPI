@@ -1,12 +1,12 @@
 package muramasa.antimatter.structure;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.int3;
 import net.minecraftforge.fml.RegistryObject;
-import speiger.src.collections.objects.lists.ObjectArrayList;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import java.util.Arrays;
 import java.util.Collection;

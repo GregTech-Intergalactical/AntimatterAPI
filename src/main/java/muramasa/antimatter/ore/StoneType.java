@@ -1,5 +1,6 @@
 package muramasa.antimatter.ore;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.material.Material;
@@ -12,7 +13,6 @@ import net.minecraft.block.SoundType;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import java.util.Collection;
 import java.util.List;

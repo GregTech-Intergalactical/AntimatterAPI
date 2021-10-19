@@ -2,11 +2,11 @@ package muramasa.antimatter.datagen.builder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import java.util.List;
 import java.util.Map;

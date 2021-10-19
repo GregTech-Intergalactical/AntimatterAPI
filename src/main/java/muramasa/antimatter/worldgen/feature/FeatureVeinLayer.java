@@ -1,5 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
@@ -12,7 +13,6 @@ import net.minecraft.world.gen.GenerationStage;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.registries.ForgeRegistries;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import java.util.List;
 import java.util.Random;

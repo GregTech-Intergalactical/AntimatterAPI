@@ -1,6 +1,7 @@
 package muramasa.antimatter.tool.behaviour;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
@@ -18,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.ForgeEventFactory;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
 
 public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
 

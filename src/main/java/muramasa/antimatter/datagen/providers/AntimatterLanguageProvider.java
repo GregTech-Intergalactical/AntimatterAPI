@@ -1,12 +1,10 @@
 package muramasa.antimatter.datagen.providers;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockStone;
-import muramasa.antimatter.block.BlockStoneSlab;
-import muramasa.antimatter.block.BlockStoneStair;
-import muramasa.antimatter.block.BlockStoneWall;
-import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.block.*;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
@@ -40,8 +38,6 @@ import net.minecraft.potion.Effect;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
-import speiger.src.collections.objects.maps.impl.tree.Object2ObjectRBTreeMap;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

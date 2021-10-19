@@ -1,12 +1,11 @@
 package muramasa.antimatter.tool;
 
-import muramasa.antimatter.Antimatter;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.behaviour.IItemUse;
-import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
@@ -41,7 +40,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.extensions.IForgeItem;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 

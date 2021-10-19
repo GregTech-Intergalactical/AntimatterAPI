@@ -2,6 +2,10 @@ package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
@@ -60,10 +64,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
-import speiger.src.collections.doubles.maps.impl.hash.Double2ObjectOpenHashMap;
-import speiger.src.collections.doubles.maps.interfaces.Double2ObjectMap;
-import speiger.src.collections.objects.lists.ObjectArrayList;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;

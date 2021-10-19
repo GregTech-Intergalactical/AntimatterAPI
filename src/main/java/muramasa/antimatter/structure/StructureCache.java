@@ -1,8 +1,12 @@
 package muramasa.antimatter.structure;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongList;
+import it.unimi.dsi.fastutil.longs.LongLists;
+import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -10,18 +14,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import speiger.src.collections.longs.lists.LongList;
-import speiger.src.collections.longs.maps.impl.hash.Long2ObjectOpenHashMap;
-import speiger.src.collections.longs.maps.interfaces.Long2ObjectMap;
-import speiger.src.collections.longs.utils.LongLists;
-import speiger.src.collections.objects.maps.impl.hash.Object2BooleanOpenHashMap;
-import speiger.src.collections.objects.maps.impl.hash.Object2ObjectOpenHashMap;
-import speiger.src.collections.objects.maps.interfaces.Object2BooleanMap;
-import speiger.src.collections.objects.maps.interfaces.Object2ObjectMap;
-import speiger.src.collections.objects.sets.ObjectOpenHashSet;
-import speiger.src.collections.objects.utils.maps.Object2BooleanMaps;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Set;
@@ -246,7 +239,7 @@ public class StructureCache {
 
         public DimensionEntry() {
             //STRUCTURE_TO_CONTROLLER.setDefaultReturnValue(Object2BooleanMaps.empty());
-            CONTROLLER_TO_STRUCTURE.setDefaultReturnValue(LongLists.empty());
+            CONTROLLER_TO_STRUCTURE.defaultReturnValue(LongLists.EMPTY_LIST);
         }
 
         @Nullable
@@ -280,14 +273,14 @@ public class StructureCache {
             }).max().orElse(0);
             if (i <= maxAmount) {
                 LongList old = this.CONTROLLER_TO_STRUCTURE.remove(at);
-                old.forEach(l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
+                old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
                     if (v == null) return null;
                     if (v.size() == 1) return null;
                     v.remove(pos);
                     return v;
                 }));
                 this.CONTROLLER_TO_STRUCTURE.put(at, structure);
-                structure.forEach(t -> this.STRUCTURE_TO_CONTROLLER.compute(t, (k,v) -> {
+                structure.forEach((LongConsumer) t -> this.STRUCTURE_TO_CONTROLLER.compute(t, (k,v) -> {
                     if (v == null) {
                         v = new Object2BooleanOpenHashMap<>();
                     }
@@ -302,7 +295,7 @@ public class StructureCache {
         public void invalidate(BlockPos pos, LongList structure) {
             long at = pos.toLong();
             LongList old = this.CONTROLLER_TO_STRUCTURE.put(at, structure);
-            old.forEach(l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
+            old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
                 if (v == null) return null;
                 if (v.size() == 1) return null;
                 v.remove(pos);

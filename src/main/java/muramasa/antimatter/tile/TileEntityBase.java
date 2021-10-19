@@ -1,12 +1,12 @@
 package muramasa.antimatter.tile;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import speiger.src.collections.objects.lists.ObjectArrayList;
 
 import javax.annotation.Nullable;
 import java.util.List;
