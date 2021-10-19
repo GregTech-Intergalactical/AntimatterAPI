@@ -30,14 +30,14 @@ public class SimpleReloadableResourceManagerMixin {
     @Final
     private ResourcePackType type;
 
-    @Inject(remap = false, method = "initializeAsyncReloader(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/List;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/resources/IAsyncReloader;", at = @At("HEAD"))
+    @Inject(/*remap = false,*/ method = "initializeAsyncReloader(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/List;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/resources/IAsyncReloader;", at = @At("HEAD"))
     private void callback(Executor backgroundExecutor, Executor gameExecutor, List<IFutureReloadListener> listeners, CompletableFuture<Unit> waitingFor, CallbackInfoReturnable<IAsyncReloader> cir) {
         if (type == ResourcePackType.SERVER_DATA) {
             AntimatterDynamics.onResourceReload(true);
         }
     }
 
-    @Inject(remap = false, at = @At("RETURN"), method = "Lnet/minecraft/resources/SimpleReloadableResourceManager;clearResourceNamespaces()V")
+    @Inject(/*remap = false,*/ at = @At("RETURN"), method = "Lnet/minecraft/resources/SimpleReloadableResourceManager;clearResourceNamespaces()V")
     private void clearNamespaceInject(CallbackInfo info) {
         SimpleReloadableResourceManager manager = ((SimpleReloadableResourceManager)(Object)this);
         //if (type == ResourcePackType.SERVER_DATA)

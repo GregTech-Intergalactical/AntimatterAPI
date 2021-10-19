@@ -29,7 +29,7 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
         super(idIn);
     }
 
-    @Inject(remap = false, method = "getCraftingResult", at = @At("HEAD"), cancellable = true)
+    @Inject(/*remap = false,*/ method = "getCraftingResult", at = @At("HEAD"), cancellable = true)
     private void getCraftingResultInject(CraftingInventory inv, CallbackInfoReturnable<ItemStack> ci){
         List<ItemStack> list = Lists.newArrayList();
 
@@ -92,7 +92,7 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
         }
     }
 
-    @Inject(remap = false, method = "matches", at = @At("HEAD"), cancellable = true)
+    @Inject(/*remap = false,*/ method = "matches", at = @At("HEAD"), cancellable = true)
     private void matchesInject(CraftingInventory inv, World world, CallbackInfoReturnable<Boolean> ci){
         List<ItemStack> list = Lists.newArrayList();
 

@@ -35,7 +35,7 @@ public abstract class GrindstoneContainerMixin extends Container {
         throw new AssertionError();
     }
 
-    @Inject(remap = false, method = "updateRecipeOutput", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(/*remap = false,*/ method = "updateRecipeOutput", at = @At(value = "HEAD"), cancellable = true)
     private void checkTools(CallbackInfo ci){
         ItemStack a = this.inputInventory.getStackInSlot(0);
         ItemStack b = this.inputInventory.getStackInSlot(1);
