@@ -197,6 +197,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     }
 
     public Material asOreStone(IMaterialTag... tags){
+        asOre(tags);
         asDust(ORE_STONE, ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
         flags(tags);
         return this;
