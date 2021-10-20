@@ -86,7 +86,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         if (!super.validate(dir)) return false;
         TileEntity tile = world.getTileEntity(getPos().offset(dir));
         if (tile == null) return false;
-        return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
+        return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite()).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
     }
 
     @Override

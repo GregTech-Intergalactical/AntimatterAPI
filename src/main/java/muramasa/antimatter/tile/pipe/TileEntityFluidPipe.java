@@ -110,7 +110,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         if (!super.validate(dir)) return false;
         TileEntity tile = world.getTileEntity(getPos().offset(dir));
         if (tile == null) return false;
-        return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir).isPresent();
+        return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
     }
 
     @Override
