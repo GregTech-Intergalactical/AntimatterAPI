@@ -288,7 +288,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Nonnull
     public <U> LazyOptional<U> getCoverCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
         if (side == null) return LazyOptional.empty();
-        if (!this.connects(side)) return LazyOptional.empty();
+        //if (!this.connects(side)) return LazyOptional.empty();
         if (cap == getCapability()) {
             return pipeCapHolder.side(null).cast();
         }
