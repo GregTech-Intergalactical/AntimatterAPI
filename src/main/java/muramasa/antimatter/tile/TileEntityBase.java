@@ -51,7 +51,7 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEn
         if (!this.getWorld().isRemote) {
             this.markDirty();
             Utils.markTileForNBTSync(this);
-        } else if(renderUpdate) {
+        } else if (renderUpdate) {
             Utils.markTileForRenderUpdate(this);
         }
     }
@@ -65,7 +65,7 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEn
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
-        handleUpdateTag(getBlockState(),pkt.getNbtCompound());
+        handleUpdateTag(getBlockState(), pkt.getNbtCompound());
         sidedSync(true);
     }
 

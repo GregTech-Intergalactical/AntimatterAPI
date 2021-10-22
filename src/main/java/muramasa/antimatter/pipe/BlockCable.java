@@ -1,4 +1,3 @@
-
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.Data;
@@ -35,13 +34,13 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         this.insulated = insulated;
         String prefix = insulated ? "cable" : "wire";
         this.side = new Texture(Ref.ID, "block/pipe/" + prefix + "_side");
-        this.faces = new Texture[] {
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_vtiny"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_tiny"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_small"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_normal"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_large"),
-            new Texture(Ref.ID, "block/pipe/" + prefix + "_huge")
+        this.faces = new Texture[]{
+                new Texture(Ref.ID, "block/pipe/" + prefix + "_vtiny"),
+                new Texture(Ref.ID, "block/pipe/" + prefix + "_tiny"),
+                new Texture(Ref.ID, "block/pipe/" + prefix + "_small"),
+                new Texture(Ref.ID, "block/pipe/" + prefix + "_normal"),
+                new Texture(Ref.ID, "block/pipe/" + prefix + "_large"),
+                new Texture(Ref.ID, "block/pipe/" + prefix + "_huge")
         };
     }
 
@@ -57,8 +56,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
 
 
     @Override
-    public boolean isFireSource(BlockState state, IWorldReader world, BlockPos pos, Direction side)
-    {
+    public boolean isFireSource(BlockState state, IWorldReader world, BlockPos pos, Direction side) {
         return true;
     }
 
@@ -90,9 +88,9 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
 
-        tooltip.add(new TranslationTextComponent("generic.amp").appendString(": ").appendSibling(new StringTextComponent(""+this.type.getAmps(this.size)).mergeStyle(TextFormatting.GREEN)));
-        tooltip.add(new TranslationTextComponent("generic.voltage").appendString(": ").appendSibling(new StringTextComponent(""+this.type.getTier().getVoltage()).mergeStyle(TextFormatting.BLUE)));
-        tooltip.add(new TranslationTextComponent("generic.loss").appendString(": ").appendSibling(new StringTextComponent(""+this.type.getLoss()).mergeStyle(TextFormatting.BLUE)));
+        tooltip.add(new TranslationTextComponent("generic.amp").appendString(": ").appendSibling(new StringTextComponent("" + this.type.getAmps(this.size)).mergeStyle(TextFormatting.GREEN)));
+        tooltip.add(new TranslationTextComponent("generic.voltage").appendString(": ").appendSibling(new StringTextComponent("" + this.type.getTier().getVoltage()).mergeStyle(TextFormatting.BLUE)));
+        tooltip.add(new TranslationTextComponent("generic.loss").appendString(": ").appendSibling(new StringTextComponent("" + this.type.getLoss()).mergeStyle(TextFormatting.BLUE)));
     }
 
     //    @Override

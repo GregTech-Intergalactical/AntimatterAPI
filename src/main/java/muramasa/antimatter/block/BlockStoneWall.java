@@ -11,23 +11,13 @@ import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.WallBlock;
-import net.minecraft.block.WallHeight;
-import net.minecraft.state.properties.Half;
-import net.minecraft.state.properties.StairsShape;
-import net.minecraft.util.Direction;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
 
 import static net.minecraft.block.WallHeight.LOW;
 import static net.minecraft.block.WallHeight.TALL;
-import static net.minecraft.state.properties.StairsShape.STRAIGHT;
-import static net.minecraft.util.Direction.EAST;
-import static net.minecraft.util.Direction.NORTH;
-import static net.minecraft.util.Direction.SOUTH;
-import static net.minecraft.util.Direction.WEST;
 
 public class BlockStoneWall extends WallBlock implements IAntimatterObject, ITextureProvider, IModelProvider {
     protected String domain, id, suffix;
@@ -39,12 +29,12 @@ public class BlockStoneWall extends WallBlock implements IAntimatterObject, ITex
         id = type.getId() + "_" + suffix + "_wall";
         this.suffix = suffix;
         this.type = type;
-        AntimatterAPI.register(getClass(), getId(), this);
+        AntimatterAPI.register(getClass(), this);
     }
 
-    private static Properties getProps(StoneType type){
+    private static Properties getProps(StoneType type) {
         Properties props = Block.Properties.create(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).hardnessAndResistance(type.getHardness(), type.getResistence());
-        if (type.doesRequireTool()){
+        if (type.doesRequireTool()) {
             props.setRequiresTool();
         }
         return props;

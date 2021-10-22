@@ -10,7 +10,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
@@ -36,7 +36,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class AntimatterToolType implements IAntimatterObject {
+public class AntimatterToolType implements ISharedAntimatterObject {
 
     private final String domain, id;
     private final ToolType TOOL_TYPE;
@@ -45,7 +45,7 @@ public class AntimatterToolType implements IAntimatterObject {
     private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
-    private List<ITextComponent> tooltip = new ObjectArrayList<>();
+    private final List<ITextComponent> tooltip = new ObjectArrayList<>();
     private boolean powered, repairable, blockBreakability, hasContainer;
     private long baseMaxEnergy;
     private int[] energyTiers;
@@ -56,11 +56,14 @@ public class AntimatterToolType implements IAntimatterObject {
     private ITag.INamedTag<Item> tag, forgeTag; // Set?
     private UseAction useAction;
     private Class<? extends IAntimatterTool> toolClass;
-    @Nullable private SoundEvent useSound;
-    @Nullable private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
+    @Nullable
+    private SoundEvent useSound;
+    @Nullable
+    private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
 
     /**
      * Instantiates a AntimatterToolType with its basic values
+     *
      * @param domain             unique identifier provided by the mod
      * @param id                 unique identifier
      * @param useDurability      durability that is lost during an 'use' or 'blockDestroyed' operation
@@ -108,6 +111,7 @@ public class AntimatterToolType implements IAntimatterObject {
 
     /**
      * Instantiates a MaterialTool with Reflection (only use this when you have done setToolClass when creating your AntimatterToolType)
+     *
      * @param domain  namespace
      * @param objects an Object array that should be ordered same way as your custom ToolClass constructor
      *                (e.g. for MaterialItem: String domain, AntimatterToolType type, IItemTier tier, Item.Properties properties, Material primary, Material secondary)
@@ -181,7 +185,7 @@ public class AntimatterToolType implements IAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType setBrokenItems(ImmutableMap<String, Function<ItemStack, ItemStack>> map){
+    public AntimatterToolType setBrokenItems(ImmutableMap<String, Function<ItemStack, ItemStack>> map) {
         this.brokenItems = map;
         return this;
     }
@@ -211,31 +215,36 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     public AntimatterToolType addToolTypes(String... types) {
-        if (types.length == 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
+        if (types.length == 0)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
         this.TOOL_TYPES.addAll(Arrays.asList(types));
         return this;
     }
 
     public AntimatterToolType addEffectiveBlocks(Block... blocks) {
-        if (blocks.length == 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective blocks even when it was explicitly called!");
+        if (blocks.length == 0)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective blocks even when it was explicitly called!");
         this.EFFECTIVE_BLOCKS.addAll(Arrays.asList(blocks));
         return this;
     }
 
     public AntimatterToolType addEffectiveMaterials(net.minecraft.block.material.Material... materials) {
-        if (materials.length == 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective materials even when it was explicitly called!");
+        if (materials.length == 0)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective materials even when it was explicitly called!");
         this.EFFECTIVE_MATERIALS.addAll(Arrays.asList(materials));
         return this;
     }
 
     public AntimatterToolType setPrimaryRequirement(IMaterialTag tag) {
-        if (tag == null) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no primary material requirement even when it was explicitly called!");
+        if (tag == null)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no primary material requirement even when it was explicitly called!");
         this.primaryMaterialRequirement = tag;
         return this;
     }
 
     public AntimatterToolType setSecondaryRequirement(IMaterialTag tag) {
-        if (tag == null) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no secondary material requirement even when it was explicitly called!");
+        if (tag == null)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no secondary material requirement even when it was explicitly called!");
         this.secondaryMaterialRequirement = tag;
         return this;
     }
@@ -255,7 +264,8 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     public AntimatterToolType setBaseQuality(int quality) {
-        if (quality < 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have negative Base Quality!");
+        if (quality < 0)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have negative Base Quality!");
         this.baseQuality = quality;
         return this;
     }
@@ -276,7 +286,8 @@ public class AntimatterToolType implements IAntimatterObject {
     }
 
     public AntimatterToolType setOverlayLayers(int layers) {
-        if (layers < 0) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have less than 0 overlayer layers!");
+        if (layers < 0)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have less than 0 overlayer layers!");
         this.overlayLayers = layers;
         return this;
     }
@@ -306,7 +317,7 @@ public class AntimatterToolType implements IAntimatterObject {
     /* GETTERS */
 
     public ItemStack getToolStack(Material primary, Material secondary) {
-        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id)).asItemStack(primary, secondary);
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id, getDomain())).asItemStack(primary, secondary);
     }
 
     public String getDomain() {
@@ -394,6 +405,7 @@ public class AntimatterToolType implements IAntimatterObject {
     public ITag.INamedTag<Item> getTag() {
         return tag;
     }
+
     public ITag.INamedTag<Item> getForgeTag() {
         return forgeTag;
     }
@@ -402,7 +414,7 @@ public class AntimatterToolType implements IAntimatterObject {
         return useAction;
     }
 
-    @Nullable 
+    @Nullable
     public SoundEvent getUseSound() {
         return useSound;
     }

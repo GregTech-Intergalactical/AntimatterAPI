@@ -31,13 +31,17 @@ import java.util.Set;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-/** Allows a MultiMachine to handle GUI recipes, instead of using Hatches **/
+/**
+ * Allows a MultiMachine to handle GUI recipes, instead of using Hatches
+ **/
 public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T>> extends TileEntityMachine<T> implements IComponent {
 
     private final Set<StructureHandle<?>> allHandlers = new ObjectOpenHashSet<>();
     protected StructureResult result = null;
 
-    /** To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded from disk. **/
+    /**
+     * To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded from disk.
+     **/
     protected boolean shouldCheckFirstTick = true;
     //Number of calls into checkStructure, invalidateStructure. if > 0 ignore callbacks from structurecache.
     private int checkingStructure = 0;
@@ -65,6 +69,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     /**
      * How many multiblocks you can share components with.
+     *
      * @return how many.
      */
     public int maxShares() {
@@ -124,7 +129,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 }
             }
         } else {
-           //Antimatter.LOGGER.info("[Structure Debug] Error " + result.getError());
+            //Antimatter.LOGGER.info("[Structure Debug] Error " + result.getError());
         }
         //if we reached here something went wrong.
         invalidateStructure();
@@ -139,17 +144,20 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     public <T> LazyOptional<T> getCapabilityFromFake(Capability<T> cap, BlockPos pos, Direction side, ICover coverPresent) {
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent() && (coverPresent instanceof CoverInput)) return itemHandler.side(side).cast();
-        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent() && (coverPresent instanceof CoverInput)) return fluidHandler.side(side).cast();
-        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent() && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy)) return energyHandler.side(side).cast();
+        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent() && (coverPresent instanceof CoverInput))
+            return itemHandler.side(side).cast();
+        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent() && (coverPresent instanceof CoverInput))
+            return fluidHandler.side(side).cast();
+        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent() && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
+            return energyHandler.side(side).cast();
         return LazyOptional.empty();
     }
-    
+
     @Override
     public void onBlockUpdate(BlockPos pos) {
         if (checkingStructure > 0) return;
         if (result != null) {
-            if (!getMachineType().getStructure(getMachineTier()).evaluatePosition(result,this, pos)) {
+            if (!getMachineType().getStructure(getMachineTier()).evaluatePosition(result, this, pos)) {
                 invalidateStructure();
             }
         } else {
@@ -180,7 +188,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public void onMachineStop() {
         super.onMachineStop();
-        if (oldState != null)  {
+        if (oldState != null) {
             this.facingOverride = Utils.dirFromState(oldState);
         }
     }
@@ -210,7 +218,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         checkingStructure--;
     }
 
-    /** Returns a list of Components **/
+    /**
+     * Returns a list of Components
+     **/
     public List<IComponentHandler> getComponents(IAntimatterObject object) {
         return getComponents(object.getId());
     }
@@ -240,12 +250,14 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         super.onLoad();
     }
 
-    /** Events **/
+    /**
+     * Events
+     **/
     public boolean onStructureFormed() {
         return true;
     }
 
-    public void afterStructureFormed(){
+    public void afterStructureFormed() {
         //NOOP
     }
 

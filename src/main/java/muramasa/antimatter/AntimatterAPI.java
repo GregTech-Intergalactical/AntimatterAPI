@@ -1,5 +1,6 @@
 package muramasa.antimatter;
 
+import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
@@ -45,12 +46,14 @@ import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 
 public final class AntimatterAPI {
 
-    private static final Object2ObjectMap<Class<?>, Object2ObjectMap<String, Object>> OBJECTS = new Object2ObjectOpenHashMap<>();
+    private static final Map<Class<?>, Map<String, Either<ISharedAntimatterObject, Map<String, Object>>>> OBJECTS = new Object2ObjectOpenHashMap<>();
     private static final EnumMap<RegistrationEvent, List<Runnable>> CALLBACKS = new EnumMap<>(RegistrationEvent.class);
     private static final EnumSet<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = EnumSet.noneOf(RegistrationEvent.class);
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<ResourceLocation, Object> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
+
+    private static boolean dataDone = false;
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
@@ -60,97 +63,205 @@ public final class AntimatterAPI {
 
     /** Internal Registry Section **/
 
-    private synchronized static void registerInternal(Class<?> c, String id, Object o) {
-        Object present = null;
-        if((present = OBJECTS.computeIfAbsent(c, t -> new Object2ObjectLinkedOpenHashMap<>()).putIfAbsent(id, o)) != null) {
-            throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", present.toString()));
+    private static void registerInternal(Class<?> c, String id, @Nullable String domain, Object o) {
+        Object present;
+        if (domain != null) {
+            if((present = OBJECTS.computeIfAbsent(c, t -> new Object2ObjectLinkedOpenHashMap<>()).computeIfAbsent(domain, t -> Either.right(new Object2ObjectLinkedOpenHashMap<>())).map(t -> null, t -> t.put(id, o))) != null) {
+                throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", present.toString()));
+            }
+        } else {
+            Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.computeIfAbsent(c, t -> new Object2ObjectLinkedOpenHashMap<>());
+            if ((present = map.put(id, Either.left((ISharedAntimatterObject) o))) != null) {
+                throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", present.toString()));
+            }
         }
     }
 
-    public static void register(Class<?> c, String id, Object o) {
-        registerInternal(c, id, o);
-        if (o instanceof Block && notRegistered(Block.class, id)) registerInternal(Block.class, id, o);
-        else if (o instanceof Item && notRegistered(Item.class, id)) registerInternal(Item.class, id, o);
-        else if (o instanceof IRegistryEntryProvider) {
-            String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
-            if (notRegistered(IRegistryEntryProvider.class, changedId)) registerInternal(IRegistryEntryProvider.class, changedId, o);
+    public static void register(Class<?> c, String id, String domain, Object o) {
+        synchronized (OBJECTS) {
+            if (o instanceof IAntimatterObject && !((IAntimatterObject)o).shouldRegister()) return;
+            domain = o instanceof ISharedAntimatterObject ? null : domain;
+            registerInternal(c, id, domain, o);
+            if (o instanceof Block && notRegistered(Block.class, id, domain)) registerInternal(Block.class, id, domain, o);
+            else if (o instanceof Item && notRegistered(Item.class, id, domain)) registerInternal(Item.class, id, domain, o);
+            else if (o instanceof IRegistryEntryProvider) {
+                String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
+                if (notRegistered(IRegistryEntryProvider.class, changedId, domain)) registerInternal(IRegistryEntryProvider.class, changedId, domain, o);
+            }
         }
     }
 
     public static void register(Class<?> c, IAntimatterObject o) {
-        register(c, o.getId(), o);
+        register(c, o.getId(), o.getDomain(), o);
     }
 
-    public static <T> T registerIfAbsent(Class<? extends T> clazz, String id, Supplier<? extends T> obj) {
+    public static <T extends ISharedAntimatterObject> T registerIfAbsent(Class<? extends T> clazz, String id, Supplier<? extends T> obj) {
         T o = get(clazz, id);
         if (o != null) return o;
         o = obj.get();
         //the constructor of get() might register.
-        if (get(clazz, id) == null)
-            register(clazz, id, o);
+        if (get(clazz, id, Ref.ID) == null)
+            register(clazz, id, Ref.ID, o);
         return o;
     }
 
-    private static boolean notRegistered(Class<?> c, String id) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
-        return map == null || !map.containsKey(id);
+    private static boolean notRegistered(Class<?> c, String id, String domain) {
+        return !has(c, id ,domain);
+    }
+
+
+    private static <T> T getInternal(Class<T> c, String id, String domain) {
+        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+        if (map != null) {
+            Either<ISharedAntimatterObject, Map<String, Object>> inner = map.get(domain);
+            if (inner != null) {
+                return inner.map(t -> null, t -> {
+                    Object o = t.get(id);
+                    return o == null ? null : c.cast(o);
+                });
+            }
+        }
+        return null;
     }
 
     @Nullable
-    public static <T> T get(Class<T> c, String id) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
-        return map != null ? c.cast(map.get(id)) : null;
+    public static <T> T get(Class<T> c, String id, String domain) {
+        if (!dataDone) {
+            synchronized (OBJECTS) {
+                return getInternal(c, id, domain);
+            }
+        }
+        return getInternal(c, id, domain);
+    }
+
+    public static void dataReady() {
+        dataDone = true;
+    }
+
+    private static <T extends ISharedAntimatterObject> T getInternal(Class<? extends T> c, String id) {
+        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+        if (map == null) return null;
+        Either<ISharedAntimatterObject, Map<String, Object>> obj = map.get(id);
+        return obj == null ? null : c.cast(obj.map(t -> t, t -> null));
+    }
+
+    public static <T extends ISharedAntimatterObject> T get(Class<? extends T> c, String id) {
+        if (!dataDone) {
+            synchronized (OBJECTS) {
+                return getInternal(c, id);
+            }
+        }
+        return getInternal(c, id);
     }
 
     @Nonnull
-    public static <T> T getOrDefault(Class<T> c, String id, NonNullSupplier<? extends T> supplier) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
-        T t = map != null ? c.cast(map.get(id)) : null;
-        return t != null ? t : supplier.get();
+    public static <T> T getOrDefault(Class<T> c, String id, String domain, NonNullSupplier<? extends T> supplier) {
+        Object obj = get(c, id, domain);
+        return obj != null ? c.cast(obj) : supplier.get();
+    }
+
+
+    @Nonnull
+    public static <T> T getOrThrow(Class<T> c, String id, String domain, Supplier<? extends RuntimeException> supplier) {
+        Object obj = get(c, id, domain);
+        if (obj != null) {
+            return c.cast(obj);
+        }
+        throw supplier.get();
     }
 
     @Nonnull
-    public static <T> T getOrThrow(Class<T> c, String id, Supplier<? extends RuntimeException> supplier) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
-        T t = map != null ? c.cast(map.get(id)) : null;
-        if (t == null) throw supplier.get();
-        return t;
+    public static <T extends ISharedAntimatterObject> T getOrThrow(Class<T> c, String id, Supplier<? extends RuntimeException> supplier) {
+        Object obj = get(c, id);
+        if (obj != null) {
+            return c.cast(obj);
+        }
+        throw supplier.get();
+    }
+
+    public static <T> boolean has(Class<T> c, String id, String domain) {
+        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+        if (map != null) {
+            Either<ISharedAntimatterObject, Map<String, Object>> either = map.get(domain);
+            if (either == null) return false;
+            return either.map(t -> true, t -> t.containsKey(id));
+        }
+        return false;
     }
 
     public static <T> boolean has(Class<T> c, String id) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
-        return map != null && map.containsKey(id);
+        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+        if (map != null) {
+            Either<ISharedAntimatterObject, Map<String, Object>> inner = map.get(id);
+            return inner != null && inner.left().isPresent();
+        }
+        return false;
     }
 
+
     public static <T> List<T> all(Class<T> c) {
+        if (!dataDone) {
+            List<T> list;
+            synchronized (OBJECTS) {
+                list = allInternal(c).collect(Collectors.toList());
+            }
+            return list;
+        }
         return allInternal(c).collect(Collectors.toList());
     }
 
     public static <T> List<T> all(Class<T> c, String domain) {
+        if (!dataDone) {
+            List<T> list;
+            synchronized (OBJECTS) {
+                list = allInternal(c,domain).collect(Collectors.toList());
+            }
+            return list;
+        }
         return allInternal(c, domain).collect(Collectors.toList());
     }
 
     private static <T> Stream<T> allInternal(Class<T> c) {
-        Object2ObjectMap<String, Object> map = OBJECTS.get(c);
-        return map == null ? Stream.empty() : map.values().stream().map(c::cast);
+        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+        return map == null ? Stream.empty() : map.values().stream().flatMap(t -> t.map(Stream::of, right -> right.values().stream())).map(c::cast);
     }
 
     private static <T> Stream<T> allInternal(Class<T> c, @Nonnull String domain) {
-        return all(c).stream().filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain) ||
+        return allInternal(c).filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain) ||
                 o instanceof IForgeRegistryEntry && ((IForgeRegistryEntry<?>) o).getRegistryName() != null && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain));
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
-        allInternal(c).forEach(consumer);
+        if (!dataDone) {
+            synchronized (OBJECTS) {
+                allInternal(c).forEach(consumer);
+            }
+        } else {
+            allInternal(c).forEach(consumer);
+        }
     }
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
-        allInternal(c, domain).forEach(consumer);
+        if (!dataDone) {
+            synchronized (OBJECTS) {
+                allInternal(c, domain).forEach(consumer);
+            }
+        } else {
+            allInternal(c, domain).forEach(consumer);
+        }
     }
 
     public static <T> void all(Class<T> c, String[] domains, Consumer<T> consumer) {
-        for (String domain : domains) {
-            allInternal(c, domain).forEach(consumer);
+        if (!dataDone) {
+            synchronized (OBJECTS) {
+                for (String domain : domains) {
+                    allInternal(c, domain).forEach(consumer);
+                }
+            }
+        } else {
+            for (String domain : domains) {
+                allInternal(c, domain).forEach(consumer);
+            }
         }
     }
 
@@ -174,15 +285,21 @@ public final class AntimatterAPI {
     }
 
     public static void runLaterCommon(Runnable... r) {
-        DEFERRED_QUEUE.computeIfAbsent(0, q -> new LinkedList<>(Arrays.asList(r))).addAll(Arrays.asList(r));
+        synchronized (DEFERRED_QUEUE) {
+            DEFERRED_QUEUE.computeIfAbsent(0, q -> new LinkedList<>(Arrays.asList(r))).addAll(Arrays.asList(r));
+        }
     }
 
     public static void runLaterClient(Runnable... r) {
-        DEFERRED_QUEUE.computeIfAbsent(1, q -> new LinkedList<>(Arrays.asList(r))).addAll(Arrays.asList(r));
+        synchronized (DEFERRED_QUEUE) {
+            DEFERRED_QUEUE.computeIfAbsent(1, q -> new LinkedList<>()).addAll(Arrays.asList(r));
+        }
     }
 
     public static void runLaterServer(Runnable... r) {
-        DEFERRED_QUEUE.computeIfAbsent(2, q -> new LinkedList<>(Arrays.asList(r))).addAll(Arrays.asList(r));
+        synchronized (DEFERRED_QUEUE) {
+            DEFERRED_QUEUE.computeIfAbsent(2, q -> new LinkedList<>(Arrays.asList(r))).addAll(Arrays.asList(r));
+        }
     }
 
     /** Registrar Section **/
@@ -209,12 +326,12 @@ public final class AntimatterAPI {
 
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar instanceof Antimatter) INTERNAL_REGISTRAR = registrar;
-        else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar);
+        else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar.getDomain(), registrar);
         FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {
-        return Optional.ofNullable(get(IAntimatterRegistrar.class, id));
+        return allInternal(IAntimatterRegistrar.class).filter(t -> t.getId().equals(id)).findFirst();
     }
 
     public static boolean isRegistrarEnabled(String id) {
@@ -223,7 +340,7 @@ public final class AntimatterAPI {
 
     /** JEI Registry Section **/
 
-    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, String model, boolean override) {
+    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
             AntimatterJEIPlugin.registerCategory(map, gui,tier, model, override);
         }
@@ -231,7 +348,7 @@ public final class AntimatterAPI {
 
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Machine<?> machine, boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
-            AntimatterJEIPlugin.registerCategory(map, gui, machine.getFirstTier(), machine.getId(), override);
+            AntimatterJEIPlugin.registerCategory(map, gui, machine.getFirstTier(), new ResourceLocation(machine.getDomain(), machine.getId()), override);
         }
     }
 
@@ -239,8 +356,8 @@ public final class AntimatterAPI {
        registerJEICategory(map,gui,Tier.LV, null, true);
     }
 
-    public static IRecipeRegistrate getRecipeRegistrate() {
-        return recipe -> AntimatterAPI.register(IRecipeRegistrate.IRecipeLoader.class, recipe.getClass().getName(), recipe);
+    public static IRecipeRegistrate getRecipeRegistrate(String domain) {
+        return recipe -> AntimatterAPI.register(IRecipeRegistrate.IRecipeLoader.class, recipe.getClass().getName(), domain, recipe);
     }
 
     //TODO: Allow other than item.

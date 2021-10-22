@@ -35,7 +35,7 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
 
     public BlockProxy(String domain, String id, Properties properties) {
         super(domain, id, properties);
-        AntimatterAPI.register(IRegistryEntryProvider.class, getId(), this);
+        AntimatterAPI.register(IRegistryEntryProvider.class, this);
     }
 
     public BlockProxy(String domain, String id) {
@@ -59,9 +59,9 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
     @SuppressWarnings("unchecked")
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.TILE_ENTITIES) {
-           // ((IForgeRegistry<Block>)registry).register(this);
+            // ((IForgeRegistry<Block>)registry).register(this);
             TYPE = new TileEntityType<>(() -> new TileEntityFakeBlock(this), Collections.singleton(this), null).setRegistryName(new ResourceLocation(Ref.ID, "proxy"));
-            AntimatterAPI.register(TileEntityType.class, getId(), TYPE);
+            AntimatterAPI.register(TileEntityType.class, getId(), getDomain(), TYPE);
         }
     }
 

@@ -18,8 +18,10 @@ public class TagUtils {
 
     //A list of all registered tags for all Antimatter mods.
     private static final Map<Class, Map<ResourceLocation, ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
+
     /**
      * Redirects an ItemTag to a BlockTag
+     *
      * @param tag a ItemTag, preferably already created
      * @return BlockTag variant of the ItemTag
      */
@@ -29,9 +31,10 @@ public class TagUtils {
 
     /**
      * Redirects an BlockTag to a ItemTag
+     *
      * @param tag a BlockTag, preferably already created
-     *             This is NOT safe to use for recipes outside of Antimatter recipe builders,
-     *             call nc() to get content. (NamedToContent)
+     *            This is NOT safe to use for recipes outside of Antimatter recipe builders,
+     *            call nc() to get content. (NamedToContent)
      * @return ItemTag variant of the BlockTag
      */
     public static ITag.INamedTag<Item> blockToItemTag(ITag.INamedTag<Block> tag) {
@@ -52,7 +55,6 @@ public class TagUtils {
 
     /**
      * @param name name of a BlockTag, can be new or old, has the namespace "forge" attached
-     *
      * @return BlockTag
      */
     public static ITag.INamedTag<Block> getForgeBlockTag(String name) {
@@ -61,8 +63,8 @@ public class TagUtils {
 
     /**
      * @param loc ResourceLocation of a ItemTag, can be new or old
-     *             This is NOT safe to use for recipes outside of Antimatter recipe builders,
-     *             call nc() to get content. (NamedToContent)
+     *            This is NOT safe to use for recipes outside of Antimatter recipe builders,
+     *            call nc() to get content. (NamedToContent)
      * @return ItemTag
      */
     public static ITag.INamedTag<Item> getItemTag(ResourceLocation loc) {
@@ -92,6 +94,7 @@ public class TagUtils {
      * NamedToContent
      * In order to use a named tag in recipes outside antimatter(e.g. for furnace recipes)
      * you have to convert the tag into a safe one, this method returns a safe tag.
+     *
      * @param tag
      * @return
      */
@@ -103,6 +106,7 @@ public class TagUtils {
      * NamedToContent
      * In order to use a named tag in recipes outside antimatter(e.g. for furnace recipes)
      * you have to convert the tag into a safe one, this method returns a safe tag.
+     *
      * @param tag
      * @return
      */
@@ -124,7 +128,7 @@ public class TagUtils {
 
     protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
         ITag.INamedTag<T>[] tag = new ITag.INamedTag[1];
-        TAG_MAP.compute(clazz, (k,v) -> {
+        TAG_MAP.compute(clazz, (k, v) -> {
             if (v == null) v = new Object2ObjectOpenHashMap<>();
             tag[0] = v.computeIfAbsent(loc, a -> fn.apply(loc.toString()));
             return v;

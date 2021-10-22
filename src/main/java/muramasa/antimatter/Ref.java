@@ -92,6 +92,7 @@ public class Ref {
     public static final String TAG_MACHINE_CHARGE_ITEM = "cg";
     public static final String TAG_MACHINE_CHARGE_SIZE = "gs";
     public static final String TAG_MACHINE_COVER_ID = "cv";
+    public static final String TAG_MACHINE_COVER_DOMAIN = "cd";
     public static final String TAG_MACHINE_COVER_NAME = "cn";
     public static final String TAG_MACHINE_COVER_SIDE = "vs";
 

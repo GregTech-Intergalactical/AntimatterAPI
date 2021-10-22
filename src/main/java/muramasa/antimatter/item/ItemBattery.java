@@ -99,9 +99,11 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).cast();
     }
 
-    /** Switches the discharge mode for an item.
-     *  False does nothing, true disables discharge.
-     *  @param stack the stack to switch.
+    /**
+     * Switches the discharge mode for an item.
+     * False does nothing, true disables discharge.
+     *
+     * @param stack the stack to switch.
      */
     private boolean chargeModeSwitch(ItemStack stack) {
         return getCastedHandler(stack).map(ItemEnergyHandler::chargeModeSwitch).orElse(true);

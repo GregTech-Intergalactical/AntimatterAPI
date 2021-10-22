@@ -15,14 +15,14 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
 
     public TileEntityStorage(Machine<?> type) {
         super(type);
-        itemHandler.set(() -> new MachineItemHandler<T>((T)this) {
+        itemHandler.set(() -> new MachineItemHandler<T>((T) this) {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 if (event == ContentEvent.ENERGY_SLOT_CHANGED)
                     calculateAmperage();
             }
         });
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0L, 0/*getMachineTier().getVoltage() * 64L*/, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, 0/*getMachineTier().getVoltage() * 64L*/, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.getFacing();
@@ -66,10 +66,10 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
 
     @Override
     public void onServerUpdate() {
-      //  if (checkAmps) {
-      //      calculateAmperage();
-      //      checkAmps = false;
-      //  }
+        //  if (checkAmps) {
+        //      calculateAmperage();
+        //      checkAmps = false;
+        //  }
         super.onServerUpdate();
     }
 

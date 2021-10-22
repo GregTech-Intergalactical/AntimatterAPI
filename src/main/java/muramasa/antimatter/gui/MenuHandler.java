@@ -27,7 +27,7 @@ public abstract class MenuHandler<T extends Container & IAntimatterContainer> im
         loc = new ResourceLocation(domain, id);
         AntimatterAPI.register(MenuHandler.class, this);
         ContainerType<?> type = getContainerType();
-        AntimatterAPI.registerIfAbsent(ContainerType.class, type.getRegistryName().toString(), () -> type);
+        AntimatterAPI.register(ContainerType.class, type.getRegistryName().toString(), type.getRegistryName().getNamespace(), type);
     }
 
     @Override
@@ -61,10 +61,11 @@ public abstract class MenuHandler<T extends Container & IAntimatterContainer> im
     }
 
     public abstract T onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data);
+
     //This has to be Object or else the runtime dist cleaner murders antimatter. It should actually return
     //the appropriate IScreenManager.IScreenFactory
     @OnlyIn(Dist.CLIENT)
     public Object screen() {
-        return (ScreenManager.IScreenFactory)(a,b,c) -> new AntimatterContainerScreen(a,b,c);
+        return (ScreenManager.IScreenFactory) (a, b, c) -> new AntimatterContainerScreen(a, b, c);
     }
 }

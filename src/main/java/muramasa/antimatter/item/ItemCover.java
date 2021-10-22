@@ -18,7 +18,7 @@ public class ItemCover extends ItemBasic<ItemCover> implements IHaveCover {
 
     public ItemCover(String domain, String id) {
         super(domain, id);
-        cover = Objects.requireNonNull(AntimatterAPI.get(ICover.class, this.getId()));
+        cover = Objects.requireNonNull(AntimatterAPI.get(ICover.class, this.getId(), this.getDomain()));
         if (cover instanceof CoverTiered) {
             throw new RuntimeException("Invalid non-tiered cover instantiation");
         }
@@ -30,8 +30,8 @@ public class ItemCover extends ItemBasic<ItemCover> implements IHaveCover {
     }
 
     public ItemCover(String domain, String id, Tier tier) {
-        super(domain,id + "_" + tier.getId());
-        cover = Objects.requireNonNull(AntimatterAPI.get(ICover.class, this.getId()));
+        super(domain, id + "_" + tier.getId());
+        cover = Objects.requireNonNull(AntimatterAPI.get(ICover.class, this.getId(), this.getDomain()));
         cover.setItem(this);
     }
 }

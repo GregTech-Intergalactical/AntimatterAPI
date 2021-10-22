@@ -2,10 +2,11 @@ package muramasa.antimatter.block;
 
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 
-public class BlockStone extends BlockBasic {
+public class BlockStone extends BlockBasic implements ISharedAntimatterObject {
 
     protected StoneType type;
     protected String suffix;
@@ -22,9 +23,9 @@ public class BlockStone extends BlockBasic {
         this.suffix = suffix;
     }
 
-    private static Properties getProps(StoneType type){
+    private static Properties getProps(StoneType type) {
         Properties props = Block.Properties.create(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).hardnessAndResistance(type.getHardness(), type.getResistence());
-        if (type.doesRequireTool()){
+        if (type.doesRequireTool()) {
             props.setRequiresTool();
         }
         return props;
@@ -40,8 +41,8 @@ public class BlockStone extends BlockBasic {
 
     @Override
     public Texture[] getTextures() {
-        if (type instanceof CobbleStoneType && !suffix.isEmpty()){
-            return new Texture[]{new Texture(type.getDomain(), ((CobbleStoneType)type).getBeginningPath() + type.getId() + "/" + suffix)};
+        if (type instanceof CobbleStoneType && !suffix.isEmpty()) {
+            return new Texture[]{new Texture(type.getDomain(), ((CobbleStoneType) type).getBeginningPath() + type.getId() + "/" + suffix)};
         }
         return new Texture[]{type.getTexture()};
     }

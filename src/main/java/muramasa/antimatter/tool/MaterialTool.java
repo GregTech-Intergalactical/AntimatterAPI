@@ -59,7 +59,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         this.type = type;
         this.energyTier = -1;
         this.maxEnergy = -1;
-        AntimatterAPI.register(IAntimatterTool.class, getId(), this);
+        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     public MaterialTool(String domain, AntimatterToolType type, Properties properties, int energyTier) {
@@ -68,7 +68,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         this.type = type;
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier;
-        AntimatterAPI.register(IAntimatterTool.class, getId(), this);
+        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     @Override
@@ -83,7 +83,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Nonnull
     @Override
-    public AntimatterToolType getAntimatterToolType() { return type; }
+    public AntimatterToolType getAntimatterToolType() {
+        return type;
+    }
 
     @Nonnull
     @Override
@@ -91,7 +93,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         return getToolTypes();
     }
 
-    /** Returns -1 if its not a powered tool **/
+    /**
+     * Returns -1 if its not a powered tool
+     **/
     public int getEnergyTier() {
         return energyTier;
     }
@@ -152,8 +156,8 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        if (getId().equals("branch_cutter")){
-            return Math.round((float)getTier(stack).getMaxUses() / 4);
+        if (getId().equals("branch_cutter")) {
+            return Math.round((float) getTier(stack).getMaxUses() / 4);
         }
         return getTier(stack).getMaxUses();
     }
@@ -179,7 +183,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     public void handleRenderHighlight(PlayerEntity entity, DrawHighlightEvent ev) {
-        onGenericHighlight(entity,ev);
+        onGenericHighlight(entity, ev);
     }
 
     @Override
@@ -194,7 +198,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType, ItemStack stack) {
-        Multimap<Attribute, AttributeModifier>modifiers = HashMultimap.create();
+        Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlotType.MAINHAND) {
             modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", type.getBaseAttackDamage() + getTier(stack).getAttackDamage(), AttributeModifier.Operation.ADDITION));
             modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
@@ -206,9 +210,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 //    public ActionResultType onItemUse(ItemUseContext ctx) {
 //        return onGenericItemUse(ctx);
 
-        //TODO functionality moved to BlockMachine.onBlockActivated
-        //TODO determine if other mods need smart interaction on
-        //TODO blocks that *don't* extend BlockMachine
+    //TODO functionality moved to BlockMachine.onBlockActivated
+    //TODO determine if other mods need smart interaction on
+    //TODO blocks that *don't* extend BlockMachine
 //        TileEntity tile = Utils.getTile(world, pos);
 //        if (tile == null) return EnumActionResult.PASS;
 //        EnumActionResult result = EnumActionResult.PASS;
@@ -308,10 +312,11 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
         if (type.isPowered()) {
             //TODO: not lv
-            return new ItemEnergyHandler.Provider(() -> new ToolEnergyHandler(stack, maxEnergy, 8 * (int)Math.pow(4, this.energyTier), 8 * (int)Math.pow(4, this.energyTier), 1, 1));
+            return new ItemEnergyHandler.Provider(() -> new ToolEnergyHandler(stack, maxEnergy, 8 * (int) Math.pow(4, this.energyTier), 8 * (int) Math.pow(4, this.energyTier), 1, 1));
         }
         return null;
     }
+
     private LazyOptional<ToolEnergyHandler> getCastedHandler(ItemStack stack) {
         return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).cast();
     }
@@ -323,7 +328,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         CompoundNBT inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
         if (inner != null) {
             if (nbt == null) nbt = new CompoundNBT();
-            if (nbt.contains(Ref.TAG_TOOL_DATA)){
+            if (nbt.contains(Ref.TAG_TOOL_DATA)) {
                 nbt.getCompound(Ref.TAG_TOOL_DATA).merge(inner);
             } else {
                 nbt.put(Ref.TAG_TOOL_DATA, inner);

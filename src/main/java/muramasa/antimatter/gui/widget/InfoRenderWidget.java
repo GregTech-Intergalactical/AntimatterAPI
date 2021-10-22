@@ -25,15 +25,15 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
 
     @Override
     public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-        renderer.drawInfo((T)this, matrixStack, Minecraft.getInstance().fontRenderer, realX(), realY());
+        renderer.drawInfo((T) this, matrixStack, Minecraft.getInstance().fontRenderer, realX(), realY());
     }
 
     public static <T extends InfoRenderWidget<T>> WidgetSupplier build(IInfoRenderer<T> renderer) {
-        return builder((a,b) -> new InfoRenderWidget<>(a,b,renderer));
+        return builder((a, b) -> new InfoRenderWidget<>(a, b, renderer));
     }
 
     public static WidgetSupplier build() {
-        return builder((a,b) -> new InfoRenderWidget<>(a,b, (IInfoRenderer<?>) a.handler));
+        return builder((a, b) -> new InfoRenderWidget<>(a, b, (IInfoRenderer<?>) a.handler));
     }
 
     public static class MultiRenderWidget extends InfoRenderWidget<MultiRenderWidget> {
@@ -58,7 +58,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         }
 
         public static WidgetSupplier build() {
-            return builder((a,b) -> new MultiRenderWidget(a,b, (IInfoRenderer) a.handler));
+            return builder((a, b) -> new MultiRenderWidget(a, b, (IInfoRenderer) a.handler));
         }
     }
 
@@ -79,25 +79,25 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
             final long pos = pipe.getPos().toLong();
             gui.syncLong(() -> {
-                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.getTotalVoltage();
             }, a -> this.voltAverage = a);
             gui.syncLong(() -> {
-                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.totalAmps();
             }, a -> this.ampAverage = a);
             gui.syncInt(() -> {
-                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0;
                 GTController gt = (GTController) controller;
                 return gt.cableFrameAverage(pos);
             }, a -> this.cableAverage = a);
             gui.syncLong(() -> {
-                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(),pipe.getPos().toLong());
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.totalLoss();
@@ -105,7 +105,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         }
 
         public static WidgetSupplier build() {
-            return builder((a,b) -> new TesseractGTWidget(a,b, (IInfoRenderer<TesseractGTWidget>) a.handler));
+            return builder((a, b) -> new TesseractGTWidget(a, b, (IInfoRenderer<TesseractGTWidget>) a.handler));
         }
     }
 
@@ -124,13 +124,13 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
             final long pos = pipe.getPos().toLong();
             gui.syncInt(() -> {
-                ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(),pipe.getPos().toLong());
+                ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0;
                 ItemController gt = (ItemController) controller;
                 return gt.getTransferred();
             }, a -> this.transferred = a);
             gui.syncInt(() -> {
-                ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(),pipe.getPos().toLong());
+                ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0;
                 ItemController gt = (ItemController) controller;
                 return gt.getCableTransferred(pipe.getPos().toLong());
@@ -138,7 +138,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         }
 
         public static WidgetSupplier build() {
-            return builder((a,b) -> new TesseractItemWidget(a,b, (IInfoRenderer<TesseractItemWidget>) a.handler));
+            return builder((a, b) -> new TesseractItemWidget(a, b, (IInfoRenderer<TesseractItemWidget>) a.handler));
         }
     }
 }

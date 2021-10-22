@@ -82,34 +82,44 @@ import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIM
 
 public class Utils {
 
-    private static DecimalFormat DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getInstance(Locale.US);
-    private static DecimalFormatSymbols DECIMAL_SYMBOLS = DECIMAL_FORMAT.getDecimalFormatSymbols();
+    private static final DecimalFormat DECIMAL_FORMAT = (DecimalFormat) NumberFormat.getInstance(Locale.US);
+    private static final DecimalFormatSymbols DECIMAL_SYMBOLS = DECIMAL_FORMAT.getDecimalFormatSymbols();
 
     static {
         DECIMAL_SYMBOLS.setGroupingSeparator(' ');
     }
 
-    /** Returns true of A is not empty, has the same Item and damage is equal to B **/
+    /**
+     * Returns true of A is not empty, has the same Item and damage is equal to B
+     **/
     public static boolean equals(ItemStack a, ItemStack b) {
         return a.isItemEqual(b);
     }
 
-    /** Returns true of A has the same Fluid as B **/
+    /**
+     * Returns true of A has the same Fluid as B
+     **/
     public static boolean equals(FluidStack a, FluidStack b) {
         return a.isFluidEqual(b);
     }
 
-    /** Returns true if A equals() B and A amount >= B amount **/
+    /**
+     * Returns true if A equals() B and A amount >= B amount
+     **/
     public static boolean contains(ItemStack a, ItemStack b) {
         return equals(a, b) && a.getCount() >= b.getCount();
     }
 
-    /** Returns true if A equals() B and A amount >= B amount **/
+    /**
+     * Returns true if A equals() B and A amount >= B amount
+     **/
     public static boolean contains(FluidStack a, FluidStack b) {
         return a.containsFluid(b);
     }
 
-    /** Returns the index of an item in a list, or -1 if not found **/
+    /**
+     * Returns the index of an item in a list, or -1 if not found
+     **/
     public static int contains(List<ItemStack> list, ItemStack item) {
         int size = list.size();
         for (int i = 0; i < size; i++) {
@@ -125,13 +135,15 @@ public class Utils {
 
     public static ItemStack extractAny(IItemHandler handler) {
         for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stack = handler.extractItem(i,64, false);
+            ItemStack stack = handler.extractItem(i, 64, false);
             if (!stack.isEmpty()) return stack;
         }
         return ItemStack.EMPTY;
     }
 
-    /** Returns the index of a fluid in a list, or -1 if not found **/
+    /**
+     * Returns the index of a fluid in a list, or -1 if not found
+     **/
     public static int contains(List<FluidStack> list, FluidStack fluid) {
         int size = list.size();
         for (int i = 0; i < size; i++) {
@@ -140,7 +152,9 @@ public class Utils {
         return -1;
     }
 
-    /** Merges B into A, ignoring maxStackSize **/
+    /**
+     * Merges B into A, ignoring maxStackSize
+     **/
     public static List<ItemStack> mergeItems(List<ItemStack> a, List<ItemStack> b) {
         int position, size = b.size();
         for (ItemStack stack : b) {
@@ -152,7 +166,9 @@ public class Utils {
         return a;
     }
 
-    /** Merges two Lists of FluidStacks, ignoring max amount **/
+    /**
+     * Merges two Lists of FluidStacks, ignoring max amount
+     **/
     public static List<FluidStack> mergeFluids(List<FluidStack> a, List<FluidStack> b) {
         int position, size = b.size();
         for (FluidStack stack : b) {
@@ -176,15 +192,15 @@ public class Utils {
         return stack;
     }
 
-    public static void damageStack(ItemStack stack, LivingEntity player){
+    public static void damageStack(ItemStack stack, LivingEntity player) {
         int durability = 1;
-        if (stack.getItem() instanceof IAntimatterTool){
-            durability = ((IAntimatterTool)stack.getItem()).getAntimatterToolType().getUseDurability();
+        if (stack.getItem() instanceof IAntimatterTool) {
+            durability = ((IAntimatterTool) stack.getItem()).getAntimatterToolType().getUseDurability();
         }
         damageStack(durability, stack, player);
     }
 
-    public static void damageStack(int durability, ItemStack stack, LivingEntity player){
+    public static void damageStack(int durability, ItemStack stack, LivingEntity player) {
         stack.damageItem(durability, player, p -> {
             p.sendBreakAnimation(EquipmentSlotType.MAINHAND);
         });
@@ -214,7 +230,7 @@ public class Utils {
     public static boolean getNoConsumeTag(ItemStack stack) {
         return stack.getTag().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }
-    
+
     public static boolean getNoConsumeTag(FluidStack stack) {
         return stack.getTag().getBoolean(Ref.KEY_STACK_NO_CONSUME);
     }
@@ -223,7 +239,7 @@ public class Utils {
         validateNBT(stack).getTag().putBoolean(Ref.KEY_STACK_NO_CONSUME, true);
         return stack;
     }
-    
+
     public static FluidStack addNoConsumeTag(FluidStack stack) {
         validateNBT(stack).getTag().putBoolean(Ref.KEY_STACK_NO_CONSUME, true);
         return stack;
@@ -233,7 +249,7 @@ public class Utils {
         if (!stack.hasTag()) stack.setTag(new CompoundNBT());
         return stack;
     }
-    
+
     public static FluidStack validateNBT(FluidStack stack) {
         if (!stack.hasTag()) stack.setTag(new CompoundNBT());
         return stack;
@@ -325,8 +341,8 @@ public class Utils {
             }
             ItemStack inserted = ItemHandlerHelper.insertItem(to, toInsert, true);
             if (inserted.getCount() < toInsert.getCount()) {
-                int actual = toInsert.getCount()-inserted.getCount();
-                toInsert.setCount(toInsert.getCount()-inserted.getCount());
+                int actual = toInsert.getCount() - inserted.getCount();
+                toInsert.setCount(toInsert.getCount() - inserted.getCount());
                 ItemHandlerHelper.insertItem(to, toInsert, false);
                 from.extractItem(i, actual, false);
                 if (!successful) successful = true;
@@ -338,8 +354,9 @@ public class Utils {
 
     /**
      * Transfers up to maxAmps between energy handlers, without loss.
+     *
      * @param from the handler to extract from
-     * @param to the handler to insert
+     * @param to   the handler to insert
      * @return if energy was inserted
      */
     public static boolean transferEnergy(IEnergyHandler from, IEnergyHandler to) {
@@ -357,17 +374,18 @@ public class Utils {
 
     /**
      * Transfer energy with loss.
+     *
      * @param from energy handler to extract from
-     * @param to energy handler to insert from
+     * @param to   energy handler to insert from
      * @param loss energy loss
      * @return number of amps
      */
     public static boolean transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss) {
         long extracted = from.extract(from.getOutputVoltage(), true);
         if (extracted > 0) {
-            long inputted = to.insert(extracted-loss, true);
+            long inputted = to.insert(extracted - loss, true);
             if (inputted > 0) {
-                to.insert(inputted-loss, false);
+                to.insert(inputted - loss, false);
                 from.extract(inputted, false);
                 return true;
             }
@@ -409,7 +427,7 @@ public class Utils {
     }
 
     public static boolean transferFluids(IFluidHandler from, IFluidHandler to) {
-        return transferFluids(from,to,-1);
+        return transferFluids(from, to, -1);
     }
 
     /**
@@ -437,7 +455,7 @@ public class Utils {
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
      */
     public static InventoryChangeTrigger.Instance hasItem(ItemPredicate... predicates) {
-        return new InventoryChangeTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND,UNBOUNDED, UNBOUNDED, UNBOUNDED, predicates);
+        return new InventoryChangeTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, UNBOUNDED, UNBOUNDED, UNBOUNDED, predicates);
     }
 
 //    @Nullable
@@ -453,31 +471,29 @@ public class Utils {
 //        return FluidRegistry.getRegisteredFluidIDs().get(fluid);
 //    }
 
-    /** https://stackoverflow.com/a/1308407 **/
+    /**
+     * https://stackoverflow.com/a/1308407
+     **/
     public static long getNumberOfDigits(long n, boolean in10s) {
         if (n < 10000L) {
             if (n < 100L) {
                 if (n < 10L) return 1;
                 else return in10s ? 10 : 2;
-            }
-            else {
+            } else {
                 if (n < 1000L) return in10s ? 100 : 3;
                 else return in10s ? 1000 : 4;
             }
-        }
-        else {
+        } else {
             if (n < 1000000000000L) {
                 if (n < 100000000L) {
                     if (n < 1000000L) {
                         if (n < 100000L) return in10s ? 10000 : 5;
                         else return in10s ? 100000 : 6;
-                    }
-                    else {
+                    } else {
                         if (n < 10000000L) return in10s ? 1000000 : 7;
                         else return in10s ? 10000000 : 8;
                     }
-                }
-                else {
+                } else {
                     if (n < 10000000000L) {
                         if (n < 1000000000L) return in10s ? 100000000 : 9;
                         else return in10s ? 1000000000 : 10;
@@ -486,24 +502,20 @@ public class Utils {
                         else return in10s ? 100000000000L : 12;
                     }
                 }
-            }
-            else {
+            } else {
                 if (n < 10000000000000000L) {
                     if (n < 100000000000000L) {
                         if (n < 10000000000000L) return in10s ? 1000000000000L : 13;
                         else return in10s ? 10000000000000L : 14;
-                    }
-                    else {
+                    } else {
                         if (n < 1000000000000000L) return in10s ? 100000000000000L : 15;
                         else return in10s ? 1000000000000000L : 16;
                     }
-                }
-                else {
+                } else {
                     if (n < 1000000000000000000L) {
                         if (n < 100000000000000000L) return in10s ? 10000000000000000L : 17;
                         else return in10s ? 100000000000000000L : 18;
-                    }
-                    else return in10s ? 1000000000000000000L : 19;
+                    } else return in10s ? 1000000000000000000L : 19;
                 }
             }
         }
@@ -524,7 +536,9 @@ public class Utils {
         return Math.max(1, tier);
     }
 
-    /** Safe version of world.getTileEntity **/
+    /**
+     * Safe version of world.getTileEntity
+     **/
     @Nullable
     public static TileEntity getTile(@Nullable IBlockReader reader, BlockPos pos) {
         if (reader == null) return null;
@@ -549,13 +563,17 @@ public class Utils {
         });
     }
 
-    /** Syncs NBT between Client & Server **/
+    /**
+     * Syncs NBT between Client & Server
+     **/
     public static void markTileForNBTSync(TileEntity tile) {
         BlockState state = tile.getWorld().getBlockState(tile.getPos());
         tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
     }
 
-    /** Sends block update to clients **/
+    /**
+     * Sends block update to clients
+     **/
     public static void markTileForRenderUpdate(TileEntity tile) {
         BlockState state = tile.getWorld().getBlockState(tile.getPos());
         if (tile.getWorld().isRemote) {
@@ -564,12 +582,12 @@ public class Utils {
         }
     }
 
-    public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy){
+    public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy) {
         RotationHelper.ModelRotation r = Utils.getModelRotationCover(rotateBy);
         return r.getRotation().rotateFace(toRotate);
     }
 
-    public static Direction getOffsetFacing(BlockPos center, BlockPos offset){
+    public static Direction getOffsetFacing(BlockPos center, BlockPos offset) {
         if (center.getX() > offset.getX()) return Direction.WEST;
         else if (center.getX() < offset.getX()) return Direction.EAST;
         else if (center.getZ() > offset.getZ()) return Direction.NORTH;
@@ -583,7 +601,7 @@ public class Utils {
 
     public static Direction getInteractSide(BlockRayTraceResult res) {
         Vector3d vec = res.getHitVec();
-        return getInteractSide(res.getFace(), (float)vec.x - res.getPos().getX(), (float)vec.y - res.getPos().getY(), (float)vec.z - res.getPos().getZ());
+        return getInteractSide(res.getFace(), (float) vec.x - res.getPos().getX(), (float) vec.y - res.getPos().getY(), (float) vec.z - res.getPos().getZ());
     }
 
     public static Direction getInteractSide(Direction side, float x, float y, float z) {
@@ -682,45 +700,46 @@ public class Utils {
     public static ModelRotation getModelRotation(Direction dir) {
         switch (dir) {
             case DOWN:
-                return ModelRotation.getModelRotation(90,0);
+                return ModelRotation.getModelRotation(90, 0);
             case UP:
-                return ModelRotation.getModelRotation(-90,0);
+                return ModelRotation.getModelRotation(-90, 0);
             case NORTH:
-                return ModelRotation.getModelRotation(0,0);
+                return ModelRotation.getModelRotation(0, 0);
             case SOUTH:
-                return ModelRotation.getModelRotation(0,180);
+                return ModelRotation.getModelRotation(0, 180);
             case EAST:
-                return ModelRotation.getModelRotation(0,90);
+                return ModelRotation.getModelRotation(0, 90);
             case WEST:
-                return ModelRotation.getModelRotation(0,270);
+                return ModelRotation.getModelRotation(0, 270);
         }
         return null;
     }
 
     public static TransformationMatrix getRotation(Direction dir, Direction face) {
         int[] vec = rotationVector(dir, face);
-        Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float)(-vec[1]), true);
-        quaternion.multiply(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float)(-vec[0]), true));
-        quaternion.multiply(new Quaternion(new Vector3f(0.0F, 0.0F, 1.0F), (float)(-vec[2]), true));
+        Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float) (-vec[1]), true);
+        quaternion.multiply(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float) (-vec[0]), true));
+        quaternion.multiply(new Quaternion(new Vector3f(0.0F, 0.0F, 1.0F), (float) (-vec[2]), true));
         return new TransformationMatrix(null, quaternion, null, null);
     }
+
     //All these getRotations, coverRotateFacings. Honestly look into them. I just made
     //something that works but it is really confusing... Some values here are inverted but it works? This is used
     //for multitexturer while getModelRotation is used for all else.
     public static RotationHelper.ModelRotation getModelRotationCover(Direction dir) {
         switch (dir) {
             case DOWN:
-                return RotationHelper.getModelRotation(90,0);
+                return RotationHelper.getModelRotation(90, 0);
             case UP:
-                return RotationHelper.getModelRotation(-90,0);
+                return RotationHelper.getModelRotation(-90, 0);
             case NORTH:
-                return RotationHelper.getModelRotation(0,0);
+                return RotationHelper.getModelRotation(0, 0);
             case SOUTH:
-                return RotationHelper.getModelRotation(0,180);
+                return RotationHelper.getModelRotation(0, 180);
             case EAST:
-                return RotationHelper.getModelRotation(0,270);
+                return RotationHelper.getModelRotation(0, 270);
             case WEST:
-                return RotationHelper.getModelRotation(0,90);
+                return RotationHelper.getModelRotation(0, 90);
         }
         return null;
     }
@@ -730,22 +749,22 @@ public class Utils {
     public static ModelRotation getModelRotationCoverClient(Direction dir) {
         switch (dir) {
             case DOWN:
-                return ModelRotation.getModelRotation(90,0);
+                return ModelRotation.getModelRotation(90, 0);
             case UP:
-                return ModelRotation.getModelRotation(-90,0);
+                return ModelRotation.getModelRotation(-90, 0);
             case NORTH:
-                return ModelRotation.getModelRotation(0,0);
+                return ModelRotation.getModelRotation(0, 0);
             case SOUTH:
-                return ModelRotation.getModelRotation(0,180);
+                return ModelRotation.getModelRotation(0, 180);
             case EAST:
-                return ModelRotation.getModelRotation(0,270);
+                return ModelRotation.getModelRotation(0, 270);
             case WEST:
-                return ModelRotation.getModelRotation(0,90);
+                return ModelRotation.getModelRotation(0, 90);
         }
         return null;
     }
 
-                /**
+    /**
      * Returns a list of x,y,z rotations given two facings.
      */
     public static int[] rotationVector(Direction dir, Direction h) {
@@ -759,7 +778,7 @@ public class Utils {
             case EAST:
                 return new int[]{0, 270, 0};
             case UP:
-                switch (h){
+                switch (h) {
                     case NORTH://
                         return new int[]{90, 0, 0};
                     case WEST:
@@ -771,7 +790,7 @@ public class Utils {
                 }
                 break;
             case DOWN:
-                switch (h){
+                switch (h) {
                     case NORTH:// DONE
                         return new int[]{270, 0, 0};
                     case WEST:
@@ -813,10 +832,11 @@ public class Utils {
 
     /**
      * Custom Block Breaking implementation, normally used when breaking extra blocks during/after onBlockDestroyed
-     * @param world World instance
+     *
+     * @param world  World instance
      * @param player Player instance, preferably not a ClientPlayerEntity as BlockBreakEvent won't be fired
-     * @param stack Player's heldItemStack
-     * @param pos BlockPos of the block that is about to be destroyed
+     * @param stack  Player's heldItemStack
+     * @param pos    BlockPos of the block that is about to be destroyed
      * @param damage Damage that should be taken for the ItemStack
      * @return true if block is successfully broken, false if not
      */
@@ -829,14 +849,16 @@ public class Utils {
         if (exp == -1) return false;
         stack.damageItem(state.getBlockHardness(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
         boolean destroyed = world.removeBlock(pos, false);// world.func_225521_a_(pos, !player.isCreative(), player);
-        if (destroyed && state.canHarvestBlock(world, pos, player)) state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
+        if (destroyed && state.canHarvestBlock(world, pos, player))
+            state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
         if (exp > 0) state.getBlock().dropXpOnBlockBreak((ServerWorld) world, pos, exp);
         return destroyed;
     }
 
     /**
      * IAntimatterTool-sensitive extension of IForgeBlockState::isToolEffective
-     * @param tool IAntimatterTool derivatives
+     *
+     * @param tool  IAntimatterTool derivatives
      * @param state BlockState that is being checked against
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
@@ -846,7 +868,8 @@ public class Utils {
 
     /**
      * AntimatterToolType-sensitive extension of IForgeBlockState::isToolEffective
-     * @param type AntimatterToolType object
+     *
+     * @param type  AntimatterToolType object
      * @param state BlockState that is being checked against
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
@@ -856,10 +879,11 @@ public class Utils {
 
     /**
      * Performs tree logging. If Configs.GAMEPLAY.TREE_DETECTION is true, it will do a more complex search for branches, if set to false, it will do a normal vertical loop only
-     * @param stack Player's heldItem
-     * @param start onBlockDestroy's BlockPos
+     *
+     * @param stack  Player's heldItem
+     * @param start  onBlockDestroy's BlockPos
      * @param player ServerPlayerEntity instance
-     * @param world World instance
+     * @param world  World instance
      * @return if tree logging was successful
      */
     public static boolean treeLogging(@Nonnull IAntimatterTool tool, @Nonnull ItemStack stack, @Nonnull BlockPos start, @Nonnull PlayerEntity player, @Nonnull World world) {
@@ -869,21 +893,22 @@ public class Utils {
                 if (stack.getDamage() < 2) return false;
                 tempPos.move(Direction.UP);
                 BlockState state = world.getBlockState(tempPos);
-                if (state.isAir(world, tempPos) || !ForgeHooks.canHarvestBlock(state, player, world, tempPos)) return false;
+                if (state.isAir(world, tempPos) || !ForgeHooks.canHarvestBlock(state, player, world, tempPos))
+                    return false;
                 else if (state.getBlock().isIn(BlockTags.LOGS)) {
                     breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability());
                 }
             }
-        }
-        else {
+        } else {
             LinkedList<BlockPos> blocks = new LinkedList<>();
             Set<BlockPos> visited = new ObjectOpenHashSet<>();
             int amount = AntimatterConfig.GAMEPLAY.AXE_TIMBER_MAX;
             blocks.add(start);
             BlockPos pos;
-            Direction[] dirs = { Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST };
+            Direction[] dirs = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
             while (amount > 0) {
-                if (blocks.isEmpty() || (stack.isDamaged() && stack.getDamage() < tool.getAntimatterToolType().getUseDurability())) return false;
+                if (blocks.isEmpty() || (stack.isDamaged() && stack.getDamage() < tool.getAntimatterToolType().getUseDurability()))
+                    return false;
                 pos = blocks.remove();
                 if (!visited.add(pos)) continue;
                 if (!world.getBlockState(pos).getBlock().isIn(BlockTags.LOGS)) continue;
@@ -891,7 +916,7 @@ public class Utils {
                     BlockPos dirPos = pos.offset(side);
                     if (!visited.contains(dirPos)) blocks.add(dirPos);
                 }
-                for (int x = 0; x < 3; x++)  {
+                for (int x = 0; x < 3; x++) {
                     for (int z = 0; z < 3; z++) {
                         BlockPos branchPos = pos.add(-1 + x, 1, -1 + z);
                         if (!visited.contains(branchPos)) blocks.add(branchPos);
@@ -908,11 +933,12 @@ public class Utils {
 
     /**
      * Gets harvestables out of a ImmutableSet of block positions, this is IAntimatterTool sensitive, and will not work for normal ItemStacks, for that, check out BlockState#isToolEffective
-     * @param world World instance of the PlayerEntity
+     *
+     * @param world  World instance of the PlayerEntity
      * @param player PlayerEntity that is breaking the blocks
      * @param column vertical amount of blocks
-     * @param row horizontal amount of blocks
-     * @param depth depth amount of blocks
+     * @param row    horizontal amount of blocks
+     * @param depth  depth amount of blocks
      * @return set of harvestable BlockPos in the specified range with specified player
      */
     public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull IAntimatterTool tool, int column, int row, int depth) {
@@ -922,11 +948,12 @@ public class Utils {
 
     /**
      * Gets blocks to be broken in a column (radius), row (radius) and depth. This is axis-sensitive
-     * @param world = World instance of the PlayerEntity
+     *
+     * @param world  = World instance of the PlayerEntity
      * @param player = PlayerEntity that is breaking the blocks
      * @param column = vertical amount of blocks
-     * @param row = horizontal amount of blocks
-     * @param depth = depth amount of blocks
+     * @param row    = horizontal amount of blocks
+     * @param depth  = depth amount of blocks
      * @return set of BlockPos in the specified range
      */
     public static ImmutableSet<BlockPos> getBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, int column, int row, int depth) {
@@ -942,18 +969,19 @@ public class Utils {
             for (int y = 0; y < depth; y++) {
                 for (int x = isX ? -column : -row; x <= (isX ? column : row); x++) {
                     for (int z = isX ? -row : -column; z <= (isX ? row : column); z++) {
-                        if (!(x == 0 && y == 0 && z == 0)) blockPositions.add(result.getPos().add(x, isDown ? y : -y, z));
+                        if (!(x == 0 && y == 0 && z == 0))
+                            blockPositions.add(result.getPos().add(x, isDown ? y : -y, z));
                     }
                 }
             }
-        }
-        else { // FaceAxis - Horizontal
+        } else { // FaceAxis - Horizontal
             boolean isX = faceAxis == Direction.Axis.X;
             boolean isNegative = faceAxisDir == Direction.AxisDirection.NEGATIVE;
             for (int x = 0; x < depth; x++) {
                 for (int y = -column; y <= column; y++) {
                     for (int z = -row; z <= row; z++) {
-                        if (!(x == 0 && y == 0 && z == 0)) blockPositions.add(result.getPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x)));
+                        if (!(x == 0 && y == 0 && z == 0))
+                            blockPositions.add(result.getPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x)));
                     }
                 }
             }
@@ -963,6 +991,7 @@ public class Utils {
 
     /**
      * Scrappy but efficient way of determining an DyeColor from mere RGB values
+     *
      * @param rgb int colour
      * @return DyeColor that is the closest to the RGB input
      */
@@ -972,13 +1001,13 @@ public class Utils {
         for (DyeColor dyeColour : DyeColor.values()) {
             Color enumColour = new Color(dyeColour.getColorValue());
             double distance = (colour.getRed() - enumColour.getRed()) * (colour.getRed() - enumColour.getRed())
-                + (colour.getGreen() - enumColour.getGreen()) * (colour.getGreen() - enumColour.getGreen())
-                + (colour.getBlue() - enumColour.getBlue()) * (colour.getBlue() - enumColour.getBlue());
+                    + (colour.getGreen() - enumColour.getGreen()) * (colour.getGreen() - enumColour.getGreen())
+                    + (colour.getBlue() - enumColour.getBlue()) * (colour.getBlue() - enumColour.getBlue());
             distances.put(distance, dyeColour);
         }
         return distances.get((double) Collections.min(distances.keySet()));
     }
-    
+
     public static String lowerUnderscoreToUpperSpaced(String string) {
         return StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string)), ' ');
     }
@@ -987,9 +1016,9 @@ public class Utils {
         String[] strings = StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string));
         String[] newStrings = new String[strings.length];
 
-        newStrings[0] = strings[strings.length-1];
+        newStrings[0] = strings[strings.length - 1];
         for (int i = 1; i < strings.length; i++) {
-            newStrings[i] = strings[i-1];
+            newStrings[i] = strings[i - 1];
         }
         return StringUtils.join(newStrings, ' ');
     }
@@ -1006,6 +1035,7 @@ public class Utils {
 
     /**
      * Used primarily in chemical formula tooltips
+     *
      * @param string input
      * @return string with its digits swapped to its subscript variant
      */
@@ -1054,19 +1084,19 @@ public class Utils {
             id = String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
             if (id.contains("crushed")) id = StringUtils.replace(id, "crushed", "crushed_ore");
             return id;
-        }
-        else if (id.contains("crushed")) return StringUtils.replace(id, "crushed", "crushed_ores");
+        } else if (id.contains("crushed")) return StringUtils.replace(id, "crushed", "crushed_ores");
         return id.charAt(id.length() - 1) == 's' ? id.concat("es") : id.concat("s");
     }
 
     /**
      * Spawns a new item entity
+     *
      * @param tile the active tile
      * @param item the item to spawn, 1.
-     * @param dir the direction to spawn it in.
+     * @param dir  the direction to spawn it in.
      */
     public static void dropItemInWorldAtTile(TileEntity tile, Item item, Direction dir) {
-        ItemEntity entity = new ItemEntity(tile.getWorld(), tile.getPos().getX()+dir.getXOffset(),tile.getPos().getY()+dir.getYOffset(),tile.getPos().getZ()+dir.getZOffset(), new ItemStack(item,1));
+        ItemEntity entity = new ItemEntity(tile.getWorld(), tile.getPos().getX() + dir.getXOffset(), tile.getPos().getY() + dir.getYOffset(), tile.getPos().getZ() + dir.getZOffset(), new ItemStack(item, 1));
         tile.getWorld().addEntity(entity);
     }
 
@@ -1077,7 +1107,7 @@ public class Utils {
             String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
             return lowerUnderscoreToUpperSpaced(joined).split(" ");
         }
-        return new String[] { lowerUnderscoreToUpperSpaced(id).replace('_', ' ') };
+        return new String[]{lowerUnderscoreToUpperSpaced(id).replace('_', ' ')};
     }
 
     public static String getLocalizedType(IAntimatterObject type) {
@@ -1088,7 +1118,7 @@ public class Utils {
                 String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
                 return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(joined), '_', ' ');
             }
-            return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(id),'_', ' ');
+            return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(id), '_', ' ');
         }
         return StringUtils.capitalize(id);
     }
@@ -1146,7 +1176,7 @@ public class Utils {
      * @return an empty instance of Recipe
      */
     public static Recipe getEmptyRecipe() {
-        return new Recipe(Collections.emptyList(), new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0,1);
+        return new Recipe(Collections.emptyList(), new ItemStack[0], new FluidStack[0], new FluidStack[0], 1, 1, 0, 1);
     }
 
     public static Recipe getEmptyPoweredRecipe(int duration, long euT, int amps) {
@@ -1155,11 +1185,12 @@ public class Utils {
 
     /**
      * Returns a fluid powered recipe, that is, essentially a recipe for generators.
-     * @param input fluid inputs.
-     * @param output fluid outputs (e.g. water)
+     *
+     * @param input    fluid inputs.
+     * @param output   fluid outputs (e.g. water)
      * @param duration how long to generate power for
-     * @param euT eu/T generated.
-     * @param amps amps outputted.
+     * @param euT      eu/T generated.
+     * @param amps     amps outputted.
      * @return recipe.
      */
     public static Recipe getFluidPoweredRecipe(FluidStack[] input, FluidStack[] output, int duration, long euT, int amps) {

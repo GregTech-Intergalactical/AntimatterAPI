@@ -24,7 +24,8 @@ public class BehaviourPoweredDebug implements IItemUse<IAntimatterTool> {
         if (instance.getAntimatterToolType().isPowered() && c.getWorld().getBlockState(c.getPos()) == Blocks.REDSTONE_BLOCK.getDefaultState() && c.getPlayer() != null) {
             ItemStack stack = c.getPlayer().getHeldItem(c.getHand());
             CompoundNBT tag = instance.getDataTag(stack);
-            if (instance.getMaxEnergy(stack) - instance.getCurrentEnergy(stack) <= 50000) tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, instance.getMaxEnergy(stack));
+            if (instance.getMaxEnergy(stack) - instance.getCurrentEnergy(stack) <= 50000)
+                tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, instance.getMaxEnergy(stack));
             else tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, tag.getLong(Ref.KEY_TOOL_DATA_ENERGY) + 50000);
             return ActionResultType.SUCCESS;
         }

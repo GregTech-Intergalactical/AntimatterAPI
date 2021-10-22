@@ -29,21 +29,21 @@ public class BackgroundWidget extends Widget {
     @Override
     public void setParent(IGuiElement parent) {
         super.setParent(parent);
-        this.setDepth(parent.depth()-1);
+        this.setDepth(parent.depth() - 1);
     }
 
     public static WidgetSupplier build(ResourceLocation loc, int w, int h) {
-        return builder((a,b) -> new BackgroundWidget(a,b, loc, w, h, 256, 256)).clientSide();
+        return builder((a, b) -> new BackgroundWidget(a, b, loc, w, h, 256, 256)).clientSide();
     }
 
     public static WidgetSupplier build(ResourceLocation loc, int w, int h, int guiW, int guiH) {
-        return builder((a,b) -> new BackgroundWidget(a,b, loc, w, h, guiW, guiH)).clientSide();
+        return builder((a, b) -> new BackgroundWidget(a, b, loc, w, h, guiW, guiH)).clientSide();
     }
 
 
     @Override
     public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-        drawTexture(matrixStack, loc, realX(),realY(), 0,0, xSize, ySize);
+        drawTexture(matrixStack, loc, realX(), realY(), 0, 0, xSize, ySize);
     }
 
     @OnlyIn(Dist.CLIENT)

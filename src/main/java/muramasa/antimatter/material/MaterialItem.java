@@ -3,10 +3,7 @@ package muramasa.antimatter.material;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBasic;
-import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IColorHandler;
-import muramasa.antimatter.registration.IModelProvider;
-import muramasa.antimatter.registration.ITextureProvider;
+import muramasa.antimatter.registration.*;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
@@ -37,7 +34,7 @@ import java.util.List;
 
 import static muramasa.antimatter.Data.DUST;
 
-public class MaterialItem extends ItemBasic<MaterialItem> implements IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
     protected Material material;
     protected MaterialType<?> type;

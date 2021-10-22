@@ -7,6 +7,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -19,9 +20,11 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryProvider {
+public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryProvider, ISharedAntimatterObject {
 
-    /** Basic Members **/
+    /**
+     * Basic Members
+     **/
     protected String domain;
     protected Material material;
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
@@ -33,24 +36,25 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     private final Function<T, TileEntityPipe<T>> coveredFunc;
 
 
-    public PipeType(String domain, Material material, Function<T, TileEntityPipe<T>> func,  Function<T, TileEntityPipe<T>> covered) {
+    public PipeType(String domain, Material material, Function<T, TileEntityPipe<T>> func, Function<T, TileEntityPipe<T>> covered) {
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);
-        AntimatterAPI.register(getClass(), getId() + "_" + material.getId(), this);
+        AntimatterAPI.register(getClass(), getId() + "_" + material.getId(), getDomain(), this);
         this.tileFunc = func;
         this.coveredFunc = covered;
     }
+
     @SuppressWarnings("unchecked")
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry != ForgeRegistries.BLOCKS) return;
         Set<Block> blocks = getBlocks();
-        registeredBlocks = blocks.stream().map(t ->new Pair<>(((BlockPipe<?>)t).getSize(), t.getBlock())).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-        tileType = new TileEntityType<>(() -> tileFunc.apply((T)this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId());
-        coveredType = new TileEntityType<>(() -> coveredFunc.apply((T)this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId() + "_covered");
-        AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId(), getTileType());
-        AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId() + "_covered", getCoveredType());
+        registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(), t.getBlock())).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
+        tileType = new TileEntityType<>(() -> tileFunc.apply((T) this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId());
+        coveredType = new TileEntityType<>(() -> coveredFunc.apply((T) this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId() + "_covered");
+        AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId(), getDomain(), getTileType());
+        AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId() + "_covered", getDomain(), getCoveredType());
     }
 
     public Block getBlock(PipeSize size) {

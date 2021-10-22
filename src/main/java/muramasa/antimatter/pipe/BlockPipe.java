@@ -70,6 +70,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     protected Texture[] faces;
 
     public static final BooleanProperty COVERED = BooleanProperty.create("cover");
+
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
         this(prefix, type, size, modelId, Block.Properties.create(Data.WRENCH_MATERIAL).hardnessAndResistance(1.0f, 3.0f).notSolid().setRequiresTool());
     }
@@ -80,7 +81,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         this.size = size;
         side = new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_side");
         faces = new Texture[]{new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_vtiny"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_tiny"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_small"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_normal"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_large"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_huge")};
-        AntimatterAPI.register(BlockPipe.class, getId(), this);
+        AntimatterAPI.register(BlockPipe.class, this);
         setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false).with(COVERED, false));
         this.modelId = modelId;
         buildShapes();
@@ -97,13 +98,13 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         //Also make sure it is the covered data that actually changes.
         if (state.hasTileEntity() && state.getBlock().matchesBlock(newState.getBlock()) && (state.equals(newState.with(COVERED, !newState.get(COVERED))))) {
             worldIn.removeTileEntity(pos);
-         } else if (!state.getBlock().matchesBlock(newState.getBlock())) {
+        } else if (!state.getBlock().matchesBlock(newState.getBlock())) {
             TileEntity tile = worldIn.getTileEntity(pos);
             if (tile == null) return;
             TileEntityPipe<T> pipe = (TileEntityPipe<T>) tile;
             pipe.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), stack)));
             super.onReplaced(state, worldIn, pos, newState, isMoving);
-         }
+        }
     }
 
     private void recursiveShapeBuild(int index, byte acc) {
@@ -111,19 +112,25 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             shapes.put(getPipeID(acc, 0), makeShapes(acc));
             return;
         }
-        recursiveShapeBuild(index+1, (byte) (acc | (1 << index)));
-        recursiveShapeBuild(index+1, acc);
+        recursiveShapeBuild(index + 1, (byte) (acc | (1 << index)));
+        recursiveShapeBuild(index + 1, acc);
     }
 
-    private VoxelShape makeShapes(byte which){
+    private VoxelShape makeShapes(byte which) {
         float offset = 0.0625f * size.ordinal();
         VoxelShape shape = VoxelShapes.create(size.getAABB());
-        if ((which & (1 << 0)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
-        if ((which & (1 << 1)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
-        if ((which & (1 << 2)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
-        if ((which & (1 << 3)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
-        if ((which & (1 << 4)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
-        if ((which & (1 << 5)) > 0) shape = VoxelShapes.or(shape,VoxelShapes.create(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
+        if ((which & (1 << 0)) > 0)
+            shape = VoxelShapes.or(shape, VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
+        if ((which & (1 << 1)) > 0)
+            shape = VoxelShapes.or(shape, VoxelShapes.create(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
+        if ((which & (1 << 2)) > 0)
+            shape = VoxelShapes.or(shape, VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
+        if ((which & (1 << 3)) > 0)
+            shape = VoxelShapes.or(shape, VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
+        if ((which & (1 << 4)) > 0)
+            shape = VoxelShapes.or(shape, VoxelShapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
+        if ((which & (1 << 5)) > 0)
+            shape = VoxelShapes.or(shape, VoxelShapes.create(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
         return shape;
     }
 
@@ -164,7 +171,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        TileEntityPipe pipe = (TileEntityPipe)( state.get(COVERED) ? type.getCoveredType().create() : type.getTileType().create());
+        TileEntityPipe pipe = (TileEntityPipe) (state.get(COVERED) ? type.getCoveredType().create() : type.getTileType().create());
         pipe.ofState(state);
         return pipe;
     }
@@ -201,9 +208,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     @Override
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-        if (!worldIn.isRemote){
-            TileEntityPipe<?> tile = (TileEntityPipe<?>)worldIn.getTileEntity(pos);
-            if (tile != null){
+        if (!worldIn.isRemote) {
+            TileEntityPipe<?> tile = (TileEntityPipe<?>) worldIn.getTileEntity(pos);
+            if (tile != null) {
                 tile.onBlockUpdate(fromPos);
             }
         }
@@ -230,7 +237,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         if (!world.isRemote && hand == Hand.MAIN_HAND) {
             ItemStack stack = player.getHeldItem(hand);
             if (stack.getItem() instanceof IHaveCover) {
-                boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,Utils.getInteractSide(hit)).map(i -> i.placeCover(player,Utils.getInteractSide(hit),stack,((IHaveCover) stack.getItem()).getCover())).orElse(false);
+                boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, ((IHaveCover) stack.getItem()).getCover())).orElse(false);
                 if (ok) {
                     return ActionResultType.SUCCESS;
                 }
@@ -240,7 +247,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 return ActionResultType.PASS;
             }
             if (type == Data.CROWBAR) {
-                if (!player.isCrouching()){
+                if (!player.isCrouching()) {
                     if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                         Utils.damageStack(stack, player);
                         return ActionResultType.SUCCESS;
@@ -267,8 +274,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                         return ActionResultType.SUCCESS;
                     }
                     return ActionResultType.PASS;
-                } 
-             }
+                }
+            }
             if (getHarvestTool(state) == type.getToolType()) {
                 Direction side = Utils.getInteractSide(hit);
                 if (tile.blocksSide(side)) return ActionResultType.CONSUME;
@@ -286,19 +293,19 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType(), Data.SCREWDRIVER.getToolType())) {
                 return VoxelShapes.fullCube();
             }
-            if (!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof IHaveCover){
+            if (!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof IHaveCover) {
                 return VoxelShapes.fullCube();
             }
             BlockPipe<?> pipe = null;
             if (player.getHeldItemMainhand().getItem() instanceof PipeItemBlock) {
-                pipe = ((PipeItemBlock)player.getHeldItemMainhand().getItem()).getPipe();
+                pipe = ((PipeItemBlock) player.getHeldItemMainhand().getItem()).getPipe();
             }
             if (player.getHeldItemOffhand().getItem() instanceof PipeItemBlock) {
-                pipe = ((PipeItemBlock)player.getHeldItemOffhand().getItem()).getPipe();
+                pipe = ((PipeItemBlock) player.getHeldItemOffhand().getItem()).getPipe();
             }
             if (pipe != null && getClass().isInstance(pipe)) {
                 return VoxelShapes.fullCube();
-            } 
+            }
         }
         int config = getConfig(state, world, new BlockPos.Mutable(pos.getX(), pos.getY(), pos.getZ()), pos).getConfig()[0];
         VoxelShape shape = this.shapes.get(config);

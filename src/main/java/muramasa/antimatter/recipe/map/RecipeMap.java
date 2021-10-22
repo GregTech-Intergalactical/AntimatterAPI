@@ -74,7 +74,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     //Data allows you to set related data to the map, e.g. which tier the gui displays.
     public RecipeMap(String categoryId, B builder) {
-        this.id = "gt.recipe_map." + categoryId;
+        this.id = categoryId;
         this.builder = builder;
         this.builder.setMap(this);
         AntimatterAPI.register(RecipeMap.class, this);

@@ -29,16 +29,16 @@ public class IOWidget extends AbstractSwitchWidget {
         this.setH(h);
         ContainerMachine<?> m = (ContainerMachine<?>) instance.container;
         if (m.getTile().getMachineType().has(ITEM)) {
-            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvent.ITEM_EJECT,0).setSize(26, 0, w, h).buildAndAdd(instance, this);
+            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvent.ITEM_EJECT, 0).setSize(26, 0, w, h).buildAndAdd(instance, this);
             item.setEnabled(false);
             item.setStateHandler(wid -> itemState);
-            item.setDepth(depth()+1);
+            item.setDepth(depth() + 1);
         }
         if (m.getTile().getMachineType().has(FLUID)) {
-            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvent.FLUID_EJECT,0).setSize(44, 0, w, h).buildAndAdd(instance, this);
+            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvent.FLUID_EJECT, 0).setSize(44, 0, w, h).buildAndAdd(instance, this);
             fluid.setStateHandler(wid -> fluidState);
             fluid.setEnabled(false);
-            fluid.setDepth(depth()+1);
+            fluid.setDepth(depth() + 1);
         }
     }
 
@@ -46,8 +46,10 @@ public class IOWidget extends AbstractSwitchWidget {
     public void init() {
         super.init();
         ContainerMachine<?> m = (ContainerMachine<?>) gui.container;
-        if (item != null) gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false)), this::setItem);
-        if (fluid != null) gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false)), this::setFluid);
+        if (item != null)
+            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false)), this::setItem);
+        if (fluid != null)
+            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false)), this::setFluid);
     }
 
     @Override
@@ -72,6 +74,6 @@ public class IOWidget extends AbstractSwitchWidget {
     }
 
     public static WidgetSupplier build(int x, int y, int w, int h) {
-        return builder((a,b) -> new IOWidget(a,b, x, y, w, h));
+        return builder((a, b) -> new IOWidget(a, b, x, y, w, h));
     }
 }

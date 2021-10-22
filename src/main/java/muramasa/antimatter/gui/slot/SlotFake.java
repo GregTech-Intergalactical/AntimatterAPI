@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 //TODO: Should be used on filters
 public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     final boolean settable;
+
     public SlotFake(SlotType<SlotFake> type, IGuiHandler tile, IItemHandler stackHandler, int index, int x, int y, boolean settable) {
         super(type, tile, stackHandler, index, x, y);
         this.settable = settable;
@@ -34,7 +35,7 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
 
     @Override
     public int getItemStackLimit(@Nonnull ItemStack stack) {
-        if (settable){
+        if (settable) {
             return 1;
         }
         return super.getItemStackLimit(stack);
@@ -60,7 +61,7 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
         return settable;
     }
 
-    public ItemStack clickSlot(int clickedButton, ClickType clickType, PlayerEntity playerEntity, Container container){
+    public ItemStack clickSlot(int clickedButton, ClickType clickType, PlayerEntity playerEntity, Container container) {
         if (!settable) return ItemStack.EMPTY;
         PlayerInventory playerinventory = playerEntity.inventory;
         ItemStack itemstack = playerinventory.getItemStack().copy();

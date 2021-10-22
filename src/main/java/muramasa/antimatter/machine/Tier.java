@@ -3,10 +3,11 @@ package muramasa.antimatter.machine;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.util.text.TextFormatting;
 
-public class Tier implements IAntimatterObject {
+public class Tier implements ISharedAntimatterObject {
 
     /** Electricity Tiers **/
     public static Tier ULV = new Tier(Ref.ID, "ulv", 8, TextFormatting.WHITE); //Tier 1

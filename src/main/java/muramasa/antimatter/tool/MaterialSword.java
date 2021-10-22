@@ -51,7 +51,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
         this.type = type;
         this.energyTier = -1;
         this.maxEnergy = -1;
-        AntimatterAPI.register(IAntimatterTool.class, getId(), this);
+        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     public MaterialSword(String domain, AntimatterToolType type, Properties properties, int energyTier) {
@@ -60,7 +60,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
         this.type = type;
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier;
-        AntimatterAPI.register(IAntimatterTool.class, getId(), this);
+        AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
     @Override
@@ -85,7 +85,9 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
         return type.getToolTypes().stream().map(ToolType::get).collect(Collectors.toSet());
     }
 
-    /** Returns -1 if its not a powered tool **/
+    /**
+     * Returns -1 if its not a powered tool
+     **/
     public int getEnergyTier() {
         return energyTier;
     }

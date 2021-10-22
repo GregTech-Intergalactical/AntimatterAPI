@@ -49,13 +49,13 @@ public class AntimatterJEIPlugin implements IModPlugin {
         RecipeMap<?> map;
         GuiData gui;
         Tier tier;
-        String machine;
+        ResourceLocation model;
 
-        public RegistryValue(RecipeMap<?> map, GuiData gui, Tier tier, String machine) {
+        public RegistryValue(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model) {
             this.map = map;
             this.gui = gui;
             this.tier = tier;
-            this.machine = machine;
+            this.model = model;
         }
     }
 
@@ -73,12 +73,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return new ResourceLocation(Ref.ID, "jei");
     }
 
-    public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, String itemModel, boolean override) {
+    public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
         if (REGISTRY.containsKey(map.getId()) && !override) {
             Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
             return;
         }
-        REGISTRY.put(map.getId(), new RegistryValue(map,map.getGui() == null ? gui : map.getGui(),tier,itemModel));//new Tuple<>(map, new Tuple<>(gui, tier)));
+        REGISTRY.put(map.getId(), new RegistryValue(map,map.getGui() == null ? gui : map.getGui(),tier,model));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
     public static IJeiHelpers helpers() {
@@ -104,7 +104,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
         REGISTRY.forEach((id, tuple) -> {
             if (!registeredMachineCats.contains(tuple.map.getId())) {
-                registry.addRecipeCategories(new RecipeMapCategory(tuple.map,tuple.gui,tuple.tier,tuple.machine));
+                registry.addRecipeCategories(new RecipeMapCategory(tuple.map,tuple.gui,tuple.tier,tuple.model));
                 registeredMachineCats.add(tuple.map.getId());
             }
         });
@@ -165,14 +165,15 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         REGISTRY.forEach((id, tuple) -> {
-            Optional<Machine<?>> machine = Machine.get(tuple.machine);
+            if (tuple.model == null) return;
+            Optional<Machine<?>> machine = Machine.get(tuple.model.getPath(), tuple.model.getNamespace());
             machine.ifPresent(mach -> {
                 mach.getTiers().forEach(t -> {
                     ItemStack stack = new ItemStack(mach.getItem(t));
                     if (!stack.isEmpty()){
                         registration.addRecipeCatalyst(stack, new ResourceLocation(Ref.ID, id));
                     } else {
-                        Antimatter.LOGGER.error("machine " + tuple.machine + " has an empty item. Did you do the machine correctly?");
+                        Antimatter.LOGGER.error("machine " + tuple.model + " has an empty item. Did you do the machine correctly?");
                     }
                 });
             });

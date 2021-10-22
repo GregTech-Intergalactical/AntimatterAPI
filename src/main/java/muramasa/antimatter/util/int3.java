@@ -111,7 +111,7 @@ public class int3 extends BlockPos.Mutable {
 
     public int3 offset(int n, Direction side) {
         if (n == 0 || side == null) return this;
-        setPos(getX() + side.getXOffset() * n, getY() + side.getYOffset() * n, getZ()+ side.getZOffset() * n);
+        setPos(getX() + side.getXOffset() * n, getY() + side.getYOffset() * n, getZ() + side.getZOffset() * n);
         return this;
     }
 

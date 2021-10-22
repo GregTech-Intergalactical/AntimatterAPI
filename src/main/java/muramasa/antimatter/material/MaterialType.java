@@ -7,6 +7,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.Item;
@@ -17,7 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class MaterialType<T> implements IMaterialTag, IAntimatterObject {
+public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
 
     protected String id;
     protected int unitValue, layers;

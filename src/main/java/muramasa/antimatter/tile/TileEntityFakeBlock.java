@@ -114,12 +114,13 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         for (Direction dir : Ref.DIRS) {
             String id = c.getString(dir.getName2());
             if (id.isEmpty()) continue;
-            covers.put(dir, AntimatterAPI.get(ICover.class, id));
+            String[] ids = id.split(":");
+            covers.put(dir, AntimatterAPI.get(ICover.class, ids[1], ids[0]));
         }
         if (nbt.contains("P")) {
             ListNBT list = nbt.getList("P", 4);
             this.controllerPos = new ObjectArrayList<>(list.size());
-            list.forEach(n -> controllerPos.add(BlockPos.fromLong(((LongNBT)n).getLong())));
+            list.forEach(n -> controllerPos.add(BlockPos.fromLong(((LongNBT) n).getLong())));
         }
     }
 
@@ -145,7 +146,7 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         nbt.put("B", NBTUtil.writeBlockState(state));
         nbt.putInt("F", facing.ordinal());
         CompoundNBT n = new CompoundNBT();
-        this.covers.forEach((k,v) -> n.putString(k.getName2(), v.getId()));
+        this.covers.forEach((k, v) -> n.putString(k.getName2(), v.getDomain() + ":" + v.getId()));
         compound.put("C", n);
         if (!send) {
             ListNBT list = new ListNBT();
@@ -169,13 +170,13 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     @Override
     public List<String> getInfo() {
         List<String> list = super.getInfo();
-        if (getState() !=null) list.add("State: " + getState().toString());
+        if (getState() != null) list.add("State: " + getState().toString());
         if (facing != null) list.add("Facing: " + facing.getName2());
-        covers.forEach((k,v) -> {
+        covers.forEach((k, v) -> {
             list.add("Cover on " + k.getName2() + ": " + v.getId());
         });
         if (controllers.size() > 0) {
-            list.add("Controller positions: " + controllers.stream().map(t -> t.getPos().toString()).reduce((k,v) -> k + ", " + v).orElse(""));
+            list.add("Controller positions: " + controllers.stream().map(t -> t.getPos().toString()).reduce((k, v) -> k + ", " + v).orElse(""));
         }
         return list;
     }

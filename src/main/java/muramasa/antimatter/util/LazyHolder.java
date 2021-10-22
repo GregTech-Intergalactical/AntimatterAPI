@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 /**
  * A class that incorporates both Java's Optional and Forge's LazyOptional.
- *
+ * <p>
  * Equals and hashCode isn't overriden!
  */
 public class LazyHolder<T> {

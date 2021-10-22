@@ -37,7 +37,7 @@ public class RecipeBuilders {
     }
     /** RECIPE BUILDERS **/
 
-    public static final MaterialRecipe.Provider ARMOR_BUILDER = MaterialRecipe.registerProvider("armor", id -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider ARMOR_BUILDER = MaterialRecipe.registerProvider("armor", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -52,7 +52,7 @@ public class RecipeBuilders {
         }
     });
 
-    public static final MaterialRecipe.Provider ITEM_PIPE_BUILDER = MaterialRecipe.registerProvider("pipe", id  -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider ITEM_PIPE_BUILDER = MaterialRecipe.registerProvider("pipe", Ref.ID, id  -> new MaterialRecipe.ItemBuilder() {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -69,7 +69,7 @@ public class RecipeBuilders {
         }
     });
 
-    public static final MaterialRecipe.Provider DUST_BUILDER = MaterialRecipe.registerProvider("dust", id -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider DUST_BUILDER = MaterialRecipe.registerProvider("dust", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
         final MaterialTypeItem type = AntimatterAPI.get(MaterialTypeItem.class, id);
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -90,7 +90,7 @@ public class RecipeBuilders {
         }
     });
 
-    public static final MaterialRecipe.Provider FLUID_PIPE_BUILDER = MaterialRecipe.registerProvider("fluid", id  -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider FLUID_PIPE_BUILDER = MaterialRecipe.registerProvider("fluid", Ref.ID, id  -> new MaterialRecipe.ItemBuilder() {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -107,7 +107,7 @@ public class RecipeBuilders {
         }
     });
 
-    public static final MaterialRecipe.Provider TOOL_BUILDER = MaterialRecipe.registerProvider("tool", id -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider TOOL_BUILDER = MaterialRecipe.registerProvider("tool", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -126,7 +126,7 @@ public class RecipeBuilders {
         }
     });
 
-    public static final MaterialRecipe.Provider PROBE_BUILDER = MaterialRecipe.registerProvider("probe", id -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider PROBE_BUILDER = MaterialRecipe.registerProvider("probe", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -144,7 +144,7 @@ public class RecipeBuilders {
         }
     });
 
-    public static final MaterialRecipe.Provider WOOD_TOOL_BUILDER = MaterialRecipe.registerProvider("wood_tool", id -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider WOOD_TOOL_BUILDER = MaterialRecipe.registerProvider("wood_tool", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -163,7 +163,7 @@ public class RecipeBuilders {
         }
     });
 
-    public static final MaterialRecipe.Provider CROWBAR_BUILDER = MaterialRecipe.registerProvider("crowbar", id -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider CROWBAR_BUILDER = MaterialRecipe.registerProvider("crowbar", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
             int dye = ((DyeColor) mats.mats.get("secondary")).getColorValue();

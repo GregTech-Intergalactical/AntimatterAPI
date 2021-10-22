@@ -1,8 +1,10 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
@@ -17,7 +19,7 @@ public class BlockBasic extends Block implements IAntimatterObject, ITextureProv
         super(properties);
         this.domain = domain;
         this.id = id;
-        AntimatterAPI.register(getClass(), id, this);
+        AntimatterAPI.register(getClass(), this);
     }
 
     public BlockBasic(String domain, String id) {
@@ -25,7 +27,7 @@ public class BlockBasic extends Block implements IAntimatterObject, ITextureProv
     }
 
     public String getDomain() {
-        return domain;
+        return this instanceof ISharedAntimatterObject ? Ref.ID : domain;
     }
 
     @Override

@@ -115,23 +115,23 @@ public class Data {
     public static MaterialType<?> TOOLS = new MaterialType<>("tools", 1, false, -1).nonGen();
     public static MaterialType<?> ARMOR = new MaterialType<>("armor", 1, false, -1).nonGen();
 
-    public static final Material NULL = new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F);
+    public static final Material NULL = AntimatterAPI.registerIfAbsent(Material.class, "null", () -> new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F));
 
     //Vanilla Stone Materials
-    public static Material Stone = new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F);
-    public static Material Granite = new Material(Ref.ID, "granite", 0xa07882, NONE).asDust(ROCK);
-    public static Material Diorite = new Material(Ref.ID, "diorite", 0xf0f0f0, NONE).asDust(ROCK);
-    public static Material Andesite = new Material(Ref.ID, "andesite", 0xbfbfbf, NONE).asDust(ROCK);
+    public static Material Stone =  AntimatterAPI.registerIfAbsent(Material.class, "stone", () -> new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F));
+    public static Material Granite =  AntimatterAPI.registerIfAbsent(Material.class, "granite", () -> new Material(Ref.ID, "granite", 0xa07882, NONE).asDust(ROCK));
+    public static Material Diorite =  AntimatterAPI.registerIfAbsent(Material.class, "diorite", () -> new Material(Ref.ID, "diorite", 0xf0f0f0, NONE).asDust(ROCK));
+    public static Material Andesite =  AntimatterAPI.registerIfAbsent(Material.class, "andesite", () -> new Material(Ref.ID, "andesite", 0xbfbfbf, NONE).asDust(ROCK));
 
-    public static Material Gravel = new Material(Ref.ID, "gravel", 0xcdcdcd, NONE).asDust(ROCK);
-    public static Material Sand = new Material(Ref.ID, "sand", 0xfafac8, NONE).asDust(ROCK);
-    public static Material RedSand = new Material(Ref.ID, "red_sand", 0xff8438, NONE).asDust(ROCK);
-    public static Material Sandstone = new Material(Ref.ID, "sandstone", 0xfafac8, NONE).asDust(ROCK);
-    public static Material Blackstone = new Material(Ref.ID, "blackstone", 0x2c272d, NONE).asDust();
-    public static Material BasaltVanilla = new Material(Ref.ID, "vanilla_basalt", 0x1e1414, NONE);
+    public static Material Gravel =  AntimatterAPI.registerIfAbsent(Material.class, "gravel", () -> new Material(Ref.ID, "gravel", 0xcdcdcd, NONE).asDust(ROCK));
+    public static Material Sand =  AntimatterAPI.registerIfAbsent(Material.class, "sand", () -> new Material(Ref.ID, "sand", 0xfafac8, NONE).asDust(ROCK));
+    public static Material RedSand =  AntimatterAPI.registerIfAbsent(Material.class, "red_sand", () -> new Material(Ref.ID, "red_sand", 0xff8438, NONE).asDust(ROCK));
+    public static Material Sandstone =  AntimatterAPI.registerIfAbsent(Material.class, "sandstone", () -> new Material(Ref.ID, "sandstone", 0xfafac8, NONE).asDust(ROCK));
+    public static Material Blackstone =  AntimatterAPI.registerIfAbsent(Material.class, "blackstone", () -> new Material(Ref.ID, "blackstone", 0x2c272d, NONE).asDust());
+    public static Material BasaltVanilla =  AntimatterAPI.registerIfAbsent(Material.class, "vanilla_basalt", () -> new Material(Ref.ID, "vanilla_basalt", 0x1e1414, NONE));
 
-    public static Material Endstone = new Material(Ref.ID, "endstone", 0xffffff, NONE).asDust();
-    public static Material Netherrack = new Material(Ref.ID, "netherrack", 0xc80000, NONE).asDust();
+    public static Material Endstone =  AntimatterAPI.registerIfAbsent(Material.class, "endstone", () -> new Material(Ref.ID, "endstone", 0xffffff, NONE).asDust());
+    public static Material Netherrack =  AntimatterAPI.registerIfAbsent(Material.class, "netherrack", () -> new Material(Ref.ID, "netherrack", 0xc80000, NONE).asDust());
 
     public static StoneType STONE = new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE);
 
@@ -156,7 +156,7 @@ public class Data {
 
         ROCK.set((m, s) -> {
             if (m == null || s == null || !ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ROCK, m, s);
-            BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
+            BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + Utils.getConventionalStoneType(s), m.materialDomain());
             return new MaterialTypeBlock.Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
         });
         ORE.set((m, s) -> {

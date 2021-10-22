@@ -66,9 +66,9 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
     }
 
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        if (slotId >= 0 && this.getSlot(slotId) instanceof IClickableSlot){
+        if (slotId >= 0 && this.getSlot(slotId) instanceof IClickableSlot) {
             try {
-                return ((IClickableSlot)this.getSlot(slotId)).clickSlot(dragType, clickTypeIn, player, this);
+                return ((IClickableSlot) this.getSlot(slotId)).clickSlot(dragType, clickTypeIn, player, this);
             } catch (Exception exception) {
                 CrashReport crashreport = CrashReport.makeCrashReport(exception, "Container click");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Click info");
@@ -101,15 +101,13 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                 if (!this.mergeItemStack(slotStack, invSize, this.inventorySlots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            }
-            else if (!this.mergeItemStack(slotStack, 0, invSize, false)) {
+            } else if (!this.mergeItemStack(slotStack, 0, invSize, false)) {
                 return ItemStack.EMPTY;
             }
 
             if (slotStack.getCount() == 0) {
                 slot.putStack(ItemStack.EMPTY);
-            }
-            else {
+            } else {
                 slot.onSlotChanged();
             }
         }
@@ -127,7 +125,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
         }
 
         if (stack.isStackable()) {
-            while(!stack.isEmpty()) {
+            while (!stack.isEmpty()) {
                 if (reverseDirection) {
                     if (i < startIndex) {
                         break;
@@ -138,7 +136,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
 
                 Slot slot = this.inventorySlots.get(i);
                 boolean continueLoop = false;
-                if (slot instanceof SlotFake || !slot.isItemValid(stack)){
+                if (slot instanceof SlotFake || !slot.isItemValid(stack)) {
                     continueLoop = true;
                 }
                 ItemStack itemstack = slot.getStack();
@@ -153,7 +151,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                             SlotItemHandler handler = (SlotItemHandler) slot;
                             IItemHandler handle = handler.getItemHandler();
                             if (handle instanceof TrackedItemHandler<?>) {
-                                ((TrackedItemHandler<?>)handle).onContentsChanged(slot.slotNumber);
+                                ((TrackedItemHandler<?>) handle).onContentsChanged(slot.slotNumber);
                             }
                         }
                         flag = true;
@@ -180,7 +178,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                 i = startIndex;
             }
 
-            while(true) {
+            while (true) {
                 if (reverseDirection) {
                     if (i < startIndex) {
                         break;
@@ -191,7 +189,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
 
                 Slot slot1 = this.inventorySlots.get(i);
                 boolean continueLoop = false;
-                if (slot1 instanceof SlotFake){
+                if (slot1 instanceof SlotFake) {
                     continueLoop = true;
                 }
                 ItemStack itemstack1 = slot1.getStack();

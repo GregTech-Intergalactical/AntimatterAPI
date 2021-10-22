@@ -41,17 +41,23 @@ import java.util.List;
 
 public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, INamedContainerProvider, IGuiHandler, IPipe {
 
-    /** Pipe Data **/
+    /**
+     * Pipe Data
+     **/
     protected T type;
     protected PipeSize size;
 
-    /** Capabilities **/
+    /**
+     * Capabilities
+     **/
     public final LazyOptional<PipeCoverHandler<?>> coverHandler;
 
     ///** Tesseract **/
     //private Direction direction; // when cap not initialized yet, it will help to store preset direction
 
-    /** Connection data **/
+    /**
+     * Connection data
+     **/
     private byte connection;
 
     protected Holder pipeCapHolder;
@@ -71,7 +77,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         }
     }
 
-    public void onBlockUpdate(BlockPos neighbor){
+    public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getPos(), neighbor);
         coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate(facing));
     }
@@ -109,13 +115,14 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         return (((BlockPipe<T>) state.getBlock()).getType());
     }
 
-    public PipeSize getPipeSize() { 
+    public PipeSize getPipeSize() {
         if (size == null) {
             size = getPipeSize(getBlockState());
         }
         return size;
     }
-    private PipeSize getPipeSize(BlockState state) { 
+
+    private PipeSize getPipeSize(BlockState state) {
         return ((BlockPipe<?>) state.getBlock()).getSize();
     }
 
@@ -222,11 +229,12 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     /**
      * Handles cover updates, to check if the tile has to be replaced.
-     * @param remove if a cover was removed.
+     *
+     * @param remove      if a cover was removed.
      * @param hasNonEmpty if there is at least one cover still present.
-     * @param side which side the cover was removed on.
-     * @param old the old coverstack, can be empty.
-     * @param stack the new coverstack, can be empty.
+     * @param side        which side the cover was removed on.
+     * @param old         the old coverstack, can be empty.
+     * @param stack       the new coverstack, can be empty.
      * @return if the tile was updated.
      */
     public boolean onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, CoverStack<? extends TileEntityPipe> old, CoverStack<? extends TileEntityPipe> stack) {
@@ -299,7 +307,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     public void read(BlockState state, CompoundNBT tag) {
         super.read(state, tag); //TODO get tile data tag
         ofState(state);
-        if (tag.contains(Ref.KEY_PIPE_TILE_COVER)) coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
+        if (tag.contains(Ref.KEY_PIPE_TILE_COVER))
+            coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         byte newConnection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         if (newConnection != connection && (world != null && world.isRemote)) {
             Utils.markTileForRenderUpdate(this);
@@ -388,6 +397,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Override
     public void addWidgets(GuiInstance instance, IGuiElement parent) {
         //instance.addWidget(WidgetSupplier.build((a,b) -> TextWidget.build(a.screen.getTitle().getString(), 4210752).setPos(10,10).build(a,b)).clientSide());
-        instance.addWidget(BackgroundWidget.build(instance.handler.getGuiTexture(),  instance.handler.guiSize(), instance.handler.guiHeight()));
+        instance.addWidget(BackgroundWidget.build(instance.handler.getGuiTexture(), instance.handler.guiSize(), instance.handler.guiHeight()));
     }
 }

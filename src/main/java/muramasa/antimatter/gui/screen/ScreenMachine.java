@@ -62,6 +62,7 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
     private boolean isSlotSelected(int x, int y, double mouseX, double mouseY) {
         return this.isPointInRegion(x, y, 16, 16, mouseX, mouseY);
     }
+
     @Override
     public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         super.render(stack, mouseX, mouseY, partialTicks);

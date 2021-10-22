@@ -41,6 +41,7 @@ public class ButtonWidget extends Widget {
         this.bodyLoc = null;
         this.onPress = onPress;
     }
+
     protected void setClick(Consumer<ButtonWidget> clicker) {
         this.onPress = clicker;
     }
@@ -81,7 +82,7 @@ public class ButtonWidget extends Widget {
         boolean isActive = activeHandler == null || activeHandler.apply(this);
         float color = isActive ? 1.0f : pressed ? 0.75f : 0.5f;
         if (color < 1f) {
-            RenderSystem.color4f(color,color,color,1);
+            RenderSystem.color4f(color, color, color, 1);
         }
         if (overlay != null) {
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), overlay.getX(), overlay.getY(), overlay.getW(), overlay.getH(), 256, 256);
@@ -90,7 +91,7 @@ public class ButtonWidget extends Widget {
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), resLoc.x, resLoc.y, resLoc.z, resLoc.w, 256, 256);
         }
         RenderSystem.enableDepthTest();
-        RenderSystem.color4f(1,1,1,1);
+        RenderSystem.color4f(1, 1, 1, 1);
         ITextComponent message = getMessage();
         if (!message.getString().isEmpty()) {
             AbstractGui.drawCenteredString(matrixStack, minecraft.fontRenderer, message, realX() + getW() / 2, realY() + (getH() - 8) / 2, 16777215);
@@ -108,19 +109,19 @@ public class ButtonWidget extends Widget {
     }
 
     public static WidgetSupplier build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        return builder((a,b) -> new ButtonWidget(a,b, res, body, overlay, onPress)).clientSide();
+        return builder((a, b) -> new ButtonWidget(a, b, res, body, overlay, onPress)).clientSide();
     }
 
     public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        return builder((a,b)  -> new ButtonWidget(a,b, res, bodyLoc, loc, overlay, onPress)).clientSide();
+        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, onPress)).clientSide();
     }
 
     public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder((a,b)  -> new ButtonWidget(a,b, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0)))).clientSide();
+        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0)))).clientSide();
     }
 
     public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder(((a,b) -> new ButtonWidget(a,b, new ResourceLocation(a.handler.getDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0))))).clientSide();
+        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.getDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0))))).clientSide();
     }
 
 }

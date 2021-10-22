@@ -23,12 +23,12 @@ public class AMCreationEvent extends EventJS {
         return new StoneType(Ref.MOD_KJS, id, Material.get(material), new Texture(texture), soundType, false).setStateSupplier(() -> ForgeRegistries.BLOCKS.getValue(new ResourceLocation(stoneState)).getDefaultState());
     }
 
-    public Material createMaterial(String id, int rgb, String textureSet){
-        return new Material(Ref.MOD_KJS, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet));
+    public Material createMaterial(String id, int rgb, String textureSet, String textureSetDomain){
+        return new Material(Ref.MOD_KJS, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet, textureSetDomain));
     }
 
-    public Material createMaterial(String id, int rgb, String textureSet, String element){
-        return new Material(Ref.MOD_KJS, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet), Element.getFromElementId(element));
+    public Material createMaterial(String id, int rgb, String textureSet, String textureSetDomain, String element){
+        return new Material(Ref.MOD_KJS, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet, textureSetDomain), Element.getFromElementId(element));
     }
 
     public MaterialType type(String type) {

@@ -20,7 +20,7 @@ public class TextWidget extends Widget {
     }
 
     public static WidgetSupplier build(String text, int color) {
-        return builder((a,b) -> new TextWidget(a, b, text, color)).clientSide();
+        return builder((a, b) -> new TextWidget(a, b, text, color)).clientSide();
     }
 
     @Override

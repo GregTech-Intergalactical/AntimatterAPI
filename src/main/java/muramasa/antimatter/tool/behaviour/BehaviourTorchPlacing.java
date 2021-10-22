@@ -35,15 +35,15 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
     public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
         ItemStack stack = ItemStack.EMPTY;
         if (c.getPlayer() == null) return ActionResultType.PASS;
-        for (ItemStack stack1 : c.getPlayer().inventory.mainInventory){
-            if (stack1.getItem() == Items.TORCH || stack1.getItem() == Items.SOUL_TORCH){
+        for (ItemStack stack1 : c.getPlayer().inventory.mainInventory) {
+            if (stack1.getItem() == Items.TORCH || stack1.getItem() == Items.SOUL_TORCH) {
                 stack = stack1;
                 break;
             }
         }
-        if (!stack.isEmpty() || c.getPlayer().isCreative()){
+        if (!stack.isEmpty() || c.getPlayer().isCreative()) {
             ActionResultType resultType = tryPlace(new BlockItemUseContext(c), stack);
-            if (resultType.isSuccessOrConsume()){
+            if (resultType.isSuccessOrConsume()) {
                 if (!c.getPlayer().isCreative()) stack.shrink(1);
                 return resultType;
             }
@@ -72,7 +72,7 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
                     this.onBlockPlaced(blockpos, world, playerentity, itemstack, blockstate1);
                     block.onBlockPlacedBy(world, blockpos, blockstate1, playerentity, itemstack);
                     if (playerentity instanceof ServerPlayerEntity) {
-                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity)playerentity, blockpos, itemstack);
+                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity) playerentity, blockpos, itemstack);
                     }
                 }
 
@@ -95,7 +95,7 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
             CompoundNBT compoundnbt1 = compoundnbt.getCompound("BlockStateTag");
             StateContainer<Block, BlockState> statecontainer = p_219985_4_.getBlock().getStateContainer();
 
-            for(String s : compoundnbt1.keySet()) {
+            for (String s : compoundnbt1.keySet()) {
                 Property<?> property = statecontainer.getProperty(s);
                 if (property != null) {
                     String s1 = compoundnbt1.get(s).getString();
@@ -128,7 +128,7 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
         IWorldReader iworldreader = context.getWorld();
         BlockPos blockpos = context.getPos();
 
-        for(Direction direction : context.getNearestLookingDirections()) {
+        for (Direction direction : context.getNearestLookingDirections()) {
             if (direction != Direction.UP) {
                 BlockState blockstate2 = direction == Direction.DOWN ? (torch.getItem() == Items.SOUL_TORCH ? Blocks.SOUL_TORCH.getStateForPlacement(context) : Blocks.TORCH.getStateForPlacement(context)) : blockstate;
                 if (blockstate2 != null && blockstate2.isValidPosition(iworldreader, blockpos)) {

@@ -194,6 +194,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
                 sides[0] |= (1 << s.getIndex());
                 CompoundNBT nbt = c.serialize();
                 nbt.putString(Ref.TAG_MACHINE_COVER_ID, c.getId());
+                nbt.putString(Ref.TAG_MACHINE_COVER_DOMAIN, c.getDomain());
                 tag.put(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(s.getIndex())), nbt);
             }
         });
@@ -207,7 +208,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
                 CompoundNBT cover = nbt.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
-                CoverStack<T> c = new CoverStack<>(AntimatterAPI.get(ICover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID)), tile, Ref.DIRS[i]);
+                CoverStack<T> c = new CoverStack<>(AntimatterAPI.get(ICover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID), cover.getString(Ref.TAG_MACHINE_COVER_DOMAIN)), tile, Ref.DIRS[i]);
                 c.deserialize(cover);
                 buildLookup(covers.get(Ref.DIRS[i]).getCover(), c.getCover(), Ref.DIRS[i]);
                 covers.put(Ref.DIRS[i], c);

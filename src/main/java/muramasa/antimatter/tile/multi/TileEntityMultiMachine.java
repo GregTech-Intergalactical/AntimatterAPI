@@ -39,32 +39,32 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
             itemHandler.set(() -> new MultiMachineItemHandler<>((T) this));
         }
         if (type.has(ENERGY)) {
-            energyHandler.set(() -> new MultiMachineEnergyHandler<>((T)this));
+            energyHandler.set(() -> new MultiMachineEnergyHandler<>((T) this));
         }
         if (type.has(FLUID)) {
-            fluidHandler.set(() -> new MultiMachineFluidHandler<>((T)this));
+            fluidHandler.set(() -> new MultiMachineFluidHandler<>((T) this));
         }
     }
 
     @Override
     public Tier getPowerLevel() {
-        return energyHandler.map(t -> ((MultiMachineEnergyHandler<T>)t).getAccumulatedPower()).orElse(super.getPowerLevel());
+        return energyHandler.map(t -> ((MultiMachineEnergyHandler<T>) t).getAccumulatedPower()).orElse(super.getPowerLevel());
     }
 
     @Override
-    public void afterStructureFormed(){
+    public void afterStructureFormed() {
         this.result.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureFormed(this);
         }));
         //Handlers.
         this.itemHandler.ifPresent(handle -> {
-            ((MultiMachineItemHandler<T>)handle).onStructureBuild();
+            ((MultiMachineItemHandler<T>) handle).onStructureBuild();
         });
         this.energyHandler.ifPresent(handle -> {
-            ((MultiMachineEnergyHandler<T>)handle).onStructureBuild();
+            ((MultiMachineEnergyHandler<T>) handle).onStructureBuild();
         });
         this.fluidHandler.ifPresent(handle -> {
-            ((MultiMachineFluidHandler<T>)handle).onStructureBuild();
+            ((MultiMachineFluidHandler<T>) handle).onStructureBuild();
         });
     }
 
@@ -72,9 +72,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         this.result.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureInvalidated(this);
         }));
-        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler<T>)handle).invalidate());
-        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler<T>)handle).invalidate());
-        this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler<T>)handle).invalidate());
+        this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler<T>) handle).invalidate());
+        this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler<T>) handle).invalidate());
+        this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler<T>) handle).invalidate());
     }
 
     @Override
@@ -86,7 +86,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         }*/
     }
 
-    /** Returns list of items across all input hatches. Merges equal filters empty **/
+    /**
+     * Returns list of items across all input hatches. Merges equal filters empty
+     **/
     public ItemStack[] getStoredItems() {
         if (!has(MachineFlag.ITEM)) return new ItemStack[0];
         List<ItemStack> all = new ObjectArrayList<>();
@@ -97,7 +99,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         return all.toArray(new ItemStack[0]);
     }
 
-    /** Returns list of fluids across all input hatches. Merges equal filters empty **/
+    /**
+     * Returns list of fluids across all input hatches. Merges equal filters empty
+     **/
     public FluidStack[] getStoredFluids() {
         if (!has(MachineFlag.FLUID)) return new FluidStack[0];
         List<FluidStack> all = new ObjectArrayList<>();
@@ -108,16 +112,21 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         return all.toArray(new FluidStack[0]);
     }
 
-    /** Returns the total energy stored across all energy hatches **/
+    /**
+     * Returns the total energy stored across all energy hatches
+     **/
     public long getStoredEnergy() {
         long total = 0;
         for (IComponentHandler hatch : getComponents("hatch_energy")) {
-            if (hatch.getEnergyHandler().isPresent()) total += hatch.getEnergyHandler().map(MachineEnergyHandler::getEnergyStored).orElse(0);
+            if (hatch.getEnergyHandler().isPresent())
+                total += hatch.getEnergyHandler().map(MachineEnergyHandler::getEnergyStored).orElse(0);
         }
         return total;
     }
 
-    /** Consumes inputs from all input hatches. Assumes Utils.doItemsMatchAndSizeValid has been used **/
+    /**
+     * Consumes inputs from all input hatches. Assumes Utils.doItemsMatchAndSizeValid has been used
+     **/
     public void consumeItems(ItemStack[] items) {
         if (items == null) return;
         for (IComponentHandler hatch : getComponents("hatch_item_input")) {
@@ -130,7 +139,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         if (items.length > 0) System.out.println("DID NOT CONSUME ALL: " + Arrays.toString(items));
     }
 
-    /** Consumes inputs from all input hatches. Assumes Utils.doFluidsMatchAndSizeValid has been used **/
+    /**
+     * Consumes inputs from all input hatches. Assumes Utils.doFluidsMatchAndSizeValid has been used
+     **/
     public void consumeFluids(FluidStack[] inp) {
         if (inp == null) return;
         List<FluidStack> fluids = Arrays.asList(inp);
@@ -145,7 +156,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         if (fluids.size() > 0) System.out.println("DID NOT CONSUME ALL: " + Arrays.toString(fluids.toArray()));
     }
 
-    /** Consumes energy from all energy hatches. Assumes enough energy is present in hatches **/
+    /**
+     * Consumes energy from all energy hatches. Assumes enough energy is present in hatches
+     **/
     public void consumeEnergy(long energy) {
         if (energy <= 0) return;
         for (IComponentHandler hatch : getComponents("hatch_energy")) {
@@ -157,7 +170,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         }
     }
 
-    /** Export items to hatches regardless of space. Assumes canOutputsFit has been used **/
+    /**
+     * Export items to hatches regardless of space. Assumes canOutputsFit has been used
+     **/
     public void outputItems(ItemStack[] items) {
         if (items == null) return;
         for (IComponentHandler hatch : getComponents("hatch_item_output")) {
@@ -170,7 +185,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         if (items.length > 0) System.out.println("HATCH OVERFLOW: " + Arrays.toString(items));
     }
 
-    /** Export fluids to hatches regardless of space. Assumes canOutputsFit has been used **/
+    /**
+     * Export fluids to hatches regardless of space. Assumes canOutputsFit has been used
+     **/
     public void outputFluids(FluidStack[] fluids) {
         if (fluids == null) return;
         for (IComponentHandler hatch : getComponents("hatch_fluid_output")) {
@@ -183,7 +200,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         if (fluids.length > 0) System.out.println("HATCH OVERFLOW: " + Arrays.toString(fluids));
     }
 
-    /** Tests if items can fit across all output hatches **/
+    /**
+     * Tests if items can fit across all output hatches
+     **/
     public boolean canItemsFit(ItemStack[] items) {
         if (items == null) return true;
         int matchCount = 0;
@@ -195,7 +214,9 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         return matchCount >= items.length;
     }
 
-    /** Tests if fluids can fit across all output hatches **/
+    /**
+     * Tests if fluids can fit across all output hatches
+     **/
     public boolean canFluidsFit(FluidStack[] fluids) {
         if (fluids == null) return true;
         int matchCount = 0;
@@ -210,7 +231,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     @Override
     public int getMaxInputVoltage() {
         List<IComponentHandler> hatches = getComponents("hatch_energy");
-        return hatches.size() >= 1 ? hatches.stream().mapToInt(t -> t.getEnergyHandler().map(eh -> eh.getInputAmperage()*eh.getInputVoltage()).orElse(0)).sum() : Ref.V[0];
+        return hatches.size() >= 1 ? hatches.stream().mapToInt(t -> t.getEnergyHandler().map(eh -> eh.getInputAmperage() * eh.getInputVoltage()).orElse(0)).sum() : Ref.V[0];
     }
 
     public WidgetSupplier getInfoWidget() {
@@ -219,14 +240,14 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 
     @Override
     public int drawInfo(InfoRenderWidget.MultiRenderWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
-        renderer.drawString(stack,this.getDisplayName().getString(), left,top, 16448255);
+        renderer.drawString(stack, this.getDisplayName().getString(), left, top, 16448255);
         if (getMachineState() != MachineState.ACTIVE) {
-            renderer.drawString(stack, "Inactive.", left, top+8, 16448255);
+            renderer.drawString(stack, "Inactive.", left, top + 8, 16448255);
             return 16;
         } else {
-            renderer.drawString(stack,"Progress: " + instance.currentProgress + "/" + instance.maxProgress, left, top+ 8, 16448255);
-            renderer.drawString(stack,"Overclock: " + instance.overclock, left,top+ 16, 16448255);
-            renderer.drawString(stack,"EU/t: " + instance.euT, left,top+24, 16448255);
+            renderer.drawString(stack, "Progress: " + instance.currentProgress + "/" + instance.maxProgress, left, top + 8, 16448255);
+            renderer.drawString(stack, "Overclock: " + instance.overclock, left, top + 16, 16448255);
+            renderer.drawString(stack, "EU/t: " + instance.euT, left, top + 24, 16448255);
             return 32;
         }
     }

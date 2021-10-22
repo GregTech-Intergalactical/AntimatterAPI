@@ -13,7 +13,8 @@ public class WidgetSupplier {
     private final BiFunction<GuiInstance, IGuiElement, Widget> builder;
     private boolean clientOnly = false;
 
-    private Consumer<Widget> root = a -> {};
+    private Consumer<Widget> root = a -> {
+    };
     private Predicate<GuiInstance> validator = a -> true;
 
     public WidgetSupplier(BiFunction<GuiInstance, IGuiElement, Widget> source) {
@@ -43,7 +44,7 @@ public class WidgetSupplier {
     }
 
     public WidgetSupplier setSize(int x, int y, int width, int height) {
-        return setPos(x,y).setWH(width, height);
+        return setPos(x, y).setWH(width, height);
     }
 
     public WidgetSupplier setWH(int w, int h) {
@@ -71,8 +72,8 @@ public class WidgetSupplier {
     }
 
     private BiFunction<GuiInstance, IGuiElement, Widget> build() {
-        return (a,b) -> {
-            Widget w = this.builder.apply(a,b);
+        return (a, b) -> {
+            Widget w = this.builder.apply(a, b);
             root.accept(w);
             return w;
         };

@@ -23,7 +23,7 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
 
     public AntimatterModelLoader(ResourceLocation loc) {
         this.loc = loc;
-        AntimatterAPI.register(AntimatterModelLoader.class, getId(), this);
+        AntimatterAPI.register(AntimatterModelLoader.class, this);
     }
 
     public ResourceLocation getLoc() {
@@ -32,7 +32,7 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
 
     @Override
     public String getId() {
-        return getLoc().toString();
+        return getLoc().getPath();
     }
 
     @Override

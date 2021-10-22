@@ -8,7 +8,7 @@ public class ItemTag implements IAntimatterObject {
 
     public static ItemTag SHOW_EXTENDED_HIGHLIGHT = new ItemTag("show_extended_highlight");
 
-    private String id;
+    private final String id;
 
     public ItemTag(String id) {
         this.id = id;

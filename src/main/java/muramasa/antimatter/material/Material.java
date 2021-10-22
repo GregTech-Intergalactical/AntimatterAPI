@@ -14,6 +14,7 @@ import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.enchantment.Enchantment;
@@ -37,7 +38,7 @@ import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.HANDLE;
 import static muramasa.antimatter.material.MaterialTag.METAL;
 
-public class Material implements IAntimatterObject, IRegistryEntryProvider {
+public class Material implements ISharedAntimatterObject, IRegistryEntryProvider {
 
     /** Basic Members **/
     private String domain, id;
@@ -74,7 +75,7 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
     /** Ore members **/
     private RangedInteger expRange = null;
 
-    private boolean enabled;
+    private final boolean enabled;
 
     /** Processing Members **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
@@ -97,7 +98,15 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
             }
         }
         enabled = true;
-        AntimatterAPI.register(Material.class, this);
+    }
+
+    public String materialDomain() {
+        return domain;
+    }
+
+    @Override
+    public boolean shouldRegister() {
+        return enabled;
     }
 
     public Material(String domain, String id, int rgb, TextureSet set, Element element, String... modIds) {
@@ -118,10 +127,6 @@ public class Material implements IAntimatterObject, IRegistryEntryProvider {
             if (has(ORE_SMALL)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE_SMALL));
             if (has(ORE_STONE)) new BlockOreStone(domain, this);
         }
-    }
-
-    public String getDomain() {
-        return domain;
     }
 
     @Override

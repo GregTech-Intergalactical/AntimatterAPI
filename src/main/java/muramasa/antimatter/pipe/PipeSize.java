@@ -22,8 +22,8 @@ public enum PipeSize implements IAntimatterObject {
         VALUES = values();
     }
 
-    private int cableThickness;
-    private AxisAlignedBB AABB;
+    private final int cableThickness;
+    private final AxisAlignedBB AABB;
 
     PipeSize(int cableThickness) {
         this.cableThickness = cableThickness;

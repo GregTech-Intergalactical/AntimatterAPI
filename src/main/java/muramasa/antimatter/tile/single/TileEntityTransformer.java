@@ -19,7 +19,6 @@ import tesseract.api.capability.TesseractGTCapability;
 import java.util.List;
 import java.util.function.IntToLongFunction;
 
-import static muramasa.antimatter.Data.HAMMER;
 import static muramasa.antimatter.Data.SOFT_HAMMER;
 
 public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends TileEntityMachine<T> {
@@ -35,7 +34,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
         super(type);
         this.amperage = amps;
         this.capFunc = capFunc;
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0L, capFunc.applyAsLong(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4)  {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, capFunc.applyAsLong(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4) {
             @Override
             public boolean canOutput(Direction direction) {
                 return isDefaultMachineState() == (tile.getFacing().getIndex() != direction.getIndex());

@@ -13,7 +13,6 @@ import muramasa.antimatter.util.int4;
 import net.minecraft.util.text.StringTextComponent;
 
 
-
 public class ProgressWidget extends Widget {
     public final BarDir direction;
     public final boolean barFill;
@@ -36,20 +35,20 @@ public class ProgressWidget extends Widget {
     @Override
     public void init() {
         super.init();
-        gui.syncFloat(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F), i -> this.percent = i);
-        gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getCurrentProgress).orElse(0), i -> this.progress = i);
-        gui.syncInt(() -> ((ContainerMachine<?>)gui.container).getTile().recipeHandler.map(rec -> rec.getActiveRecipe() == null ? 0 : rec.getActiveRecipe().getDuration()).orElse(0), i -> this.maxProgress = i);
+        gui.syncFloat(() -> ((ContainerMachine<?>) gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getClientProgress).orElse(0F), i -> this.percent = i);
+        gui.syncInt(() -> ((ContainerMachine<?>) gui.container).getTile().recipeHandler.map(MachineRecipeHandler::getCurrentProgress).orElse(0), i -> this.progress = i);
+        gui.syncInt(() -> ((ContainerMachine<?>) gui.container).getTile().recipeHandler.map(rec -> rec.getActiveRecipe() == null ? 0 : rec.getActiveRecipe().getDuration()).orElse(0), i -> this.maxProgress = i);
     }
 
     public static WidgetSupplier build(BarDir dir, boolean barFill) {
-        return builder((a,b) -> new ProgressWidget(a,b, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
+        return builder((a, b) -> new ProgressWidget(a, b, dir.getUV(), dir, dir.getPos().x + 6, dir.getPos().y + 6, dir.getUV().z, dir.getUV().w, barFill));
     }
 
     @Override
     public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         int progressTime;
         int x = this.realX(), y = this.realY(), xLocation = uv.x, yLocation = uv.y, length = uv.z, width = uv.w;
-        switch (direction){
+        switch (direction) {
             case TOP:
                 progressTime = (int) (uv.w * percent);
                 if (!barFill) {
@@ -61,7 +60,7 @@ public class ProgressWidget extends Widget {
                 break;
             case LEFT:
                 progressTime = (int) (uv.z * percent);
-                if (barFill){
+                if (barFill) {
                     length = progressTime;
                 } else {
                     length = length - progressTime;
@@ -69,7 +68,7 @@ public class ProgressWidget extends Widget {
                 break;
             case BOTTOM:
                 progressTime = (int) (uv.w * percent);
-                if (barFill){
+                if (barFill) {
                     width = progressTime;
                 } else {
                     width = width - progressTime;
@@ -102,7 +101,7 @@ public class ProgressWidget extends Widget {
     public void onClick(double mouseX, double mouseY, int button) {
         super.onClick(mouseX, mouseY, button);
         if (this.gui.handler instanceof TileEntityMachine) {
-            AntimatterJEIPlugin.showCategory(((TileEntityMachine<?>)this.gui.handler).getMachineType());
+            AntimatterJEIPlugin.showCategory(((TileEntityMachine<?>) this.gui.handler).getMachineType());
         }
     }
 }

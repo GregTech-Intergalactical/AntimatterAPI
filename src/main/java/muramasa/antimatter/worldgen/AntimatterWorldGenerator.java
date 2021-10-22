@@ -83,8 +83,8 @@ public class AntimatterWorldGenerator {
         if (feature != null) base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
     }
 
-    public static void register(Consumer<BiomeLoadingEvent> consumer, String id, Predicate<Biome.Category> validator) {
-        AntimatterAPI.register(GenHandler.class, id, new GenHandler(consumer, validator));
+    public static void register(Consumer<BiomeLoadingEvent> consumer, String id, String domain, Predicate<Biome.Category> validator) {
+        AntimatterAPI.register(GenHandler.class, id, domain,  new GenHandler(consumer, validator));
     }
 
     public static <T> List<T> all(Class<T> c, RegistryKey<World> dim) {

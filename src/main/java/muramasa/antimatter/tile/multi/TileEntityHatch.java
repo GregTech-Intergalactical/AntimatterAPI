@@ -25,13 +25,13 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
-    private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional.of(() -> new HatchComponentHandler((T)this));
+    private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional.of(() -> new HatchComponentHandler(this));
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
         if (type.has(ENERGY)) {
-            energyHandler.set(() -> new MachineEnergyHandler<T>((T)this, 0,getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
-                    type.getOutputCover() == COVERENERGY ? 2 : 0,type.getOutputCover() == COVERDYNAMO ? 1 : 0){
+            energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0, type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
+                    type.getOutputCover() == COVERENERGY ? 2 : 0, type.getOutputCover() == COVERDYNAMO ? 1 : 0) {
                 @Override
                 public boolean canInput(Direction direction) {
                     Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
@@ -49,7 +49,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                 }
             });
         }
-}
+    }
 
     @Override
     public LazyOptional<HatchComponentHandler<T>> getComponentHandler() {
@@ -59,7 +59,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (isClientSide()) return;
-        super.onMachineEvent(event,data);
+        super.onMachineEvent(event, data);
         if (event instanceof ContentEvent) {
             componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList()).forEach(controller -> {
                 switch ((ContentEvent) event) {
@@ -74,7 +74,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
             });
         } else if (event instanceof MachineEvent) {
             componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList()).forEach(controller -> {
-                switch ((MachineEvent)event) {
+                switch ((MachineEvent) event) {
                     //Forward energy event to controller.
                     case ENERGY_DRAINED:
                     case ENERGY_INPUTTED:

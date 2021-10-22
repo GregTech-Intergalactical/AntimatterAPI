@@ -5,7 +5,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -23,13 +23,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class AntimatterArmorType implements IAntimatterObject {
+public class AntimatterArmorType implements ISharedAntimatterObject {
     private final String domain, id;
-    private List<ITextComponent> tooltip = new ObjectArrayList<>();
-    private boolean repairable;
+    private final List<ITextComponent> tooltip = new ObjectArrayList<>();
+    private final boolean repairable;
     private final int durabilityFactor, baseArmor;
     private final float baseToughness, baseKnockback;
-    private ItemGroup itemGroup;
+    private final ItemGroup itemGroup;
     private EquipmentSlotType slot;
     private SoundEvent event;
     int overlayLayers;
@@ -38,16 +38,17 @@ public class AntimatterArmorType implements IAntimatterObject {
 
     /**
      * Instantiates a AntimatterArmorType with its basic values
-     * @param domain             unique identifier provided by the mod
-     * @param id                 unique identifier
-     * @param durabilityFactor   durability multiplier used to determine the durability of an armor piece, it is multiplied by these to determine the durability: 13(head), 15(chest), 16(legs), 11(feet)
-     * @param baseArmor          base armor protection that would be applied to item's attribute
-     * @param baseToughness      base toughness that would be applied to item's attribute
-     * @param baseKnockback      base knockback resistance that would be applied to the item's attributes
-     * @param slot               armor slot the item goes in
+     *
+     * @param domain           unique identifier provided by the mod
+     * @param id               unique identifier
+     * @param durabilityFactor durability multiplier used to determine the durability of an armor piece, it is multiplied by these to determine the durability: 13(head), 15(chest), 16(legs), 11(feet)
+     * @param baseArmor        base armor protection that would be applied to item's attribute
+     * @param baseToughness    base toughness that would be applied to item's attribute
+     * @param baseKnockback    base knockback resistance that would be applied to the item's attributes
+     * @param slot             armor slot the item goes in
      * @return a brand new AntimatterArmorType for enjoyment
      */
-    public AntimatterArmorType(String domain, String id, int durabilityFactor, int baseArmor, float baseToughness, float baseKnockback, EquipmentSlotType slot){
+    public AntimatterArmorType(String domain, String id, int durabilityFactor, int baseArmor, float baseToughness, float baseKnockback, EquipmentSlotType slot) {
         this.domain = domain;
         this.id = id;
         this.repairable = true;
@@ -88,7 +89,7 @@ public class AntimatterArmorType implements IAntimatterObject {
         return this;
     }
 
-    public AntimatterArmorType setArmorSlot(EquipmentSlotType slot){
+    public AntimatterArmorType setArmorSlot(EquipmentSlotType slot) {
         this.slot = slot;
         return this;
     }
@@ -99,7 +100,8 @@ public class AntimatterArmorType implements IAntimatterObject {
     }
 
     public AntimatterArmorType setPrimaryRequirement(IMaterialTag tag) {
-        if (tag == null) Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterArmorType was set to have no primary material requirement even when it was explicitly called!");
+        if (tag == null)
+            Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterArmorType was set to have no primary material requirement even when it was explicitly called!");
         this.materialRequirement = tag;
         return this;
     }

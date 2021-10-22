@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -34,9 +35,9 @@ public class MaterialRecipe extends ShapedRecipe {
         }
     }
 
-    public static Provider registerProvider(String loc, Provider obj) {
+    public static Provider registerProvider(String loc, String domain, Provider obj) {
         if (loc.contains("/")) throw new RuntimeException("invalid input identifier to MaterialRecipe.Provider, contains /");
-        AntimatterAPI.register(Provider.class, loc, obj);
+        AntimatterAPI.register(Provider.class, loc, domain, obj);
         IDS.put(obj, loc);
         return obj;
     }
@@ -56,8 +57,9 @@ public class MaterialRecipe extends ShapedRecipe {
         this.materialSlots = ImmutableMap.copyOf(materialSlots);
         this.size = materialSlots.values().stream().mapToInt(Set::size).sum();
         this.builderId = new ResourceLocation(builderId);
+        ResourceLocation lookup = new ResourceLocation(builderId.split("/")[0]);
         String[] ids = this.builderId.getPath().split("/");
-        this.builder = AntimatterAPI.get(Provider.class, ids[0]).provide(ids[1]);
+        this.builder = Objects.requireNonNull(AntimatterAPI.get(Provider.class, lookup.getPath(), lookup.getNamespace()), "Failed to get builder provider in MaterialRecipe").provide(ids[1]);
         this.outputs = recipeOutputIn;
     }
 

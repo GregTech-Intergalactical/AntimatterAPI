@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.single;
 
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityStorage;

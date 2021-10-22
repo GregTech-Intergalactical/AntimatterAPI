@@ -25,10 +25,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-configurations {
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-}
-
 repositories {
     //JEI
     maven { url 'https://dvs1.progwml6.com/files/maven' }
@@ -221,7 +217,7 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
     def targetVersion = 8
     if (JavaVersion.current().isJava9Compatible()) {
-        options.release = targetVersion
+        options.release.set(targetVersion)
     }
 }
 
@@ -284,7 +280,7 @@ jar {
     classifier ''
 }*/
 
-jar.classifier = 'nodep'
+//jar.classifier = 'nodep'
 
 /*reobf {
     shadowJar {}

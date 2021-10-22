@@ -25,11 +25,11 @@ public class ScreenHatch<T extends TileEntityHatch<T>, U extends ContainerHatch<
         List<SlotData<?>> list = container.getTile().getMachineType().getSlots(container.getTile().getMachineTier());
         for (SlotData<?> slot : list) {
             if (slot.getType() == SlotType.IT_IN || slot.getType() == SlotType.IT_OUT) {
-                drawTexture(stack, gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 0, 18, 18);
+                drawTexture(stack, gui, guiLeft + slot.getX() - 1, guiTop + slot.getY() - 1, xSize, 0, 18, 18);
             } else if (slot.getType() == SlotType.FL_IN) {
-                drawTexture(stack, gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 90, 18, 18);
+                drawTexture(stack, gui, guiLeft + slot.getX() - 1, guiTop + slot.getY() - 1, xSize, 90, 18, 18);
             } else if (slot.getType() == SlotType.FL_OUT) {
-                drawTexture(stack, gui, guiLeft + slot.getX()-1, guiTop + slot.getY()-1, xSize, 108, 18, 18);
+                drawTexture(stack, gui, guiLeft + slot.getX() - 1, guiTop + slot.getY() - 1, xSize, 108, 18, 18);
             }
         }
         if (container.getTile().getMachineType().has(MachineFlag.FLUID)) {

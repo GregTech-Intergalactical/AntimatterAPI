@@ -74,10 +74,10 @@ public class ClientHandler implements IProxyHandler {
     public static void setup(FMLClientSetupEvent e) {
         /* Register screens. */
         AntimatterAPI.runLaterClient(() -> {
-            Set<ContainerType> registered = new ObjectOpenHashSet<>();
+            Set<ResourceLocation> registered = new ObjectOpenHashSet<>();
             AntimatterAPI.all(MenuHandler.class, h -> {
-                if (!registered.contains(h.getContainerType())) {
-                    registered.add(h.getContainerType());
+                if (!registered.contains(h.getContainerType().getRegistryName())) {
+                    registered.add(h.getContainerType().getRegistryName());
                     ScreenManager.registerFactory(h.getContainerType(), (ScreenManager.IScreenFactory)h.screen());
                 }
             });

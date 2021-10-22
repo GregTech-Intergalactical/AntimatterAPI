@@ -11,6 +11,7 @@ import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+
 //A screen showing the GUI for the cover.
 public class ScreenCover<T extends ContainerCover> extends AntimatterContainerScreen<T> implements IHasContainer<T> {
 
@@ -22,19 +23,19 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
         super(container, inv, name);
         this.container = container;
         if (container.getCover().getCover() instanceof CoverTiered) {
-            this.gui = container.getCover().getCover().getGui().getTexture((((CoverTiered)container.getCover().getCover()).getTier()),"cover");
+            this.gui = container.getCover().getCover().getGui().getTexture((((CoverTiered) container.getCover().getCover()).getTier()), "cover");
         } else {
-            this.gui = container.getCover().getCover().getGui().getTexture(Tier.LV,"cover");
+            this.gui = container.getCover().getCover().getGui().getTexture(Tier.LV, "cover");
         }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
         drawTitle(stack, mouseX, mouseY);
-        if (container.getCover().getCover() instanceof ICoverModeHandler){
+        if (container.getCover().getCover() instanceof ICoverModeHandler) {
             ICoverModeHandler coverModeHandler = (ICoverModeHandler) container.getCover().getCover();
             ICoverMode mode = coverModeHandler.getCoverMode(container.getCover());
-            Minecraft.getInstance().fontRenderer.drawString(stack,"Mode: " + mode.getName(), getCenteredStringX("Mode: " + mode.getName()), 13, 0x404040);
+            Minecraft.getInstance().fontRenderer.drawString(stack, "Mode: " + mode.getName(), getCenteredStringX("Mode: " + mode.getName()), 13, 0x404040);
         }
     }
 
@@ -45,7 +46,7 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
         drawTexture(stack, gui, guiLeft, guiTop, 0, 0, xSize, ySize);
-        if (container.getCover().getCover() instanceof ICoverModeHandler){
+        if (container.getCover().getCover() instanceof ICoverModeHandler) {
             ICoverModeHandler coverModeHandler = (ICoverModeHandler) container.getCover().getCover();
             ICoverMode mode = coverModeHandler.getCoverMode(container.getCover());
             drawTexture(stack, gui, guiLeft + mode.getX(), guiTop + mode.getY(), coverModeHandler.getOverlayX(), coverModeHandler.getOverlayY(), 18, 18);

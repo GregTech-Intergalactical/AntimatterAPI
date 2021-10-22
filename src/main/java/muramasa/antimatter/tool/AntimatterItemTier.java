@@ -55,7 +55,9 @@ public class AntimatterItemTier implements IItemTier {
     }
 
     @Override
-    public float getAttackDamage() { return primary.getToolDamage(); }
+    public float getAttackDamage() {
+        return primary.getToolDamage();
+    }
 
     @Override
     public int getHarvestLevel() {
@@ -71,14 +73,11 @@ public class AntimatterItemTier implements IItemTier {
     public Ingredient getRepairMaterial() {
         if (primary.has(Data.GEM)) {
             return Ingredient.fromTag(TagUtils.getForgeItemTag("gems/".concat(primary.getId())));
-        }
-        else if (primary.has(Data.INGOT)) {
+        } else if (primary.has(Data.INGOT)) {
             return Ingredient.fromTag(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
-        }
-        else if (primary.has(Data.DUST)) {
+        } else if (primary.has(Data.DUST)) {
             return Ingredient.fromTag(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
-        }
-        else if (ItemTags.getCollection().get(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
+        } else if (ItemTags.getCollection().get(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
             return Ingredient.fromTag(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
         }
         return Ingredient.EMPTY;
@@ -103,7 +102,7 @@ public class AntimatterItemTier implements IItemTier {
 
     @Override
     public int hashCode() {
-       return Objects.hash(primary.hashCode(), secondary.hashCode());
+        return Objects.hash(primary.hashCode(), secondary.hashCode());
     }
 
 }

@@ -9,23 +9,15 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.state.properties.Half;
-import net.minecraft.state.properties.SlabType;
 import net.minecraft.state.properties.StairsShape;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-
-import java.util.function.Supplier;
 
 import static net.minecraft.state.properties.StairsShape.STRAIGHT;
-import static net.minecraft.util.Direction.EAST;
-import static net.minecraft.util.Direction.NORTH;
-import static net.minecraft.util.Direction.SOUTH;
-import static net.minecraft.util.Direction.WEST;
+import static net.minecraft.util.Direction.*;
 
 public class BlockStoneStair extends StairsBlock implements IAntimatterObject, ITextureProvider, IModelProvider {
     protected String domain, id, suffix;
@@ -37,12 +29,12 @@ public class BlockStoneStair extends StairsBlock implements IAntimatterObject, I
         id = type.getId() + "_" + suffix + "_stairs";
         this.suffix = suffix;
         this.type = type;
-        AntimatterAPI.register(getClass(), getId(), this);
+        AntimatterAPI.register(getClass(), this);
     }
 
-    private static Properties getProps(StoneType type){
+    private static Properties getProps(StoneType type) {
         Properties props = Block.Properties.create(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).hardnessAndResistance(type.getHardness(), type.getResistence());
-        if (type.doesRequireTool()){
+        if (type.doesRequireTool()) {
             props.setRequiresTool();
         }
         return props;
@@ -76,29 +68,29 @@ public class BlockStoneStair extends StairsBlock implements IAntimatterObject, I
             if (shape.getString().contains("outer")) b = outer;
             if (shape.getString().contains("inner")) b = inner;
             builder.modelFile(b);
-            if (half == Half.TOP){
+            if (half == Half.TOP) {
                 builder.rotationX(180);
-                if ((facing == EAST && right) || (facing == SOUTH && (shape == STRAIGHT || left))){
+                if ((facing == EAST && right) || (facing == SOUTH && (shape == STRAIGHT || left))) {
                     builder.rotationY(90);
                 }
-                if ((facing == SOUTH && right) || (facing == WEST && (left || shape == STRAIGHT))){
+                if ((facing == SOUTH && right) || (facing == WEST && (left || shape == STRAIGHT))) {
                     builder.rotationY(180);
                 }
-                if ((facing == WEST && right) || (facing == NORTH && (left || shape == STRAIGHT))){
+                if ((facing == WEST && right) || (facing == NORTH && (left || shape == STRAIGHT))) {
                     builder.rotationY(270);
                 }
                 builder.uvLock(true);
             } else {
-                if ((facing == SOUTH && (shape == STRAIGHT || right)) || (facing == WEST && left)){
+                if ((facing == SOUTH && (shape == STRAIGHT || right)) || (facing == WEST && left)) {
                     builder.rotationY(90);
                 }
-                if ((facing == NORTH && left) || (facing == WEST && (right || shape == STRAIGHT))){
+                if ((facing == NORTH && left) || (facing == WEST && (right || shape == STRAIGHT))) {
                     builder.rotationY(180);
                 }
-                if ((facing == EAST && left) || (facing == NORTH && (right || shape == STRAIGHT))){
+                if ((facing == EAST && left) || (facing == NORTH && (right || shape == STRAIGHT))) {
                     builder.rotationY(270);
                 }
-                if (!((facing == EAST && (right || shape ==STRAIGHT)) || (facing == SOUTH && left))){
+                if (!((facing == EAST && (right || shape == STRAIGHT)) || (facing == SOUTH && left))) {
                     builder.uvLock(true);
                 }
             }

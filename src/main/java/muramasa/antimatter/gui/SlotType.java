@@ -20,26 +20,26 @@ import java.util.function.BiPredicate;
 
 public class SlotType<T extends Slot> implements IAntimatterObject {
 
-    public static SlotType<SlotInput> IT_IN = new SlotType<>("item_in", (type, gui,inv, i, d) -> new SlotInput(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> {
+    public static SlotType<SlotInput> IT_IN = new SlotType<>("item_in", (type, gui, inv, i, d) -> new SlotInput(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> {
         if (t instanceof TileEntityMachine) {
-            return (((TileEntityMachine<?>)t).recipeHandler.map(rh -> rh.accepts(i)).orElse(true));
+            return (((TileEntityMachine<?>) t).recipeHandler.map(rh -> rh.accepts(i)).orElse(true));
         }
         return true;
-    },ContentEvent.ITEM_INPUT_CHANGED, true, false);
+    }, ContentEvent.ITEM_INPUT_CHANGED, true, false);
 
-    public static SlotType<SlotOutput> IT_OUT = new SlotType<>("item_out", (type, gui,inv, i, d) -> new SlotOutput(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()),(t, i) -> false,ContentEvent.ITEM_OUTPUT_CHANGED, false, true);
+    public static SlotType<SlotOutput> IT_OUT = new SlotType<>("item_out", (type, gui, inv, i, d) -> new SlotOutput(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> false, ContentEvent.ITEM_OUTPUT_CHANGED, false, true);
     public static SlotType<SlotFake> DISPLAY = new SlotType<>("display", (type, gui, item, i, d) -> new SlotFake(type, gui, item.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY(), false), (t, i) -> false, ContentEvent.ITEM_INPUT_CHANGED, false, false);
     public static SlotType<SlotFake> DISPLAY_SETTABLE = new SlotType<>("display_settable", (type, gui, item, i, d) -> new SlotFake(type, gui, item.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY(), true), (t, i) -> false, ContentEvent.ITEM_INPUT_CHANGED, true, false);
     public static SlotType<AbstractSlot<?>> STORAGE = new SlotType<>("storage", (type, gui, item, i, d) -> new AbstractSlot<>(type, gui, item.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> true, ContentEvent.ITEM_INPUT_CHANGED);
-    public static SlotType<SlotFakeFluid> FL_IN = new SlotType<>("fluid_in", (type, gui,inv, i, d) -> new SlotFakeFluid(type, gui, MachineFluidHandler.FluidDirection.INPUT,i, d.getX(), d.getY()), (t,i) -> false,ContentEvent.FLUID_INPUT_CHANGED, false, false);
+    public static SlotType<SlotFakeFluid> FL_IN = new SlotType<>("fluid_in", (type, gui, inv, i, d) -> new SlotFakeFluid(type, gui, MachineFluidHandler.FluidDirection.INPUT, i, d.getX(), d.getY()), (t, i) -> false, ContentEvent.FLUID_INPUT_CHANGED, false, false);
     //Cheat using same ID to get working counter.
-    public static SlotType<SlotFakeFluid> FL_OUT = new SlotType<>("fluid_out", (type, gui,inv, i, d) -> new SlotFakeFluid(type, gui,MachineFluidHandler.FluidDirection.OUTPUT, i, d.getX(), d.getY()), (t,i) -> false, ContentEvent.FLUID_OUTPUT_CHANGED, false, false);
-    public static SlotType<SlotCell> CELL_IN = new SlotType<>("cell_in", (type, gui,inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t,i) -> i.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED,true, false);
-    public static SlotType<SlotCell> CELL_OUT = new SlotType<>("cell_out", (type, gui,inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t,i) -> i.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED,false, true);
-    public static SlotType<SlotEnergy> ENERGY = new SlotType<>("energy", (type, gui,inv, i, d) -> new SlotEnergy(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t,i) ->  {
+    public static SlotType<SlotFakeFluid> FL_OUT = new SlotType<>("fluid_out", (type, gui, inv, i, d) -> new SlotFakeFluid(type, gui, MachineFluidHandler.FluidDirection.OUTPUT, i, d.getX(), d.getY()), (t, i) -> false, ContentEvent.FLUID_OUTPUT_CHANGED, false, false);
+    public static SlotType<SlotCell> CELL_IN = new SlotType<>("cell_in", (type, gui, inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> i.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED, true, false);
+    public static SlotType<SlotCell> CELL_OUT = new SlotType<>("cell_out", (type, gui, inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> i.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED, false, true);
+    public static SlotType<SlotEnergy> ENERGY = new SlotType<>("energy", (type, gui, inv, i, d) -> new SlotEnergy(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> {
         if (t instanceof ICapabilityProvider) {
             ICapabilityProvider tile = (ICapabilityProvider) t;
-            return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(eh -> i.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(inner -> ((inner.getInputVoltage() | inner.getOutputVoltage()) == (eh.getInputVoltage() | eh.getOutputVoltage()) )).orElse(false)).orElse(false);
+            return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(eh -> i.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(inner -> ((inner.getInputVoltage() | inner.getOutputVoltage()) == (eh.getInputVoltage() | eh.getOutputVoltage()))).orElse(false)).orElse(false);
         }
         return true;
     }, ContentEvent.ENERGY_SLOT_CHANGED, true, false);
@@ -52,7 +52,7 @@ public class SlotType<T extends Slot> implements IAntimatterObject {
     public final ContentEvent ev;
 
     public SlotType(String id, ISlotSupplier<T> slotSupplier, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent ev) {
-        this(id, slotSupplier, validator, ev,true, true);
+        this(id, slotSupplier, validator, ev, true, true);
     }
 
     public SlotType(String id, ISlotSupplier<T> slotSupplier, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent ev, boolean input, boolean output) {

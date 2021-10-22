@@ -21,7 +21,7 @@ public class GuiData {
     protected int4 padding = new int4(0, 55, 0, 0);
     public BarDir dir = BarDir.RIGHT;
 
-    private int buttons = 0;
+    private final int buttons = 0;
     private ISlotProvider<?> slots;
 
     public GuiData(String domain, String id) {

@@ -30,8 +30,7 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity playerIn)
-    {
+    public boolean canTakeStack(PlayerEntity playerIn) {
         return !MachineItemHandler.extractFromInput(this.getItemHandler(), index, 1, true).isEmpty();
     }
 
@@ -41,8 +40,7 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack)
-    {
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
        /* IItemHandler handler = this.getItemHandler();
         if (handler instanceof TrackedItemHandler) {
             ItemStack maxAdd = stack.copy();
@@ -60,7 +58,7 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
 
             return maxInput - remainder.getCount();
         } else {*/
-            return super.getItemStackLimit(stack);
-      //  }
+        return super.getItemStackLimit(stack);
+        //  }
     }
 }

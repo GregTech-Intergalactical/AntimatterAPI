@@ -55,6 +55,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     public int getPressure(PipeSize size) {
         return pressures[size.ordinal()];
     }
+
     //TODO!
     public T caps(int baseCap) {
         //this.caps = new int[]{baseCap / 6, baseCap / 6, baseCap / 3, baseCap, baseCap * 2, baseCap * 4};
@@ -74,7 +75,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     }
 
     public T pressures(int... pressures) {
-        this.pressures = Arrays.stream(pressures).map(t -> t/20).toArray();
+        this.pressures = Arrays.stream(pressures).map(t -> t / 20).toArray();
         return (T) this;
     }
 }

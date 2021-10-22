@@ -163,7 +163,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         });
         AntimatterAPI.all(AntimatterFluid.class, domain).forEach(s -> {
             add(s.getAttributes().getTranslationKey(), lowerUnderscoreToUpperSpaced(s.getId()));
-            Item bucket = AntimatterAPI.get(Item.class, s.getId()+ "_bucket");
+            Item bucket = AntimatterAPI.get(Item.class, s.getId()+ "_bucket", Ref.ID);
             if (bucket != null) add(bucket, lowerUnderscoreToUpperSpaced(s.getId()) + " Bucket");
         });
         AntimatterAPI.all(BlockStorage.class, domain).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
@@ -184,7 +184,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
 
         AntimatterAPI.all(RecipeMap.class, t -> {
             String id = "jei.category." + t.getId();
-            add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.','_'),3));
+            add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.','_'),0));
         });
         customTranslations();
     }

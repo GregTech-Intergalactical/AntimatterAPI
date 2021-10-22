@@ -100,7 +100,9 @@ public class AntimatterDynamics {
         List<Recipe> recipes = manager.getRecipesForType(Recipe.RECIPE_TYPE);
         Map<String, List<Recipe>> map = recipes.stream().collect(Collectors.groupingBy(recipe -> recipe.mapId));
         for (Map.Entry<String, List<Recipe>> entry : map.entrySet()) {
-            RecipeMap<?> rmap = AntimatterAPI.get(RecipeMap.class, "gt.recipe_map." + entry.getKey());
+            String[] split = entry.getKey().split(":");
+            if (split.length != 2) continue;
+            RecipeMap<?> rmap = AntimatterAPI.get(RecipeMap.class, split[1], split[0]);
             if (rmap != null) entry.getValue().forEach(rec -> rmap.compileRecipe(rec, tags));
         }
         time = System.nanoTime()-time;
@@ -125,7 +127,7 @@ public class AntimatterDynamics {
             for (String mod : t.modIds()) {
                 if (!AntimatterAPI.isModLoaded(mod)) return;
             }
-            t.antimatterRecipes(AntimatterAPI.getRecipeRegistrate());
+            t.antimatterRecipes(AntimatterAPI.getRecipeRegistrate(Ref.ID));
         });
         Antimatter.LOGGER.info("Amount of Antimatter Recipe Loaders registered: " + AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class).size());
         if (server) {

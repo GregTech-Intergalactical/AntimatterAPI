@@ -17,7 +17,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
 
     public MaterialTypeBlock(String id, int layers, boolean visible, int unitValue) {
         super(id, layers, visible, unitValue);
-        AntimatterAPI.register(MaterialTypeBlock.class, id, this);
+        AntimatterAPI.register(MaterialTypeBlock.class, this);
     }
 
     public static Container getEmptyBlockAndLog(MaterialType<?> type, IAntimatterObject... objects) {

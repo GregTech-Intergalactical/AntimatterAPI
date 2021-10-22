@@ -222,7 +222,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry != ForgeRegistries.BLOCKS) return;
         tileType = new TileEntityType<>(tileFunc.apply((T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
-        AntimatterAPI.register(TileEntityType.class, getId(), getTileType());
+        AntimatterAPI.register(TileEntityType.class, getId(), getDomain(), getTileType());
     }
 
     @Override
@@ -240,7 +240,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMachine.class,this.getId() + "_" + tier.getId()));
+        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMachine.class,this.getId() + "_" + tier.getId(), getDomain()));
     }
 
     /**
@@ -473,8 +473,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     /** Static Methods **/
-    public static Optional<Machine<?>> get(String name) {
-        Machine<?> machine = AntimatterAPI.get(Machine.class, name);
+    public static Optional<Machine<?>> get(String name, String domain) {
+        Machine<?> machine = AntimatterAPI.get(Machine.class, name, domain);
         return Optional.ofNullable(machine);
     }
 

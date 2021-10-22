@@ -25,13 +25,13 @@ public abstract class WidgetGroup extends Widget {
     public void setDepth(int depth) {
         super.setDepth(depth);
         for (Widget child : children) {
-            child.setDepth(depth+1);
+            child.setDepth(depth + 1);
         }
     }
 
     protected void addWidget(WidgetSupplier w) {
         Widget wid = w.buildAndAdd(this.gui, this);
-        wid.setDepth(depth()+1);
+        wid.setDepth(depth() + 1);
         this.children.add(wid);
     }
 }

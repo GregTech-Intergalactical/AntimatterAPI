@@ -12,7 +12,7 @@ public class SubTag implements IAntimatterObject {
     public final String id;
     public SubTag(String id) {
         this.id = id + "_subtag";
-        AntimatterAPI.register(SubTag.class, this.id, this);
+        AntimatterAPI.register(SubTag.class, this);
     }
 
     @Override

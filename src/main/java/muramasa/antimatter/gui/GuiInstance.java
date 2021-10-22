@@ -52,6 +52,7 @@ public class GuiInstance implements ICanSyncData {
 
     /**
      * Rescales the GUI window, sets all root widgets.
+     *
      * @param root top level widget, e.g. screen.
      */
     public void rescale(IGuiElement root) {
@@ -62,14 +63,15 @@ public class GuiInstance implements ICanSyncData {
 
     /**
      * Returns all widgets under the mouse.
+     *
      * @param mouseX x position
      * @param mouseY y position
      * @return iterable widget list
      */
     public Iterable<Widget> getWidgets(double mouseX, double mouseY) {
         return () -> {
-            Stream<Widget> stream = this.widgetLookup.search(new float[]{(float) mouseX, (float) mouseY}, new float[]{0f,0f}).stream();
-            return stream.sorted((a,b) -> Integer.compare(b.depth(), a.depth())).iterator();
+            Stream<Widget> stream = this.widgetLookup.search(new float[]{(float) mouseX, (float) mouseY}, new float[]{0f, 0f}).stream();
+            return stream.sorted((a, b) -> Integer.compare(b.depth(), a.depth())).iterator();
         };
     }
 
@@ -80,6 +82,7 @@ public class GuiInstance implements ICanSyncData {
 
     /**
      * Returns all widgets available in reverse depth order (for e.g. rendering).
+     *
      * @return iterable widget list
      */
     public Iterable<Widget> getReverseWidgets() {
@@ -88,7 +91,8 @@ public class GuiInstance implements ICanSyncData {
 
     /**
      * Is the widget top level widget at this mouse position?
-     * @param wid widget to check
+     *
+     * @param wid    widget to check
      * @param mouseX mouse X
      * @param mouseY mouse Y
      * @return if it is on top.
@@ -104,7 +108,7 @@ public class GuiInstance implements ICanSyncData {
         float y = (float) oldY;
         float w = (float) oldW;
         float h = (float) oldH;
-        if (widgetLookup.delete(new float[]{x,y}, new float[]{w,h}, wid)) {
+        if (widgetLookup.delete(new float[]{x, y}, new float[]{w, h}, wid)) {
             widgetLookup.insert(wid);
         }
     }
@@ -155,7 +159,7 @@ public class GuiInstance implements ICanSyncData {
     }
 
     public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body) {
-        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvent.EXTRA_BUTTON, buttonCounter++).setSize(x,y,w,h));
+        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvent.EXTRA_BUTTON, buttonCounter++).setSize(x, y, w, h));
         return this;
     }
 
@@ -216,6 +220,7 @@ public class GuiInstance implements ICanSyncData {
         public final BiConsumer<PacketBuffer, Object> writer;
         public final int index;
         public BiFunction<Object, Object, Boolean> equality;
+
         public SyncHolder(Supplier<?> source, Consumer<?> sink, Function<PacketBuffer, ?> reader, BiConsumer<PacketBuffer, ?> writer, int index, BiFunction<Object, Object, Boolean> equality) {
             this.source = source;
             this.index = index;

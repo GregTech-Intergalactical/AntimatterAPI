@@ -6,6 +6,7 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
@@ -51,7 +52,7 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
 
     @Override
     public String getDomain() {
-        return domain;
+        return this instanceof ISharedAntimatterObject ? Ref.ID : domain;
     }
 
     @Override
@@ -90,6 +91,6 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{new Texture(getRegistryName().getNamespace(), "item/basic/" + getId())};
+        return new Texture[]{new Texture(domain, "item/basic/" + getId())};
     }
 }

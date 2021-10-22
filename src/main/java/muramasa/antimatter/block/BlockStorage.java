@@ -4,6 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IItemBlockProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -27,10 +28,10 @@ import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 
-public class BlockStorage extends BlockMaterialType implements IItemBlockProvider {
+public class BlockStorage extends BlockMaterialType implements IItemBlockProvider, ISharedAntimatterObject {
 
     private static final VoxelShape FRAME_SHAPE = VoxelShapes.create(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
-    
+
     public BlockStorage(String domain, Material material, MaterialType<?> type) {
         super(domain, material, type, Block.Properties.create(net.minecraft.block.material.Material.IRON).hardnessAndResistance(8.0f).sound(SoundType.METAL));
     }
@@ -73,7 +74,8 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
         if (entity.isCrouching() && entity instanceof PlayerEntity) {
             if (entity.isInWater()) entity.setMotion(entity.getMotion().x, 0.02D, entity.getMotion().z);
             else entity.setMotion(entity.getMotion().x, 0.08D, entity.getMotion().z);
-        } else if (entity.collidedHorizontally) entity.setMotion(entity.getMotion().x, 0.22D + (material.getToolSpeed() / 75), entity.getMotion().z);
+        } else if (entity.collidedHorizontally)
+            entity.setMotion(entity.getMotion().x, 0.22D + (material.getToolSpeed() / 75), entity.getMotion().z);
         else entity.setMotion(entity.getMotion().x, Math.max(entity.getMotion().y, -0.2D), entity.getMotion().z);
     }
 
@@ -85,17 +87,18 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
 
     // @Override
     // public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
-        // return super.getDrops(state, builder);
+    // return super.getDrops(state, builder);
     // }
 
-    /** Ladder Stuffs - End **/
-    
+    /**
+     * Ladder Stuffs - End
+     **/
+
 //    @Override
 //    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
 //        drops.clear();
 //        drops.add(new ItemStack(this, 1, state.getValue(STORAGE_MATERIAL)));
 //    }
-
     @Override
     public int getHarvestLevel(BlockState state) {
         return material.getToolQuality();

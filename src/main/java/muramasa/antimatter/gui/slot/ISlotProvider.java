@@ -14,43 +14,54 @@ import java.util.Map;
 
 public interface ISlotProvider<T extends ISlotProvider<T>> {
     Map<String, Object2IntOpenHashMap<SlotType<?>>> getCountLookup();
+
     Map<String, List<SlotData<?>>> getSlotLookup();
 
-    /** Adds a slot for ANY **/
+    /**
+     * Adds a slot for ANY
+     **/
     default T add(SlotType<?> type, int x, int y) {
         return add("", new SlotData<>(type, x, y));
     }
 
-    /** Adds a slot for the given Tier **/
+    /**
+     * Adds a slot for the given Tier
+     **/
     default T add(Tier tier, SlotType<?> type, int x, int y) {
         return add(tier.getId(), new SlotData<>(type, x, y));
     }
 
-    /** Copies ALL slots from an existing Machine **/
+    /**
+     * Copies ALL slots from an existing Machine
+     **/
     default T add(ISlotProvider<?> provider) {
         List<SlotData<?>> list = provider.getAnySlots();
         for (SlotData<?> slot : list) {
             add("", slot);
         }
-        return (T)this;
+        return (T) this;
     }
 
-    /** Copies ALL slots from type into toTier slots **/
+    /**
+     * Copies ALL slots from type into toTier slots
+     **/
     default T add(Tier toTier, ISlotProvider<?> provider) {
         List<SlotData<?>> list = provider.getAnySlots();
         for (SlotData<?> slot : list) {
             add(toTier.getId(), slot);
         }
-        return (T)this;
+        return (T) this;
     }
 
-    /** Copies fromTier slots from type into toTier slots **/
+    /**
+     * Copies fromTier slots from type into toTier slots
+     **/
     default T add(Tier toTier, ISlotProvider<?> type, Tier fromTier) {
         List<SlotData<?>> list = type.getSlots(fromTier);
         for (SlotData<?> slot : list) {
             add(toTier.getId(), slot);
         }
-        return (T)this;
+        return (T) this;
     }
 
     default T add(String key, SlotData<?> slot) {
@@ -68,7 +79,7 @@ public interface ISlotProvider<T extends ISlotProvider<T>> {
             list.add(slot);
             slotLookup.put(key, list);
         }
-        return (T)this;
+        return (T) this;
     }
 
     default boolean hasType(SlotType<?> type) {
@@ -128,10 +139,12 @@ public interface ISlotProvider<T extends ISlotProvider<T>> {
 
     class Provider implements ISlotProvider<Provider> {
 
-        protected Provider() {}
+        protected Provider() {
+        }
 
         Map<String, Object2IntOpenHashMap<SlotType<?>>> count = new Object2ObjectOpenHashMap<>();
         Map<String, List<SlotData<?>>> slot = new Object2ObjectOpenHashMap<>();
+
         @Override
         public Map<String, Object2IntOpenHashMap<SlotType<?>>> getCountLookup() {
             return count;

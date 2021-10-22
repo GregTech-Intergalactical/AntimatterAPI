@@ -32,7 +32,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public TileEntityFluidPipe(T type, boolean covered) {
         super(type, covered);
         if (fluidHandler == null) {
-            fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0)) : LazyOptional.empty();
+            fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0)) : LazyOptional.empty();
         }
         pipeCapHolder.set(() -> this);
     }
@@ -45,7 +45,8 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void read(BlockState state, CompoundNBT tag) {
         super.read(state, tag);
-        if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) fluidHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
+        if (tag.contains(Ref.KEY_MACHINE_FLUIDS))
+            fluidHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
     }
 
     @Override
@@ -122,7 +123,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public LazyOptional<? extends IFluidHandler> forSide(Direction side) {
         if (FluidController.SLOOSH) {
             if (fluidHandler == null) {
-                fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this,1000*(getPipeSize().ordinal()+1),1000,1,0));
+                fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
             }
         } else {
             return LazyOptional.of(() -> new TesseractFluidCapability(this, side));

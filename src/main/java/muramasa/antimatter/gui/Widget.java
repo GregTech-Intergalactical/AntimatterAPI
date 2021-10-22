@@ -119,7 +119,7 @@ public abstract class Widget implements IGuiElement {
 
     @OnlyIn(Dist.CLIENT)
     protected void renderTooltip(MatrixStack matrixStack, ITextComponent text, double mouseX, double mouseY) {
-        net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, Arrays.asList(text),(int) mouseX, (int) mouseY, parent.getW(), parent.getH(), -1, Minecraft.getInstance().fontRenderer);
+        net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, Arrays.asList(text), (int) mouseX, (int) mouseY, parent.getW(), parent.getH(), -1, Minecraft.getInstance().fontRenderer);
     }
 
     @Override

@@ -73,17 +73,23 @@ import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABI
 
 public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements INamedContainerProvider, IMachineHandler, IGuiHandler, IDynamicModelProvider {
 
-    /** Open container. Allows for better syncing **/
+    /**
+     * Open container. Allows for better syncing
+     **/
     protected final Set<ContainerMachine<T>> openContainers = new ObjectOpenHashSet<>();
 
-    /** Machine Data **/
+    /**
+     * Machine Data
+     **/
     protected Machine<?> type;
     protected Tier tier;
     protected MachineState machineState;
 
     protected MachineState disabledState;
 
-    /** Handlers **/
+    /**
+     * Handlers
+     **/
    /* public LazyOptional<MachineItemHandler<?>> itemHandler;
     public LazyOptional<MachineFluidHandler<?>> fluidHandler;
     public LazyOptional<MachineEnergyHandler<T>> energyHandler;
@@ -96,7 +102,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dispatch);
     public Holder<MachineRecipeHandler, MachineRecipeHandler<T>> recipeHandler = new Holder<>(RECIPE_HANDLER_CAPABILITY, dispatch);
 
-    /** Texture related areas. **/
+    /**
+     * Texture related areas.
+     **/
     public LazyValue<DynamicTexturer<TileEntityMachine<?>, DynamicKey>> multiTexturer;
 
     public TileEntityMachine(Machine<?> type) {
@@ -104,19 +112,19 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         this.type = type;
         this.machineState = getDefaultMachineState();
         if (type.has(ITEM) || type.has(CELL)) {
-            itemHandler.set(() -> new MachineItemHandler<>((T)this));
+            itemHandler.set(() -> new MachineItemHandler<>((T) this));
         }
         if (type.has(FLUID)) {
-            fluidHandler.set(() -> new MachineFluidHandler<>((T)this));
+            fluidHandler.set(() -> new MachineFluidHandler<>((T) this));
         }
         if (type.has(ENERGY)) {
-            energyHandler.set(() -> new MachineEnergyHandler<>((T)this,type.amps(),type.has(GENERATOR)));
+            energyHandler.set(() -> new MachineEnergyHandler<>((T) this, type.amps(), type.has(GENERATOR)));
         }
         if (type.has(RECIPE)) {
-            recipeHandler.set(() -> new MachineRecipeHandler<>((T)this));
+            recipeHandler.set(() -> new MachineRecipeHandler<>((T) this));
         }
         if (type.has(COVERABLE)) {
-            coverHandler.set(() -> new MachineCoverHandler<>((T)this));
+            coverHandler.set(() -> new MachineCoverHandler<>((T) this));
         }
         multiTexturer = new LazyValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER));
     }
@@ -168,7 +176,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getMachineType().getGui().getTexture(this.getMachineTier(), "machine");
     }
 
-    /** RECIPE UTILITY METHODS **/
+    /**
+     * RECIPE UTILITY METHODS
+     **/
 
     //Called before a recipe ticks.
     public void onRecipePreTick() {
@@ -190,15 +200,15 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     }
 
-    public void onBlockUpdate(BlockPos neighbor){
+    public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getPos(), neighbor);
         coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate(facing));
     }
 
     public void ofState(@Nonnull BlockState state) {
         Block block = state.getBlock();
-        this.tier = ((BlockMachine)block).getTier();
-        this.type = ((BlockMachine)block).getType();
+        this.tier = ((BlockMachine) block).getTier();
+        this.type = ((BlockMachine) block).getType();
     }
 
     @Override
@@ -211,7 +221,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
         if (false) {
             double d = Ref.RNG.nextDouble();
-            if (d > 0.97D && this.world.isRainingAt(new BlockPos(this.pos.getX(), this.pos.getY()+1, this.pos.getZ()))) {
+            if (d > 0.97D && this.world.isRainingAt(new BlockPos(this.pos.getX(), this.pos.getY() + 1, this.pos.getZ()))) {
                 if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false))
                     Utils.createExplosion(this.world, pos, 6.0F, Explosion.Mode.DESTROY);
             }
@@ -245,7 +255,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
-    /** Getters **/
+    /**
+     * Getters
+     **/
     public Machine<?> getMachineType() {
         if (type != null) return type;
         Block block = getBlockState().getBlock();
@@ -269,15 +281,15 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getMachineType().has(flag);
     }
 
-    public int getWeakRedstonePower(Direction facing){
-        if (facing != null && !this.getCover(facing).isEmpty()){
+    public int getWeakRedstonePower(Direction facing) {
+        if (facing != null && !this.getCover(facing).isEmpty()) {
             return this.getCover(facing).getWeakPower(facing);
         }
         return 0;
     }
 
-    public int getStrongRedstonePower(Direction facing){
-        if (facing != null && !this.getCover(facing).isEmpty()){
+    public int getStrongRedstonePower(Direction facing) {
+        if (facing != null && !this.getCover(facing).isEmpty()) {
             return this.getCover(facing).getStrongPower(facing);
         }
         return 0;
@@ -289,20 +301,21 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (state == AIR.getDefaultState()) {
             return Direction.NORTH;
         }
-        if (getMachineType().allowVerticalFacing()){
+        if (getMachineType().allowVerticalFacing()) {
             return state.get(BlockStateProperties.FACING);
         }
         return state.get(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     public boolean setFacing(Direction side) {
-        if (side == getFacing() || (side.getAxis() == Direction.Axis.Y && !getMachineType().allowVerticalFacing())) return false;
+        if (side == getFacing() || (side.getAxis() == Direction.Axis.Y && !getMachineType().allowVerticalFacing()))
+            return false;
         boolean isEmpty = coverHandler.map(ch -> ch.get(side).isEmpty()).orElse(true);
         if (isEmpty) {
             BlockState state = getBlockState();
-            if (getMachineType().allowVerticalFacing()){
+            if (getMachineType().allowVerticalFacing()) {
                 state = state.with(BlockStateProperties.FACING, side);
-                if (side.getAxis() != Direction.Axis.Y){
+                if (side.getAxis() != Direction.Axis.Y) {
                     state = state.with(BlockMachine.HORIZONTAL_FACING, side);
                 }
             } else {
@@ -316,12 +329,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return false;
     }
 
-    protected boolean setFacing(PlayerEntity player, Direction side){
+    protected boolean setFacing(PlayerEntity player, Direction side) {
         boolean setFacing = setFacing(side);
         if (setFacing) player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
         return setFacing;
     }
-    
+
     public boolean wrenchMachine(PlayerEntity player, BlockRayTraceResult res, boolean crouch) {
         if (crouch || getMachineType().getOutputCover() == Data.COVERNONE) {
             //Machine has no output
@@ -334,7 +347,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
         if (event == ITEM_EJECT || event == FLUID_EJECT) {
             coverHandler.ifPresent(ch -> {
-                ch.get(ch.getOutputFacing()).onGuiEvent(event,player, data);
+                ch.get(ch.getOutputFacing()).onGuiEvent(event, player, data);
             });
         }
     }
@@ -346,7 +359,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     // TODO: Fix
     public Direction getOutputFacing() {
-        if (type.getOutputCover() != null  && type.getOutputCover() != Data.COVERNONE) {
+        if (type.getOutputCover() != null && type.getOutputCover() != Data.COVERNONE) {
             return coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(getFacing().getOpposite());
         }
         return null;
@@ -376,7 +389,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return energyHandler.map(EnergyHandler::getOutputVoltage).orElse(0);
     }
 
-    /** Helpers **/
+    /**
+     * Helpers
+     **/
     public void resetMachine() {
         setMachineState(getDefaultMachineState());
     }
@@ -407,7 +422,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                 if (!world.isRemote) {
                     if (old == MachineState.ACTIVE) {
                         this.onMachineStop();
-                    } else if (newState == MachineState.ACTIVE){
+                    } else if (newState == MachineState.ACTIVE) {
                         if (recipeHandler.isPresent()) {
                             MachineRecipeHandler<?> handler = recipeHandler.get();
                             this.onMachineStarted(handler.getActiveRecipe());
@@ -433,7 +448,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         ModelDataMap.Builder builder = new ModelDataMap.Builder();
         TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getWorld(), pos, TileEntityBasicMultiMachine.class);
         if (mTile != null) {
-            builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE,a -> {
+            builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE, a -> {
                 Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
                 if (tex.length == 1) return tex[0];
                 return tex[a.getIndex()];
@@ -460,7 +475,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getMachineType().has(GUI) ? getMachineType().getGui().getMenuHandler().menu(this, inv, windowId) : null;
     }
 
-    public boolean canPlayerOpenGui(PlayerEntity playerEntity){
+    public boolean canPlayerOpenGui(PlayerEntity playerEntity) {
         return true;
     }
 
@@ -500,7 +515,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (blocksCapability(cap, side)) return LazyOptional.empty();
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.side(side).cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.side(side).cast();
-        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()) return energyHandler.side(side).cast();
+        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent())
+            return energyHandler.side(side).cast();
         return super.getCapability(cap, side);
     }
 

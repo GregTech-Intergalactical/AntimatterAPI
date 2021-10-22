@@ -43,18 +43,18 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
         for (Widget widget : container.source().getWidgets(mouseX, mouseY)) {
             if (!widget.isEnabled()) continue;
             if (widget.mouseClicked(mouseX, mouseY, button)) {
-                    return true;
+                return true;
             }
         }
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     public double mouseX() {
-        return minecraft.mouseHelper.getMouseX() * (double)this.minecraft.getMainWindow().getScaledWidth() / (double)this.minecraft.getMainWindow().getWidth();
+        return minecraft.mouseHelper.getMouseX() * (double) this.minecraft.getMainWindow().getScaledWidth() / (double) this.minecraft.getMainWindow().getWidth();
     }
 
     public double mouseY() {
-        return minecraft.mouseHelper.getMouseY() * (double)this.minecraft.getMainWindow().getScaledHeight() / (double)this.minecraft.getMainWindow().getHeight();
+        return minecraft.mouseHelper.getMouseY() * (double) this.minecraft.getMainWindow().getScaledHeight() / (double) this.minecraft.getMainWindow().getHeight();
     }
 
     @Override
@@ -79,9 +79,9 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         double x = mouseX();
         double y = mouseY();
-        for (Widget wid : container.source().getWidgets(x,y)) {
+        for (Widget wid : container.source().getWidgets(x, y)) {
             if (!wid.isEnabled()) continue;
-            if (wid.keyPressed(keyCode, scanCode, modifiers, x,y)) return true;
+            if (wid.keyPressed(keyCode, scanCode, modifiers, x, y)) return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
@@ -96,12 +96,12 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         float ticks = Minecraft.getInstance().getRenderPartialTicks();
         RenderSystem.pushMatrix();
-        RenderSystem.translatef((float)-this.guiLeft, (float)-this.guiTop, 0.0F);
+        RenderSystem.translatef((float) -this.guiLeft, (float) -this.guiTop, 0.0F);
         for (Widget widget : container.source().getReverseWidgets()) {
             if (!widget.isEnabled() || !widget.isVisible() || widget.depth() < this.depth()) continue;
             widget.render(matrixStack, x, y, ticks);
         }
-        container.source().getTopLevelWidget(x, y).ifPresent(t -> t.mouseOver(matrixStack,x,y, ticks));
+        container.source().getTopLevelWidget(x, y).ifPresent(t -> t.mouseOver(matrixStack, x, y, ticks));
         RenderSystem.popMatrix();
     }
 
@@ -126,7 +126,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
         return xSize / 2 - Minecraft.getInstance().fontRenderer.getStringWidth(s) / 2;
     }
 
-    public void drawTooltipInArea(MatrixStack stack,String line, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
+    public void drawTooltipInArea(MatrixStack stack, String line, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
         List<String> list = new ObjectArrayList<>();
         list.add(line);
         drawTooltipInArea(stack, list, mouseX, mouseY, x, y, sizeX, sizeY);
@@ -140,7 +140,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     // Returns true if the given x,y coordinates are within the given rectangle
     public boolean isInRect(int x, int y, int xSize, int ySize, double mouseX, double mouseY) {
-        return ((mouseX >= x && mouseX <= x+xSize) && (mouseY >= y && mouseY <= y+ySize));
+        return ((mouseX >= x && mouseX <= x + xSize) && (mouseY >= y && mouseY <= y + ySize));
     }
 
     public boolean isInGui(int x, int y, int xSize, int ySize, double mouseX, double mouseY) {
@@ -191,6 +191,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     public void setW(int w) {
         throw new IllegalStateException("Cannot set X on root gui");
     }
+
     @Override
     public void setH(int h) {
         throw new IllegalStateException("Cannot set X on root gui");

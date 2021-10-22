@@ -305,7 +305,7 @@ public class RTree<T extends IGuiElement> {
         float[] coordBuf = new float[numDims];
         float[] dimBuf = new float[numDims];
         Queue<Node> toVisit = new LinkedList<>();
-        Map<Node,Integer> nodeDepths = new HashMap<>();
+        Map<Node, Integer> nodeDepths = new HashMap<>();
         nodeDepths.put(root, 0);
         toVisit.add(root);
         while (!toVisit.isEmpty()) {
@@ -316,7 +316,7 @@ public class RTree<T extends IGuiElement> {
             System.arraycopy(currentNode.coords, 0, coordBuf, 0, numDims);
             System.arraycopy(currentNode.dimensions, 0, dimBuf, 0, numDims);
             if (currentNode instanceof RTree.Entry) {
-                nv.visit(nodeDepths.get(currentNode), coordBuf, dimBuf, ((Entry)currentNode).entry);
+                nv.visit(nodeDepths.get(currentNode), coordBuf, dimBuf, ((Entry) currentNode).entry);
             } else {
                 nv.visit(nodeDepths.get(currentNode), coordBuf, dimBuf, null);
             }

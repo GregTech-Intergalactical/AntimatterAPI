@@ -5,9 +5,9 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IForgeItem {
+public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IForgeItem {
     AntimatterArmorType getAntimatterArmorType();
 
     default Material getMaterial(ItemStack stack) {
@@ -77,19 +77,16 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
 
     default Ingredient getRepairMaterial(ItemStack stack) {
         Material primary = getMaterial(stack);
-        if (primary == null){
+        if (primary == null) {
             return Ingredient.EMPTY;
         }
         if (primary.has(Data.GEM)) {
             return Ingredient.fromTag(TagUtils.getForgeItemTag("gems/".concat(primary.getId())));
-        }
-        else if (primary.has(Data.INGOT)) {
+        } else if (primary.has(Data.INGOT)) {
             return Ingredient.fromTag(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
-        }
-        else if (primary.has(Data.DUST)) {
+        } else if (primary.has(Data.DUST)) {
             return Ingredient.fromTag(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
-        }
-        else if (ItemTags.getCollection().get(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
+        } else if (ItemTags.getCollection().get(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
             return Ingredient.fromTag(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
         }
         return Ingredient.EMPTY;
@@ -105,7 +102,8 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
         List<Texture> textures = new ObjectArrayList<>();
         int layers = getAntimatterArmorType().getOverlayLayers();
         textures.add(new Texture(getDomain(), "item/tool/".concat(getAntimatterArmorType().getId())));
-        if (layers == 1) textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterArmorType().getId())));
+        if (layers == 1)
+            textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterArmorType().getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
                 textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getAntimatterArmorType().getId(), "_", Integer.toString(i))));
@@ -116,19 +114,19 @@ public interface IAntimatterArmor extends IAntimatterObject, IColorHandler, ITex
 
     @Override
     default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        if (this.getAntimatterArmorType().getSlot() == EquipmentSlotType.HEAD){
+        if (this.getAntimatterArmorType().getSlot() == EquipmentSlotType.HEAD) {
             String id = this.getId();
-            ItemModelBuilder builder = prov.getBuilder(id +"_probe");
-            builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation("minecraft","item/handheld")));
+            ItemModelBuilder builder = prov.getBuilder(id + "_probe");
+            builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation("minecraft", "item/handheld")));
             Texture[] textures = getTextures();
             for (int i = 0; i < textures.length + 1; i++) {
-                if (i == textures.length){
+                if (i == textures.length) {
                     builder.texture("layer" + i, new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterArmorType().getId()).concat("_probe")));
                     continue;
                 }
                 builder.texture("layer" + i, textures[i]);
             }
-            prov.tex(item, "minecraft:item/handheld", getTextures()).override().predicate(new ResourceLocation(Ref.ID, "probe"), 1).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id +"_probe")));
+            prov.tex(item, "minecraft:item/handheld", getTextures()).override().predicate(new ResourceLocation(Ref.ID, "probe"), 1).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id + "_probe")));
             return;
         }
         prov.tex(item, "minecraft:item/handheld", getTextures());

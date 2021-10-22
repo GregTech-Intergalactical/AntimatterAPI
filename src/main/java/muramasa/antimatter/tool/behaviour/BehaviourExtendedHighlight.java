@@ -36,11 +36,12 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
 
     public final static BiFunction<Direction, TileEntity, Boolean> PIPE_FUNCTION = (dir, tile) -> {
         if (tile instanceof TileEntityPipe) {
-            return ((TileEntityPipe)tile).canConnect(dir.getIndex());
+            return ((TileEntityPipe) tile).canConnect(dir.getIndex());
         }
-        if (tile instanceof TileEntityMachine){
-            Direction direction = ((TileEntityMachine)tile).getOutputFacing();
-            if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching()) direction = ((TileEntityMachine)tile).getFacing();
+        if (tile instanceof TileEntityMachine) {
+            Direction direction = ((TileEntityMachine) tile).getOutputFacing();
+            if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isCrouching())
+                direction = ((TileEntityMachine) tile).getFacing();
             return direction != null && direction == dir;
         }
         return false;

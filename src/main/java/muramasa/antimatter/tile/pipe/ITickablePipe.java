@@ -5,7 +5,7 @@ import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraftforge.common.util.LazyOptional;
 
-public interface ITickablePipe extends ITickableTileEntity{
+public interface ITickablePipe extends ITickableTileEntity {
     LazyOptional<PipeCoverHandler<?>> getCoverHandler();
 
     @Override

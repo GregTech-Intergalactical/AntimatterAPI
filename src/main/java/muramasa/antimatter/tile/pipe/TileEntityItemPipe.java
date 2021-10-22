@@ -93,13 +93,13 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     @Override
     public void addWidgets(GuiInstance instance, IGuiElement parent) {
         super.addWidgets(instance, parent);
-        instance.addWidget(InfoRenderWidget.TesseractItemWidget.build().setPos(10,10));
+        instance.addWidget(InfoRenderWidget.TesseractItemWidget.build().setPos(10, 10));
     }
 
     @Override
     public int drawInfo(InfoRenderWidget.TesseractItemWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
-        renderer.drawString(stack,"Total transferred in net: " + instance.transferred, left, top, 16448255);
-        renderer.drawString(stack,"Cable transfers (stacks): " + instance.cableTransferred, left, top+ 8, 16448255);
+        renderer.drawString(stack, "Total transferred in net: " + instance.transferred, left, top, 16448255);
+        renderer.drawString(stack, "Cable transfers (stacks): " + instance.cableTransferred, left, top + 8, 16448255);
         return 16;
     }
 

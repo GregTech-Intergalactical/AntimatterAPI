@@ -42,7 +42,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         if (hasGui()) {
             this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
             gui.setEnablePlayerSlots(true);
-            this.addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(),t.handler.guiSize(), t.handler.guiHeight())));
+            this.addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
         }
     }
 
@@ -50,6 +50,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         AntimatterAPI.register(ICover.class, this);
         AntimatterAPI.register(getClass(), this);
     }
+
     //Extra constructor for multicovers. TODO?
     protected BaseCover(String id) {
         this.id = id;
@@ -85,13 +86,13 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     }
 
     @Override
-    public void setTextures(BiConsumer<String,Texture> texer) {
-        texer.accept("overlay",new Texture(getDomain(), "block/cover/" + getRenderId()));
+    public void setTextures(BiConsumer<String, Texture> texer) {
+        texer.accept("overlay", new Texture(getDomain(), "block/cover/" + getRenderId()));
     }
 
     public Texture[] getTextures() {
         List<Texture> l = new ArrayList<>();
-        setTextures((name,tex) -> l.add(tex));
+        setTextures((name, tex) -> l.add(tex));
         return l.toArray(new Texture[0]);
     }
 

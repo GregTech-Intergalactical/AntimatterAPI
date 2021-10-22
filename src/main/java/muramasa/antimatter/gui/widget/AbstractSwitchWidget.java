@@ -73,6 +73,7 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
         }
         RenderSystem.enableDepthTest();
     }
+
     public boolean isSwitched() {
         return state;
     }

@@ -4,8 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
+public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvider {
 
     private final String domain, id;
     //private int harvestLevel;
@@ -33,7 +33,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     private float hardness, resistence;
     private ToolType toolType;
     private net.minecraft.block.material.Material blockMaterial;
-    
+
     public StoneType(String domain, String id, Material material, Texture texture, SoundType soundType, boolean generateBlock) {
         this.domain = domain;
         this.id = id;
@@ -94,7 +94,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
         return this;
     }
 
-    public StoneType setBlockMaterial(net.minecraft.block.material.Material material){
+    public StoneType setBlockMaterial(net.minecraft.block.material.Material material) {
         this.blockMaterial = material;
         return this;
     }
@@ -116,7 +116,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     public Material getMaterial() {
         return material;
     }
-    
+
     public BlockState getState() {
         return state;
     }
@@ -124,9 +124,9 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
     public Texture getTexture() {
         return texture;
     }
-    
+
     public SoundType getSoundType() {
-    	return soundType;
+        return soundType;
     }
 
     public ToolType getToolType() {
@@ -145,7 +145,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
         return generateBlock;
     }
 
-    public boolean doesRequireTool(){
+    public boolean doesRequireTool() {
         return requiresTool;
     }
 
@@ -163,7 +163,7 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
         this.stateSupplier = blockState;
         return this;
     }
-    
+
     public int getHarvestLevel() {
         return harvestLevel;
     }
@@ -193,12 +193,12 @@ public class StoneType implements IAntimatterObject, IRegistryEntryProvider {
         return AntimatterAPI.all(StoneType.class).stream().filter(s -> s.generateBlock).toArray(StoneType[]::new);
     }
 
-    public void initSuppliedState(){
-        if (state == null && stateSupplier != null){
+    public void initSuppliedState() {
+        if (state == null && stateSupplier != null) {
             state = stateSupplier.get();
         }
     }
-    
+
     public static StoneType get(String id) {
         return AntimatterAPI.get(StoneType.class, id);
     }

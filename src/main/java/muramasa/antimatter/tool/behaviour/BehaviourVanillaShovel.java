@@ -31,12 +31,11 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
         BlockState changedState = null;
         if (state.getBlock() == Blocks.GRASS_BLOCK && c.getWorld().isAirBlock(c.getPos().up())) {
             changedState = getToolModifiedState(state, Blocks.GRASS_PATH.getDefaultState(), c.getWorld(), c.getPos(), c.getPlayer(), c.getItem(), ToolType.SHOVEL);
-            if (changedState != null){
+            if (changedState != null) {
                 SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.ITEM_SHOVEL_FLATTEN : instance.getAntimatterToolType().getUseSound();
                 c.getWorld().playSound(c.getPlayer(), c.getPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
-        }
-        else if (state.getBlock() instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
+        } else if (state.getBlock() instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
             changedState = getToolModifiedState(state, state.with(CampfireBlock.LIT, false), c.getWorld(), c.getPos(), c.getPlayer(), c.getItem(), ToolType.SHOVEL);
             if (changedState != null) {
                 c.getWorld().playEvent(c.getPlayer(), 1009, c.getPos(), 0);
@@ -46,8 +45,7 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
             c.getWorld().setBlockState(c.getPos(), changedState, 11);
             Utils.damageStack(c.getItem(), c.getPlayer());
             return ActionResultType.SUCCESS;
-        }
-        else return ActionResultType.PASS;
+        } else return ActionResultType.PASS;
     }
 
     private BlockState getToolModifiedState(BlockState originalState, BlockState changedState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {

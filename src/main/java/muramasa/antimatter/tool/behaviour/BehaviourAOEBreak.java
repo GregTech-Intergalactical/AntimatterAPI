@@ -44,8 +44,10 @@ public class BehaviourAOEBreak implements IBlockDestroyed<IAntimatterTool> {
         if (!(entity instanceof PlayerEntity)) return true;
         PlayerEntity player = (PlayerEntity) entity;
         for (BlockPos blockPos : Utils.getHarvestableBlocksToBreak(world, player, instance, column, row, depth)) {
-            if (!instance.hasEnoughDurability(stack, instance.getAntimatterToolType().getUseDurability(), instance.getAntimatterToolType().isPowered())) return true;
-            if (!Utils.breakBlock(world, player, stack, blockPos, instance.getAntimatterToolType().getUseDurability())) break;
+            if (!instance.hasEnoughDurability(stack, instance.getAntimatterToolType().getUseDurability(), instance.getAntimatterToolType().isPowered()))
+                return true;
+            if (!Utils.breakBlock(world, player, stack, blockPos, instance.getAntimatterToolType().getUseDurability()))
+                break;
         }
         return true;
     }

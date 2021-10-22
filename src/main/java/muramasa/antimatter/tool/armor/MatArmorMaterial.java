@@ -9,7 +9,8 @@ import net.minecraft.util.SoundEvent;
 public class MatArmorMaterial implements IArmorMaterial {
     final AntimatterArmorType toolType;
     private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
-    public MatArmorMaterial(AntimatterArmorType toolType){
+
+    public MatArmorMaterial(AntimatterArmorType toolType) {
         this.toolType = toolType;
     }
 

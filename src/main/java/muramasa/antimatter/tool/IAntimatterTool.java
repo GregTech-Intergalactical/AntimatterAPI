@@ -65,7 +65,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default Material[] getMaterials(ItemStack stack) {
         CompoundNBT tag = getDataTag(stack);
-        return new Material[] { Material.get(tag.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(tag.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL)) };
+        return new Material[]{Material.get(tag.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(tag.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL))};
     }
 
     default Set<ToolType> getToolTypes() {
@@ -105,7 +105,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
             //return stack;
         }
-        if (!handleEnchants.isEmpty()) handleEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack) && !mainEnchants.containsKey(e.getKey())).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+        if (!handleEnchants.isEmpty())
+            handleEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack) && !mainEnchants.containsKey(e.getKey())).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
         return stack;
     }
 
@@ -117,9 +118,9 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         dataTag.putLong(Ref.KEY_TOOL_DATA_ENERGY, startingEnergy);
         dataTag.putLong(Ref.KEY_TOOL_DATA_MAX_ENERGY, maxEnergy);
         IEnergyHandler h = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(t -> t).orElse(null);
-        if (h instanceof ToolEnergyHandler){
-            ((ToolEnergyHandler)h).setEnergy(startingEnergy);
-            ((ToolEnergyHandler)h).setMaxEnergy(maxEnergy);
+        if (h instanceof ToolEnergyHandler) {
+            ((ToolEnergyHandler) h).setEnergy(startingEnergy);
+            ((ToolEnergyHandler) h).setMaxEnergy(maxEnergy);
         }
         return dataTag;
     }
@@ -136,21 +137,23 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             ItemStack stack = asItemStack(NULL, NULL);
             getDataTag(stack).putLong(Ref.KEY_TOOL_DATA_ENERGY, maxEnergy);
             list.add(stack);
-        }
-        else list.add(asItemStack(NULL, NULL));
+        } else list.add(asItemStack(NULL, NULL));
     }
 
     default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
         tooltip.add(new StringTextComponent("Primary Material: " + primary.getDisplayName().getString()));
-        if (secondary != NULL) tooltip.add(new StringTextComponent("Secondary Material: " + secondary.getDisplayName().getString()));
-        if (flag.isAdvanced() && getAntimatterToolType().isPowered()) tooltip.add(new StringTextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
+        if (secondary != NULL)
+            tooltip.add(new StringTextComponent("Secondary Material: " + secondary.getDisplayName().getString()));
+        if (flag.isAdvanced() && getAntimatterToolType().isPowered())
+            tooltip.add(new StringTextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
     }
 
     default boolean onGenericHitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker, float volume, float pitch) {
-        if (getAntimatterToolType().getUseSound() != null) target.getEntityWorld().playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), getAntimatterToolType().getUseSound(), SoundCategory.HOSTILE, volume, pitch);
+        if (getAntimatterToolType().getUseSound() != null)
+            target.getEntityWorld().playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), getAntimatterToolType().getUseSound(), SoundCategory.HOSTILE, volume, pitch);
         Utils.damageStack(getAntimatterToolType().getAttackDurability(), stack, attacker);
         return true;
     }
@@ -159,7 +162,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     default boolean onGenericBlockDestroyed(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
-            if (getAntimatterToolType().getUseSound() != null) player.playSound(getAntimatterToolType().getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
+            if (getAntimatterToolType().getUseSound() != null)
+                player.playSound(getAntimatterToolType().getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
             boolean isToolEffective = Utils.isToolEffective(getAntimatterToolType(), getToolTypes(), state);
             if (state.getBlockHardness(world, pos) != 0.0F) {
                 Utils.damageStack(isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1, stack, entity);
@@ -169,7 +173,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IBlockDestroyed)) continue;
-            returnValue = ((IBlockDestroyed) b).onBlockDestroyed(this, stack, world, state, pos ,entity);
+            returnValue = ((IBlockDestroyed) b).onBlockDestroyed(this, stack, world, state, pos, entity);
         }
         return returnValue;
     }
@@ -192,7 +196,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemHighlight)) continue;
-            ActionResultType type = ((IItemHighlight) b).onDrawHighlight(player,ev);
+            ActionResultType type = ((IItemHighlight) b).onDrawHighlight(player, ev);
             if (result != ActionResultType.SUCCESS) result = type;
         }
         return result;
@@ -214,8 +218,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             stack.setDamage(l);
             empty = l >= stack.getMaxDamage();
         }
-        if (empty){
-            if (!getAntimatterToolType().getBrokenItems().containsKey(this.getId())){
+        if (empty) {
+            if (!getAntimatterToolType().getBrokenItems().containsKey(this.getId())) {
                 return ItemStack.EMPTY;
             }
             ItemStack item = getAntimatterToolType().getBrokenItems().get(this.getId()).apply(oldStack);
@@ -227,20 +231,19 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     default int damage(ItemStack stack, int amount) {
         if (!getAntimatterToolType().isPowered()) return amount;
         IEnergyHandler h = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(t -> t).orElse(null);
-        if (!(h instanceof ItemEnergyHandler)){
+        if (!(h instanceof ItemEnergyHandler)) {
             return amount;
         }
         long currentEnergy = h.getEnergy();
         int multipliedDamage = amount * 100;
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {
-            ((ItemEnergyHandler)h).extractInternal(multipliedDamage, false, true);
+            ((ItemEnergyHandler) h).extractInternal(multipliedDamage, false, true);
             //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, currentEnergy - multipliedDamage); // Otherwise take energy off of tool if energy is larger than multiplied damage
             return 0; // Nothing is taken away from main durability
-        }
-        else { // Lastly, set energy to 0 and take leftovers off of tool durability itself
+        } else { // Lastly, set energy to 0 and take leftovers off of tool durability itself
             int leftOver = (int) (multipliedDamage - currentEnergy);
-            ((ItemEnergyHandler)h).extractInternal(currentEnergy, false, true);
+            ((ItemEnergyHandler) h).extractInternal(currentEnergy, false, true);
             //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
             return Math.max(1, leftOver / 100);
         }
@@ -251,7 +254,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return stack.getDamage() >= damage;
     }
 
-    default void onItemBreak(ItemStack stack, PlayerEntity entity){
+    default void onItemBreak(ItemStack stack, PlayerEntity entity) {
         String name = this.getId();
         AntimatterToolType type = getAntimatterToolType();
         if (!type.getBrokenItems().containsKey(name)) {
@@ -273,7 +276,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         List<Texture> textures = new ObjectArrayList<>();
         int layers = getAntimatterToolType().getOverlayLayers();
         textures.add(new Texture(getDomain(), "item/tool/".concat(getAntimatterToolType().getId())));
-        if (layers == 1) textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterToolType().getId())));
+        if (layers == 1)
+            textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterToolType().getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
                 textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getAntimatterToolType().getId(), "_", Integer.toString(i))));

@@ -59,7 +59,7 @@ public final class AntimatterRegistration {
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, b -> {
                 if (b instanceof IAntimatterObject && b.getRegistryName() == null) b.setRegistryName(domain, ((IAntimatterObject) b).getId());
-                AntimatterAPI.register(Item.class, b.getRegistryName().toString(), b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock() : new AntimatterItemBlock(b));
+                AntimatterAPI.register(Item.class, b.getRegistryName().toString(), b.getRegistryName().getNamespace(), b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock() : new AntimatterItemBlock(b));
                 ((IForgeRegistry) e.getRegistry()).register(b);
             });
 

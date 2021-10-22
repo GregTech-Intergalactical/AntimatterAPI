@@ -131,6 +131,9 @@ public class Antimatter extends AntimatterMod {
             RecipeBuilders.init();
             Data.init(side);
         }
+        if (event == RegistrationEvent.DATA_READY) {
+            AntimatterAPI.dataReady();
+        }
     }
 
     @Override

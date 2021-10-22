@@ -22,8 +22,8 @@ public abstract class CoverTiered extends BaseCover {
     protected void register() {
         Arrays.stream(Tier.getStandard()).forEach(t -> {
             CoverTiered tier = getTiered(t);
-            AntimatterAPI.register(ICover.class, tier.getId(), tier);
-            AntimatterAPI.register(getClass(), tier.getId(), tier);
+            AntimatterAPI.register(ICover.class, tier);
+            AntimatterAPI.register(getClass(), tier);
             this.COVERS.put(t, tier);
         });
     }

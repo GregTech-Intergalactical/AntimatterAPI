@@ -2,15 +2,8 @@ package muramasa.antimatter.registration;
 
 import muramasa.antimatter.Ref;
 
-public interface IAntimatterObject {
-
+public interface ISharedAntimatterObject extends IAntimatterObject{
     default String getDomain() {
         return Ref.ID;
-    }
-
-    String getId();
-
-    default boolean shouldRegister() {
-        return true;
     }
 }

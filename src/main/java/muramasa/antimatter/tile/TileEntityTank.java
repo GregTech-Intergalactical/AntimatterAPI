@@ -11,7 +11,7 @@ public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMa
 
     public TileEntityTank(Machine<?> type) {
         super(type);
-        fluidHandler.set(() -> new MachineFluidHandler<T>((T)this) {
+        fluidHandler.set(() -> new MachineFluidHandler<T>((T) this) {
             @Nullable
             @Override
             public FluidTanks getOutputTanks() {

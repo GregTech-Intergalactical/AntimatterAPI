@@ -64,19 +64,27 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static void addState(ResourceLocation loc, IGeneratedBlockstate state) {
-        ASSETS.put(getStateLoc(loc), state.toJson().toString());
+        synchronized (ASSETS) {
+            ASSETS.put(getStateLoc(loc), state.toJson().toString());
+        }
     }
 
     public static void addBlock(ResourceLocation loc, ModelBuilder<?> builder) {
-        ASSETS.put(getModelLoc(loc), builder.toJson().toString());
+        synchronized (ASSETS) {
+            ASSETS.put(getModelLoc(loc), builder.toJson().toString());
+        }
     }
 
     public static void addItem(ResourceLocation loc, ModelBuilder<?> builder) {
-        ASSETS.put(getModelLoc(loc), builder.toJson().toString());
+        synchronized (ASSETS) {
+            ASSETS.put(getModelLoc(loc), builder.toJson().toString());
+        }
     }
 
     public static void addLangLoc(String domain, String locale, String key, String value) {
-        LANG.computeIfAbsent(getLangLoc(domain, locale), j -> new JsonObject()).addProperty(key, value);
+        synchronized (LANG) {
+            LANG.computeIfAbsent(getLangLoc(domain, locale), j -> new JsonObject()).addProperty(key, value);
+        }
     }
 
     public static void addRecipe(IFinishedRecipe recipe) {
@@ -86,24 +94,32 @@ public class DynamicResourcePack implements IResourcePack {
 
     public static void addLootEntry(ResourceLocation loc, LootTable table) {
         JsonObject obj =  (JsonObject) LootTableManager.toJson(table);
-        DATA.put(getLootLoc(loc), obj);
+        synchronized (DATA) {
+            DATA.put(getLootLoc(loc), obj);
+        }
     }
 
     public static void addAdvancement(ResourceLocation loc, JsonObject obj) {
-        DATA.put(getAdvancementLoc(loc), obj);
+        synchronized (DATA) {
+            DATA.put(getAdvancementLoc(loc), obj);
+        }
     }
 
 
     public static void addTag(String type, ResourceLocation loc, JsonObject obj) {
-        JsonObject object = DATA.putIfAbsent(getTagLoc(type, loc), obj);
-        if (object != null){
-            object.getAsJsonArray("values").addAll(obj.getAsJsonArray("values"));
+        synchronized (DATA) {
+            JsonObject object = DATA.putIfAbsent(getTagLoc(type, loc), obj);
+            if (object != null){
+                object.getAsJsonArray("values").addAll(obj.getAsJsonArray("values"));
+            }
         }
     }
 
     public static void ensureTagAvailable(String id, ResourceLocation loc) {
         if (loc.getNamespace().contains("minecraft")) return;
-        DATA.putIfAbsent(getTagLoc(id, loc), ITag.Builder.create().serialize());
+        synchronized (DATA) {
+            DATA.putIfAbsent(getTagLoc(id, loc), ITag.Builder.create().serialize());
+        }
     }
 
     @Override

@@ -1,20 +1,17 @@
 package muramasa.antimatter.ore;
 
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.item.FallingBlockEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
 import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tags.BlockTags;
@@ -33,7 +30,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Random;
 
-public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider {
+public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider, ISharedAntimatterObject {
 
     private final MaterialType<?> oreType;
 
@@ -68,7 +65,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //        return net.minecraft.block.material.Material.ROCK;
 //    }
 
-//    //TODO
+    //    //TODO
 //    @Override
 //    public float getBlockHardness(BlockState blockState, World worldIn, BlockPos pos) {
 //        return stoneSet[blockState.getValue(STONE_TYPE)].getBaseState().getBlockHardness(worldIn, pos) + getHarvestLevel(blockState) - (type == OreType.SMALL ? 0.2F : 0);
@@ -130,7 +127,9 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //        return Configs.WORLD.ORE_VEIN_SPECTATOR_DEBUG ? 15 : 0;
 //    }
 
-    /** Falling block stuff **/
+    /**
+     * Falling block stuff
+     **/
     @Override
     public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (this.stoneType.getGravity()) {
@@ -156,7 +155,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
         if (this.stoneType.getGravity()) {
             if (worldIn.isAirBlock(pos.down()) || canFallThrough(worldIn.getBlockState(pos.down())) && pos.getY() >= 0) {
-                FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, worldIn.getBlockState(pos));
+                FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, worldIn.getBlockState(pos));
                 this.onStartFalling(fallingblockentity);
                 worldIn.addEntity(fallingblockentity);
             }
@@ -181,9 +180,9 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
             if (rand.nextInt(16) == 0) {
                 BlockPos blockpos = pos.down();
                 if (worldIn.isAirBlock(blockpos) || canFallThrough(worldIn.getBlockState(blockpos))) {
-                    double d0 = (double)pos.getX() + rand.nextDouble();
-                    double d1 = (double)pos.getY() - 0.05D;
-                    double d2 = (double)pos.getZ() + rand.nextDouble();
+                    double d0 = (double) pos.getX() + rand.nextDouble();
+                    double d1 = (double) pos.getY() - 0.05D;
+                    double d2 = (double) pos.getZ() + rand.nextDouble();
                     worldIn.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, stateIn), d0, d1, d2, 0.0D, 0.0D, 0.0D);
                 }
             }
@@ -209,9 +208,9 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) {
-        if (silktouch == 0 && material.getExpRange() != null){
-            List<ItemStack> self = getDrops(state, ((ServerWorld)world), pos, world.getTileEntity(pos));
-            if (self.stream().anyMatch(i -> i.getItem() == this.asItem())){
+        if (silktouch == 0 && material.getExpRange() != null) {
+            List<ItemStack> self = getDrops(state, ((ServerWorld) world), pos, world.getTileEntity(pos));
+            if (self.stream().anyMatch(i -> i.getItem() == this.asItem())) {
                 return 0;
             }
             return material.getExpRange().getRandomWithinRange(RANDOM);

@@ -54,19 +54,22 @@ import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXE
 public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     public final Material material;
-    private int capacity, maxTemp;
+    private final int capacity;
+    private final int maxTemp;
 
     private final Fluid stack;
 
-    /** Tag name for fluid in a bucket */
+    /**
+     * Tag name for fluid in a bucket
+     */
     private static final String TAG_FLUID = "Fluid";
 
     public ItemFluidCell(String domain, Material material, int capacity) {
         super(domain, "cell_".concat(material.getId()));
         Data.EMPTY_CELLS.add(this);
         AntimatterTextureStitcher.addStitcher(t -> {
-            t.accept(new ResourceLocation(domain, "item/other/"+getId()+"_cover"));
-            t.accept(new ResourceLocation(domain, "item/other/"+getId()+"_fluid"));
+            t.accept(new ResourceLocation(domain, "item/other/" + getId() + "_cover"));
+            t.accept(new ResourceLocation(domain, "item/other/" + getId() + "_fluid"));
         });
         this.material = material;
         this.capacity = capacity;
@@ -156,8 +159,9 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     /**
      * Gets the fluid from the given clay bucket container
-     * @param stack  Cell stack
-     * @return  Fluid contained in the container
+     *
+     * @param stack Cell stack
+     * @return Fluid contained in the container
      */
     public FluidStack getFluid(ItemStack stack) {
         return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(t -> t.getFluidInTank(0)).orElse(FluidStack.EMPTY);
@@ -218,7 +222,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
             }
 
             if ((fluid.isEmpty() || fluid.getAmount() + 1000 <= capacity) && block instanceof IBucketPickupHandler) {
-                Fluid newFluid = ((IBucketPickupHandler)block).pickupFluid(world, pos, state);
+                Fluid newFluid = ((IBucketPickupHandler) block).pickupFluid(world, pos, state);
                 if (newFluid != Fluids.EMPTY) {
                     player.addStat(Stats.ITEM_USED.get(this));
 
@@ -230,22 +234,22 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
                     player.playSound(sound, 1.0F, 1.0F);
                     ItemStack newStack = updateCell(stack, player, fill(newFluid, fluid.getAmount() + 1000));
                     if (!world.isRemote()) {
-                        CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayerEntity)player, newStack.copy());
+                        CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayerEntity) player, newStack.copy());
                     }
 
                     return ActionResult.resultSuccess(newStack);
                 }
-            } else if (fluid.getAmount() >= 1000){
+            } else if (fluid.getAmount() >= 1000) {
                 BlockPos fluidPos = state.getBlock() instanceof ILiquidContainer && fluid.getFluid() == Fluids.WATER ? pos : offset;
                 if (this.tryPlaceContainedLiquid(player, world, fluidPos, stack, trace)) {
                     onLiquidPlaced(fluid.getFluid(), world, stack, fluidPos);
                     if (player instanceof ServerPlayerEntity) {
-                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity)player, fluidPos, stack);
+                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity) player, fluidPos, stack);
                     }
 
                     player.addStat(Stats.ITEM_USED.get(this));
                     ItemStack newStack = drain(Utils.ca(1, stack), new FluidStack(fluid.getFluid(), 1000));
-                    if (stack.getCount() > 1){
+                    if (stack.getCount() > 1) {
                         stack.shrink(1);
                         addItem(player, newStack);
                         return ActionResult.resultSuccess(stack);
@@ -260,16 +264,17 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     /**
      * Called when a liquid is placed in world
-     * @param fluid  Fluid to place
-     * @param world  World instance
-     * @param stack  Stack instance
-     * @param pos    Position to place the world
+     *
+     * @param fluid Fluid to place
+     * @param world World instance
+     * @param stack Stack instance
+     * @param pos   Position to place the world
      */
     private static void onLiquidPlaced(Fluid fluid, World world, ItemStack stack, BlockPos pos) {
         // TODO: is this bad?
         Item item = fluid.getFilledBucket();
         if (item instanceof BucketItem) {
-            ((BucketItem)item).onLiquidPlaced(world, stack, pos);
+            ((BucketItem) item).onLiquidPlaced(world, stack, pos);
         }
     }
 
@@ -285,15 +290,15 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         boolean replaceable = state.isReplaceable(fluid);
-        if (state.isAir(world, pos) || replaceable || block instanceof ILiquidContainer && ((ILiquidContainer)block).canContainFluid(world, pos, state, fluid)) {
+        if (state.isAir(world, pos) || replaceable || block instanceof ILiquidContainer && ((ILiquidContainer) block).canContainFluid(world, pos, state, fluid)) {
             if (world.getDimensionType().isUltrawarm() && fluid.isIn(FluidTags.WATER)) {
                 world.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8F);
 
-                for(int l = 0; l < 8; ++l) {
+                for (int l = 0; l < 8; ++l) {
                     world.addParticle(ParticleTypes.LARGE_SMOKE, pos.getX() + Math.random(), pos.getY() + Math.random(), pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
                 }
             } else if (block instanceof ILiquidContainer && fluid == Fluids.WATER) {
-                if (((ILiquidContainer)block).receiveFluid(world, pos, state, ((FlowingFluid)fluid).getStillFluidState(false))) {
+                if (((ILiquidContainer) block).receiveFluid(world, pos, state, ((FlowingFluid) fluid).getStillFluidState(false))) {
                     this.playEmptySound(fluid, player, world, pos);
                 }
             } else {
@@ -315,10 +320,11 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     /**
      * Plays the sound on emptying the bucket
-     * @param fluid   Fluid placed
-     * @param player  Player accessing the bucket
-     * @param world   World instance
-     * @param pos     Position of sound
+     *
+     * @param fluid  Fluid placed
+     * @param player Player accessing the bucket
+     * @param world  World instance
+     * @param pos    Position of sound
      */
     private void playEmptySound(Fluid fluid, @Nullable PlayerEntity player, IWorld world, BlockPos pos) {
         SoundEvent sound = fluid.getAttributes().getEmptySound();
@@ -330,48 +336,49 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     /**
      * Interacts with a cauldron block
-     * @param world   World instance
-     * @param pos     Position of the cauldron
-     * @param state   Cauldron state
-     * @param player  Interacting player
-     * @param stack   Bucket stack
-     * @param fluid   Contained fluid
-     * @return  Action result from interaction, pass means failed to interact with a cauldron
+     *
+     * @param world  World instance
+     * @param pos    Position of the cauldron
+     * @param state  Cauldron state
+     * @param player Interacting player
+     * @param stack  Bucket stack
+     * @param fluid  Contained fluid
+     * @return Action result from interaction, pass means failed to interact with a cauldron
      */
     private ActionResult<ItemStack> interactWithCauldron(World world, BlockPos pos, BlockState state, PlayerEntity player, ItemStack stack, FluidStack fluid) {
         // if the bucket is empty, try filling from the cauldron
         int level = state.get(CauldronBlock.LEVEL);
         if (fluid.isEmpty()) {
             // if empty, try emptying
-            if(level == 3) {
+            if (level == 3) {
                 // empty cauldron logic
-                if(player != null) {
+                if (player != null) {
                     player.addStat(Stats.USE_CAULDRON);
                 }
-                if(!world.isRemote()) {
-                    ((CauldronBlock)Blocks.CAULDRON).setWaterLevel(world, pos, state, 0);
+                if (!world.isRemote()) {
+                    ((CauldronBlock) Blocks.CAULDRON).setWaterLevel(world, pos, state, 0);
                 }
                 world.playSound(null, pos, SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 ItemStack newStack = fill(Fluids.WATER, 1000);
-                if (stack.getCount() > 1){
+                if (stack.getCount() > 1) {
                     stack.shrink(1);
                     addItem(player, newStack);
                     return ActionResult.resultSuccess(stack);
                 }
                 return ActionResult.resultSuccess(newStack);
             }
-        } else if(fluid.getFluid() == Fluids.WATER && fluid.getAmount() >= 1000) {
+        } else if (fluid.getFluid() == Fluids.WATER && fluid.getAmount() >= 1000) {
             // fill cauldron if not full
-            if(level < 3) {
-                if(player != null) {
+            if (level < 3) {
+                if (player != null) {
                     player.addStat(Stats.FILL_CAULDRON);
                 }
-                if(!world.isRemote) {
-                    ((CauldronBlock)Blocks.CAULDRON).setWaterLevel(world, pos, state, 3);
+                if (!world.isRemote) {
+                    ((CauldronBlock) Blocks.CAULDRON).setWaterLevel(world, pos, state, 3);
                 }
                 world.playSound(null, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 ItemStack newStack = drain(Utils.ca(1, stack), new FluidStack(fluid.getFluid(), 1000));
-                if (stack.getCount() > 1){
+                if (stack.getCount() > 1) {
                     stack.shrink(1);
                     addItem(player, newStack);
                     return ActionResult.resultSuccess(stack);
@@ -388,10 +395,11 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     /**
      * Fills a bucket stack with the given fluid
+     *
      * @param originalStack original
      * @param player        Player instance
      * @param newCell       Filled cell stack
-     * @return  Stack of buckets
+     * @return Stack of buckets
      */
     protected static ItemStack updateCell(ItemStack originalStack, PlayerEntity player, ItemStack newCell) {
         // shrink the stack
@@ -409,8 +417,9 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     /**
      * Adds an item to the player inventory, dropping if there is no space
-     * @param player  Player instance
-     * @param stack   Stack to add
+     *
+     * @param player Player instance
+     * @param stack  Stack to add
      */
     protected static void addItem(PlayerEntity player, ItemStack stack) {
         if (!player.inventory.addItemStackToInventory(stack)) {
@@ -420,10 +429,10 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     @Override
     public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        ((AntimatterItemModelBuilder)prov.getAntimatterBuilder(item).bucketProperties(stack,true,false).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"))).tex((map) -> {
+        ((AntimatterItemModelBuilder) prov.getAntimatterBuilder(item).bucketProperties(stack, true, false).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"))).tex((map) -> {
             map.put("base", getDomain() + ":item/basic/" + getId());
-            map.put("cover",getDomain() + ":item/other/"+getId() + "_cover");
-            map.put("fluid", getDomain() + ":item/other/"+getId() + "_fluid");
+            map.put("cover", getDomain() + ":item/other/" + getId() + "_cover");
+            map.put("fluid", getDomain() + ":item/other/" + getId() + "_fluid");
         });
     }
 

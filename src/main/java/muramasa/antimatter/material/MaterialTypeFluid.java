@@ -14,7 +14,7 @@ public class MaterialTypeFluid<T> extends MaterialType<T> {
 
     public MaterialTypeFluid(String id, int layers, boolean visible, int unitValue) {
         super(id, layers, visible, unitValue);
-        AntimatterAPI.register(MaterialTypeFluid.class, id, this);
+        AntimatterAPI.register(MaterialTypeFluid.class, this);
     }
 
     public static FluidStack getEmptyFluidAndLog(MaterialType<?> type, IAntimatterObject... objects) {

@@ -11,12 +11,12 @@ import java.util.Objects;
 
 public class ContainerCover extends AntimatterContainer {
     protected TileEntity onEntity;
-    private CoverStack<?> c;
-    private MenuHandlerCover<?> m;
+    private final CoverStack<?> c;
+    private final MenuHandlerCover<?> m;
 
     public ContainerCover(CoverStack<?> on, PlayerInventory playerInv, MenuHandlerCover<?> menuHandler, int windowId) {
         super(on, menuHandler.getContainerType(), windowId, playerInv, 0);
-        this.c =  on;
+        this.c = on;
         this.m = menuHandler;
         if (c.getCover().getGui().enablePlayerSlots()) addPlayerSlots();
         this.onEntity = Objects.requireNonNull(c.getTile());

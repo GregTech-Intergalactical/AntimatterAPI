@@ -41,7 +41,7 @@ public class FluidSlotWidget extends Widget {
     }
 
     public static WidgetSupplier build(int slot, SlotData<?> slots) {
-        return builder((a,b) -> new FluidSlotWidget(a,b,slot,slots));
+        return builder((a, b) -> new FluidSlotWidget(a, b, slot, slots));
     }
 
     @Override
@@ -84,8 +84,9 @@ public class FluidSlotWidget extends Widget {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers, double mouseX, double mouseY) {
         if (!isInside(mouseX, mouseY)) return super.keyPressed(keyCode, scanCode, modifiers, mouseX, mouseY);
         InputMappings.Input input = InputMappings.getInputByCode(keyCode, scanCode);
-        if (!(input.getTranslationKey().equals("key.keyboard.u") || input.getTranslationKey().equals("key.keyboard.r"))) return false;
-        AntimatterJEIPlugin.uses(stack,input.getTranslationKey().equals("key.keyboard.u"));
+        if (!(input.getTranslationKey().equals("key.keyboard.u") || input.getTranslationKey().equals("key.keyboard.r")))
+            return false;
+        AntimatterJEIPlugin.uses(stack, input.getTranslationKey().equals("key.keyboard.u"));
         return true;
     }
 

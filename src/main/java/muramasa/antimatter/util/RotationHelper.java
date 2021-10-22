@@ -39,7 +39,7 @@ public class RotationHelper {
         X270_Y180(270, 180),
         X270_Y270(270, 270);
 
-        private static final Map<Integer,ModelRotation> MAP_ROTATIONS = Arrays.stream(values()).collect(Collectors.toMap((rotation) -> rotation.combinedXY, (rotation) -> rotation));
+        private static final Map<Integer, ModelRotation> MAP_ROTATIONS = Arrays.stream(values()).collect(Collectors.toMap((rotation) -> rotation.combinedXY, (rotation) -> rotation));
         private final int combinedXY;
         private final TransformationMatrix transformation;
 
@@ -49,8 +49,8 @@ public class RotationHelper {
 
         ModelRotation(int x, int y) {
             this.combinedXY = combineXY(x, y);
-            Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float)(-y), true);
-            quaternion.multiply(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float)(-x), true));
+            Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float) (-y), true);
+            quaternion.multiply(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float) (-x), true));
             this.transformation = new TransformationMatrix(quaternion);
         }
 
@@ -63,7 +63,7 @@ public class RotationHelper {
         }
     }
 
-    public static final class TransformationMatrix  {
+    public static final class TransformationMatrix {
         private final Matrix4f matrix;
 
         public TransformationMatrix(@Nullable Quaternion rotationLeftIn) {
@@ -72,7 +72,7 @@ public class RotationHelper {
 
 
         private static Matrix4f composeVanilla(@Nullable Quaternion rotationLeft) {
-            Matrix4f matrix4f = new Matrix4f(new float[]{1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1});
+            Matrix4f matrix4f = new Matrix4f(new float[]{1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1});
             if (rotationLeft != null) {
                 matrix4f.mul(new Matrix4f(rotationLeft));
             }
@@ -83,7 +83,7 @@ public class RotationHelper {
 
         public Direction rotateFace(Direction facing) {
             Vector3i vector3i = facing.getDirectionVec();
-            Vector4f vector4f = new Vector4f((float)vector3i.getX(), (float)vector3i.getY(), (float)vector3i.getZ(), 0.0F);
+            Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
             vector4f.transform(new net.minecraft.util.math.vector.Matrix4f(matrix.values()));
             return Direction.getFacingFromVector(vector4f.getX(), vector4f.getY(), vector4f.getZ());
         }
@@ -108,8 +108,9 @@ public class RotationHelper {
         protected float m33;
 
         public float[] values() {
-            return new float[]{m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33};
+            return new float[]{m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33};
         }
+
         public Matrix4f(float[] values) {
             m00 = values[0];
             m01 = values[1];
@@ -128,6 +129,7 @@ public class RotationHelper {
             m32 = values[14];
             m33 = values[15];
         }
+
         public void mul(Matrix4f matrix) {
             float f = this.m00 * matrix.m00 + this.m01 * matrix.m10 + this.m02 * matrix.m20 + this.m03 * matrix.m30;
             float f1 = this.m00 * matrix.m01 + this.m01 * matrix.m11 + this.m02 * matrix.m21 + this.m03 * matrix.m31;
@@ -162,6 +164,7 @@ public class RotationHelper {
             this.m32 = f14;
             this.m33 = f15;
         }
+
         public Matrix4f(Quaternion quaternionIn) {
             float f = quaternionIn.getX();
             float f1 = quaternionIn.getY();
