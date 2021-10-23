@@ -7,6 +7,7 @@ import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
@@ -19,7 +20,7 @@ import net.minecraftforge.client.model.generators.ModelFile;
 import static net.minecraft.block.WallHeight.LOW;
 import static net.minecraft.block.WallHeight.TALL;
 
-public class BlockStoneWall extends WallBlock implements IAntimatterObject, ITextureProvider, IModelProvider {
+public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject, ITextureProvider, IModelProvider {
     protected String domain, id, suffix;
     CobbleStoneType type;
 
@@ -38,10 +39,6 @@ public class BlockStoneWall extends WallBlock implements IAntimatterObject, ITex
             props.setRequiresTool();
         }
         return props;
-    }
-
-    public String getDomain() {
-        return domain;
     }
 
     @Override

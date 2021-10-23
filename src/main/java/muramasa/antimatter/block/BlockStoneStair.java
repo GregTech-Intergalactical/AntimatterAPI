@@ -6,6 +6,7 @@ import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
@@ -19,7 +20,7 @@ import net.minecraftforge.client.model.generators.ConfiguredModel;
 import static net.minecraft.state.properties.StairsShape.STRAIGHT;
 import static net.minecraft.util.Direction.*;
 
-public class BlockStoneStair extends StairsBlock implements IAntimatterObject, ITextureProvider, IModelProvider {
+public class BlockStoneStair extends StairsBlock implements ISharedAntimatterObject, ITextureProvider, IModelProvider {
     protected String domain, id, suffix;
     CobbleStoneType type;
 
@@ -38,10 +39,6 @@ public class BlockStoneStair extends StairsBlock implements IAntimatterObject, I
             props.setRequiresTool();
         }
         return props;
-    }
-
-    public String getDomain() {
-        return domain;
     }
 
     @Override
