@@ -52,7 +52,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
     private static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
 
-    private final String id;
+    private final ResourceLocation loc;
     private final B builder;
     private final Branch LOOKUP = new Branch();
     private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
@@ -73,11 +73,16 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     private IRecipeInfoRenderer infoRenderer;
 
     //Data allows you to set related data to the map, e.g. which tier the gui displays.
-    public RecipeMap(String categoryId, B builder) {
-        this.id = categoryId;
+    public RecipeMap(String domain, String categoryId, B builder) {
+        this.loc = new ResourceLocation(domain, categoryId);
         this.builder = builder;
         this.builder.setMap(this);
         AntimatterAPI.register(RecipeMap.class, this);
+    }
+
+    @Override
+    public String getDomain() {
+        return loc.getNamespace();
     }
 
     //In the case of split stacks, merge the items, 2 aluminium dust in separate stacks -> 1 stack with additive count.
@@ -170,11 +175,11 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     @Override
     public String getId() {
-        return id;
+        return loc.getPath();
     }
 
     public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("jei.category." + id);
+        return new TranslationTextComponent("jei.category." + loc.getPath());
     }
 
     public B RB() {
@@ -224,7 +229,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
                     continue;
                 }
                 if (inputItem.get().hasNoMatchingItems() || (inputItem.get().getMatchingStacks().length == 1 && inputItem.get().getMatchingStacks()[0].getItem() == Items.BARRIER)) {
-                    Utils.onInvalidData("RECIPE WITH EMPTY INPUT (MAP): " + this.id);
+                    Utils.onInvalidData("RECIPE WITH EMPTY INPUT (MAP): " + this.loc.getPath());
                     return;
                 }
             }
