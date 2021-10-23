@@ -79,6 +79,9 @@ public final class AntimatterAPI {
 
     public static void register(Class<?> c, String id, String domain, Object o) {
         synchronized (OBJECTS) {
+            if (dataDone) {
+                throw new IllegalStateException("Registering after DataDone in AntimatterAPI - badbad!");
+            }
             if (o instanceof IAntimatterObject && !((IAntimatterObject)o).shouldRegister()) return;
             domain = o instanceof ISharedAntimatterObject ? null : domain;
             registerInternal(c, id, domain, o);
@@ -131,7 +134,13 @@ public final class AntimatterAPI {
                 return getInternal(c, id, domain);
             }
         }
-        return getInternal(c, id, domain);
+        T obj = getInternal(c, id, domain);
+        if (obj == null) {
+            Class clazz = c;
+            Object o = get(clazz, id);
+            return o == null ? null : c.cast(o);
+        }
+        return obj;
     }
 
     public static void dataReady() {
