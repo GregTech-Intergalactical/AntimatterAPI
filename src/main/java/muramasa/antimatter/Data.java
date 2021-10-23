@@ -8,6 +8,7 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.cover.*;
 import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.MenuHandlerPipe;
@@ -314,6 +315,11 @@ public class Data {
             if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
+        LIQUID.all().stream().filter(l -> !l.getId().equals("water") || !l.getId().equals("lava")).forEach(m -> new AntimatterMaterialFluid(Ref.ID, m, LIQUID));
+        GAS.all().forEach(m -> new AntimatterMaterialFluid(Ref.ID, m, GAS));
+        PLASMA.all().forEach(m -> new AntimatterMaterialFluid(Ref.ID, m, PLASMA));
+        AntimatterAPI.all(Material.class, Material::setChemicalFormula);
+        if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) ORE.all().forEach(m -> m.flags(ORE_SMALL));
         if (side == Dist.CLIENT) {
             clientBehaviours();
         }
