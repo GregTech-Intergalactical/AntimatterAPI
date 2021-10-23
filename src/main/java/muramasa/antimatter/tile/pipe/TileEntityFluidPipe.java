@@ -58,7 +58,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public void addNode(Direction side) {
-        Tesseract.FLUID.registerNode(this, getWorld(), pos.offset(side).toLong(), side.getOpposite(), pos -> {
+        Tesseract.FLUID.registerNode(getWorld(), pos.offset(side).toLong(), side.getOpposite(), pos -> {
             TileEntity tile = world.getTileEntity(BlockPos.fromLong(pos));
             if (tile == null) {
                 return null;

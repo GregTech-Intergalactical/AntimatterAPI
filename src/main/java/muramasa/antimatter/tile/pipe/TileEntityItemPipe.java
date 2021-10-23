@@ -36,7 +36,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public void addNode(Direction side) {
-        Tesseract.ITEM.registerNode(this, getWorld(), pos.offset(side).toLong(), side.getOpposite(), pos -> {
+        Tesseract.ITEM.registerNode(getWorld(), pos.offset(side).toLong(), side.getOpposite(), pos -> {
             TileEntity tile = getWorld().getTileEntity(BlockPos.fromLong(pos));
             if (tile == null) {
                 return null;
