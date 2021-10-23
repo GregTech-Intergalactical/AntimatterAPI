@@ -131,7 +131,12 @@ public final class AntimatterAPI {
     public static <T> T get(Class<T> c, String id, String domain) {
         if (!dataDone) {
             synchronized (OBJECTS) {
-                return getInternal(c, id, domain);
+                T obj = getInternal(c, id, domain);
+                if (obj == null) {
+                    Class clazz = c;
+                    Object o = getInternal(clazz, id);
+                    return o == null ? null : c.cast(o);
+                }
             }
         }
         T obj = getInternal(c, id, domain);
