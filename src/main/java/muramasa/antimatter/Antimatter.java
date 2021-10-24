@@ -5,6 +5,7 @@ import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
+import muramasa.antimatter.material.SubTag;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -130,6 +131,7 @@ public class Antimatter extends AntimatterMod {
         if (event == RegistrationEvent.DATA_INIT) {
             RecipeBuilders.init();
             Data.init(side);
+            SubTag.init();
         }
         if (event == RegistrationEvent.DATA_READY) {
             AntimatterAPI.dataReady();

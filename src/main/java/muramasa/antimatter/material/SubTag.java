@@ -19,4 +19,7 @@ public class SubTag implements IAntimatterObject {
     public String getId() {
         return id;
     }
+
+    public static void init(){
+    }
 }
