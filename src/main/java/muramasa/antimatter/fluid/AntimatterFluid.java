@@ -56,7 +56,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
         this.fluidProperties = new Properties(this::getFluid, this::getFlowingFluid, builder).bucket(this::getContainerItem).block(this::getFluidBlock);
         this.blockProperties = blockProperties;
         this.attributes = builder.translationKey("block." + domain + ".liquid." + id).build(this.source);
-        AntimatterAPI.register(AntimatterFluid.class, this);
+        AntimatterAPI.registerIfAbsent(AntimatterFluid.class, id, () -> this);
     }
 
     public AntimatterFluid(String domain, String id) {
