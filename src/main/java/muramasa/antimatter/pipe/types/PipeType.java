@@ -51,10 +51,10 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         if (registry != ForgeRegistries.BLOCKS) return;
         Set<Block> blocks = getBlocks();
         registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(), t.getBlock())).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-        tileType = new TileEntityType<>(() -> tileFunc.apply((T) this), blocks, null).setRegistryName(getDomain(), getId() + "_" + material.getId());
-        coveredType = new TileEntityType<>(() -> coveredFunc.apply((T) this), blocks, null).setRegistryName(getDomain(), getId() + "_" + material.getId() + "_covered");
-        AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId(), getDomain(), getTileType());
-        AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId() + "_covered", getDomain(), getCoveredType());
+        tileType = new TileEntityType<>(() -> tileFunc.apply((T) this), blocks, null).setRegistryName(getDomain(), getId());
+        coveredType = new TileEntityType<>(() -> coveredFunc.apply((T) this), blocks, null).setRegistryName(getDomain(), getId() + "_covered");
+        AntimatterAPI.register(TileEntityType.class, getId(), getDomain(), getTileType());
+        AntimatterAPI.register(TileEntityType.class, getId() + "_covered", getDomain(), getCoveredType());
     }
 
     public Block getBlock(PipeSize size) {

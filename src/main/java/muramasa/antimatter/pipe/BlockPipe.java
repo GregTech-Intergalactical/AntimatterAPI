@@ -76,7 +76,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId, AbstractBlock.Properties properties) {
-        super(type.domain, prefix + "_" + type.getMaterial().getId() + "_" + size.getId(), properties);
+        super(type.domain, prefix + "_" + size.getId(), properties);
         this.type = type;
         this.size = size;
         side = new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_side");
