@@ -60,14 +60,14 @@ public final class AntimatterRegistration {
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, b -> {
-                if (b instanceof IAntimatterObject && b.getRegistryName() == null) b.setRegistryName(domain, ((IAntimatterObject) b).getId());
+                if (b instanceof IAntimatterObject && b.getRegistryName() == null) b.setRegistryName(((IAntimatterObject)b).getDomain(), ((IAntimatterObject) b).getId());
                 AntimatterAPI.register(Item.class, b.getRegistryName().toString(), b.getRegistryName().getNamespace(), b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock() : new AntimatterItemBlock(b));
                 ((IForgeRegistry) e.getRegistry()).register(b);
             });
 
         } else if (e.getRegistry() == ForgeRegistries.ITEMS) {
             AntimatterAPI.all(Item.class, domain, i -> {
-                if (i instanceof IAntimatterObject && i.getRegistryName() == null) i.setRegistryName(domain, ((IAntimatterObject) i).getId());
+                if (i instanceof IAntimatterObject && i.getRegistryName() == null) i.setRegistryName(((IAntimatterObject)i).getDomain(), ((IAntimatterObject) i).getId());
                 ((IForgeRegistry) e.getRegistry()).register(i);
             });
             registerTools(domain, e.getRegistry());
