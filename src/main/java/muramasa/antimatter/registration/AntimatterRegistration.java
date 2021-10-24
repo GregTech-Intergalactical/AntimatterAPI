@@ -1,6 +1,7 @@
 package muramasa.antimatter.registration;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.fluid.AntimatterFluid;
@@ -51,6 +52,7 @@ public final class AntimatterRegistration {
                 if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
                     AntimatterKubeJS.loadStartupScripts();
                 }
+                Data.postInit(side);
             }
             AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));
             List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());

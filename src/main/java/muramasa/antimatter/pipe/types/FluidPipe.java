@@ -26,12 +26,12 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
     }
 
     @Override
-    public String getId() {
+    public String getTypeName() {
         return "fluid";
     }
 
     @Override
-    public String getTypeName() {
+    public String getType() {
         return "fluid";
     }
 

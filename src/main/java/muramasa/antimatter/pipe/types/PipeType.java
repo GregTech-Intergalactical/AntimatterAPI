@@ -25,7 +25,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     /**
      * Basic Members
      **/
-    protected String domain;
+    public final String domain;
     protected Material material;
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
     protected TileEntityType<?> tileType;
@@ -40,7 +40,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);
-        AntimatterAPI.register(getClass(), getId() + "_" + material.getId(), getDomain(), this);
+        //AntimatterAPI.register(getClass(), getId() + "_" + material.getId(), getDomain(), this);
         this.tileFunc = func;
         this.coveredFunc = covered;
     }
@@ -51,8 +51,8 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         if (registry != ForgeRegistries.BLOCKS) return;
         Set<Block> blocks = getBlocks();
         registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(), t.getBlock())).collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-        tileType = new TileEntityType<>(() -> tileFunc.apply((T) this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId());
-        coveredType = new TileEntityType<>(() -> coveredFunc.apply((T) this), blocks, null).setRegistryName(domain, getId() + "_" + material.getId() + "_covered");
+        tileType = new TileEntityType<>(() -> tileFunc.apply((T) this), blocks, null).setRegistryName(getDomain(), getId() + "_" + material.getId());
+        coveredType = new TileEntityType<>(() -> coveredFunc.apply((T) this), blocks, null).setRegistryName(getDomain(), getId() + "_" + material.getId() + "_covered");
         AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId(), getDomain(), getTileType());
         AntimatterAPI.register(TileEntityType.class, getId() + "_" + material.getId() + "_covered", getDomain(), getCoveredType());
     }
@@ -67,12 +67,16 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
 
     public abstract Set<Block> getBlocks();
 
-    public String getDomain() {
+    /*public String getDomain() {
         return domain;
-    }
+    }*/
+
+    public abstract String getType();
 
     @Override
-    public abstract String getId();
+    public String getId() {
+        return getType() + "_" + material.getId();
+    }
 
     public abstract String getTypeName();
 

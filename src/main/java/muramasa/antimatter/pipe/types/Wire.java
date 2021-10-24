@@ -17,7 +17,7 @@ public class Wire<T extends Wire<T>> extends Cable<T> {
     }
 
     @Override
-    public String getId() {
+    public String getType() {
         return "wire";
     }
 

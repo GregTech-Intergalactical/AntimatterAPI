@@ -116,39 +116,39 @@ public class Data {
     public static MaterialType<?> TOOLS = new MaterialType<>("tools", 1, false, -1).nonGen();
     public static MaterialType<?> ARMOR = new MaterialType<>("armor", 1, false, -1).nonGen();
 
-    public static final Material NULL = AntimatterAPI.registerIfAbsent(Material.class, "null", () -> new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F));
+    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F));
 
     //Vanilla Stone Materials
-    public static Material Stone =  AntimatterAPI.registerIfAbsent(Material.class, "stone", () -> new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F));
-    public static Material Granite =  AntimatterAPI.registerIfAbsent(Material.class, "granite", () -> new Material(Ref.ID, "granite", 0xa07882, NONE).asDust(ROCK));
-    public static Material Diorite =  AntimatterAPI.registerIfAbsent(Material.class, "diorite", () -> new Material(Ref.ID, "diorite", 0xf0f0f0, NONE).asDust(ROCK));
-    public static Material Andesite =  AntimatterAPI.registerIfAbsent(Material.class, "andesite", () -> new Material(Ref.ID, "andesite", 0xbfbfbf, NONE).asDust(ROCK));
+    public static Material Stone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F));
+    public static Material Granite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "granite", 0xa07882, NONE).asDust(ROCK));
+    public static Material Diorite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "diorite", 0xf0f0f0, NONE).asDust(ROCK));
+    public static Material Andesite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "andesite", 0xbfbfbf, NONE).asDust(ROCK));
 
-    public static Material Gravel =  AntimatterAPI.registerIfAbsent(Material.class, "gravel", () -> new Material(Ref.ID, "gravel", 0xcdcdcd, NONE).asDust(ROCK));
-    public static Material Sand =  AntimatterAPI.registerIfAbsent(Material.class, "sand", () -> new Material(Ref.ID, "sand", 0xfafac8, NONE).asDust(ROCK));
-    public static Material RedSand =  AntimatterAPI.registerIfAbsent(Material.class, "red_sand", () -> new Material(Ref.ID, "red_sand", 0xff8438, NONE).asDust(ROCK));
-    public static Material Sandstone =  AntimatterAPI.registerIfAbsent(Material.class, "sandstone", () -> new Material(Ref.ID, "sandstone", 0xfafac8, NONE).asDust(ROCK));
-    public static Material Blackstone =  AntimatterAPI.registerIfAbsent(Material.class, "blackstone", () -> new Material(Ref.ID, "blackstone", 0x2c272d, NONE).asDust());
-    public static Material BasaltVanilla =  AntimatterAPI.registerIfAbsent(Material.class, "vanilla_basalt", () -> new Material(Ref.ID, "vanilla_basalt", 0x1e1414, NONE));
+    public static Material Gravel =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "gravel", 0xcdcdcd, NONE).asDust(ROCK));
+    public static Material Sand =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "sand", 0xfafac8, NONE).asDust(ROCK));
+    public static Material RedSand =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "red_sand", 0xff8438, NONE).asDust(ROCK));
+    public static Material Sandstone =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "sandstone", 0xfafac8, NONE).asDust(ROCK));
+    public static Material Blackstone =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "blackstone", 0x2c272d, NONE).asDust());
+    public static Material BasaltVanilla =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "vanilla_basalt", 0x1e1414, NONE));
 
-    public static Material Endstone =  AntimatterAPI.registerIfAbsent(Material.class, "endstone", () -> new Material(Ref.ID, "endstone", 0xffffff, NONE).asDust());
-    public static Material Netherrack =  AntimatterAPI.registerIfAbsent(Material.class, "netherrack", () -> new Material(Ref.ID, "netherrack", 0xc80000, NONE).asDust());
+    public static Material Endstone =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "endstone", 0xffffff, NONE).asDust());
+    public static Material Netherrack =  AntimatterAPI.register(Material.class ,new Material(Ref.ID, "netherrack", 0xc80000, NONE).asDust());
 
-    public static StoneType STONE = new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE);
+    public static StoneType STONE =  AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE));
 
-    public static StoneType GRANITE = new StoneType(Ref.ID, "granite", Granite, new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.GRANITE);
-    public static StoneType DIORITE = new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DIORITE);
-    public static StoneType ANDESITE = new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.ANDESITE);
+    public static StoneType GRANITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "granite", Granite, new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.GRANITE));
+    public static StoneType DIORITE =  AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DIORITE));
+    public static StoneType ANDESITE =  AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.ANDESITE));
 
-    public static StoneType GRAVEL = AntimatterAPI.registerIfAbsent(StoneType.class, "gravel", () -> new StoneType(Ref.ID, "gravel", Gravel, new Texture("minecraft", "block/gravel"), SoundType.GROUND, false).setState(Blocks.GRAVEL).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.6F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
-    public static StoneType SAND = AntimatterAPI.registerIfAbsent(StoneType.class, "sand", () -> new StoneType(Ref.ID, "sand", Sand, new Texture("minecraft", "block/sand"), SoundType.SAND, false).setState(Blocks.SAND).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
-    public static StoneType SAND_RED = AntimatterAPI.registerIfAbsent(StoneType.class, "sand_red", () -> new StoneType(Ref.ID, "sand_red", RedSand, new Texture("minecraft", "block/red_sand"), SoundType.SAND, false).setState(Blocks.RED_SAND).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
-    public static StoneType SANDSTONE = AntimatterAPI.registerIfAbsent(StoneType.class, "sandstone", () -> new StoneType(Ref.ID, "sandstone", Sandstone, new Texture("minecraft", "block/sandstone"), SoundType.STONE, false).setState(Blocks.SANDSTONE));
-    public static StoneType BASALT_VANILLA = AntimatterAPI.registerIfAbsent(StoneType.class, "vanilla_basalt", () -> new StoneType(Ref.ID, "vanilla_basalt", BasaltVanilla, new Texture("minecraft", "block/basalt_side"), SoundType.BASALT, false).setState(Blocks.BASALT).setHardnessAndResistance(1.25F, 4.2F));
-    public static StoneType BLACKSTONE = AntimatterAPI.registerIfAbsent(StoneType.class, "blackstone", () -> new StoneType(Ref.ID, "blackstone", Blackstone, new Texture("minecraft", "block/blackstone"), SoundType.STONE, false).setState(Blocks.BLACKSTONE));
+    public static StoneType GRAVEL = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "gravel", Gravel, new Texture("minecraft", "block/gravel"), SoundType.GROUND, false).setState(Blocks.GRAVEL).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.6F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
+    public static StoneType SAND = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "sand", Sand, new Texture("minecraft", "block/sand"), SoundType.SAND, false).setState(Blocks.SAND).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
+    public static StoneType SAND_RED = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "sand_red", RedSand, new Texture("minecraft", "block/red_sand"), SoundType.SAND, false).setState(Blocks.RED_SAND).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
+    public static StoneType SANDSTONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "sandstone", Sandstone, new Texture("minecraft", "block/sandstone"), SoundType.STONE, false).setState(Blocks.SANDSTONE));
+    public static StoneType BASALT_VANILLA = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "vanilla_basalt", BasaltVanilla, new Texture("minecraft", "block/basalt_side"), SoundType.BASALT, false).setState(Blocks.BASALT).setHardnessAndResistance(1.25F, 4.2F));
+    public static StoneType BLACKSTONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "blackstone", Blackstone, new Texture("minecraft", "block/blackstone"), SoundType.STONE, false).setState(Blocks.BLACKSTONE));
 
-    public static StoneType NETHERRACK = AntimatterAPI.registerIfAbsent(StoneType.class, "netherrack", () -> new StoneType(Ref.ID, "netherrack", Netherrack, new Texture("minecraft", "block/netherrack"), SoundType.NETHERRACK, false).setState(Blocks.NETHERRACK).setHardnessAndResistance(0.4F));
-    public static StoneType ENDSTONE = AntimatterAPI.registerIfAbsent(StoneType.class, "endstone", () -> new StoneType(Ref.ID, "endstone", Endstone, new Texture("minecraft", "block/end_stone"), SoundType.STONE, false).setState(Blocks.END_STONE).setHardnessAndResistance(3.0F, 9.0F));
+    public static StoneType NETHERRACK = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "netherrack", Netherrack, new Texture("minecraft", "block/netherrack"), SoundType.NETHERRACK, false).setState(Blocks.NETHERRACK).setHardnessAndResistance(0.4F));
+    public static StoneType ENDSTONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "endstone", Endstone, new Texture("minecraft", "block/end_stone"), SoundType.STONE, false).setState(Blocks.END_STONE).setHardnessAndResistance(3.0F, 9.0F));
 
     static {
         StructureBuilder.addGlobalElement("A", BlockStateElement.AIR);
@@ -315,14 +315,18 @@ public class Data {
             if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
-        LIQUID.all().stream().filter(l -> !l.getId().equals("water") || !l.getId().equals("lava")).forEach(m -> new AntimatterMaterialFluid(Ref.ID, m, LIQUID));
-        GAS.all().forEach(m -> new AntimatterMaterialFluid(Ref.ID, m, GAS));
-        PLASMA.all().forEach(m -> new AntimatterMaterialFluid(Ref.ID, m, PLASMA));
-        AntimatterAPI.all(Material.class, Material::setChemicalFormula);
-        if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) ORE.all().forEach(m -> m.flags(ORE_SMALL));
+
         if (side == Dist.CLIENT) {
             clientBehaviours();
         }
+    }
+
+    public static void postInit(Dist side) {
+        LIQUID.all().stream().filter(l -> !l.getId().equals("water") || !l.getId().equals("lava")).forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.ID, m, LIQUID)));
+        GAS.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.ID, m, GAS)));
+        PLASMA.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.ID, m, PLASMA)));
+        AntimatterAPI.all(Material.class, Material::setChemicalFormula);
+        if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) ORE.all().forEach(m -> m.flags(ORE_SMALL));
     }
 
     private static void clientBehaviours() {

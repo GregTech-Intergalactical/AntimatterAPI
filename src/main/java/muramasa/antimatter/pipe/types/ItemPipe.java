@@ -21,7 +21,7 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
     }
 
     @Override
-    public String getId() {
+    public String getType() {
         return "item";
     }
 

@@ -26,7 +26,7 @@ public class Cable<T extends Cable<T>> extends PipeType<T> {
     }
 
     @Override
-    public String getId() {
+    public String getType() {
         return "cable";
     }
 

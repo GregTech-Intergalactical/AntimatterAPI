@@ -77,15 +77,16 @@ public final class AntimatterAPI {
         }
     }
 
-    public static void register(Class<?> c, String id, String domain, Object o) {
-        synchronized (OBJECTS) {
+    public static <T> T register(Class<?> c, String id, String domain, Object o) {
+       // synchronized (OBJECTS) {
             if (dataDone) {
                 throw new IllegalStateException("Registering after DataDone in AntimatterAPI - badbad!");
             }
-            if (o instanceof IAntimatterObject && !((IAntimatterObject)o).shouldRegister()) return;
-           // if (domain != null && o instanceof ISharedAntimatterObject) {
-           //     throw new IllegalStateException("Shared Antimatterobject registered using non-shared method.");
-           // }
+            if (o instanceof IAntimatterObject && !((IAntimatterObject)o).shouldRegister()) return (T) o;
+            Class clazz = c;
+            if (o instanceof ISharedAntimatterObject && getInternal(clazz, id) != null) {
+                return (T) getInternal(clazz, id);
+            }
             domain = o instanceof ISharedAntimatterObject ? null : domain;
             registerInternal(c, id, domain, o);
             if (o instanceof Block && notRegistered(Block.class, id, domain)) registerInternal(Block.class, id, domain, o);
@@ -94,21 +95,12 @@ public final class AntimatterAPI {
                 String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
                 if (notRegistered(IRegistryEntryProvider.class, changedId, domain)) registerInternal(IRegistryEntryProvider.class, changedId, domain, o);
             }
-        }
+            return (T) o;
+    //    }
     }
 
-    public static void register(Class<?> c, IAntimatterObject o) {
-        register(c, o.getId(), o.getDomain(), o);
-    }
-
-    public static <T extends ISharedAntimatterObject> T registerIfAbsent(Class<? extends T> clazz, String id, Supplier<? extends T> obj) {
-        T o = get(clazz, id);
-        if (o != null) return o;
-        o = obj.get();
-        //the constructor of get() might register.
-        if (get(clazz, id, Ref.ID) == null)
-            register(clazz, id, Ref.ID, o);
-        return o;
+    public static <T> T register(Class<?> c, IAntimatterObject o) {
+        return register(c, o.getId(), o.getDomain(), o);
     }
 
     private static boolean notRegistered(Class<?> c, String id, String domain) {
@@ -133,14 +125,14 @@ public final class AntimatterAPI {
     @Nullable
     public static <T> T get(Class<T> c, String id, String domain) {
         if (!dataDone) {
-            synchronized (OBJECTS) {
+         //   synchronized (OBJECTS) {
                 T obj = getInternal(c, id, domain);
                 if (obj == null) {
                     Class clazz = c;
                     Object o = getInternal(clazz, id);
                     return o == null ? null : c.cast(o);
                 }
-            }
+        //    }
         }
         T obj = getInternal(c, id, domain);
         if (obj == null) {
@@ -164,9 +156,9 @@ public final class AntimatterAPI {
 
     public static <T extends ISharedAntimatterObject> T get(Class<? extends T> c, String id) {
         if (!dataDone) {
-            synchronized (OBJECTS) {
+          //  synchronized (OBJECTS) {
                 return getInternal(c, id);
-            }
+        //    }
         }
         return getInternal(c, id);
     }
@@ -219,9 +211,9 @@ public final class AntimatterAPI {
     public static <T> List<T> all(Class<T> c) {
         if (!dataDone) {
             List<T> list;
-            synchronized (OBJECTS) {
+          //  synchronized (OBJECTS) {
                 list = allInternal(c).collect(Collectors.toList());
-            }
+          //  }
             return list;
         }
         return allInternal(c).collect(Collectors.toList());
@@ -230,9 +222,9 @@ public final class AntimatterAPI {
     public static <T> List<T> all(Class<T> c, String domain) {
         if (!dataDone) {
             List<T> list;
-            synchronized (OBJECTS) {
+            //synchronized (OBJECTS) {
                 list = allInternal(c,domain).collect(Collectors.toList());
-            }
+           // }
             return list;
         }
         return allInternal(c, domain).collect(Collectors.toList());
@@ -250,9 +242,9 @@ public final class AntimatterAPI {
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
         if (!dataDone) {
-            synchronized (OBJECTS) {
+          //  synchronized (OBJECTS) {
                 allInternal(c).forEach(consumer);
-            }
+         //   }
         } else {
             allInternal(c).forEach(consumer);
         }
@@ -260,9 +252,9 @@ public final class AntimatterAPI {
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
         if (!dataDone) {
-            synchronized (OBJECTS) {
+         //   synchronized (OBJECTS) {
                 allInternal(c, domain).forEach(consumer);
-            }
+         //   }
         } else {
             allInternal(c, domain).forEach(consumer);
         }
@@ -270,11 +262,11 @@ public final class AntimatterAPI {
 
     public static <T> void all(Class<T> c, String[] domains, Consumer<T> consumer) {
         if (!dataDone) {
-            synchronized (OBJECTS) {
+           // synchronized (OBJECTS) {
                 for (String domain : domains) {
                     allInternal(c, domain).forEach(consumer);
                 }
-            }
+          //  }
         } else {
             for (String domain : domains) {
                 allInternal(c, domain).forEach(consumer);
