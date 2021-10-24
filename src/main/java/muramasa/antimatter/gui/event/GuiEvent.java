@@ -15,6 +15,10 @@ public enum GuiEvent implements IGuiEvent {
         register();
     }
 
+    public static void init() {
+
+    }
+
     @Override
     public String getId() {
         return id;

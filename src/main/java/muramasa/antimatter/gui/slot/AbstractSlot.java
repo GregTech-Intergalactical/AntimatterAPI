@@ -1,6 +1,7 @@
 package muramasa.antimatter.gui.slot;
 
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.SlotType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,6 +23,22 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
         this.type = type;
         this.holder = tile;
     }
+
+    @Override
+    public void onSlotChange(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
+        super.onSlotChange(oldStackIn, newStackIn);
+        if (this.getItemHandler() instanceof TrackedItemHandler) {
+            ((TrackedItemHandler<?>)this.getItemHandler()).onContentsChanged(this.index);
+        }
+    }
+    @Override
+    public void onSlotChanged() {
+        super.onSlotChanged();
+        if (this.getItemHandler() instanceof TrackedItemHandler) {
+            ((TrackedItemHandler<?>)this.getItemHandler()).onContentsChanged(this.index);
+        }
+    }
+
 
     @Override
     @Nonnull

@@ -53,6 +53,11 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
     }
 
     @Override
+    public void onSlotChanged() {
+
+    }
+
+    @Override
     public void putStack(@Nonnull ItemStack stack) {
         super.putStack(stack);
     }

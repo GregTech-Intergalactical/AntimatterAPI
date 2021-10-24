@@ -83,6 +83,9 @@ public final class AntimatterAPI {
                 throw new IllegalStateException("Registering after DataDone in AntimatterAPI - badbad!");
             }
             if (o instanceof IAntimatterObject && !((IAntimatterObject)o).shouldRegister()) return;
+           // if (domain != null && o instanceof ISharedAntimatterObject) {
+           //     throw new IllegalStateException("Shared Antimatterobject registered using non-shared method.");
+           // }
             domain = o instanceof ISharedAntimatterObject ? null : domain;
             registerInternal(c, id, domain, o);
             if (o instanceof Block && notRegistered(Block.class, id, domain)) registerInternal(Block.class, id, domain, o);

@@ -107,6 +107,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         AntimatterAPI.all(BlockOre.class, providerDomain, o -> {
             if (o.getOreType() != ORE) return;
             if (!o.getMaterial().getSmeltInto().has(INGOT)) return;
+            if (o.getMaterial().needsBlastFurnace()) return;
             Item ingot = INGOT.get(o.getMaterial().getSmeltInto());
             ITag.INamedTag<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
             ITag.INamedTag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(o.getMaterial().getSmeltInto().getId()));
@@ -117,7 +118,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     .addCriterion("has_material_" + o.getMaterial().getId(), hasItem(ingotTag))
                     .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot_smelting")));
         });
-        AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> m.has(RAW_ORE) && m.getSmeltInto().has(INGOT)).forEach(m -> {
+        AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> m.has(RAW_ORE) && m.getSmeltInto().has(INGOT) && !m.needsBlastFurnace()).forEach(m -> {
             AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1).get(), new ItemStack(INGOT.get(m.getSmeltInto()), m.getSmeltingMulti()), 2.0F, 100)
                     .addCriterion("has_material_" + m.getId(), hasItem(INGOT.getMaterialTag(m.getSmeltInto())))
                     .build(consumer, fixLoc(providerDomain, m.getId().concat("_raw_ore_to_ingot")));
