@@ -23,6 +23,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
         this.maxTemp = maxTemp;
         this.gasProof = gasProof;
         material.flags(MaterialTag.FLUIDPIPE);
+        sizes(PipeSize.TINY, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE);
     }
 
     @Override

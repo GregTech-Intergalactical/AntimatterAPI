@@ -18,6 +18,7 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
     public ItemPipe(String domain, Material material) {
         super(domain, material, t -> new TileEntityItemPipe<>(t, false), TileEntityCoveredItemPipe::new);
         material.flags(MaterialTag.ITEMPIPE);
+        sizes(PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE);
     }
 
     @Override
