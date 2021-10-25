@@ -102,6 +102,11 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         return list.toArray(new ItemStack[0]);
     }
 
+    @Nonnull
+    public ResourceLocation getLoc() {
+        return loc;
+    }
+
     @Nullable
     public Tier getGuiTier() {
         return guiTier;

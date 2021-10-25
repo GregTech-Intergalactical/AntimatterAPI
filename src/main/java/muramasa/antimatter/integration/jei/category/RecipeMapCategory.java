@@ -48,7 +48,8 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     //protected static FluidStackRenderer fluidRenderer = new FluidStackRenderer();
     protected static IGuiHelper guiHelper;
 
-    protected String id, title;
+    protected String title;
+    protected final ResourceLocation loc;
     protected IDrawable background, icon;
     protected IDrawableAnimated progressBar;
     protected GuiData gui;
@@ -56,7 +57,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     private final IRecipeInfoRenderer infoRenderer;
 
     public RecipeMapCategory(RecipeMap<?> map, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
-        id = map.getId();
+        loc = map.getLoc();
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getString();
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.dir.getUV();
@@ -84,7 +85,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 
     @Override
     public ResourceLocation getUid() {
-        return new ResourceLocation(Ref.ID, id);
+        return loc;
     }
 
     @Override

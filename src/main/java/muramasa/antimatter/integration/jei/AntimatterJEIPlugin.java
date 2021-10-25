@@ -100,12 +100,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public void registerCategories(IRecipeCategoryRegistration registry) {
         RecipeMapCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
         if (helpers == null) helpers = registry.getJeiHelpers();
-        Set<String> registeredMachineCats = new ObjectOpenHashSet<>();
+        Set<ResourceLocation> registeredMachineCats = new ObjectOpenHashSet<>();
 
         REGISTRY.forEach((id, tuple) -> {
-            if (!registeredMachineCats.contains(tuple.map.getId())) {
+            if (!registeredMachineCats.contains(tuple.map.getLoc())) {
                 registry.addRecipeCategories(new RecipeMapCategory(tuple.map,tuple.gui,tuple.tier,tuple.model));
-                registeredMachineCats.add(tuple.map.getId());
+                registeredMachineCats.add(tuple.map.getLoc());
             }
         });
     }
