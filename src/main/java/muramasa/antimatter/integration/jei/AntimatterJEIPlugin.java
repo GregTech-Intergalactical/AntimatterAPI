@@ -122,7 +122,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
             List<ResourceLocation> list = new LinkedList<>();
             for (int i = 0; i < types.length; i++) {
                 if (!types[i].has(RECIPE)) continue;
-                list.add(new ResourceLocation(Ref.ID, types[i].getRecipeMap().getId()));
+                list.add(types[i].getRecipeMap().getLoc());
             }
             runtime.getRecipesGui().showCategories(list);
         }

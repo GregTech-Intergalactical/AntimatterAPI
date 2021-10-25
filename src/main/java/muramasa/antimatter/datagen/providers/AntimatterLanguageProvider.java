@@ -140,47 +140,50 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
 
         });
 
-        AntimatterAPI.all(IAntimatterArmor.class, domain, t -> {
-            add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
-        });
+        if (domain.equals(Ref.ID)) {
+            AntimatterAPI.all(BlockPipe.class).forEach(s -> {
+                String str = s.getSize().getId();
+                //hmmmm
+                if (str.equals("vtiny")) str = "very tiny";
+                if (s.getType() instanceof Cable){
+                    str = s.getSize().getCableThickness() + "x";
+                }
+                String strd = s.getType().getId().split("_")[0];
+                if (s.getType() instanceof FluidPipe || s.getType() instanceof ItemPipe) {
+                    strd = s.getType().getId() + " Pipe";
+                }
+                add(s,StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1)," ", lowerUnderscoreToUpperSpaced(s.getType().getMaterial().getId())," ",strd.substring(0, 1).toUpperCase() + strd.substring(1)));
+            });
+            AntimatterAPI.all(BlockStone.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
+            AntimatterAPI.all(BlockStoneSlab.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
+            AntimatterAPI.all(BlockStoneStair.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
+            AntimatterAPI.all(BlockStoneWall.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
+            AntimatterAPI.all(AntimatterFluid.class).forEach(s -> {
+                add(s.getAttributes().getTranslationKey(), lowerUnderscoreToUpperSpaced(s.getId()));
+                Item bucket = AntimatterAPI.get(Item.class, s.getId()+ "_bucket", Ref.ID);
+                if (bucket != null) add(bucket, lowerUnderscoreToUpperSpaced(s.getId()) + " Bucket");
+            });
+            AntimatterAPI.all(BlockStorage.class).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
+            AntimatterAPI.all(MaterialItem.class).forEach(item -> {
+                MaterialType<?> type = item.getType();
+                if (type == ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
+                else if (type == CRUSHED) add(item, String.join("", "Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                else if (type == CRUSHED_PURIFIED) add(item, String.join("", "Purified Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                else if (type == CRUSHED_CENTRIFUGED) add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                else {
+                    String[] split = getLocalizedMaterialType(type);
+                    if (split.length > 1) {
+                        if (type.isSplitName()) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
+                        else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[1], " ", split[0]));
+                    } else add(item, String.join("",  getLocalizedType(item.getMaterial())," ", split[0]));
+                }
+            });
+            AntimatterAPI.all(IAntimatterArmor.class, domain, t -> {
+                add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+            });
+        }
 
-        AntimatterAPI.all(BlockStone.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
-        AntimatterAPI.all(BlockStoneSlab.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
-        AntimatterAPI.all(BlockStoneStair.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
-        AntimatterAPI.all(BlockStoneWall.class, domain).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
-        AntimatterAPI.all(BlockPipe.class, domain).forEach(s -> {
-            String str = s.getSize().getId();
-            //hmmmm
-            if (str.equals("vtiny")) str = "very tiny";
-            if (s.getType() instanceof Cable){
-                str = s.getSize().getCableThickness() + "x";
-            }
-            String strd = s.getType().getId();
-            if (s.getType() instanceof FluidPipe || s.getType() instanceof ItemPipe) {
-                strd = s.getType().getId() + " Pipe";
-            }
-            add(s,StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1)," ", lowerUnderscoreToUpperSpaced(s.getType().getMaterial().getId())," ",strd.substring(0, 1).toUpperCase() + strd.substring(1)));
-        });
-        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(s -> {
-            add(s.getAttributes().getTranslationKey(), lowerUnderscoreToUpperSpaced(s.getId()));
-            Item bucket = AntimatterAPI.get(Item.class, s.getId()+ "_bucket", Ref.ID);
-            if (bucket != null) add(bucket, lowerUnderscoreToUpperSpaced(s.getId()) + " Bucket");
-        });
-        AntimatterAPI.all(BlockStorage.class, domain).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
-        AntimatterAPI.all(MaterialItem.class, domain).forEach(item -> {
-            MaterialType<?> type = item.getType();
-            if (type == ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
-            else if (type == CRUSHED) add(item, String.join("", "Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
-            else if (type == CRUSHED_PURIFIED) add(item, String.join("", "Purified Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
-            else if (type == CRUSHED_CENTRIFUGED) add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
-            else {
-                String[] split = getLocalizedMaterialType(type);
-                if (split.length > 1) {
-                    if (type.isSplitName()) add(item, String.join("", split[0], " ", getLocalizedType(item.getMaterial()), " ", split[1]));
-                    else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[1], " ", split[0]));
-                } else add(item, String.join("",  getLocalizedType(item.getMaterial())," ", split[0]));
-            }
-        });
+
 
         AntimatterAPI.all(RecipeMap.class, domain, t -> {
             String id = "jei.category." + t.getId();
