@@ -58,7 +58,7 @@ public class AntimatterDynamics {
         DynamicResourcePack.clearClient();
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.CLIENT) && p.shouldRun())).collect(Collectors.toList());
         long time = System.currentTimeMillis();
-        Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
+        Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());        
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);

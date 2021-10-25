@@ -490,8 +490,8 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, criterionName, criterion, output, inputs, inputPattern);
         if (recipeName.isEmpty()) recipeBuilder.build(consumer);
         else {
-            if (recipeDomain.isEmpty()) recipeBuilder.buildTool(consumer, new ResourceLocation(Ref.ID, builder), recipeName);
-            else recipeBuilder.buildTool(consumer, new ResourceLocation(Ref.ID, builder), fixLoc(recipeDomain, recipeName));
+            if (recipeDomain.isEmpty()) recipeBuilder.buildTool(consumer, builder, recipeName);
+            else recipeBuilder.buildTool(consumer, builder, fixLoc(recipeDomain, recipeName));
         }
     }
 

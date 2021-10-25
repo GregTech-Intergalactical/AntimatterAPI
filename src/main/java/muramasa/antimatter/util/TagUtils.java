@@ -128,11 +128,13 @@ public class TagUtils {
 
     protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
         ITag.INamedTag<T>[] tag = new ITag.INamedTag[1];
-        TAG_MAP.compute(clazz, (k, v) -> {
+        synchronized (TAG_MAP) {
+            TAG_MAP.compute(clazz, (k, v) -> {
             if (v == null) v = new Object2ObjectOpenHashMap<>();
             tag[0] = v.computeIfAbsent(loc, a -> fn.apply(loc.toString()));
             return v;
-        });
+        });}
+
         return tag[0];
     }
 }

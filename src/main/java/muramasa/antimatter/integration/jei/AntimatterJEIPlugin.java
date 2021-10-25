@@ -61,7 +61,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     private static IJeiRuntime runtime;
     private static IJeiHelpers helpers;
-    private static final Object2ObjectMap<String, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
+    private static final Object2ObjectMap<ResourceLocation, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
 
     public AntimatterJEIPlugin() {
         Antimatter.LOGGER.debug("AntimatterJEIPlugin created");
@@ -74,11 +74,11 @@ public class AntimatterJEIPlugin implements IModPlugin {
     }
 
     public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
-        if (REGISTRY.containsKey(map.getId()) && !override) {
+        if (REGISTRY.containsKey(new ResourceLocation(map.getDomain(), map.getId())) && !override) {
             Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
             return;
         }
-        REGISTRY.put(map.getId(), new RegistryValue(map,map.getGui() == null ? gui : map.getGui(),tier,model));//new Tuple<>(map, new Tuple<>(gui, tier)));
+        REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map,map.getGui() == null ? gui : map.getGui(),tier,model));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
     public static IJeiHelpers helpers() {
@@ -113,7 +113,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public void registerRecipes(@Nonnull IRecipeRegistration registration) {
         if (helpers == null) helpers = registration.getJeiHelpers();
         REGISTRY.forEach((id, tuple) -> {
-            registration.addRecipes(tuple.map.getRecipes(true), new ResourceLocation(Ref.ID, id));
+            registration.addRecipes(tuple.map.getRecipes(true), id);
         });
     }
 
@@ -171,7 +171,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
                 mach.getTiers().forEach(t -> {
                     ItemStack stack = new ItemStack(mach.getItem(t));
                     if (!stack.isEmpty()){
-                        registration.addRecipeCatalyst(stack, new ResourceLocation(Ref.ID, id));
+                        registration.addRecipeCatalyst(stack, id);
                     } else {
                         Antimatter.LOGGER.error("machine " + tuple.model + " has an empty item. Did you do the machine correctly?");
                     }

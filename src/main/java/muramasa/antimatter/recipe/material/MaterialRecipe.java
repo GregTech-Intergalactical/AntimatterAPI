@@ -25,7 +25,7 @@ import java.util.Set;
 
 public class MaterialRecipe extends ShapedRecipe {
 
-    private final static Map<Provider, String> IDS = new Object2ObjectOpenHashMap<>();
+    private final static Map<Provider, ResourceLocation> IDS = new Object2ObjectOpenHashMap<>();
 
     public interface Provider {
         ItemBuilder provide(String id);
@@ -38,7 +38,7 @@ public class MaterialRecipe extends ShapedRecipe {
     public static Provider registerProvider(String loc, String domain, Provider obj) {
         if (loc.contains("/")) throw new RuntimeException("invalid input identifier to MaterialRecipe.Provider, contains /");
         AntimatterAPI.register(Provider.class, loc, domain, obj);
-        IDS.put(obj, loc);
+        IDS.put(obj, new ResourceLocation(domain, loc));
         return obj;
     }
 
@@ -56,10 +56,10 @@ public class MaterialRecipe extends ShapedRecipe {
         super(idIn, groupIn, recipeWidthIn, recipeHeightIn, recipeItemsIn, recipeOutputIn.get(0));
         this.materialSlots = ImmutableMap.copyOf(materialSlots);
         this.size = materialSlots.values().stream().mapToInt(Set::size).sum();
-        this.builderId = new ResourceLocation(builderId);
-        ResourceLocation lookup = new ResourceLocation(builderId.split("/")[0]);
-        String[] ids = this.builderId.getPath().split("/");
-        this.builder = Objects.requireNonNull(AntimatterAPI.get(Provider.class, lookup.getPath(), lookup.getNamespace()), "Failed to get builder provider in MaterialRecipe").provide(ids[1]);
+        String[] ids = builderId.split("/");
+        ResourceLocation lookup = new ResourceLocation(ids[0]);
+        this.builderId = lookup;
+        this.builder = Objects.requireNonNull(AntimatterAPI.get(Provider.class, lookup.getPath(), lookup.getNamespace()), "Failed to get builder provider in MaterialRecipe" + builderId).provide(ids[1]);
         this.outputs = recipeOutputIn;
     }
 

@@ -16,6 +16,7 @@ import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -60,7 +61,7 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable, IPipe.IPipeBlock {
+public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable, IPipe.IPipeBlock, ISharedAntimatterObject {
 
     protected T type;
     protected PipeSize size;

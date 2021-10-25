@@ -158,13 +158,13 @@ public class AntimatterShapedRecipeBuilder {
         consumer.accept(new Result(id, this.result.get(0), this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.get(0).getItem().getGroup().getPath() + "/" + id.getPath())));
     }
 
-    public void buildTool(Consumer<IFinishedRecipe> consumer, ResourceLocation builder, String id) {
+    public void buildTool(Consumer<IFinishedRecipe> consumer ,String builder, String id) {
         buildTool(consumer, builder, new ResourceLocation(id));
     }
     /**
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
-    public void buildTool(Consumer<IFinishedRecipe> consumer, ResourceLocation builder, ResourceLocation id) {
+    public void buildTool(Consumer<IFinishedRecipe> consumer, String builder, ResourceLocation id) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem());
         if (id.equals(resourcelocation)) {
             throw new IllegalStateException("Shaped Recipe " + id + " should remove its 'save' argument");
@@ -280,10 +280,10 @@ public class AntimatterShapedRecipeBuilder {
 
     public static class ToolResult extends Result {
 
-        private final ResourceLocation builderId;
+        private final String builderId;
         private final List<ItemStack> result;
 
-        public ToolResult(ResourceLocation builderId, ResourceLocation id, List<ItemStack> result, String group, List<String> pattern, Map<Character, Ingredient> key, Advancement.Builder advBuilder, ResourceLocation advId) {
+        public ToolResult(String builderId, ResourceLocation id, List<ItemStack> result, String group, List<String> pattern, Map<Character, Ingredient> key, Advancement.Builder advBuilder, ResourceLocation advId) {
             super(id, result.get(0), group, pattern, key, advBuilder, advId);
             this.builderId = builderId;
             this.result = result;
@@ -292,7 +292,7 @@ public class AntimatterShapedRecipeBuilder {
         @Override
         public void serialize(JsonObject json) {
             super.serialize(json);
-            json.addProperty("builder", builderId.toString());
+            json.addProperty("builder", builderId);
             JsonArray arr = new JsonArray();
             result.forEach(el -> {
                 JsonObject resultObj = new JsonObject();

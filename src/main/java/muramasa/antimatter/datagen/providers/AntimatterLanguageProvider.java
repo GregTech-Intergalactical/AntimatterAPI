@@ -182,7 +182,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             }
         });
 
-        AntimatterAPI.all(RecipeMap.class, t -> {
+        AntimatterAPI.all(RecipeMap.class, domain, t -> {
             String id = "jei.category." + t.getId();
             add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.','_'),0));
         });
