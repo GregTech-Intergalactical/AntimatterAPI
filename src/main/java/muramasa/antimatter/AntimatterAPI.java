@@ -98,7 +98,7 @@ public final class AntimatterAPI {
         }
     }
 
-    public static <T> T register(Class<?> c, IAntimatterObject o) {
+    public static <T> T register(Class<T> c, IAntimatterObject o) {
         return register(c, o.getId(), o.getDomain(), o);
     }
 
