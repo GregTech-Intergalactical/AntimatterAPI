@@ -1,10 +1,10 @@
 package muramasa.antimatter.capability;
 
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ResourceLocation;
 
@@ -13,42 +13,42 @@ import java.util.function.Consumer;
 
 public interface IGuiHandler {
 
-    default void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
-        //NOOP
+  default void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
+    // NOOP
+  }
+
+  boolean isRemote();
+
+  default void addWidgets(GuiInstance instance, IGuiElement parent) {
+
+  }
+
+  ResourceLocation getGuiTexture();
+
+  default int guiSize() {
+    return 176;
+  }
+
+  default int guiHeight() {
+    return 166;
+  }
+
+  /**
+   * Creates a gui packet, depending on the type of gui handler.
+   * 
+   * @param data the input data.
+   * @return a packet to send.
+   */
+  AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data);
+
+  String handlerDomain();
+
+  interface IHaveWidgets {
+    List<Consumer<GuiInstance>> getCallbacks();
+
+    default IHaveWidgets addGuiCallback(Consumer<GuiInstance> gui) {
+      getCallbacks().add(gui);
+      return this;
     }
-
-    default String getDomain(){
-        return Ref.ID;
-    }
-
-    boolean isRemote();
-
-    default void addWidgets(GuiInstance instance, IGuiElement parent) {
-
-    }
-
-    ResourceLocation getGuiTexture();
-
-    default int guiSize() {
-        return 176;
-    }
-
-    default int guiHeight() {
-        return 166;
-    }
-
-    /**
-     * Creates a gui packet, depending on the type of gui handler.
-     * @param data the input data.
-     * @return a packet to send.
-     */
-    AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data);
-
-    interface IHaveWidgets {
-        List<Consumer<GuiInstance>> getCallbacks();
-        default IHaveWidgets addGuiCallback(Consumer<GuiInstance> gui) {
-            getCallbacks().add(gui);
-            return this;
-        }
-    }
+  }
 }

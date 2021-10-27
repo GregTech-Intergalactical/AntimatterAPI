@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.widget;
 
+import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -22,20 +23,20 @@ public class IOWidget extends AbstractSwitchWidget {
     private boolean fluidState = false;
 
     protected IOWidget(GuiInstance instance, IGuiElement parent, int x, int y, int w, int h) {
-        super(instance, parent, new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, false);
+        super(instance, parent, new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), ButtonOverlay.INPUT_OUTPUT, IOWidget::handler, false);
         this.setX(x);
         this.setY(y);
         this.setW(w);
         this.setH(h);
         ContainerMachine<?> m = (ContainerMachine<?>) instance.container;
         if (m.getTile().getMachineType().has(ITEM)) {
-            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvent.ITEM_EJECT, 0).setSize(26, 0, w, h).buildAndAdd(instance, this);
+            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvent.ITEM_EJECT, 0).setSize(26, 0, w, h).buildAndAdd(instance, this);
             item.setEnabled(false);
             item.setStateHandler(wid -> itemState);
             item.setDepth(depth() + 1);
         }
         if (m.getTile().getMachineType().has(FLUID)) {
-            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.getDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvent.FLUID_EJECT, 0).setSize(44, 0, w, h).buildAndAdd(instance, this);
+            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvent.FLUID_EJECT, 0).setSize(44, 0, w, h).buildAndAdd(instance, this);
             fluid.setStateHandler(wid -> fluidState);
             fluid.setEnabled(false);
             fluid.setDepth(depth() + 1);
@@ -47,9 +48,9 @@ public class IOWidget extends AbstractSwitchWidget {
         super.init();
         ContainerMachine<?> m = (ContainerMachine<?>) gui.container;
         if (item != null)
-            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputItems(t.getOutputCover())).orElse(false)), this::setItem);
+            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> ((CoverOutput)t.getOutputCover()).shouldOutputItems()).orElse(false)), this::setItem);
         if (fluid != null)
-            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> COVEROUTPUT.shouldOutputFluids(t.getOutputCover())).orElse(false)), this::setFluid);
+            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> ((CoverOutput)t.getOutputCover()).shouldOutputFluids()).orElse(false)), this::setFluid);
     }
 
     @Override

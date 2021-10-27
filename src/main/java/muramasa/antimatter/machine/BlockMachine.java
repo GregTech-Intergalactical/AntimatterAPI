@@ -5,7 +5,9 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.cover.CoverStack;
+
+import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -156,7 +158,9 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                 if (ty.isSuccessOrConsume()) return ty;
                 if (hand == Hand.MAIN_HAND) {
                     if (player.getHeldItem(hand).getItem() instanceof IHaveCover) {
-                        boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,Utils.getInteractSide(hit)).map(i -> i.placeCover(player,Utils.getInteractSide(hit),stack,((IHaveCover) stack.getItem()).getCover())).orElse(false);
+                        CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
+                        Direction dir = Utils.getInteractSide(hit);
+                        boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY,Utils.getInteractSide(hit)).map(i -> i.placeCover(player,Utils.getInteractSide(hit),stack,factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
                         if (ok) {
                             return ActionResultType.SUCCESS;
                         }
@@ -188,9 +192,9 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                             }
                         }
                     } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
-                        CoverStack<?> instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(COVER_EMPTY);
+                        ICover instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(ICover.empty);
                         if (!player.isCrouching()) {
-                            if (!instance.isEmpty() && instance.getCover().hasGui() && instance.openGui(player, hit.getFace())) {
+                            if (!instance.isEmpty() && instance.openGui(player, hit.getFace())) {
                                 Utils.damageStack(stack, player);
                                 return ActionResultType.SUCCESS;
                             }
@@ -364,21 +368,21 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                 if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y){
                     Direction horizontalFacing = state.get(HORIZONTAL_FACING);
                     return config.set(new int[] {
-                            h.get(DOWN).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, DOWN, facing), facing), machineState) : 0,
-                            h.get(UP).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, UP, facing), facing), machineState) : 0,
-                            h.get(NORTH).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, NORTH, facing), facing), machineState) : 0,
-                            h.get(SOUTH).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, SOUTH, facing), facing), machineState) : 0,
-                            h.get(WEST).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, WEST, facing), facing), machineState) : 0,
-                            h.get(EAST).skipRender() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, EAST, facing), facing), machineState) : 0
+                            h.get(DOWN).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, DOWN, facing), facing), machineState) : 0,
+                            h.get(UP).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, UP, facing), facing), machineState) : 0,
+                            h.get(NORTH).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, NORTH, facing), facing), machineState) : 0,
+                            h.get(SOUTH).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, SOUTH, facing), facing), machineState) : 0,
+                            h.get(WEST).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, WEST, facing), facing), machineState) : 0,
+                            h.get(EAST).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, EAST, facing), facing), machineState) : 0
                     });
                 }
                 return config.set(new int[] {
-                    h.get(DOWN).skipRender() ? getModelId(facing, DOWN, machineState) : 0,
-                    h.get(UP).skipRender() ? getModelId(facing, UP, machineState) : 0,
-                    h.get(NORTH).skipRender() ? getModelId(facing, Utils.coverRotateFacing(NORTH,facing), machineState) : 0,
-                    h.get(SOUTH).skipRender() ? getModelId(facing, Utils.coverRotateFacing(SOUTH,facing), machineState) : 0,
-                    h.get(WEST).skipRender() ? getModelId(facing, Utils.coverRotateFacing(WEST,facing), machineState) : 0,
-                    h.get(EAST).skipRender() ? getModelId(facing, Utils.coverRotateFacing(EAST,facing), machineState) : 0
+                    h.get(DOWN).isEmpty() ? getModelId(facing, DOWN, machineState) : 0,
+                    h.get(UP).isEmpty() ? getModelId(facing, UP, machineState) : 0,
+                    h.get(NORTH).isEmpty() ? getModelId(facing, Utils.coverRotateFacing(NORTH,facing), machineState) : 0,
+                    h.get(SOUTH).isEmpty() ? getModelId(facing, Utils.coverRotateFacing(SOUTH,facing), machineState) : 0,
+                    h.get(WEST).isEmpty() ? getModelId(facing, Utils.coverRotateFacing(WEST,facing), machineState) : 0,
+                    h.get(EAST).isEmpty() ? getModelId(facing, Utils.coverRotateFacing(EAST,facing), machineState) : 0
                 });
             } else {
                 if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y){

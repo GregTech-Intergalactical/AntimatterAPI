@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -34,18 +35,16 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                     type.getOutputCover() == COVERENERGY ? 2 : 0, type.getOutputCover() == COVERDYNAMO ? 1 : 0) {
                 @Override
                 public boolean canInput(Direction direction) {
-                    Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
+                    ICover out = tile.coverHandler.map(MachineCoverHandler::getOutputCover).orElse(null);
                     if (out == null) return false;
-                    ICover o = tile.getMachineType().getOutputCover();
-                    return o.equals(COVERENERGY) && direction == out;
+                    return out.isEqual(COVERENERGY) && direction == out.side();
                 }
 
                 @Override
                 public boolean canOutput(Direction direction) {
-                    Direction out = tile.coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(null);
+                    ICover out = tile.coverHandler.map(MachineCoverHandler::getOutputCover).orElse(null);
                     if (out == null) return false;
-                    ICover o = tile.getMachineType().getOutputCover();
-                    return o.equals(COVERDYNAMO) && direction == out;
+                    return out.isEqual(COVERDYNAMO) && direction == out.side();
                 }
             });
         }
@@ -89,7 +88,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     public void onFirstTick() {
         super.onFirstTick();
         coverHandler.ifPresent(t -> {
-            COVEROUTPUT.setEjects(t.get(t.getOutputFacing()), has(FLUID), has(ITEM));
+            ((CoverOutput)t.getOutputCover()).setEjects(has(FLUID), has(ITEM));
         });
     }
 

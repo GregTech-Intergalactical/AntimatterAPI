@@ -3,7 +3,8 @@ package muramasa.antimatter.client.baked;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
-import muramasa.antimatter.cover.CoverStack;
+
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -41,8 +42,8 @@ public class MachineBakedModel extends CoveredBakedModel {
                 if (!(tile instanceof TileEntityMachine)) return quads;
                 TileEntityMachine<?> t = (TileEntityMachine) tile;
                 MachineCoverHandler<?> covers = t.coverHandler.orElse(null);
-                CoverStack<?> c = covers == null ? null : covers.get(side);
-                if (c == null || c.skipRender()) {
+                ICover c = covers == null ? null : covers.get(side);
+                if (c == null || c.isEmpty()) {
                     TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, Utils.dirFromState(state), data.getData(AntimatterProperties.MACHINE_STATE));
                     quads = t.multiTexturer.getValue().getQuads("machine", quads, state, t, key, side.getIndex(), data);
                     assert quads.size() == 0 || quads.get(0).getFace() == side;

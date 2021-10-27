@@ -1,8 +1,7 @@
 package muramasa.antimatter.item;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.cover.CoverTiered;
-import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.machine.Tier;
 
@@ -10,28 +9,28 @@ import java.util.Objects;
 
 public class ItemCover extends ItemBasic<ItemCover> implements IHaveCover {
 
-    private ICover cover;
+    private final CoverFactory cover;
 
-    public ItemCover(String domain, String id, Properties properties) {
-        super(domain, id, properties);
-    }
+    private final Tier tier;
 
     public ItemCover(String domain, String id) {
         super(domain, id);
-        cover = Objects.requireNonNull(AntimatterAPI.get(ICover.class, this.getId(), this.getDomain()));
-        if (cover instanceof CoverTiered) {
-            throw new RuntimeException("Invalid non-tiered cover instantiation");
-        }
-        cover.setItem(this);
-    }
-
-    public ICover getCover() {
-        return cover;
+        cover = Objects.requireNonNull(AntimatterAPI.get(CoverFactory.class, id, this.getDomain()));
+        this.tier = null;
     }
 
     public ItemCover(String domain, String id, Tier tier) {
         super(domain, id + "_" + tier.getId());
-        cover = Objects.requireNonNull(AntimatterAPI.get(ICover.class, this.getId(), this.getDomain()));
-        cover.setItem(this);
+        cover = Objects.requireNonNull(AntimatterAPI.get(CoverFactory.class, id, this.getDomain()));
+        this.tier = tier;
+    }
+
+    @Override
+    public Tier getTier() {
+        return tier;
+    }
+
+    public CoverFactory getCover() {
+        return cover;
     }
 }

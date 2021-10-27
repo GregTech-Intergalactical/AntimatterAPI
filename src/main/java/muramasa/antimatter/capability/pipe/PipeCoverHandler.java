@@ -1,7 +1,7 @@
 package muramasa.antimatter.capability.pipe;
 
 import muramasa.antimatter.capability.CoverHandler;
-import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.util.Direction;
 
@@ -13,7 +13,7 @@ public class PipeCoverHandler<T extends TileEntityPipe<?>> extends CoverHandler<
     }
 
     @Override
-    public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack, boolean sync) {
+    public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
         boolean ok = super.set(side, old, stack, sync);
         if (ok && sync) {
             boolean anyEmpty = this.covers.values().stream().anyMatch(t -> !t.isEmpty());

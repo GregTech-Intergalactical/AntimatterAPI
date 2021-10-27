@@ -1,33 +1,37 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.util.Direction;
 import tesseract.api.capability.TesseractGTCapability;
 
+import javax.annotation.Nullable;
+
 public class CoverDynamo extends BaseCover {
 
-    public CoverDynamo(String id) {
-        super(id);
-        register();
-    }
-    @Override
-    public String getId() {
-        return id;
-    }
+  public CoverDynamo(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+    super(source, tier, side, factory);
+  }
 
-    @Override
-    protected String getRenderId() {
-        return "dynamo";
-    }
+  @Override
+  public String getId() {
+    return id;
+  }
 
-    @Override
-    public boolean ticks() {
-        return false;
-    }
+  @Override
+  protected String getRenderId() {
+    return "dynamo";
+  }
 
-    @Override
-    public void onPlace(CoverStack<?> instance, Direction side) {
-        super.onPlace(instance, side);
-        ((TileEntityMachine<?>)instance.getTile()).invalidateCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
-    }
+  @Override
+  public boolean ticks() {
+    return false;
+  }
+
+  @Override
+  public void onPlace() {
+    super.onPlace();
+    ((TileEntityMachine<?>) handler.getTile()).invalidateCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
+  }
 }

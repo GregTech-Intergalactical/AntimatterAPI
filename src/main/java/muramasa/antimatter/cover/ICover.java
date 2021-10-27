@@ -1,11 +1,14 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
-import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -14,8 +17,10 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -27,55 +32,155 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicModelProvider {
+public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedContainerProvider, IGuiHandler {
     ResourceLocation PIPE_COVER_MODEL = new ResourceLocation(Ref.ID, "block/cover/cover_pipe");
+    ICover empty = new ICover() {
+        @Override
+        public Direction side() {
+            return null;
+        }
 
-    default void onPlace(CoverStack<?> instance, Direction side) {
+        @Override
+        public CoverFactory getFactory() {
+            return emptyFactory;
+        }
+
+        @Override
+        public void deserialize(CompoundNBT nbt) {
+
+        }
+
+        @Override
+        public CompoundNBT serialize() {
+            return new CompoundNBT();
+        }
+
+        @Override
+        public ItemStack getItem() {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public ICoverHandler<?> source() {
+            return null;
+        }
+
+        @Override
+        public boolean isRemote() {
+            return false;
+        }
+
+        @Override
+        public ResourceLocation getGuiTexture() {
+            return null;
+        }
+
+        @Override
+        public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
+            return null;
+        }
+
+        @Override
+        public ResourceLocation getModel(String type, Direction dir, Direction facing) {
+            return null;
+        }
+
+        @Override
+        public Texture[] getTextures() {
+            return new Texture[0];
+        }
+
+        @Override
+        public void setTextures(BiConsumer<String, Texture> texer) {
+
+        }
+
+        @Nullable
+        @Override
+        public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+            return null;
+        }
+    };
+    CoverFactory emptyFactory = CoverFactory.builder((a, b, c, d) -> empty).build(Ref.ID, "none");
+
+    default void onPlace() {
 
     }
 
+    @Nonnull
+    default ITextComponent getDisplayName() {
+        return new StringTextComponent(Utils.underscoreToUpperCamel(this.getId()));
+    }
+
+    default void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
+        // NOOP
+    }
+
+    Direction side();
+
+    default ResourceLocation getLoc() {
+        return new ResourceLocation(getDomain(), getId());
+    }
+
+    @Override
+    default String getId() {
+        return getFactory().getId();
+    }
+
+    CoverFactory getFactory();
+
+    default Tier getTier() {
+        return null;
+    }
+
     // Called right after the cover being removed from the tile.
-    default void onRemove(CoverStack<?> instance, Direction side) {
+    default void onRemove() {
 
     }
 
     // Called on update of the world.
-    default void onUpdate(CoverStack<?> instance, Direction side) {
+    default void onUpdate() {
 
     }
 
-    default void onBlockUpdate(CoverStack<?> instance, Direction side) {
+    default void onBlockUpdate() {
 
     }
 
-    default void onMachineEvent(CoverStack<?> instance, TileEntityMachine<?> tile, IMachineEvent event, int... data) {
+    @Override
+    default String handlerDomain() {
+        return getDomain();
+    }
+
+    default void onMachineEvent(TileEntityMachine<?> tile, IMachineEvent event, int... data) {
         // NOOP
     }
 
-    default void onGuiEvent(CoverStack<?> instance, IGuiEvent event, PlayerEntity player, int... data) {
-        // NOOP
+    default boolean hasGui() {
+        return false;
     }
 
-    default boolean openGui(CoverStack<?> instance, PlayerEntity player, Direction side) {
+    default boolean openGui(PlayerEntity player, Direction side) {
         if (!hasGui())
             return false;
-        NetworkHooks.openGui((ServerPlayerEntity) player, instance, packetBuffer -> {
-            packetBuffer.writeBlockPos(instance.getTile().getPos());
+        NetworkHooks.openGui((ServerPlayerEntity) player, this, packetBuffer -> {
+            packetBuffer.writeBlockPos(this.source().getTile().getPos());
             packetBuffer.writeInt(side.getIndex());
         });
         player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 2.0f);
         return true;
     }
 
-    default int getWeakPower(CoverStack<?> instance, Direction side) {
+    default int getWeakPower() {
         return 0;
     }
 
-    default int getStrongPower(CoverStack<?> instance, Direction side) {
+    default int getStrongPower() {
         return 0;
     }
 
@@ -83,8 +188,7 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
      * Fires once per Side. Return defines whether or not to consume the
      * interaction.
      **/
-    default boolean onInteract(CoverStack<?> instance, PlayerEntity player, Hand hand, Direction side,
-                               @Nullable AntimatterToolType type) {
+    default boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
         // Do not consume behaviour per default.
         return false;
     }
@@ -93,50 +197,44 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
         return true;
     }
 
-    void deserialize(CoverStack<?> stack, CompoundNBT nbt);
+    void deserialize(CompoundNBT nbt);
 
-    void serialize(CoverStack<?> stack, CompoundNBT nbt);
+    CompoundNBT serialize();
 
-    Item getItem();
-
-    boolean hasGui();
-
-    GuiData getGui();
+    ItemStack getItem();
 
     // Stack is not guaranteed to contain a real tile and side is nullable.
-    default <T> boolean blocksCapability(CoverStack<?> stack, Capability<T> cap, @Nullable Direction side) {
+    default <T> boolean blocksCapability(Capability<T> cap, @Nullable Direction side) {
         return false;
     }
 
-    default <T> boolean blocksInput(CoverStack<?> stack, Capability<T> cap, @Nullable Direction side) {
+    default <T> boolean blocksInput(Capability<T> cap, @Nullable Direction side) {
         return false;
     }
 
-    default <T> boolean blocksOutput(CoverStack<?> stack, Capability<T> cap, @Nullable Direction side) {
+    default <T> boolean blocksOutput(Capability<T> cap, @Nullable Direction side) {
         return false;
-    }
-
-    /**
-     * No guarantee to be implemented. Override the item of this cover.
-     *
-     * @param item the item to set.
-     */
-    default void setItem(Item item) {
-
-    }
-
-    default ITextComponent getDisplayName() {
-        return new StringTextComponent(Utils.underscoreToUpperCamel(this.getId()));
     }
 
     void setTextures(BiConsumer<String, Texture> texer);
 
     default ItemStack getDroppedStack() {
-        return getItem() == null ? ItemStack.EMPTY : new ItemStack(getItem(), 1);
+        return getItem();
     }
 
     default boolean isEqual(ICover cover) {
-        return this == cover;
+        return this.getLoc().equals(cover.getLoc());
+    }
+
+    //Does not consider Tier.
+    default boolean isEqual(CoverFactory fac) {
+        return this.getLoc().equals(new ResourceLocation(fac.domain, fac.getId()));
+    }
+
+    ICoverHandler<?> source();
+
+    default GuiData getGui() {
+        return null;
     }
 
     default List<BakedQuad> transformQuads(BlockState state, List<BakedQuad> quads) {
@@ -147,6 +245,10 @@ public interface ICover extends IAntimatterObject, ITextureProvider, IDynamicMod
          * t.getTintIndex())); }); }
          */
         return quads;
+    }
+
+    default boolean isEmpty() {
+        return this == empty;
     }
 
     /**

@@ -121,7 +121,7 @@ public class ButtonWidget extends Widget {
     }
 
     public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.getDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0))))).clientSide();
+        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0))))).clientSide();
     }
 
 }

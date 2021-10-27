@@ -5,7 +5,7 @@ import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.cover.CoverStack;
+
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
-import static muramasa.antimatter.Data.COVERNONE;
 
 public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHandler<T> implements IMachineHandler, Dispatch.Sided<ICoverHandler> {
     public MachineCoverHandler(T tile) {
@@ -28,19 +27,17 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
         Arrays.stream(Ref.DIRS).forEach(d -> {
             Direction facing = getTileFacing();
             Direction newDir = Utils.coverRotateFacing(d, facing);
-            //Don't use set(), it calls onPlace which might call into Tesseract.
-            CoverStack<T> cover = new CoverStack<T>(tile.getMachineType().defaultCover(newDir), tile, d);
-            covers.put(d, cover);
-            buildLookup(COVERNONE, cover.getCover(), d);
+            covers.put(d, tile.getMachineType().defaultCover(newDir).get().get(this, null, d, tile.getMachineType().defaultCover(newDir)));
+            buildLookup(ICover.emptyFactory, tile.getMachineType().defaultCover(newDir), d);
         });
     }
 
     public Direction getOutputFacing() {
-        return lookupSingle(getTile().getMachineType().getOutputCover().getClass());
+        return lookupSingle(getTile().getMachineType().getOutputCover());
     }
 
-    public CoverStack<T> getOutputCover() {
-        return get(lookupSingle(getTile().getMachineType().getOutputCover().getClass()));
+    public ICover getOutputCover() {
+        return get(lookupSingle(getTile().getMachineType().getOutputCover()));
     }
 
     public boolean setOutputFacing(PlayerEntity entity, Direction side) {
@@ -56,14 +53,14 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     }
 
     @Override
-    public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack, boolean sync) {
+    public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
         return super.set(side, old, stack, sync);
     }
 
     @Override
     protected boolean canRemoveCover(ICover cover) {
-        return !getTile().getMachineType().getOutputCover().isEqual(cover);
+        return getTile().getMachineType().getOutputCover() != ICover.emptyFactory;
     }
 
     @Override
@@ -78,12 +75,11 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
 
     @Override
     public boolean isValid(@Nonnull Direction side, @Nonnull ICover replacement) {
-        if (!validCovers.contains(replacement.getId())) return false;
+        if (!validCovers.contains(replacement.getLoc())) return false;
         if (side == getOutputFacing()) return false;
-        return (get(side).isEmpty() && !(replacement == COVERNONE)) || super.isValid(side, replacement);
+        return (get(side).isEmpty() && !replacement.isEmpty()) || super.isValid(side, replacement);
     }
 
-    @Override
     public Direction getTileFacing() {
         return getTile().getFacing();
     }

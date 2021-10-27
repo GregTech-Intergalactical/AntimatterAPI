@@ -51,6 +51,8 @@ import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -82,7 +84,10 @@ public class Data {
     public static MaterialTypeItem<?> GEM_BRITTLE = new MaterialTypeItem<>("gem_brittle", 2, true, Ref.U);
     public static MaterialTypeItem<?> GEM_POLISHED = new MaterialTypeItem<>("gem_polished", 2, true, Ref.U);
     public static MaterialTypeItem<?> LENS = new MaterialTypeItem<>("lens", 2, true, Ref.U * 3 / 4);
-    public static MaterialTypeItem<?> PLATE = new MaterialTypeItem<>("plate", 2, true, Ref.U, (a,b,c) -> new CoverMaterialItem(a,b,new CoverPlate(a, b, c),c));
+    public static MaterialTypeItem<?> PLATE = new MaterialTypeItem<>("plate", 2, true, Ref.U, (a,b,c) -> {
+        CoverFactory factory = CoverFactory.builder((u,v,t,w) -> new CoverPlate(u,v,t,w, b, c)).item((u,v) -> new CoverMaterialItem(u.getDomain(),b, u, c).getDefaultInstance()).build(Ref.ID, "plate_" + c.getId());
+        return (MaterialItem) factory.getItem().getItem();
+    });
     public static MaterialTypeItem<?> PLATE_DENSE = new MaterialTypeItem<>("plate_dense", 2, true, Ref.U * 9);
     public static MaterialTypeItem<?> PLATE_TINY = new MaterialTypeItem<>("plate_tiny", 2, true, Ref.U / 8);
     public static MaterialTypeItem<?> ROD = new MaterialTypeItem<>("rod", 2, true, Ref.U2);
@@ -254,15 +259,11 @@ public class Data {
 
     //public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
-    public static BaseCover COVERNONE = new CoverNone(); //TODO: deal with default? Singleton of Cover&CoverInstance is not done.
-    public static CoverOutput COVEROUTPUT = new CoverOutput();
-    public static ICover COVERINPUT = new CoverInput();
-    public static ICover COVERMUFFLER = new CoverMuffler();
-    public static ICover COVERDYNAMO = new CoverDynamo("dynamo");
-    public static ICover COVERENERGY = new CoverEnergy();
-
-    public static CoverStack<?> COVER_EMPTY = new CoverStack<>(COVERNONE);
-    public static CoverStack<?> COVER_OUTPUT = new CoverStack<>(COVEROUTPUT);
+    public static CoverFactory COVEROUTPUT = CoverFactory.builder(CoverOutput::new).addTextures(new Texture(Ref.ID, "block/cover/output")).build(Ref.ID, "output");
+    public static CoverFactory COVERINPUT = CoverFactory.builder(CoverInput::new).addTextures(new Texture(Ref.ID, "block/cover/input")).build(Ref.ID, "input");
+    public static CoverFactory COVERMUFFLER = CoverFactory.builder(CoverMuffler::new).addTextures(new Texture(Ref.ID, "block/cover/muffler")).build(Ref.ID, "muffler");
+    public static CoverFactory COVERDYNAMO = CoverFactory.builder(CoverDynamo::new).addTextures(new Texture(Ref.ID, "block/cover/dynamo")).build(Ref.ID, "dynamo");
+    public static CoverFactory COVERENERGY = CoverFactory.builder(CoverEnergy::new).addTextures(new Texture(Ref.ID, "block/cover/energy")).build(Ref.ID, "energy");
 
     public static BlockProxy PROXY_INSTANCE = new BlockProxy(Ref.ID, "proxy", AbstractBlock.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 1.0f).notSolid());
 
@@ -280,7 +281,7 @@ public class Data {
     public static MenuHandlerCover<ContainerCover> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
         @Override
         public ContainerCover getMenu(IGuiHandler tile, PlayerInventory playerInv, int windowId) {
-            return new ContainerCover((CoverStack<?>) tile, playerInv, this, windowId);
+            return new ContainerCover((ICover) tile, playerInv, this, windowId);
         }
     };
 

@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability;
 
-import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,11 +17,9 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
     /** Getters/Setters **/
     boolean set(Direction side, ICover cover, boolean sync);
 
-    CoverStack<T> get(Direction side);
+    ICover get(Direction side);
 
-    CoverStack<?>[] getAll();
-
-    Direction getTileFacing();
+    ICover[] getAll();
 
     T getTile();
 
@@ -45,7 +42,7 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
      */
     boolean removeCover(PlayerEntity player, Direction side, boolean onlyRemove);
 
-    boolean hasCover(Direction side, ICover cover);
+    boolean hasCover(Class<? extends ICover> clazz);
 
     boolean isValid(Direction side, ICover replacement);
 

@@ -8,7 +8,7 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
-import muramasa.antimatter.cover.CoverNone;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
@@ -37,7 +37,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.Set;
 
-import static muramasa.antimatter.Data.COVERNONE;
 
 public class ClientHandler implements IProxyHandler {
 
@@ -56,8 +55,8 @@ public class ClientHandler implements IProxyHandler {
         eventBus.addListener(ClientHandler::onModelRegistry);
         eventBus.addListener(AntimatterTextureStitcher::onTextureStitch);
 
-        AntimatterTextureStitcher.addStitcher(event -> AntimatterAPI.all(ICover.class).forEach(cover -> {
-            if (cover instanceof CoverNone || cover == COVERNONE) return;
+        AntimatterTextureStitcher.addStitcher(event -> AntimatterAPI.all(CoverFactory.class).forEach(cover -> {
+            if (cover == ICover.emptyFactory) return;
             for (ResourceLocation r : cover.getTextures()) {
                 event.accept(r);
             }

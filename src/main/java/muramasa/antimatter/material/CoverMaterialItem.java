@@ -1,5 +1,6 @@
 package muramasa.antimatter.material;
 
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
 import net.minecraft.client.util.ITooltipFlag;
@@ -13,20 +14,20 @@ import java.util.List;
 
 public class CoverMaterialItem extends MaterialItem implements IHaveCover {
 
-    protected final ICover cover;
+    protected final CoverFactory cover;
 
-    public CoverMaterialItem(String domain, MaterialType<?> type, Material material, ICover cover, Properties properties) {
+    public CoverMaterialItem(String domain, MaterialType<?> type, Material material, CoverFactory cover, Properties properties) {
         super(domain, type, material, properties);
         this.cover = cover;
     }
 
-    public CoverMaterialItem(String domain, MaterialType<?> type,ICover cover, Material material) {
+    public CoverMaterialItem(String domain, MaterialType<?> type, CoverFactory cover, Material material) {
         super(domain, type, material);
         this.cover = cover;
     }
 
     @Override
-    public ICover getCover() {
+    public CoverFactory getCover() {
         return cover;
     }
 

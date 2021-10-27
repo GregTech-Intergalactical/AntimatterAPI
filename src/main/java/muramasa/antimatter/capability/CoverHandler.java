@@ -9,7 +9,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
-import muramasa.antimatter.cover.CoverStack;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
@@ -17,10 +17,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -39,19 +36,16 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     private final LazyOptional<ICoverHandler<T>> handler = LazyOptional.of(() -> this);
 
     private final T tile;
-    protected final Object2ObjectMap<Direction, CoverStack<T>> covers = new Object2ObjectOpenHashMap<>(6);
-    protected final Object2ObjectMap<Class<?>, Set<Direction>> reverseLookup = new Object2ObjectOpenHashMap<>(6);
-    protected List<String> validCovers = new ObjectArrayList<>();
+    protected final Object2ObjectMap<Direction, ICover> covers = new Object2ObjectOpenHashMap<>(6);
+    protected final Object2ObjectMap<CoverFactory, Set<Direction>> reverseLookup = new Object2ObjectOpenHashMap<>(6);
+    protected List<ResourceLocation> validCovers = new ObjectArrayList<>();
     public Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
     public CoverHandler(T tile, ICover... validCovers) {
         this.tile = tile;
-        this.validCovers.add(Data.COVERNONE.getId());
-        Arrays.stream(validCovers).forEach(c -> this.validCovers.add(c.getId()));
-        Arrays.stream(Ref.DIRS).forEach(d -> {
-            covers.put(d, new CoverStack<>(Data.COVERNONE, tile, d));
-            buildLookup(COVERNONE, COVERNONE, d);
-        });
+        this.validCovers.add(new ResourceLocation(ICover.empty.getDomain(), ICover.empty.getId()));
+        Arrays.stream(validCovers).forEach(c -> this.validCovers.add(new ResourceLocation(c.getDomain(), c.getId())));
+        Arrays.stream(Ref.DIRS).forEach(t -> this.set(t, ICover.empty, false));
         coverTexturer = new HashMap<>(6);//LazyHolder.of(() -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
     }
 
@@ -62,16 +56,15 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     @Override
     public boolean set(Direction side, @Nonnull ICover newCover, boolean sync) {
-        CoverStack<T> old = covers.get(side);
-        CoverStack<T> stack = new CoverStack<>(newCover, getTile(), side);
-        return set(side, old, stack, sync);
+        ICover old = covers.getOrDefault(side, ICover.empty);
+        return set(side, old, newCover, sync);
     }
 
-    public boolean set(Direction side, CoverStack<T> old, CoverStack<T> stack, boolean sync) {
+    public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
         covers.put(side, stack); //Emplace newCover, calls onPlace!
-        buildLookup(old.getCover(),stack.getCover(), side);
-        old.onRemove(side);
-        stack.onPlace(side);
+        buildLookup(old.getFactory(),stack.getFactory(), side);
+        old.onRemove();
+        stack.onPlace();
         if (tile.getWorld() != null && sync) {
             sync();
         }
@@ -90,41 +83,36 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         }
     }
 
-    protected void buildLookup(ICover oldCover, ICover newCover, Direction dir) {
-        reverseLookup.compute(oldCover.getClass(), (k,v) -> {
+    protected void buildLookup(CoverFactory oldCover, CoverFactory newCover, Direction dir) {
+        reverseLookup.compute(oldCover, (k,v) -> {
             if (v == null) v = new ObjectOpenHashSet<>();
             v.remove(dir);
             return v;
         });
-        reverseLookup.compute(newCover.getClass(), (k,v) -> {
+        reverseLookup.compute(newCover, (k,v) -> {
             if (v == null) v = new ObjectOpenHashSet<>();
             v.add(dir);
             return v;
         });
     }
 
-    public Set<Direction> lookup(Class<?> c) {
+    public Set<Direction> lookup(CoverFactory c) {
         return reverseLookup.get(c);
     }
     @Nullable
-    public Direction lookupSingle(Class<?> c) {
+    public Direction lookupSingle(CoverFactory c) {
         Set<Direction> set = reverseLookup.get(c);
         if (set != null && set.size() == 1) return set.iterator().next();
         return null;
     }
 
     @Override
-    public CoverStack<T> get(Direction side) {
-        return covers.getOrDefault(side, (CoverStack<T>) COVER_EMPTY); //Should never return null, as COVER_NONE is inserted for every direction
+    public ICover get(Direction side) {
+        return covers.getOrDefault(side, ICover.empty); //Should never return null, as COVER_NONE is inserted for every direction
     }
 
-    public CoverStack<?>[] getAll() {
-        return covers.values().toArray(new CoverStack[0]);
-    }
-
-    @Override
-    public Direction getTileFacing() {
-        return Direction.NORTH;
+    public ICover[] getAll() {
+        return covers.values().toArray(new ICover[0]);
     }
 
     @Override
@@ -136,13 +124,13 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     @Override
     public void onUpdate() {
         covers.forEach((s, c) -> {
-           if (c.getCover().ticks()) { c.getCover().onUpdate(c, s);};
+           if (c.ticks()) { c.onUpdate();};
         });
     }
 
     @Override
     public void onRemove() {
-        covers.forEach((s, c) -> c.onRemove(s));
+        covers.forEach((s, c) -> c.onRemove());
     }
 
     @Override
@@ -159,9 +147,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     @Override
     public boolean removeCover(PlayerEntity player, Direction side, boolean onlyRemove) {
-        ICover oldCover = get(side).getCover();
+        ICover oldCover = get(side);
         if (!onlyRemove && !canRemoveCover(oldCover)) return false;
-        if (get(side).isEmpty() || !set(side, Data.COVERNONE, !onlyRemove)) return false;
+        if (get(side).isEmpty() || !set(side, ICover.empty, !onlyRemove)) return false;
         if (!onlyRemove && !player.isCreative()) player.dropItem(oldCover.getDroppedStack(), false);
         if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != ELECTRIC_WRENCH){
             player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
@@ -176,13 +164,13 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public boolean hasCover(@Nonnull Direction side, @Nonnull ICover cover) {
-        return get(side).isEqual(cover);
+    public boolean hasCover(Class<? extends ICover> clazz) {
+        return this.reverseLookup.containsKey(clazz);
     }
 
     @Override
     public boolean isValid(@Nonnull Direction side, @Nonnull ICover replacement) {
-        return (get(side).isEmpty() || replacement.isEqual(Data.COVERNONE)) && validCovers.contains(replacement.getId());
+        return (get(side).isEmpty() || replacement.isEqual(ICover.empty)) && validCovers.contains(replacement.getId());
     }
 
     @Override
@@ -192,10 +180,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         covers.forEach((s, c) -> {
             if (!c.isEmpty()) { //Don't store EMPTY covers unnecessarily
                 sides[0] |= (1 << s.getIndex());
-                CompoundNBT nbt = c.serialize();
-                nbt.putString(Ref.TAG_MACHINE_COVER_ID, c.getId());
-                nbt.putString(Ref.TAG_MACHINE_COVER_DOMAIN, c.getDomain());
-                tag.put(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(s.getIndex())), nbt);
+                CoverFactory.writeCover(tag, c);
             }
         });
         tag.putByte(Ref.TAG_MACHINE_COVER_SIDE, sides[0]);
@@ -207,14 +192,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
-                CompoundNBT cover = nbt.getCompound(Ref.TAG_MACHINE_COVER_NAME.concat(Integer.toString(i)));
-                CoverStack<T> c = new CoverStack<>(AntimatterAPI.get(ICover.class, cover.getString(Ref.TAG_MACHINE_COVER_ID), cover.getString(Ref.TAG_MACHINE_COVER_DOMAIN)), tile, Ref.DIRS[i]);
-                c.deserialize(cover);
-                buildLookup(covers.get(Ref.DIRS[i]).getCover(), c.getCover(), Ref.DIRS[i]);
-                covers.put(Ref.DIRS[i], c);
-            } else {
-                buildLookup(covers.get(Ref.DIRS[i]).getCover(),COVERNONE, Ref.DIRS[i]);
-                covers.put(Ref.DIRS[i], new CoverStack<>(Data.COVERNONE, this.tile, Ref.DIRS[i]));
+                ICover cover = CoverFactory.readCover(this, Direction.byIndex(i), nbt);
+                buildLookup(ICover.emptyFactory, cover.getFactory(), Ref.DIRS[i]);
+                covers.put(Ref.DIRS[i], cover);
             }
         }
         World w = tile.getWorld();
@@ -225,19 +205,18 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
         return handler.cast();
     }
 
     @Override
     public boolean moveCover(PlayerEntity entity,Direction oldSide, Direction newSide) {
         //Have to move the entire stack, due to possible tag data.
-        CoverStack<T> newStack = get(newSide);
-        CoverStack<T> oldStack = get(oldSide);
+        ICover newStack = get(newSide);
+        ICover oldStack = get(oldSide);
         if (!newStack.isEmpty() || oldStack.isEmpty()) return false;
-        CoverStack<T> toPlace = new CoverStack<>(oldStack, newSide);
         if (!removeCover(entity, oldSide, true)) return false;
-        boolean ok = set(newSide,newStack, toPlace, true);
+        boolean ok = set(newSide,newStack, newStack, true);
         if (ok) {
             sync();
         }
@@ -250,9 +229,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
      * @return a boolean whether or not capability was blocked.
      */
     public <U> boolean blocksCapability(Capability<U> capability, Direction side) {
-        CoverStack<?> stack = get(side);
-        if (stack.isEmpty()) return false;
-        return stack.getCover().blocksCapability(stack, capability, side);
+        ICover stack = get(side);
+        if (stack == null) return false;
+        return stack.blocksCapability(capability, side);
     }
 
     /**
@@ -260,7 +239,6 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
      * @return list.
      */
     public List<ItemStack> getDrops() {
-        return this.covers.values().stream().filter(t -> !t.getCover().getDroppedStack().isEmpty()).map(t ->
-            t.getCover().getDroppedStack()).collect(Collectors.toList());
+        return this.covers.values().stream().map(ICover::getDroppedStack).filter(droppedStack -> !droppedStack.isEmpty()).collect(Collectors.toList());
     }
 }

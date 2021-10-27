@@ -44,7 +44,7 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        if (coverHandler != null && coverHandler.get(side).getCover().blocksInput(coverHandler.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
+        if (coverHandler != null && coverHandler.get(side).blocksInput(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
             return 0;
         }
         if (!fluidHandler.canInput(resource, side) || !fluidHandler.canInput(side)){
@@ -56,7 +56,7 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
-        if (coverHandler != null && coverHandler.get(side).getCover().blocksOutput(coverHandler.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
+        if (coverHandler != null && coverHandler.get(side).blocksOutput(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
             return FluidStack.EMPTY;
         }
         if (!fluidHandler.canOutput(side)) return FluidStack.EMPTY;
@@ -66,7 +66,7 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
-        if (coverHandler != null && coverHandler.get(side).getCover().blocksOutput(coverHandler.get(side), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
+        if (coverHandler != null && coverHandler.get(side).blocksOutput(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)){
             return FluidStack.EMPTY;
         }
         if (!fluidHandler.canOutput(side)) return FluidStack.EMPTY;

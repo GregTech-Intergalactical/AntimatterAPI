@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.slot.ISlotProvider;
@@ -46,7 +47,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.Data.COVERNONE;
 import static muramasa.antimatter.Data.COVEROUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
@@ -64,7 +64,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
-    protected ICover[] DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,COVEROUTPUT,COVERNONE,COVERNONE};
+    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,COVEROUTPUT,ICover.emptyFactory,ICover.emptyFactory};
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -91,7 +91,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean frontIO = false;
 
     /** Covers **/
-    protected ICover outputCover = COVEROUTPUT;
+    protected CoverFactory outputCover = COVEROUTPUT;
 
     /** Slots **/
     private final Map<String, Object2IntOpenHashMap<SlotType<?>>> countLookup = new Object2ObjectOpenHashMap<>();
@@ -152,12 +152,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @param cover the cover.
      * @return this.
      */
-    public T setOutputCover(ICover cover) {
+    public T setOutputCover(CoverFactory cover) {
         this.outputCover = cover;
         return (T) this;
     }
 
-    public ICover getOutputCover() {
+    public CoverFactory getOutputCover() {
         return outputCover;
     }
 
@@ -186,15 +186,15 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 *               6 covers configures all covers.
      * @return this
      */
-    public T covers(ICover... covers) {
+    public T covers(CoverFactory... covers) {
         if (covers == null) {
-            setOutputCover(COVERNONE);
-            this.DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,COVERNONE,COVERNONE,COVERNONE};
+            setOutputCover(ICover.emptyFactory);
+            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory};
             return (T) this;
         }
         if (covers.length == 1) {
             setOutputCover(covers[0]);
-            this.DEFAULT_COVERS = new ICover[]{COVERNONE,COVERNONE,COVERNONE,covers[0],COVERNONE,COVERNONE};
+            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,covers[0],ICover.emptyFactory,ICover.emptyFactory};
         } else {
             this.DEFAULT_COVERS = covers;
         }
@@ -202,11 +202,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T noCovers() {
-        covers((ICover[])null);
+        covers((CoverFactory[])null);
         return (T) this;
     }
 
-    public ICover defaultCover(Direction dir) {
+    public CoverFactory defaultCover(Direction dir) {
         return DEFAULT_COVERS[dir.getIndex()];
     }
 

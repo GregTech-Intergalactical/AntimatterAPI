@@ -6,7 +6,8 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.BaseCover;
-import muramasa.antimatter.cover.CoverStack;
+
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
@@ -55,7 +56,7 @@ public class PipeBakedModel extends DynamicBakedModel {
     if (side == null) {
       for (Direction dir : Ref.DIRS) {
         Texture tex = ((BlockPipe<?>) state.getBlock()).getFace();
-        CoverStack<?> c = covers.get(dir);
+        ICover c = covers.get(dir);
         if (c.isEmpty())
           continue;
         // Depth model only causes z fighting of sizes larger than tiny.
@@ -65,8 +66,8 @@ public class PipeBakedModel extends DynamicBakedModel {
             quads.remove(index);
           }
         }
-        coverQuads = covers.getTexturer(side).getQuads("pipe", coverQuads, state, c.getCover(),
-            new BaseCover.DynamicKey(dir, tex, c.getCover().getId()), dir.getIndex(), data);
+        coverQuads = covers.getTexturer(side).getQuads("pipe", coverQuads, state, c,
+            new BaseCover.DynamicKey(dir, tex, c.getId()), dir.getIndex(), data);
       }
     }
     quads.addAll(coverQuads);

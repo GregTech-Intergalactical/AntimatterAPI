@@ -5,7 +5,6 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
-import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -70,6 +69,11 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     @Override
+    public String handlerDomain() {
+        return getPipeType().domain;
+    }
+
+    @Override
     public void onLoad() {
         if (isServerSide()) {
             getWrapper().registerConnector(getWorld(), getPos().toLong(), this);
@@ -79,7 +83,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getPos(), neighbor);
-        coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate(facing));
+        coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
     }
 
     public void ofState(BlockState state) {
@@ -200,8 +204,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Override
     public boolean registerAsNode() {
         return this.coverHandler.map(t -> {
-            for (CoverStack<?> coverStack : t.getAll()) {
-                if (coverStack.getCover().ticks()) return true;
+            for (ICover coverStack : t.getAll()) {
+                if (coverStack.ticks()) return true;
             }
             return false;
         }).orElse(false);
@@ -237,8 +241,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
      * @param stack       the new coverstack, can be empty.
      * @return if the tile was updated.
      */
-    public boolean onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, CoverStack<? extends TileEntityPipe> old, CoverStack<? extends TileEntityPipe> stack) {
-        if (stack.getCover().blocksCapability(stack, getCapability(), side)) {
+    public boolean onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, ICover old, ICover stack) {
+        if (stack.blocksCapability(getCapability(), side)) {
             this.clearConnection(side);
         }
         if (this instanceof ITickablePipe) {
@@ -265,14 +269,14 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     public ICover[] getValidCovers() {
-        return AntimatterAPI.all(ICover.class).stream().filter(t -> !t.blocksCapability(new CoverStack<>(t), getCapability(), null)).toArray(ICover[]::new);
+        return AntimatterAPI.all(ICover.class).stream().filter(t -> !t.blocksCapability(getCapability(), null)).toArray(ICover[]::new);
     }
 
-    public CoverStack<?>[] getAllCovers() {
-        return coverHandler.map(CoverHandler::getAll).orElse(new CoverStack[0]);
+    public ICover[] getAllCovers() {
+        return coverHandler.map(CoverHandler::getAll).orElse(new ICover[0]);
     }
 
-    public CoverStack<?> getCover(Direction side) {
+    public ICover getCover(Direction side) {
         return coverHandler.map(h -> h.get(side)).orElse(null);
     }
 

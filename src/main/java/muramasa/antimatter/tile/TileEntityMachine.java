@@ -10,7 +10,6 @@ import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
-import muramasa.antimatter.cover.CoverStack;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -202,7 +201,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getPos(), neighbor);
-        coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate(facing));
+        coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
     }
 
     public void ofState(@Nonnull BlockState state) {
@@ -283,14 +282,14 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     public int getWeakRedstonePower(Direction facing) {
         if (facing != null && !this.getCover(facing).isEmpty()) {
-            return this.getCover(facing).getWeakPower(facing);
+            return this.getCover(facing).getWeakPower();
         }
         return 0;
     }
 
     public int getStrongRedstonePower(Direction facing) {
         if (facing != null && !this.getCover(facing).isEmpty()) {
-            return this.getCover(facing).getStrongPower(facing);
+            return this.getCover(facing).getStrongPower();
         }
         return 0;
     }
@@ -336,7 +335,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     public boolean wrenchMachine(PlayerEntity player, BlockRayTraceResult res, boolean crouch) {
-        if (crouch || getMachineType().getOutputCover() == Data.COVERNONE) {
+        if (crouch || getMachineType().getOutputCover() == ICover.emptyFactory) {
             //Machine has no output
             return setFacing(player, Utils.getInteractSide(res));
         }
@@ -357,10 +356,16 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return new TileGuiEventPacket(event, getPos(), data);
     }
 
+    @Override
+    public String handlerDomain() {
+        return getDomain();
+    }
+
     // TODO: Fix
     public Direction getOutputFacing() {
-        if (type.getOutputCover() != null && type.getOutputCover() != Data.COVERNONE) {
-            return coverHandler.map(MachineCoverHandler::getOutputFacing).orElse(getFacing().getOpposite());
+        if (type.getOutputCover() != null && !(type.getOutputCover() == ICover.emptyFactory) && coverHandler.isPresent()) {
+            Direction dir = coverHandler.get().getOutputFacing();
+            return dir == null ? getFacing().getOpposite() : dir;
         }
         return null;
     }
@@ -438,8 +443,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return AntimatterAPI.all(ICover.class).toArray(new ICover[0]);
     }
 
-    public CoverStack<?> getCover(Direction side) {
-        return coverHandler.map(h -> h.get(side)).orElse(null);
+    public ICover getCover(Direction side) {
+        return coverHandler.map(h -> h.get(side)).orElse(ICover.empty);
     }
 
     @Nonnull

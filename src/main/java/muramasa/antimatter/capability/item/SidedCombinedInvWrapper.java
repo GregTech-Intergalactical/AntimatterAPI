@@ -23,14 +23,14 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (coverHandler != null && coverHandler.get(side).getCover().blocksInput(coverHandler.get(side), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)) return stack;
+        if (coverHandler != null && coverHandler.get(side).blocksInput(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)) return stack;
         return super.insertItem(slot, stack, simulate);
     }
 
     @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if (coverHandler != null && coverHandler.get(side).getCover().blocksOutput(coverHandler.get(side), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)) return ItemStack.EMPTY;
+        if (coverHandler != null && coverHandler.get(side).blocksOutput(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)) return ItemStack.EMPTY;
         return super.extractItem(slot, amount, simulate);
     }
 }

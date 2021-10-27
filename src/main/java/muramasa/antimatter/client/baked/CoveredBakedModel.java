@@ -5,7 +5,8 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.cover.BaseCover;
-import muramasa.antimatter.cover.CoverStack;
+
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.util.Utils;
@@ -46,11 +47,11 @@ public class CoveredBakedModel extends AttachableBakedModel {
     Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE)
         ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(side)
         : data.getData(AntimatterProperties.MACHINE_TEXTURE).apply(side);
-    CoverStack<?> c = covers.get(side);
+    ICover c = covers.get(side);
     if (c.isEmpty())
       return quads;
-    quads = covers.getTexturer(side).getQuads("cover", quads, state, c.getCover(),
-        new BaseCover.DynamicKey(Utils.dirFromState(state), tex, c.getCover().getId()), side.getIndex(),
+    quads = covers.getTexturer(side).getQuads("cover", quads, state, c,
+        new BaseCover.DynamicKey(Utils.dirFromState(state), tex, c.getId()), side.getIndex(),
         data);
     return quads;
   }

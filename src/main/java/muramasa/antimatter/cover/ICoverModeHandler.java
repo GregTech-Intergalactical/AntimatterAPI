@@ -1,7 +1,7 @@
 package muramasa.antimatter.cover;
 
 public interface ICoverModeHandler {
-    ICoverMode getCoverMode(CoverStack<?> stack);
+    ICoverMode getCoverMode();
 
     default int getOverlayX(){
         return 176;

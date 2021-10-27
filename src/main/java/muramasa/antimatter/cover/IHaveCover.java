@@ -1,5 +1,11 @@
 package muramasa.antimatter.cover;
 
+import muramasa.antimatter.machine.Tier;
+
 public interface IHaveCover {
-    ICover getCover();
+    CoverFactory getCover();
+
+    default Tier getTier() {
+        return null;
+    }
 }

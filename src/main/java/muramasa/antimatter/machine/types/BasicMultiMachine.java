@@ -2,6 +2,7 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.widget.ProgressWidget;
@@ -37,7 +38,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setTile(() -> new TileEntityBasicMultiMachine<>(this));
         addFlags(MULTI, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);
-        covers((ICover[]) null);
+        covers((CoverFactory []) null);
         this.baseTexture((type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});
     }
 
