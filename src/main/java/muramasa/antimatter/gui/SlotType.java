@@ -8,6 +8,7 @@ import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -20,12 +21,7 @@ import java.util.function.BiPredicate;
 
 public class SlotType<T extends Slot> implements IAntimatterObject {
 
-    public static SlotType<SlotInput> IT_IN = new SlotType<>("item_in", (type, gui, inv, i, d) -> new SlotInput(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> {
-        if (t instanceof TileEntityMachine) {
-            return (((TileEntityMachine<?>) t).recipeHandler.map(rh -> rh.accepts(i)).orElse(true));
-        }
-        return true;
-    }, ContentEvent.ITEM_INPUT_CHANGED, true, false);
+    public static SlotType<SlotInput> IT_IN = new SlotType<>("item_in", (type, gui, inv, i, d) -> new SlotInput(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), new ItIn(), ContentEvent.ITEM_INPUT_CHANGED, true, false);
 
     public static SlotType<SlotOutput> IT_OUT = new SlotType<>("item_out", (type, gui, inv, i, d) -> new SlotOutput(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> false, ContentEvent.ITEM_OUTPUT_CHANGED, false, true);
     public static SlotType<SlotFake> DISPLAY = new SlotType<>("display", (type, gui, item, i, d) -> new SlotFake(type, gui, item.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY(), false), (t, i) -> false, ContentEvent.ITEM_INPUT_CHANGED, false, false);
@@ -79,5 +75,16 @@ public class SlotType<T extends Slot> implements IAntimatterObject {
 
     public static void init(){
 
+    }
+
+    public static class ItIn implements BiPredicate<IGuiHandler, ItemStack>{
+
+        @Override
+        public boolean test(IGuiHandler iGuiHandler, ItemStack stack) {
+            if (iGuiHandler instanceof TileEntityMachine) {
+                return (((TileEntityMachine<?>) iGuiHandler).recipeHandler.map(rh -> rh.accepts(stack)).orElse(true));
+            }
+            return true;
+        }
     }
 }
