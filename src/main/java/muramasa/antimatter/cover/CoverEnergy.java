@@ -10,27 +10,27 @@ import javax.annotation.Nullable;
 
 public class CoverEnergy extends BaseCover {
 
-  public CoverEnergy(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
-    super(source, tier, side, factory);
-  }
+    public CoverEnergy(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+        super(source, tier, side, factory);
+    }
 
-  @Override
-  public String getId() {
-    return "energy";
-  }
-  // @Override
-  // public ResourceLocation getModel(Direction dir, Direction facing) {
-  // return getBasicModel();
-  // }
+    @Override
+    public String getId() {
+        return "energy";
+    }
+    // @Override
+    // public ResourceLocation getModel(Direction dir, Direction facing) {
+    // return getBasicModel();
+    // }
 
-  @Override
-  public boolean ticks() {
-    return false;
-  }
+    @Override
+    public boolean ticks() {
+        return false;
+    }
 
-  @Override
-  public void onPlace() {
-    super.onPlace();
-    ((TileEntityMachine<?>) handler.getTile()).invalidateCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
-  }
+    @Override
+    public void onPlace() {
+        super.onPlace();
+        ((TileEntityMachine<?>) handler.getTile()).invalidateCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
+    }
 }

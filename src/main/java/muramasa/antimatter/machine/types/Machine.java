@@ -64,7 +64,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
-    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,COVEROUTPUT,ICover.emptyFactory,ICover.emptyFactory};
+    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory};
 
     /** Recipe Members **/
     protected RecipeMap<?> recipeMap;
@@ -90,7 +90,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean allowVerticalFacing = false;
     protected boolean frontIO = false;
 
-    /** Covers **/
+    /**
+     * Covers
+     **/
     protected CoverFactory outputCover = COVEROUTPUT;
 
     /** Slots **/
@@ -149,6 +151,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Sets the output cover fort his machine, which is per default placed on the opposite side of the machine
      * upon placement.
+     *
      * @param cover the cover.
      * @return this.
      */
@@ -181,20 +184,21 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /**
      * Allows you to configure default covers.
+     *
      * @param covers if null, disable covers. (Icover[] null, not 1 null cover)
-*               1 cover sets 1 cover + output
-*               6 covers configures all covers.
+     *               1 cover sets 1 cover + output
+     *               6 covers configures all covers.
      * @return this
      */
     public T covers(CoverFactory... covers) {
         if (covers == null) {
             setOutputCover(ICover.emptyFactory);
-            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory};
+            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory};
             return (T) this;
         }
         if (covers.length == 1) {
             setOutputCover(covers[0]);
-            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory,ICover.emptyFactory,ICover.emptyFactory,covers[0],ICover.emptyFactory,ICover.emptyFactory};
+            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, covers[0], ICover.emptyFactory, ICover.emptyFactory};
         } else {
             this.DEFAULT_COVERS = covers;
         }

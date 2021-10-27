@@ -2,7 +2,6 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 

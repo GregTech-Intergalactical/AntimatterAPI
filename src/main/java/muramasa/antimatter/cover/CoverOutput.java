@@ -94,9 +94,9 @@ public class CoverOutput extends CoverInput {
     if (adjTile == null)
       return;
     adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputDir.getOpposite())
-        .ifPresent(adjHandler -> {
-          tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler, false));
-        });
+            .ifPresent(adjHandler -> {
+              tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler, false));
+            });
   }
 
   protected void processFluidOutput() {
@@ -105,9 +105,9 @@ public class CoverOutput extends CoverInput {
     if (adjTile == null)
       return;
     adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, outputDir.getOpposite())
-        .ifPresent(adjHandler -> {
-          tile.fluidHandler.ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h.getOutputTanks(), 1000, true));
-        });
+            .ifPresent(adjHandler -> {
+              tile.fluidHandler.ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h.getOutputTanks(), 1000, true));
+            });
   }
 
   @Override

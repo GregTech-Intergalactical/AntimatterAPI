@@ -21,7 +21,8 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.Data.COVERDYNAMO;
+import static muramasa.antimatter.Data.COVERENERGY;
 import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
@@ -88,7 +89,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     public void onFirstTick() {
         super.onFirstTick();
         coverHandler.ifPresent(t -> {
-            ((CoverOutput)t.getOutputCover()).setEjects(has(FLUID), has(ITEM));
+            ((CoverOutput) t.getOutputCover()).setEjects(has(FLUID), has(ITEM));
         });
     }
 

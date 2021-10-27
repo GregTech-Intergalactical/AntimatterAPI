@@ -5,7 +5,6 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.cover.BaseCover;
-
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -41,18 +40,18 @@ public class CoveredBakedModel extends AttachableBakedModel {
     if (tile == null)
       return quads;
     CoverHandler<?> covers = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, side)
-        .filter(t -> t instanceof CoverHandler).map(t -> (CoverHandler) t).orElse(null);
+            .filter(t -> t instanceof CoverHandler).map(t -> (CoverHandler) t).orElse(null);
     if (covers == null)
       return quads;
     Texture tex = data.hasProperty(AntimatterProperties.MULTI_MACHINE_TEXTURE)
-        ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(side)
-        : data.getData(AntimatterProperties.MACHINE_TEXTURE).apply(side);
+            ? data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(side)
+            : data.getData(AntimatterProperties.MACHINE_TEXTURE).apply(side);
     ICover c = covers.get(side);
     if (c.isEmpty())
       return quads;
     quads = covers.getTexturer(side).getQuads("cover", quads, state, c,
-        new BaseCover.DynamicKey(Utils.dirFromState(state), tex, c.getId()), side.getIndex(),
-        data);
+            new BaseCover.DynamicKey(Utils.dirFromState(state), tex, c.getId()), side.getIndex(),
+            data);
     return quads;
   }
 }

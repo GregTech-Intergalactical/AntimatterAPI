@@ -9,24 +9,24 @@ import javax.annotation.Nullable;
 
 public class CoverMuffler extends BaseCover {
 
-  public CoverMuffler(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
-    super(source, tier, side, factory);
-  }
+    public CoverMuffler(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+        super(source, tier, side, factory);
+    }
 
-  @Override
-  public String getId() {
-    return "muffler";
-  }
+    @Override
+    public String getId() {
+        return "muffler";
+    }
 
-  @Override
-  public ResourceLocation getModel(String type, Direction dir, Direction facing) {
-    if (type.equals("pipe"))
-      return PIPE_COVER_MODEL;
-    return getBasicModel();
-  }
+    @Override
+    public ResourceLocation getModel(String type, Direction dir, Direction facing) {
+        if (type.equals("pipe"))
+            return PIPE_COVER_MODEL;
+        return getBasicModel();
+    }
 
-  @Override
-  public boolean ticks() {
-    return false;
-  }
+    @Override
+    public boolean ticks() {
+        return false;
+    }
 }

@@ -1,7 +1,6 @@
 package muramasa.antimatter.cover;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
@@ -71,7 +70,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
       this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
       gui.setEnablePlayerSlots(true);
       this.addGuiCallback(t -> t
-          .addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
+              .addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
     } else {
       this.gui = null;
     }

@@ -4,8 +4,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
@@ -29,7 +27,8 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
+import static muramasa.antimatter.Data.WRENCH;
 
 public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
@@ -62,7 +61,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
         covers.put(side, stack); //Emplace newCover, calls onPlace!
-        buildLookup(old.getFactory(),stack.getFactory(), side);
+        buildLookup(old.getFactory(), stack.getFactory(), side);
         old.onRemove();
         stack.onPlace();
         if (tile.getWorld() != null && sync) {
@@ -84,12 +83,12 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     protected void buildLookup(CoverFactory oldCover, CoverFactory newCover, Direction dir) {
-        reverseLookup.compute(oldCover, (k,v) -> {
+        reverseLookup.compute(oldCover, (k, v) -> {
             if (v == null) v = new ObjectOpenHashSet<>();
             v.remove(dir);
             return v;
         });
-        reverseLookup.compute(newCover, (k,v) -> {
+        reverseLookup.compute(newCover, (k, v) -> {
             if (v == null) v = new ObjectOpenHashSet<>();
             v.add(dir);
             return v;
@@ -99,6 +98,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     public Set<Direction> lookup(CoverFactory c) {
         return reverseLookup.get(c);
     }
+
     @Nullable
     public Direction lookupSingle(CoverFactory c) {
         Set<Direction> set = reverseLookup.get(c);
@@ -124,7 +124,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     @Override
     public void onUpdate() {
         covers.forEach((s, c) -> {
-           if (c.ticks()) { c.onUpdate();};
+            if (c.ticks()) {
+                c.onUpdate();
+            }
         });
     }
 
@@ -195,6 +197,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
                 ICover cover = CoverFactory.readCover(this, Direction.byIndex(i), nbt);
                 buildLookup(ICover.emptyFactory, cover.getFactory(), Ref.DIRS[i]);
                 covers.put(Ref.DIRS[i], cover);
+            } else {
+                buildLookup(covers.get(Ref.DIRS[i]).getFactory(), ICover.emptyFactory, Ref.DIRS[i]);
+                covers.put(Ref.DIRS[i], ICover.empty);
             }
         }
         World w = tile.getWorld();
@@ -216,7 +221,10 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         ICover oldStack = get(oldSide);
         if (!newStack.isEmpty() || oldStack.isEmpty()) return false;
         if (!removeCover(entity, oldSide, true)) return false;
-        boolean ok = set(newSide,newStack, newStack, true);
+        CoverFactory factory = oldStack.getFactory();
+        ICover copy = factory.get().get(this, oldStack.getTier(), newSide, factory);
+        copy.deserialize(oldStack.serialize());
+        boolean ok = set(newSide, newStack, copy, true);
         if (ok) {
             sync();
         }

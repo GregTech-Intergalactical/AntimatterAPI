@@ -14,32 +14,32 @@ import javax.annotation.Nullable;
 public abstract class CoverMaterial extends BaseCover {
 
 
-  public CoverMaterial(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
-    super(source, tier, side, factory);
-  }
-
-  public abstract MaterialType<?> getType();
-
-  public abstract Material getMaterial();
-
-  @Override
-  public <T> boolean blocksCapability(Capability<T> cap, Direction side) {
-    return side != null;
-  }
-
-  @Override
-  public void onRemove() {
-    TileEntity tile = handler.getTile();
-    if (tile instanceof TileEntityMachine) {
-      ((TileEntityMachine) tile).refreshCaps();
+    public CoverMaterial(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+        super(source, tier, side, factory);
     }
-  }
 
-  @Override
-  public void onPlace() {
-    TileEntity tile = handler.getTile();
-    if (tile instanceof TileEntityMachine) {
-      ((TileEntityMachine) tile).refreshCaps();
+    public abstract MaterialType<?> getType();
+
+    public abstract Material getMaterial();
+
+    @Override
+    public <T> boolean blocksCapability(Capability<T> cap, Direction side) {
+        return side != null;
     }
-  }
+
+    @Override
+    public void onRemove() {
+        TileEntity tile = handler.getTile();
+        if (tile instanceof TileEntityMachine) {
+            ((TileEntityMachine) tile).refreshCaps();
+        }
+    }
+
+    @Override
+    public void onPlace() {
+        TileEntity tile = handler.getTile();
+        if (tile instanceof TileEntityMachine) {
+            ((TileEntityMachine) tile).refreshCaps();
+        }
+    }
 }

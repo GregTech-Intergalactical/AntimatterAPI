@@ -3,7 +3,6 @@ package muramasa.antimatter.client.baked;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
-
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.texture.Texture;

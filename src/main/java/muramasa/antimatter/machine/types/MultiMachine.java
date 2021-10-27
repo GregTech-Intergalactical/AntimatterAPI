@@ -2,7 +2,6 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 
@@ -12,7 +11,7 @@ public class MultiMachine extends BasicMultiMachine<MultiMachine> {
         super(domain, name);
         setTile(() -> new TileEntityMultiMachine<>(this));
         setGUI(Data.MULTI_MENU_HANDLER);
-        covers((CoverFactory [])null);
+        covers((CoverFactory[]) null);
     }
 
     @Override

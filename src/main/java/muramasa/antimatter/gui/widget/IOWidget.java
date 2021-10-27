@@ -9,7 +9,6 @@ import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
 
-import static muramasa.antimatter.Data.COVEROUTPUT;
 import static muramasa.antimatter.machine.MachineFlag.FLUID;
 import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
@@ -48,9 +47,9 @@ public class IOWidget extends AbstractSwitchWidget {
         super.init();
         ContainerMachine<?> m = (ContainerMachine<?>) gui.container;
         if (item != null)
-            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> ((CoverOutput)t.getOutputCover()).shouldOutputItems()).orElse(false)), this::setItem);
+            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> ((CoverOutput) t.getOutputCover()).shouldOutputItems()).orElse(false)), this::setItem);
         if (fluid != null)
-            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> ((CoverOutput)t.getOutputCover()).shouldOutputFluids()).orElse(false)), this::setFluid);
+            gui.syncBoolean(() -> (m.getTile().coverHandler.map(t -> ((CoverOutput) t.getOutputCover()).shouldOutputFluids()).orElse(false)), this::setFluid);
     }
 
     @Override

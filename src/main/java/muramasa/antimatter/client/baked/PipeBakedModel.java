@@ -6,7 +6,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.BaseCover;
-
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import muramasa.antimatter.pipe.BlockPipe;
@@ -67,7 +66,7 @@ public class PipeBakedModel extends DynamicBakedModel {
           }
         }
         coverQuads = covers.getTexturer(side).getQuads("pipe", coverQuads, state, c,
-            new BaseCover.DynamicKey(dir, tex, c.getId()), dir.getIndex(), data);
+                new BaseCover.DynamicKey(dir, tex, c.getId()), dir.getIndex(), data);
       }
     }
     quads.addAll(coverQuads);

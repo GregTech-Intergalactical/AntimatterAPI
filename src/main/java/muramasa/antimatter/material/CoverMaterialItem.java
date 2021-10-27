@@ -1,7 +1,6 @@
 package muramasa.antimatter.material;
 
 import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;

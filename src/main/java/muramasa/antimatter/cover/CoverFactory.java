@@ -56,7 +56,7 @@ public class CoverFactory implements IAntimatterObject {
      return textures == null ? () -> Collections.emptyIterator() : textures;
   }
   public ItemStack getItem() {
-    return itemStack;
+    return itemStack == null ? ItemStack.EMPTY : itemStack;
     
   }
 
@@ -165,6 +165,7 @@ public class CoverFactory implements IAntimatterObject {
         factory.setItems(map);
       }
       if (gui) factory.setHasGui();
+      if (textures != null) factory.addTextures(textures);
       return factory;
     }
 

@@ -8,9 +8,9 @@ import javax.annotation.Nullable;
 
 public abstract class CoverTintable extends BaseCover {
 
-  public CoverTintable(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
-    super(source, tier, side, factory);
-  }
+    public CoverTintable(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+        super(source, tier, side, factory);
+    }
 
-  public abstract int getRGB();
+    public abstract int getRGB();
 }
