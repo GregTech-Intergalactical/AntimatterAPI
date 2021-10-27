@@ -3,6 +3,7 @@ package muramasa.antimatter;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
@@ -130,6 +131,7 @@ public class Antimatter extends AntimatterMod {
     @Override
     public void onRegistrationEvent(RegistrationEvent event, Dist side) {
         if (event == RegistrationEvent.DATA_INIT) {
+            SlotType.init();
             RecipeBuilders.init();
             Data.init(side);
             SubTag.init();

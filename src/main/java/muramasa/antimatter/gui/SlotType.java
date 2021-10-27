@@ -76,4 +76,8 @@ public class SlotType<T extends Slot> implements IAntimatterObject {
     public interface ISlotSupplier<T extends Slot> {
         T get(SlotType<T> type, IGuiHandler tile, Map<SlotType<?>, IItemHandler> slots, int index, SlotData<T> data);
     }
+
+    public static void init(){
+
+    }
 }
