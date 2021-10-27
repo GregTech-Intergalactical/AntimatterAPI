@@ -36,3 +36,18 @@ mandatory=false
 versionRange="[1605,)"
 ordering="AFTER"
 side="BOTH"
+[[mods]]
+modId="antimatter_shared"
+version="${file.jarVersion}"
+displayName="Antimatter Shared Data"
+displayURL="https://github.com/GregTech-Intergalactical/AntimatterAPI"
+#logoFile="examplemod.png"
+credits="mitchej123, e99999, qubka, Vliro, repolainen, Trinsdar for general implementations/fixes"
+authors="Muramasa, Rongmario"
+description='''Modid used for data shared betwen antimatter addons'''
+[[dependencies.antimatter_shared]]
+modId="antimatter"
+mandatory=true
+versionRange="[0.0.1,)"
+ordering="AFTER"
+side="BOTH"

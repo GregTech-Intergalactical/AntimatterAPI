@@ -27,7 +27,7 @@ public class BlockBasic extends Block implements IAntimatterObject, ITextureProv
     }
 
     public String getDomain() {
-        return this instanceof ISharedAntimatterObject ? Ref.ID : domain;
+        return this instanceof ISharedAntimatterObject ? Ref.SHARED_ID : domain;
     }
 
     @Override

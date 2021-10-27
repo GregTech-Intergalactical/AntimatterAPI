@@ -40,6 +40,7 @@ public final class AntimatterRegistration {
         onRegister(domain, e);
         if (domain.equals(Ref.ID)){
             onRegister(Ref.MOD_KJS, e);
+            onRegister(Ref.SHARED_ID, e);
         }
     }
 
