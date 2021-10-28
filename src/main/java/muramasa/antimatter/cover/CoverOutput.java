@@ -84,22 +84,20 @@ public class CoverOutput extends CoverInput {
   }
 
   protected void processItemOutput() {
-    Direction outputDir = tile.getFacing();
-    TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(outputDir));
+    TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(this.side));
     if (adjTile == null)
       return;
-    adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, outputDir.getOpposite())
+    adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
             .ifPresent(adjHandler -> {
               tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler, false));
             });
   }
 
   protected void processFluidOutput() {
-    Direction outputDir = tile.getFacing();
-    TileEntity adjTile = Utils.getTile(handler.getTile().getWorld(), handler.getTile().getPos().offset(outputDir));
+    TileEntity adjTile = Utils.getTile(handler.getTile().getWorld(), handler.getTile().getPos().offset(this.side));
     if (adjTile == null)
       return;
-    adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, outputDir.getOpposite())
+    adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
             .ifPresent(adjHandler -> {
               tile.fluidHandler.ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h.getOutputTanks(), 1000, true));
             });

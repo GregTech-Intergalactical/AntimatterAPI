@@ -119,13 +119,23 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
   }
 
   @Override
+  public boolean hasGui() {
+    return factory.hasGui();
+  }
+
+  @Override
+  public GuiData getGui() {
+    return gui;
+  }
+
+  @Override
   public CompoundNBT serialize() {
     return new CompoundNBT();
   }
 
   @Override
   public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-    return null;
+    return hasGui() ? getGui().getMenuHandler().menu(this, p_createMenu_3_.inventory, p_createMenu_1_) : null;
   }
 
   @Override
@@ -135,7 +145,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
   @Override
   public ResourceLocation getGuiTexture() {
-    return null;
+    return new ResourceLocation(factory.getDomain(), "gui/cover/" + getId());
   }
 
   @Override

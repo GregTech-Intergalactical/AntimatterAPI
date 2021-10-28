@@ -20,6 +20,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -30,8 +31,8 @@ public class CoverFactory implements IAntimatterObject {
   final String domain;
 
   private final CoverSupplier supplier;
-  private Map<Tier, ItemStack> itemStacks = Collections.emptyMap();
-  private ItemStack itemStack;
+  private Map<Tier, Item> itemStacks = Collections.emptyMap();
+  private Item itemStack;
   public final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>();
   private Iterable<Texture> textures;
 
@@ -49,20 +50,19 @@ public class CoverFactory implements IAntimatterObject {
   }
 
   public ItemStack getItem(Tier tier) {
-    return tier == null ? getItem() : itemStacks.getOrDefault(tier, ItemStack.EMPTY);
+    return tier == null ? getItem() : itemStacks.getOrDefault(tier, Items.AIR).getDefaultInstance();
   }
 
   public Iterable<Texture> getTextures() {
      return textures == null ? () -> Collections.emptyIterator() : textures;
   }
   public ItemStack getItem() {
-    return itemStack == null ? ItemStack.EMPTY : itemStack;
-    
+    return itemStack == null ? ItemStack.EMPTY : itemStack.getDefaultInstance();
   }
 
-  void setItems(Map<Tier, ItemStack> stacks) {
+  void setItems(Map<Tier, Item> stacks) {
     this.itemStack = stacks.remove(null);
-    if (itemStack == null) itemStack = ItemStack.EMPTY;
+    if (itemStack == null) itemStack = Items.AIR;
     this.itemStacks = ImmutableMap.copyOf(stacks);
   }
 
@@ -121,7 +121,7 @@ public class CoverFactory implements IAntimatterObject {
     List<Tier> tiers = Collections.singletonList(null);
 
     final CoverSupplier supplier;
-    BiFunction<CoverFactory, Tier, ItemStack> itemBuilder;
+    BiFunction<CoverFactory, Tier, Item> itemBuilder;
     boolean gui = false;
     Iterable<Texture> textures;
 
@@ -134,7 +134,7 @@ public class CoverFactory implements IAntimatterObject {
       return this;
     }
 
-    public Builder item(BiFunction<CoverFactory, Tier, ItemStack> item) {
+    public Builder item(BiFunction<CoverFactory, Tier, Item> item) {
       this.itemBuilder = item;
       return this;
     }
@@ -157,9 +157,9 @@ public class CoverFactory implements IAntimatterObject {
     public CoverFactory build(String domain, String id) {
       CoverFactory factory = new CoverFactory(domain, id, this.supplier);
       if (this.itemBuilder != null) {
-        Map<Tier, ItemStack> map = new Object2ObjectOpenHashMap<>();
+        Map<Tier, Item> map = new Object2ObjectOpenHashMap<>();
         for (Tier tier : this.tiers) {
-          ItemStack stack = this.itemBuilder.apply(factory, tier);
+          Item stack = this.itemBuilder.apply(factory, tier);
           map.put(tier, stack);
         }
         factory.setItems(map);

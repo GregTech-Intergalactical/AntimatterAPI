@@ -21,8 +21,7 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     public ScreenCover(T container, PlayerInventory inv, ITextComponent name) {
         super(container, inv, name);
         this.container = container;
-        this.gui = container.getCover().getGui().getTexture(Tier.LV, "cover");
-
+        this.gui = container.getCover().getGuiTexture();
     }
 
     @Override
