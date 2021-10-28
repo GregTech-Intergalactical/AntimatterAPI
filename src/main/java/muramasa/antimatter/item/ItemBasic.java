@@ -52,7 +52,7 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
 
     @Override
     public String getDomain() {
-        return this instanceof ISharedAntimatterObject ? Ref.ID : domain;
+        return this instanceof ISharedAntimatterObject ? Ref.SHARED_ID : domain;
     }
 
     @Override
