@@ -30,11 +30,6 @@ public class CoverOutput extends CoverInput {
   }
 
   @Override
-  public String getId() {
-    return "output";
-  }
-
-  @Override
   public void onUpdate() {
     super.onUpdate();
     if (tile.getWorld().getGameTime() % 100 == 0) {

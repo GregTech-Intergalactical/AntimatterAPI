@@ -29,11 +29,6 @@ import java.util.function.Consumer;
 
 //The base Cover class. All cover classes extend from this.
 public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
-
-  // For multi-covers.
-  @Nullable
-  protected String id;
-
   public final CoverFactory factory;
   public final ICoverHandler<?> handler;
   @Nullable
@@ -77,13 +72,18 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
   }
 
   @Override
+  public Tier getTier() {
+    return tier;
+  }
+
+  @Override
   public List<Consumer<GuiInstance>> getCallbacks() {
     return this.guiCallbacks;
   }
 
   @Override
   public void setTextures(BiConsumer<String, Texture> texer) {
-    texer.accept("overlay", new Texture(getDomain(), "block/cover/" + getRenderId()));
+    texer.accept("overlay", new Texture(factory.getDomain(), "block/cover/" + getRenderId()));
   }
 
   public Texture[] getTextures() {

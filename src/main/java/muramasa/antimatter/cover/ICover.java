@@ -39,74 +39,6 @@ import java.util.function.BiConsumer;
 
 public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedContainerProvider, IGuiHandler {
     ResourceLocation PIPE_COVER_MODEL = new ResourceLocation(Ref.ID, "block/cover/cover_pipe");
-    ICover empty = new ICover() {
-        @Override
-        public Direction side() {
-            return null;
-        }
-
-        @Override
-        public CoverFactory getFactory() {
-            return emptyFactory;
-        }
-
-        @Override
-        public void deserialize(CompoundNBT nbt) {
-
-        }
-
-        @Override
-        public CompoundNBT serialize() {
-            return new CompoundNBT();
-        }
-
-        @Override
-        public ItemStack getItem() {
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public ICoverHandler<?> source() {
-            return null;
-        }
-
-        @Override
-        public boolean isRemote() {
-            return false;
-        }
-
-        @Override
-        public ResourceLocation getGuiTexture() {
-            return null;
-        }
-
-        @Override
-        public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
-            return null;
-        }
-
-        @Override
-        public ResourceLocation getModel(String type, Direction dir, Direction facing) {
-            return null;
-        }
-
-        @Override
-        public Texture[] getTextures() {
-            return new Texture[0];
-        }
-
-        @Override
-        public void setTextures(BiConsumer<String, Texture> texer) {
-
-        }
-
-        @Nullable
-        @Override
-        public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-            return null;
-        }
-    };
-    CoverFactory emptyFactory = CoverFactory.builder((a, b, c, d) -> empty).build(Ref.ID, "none");
 
     default void onPlace() {
 
@@ -132,11 +64,14 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         return getFactory().getId();
     }
 
+    @Override
+    default String getDomain() {
+        return getFactory().getDomain();
+    }
+
     CoverFactory getFactory();
 
-    default Tier getTier() {
-        return null;
-    }
+    Tier getTier();
 
     // Called right after the cover being removed from the tile.
     default void onRemove() {
@@ -250,6 +185,81 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
     default boolean isEmpty() {
         return this == empty;
     }
+
+
+    ICover empty = new ICover() {
+        @Override
+        public Direction side() {
+            return null;
+        }
+
+        @Override
+        public CoverFactory getFactory() {
+            return emptyFactory;
+        }
+
+        @Override
+        public Tier getTier() {
+            return null;
+        }
+
+        @Override
+        public void deserialize(CompoundNBT nbt) {
+
+        }
+
+        @Override
+        public CompoundNBT serialize() {
+            return new CompoundNBT();
+        }
+
+        @Override
+        public ItemStack getItem() {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public ICoverHandler<?> source() {
+            return null;
+        }
+
+        @Override
+        public boolean isRemote() {
+            return false;
+        }
+
+        @Override
+        public ResourceLocation getGuiTexture() {
+            return null;
+        }
+
+        @Override
+        public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
+            return null;
+        }
+
+        @Override
+        public ResourceLocation getModel(String type, Direction dir, Direction facing) {
+            return null;
+        }
+
+        @Override
+        public Texture[] getTextures() {
+            return new Texture[0];
+        }
+
+        @Override
+        public void setTextures(BiConsumer<String, Texture> texer) {
+
+        }
+
+        @Nullable
+        @Override
+        public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+            return null;
+        }
+    };
+    CoverFactory emptyFactory = CoverFactory.builder((a, b, c, d) -> empty).build(Ref.ID, "none");
 
     /**
      * The key used to build dynamic textures for covers.

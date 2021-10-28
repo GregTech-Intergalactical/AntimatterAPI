@@ -14,10 +14,6 @@ public class CoverEnergy extends BaseCover {
         super(source, tier, side, factory);
     }
 
-    @Override
-    public String getId() {
-        return "energy";
-    }
     // @Override
     // public ResourceLocation getModel(Direction dir, Direction facing) {
     // return getBasicModel();

@@ -20,11 +20,6 @@ public abstract class CoverFilter<T> extends BaseCover {
         super(source, tier, side, factory);
     }
 
-    @Override
-    public String getId() {
-        return "filter";
-    }
-
     public void addToFilter(T value) {
         filter.add(value);
     }

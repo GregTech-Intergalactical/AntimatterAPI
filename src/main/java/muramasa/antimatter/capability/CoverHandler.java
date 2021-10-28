@@ -83,7 +83,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     protected void buildLookup(CoverFactory oldCover, CoverFactory newCover, Direction dir) {
-        reverseLookup.compute(oldCover, (k, v) -> {
+        Set<Direction> set = reverseLookup.compute(oldCover, (k, v) -> {
             if (v == null) v = new ObjectOpenHashSet<>();
             v.remove(dir);
             return v;
@@ -93,6 +93,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
             v.add(dir);
             return v;
         });
+        if (set.isEmpty()) reverseLookup.remove(oldCover);
     }
 
     public Set<Direction> lookup(CoverFactory c) {
@@ -195,7 +196,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
                 ICover cover = CoverFactory.readCover(this, Direction.byIndex(i), nbt);
-                buildLookup(ICover.emptyFactory, cover.getFactory(), Ref.DIRS[i]);
+                buildLookup(covers.get(Ref.DIRS[i]).getFactory(), cover.getFactory(), Ref.DIRS[i]);
                 covers.put(Ref.DIRS[i], cover);
             } else {
                 buildLookup(covers.get(Ref.DIRS[i]).getFactory(), ICover.emptyFactory, Ref.DIRS[i]);

@@ -46,11 +46,6 @@ public class CoverPlate extends CoverMaterial {
         return getBasicModel();
     }
 
-    @Override
-    public String getId() {
-        return "plate_" + material.getId();
-    }
-
     public MaterialType<?> getType() {
         return type;
     }

@@ -15,16 +15,6 @@ public class CoverDynamo extends BaseCover {
   }
 
   @Override
-  public String getId() {
-    return id;
-  }
-
-  @Override
-  protected String getRenderId() {
-    return "dynamo";
-  }
-
-  @Override
   public boolean ticks() {
     return false;
   }

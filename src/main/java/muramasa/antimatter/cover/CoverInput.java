@@ -15,11 +15,6 @@ public class CoverInput extends BaseCover {
     }
 
     @Override
-    public String getId() {
-        return "input";
-    }
-
-    @Override
     public ResourceLocation getModel(String type, Direction dir, Direction facing) {
         if (type.equals("pipe"))
             return PIPE_COVER_MODEL;
