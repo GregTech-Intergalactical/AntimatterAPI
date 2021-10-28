@@ -120,16 +120,6 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
                add("machine." + i.getId(), lowerUnderscoreToUpperSpaced( i.getId()));
             }
         });
-        AntimatterAPI.all(Material.class, domain).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
-        AntimatterAPI.all(BlockOre.class, domain, o -> {
-            if (o.getOreType() == ORE)
-                add(o, String.join("", getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
-            else add(o, String.join("", "Small ",getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
-        });
-
-        AntimatterAPI.all(BlockOreStone.class, domain, o -> {
-            add(o,  getLocalizedType(o.getMaterial()));
-        });
 
         AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
             if (t.getAntimatterToolType().isPowered()){
@@ -150,9 +140,19 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
                 }
                 String strd = s.getType().getId().split("_")[0];
                 if (s.getType() instanceof FluidPipe || s.getType() instanceof ItemPipe) {
-                    strd = s.getType().getId() + " Pipe";
+                    strd = s.getType().getType() + " Pipe";
                 }
                 add(s,StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1)," ", lowerUnderscoreToUpperSpaced(s.getType().getMaterial().getId())," ",strd.substring(0, 1).toUpperCase() + strd.substring(1)));
+            });
+            AntimatterAPI.all(Material.class).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
+            AntimatterAPI.all(BlockOre.class, o -> {
+                if (o.getOreType() == ORE)
+                    add(o, String.join("", getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
+                else add(o, String.join("", "Small ",getLocalizeStoneType(o.getStoneType()) + " ", getLocalizedType(o.getMaterial()), " Ore"));
+            });
+
+            AntimatterAPI.all(BlockOreStone.class, o -> {
+                add(o,  getLocalizedType(o.getMaterial()));
             });
             AntimatterAPI.all(BlockStone.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
             AntimatterAPI.all(BlockStoneSlab.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
