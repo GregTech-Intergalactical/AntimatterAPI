@@ -45,7 +45,7 @@ public class DynamicResourcePack implements IResourcePack {
 
     static {
         CLIENT_DOMAINS.addAll(Sets.newHashSet(Ref.ID, Ref.SHARED_ID));
-        SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, "minecraft", "forge"));
+        SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, Ref.SHARED_ID, "minecraft", "forge"));
     }
 
     public DynamicResourcePack(String name, Collection<String> domains) {

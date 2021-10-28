@@ -75,44 +75,46 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     }
 
     protected void processTags(String domain) {
-        AntimatterAPI.all(BlockOre.class,domain, o -> {
-            this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
-            this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
-            if (o.getOreType() == Data.ORE) this.getOrCreateBuilder(Tags.Blocks.ORES).add(o);
-        });
-        AntimatterAPI.all(BlockStone.class,domain, s -> {
-            if (s.getSuffix().isEmpty()){
-                this.getOrCreateBuilder(Tags.Blocks.STONE).add(s);
-            } else if (s.getSuffix().equals("cobble")){
-                this.getOrCreateBuilder(Tags.Blocks.COBBLESTONE).add(s);
-            } else if (s.getSuffix().contains("bricks")){
-                this.getOrCreateBuilder(BlockTags.STONE_BRICKS).add(s);
-            }
-            this.getOrCreateBuilder(getBlockTag(new ResourceLocation("antimatter", "blocks/".concat(s.getId())))).add(s).replace(replace);
-        });
-        AntimatterAPI.all(BlockStoneWall.class, domain, b -> {
-            this.getOrCreateBuilder(BlockTags.WALLS).add(b);
-        });
-        AntimatterAPI.all(BlockStoneSlab.class, domain, b -> {
-            this.getOrCreateBuilder(BlockTags.SLABS).add(b);
-        });
-        AntimatterAPI.all(BlockStoneStair.class, domain, b -> {
-            this.getOrCreateBuilder(BlockTags.STAIRS).add(b);
-        });
-        AntimatterAPI.all(BlockOreStone.class,domain, s -> {
-            // String id = getConventionalMaterialType(MaterialType.ORE_STONE);
-            this.getOrCreateBuilder(Tags.Blocks.ORES).add(s);
-            // this.getBuilder(getForgeBlockTag(id)).add(s);
-        });
-        AntimatterAPI.all(BlockStorage.class,domain, block -> {
-            this.getOrCreateBuilder(block.getType().getTag()).add(block).replace(replace);
-            String name = String.join("", block.getType().getTag().getName().getPath(), "/", block.getMaterial().getId());
-            this.getOrCreateBuilder(getForgeBlockTag(name)).add(block);
-            // if (block.getType() == FRAME) add climbable tag in 1.16
-        });
-        AntimatterAPI.all(BlockItemPipe.class, domain, pipe -> {
-           this.getOrCreateBuilder(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe"))).add(pipe);
-        });
+        if (domain.equals(Ref.ID)){
+            AntimatterAPI.all(BlockOre.class, o -> {
+                this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
+                this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
+                if (o.getOreType() == Data.ORE) this.getOrCreateBuilder(Tags.Blocks.ORES).add(o);
+            });
+            AntimatterAPI.all(BlockStone.class, s -> {
+                if (s.getSuffix().isEmpty()){
+                    this.getOrCreateBuilder(Tags.Blocks.STONE).add(s);
+                } else if (s.getSuffix().equals("cobble")){
+                    this.getOrCreateBuilder(Tags.Blocks.COBBLESTONE).add(s);
+                } else if (s.getSuffix().contains("bricks")){
+                    this.getOrCreateBuilder(BlockTags.STONE_BRICKS).add(s);
+                }
+                this.getOrCreateBuilder(getBlockTag(new ResourceLocation("antimatter", "blocks/".concat(s.getId())))).add(s).replace(replace);
+            });
+            AntimatterAPI.all(BlockStoneWall.class, b -> {
+                this.getOrCreateBuilder(BlockTags.WALLS).add(b);
+            });
+            AntimatterAPI.all(BlockStoneSlab.class, b -> {
+                this.getOrCreateBuilder(BlockTags.SLABS).add(b);
+            });
+            AntimatterAPI.all(BlockStoneStair.class, b -> {
+                this.getOrCreateBuilder(BlockTags.STAIRS).add(b);
+            });
+            AntimatterAPI.all(BlockOreStone.class, s -> {
+                // String id = getConventionalMaterialType(MaterialType.ORE_STONE);
+                this.getOrCreateBuilder(Tags.Blocks.ORES).add(s);
+                // this.getBuilder(getForgeBlockTag(id)).add(s);
+            });
+            AntimatterAPI.all(BlockStorage.class, block -> {
+                this.getOrCreateBuilder(block.getType().getTag()).add(block).replace(replace);
+                String name = String.join("", block.getType().getTag().getName().getPath(), "/", block.getMaterial().getId());
+                this.getOrCreateBuilder(getForgeBlockTag(name)).add(block);
+                // if (block.getType() == FRAME) add climbable tag in 1.16
+            });
+            AntimatterAPI.all(BlockItemPipe.class, pipe -> {
+                this.getOrCreateBuilder(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe"))).add(pipe);
+            });
+        }
     }
 
     @Override

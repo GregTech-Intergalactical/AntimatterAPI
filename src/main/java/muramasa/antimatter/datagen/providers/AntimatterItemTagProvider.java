@@ -32,6 +32,7 @@ import net.minecraftforge.common.Tags;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static muramasa.antimatter.Data.BLOCK;
@@ -97,61 +98,64 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         this.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
         this.copy(blockTag, blockToItemTag(blockTag));
         this.copy(frameTag, blockToItemTag(frameTag));
-        AntimatterAPI.all(BlockOre.class, domain, o -> {
-            //if (o.getOreType() == ORE_SMALL) return;
-            String name = String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
-            this.copy(getForgeBlockTag(name), getForgeItemTag(name));
-            String forgeName = String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
-            this.copy(getForgeBlockTag(forgeName), getForgeItemTag(forgeName));
-        });
-        AntimatterAPI.all(BlockStone.class, domain, s -> {
-            String id = "blocks/".concat(s.getId());
-            if (s.getSuffix().isEmpty()){
-                this.getOrCreateBuilder(Tags.Items.STONE).add(s.asItem());
-            } else if (s.getSuffix().equals("cobble")){
-                this.getOrCreateBuilder(Tags.Items.COBBLESTONE).add(s.asItem());
-            } else if (s.getSuffix().contains("bricks")){
-                this.getOrCreateBuilder(ItemTags.STONE_BRICKS).add(s.asItem());
-            }
-            this.copy(getBlockTag(new ResourceLocation(Ref.ID, id)), getItemTag(new ResourceLocation(Ref.ID, id)));
-        });
-        // AntimatterAPI.all(BlockOreStone.class, domain, s -> {
+        if (domain.equals(Ref.ID)){
+            AntimatterAPI.all(BlockOre.class, o -> {
+                //if (o.getOreType() == ORE_SMALL) return;
+                String name = String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
+                this.copy(getForgeBlockTag(name), getForgeItemTag(name));
+                String forgeName = String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
+                this.copy(getForgeBlockTag(forgeName), getForgeItemTag(forgeName));
+            });
+            AntimatterAPI.all(BlockStone.class, s -> {
+                String id = "blocks/".concat(s.getId());
+                if (s.getSuffix().isEmpty()){
+                    this.getOrCreateBuilder(Tags.Items.STONE).add(s.asItem());
+                } else if (s.getSuffix().equals("cobble")){
+                    this.getOrCreateBuilder(Tags.Items.COBBLESTONE).add(s.asItem());
+                } else if (s.getSuffix().contains("bricks")){
+                    this.getOrCreateBuilder(ItemTags.STONE_BRICKS).add(s.asItem());
+                }
+                this.copy(getBlockTag(new ResourceLocation(Ref.ID, id)), getItemTag(new ResourceLocation(Ref.ID, id)));
+            });
+            // AntimatterAPI.all(BlockOreStone.class, domain, s -> {
             // String id = s.getId().replaceAll("_stone_", "s/");
             // this.copy(getBlockTag(new ResourceLocation(domain, id)), getItemTag(new ResourceLocation(domain, id)));
-        // });
-        AntimatterAPI.all(BlockStorage.class, domain, storage -> {
-            MaterialType<?> type = storage.getType();
-            String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
-            this.copy(getForgeBlockTag(name), getForgeItemTag(name));
-        });
-        AntimatterAPI.all(MaterialItem.class,domain, item -> {
-            ITag.INamedTag<Item> type = item.getType().getTag();
-            TagsProvider.Builder<Item> provider = this.getOrCreateBuilder(type);
-            provider.add(item).replace(replace);
-            this.getOrCreateBuilder(item.getTag()).add(item).replace(replace);
-            //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
-        });
-        AntimatterAPI.all(MaterialType.class, domain, t -> {
-            t.getOVERRIDES().forEach((m, i) -> {
-                this.getOrCreateBuilder(t.getMaterialTag((Material) m)).add(i).replace(replace);
-                this.getOrCreateBuilder(t.getTag()).add(i).replace(replace);
+            // });
+            AntimatterAPI.all(BlockStorage.class, storage -> {
+                MaterialType<?> type = storage.getType();
+                String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
+                this.copy(getForgeBlockTag(name), getForgeItemTag(name));
             });
-        });
+            AntimatterAPI.all(MaterialItem.class, item -> {
+                ITag.INamedTag<Item> type = item.getType().getTag();
+                TagsProvider.Builder<Item> provider = this.getOrCreateBuilder(type);
+                provider.add(item).replace(replace);
+                this.getOrCreateBuilder(item.getTag()).add(item).replace(replace);
+                //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
+            });
+            AntimatterAPI.all(MaterialType.class, t -> {
+                t.getOVERRIDES().forEach((m, i) -> {
+                    this.getOrCreateBuilder(t.getMaterialTag((Material) m)).add(i).replace(replace);
+                    this.getOrCreateBuilder(t.getTag()).add(i).replace(replace);
+                });
+            });
+            processSubtags();
+        }
+
         AntimatterAPI.all(IAntimatterTool.class,domain, tool -> {
             this.getOrCreateBuilder(tool.getAntimatterToolType().getTag()).add(tool.getItem()).replace(replace);
             this.getOrCreateBuilder(tool.getAntimatterToolType().getForgeTag()).add(tool.getItem()).replace(replace);
         });
         this.copy(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe")), TagUtils.getItemTag(new ResourceLocation(Ref.ID, "item_pipe")));
         this.getOrCreateBuilder(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
-        processSubtags(domain);
     }
 
-    protected void processSubtags(String domain) {
+    protected void processSubtags() {
         for (PipeSize value : PipeSize.values()) {
             Set<Material> mats = WIRE.allSub(SubTag.COPPER_WIRE);
             if (mats.size() > 0) {
                 this.getOrCreateBuilder(TagUtils.getItemTag(new ResourceLocation(Ref.ID,SubTag.COPPER_WIRE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
-                        AntimatterAPI.get(Wire.class, "wire_"+ t.getId())).filter(t -> t != null && t.getDomain().equals(domain)).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
+                        AntimatterAPI.get(Wire.class, "wire_"+ t.getId())).filter(Objects::nonNull).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
             }
         }
     }
