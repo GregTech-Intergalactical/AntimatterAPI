@@ -68,6 +68,8 @@ public class Antimatter extends AntimatterMod {
         final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
         AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
         AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
+        AntimatterDynamics.addProvider(Ref.SHARED_ID, g -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates", g));
+        AntimatterDynamics.addProvider(Ref.SHARED_ID, g -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models", g));
         AntimatterDynamics.addProvider(Ref.ID, g -> {
             p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g, new ExistingFileHelperOverride());
             return p[0];
