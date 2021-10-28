@@ -1,6 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -61,6 +62,9 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     @Override
     protected void registerModels() {
         processItemModels(providerDomain);
+        if (providerDomain.equals(Ref.ID)){
+            processItemModels(Ref.SHARED_ID);
+        }
     }
 
     public void processItemModels(String domain) {

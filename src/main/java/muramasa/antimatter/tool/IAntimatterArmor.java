@@ -132,4 +132,8 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
         prov.tex(item, "minecraft:item/handheld", getTextures());
     }
 
+    @Override
+    default String getDomain() {
+        return Ref.ID;
+    }
 }

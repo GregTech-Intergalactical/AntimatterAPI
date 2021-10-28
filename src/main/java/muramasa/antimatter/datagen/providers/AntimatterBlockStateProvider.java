@@ -44,6 +44,9 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     @Override
     protected void registerStatesAndModels() {
         processBlocks(providerDomain);
+        if (providerDomain.equals(Ref.ID)){
+            processBlocks(Ref.SHARED_ID);
+        }
     }
 
     @Override
