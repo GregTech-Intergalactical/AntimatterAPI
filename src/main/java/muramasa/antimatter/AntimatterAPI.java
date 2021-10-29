@@ -133,16 +133,21 @@ public final class AntimatterAPI {
                 T obj = getInternal(c, id, domain);
                 if (obj == null) {
                     Class clazz = c;
-                    Object o = getInternal(clazz, id);
-                    return o == null ? null : c.cast(o);
+                    if (domain.equals(Ref.SHARED_ID)){
+                        Object o = getInternal(clazz, id);
+                        return o == null ? null : c.cast(o);
+                    }
                 }
+                return obj;
             }
         }
         T obj = getInternal(c, id, domain);
         if (obj == null) {
             Class clazz = c;
-            Object o = get(clazz, id);
-            return o == null ? null : c.cast(o);
+            if (domain.equals(Ref.SHARED_ID)){
+                Object o = get(clazz, id);
+                return o == null ? null : c.cast(o);
+            }
         }
         return obj;
     }
