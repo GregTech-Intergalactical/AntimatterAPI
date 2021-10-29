@@ -31,32 +31,33 @@ public class MapTagIngredient extends AbstractMapIngredient {
     @Override
     public boolean equals(Object o) {
         if (o instanceof MapTagIngredient) {
-            return ((MapTagIngredient)o).loc.equals(loc);
+            return ((MapTagIngredient) o).loc.equals(loc);
         }
         if (o instanceof MapItemIngredient) {
-            return ((MapItemIngredient)o).stack.getItem().getTags().contains(loc);
+            return ((MapItemIngredient) o).stack.getItem().getTags().contains(loc);
         }
         if (o instanceof MapFluidIngredient) {
-            return ((MapFluidIngredient)o).stack.getFluid().getTags().contains(loc);
+            return ((MapFluidIngredient) o).stack.getFluid().getTags().contains(loc);
         }
         return false;
     }
 
     private static final boolean ENABLE_TAGS_LOOKUP = true;
+
     public static Optional<ResourceLocation> findCommonTag(Ingredient ing, ITagCollectionSupplier tags) {
-         if (!ENABLE_TAGS_LOOKUP || ing.getMatchingStacks().length < 2) return Optional.empty();
-         Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getMatchingStacks()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(tags.getItemTags().getOwningTags(t.getItem()))).reduce((s, b) -> {
-             s.retainAll(b);
-             return s;
-         });
-         return l.map(t -> {
-             for (ResourceLocation rl : l.get()) {
-                 if (tags.getItemTags().getTagByID(rl).getAllElements().size() == ing.getMatchingStacks().length) {
-                     return rl;
-                 }
-             }
-             return null;
-         });
+        if (!ENABLE_TAGS_LOOKUP || ing.getMatchingStacks().length < 2) return Optional.empty();
+        Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getMatchingStacks()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(tags.getItemTags().getOwningTags(t.getItem()))).reduce((s, b) -> {
+            s.retainAll(b);
+            return s;
+        });
+        return l.map(t -> {
+            for (ResourceLocation rl : l.get()) {
+                if (tags.getItemTags().getTagByID(rl).getAllElements().size() == ing.getMatchingStacks().length) {
+                    return rl;
+                }
+            }
+            return null;
+        });
     }
 
     @Override

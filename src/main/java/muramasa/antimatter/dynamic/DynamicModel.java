@@ -39,7 +39,8 @@ public class DynamicModel extends AntimatterModel {
     @Override
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
         IBakedModel baked = super.bake(owner, bakery, getter, transform, overrides, loc);
-        if (baked instanceof DynamicBakedModel) ((DynamicBakedModel) baked).particle(((DynamicBakedModel) baked).getBakedDefault().getParticleTexture(EmptyModelData.INSTANCE));
+        if (baked instanceof DynamicBakedModel)
+            ((DynamicBakedModel) baked).particle(((DynamicBakedModel) baked).getBakedDefault().getParticleTexture(EmptyModelData.INSTANCE));
         return baked;
     }
 
@@ -55,7 +56,7 @@ public class DynamicModel extends AntimatterModel {
             for (int i = 0; i < baked.length; i++) {
                 baked[i] = v[i].bake(owner, bakery, getter, transform, overrides, loc);
             }
-            bakedConfigs.put((int)k, baked);
+            bakedConfigs.put((int) k, baked);
         });
         return new Tuple<>(modelDefault.bakeModel(owner, bakery, getter, transform, overrides, loc), bakedConfigs);
     }

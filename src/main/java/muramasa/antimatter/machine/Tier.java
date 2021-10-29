@@ -9,7 +9,9 @@ import net.minecraft.util.text.TextFormatting;
 
 public class Tier implements ISharedAntimatterObject {
 
-    /** Electricity Tiers **/
+    /**
+     * Electricity Tiers
+     **/
     public static Tier ULV = new Tier(Ref.ID, "ulv", 8, TextFormatting.WHITE); //Tier 1
     public static Tier LV = new Tier(Ref.ID, "lv", 32, TextFormatting.WHITE); //Tier 2
     public static Tier MV = new Tier(Ref.ID, "mv", 128, TextFormatting.WHITE); //Tier 3
@@ -21,7 +23,9 @@ public class Tier implements ISharedAntimatterObject {
     public static Tier UV = new Tier(Ref.ID, "uv", 524288, TextFormatting.LIGHT_PURPLE); //Tier 9
     public static Tier MAX = new Tier(Ref.ID, "max", 2147483647, TextFormatting.LIGHT_PURPLE); //Tier 15
 
-    /** Special Tiers **/
+    /**
+     * Special Tiers
+     **/
     //TODO make these Tier 0 and 1?
     public static Tier BRONZE = new Tier(Ref.ID, "bronze", 0, TextFormatting.WHITE);
     public static Tier STEEL = new Tier(Ref.ID, "steel", 0, TextFormatting.WHITE);
@@ -47,13 +51,20 @@ public class Tier implements ISharedAntimatterObject {
 
     public int getIntegerId() {
         switch (this.getId()) {
-            case "ulv": return 0;
-            case "lv": return 1;
-            case "mv": return 2;
-            case "hv": return 3;
-            case "ev": return 4;
-            case "iv": return 5;
-            default: return 1;
+            case "ulv":
+                return 0;
+            case "lv":
+                return 1;
+            case "mv":
+                return 2;
+            case "hv":
+                return 3;
+            case "ev":
+                return 4;
+            case "iv":
+                return 5;
+            default:
+                return 1;
         }
     }
 

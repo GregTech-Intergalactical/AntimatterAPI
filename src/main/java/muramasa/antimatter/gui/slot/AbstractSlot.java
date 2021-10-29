@@ -28,14 +28,15 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
     public void onSlotChange(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
         super.onSlotChange(oldStackIn, newStackIn);
         if (this.getItemHandler() instanceof TrackedItemHandler) {
-            ((TrackedItemHandler<?>)this.getItemHandler()).onContentsChanged(this.index);
+            ((TrackedItemHandler<?>) this.getItemHandler()).onContentsChanged(this.index);
         }
     }
+
     @Override
     public void onSlotChanged() {
         super.onSlotChanged();
         if (this.getItemHandler() instanceof TrackedItemHandler) {
-            ((TrackedItemHandler<?>)this.getItemHandler()).onContentsChanged(this.index);
+            ((TrackedItemHandler<?>) this.getItemHandler()).onContentsChanged(this.index);
         }
     }
 

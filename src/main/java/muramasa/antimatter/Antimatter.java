@@ -75,10 +75,10 @@ public class Antimatter extends AntimatterMod {
             return p[0];
         });
         AntimatterDynamics.addProvider(Ref.ID, g ->
-                new AntimatterItemTagProvider(Ref.ID,Ref.NAME.concat(" Item Tags"), false, g, p[0], new ExistingFileHelperOverride()));
+                new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"), false, g, p[0], new ExistingFileHelperOverride()));
         AntimatterDynamics.addProvider(Ref.ID, g ->
-                new AntimatterRecipeProvider(Ref.ID,Ref.NAME.concat(" Recipes"), g));
-        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterBlockLootProvider(Ref.ID,Ref.NAME.concat( " Loot generator"),g));
+                new AntimatterRecipeProvider(Ref.ID, Ref.NAME.concat(" Recipes"), g));
+        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
         AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
     }
 
@@ -94,7 +94,8 @@ public class Antimatter extends AntimatterMod {
                     Antimatter.LOGGER.warn("Caught error during client setup: " + ex.getMessage());
                 }
             }
-        }));    }
+        }));
+    }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup(e);
@@ -107,7 +108,8 @@ public class Antimatter extends AntimatterMod {
                     Antimatter.LOGGER.warn("Caught error during common setup: " + ex.getMessage());
                 }
             }
-        }));        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+        }));
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
             AntimatterKubeJS.init();
         }
     }
@@ -127,7 +129,7 @@ public class Antimatter extends AntimatterMod {
         }));
     }
 
-    private void loadComplete(FMLLoadCompleteEvent event){
+    private void loadComplete(FMLLoadCompleteEvent event) {
     }
 
     @Override

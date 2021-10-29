@@ -7,7 +7,7 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import javax.annotation.Nonnull;
 
 public class ROCombinedInvWrapper extends CombinedInvWrapper {
-    public ROCombinedInvWrapper(IItemHandlerModifiable... itemHandler){
+    public ROCombinedInvWrapper(IItemHandlerModifiable... itemHandler) {
         super(itemHandler);
     }
 

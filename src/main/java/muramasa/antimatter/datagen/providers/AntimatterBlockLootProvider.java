@@ -41,7 +41,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     protected final Map<Block, Function<Block, LootTable.Builder>> tables = new Object2ObjectOpenHashMap<>();
 
     public static final ILootCondition.IBuilder BRANCH_CUTTER = MatchTool.builder(ItemPredicate.Builder.create().item(Data.BRANCH_CUTTER.getToolStack(Data.NULL, Data.NULL).getItem()));
-    public static final ILootCondition.IBuilder SAW = MatchTool.builder(ItemPredicate.Builder.create().item(Data.SAW.getToolStack(Data.NULL, Data.NULL).getItem()).enchantment(new EnchantmentPredicate(){
+    public static final ILootCondition.IBuilder SAW = MatchTool.builder(ItemPredicate.Builder.create().item(Data.SAW.getToolStack(Data.NULL, Data.NULL).getItem()).enchantment(new EnchantmentPredicate() {
         @Override
         public boolean test(Map<Enchantment, Integer> enchantmentsIn) {
             return !enchantmentsIn.containsKey(Enchantments.SILK_TOUCH);
@@ -66,12 +66,12 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
 
     protected void loot() {
         AntimatterAPI.all(BlockMachine.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockMultiMachine.class,providerDomain, this::add);
-        AntimatterAPI.all(BlockPipe.class,providerDomain, this::add);
-        AntimatterAPI.all(BlockStorage.class,providerDomain, this::add);
+        AntimatterAPI.all(BlockMultiMachine.class, providerDomain, this::add);
+        AntimatterAPI.all(BlockPipe.class, providerDomain, this::add);
+        AntimatterAPI.all(BlockStorage.class, providerDomain, this::add);
         AntimatterAPI.all(BlockStone.class, providerDomain, b -> {
-            if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()){
-                tables.put(b, b2 -> droppingWithSilkTouch(b, ((CobbleStoneType)b.getType()).getBlock("cobble")));
+            if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
+                tables.put(b, b2 -> droppingWithSilkTouch(b, ((CobbleStoneType) b.getType()).getBlock("cobble")));
                 return;
             }
             this.add(b);
@@ -79,7 +79,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
         AntimatterAPI.all(BlockStoneSlab.class, providerDomain, b -> tables.put(b, BlockLootTables::droppingSlab));
         AntimatterAPI.all(BlockStoneStair.class, providerDomain, this::add);
         AntimatterAPI.all(BlockStoneWall.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockOre.class,providerDomain, this::addToFortune);
+        AntimatterAPI.all(BlockOre.class, providerDomain, this::addToFortune);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
         return root.resolve("data/" + id.getNamespace() + "/loot_tables/blocks/" + id.getPath() + ".json");
     }
 
-    protected void addToFortune(BlockOre block){
+    protected void addToFortune(BlockOre block) {
         if (block.getOreType() == Data.ORE_SMALL) {
             if (!block.getMaterial().has(GEM) && !(block.getMaterial().has(RAW_ORE))) return;
             Item item = block.getMaterial().has(GEM) ? GEM.get(block.getMaterial()) : null;
@@ -129,7 +129,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
             }
             tables.put(block, b -> LootTable.builder().addLootPool(builder));
             return;
-        } else if ((block.getMaterial().has(Data.RAW_ORE) || block.getMaterial().has(GEM)) && block.getOreType() == Data.ORE){
+        } else if ((block.getMaterial().has(Data.RAW_ORE) || block.getMaterial().has(GEM)) && block.getOreType() == Data.ORE) {
             Item item = block.getMaterial().has(GEM) ? GEM.get(block.getMaterial()) : Data.RAW_ORE.get(block.getMaterial());
             tables.put(block, b -> droppingItemWithFortune(b, item));
             return;
@@ -151,7 +151,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     }
 
 
-    protected static LootTable.Builder droppingWithBranchCutters(Block block, Block sapling, float... chances){
+    protected static LootTable.Builder droppingWithBranchCutters(Block block, Block sapling, float... chances) {
         return droppingWithChancesAndSticks(block, sapling, chances).addLootPool(LootPool.builder().rolls(ConstantRange.of(1)).acceptCondition(AntimatterBlockLootProvider.BRANCH_CUTTER).addEntry(ItemLootEntry.builder(sapling)));
     }
 }

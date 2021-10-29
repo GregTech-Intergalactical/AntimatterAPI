@@ -15,7 +15,7 @@ import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraftforge.api.distmarker.Dist;
 
 public class KubeJSRegistrar extends AntimatterMod {
-    public KubeJSRegistrar(){
+    public KubeJSRegistrar() {
         final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
         AntimatterDynamics.addProvider(Ref.MOD_KJS, g -> new AntimatterBlockStateProvider(Ref.MOD_KJS, "KubeJS BlockStates", g));
         AntimatterDynamics.addProvider(Ref.MOD_KJS, g -> new AntimatterItemModelProvider(Ref.MOD_KJS, "KubeJS Item Models", g));
@@ -27,7 +27,7 @@ public class KubeJSRegistrar extends AntimatterMod {
                 new AntimatterItemTagProvider(Ref.MOD_KJS, "KubeJS Item Tags", false, g, p[0], new ExistingFileHelperOverride()));
         AntimatterDynamics.addProvider(Ref.MOD_KJS, g ->
                 new AntimatterRecipeProvider(Ref.MOD_KJS, "KubeJS Recipes", g));
-        AntimatterDynamics.addProvider(Ref.MOD_KJS, g -> new AntimatterBlockLootProvider(Ref.MOD_KJS, "KubeJS Loot generator",g));
+        AntimatterDynamics.addProvider(Ref.MOD_KJS, g -> new AntimatterBlockLootProvider(Ref.MOD_KJS, "KubeJS Loot generator", g));
         AntimatterDynamics.addProvider(Ref.MOD_KJS, g -> new AntimatterLanguageProvider(Ref.MOD_KJS, "KubeJS en_us Localization", "en_us", g));
     }
 

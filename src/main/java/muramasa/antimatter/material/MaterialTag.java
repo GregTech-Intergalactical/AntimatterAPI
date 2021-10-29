@@ -35,10 +35,14 @@ public class MaterialTag implements IMaterialTag {
     public static MaterialTag METAL = new MaterialTag("metal");
     public static MaterialTag ELEMENTAL = new MaterialTag("elemental");
 
-    /** ETC **/
+    /**
+     * ETC
+     **/
     public static MaterialTag HANDLE = new MaterialTag("handle");
 
-    /** PIPES **/
+    /**
+     * PIPES
+     **/
     public static MaterialTag ITEMPIPE = new MaterialTag("itempipe");
     public static MaterialTag FLUIDPIPE = new MaterialTag("fluidpipe");
     public static MaterialTag WIRE = new MaterialTag("wire");
@@ -68,7 +72,7 @@ public class MaterialTag implements IMaterialTag {
     public boolean has(SubTag tag, Material mat) {
         return TAG_MAP.getOrDefault(tag, Collections.emptySet()).contains(mat);
     }
-    
+
     @Override
     public String getId() {
         return id;

@@ -9,7 +9,7 @@ import net.minecraftforge.fluids.FluidAttributes;
 
 /**
  * AntimatterMaterialFluid is an extension of AntimatterFluid that includes both {@link Material} and {@link MaterialType} parameters
- *
+ * <p>
  * This allows for straightforward fluid generation derived from base Material values, these are of course overridable with the different constructors still.
  */
 public class AntimatterMaterialFluid extends AntimatterFluid {
@@ -46,13 +46,11 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
             return FluidAttributes.builder(GAS_TEXTURE, GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((70 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(200).density(-1000).gaseous().temperature(material.getGasTemperature());
-        }
-        else if (type == Data.PLASMA) {
+        } else if (type == Data.PLASMA) {
             return FluidAttributes.builder(PLASMA_TEXTURE, PLASMA_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((50 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000);
-        }
-        else {
+        } else {
             return getDefaultAttributesBuilder(material.getLiquidTemperature() >= 400).color((155 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(1000).density(1000).temperature(material.getLiquidTemperature());

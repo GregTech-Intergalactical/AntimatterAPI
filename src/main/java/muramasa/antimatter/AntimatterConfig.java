@@ -46,7 +46,9 @@ public class AntimatterConfig {
 
     public static class Client {
 
-        /** @see ClientConfig **/
+        /**
+         * @see ClientConfig
+         **/
 
         public boolean BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS;
 
@@ -54,7 +56,9 @@ public class AntimatterConfig {
 
     public static class Jei {
 
-        /** @see ClientConfig **/
+        /**
+         * @see ClientConfig
+         **/
 
         public boolean SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS;
 
@@ -62,7 +66,9 @@ public class AntimatterConfig {
 
     public static class Data {
 
-        /** @see CommonConfig **/
+        /**
+         * @see CommonConfig
+         **/
 
         public boolean ALL_MATERIAL_ITEMS, ITEM_REPLACEMENTS;
 
@@ -70,7 +76,9 @@ public class AntimatterConfig {
 
     public static class Gameplay {
 
-        /** @see CommonConfig **/
+        /**
+         * @see CommonConfig
+         **/
 
         public double EU_TO_FE_RATIO, PIPE_LEAK;
 
@@ -82,7 +90,9 @@ public class AntimatterConfig {
 
     public static class World {
 
-        /** @see CommonConfig **/
+        /**
+         * @see CommonConfig
+         **/
 
         public boolean VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS, ORE_VEIN_SPECTATOR_DEBUG;
 
@@ -109,8 +119,8 @@ public class AntimatterConfig {
             // public boolean ORE_JSON_RELOADING = true;
 
             BASIC_MACHINE_MODELS = builder.comment("Enable flat machine related models (5U Style) - Default: false")
-                .translation(Ref.ID + ".config.basic_machine_models")
-                .define("BASIC_MACHINE_MODELS", false);
+                    .translation(Ref.ID + ".config.basic_machine_models")
+                    .define("BASIC_MACHINE_MODELS", false);
 
             SHOW_ALL_MATERIAL_ITEMS = builder.comment("Show all items in JEI, even ones that are unobtainable - Default: false")
                     .translation(Ref.ID + ".config.show_all_material_items")
@@ -147,22 +157,22 @@ public class AntimatterConfig {
             builder.push("World");
 
             VANILLA_ORE_GEN = builder.comment("Disable Vanilla ore generation (Iron Ore, Diamond Ore etc) - Default: true")
-                .translation(Ref.ID + ".config.vanilla_ore_gen")
-                .worldRestart()
-                .define("DISABLE_VANILLA_ORE_GEN", true);
+                    .translation(Ref.ID + ".config.vanilla_ore_gen")
+                    .worldRestart()
+                    .define("DISABLE_VANILLA_ORE_GEN", true);
 
             VANILLA_STONE_GEN = builder.comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: false")
-                .translation(Ref.ID + ".config.vanilla_stone_gen")
-                .worldRestart()
-                .define("DISABLE_VANILLA_STONE_GEN", false);
+                    .translation(Ref.ID + ".config.vanilla_stone_gen")
+                    .worldRestart()
+                    .define("DISABLE_VANILLA_STONE_GEN", false);
 
             SMALL_ORES = builder.comment("Enable small ores - Default: true")
-                .translation(Ref.ID + ".config.small_ores")
-                .define("SMALL_ORES", true);
+                    .translation(Ref.ID + ".config.small_ores")
+                    .define("SMALL_ORES", true);
 
             SURFACE_ROCKS = builder.comment("Enable surface rocks - Default: true")
-                .translation(Ref.ID + ".config.surface_rocks")
-                .define("SURFACE_ROCKS", true);
+                    .translation(Ref.ID + ".config.surface_rocks")
+                    .define("SURFACE_ROCKS", true);
 
             builder.push("Ore Veins");
 
@@ -237,40 +247,40 @@ public class AntimatterConfig {
                     .define("INPUT_RESET_MULTIBLOCK", false);
 
             EU_TO_FE_RATIO = builder.comment("The ratio of the eu to the fe energy converting - Default: (1.0 EU = 4.0 FE)")
-                .translation(Ref.ID + ".config.eu_to_rf_ratio")
-                .defineInRange("EU_TO_FE_RATIO", 1.0D, 0.1D, (Double.MAX_VALUE));
+                    .translation(Ref.ID + ".config.eu_to_rf_ratio")
+                    .defineInRange("EU_TO_FE_RATIO", 1.0D, 0.1D, (Double.MAX_VALUE));
 
             PIPE_LEAK = builder.comment("Amount of gas retained passing through a leaky pipe - Default: 90%")
-                .translation(Ref.ID + ".config.pipe_leak")
-                .defineInRange("PIPE_LEAK", 0.9D, 0.0D, 1.0D);
+                    .translation(Ref.ID + ".config.pipe_leak")
+                    .defineInRange("PIPE_LEAK", 0.9D, 0.0D, 1.0D);
 
             HARDCORE_CABLES = builder.comment("Enable hardcore cable loss and voltage - Default: true")
-                .translation(Ref.ID + ".config.hardcore_cables")
-                .define("HARDCORE_CABLES", true);
+                    .translation(Ref.ID + ".config.hardcore_cables")
+                    .define("HARDCORE_CABLES", true);
 
             HARDCORE_PIPES = builder.comment("Enable pipe blowing on overpressure - Default: false")
-                .translation(Ref.ID + ".config.hardcore_pipes")
-                .define("HARDCORE_PIPES", false);
+                    .translation(Ref.ID + ".config.hardcore_pipes")
+                    .define("HARDCORE_PIPES", false);
 
             builder.push("Treefelling");
 
             SMARTER_TREE_DETECTION = builder.comment("Smart tree detection, instead of just going up in a column, it searches surrounding connected blocks too. Default: true")
-                .translation(Ref.ID + ".config.tree_detection")
-                .define("SMARTER_TREE_DETECTION", true);
+                    .translation(Ref.ID + ".config.tree_detection")
+                    .define("SMARTER_TREE_DETECTION", true);
 
             AXE_TIMBER = builder.comment("Allow Antimatter Axe types to fell trees - Default: true")
-                .translation(Ref.ID + ".config.axe_timber")
-                .define("AXE_TIMBER", true);
+                    .translation(Ref.ID + ".config.axe_timber")
+                    .define("AXE_TIMBER", true);
 
             AXE_TIMBER_MAX = builder.comment("Max height of a column of logs an Antimatter Axe type can fell - Default: 100")
-                .translation(Ref.ID + ".config.axe_timber_max")
-                .defineInRange("AXE_TIMBER_MAX", 100, 1, 2304);
+                    .translation(Ref.ID + ".config.axe_timber_max")
+                    .defineInRange("AXE_TIMBER_MAX", 100, 1, 2304);
 
             builder.pop();
 
             PLAY_CRAFTING_SOUNDS = builder.comment("Hear various crafting sounds when you craft with any of Antimatter's tools that has a custom SoundType. Default: true")
-                .translation(Ref.ID + ".config.play_crafting_sounds")
-                .define("PLAY_CRAFTING_SOUNDS", true);
+                    .translation(Ref.ID + ".config.play_crafting_sounds")
+                    .define("PLAY_CRAFTING_SOUNDS", true);
 
             builder.pop();
 
@@ -278,8 +288,8 @@ public class AntimatterConfig {
 
             //@Comment("Enable all mod support registrars - Default: true")
             ENABLE_ALL_REGISTRARS = builder.comment("Enable all mod support registrars - Default: true")
-                .translation(Ref.ID + ".config.enable_all_resgistrars")
-                .define("ENABLE_ALL_REGISTRARS", true);
+                    .translation(Ref.ID + ".config.enable_all_resgistrars")
+                    .define("ENABLE_ALL_REGISTRARS", true);
 
             builder.pop();
 
@@ -289,7 +299,7 @@ public class AntimatterConfig {
 
     private static void bakeClientConfig() {
 
-        CLIENT.BASIC_MACHINE_MODELS =  CLIENT_CONFIG.BASIC_MACHINE_MODELS.get();
+        CLIENT.BASIC_MACHINE_MODELS = CLIENT_CONFIG.BASIC_MACHINE_MODELS.get();
         CLIENT.SHOW_ALL_MATERIAL_ITEMS = CLIENT_CONFIG.SHOW_ALL_MATERIAL_ITEMS.get();
         CLIENT.SHOW_ALL_FLUID_CELLS = CLIENT_CONFIG.SHOW_ALL_FLUID_CELLS.get();
 

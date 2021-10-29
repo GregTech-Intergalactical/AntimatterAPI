@@ -10,6 +10,7 @@ public class SubTag implements IAntimatterObject {
     public static final SubTag COPPER_WIRE = new SubTag("copper_wire");
 
     public final String id;
+
     public SubTag(String id) {
         this.id = id + "_subtag";
         AntimatterAPI.register(SubTag.class, this);
@@ -20,6 +21,6 @@ public class SubTag implements IAntimatterObject {
         return id;
     }
 
-    public static void init(){
+    public static void init() {
     }
 }

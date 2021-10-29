@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static muramasa.antimatter.machine.MachineState.*;
+
 //TODO: This needs some look into, a bit of spaghetti code sadly.
 public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMachineHandler, Dispatch.Sided<MachineRecipeHandler> {
 
@@ -45,8 +46,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     protected int overclock;
 
     //20 seconds per check.
-    static final int WAIT_TIME = 20*20;
-    static final int WAIT_TIME_POWER_LOSS = 20*5;
+    static final int WAIT_TIME = 20 * 20;
+    static final int WAIT_TIME_POWER_LOSS = 20 * 5;
     static final int WAIT_TIME_OUTPUT_FULL = 20;
     protected int tickTimer = 0;
 
@@ -84,7 +85,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return ((float) currentProgress / (float) maxProgress);
     }
 
-    public int getCurrentProgress(){
+    public int getCurrentProgress() {
         return currentProgress;
     }
 
@@ -201,7 +202,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     protected void calculateDurations() {
         maxProgress = activeRecipe.getDuration();
-        if (!generator){
+        if (!generator) {
             overclock = getOverclock();
             maxProgress = Math.max(1, maxProgress >>= overclock);
         }
@@ -277,7 +278,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (!consumeResourceForRecipe(false)) {
             if ((currentProgress == 0 && tile.getMachineState() == tile.getDefaultMachineState()) || generator) {
                 //Cannot start a recipe :(
-                if (!(generator && currentProgress > 0)){
+                if (!(generator && currentProgress > 0)) {
                     resetRecipe();
                 }
                 return tile.getDefaultMachineState();
@@ -327,8 +328,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     protected boolean validateRecipe(Recipe r) {
-        int voltage = this.generator ? tile.getMaxOutputVoltage() : tile.getMachineType().amps()*tile.getMaxInputVoltage();
-        boolean ok = voltage >= r.getPower()/ r.getAmps();
+        int voltage = this.generator ? tile.getMaxOutputVoltage() : tile.getMachineType().amps() * tile.getMaxInputVoltage();
+        boolean ok = voltage >= r.getPower() / r.getAmps();
         List<ItemStack> consumed = this.tile.itemHandler.map(t -> t.consumeInputs(r, true)).orElse(Collections.emptyList());
         return ok && (consumed.size() > 0 || !r.hasInputItems());
     }
@@ -392,7 +393,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (!tile.hadFirstTick()) return true;
         if (activeRecipe.hasInputItems()) {
             flag &= tile.itemHandler.map(h -> {
-                this.itemInputs = h.consumeInputs(activeRecipe,false);
+                this.itemInputs = h.consumeInputs(activeRecipe, false);
                 return !this.itemInputs.isEmpty();
             }).orElse(true);
         }
@@ -417,6 +418,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     protected boolean canRecipeContinue() {
         return canOutput() && (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0])));
     }
+
     /*
       Helper to consume resources for a generator.
      */
@@ -429,19 +431,19 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (toConsume == 0)
             inserted = (long) ((double) activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
         else
-            inserted = (long)((double)toConsume*activeRecipe.getPower()/activeRecipe.getInputFluids()[0].getAmount()*tile.getMachineType().getMachineEfficiency());
+            inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
 
         final long t = inserted;
-        long actual = tile.energyHandler.map(h -> h.insertInternal(t,true, true)).orElse(0L);
+        long actual = tile.energyHandler.map(h -> h.insertInternal(t, true, true)).orElse(0L);
         //If there isn't enough room for an entire run reduce output.
         //E.g. if recipe is 24 eu per MB then you have to run 2x to match 48 eu/t
         //but eventually it will be too much so reduce output.
         if (actual < inserted && toConsume == 0) return false;
         while (actual < inserted && actual > 0) {
             toConsume--;
-            inserted = (long)((double)toConsume*activeRecipe.getPower()/activeRecipe.getInputFluids()[0].getAmount()*tile.getMachineType().getMachineEfficiency());
+            inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
             final long temp = inserted;
-            actual = tile.energyHandler.map(h -> h.insertInternal(temp,true, true)).orElse(0L);
+            actual = tile.energyHandler.map(h -> h.insertInternal(temp, true, true)).orElse(0L);
         }
         //If nothing to insert.
         if (actual == 0) return false;
@@ -450,10 +452,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         final long actualInsert = inserted;
         //make sure there are fluids avaialble
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
-            int amount = h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            int amount = h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
             if (amount == actualConsume) {
                 if (!simulate)
-                    h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0],(int)actualConsume), IFluidHandler.FluidAction.EXECUTE);
+                    h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0], (int) actualConsume), IFluidHandler.FluidAction.EXECUTE);
                 return true;
             }
             return false;
@@ -469,13 +471,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     protected long calculateGeneratorConsumption(int volt, Recipe r) {
         long power = r.getPower();
         int amount = r.getInputFluids()[0].getAmount();
-        if (currentProgress > 0 && amount == 1){
+        if (currentProgress > 0 && amount == 1) {
             return 0;
         }
-        double offset =  (volt /((double)power/(double) amount));
+        double offset = (volt / ((double) power / (double) amount));
         if (r.getDuration() > 1)
             offset /= r.getDuration();
-        return Math.max(1, (long)(Math.ceil(offset)));
+        return Math.max(1, (long) (Math.ceil(offset)));
     }
 
     public void resetRecipe() {
@@ -514,21 +516,21 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (tickingRecipe) return;
         if (event instanceof ContentEvent) {
-                if (tile.getMachineState() == ACTIVE)
-                    return;
-                if ((event == ContentEvent.ITEM_OUTPUT_CHANGED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && tile.getMachineState() == OUTPUT_FULL && tickTimer == 0 && canOutput()) {
-                    tickingRecipe = true;
-                    tile.setMachineState(recipeFinish());
-                    tickingRecipe = false;
-                    return;
+            if (tile.getMachineState() == ACTIVE)
+                return;
+            if ((event == ContentEvent.ITEM_OUTPUT_CHANGED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && tile.getMachineState() == OUTPUT_FULL && tickTimer == 0 && canOutput()) {
+                tickingRecipe = true;
+                tile.setMachineState(recipeFinish());
+                tickingRecipe = false;
+                return;
+            }
+            if (tile.getMachineState().allowRecipeCheck()) {
+                if (activeRecipe != null) {
+                    tile.setMachineState(NO_POWER);
+                } else if (tile.getMachineState() != POWER_LOSS && tickTimer == 0) {
+                    checkRecipe();
                 }
-                if (tile.getMachineState().allowRecipeCheck()) {
-                    if (activeRecipe != null) {
-                        tile.setMachineState(NO_POWER);
-                    } else if (tile.getMachineState() != POWER_LOSS && tickTimer == 0) {
-                        checkRecipe();
-                    }
-                }
+            }
         } else if (event instanceof MachineEvent) {
             switch ((MachineEvent) event) {
                 case ENERGY_INPUTTED:
@@ -549,7 +551,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         }
     }
 
-    /** NBT STUFF **/
+    /**
+     * NBT STUFF
+     **/
 
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
@@ -570,8 +574,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     public void deserializeNBT(CompoundNBT nbt) {
         itemInputs = new ObjectArrayList<>();
         fluidInputs = new ObjectArrayList<>();
-        nbt.getList("I",10).forEach(t -> itemInputs.add(ItemStack.read((CompoundNBT) t)));
-        nbt.getList("F",10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundNBT) t)));
+        nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.read((CompoundNBT) t)));
+        nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundNBT) t)));
         this.currentProgress = nbt.getInt("P");
     }
 

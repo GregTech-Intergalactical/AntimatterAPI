@@ -126,7 +126,7 @@ public class RecipeHelper {
     }
 
     public static void addSmelting(RecipeIngredient input, ItemStack output) {
-       // addSmelting(input,output, InventoryChangeTrigger.Instance.forItems(input.getMatchingStacks()[0].getItem()));
+        // addSmelting(input,output, InventoryChangeTrigger.Instance.forItems(input.getMatchingStacks()[0].getItem()));
     }
 
     public static void removeSmelting(ItemStack output) {

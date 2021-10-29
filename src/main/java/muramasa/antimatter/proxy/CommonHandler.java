@@ -18,7 +18,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class CommonHandler implements IProxyHandler {
 
-    public CommonHandler() { }
+    public CommonHandler() {
+    }
 
     @SuppressWarnings("unused")
     public static void setup(FMLCommonSetupEvent e) {
@@ -35,6 +36,7 @@ public class CommonHandler implements IProxyHandler {
             protected Void prepare(IResourceManager resourceManagerIn, IProfiler profilerIn) {
                 return null;
             }
+
             @Override
             protected void apply(Void objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
                 AntimatterDynamics.onRecipeCompile(ev.getDataPackRegistries().getRecipeManager(), ev.getDataPackRegistries().func_244358_d());

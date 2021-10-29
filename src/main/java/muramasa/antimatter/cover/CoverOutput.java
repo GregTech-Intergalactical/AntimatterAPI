@@ -20,110 +20,110 @@ import javax.annotation.Nullable;
 
 public class CoverOutput extends CoverInput {
 
-  private boolean ejectItems = false;
-  private boolean ejectFluids = false;
-  private final TileEntityMachine<?> tile;
+    private boolean ejectItems = false;
+    private boolean ejectFluids = false;
+    private final TileEntityMachine<?> tile;
 
-  public CoverOutput(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
-    super(source, tier, side, factory);
-    this.tile = (TileEntityMachine<?>) source.getTile();
-  }
-
-  @Override
-  public void onUpdate() {
-    super.onUpdate();
-    if (tile.getWorld().getGameTime() % 100 == 0) {
-      if (shouldOutputFluids())
-        processFluidOutput();
-      if (shouldOutputItems())
-        processItemOutput();
+    public CoverOutput(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+        super(source, tier, side, factory);
+        this.tile = (TileEntityMachine<?>) source.getTile();
     }
-  }
 
-  @Override
-  public void onRemove() {
-    super.onRemove();
-    // refresh(instance);
-  }
-
-  public void manualOutput() {
-    if (shouldOutputFluids())
-      processFluidOutput();
-    if (shouldOutputItems())
-      processItemOutput();
-  }
-
-  public boolean shouldOutputItems() {
-    return this.ejectItems;
-  }
-
-  public boolean shouldOutputFluids() {
-    return this.ejectFluids;
-  }
-
-  // TODO: Not even sure if needed.
-  // @OnlyIn(Dist.CLIENT)
-  public void setEjects(boolean fluid, boolean item) {
-    ejectItems = item;
-    ejectFluids = fluid;
-  }
-
-  @Override
-  public void deserialize(CompoundNBT nbt) {
-    super.deserialize(nbt);
-    this.ejectItems = nbt.getBoolean("ei");
-    this.ejectFluids = nbt.getBoolean("ef");
-  }
-
-  @Override
-  public CompoundNBT serialize() {
-    CompoundNBT nbt = super.serialize();
-    nbt.putBoolean("ei", this.ejectItems);
-    nbt.putBoolean("ef", this.ejectFluids);
-    return nbt;
-  }
-
-  protected void processItemOutput() {
-    TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(this.side));
-    if (adjTile == null)
-      return;
-    adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
-            .ifPresent(adjHandler -> {
-              tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler, false));
-            });
-  }
-
-  protected void processFluidOutput() {
-    TileEntity adjTile = Utils.getTile(handler.getTile().getWorld(), handler.getTile().getPos().offset(this.side));
-    if (adjTile == null)
-      return;
-    adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
-            .ifPresent(adjHandler -> {
-              tile.fluidHandler.ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h.getOutputTanks(), 1000, true));
-            });
-  }
-
-  @Override
-  public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
-    if (event == GuiEvent.ITEM_EJECT) {
-      ejectItems = !ejectItems;
-      processItemOutput();
-      Utils.markTileForNBTSync(tile);
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+        if (tile.getWorld().getGameTime() % 100 == 0) {
+            if (shouldOutputFluids())
+                processFluidOutput();
+            if (shouldOutputItems())
+                processItemOutput();
+        }
     }
-    if (event == GuiEvent.FLUID_EJECT) {
-      ejectFluids = !ejectFluids;
-      processFluidOutput();
-      Utils.markTileForNBTSync(tile);
-    }
-  }
 
-  @Override
-  public void onMachineEvent(TileEntityMachine<?> tile, IMachineEvent event, int... data) {
-    // TODO: Tesseract stuff?
-    if (event == MachineEvent.ITEMS_OUTPUTTED && ejectItems) {
-      processItemOutput();
-    } else if (event == MachineEvent.FLUIDS_OUTPUTTED && ejectFluids) {
-      processFluidOutput();
+    @Override
+    public void onRemove() {
+        super.onRemove();
+        // refresh(instance);
     }
-  }
+
+    public void manualOutput() {
+        if (shouldOutputFluids())
+            processFluidOutput();
+        if (shouldOutputItems())
+            processItemOutput();
+    }
+
+    public boolean shouldOutputItems() {
+        return this.ejectItems;
+    }
+
+    public boolean shouldOutputFluids() {
+        return this.ejectFluids;
+    }
+
+    // TODO: Not even sure if needed.
+    // @OnlyIn(Dist.CLIENT)
+    public void setEjects(boolean fluid, boolean item) {
+        ejectItems = item;
+        ejectFluids = fluid;
+    }
+
+    @Override
+    public void deserialize(CompoundNBT nbt) {
+        super.deserialize(nbt);
+        this.ejectItems = nbt.getBoolean("ei");
+        this.ejectFluids = nbt.getBoolean("ef");
+    }
+
+    @Override
+    public CompoundNBT serialize() {
+        CompoundNBT nbt = super.serialize();
+        nbt.putBoolean("ei", this.ejectItems);
+        nbt.putBoolean("ef", this.ejectFluids);
+        return nbt;
+    }
+
+    protected void processItemOutput() {
+        TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(this.side));
+        if (adjTile == null)
+            return;
+        adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
+                .ifPresent(adjHandler -> {
+                    tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler, false));
+                });
+    }
+
+    protected void processFluidOutput() {
+        TileEntity adjTile = Utils.getTile(handler.getTile().getWorld(), handler.getTile().getPos().offset(this.side));
+        if (adjTile == null)
+            return;
+        adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
+                .ifPresent(adjHandler -> {
+                    tile.fluidHandler.ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h.getOutputTanks(), 1000, true));
+                });
+    }
+
+    @Override
+    public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
+        if (event == GuiEvent.ITEM_EJECT) {
+            ejectItems = !ejectItems;
+            processItemOutput();
+            Utils.markTileForNBTSync(tile);
+        }
+        if (event == GuiEvent.FLUID_EJECT) {
+            ejectFluids = !ejectFluids;
+            processFluidOutput();
+            Utils.markTileForNBTSync(tile);
+        }
+    }
+
+    @Override
+    public void onMachineEvent(TileEntityMachine<?> tile, IMachineEvent event, int... data) {
+        // TODO: Tesseract stuff?
+        if (event == MachineEvent.ITEMS_OUTPUTTED && ejectItems) {
+            processItemOutput();
+        } else if (event == MachineEvent.FLUIDS_OUTPUTTED && ejectFluids) {
+            processFluidOutput();
+        }
+    }
 }

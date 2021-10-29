@@ -99,6 +99,7 @@ public class Structure {
             final int3 working = new int3(facing, hFacing);
             final Point point = new Point();
             final Iterator<Map.Entry<int3, StructureElement>> it = elements.entrySet().iterator();
+
             @Override
             public boolean hasNext() {
                 return it.hasNext();
@@ -119,7 +120,7 @@ public class Structure {
     public LongList getStructure(TileEntityBasicMultiMachine<?> tile, Direction face) {
         LongList l = new LongArrayList();
         Direction h = null;
-        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y){
+        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y) {
             h = tile.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
         }
         for (Iterator<Point> it = forAllElements(tile.getPos(), face, h); it.hasNext(); ) {

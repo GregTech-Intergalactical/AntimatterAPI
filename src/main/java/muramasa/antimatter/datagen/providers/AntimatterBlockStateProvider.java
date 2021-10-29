@@ -80,7 +80,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
 
     public void processBlocks(String domain) {
         AntimatterAPI.all(Block.class, domain).forEach(b -> AntimatterModelManager.onBlockModelBuild(b, this));
-        AntimatterAPI.all(AntimatterFluid.class,domain).forEach(f -> state(f.getFluidBlock(), getBuilder(f.getFluidBlock()).texture("particle", f.getFluid().getAttributes().getStillTexture())));
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> state(f.getFluidBlock(), getBuilder(f.getFluidBlock()).texture("particle", f.getFluid().getAttributes().getStillTexture())));
     }
 
     public AntimatterBlockModelBuilder getBuilder(Block block) {
@@ -103,9 +103,9 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
             simpleBlock(block, getSimpleModel(block, textures[0]));
         } else if (textures.length == 2) {
             simpleBlock(block, getLayeredModel(block, textures[0], textures[1]));
-        } else if (textures.length == 6){
+        } else if (textures.length == 6) {
             horizontalBlock(block, getSimpleModel(block, textures));
-        } else if (textures.length == 12){
+        } else if (textures.length == 12) {
             horizontalBlock(block, getLayeredModel(block, textures));
         }
     }

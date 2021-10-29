@@ -75,18 +75,18 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     }
 
     protected void processTags(String domain) {
-        if (domain.equals(Ref.ID)){
+        if (domain.equals(Ref.ID)) {
             AntimatterAPI.all(BlockOre.class, o -> {
                 this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 this.getOrCreateBuilder(getForgeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 if (o.getOreType() == Data.ORE) this.getOrCreateBuilder(Tags.Blocks.ORES).add(o);
             });
             AntimatterAPI.all(BlockStone.class, s -> {
-                if (s.getSuffix().isEmpty()){
+                if (s.getSuffix().isEmpty()) {
                     this.getOrCreateBuilder(Tags.Blocks.STONE).add(s);
-                } else if (s.getSuffix().equals("cobble")){
+                } else if (s.getSuffix().equals("cobble")) {
                     this.getOrCreateBuilder(Tags.Blocks.COBBLESTONE).add(s);
-                } else if (s.getSuffix().contains("bricks")){
+                } else if (s.getSuffix().contains("bricks")) {
                     this.getOrCreateBuilder(BlockTags.STONE_BRICKS).add(s);
                 }
                 this.getOrCreateBuilder(getBlockTag(new ResourceLocation("antimatter", "blocks/".concat(s.getId())))).add(s).replace(replace);
@@ -132,7 +132,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     public void addTag(ResourceLocation loc, ITag.Builder obj) {
         JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
-        if (json == null)  {
+        if (json == null) {
             addTag(loc, obj.serialize());
         } else {
             obj = obj.deserialize(json, "Antimatter - Dynamic Data");
@@ -142,6 +142,6 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
 
     @Override
     public void onCompletion() {
-        TAGS.forEach((k,v) -> DynamicResourcePack.addTag("blocks", k, v));
+        TAGS.forEach((k, v) -> DynamicResourcePack.addTag("blocks", k, v));
     }
 }

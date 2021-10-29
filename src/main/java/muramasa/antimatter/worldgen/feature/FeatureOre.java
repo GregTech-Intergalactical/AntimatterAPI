@@ -36,7 +36,7 @@ public class FeatureOre extends AntimatterFeature<NoFeatureConfig> {
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-           // biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+            // biome.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 

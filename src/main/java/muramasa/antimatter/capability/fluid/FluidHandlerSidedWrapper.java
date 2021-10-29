@@ -13,7 +13,8 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     protected FluidHandler<?> fluidHandler;
     protected Direction side;
     CoverHandler<?> coverHandler;
-    public FluidHandlerSidedWrapper(FluidHandler<?> fluidHandler, CoverHandler<?> coverHandler, Direction side){
+
+    public FluidHandlerSidedWrapper(FluidHandler<?> fluidHandler, CoverHandler<?> coverHandler, Direction side) {
         this.fluidHandler = fluidHandler;
         this.coverHandler = coverHandler;
         this.side = side;

@@ -35,7 +35,9 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
         super(domain, id);
     }
 
-    /** Connection Logic **/
+    /**
+     * Connection Logic
+     **/
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int[] ct = new int[1];
         for (Direction side : Ref.DIRS) {

@@ -140,7 +140,8 @@ public class RecipeIngredient {
             return tag != null ? Ingredient.fromTag(tag) : Ingredient.fromItemListStream(Stream.empty());
         }, count);
     }
-    public static RecipeIngredient of(ITag.INamedTag<Item> tagIn,int count) {
+
+    public static RecipeIngredient of(ITag.INamedTag<Item> tagIn, int count) {
         ensureRegisteredTag(tagIn.getName());
         return new RecipeIngredient(() -> {
             ITag<Item> tag = collectTag(tagIn.getName());
@@ -150,7 +151,7 @@ public class RecipeIngredient {
 
     private static ITag<Item> collectTag(ResourceLocation loc) {
         ITagCollectionSupplier getter = TagUtils.getSupplier();
-        if (getter == null){
+        if (getter == null) {
             return TagUtils.nc(loc);
         }
         return getter.getItemTags().get(loc);

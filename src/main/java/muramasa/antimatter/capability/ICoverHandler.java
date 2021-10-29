@@ -14,7 +14,9 @@ import javax.annotation.Nullable;
 
 public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializable<CompoundNBT> {
 
-    /** Getters/Setters **/
+    /**
+     * Getters/Setters
+     **/
     boolean set(Direction side, ICover cover, boolean sync);
 
     ICover get(Direction side);
@@ -23,7 +25,9 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
 
     T getTile();
 
-    /** Events **/
+    /**
+     * Events
+     **/
     void onRemove();
 
     void onUpdate();
@@ -31,13 +35,16 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
     //If the player uses a cover in hand -> place cover if none exists.. Otherwises interact with the cover, if present.
     boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type);
 
-    /** Helpers **/
+    /**
+     * Helpers
+     **/
     boolean placeCover(PlayerEntity player, Direction side, ItemStack stack, ICover cover);
 
     /**
      * Removes a cover.
+     *
      * @param player entity.
-     * @param side which side to remove.
+     * @param side   which side to remove.
      * @return
      */
     boolean removeCover(PlayerEntity player, Direction side, boolean onlyRemove);

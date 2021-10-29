@@ -29,7 +29,7 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
 
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
-    public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen,  ExistingFileHelperOverride fh) {
+    public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, ExistingFileHelperOverride fh) {
         super(gen, fh);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
@@ -67,17 +67,17 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
     }
 
     protected void processTags(String domain) {
-        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f ->{
+        AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> {
             getOrCreateBuilder(getForgeFluidTag(f.getId()))
                     .add(f.getFluid(), f.getFlowingFluid())
                     .replace(replace);
             if (f instanceof AntimatterMaterialFluid) {
-                Material m = ((AntimatterMaterialFluid)f).getMaterial();
+                Material m = ((AntimatterMaterialFluid) f).getMaterial();
                 getOrCreateBuilder(getForgeFluidTag(m.getId()))
-                    .add(f.getFluid(), f.getFlowingFluid())
+                        .add(f.getFluid(), f.getFlowingFluid())
                         .replace(replace);
             }
-            });
+        });
     }
 
     @Override
@@ -105,6 +105,6 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
 
     @Override
     public void onCompletion() {
-        TAGS.forEach((k,v) -> DynamicResourcePack.addTag("fluids", k, v));
+        TAGS.forEach((k, v) -> DynamicResourcePack.addTag("fluids", k, v));
     }
 }

@@ -36,6 +36,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
         this.recipe = recipe;
         this.helper = AntimatterJEIPlugin.helpers().getGuiHelper().createCraftingGridHelper(craftInputSlot1);
     }
+
     @Override
     public void setIngredients(IIngredients ingredients) {
         ingredients.setInputIngredients(recipe.getIngredients());
@@ -58,7 +59,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                 for (int i = 0; i < recipe.getIngredients().size(); i++) {
                     Ingredient j = recipe.getIngredients().get(i);
                     if (!(j instanceof PropertyIngredient)) continue;
-                    PropertyIngredient inner = (PropertyIngredient)j;
+                    PropertyIngredient inner = (PropertyIngredient) j;
                     Object o = m.get(inner.getId());
                     if (o == null) continue;
                     List<ItemStack> st = Arrays.stream(inner.getMatchingStacks()).filter(t -> MaterialRecipe.getMat(inner, t).equals(o)).collect(Collectors.toList());
@@ -89,7 +90,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                                 i++;
                                 continue;
                             }
-                            PropertyIngredient inner = (PropertyIngredient)innerIngredient;
+                            PropertyIngredient inner = (PropertyIngredient) innerIngredient;
                             if (inner.getId().equals(prop.getId())) {
                                 List<ItemStack> st = Arrays.stream(inner.getMatchingStacks()).filter(t -> MaterialRecipe.getMat(inner, t).equals(obj)).collect(Collectors.toList());
                                 if (st.size() > 0) {
@@ -124,7 +125,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
             guiItemStacks.set(craftOutputSlot, outputs.stream().flatMap(Collection::stream).collect(Collectors.toList()));
         }
 
-        guiItemStacks.addTooltipCallback((a,b,c,d) -> {
+        guiItemStacks.addTooltipCallback((a, b, c, d) -> {
             if (b) {
               /*  Ingredient i = recipe.getIngredients().get(a-craftInputSlot1);
                 if (i instanceof PropertyIngredient) {
@@ -133,11 +134,11 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                 }*/
             }
         });
-        guiItemStacks.addTooltipCallback((a,b,c,d) -> {
+        guiItemStacks.addTooltipCallback((a, b, c, d) -> {
             if (!b) {
                 Map<String, Object> o = recipe.builder.getFromResult(c);
                 d.add(new StringTextComponent("Properties:").mergeStyle(TextFormatting.GOLD));
-                o.forEach((k,v) -> d.add(new StringTextComponent(k.substring(0,1).toUpperCase() + k.substring(1)).appendSibling(new StringTextComponent(" - " + v.toString()))));
+                o.forEach((k, v) -> d.add(new StringTextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).appendSibling(new StringTextComponent(" - " + v.toString()))));
             }
         });
         helper.setInputs(guiItemStacks, shouldReplace ? newInputs : inputs, recipe.getWidth(), recipe.getHeight());

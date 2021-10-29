@@ -54,11 +54,14 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 /**
  * Machine represents the base class for an Antimatter Machine. It provides tile entities, blocks as well as
  * features to configure machines such as vertical facing, the recipe map and smaller behaviours like if front IO is allowed.
+ *
  * @param <T> this class as a generic argument.
  */
 public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>>, IGuiHandler.IHaveWidgets {
 
-    /** Basic Members **/
+    /**
+     * Basic Members
+     **/
     protected TileEntityType<?> tileType;
     protected Function<T, Supplier<? extends TileEntityMachine<?>>> tileFunc = m -> () -> new TileEntityMachine<>(this);
     protected String domain, id;
@@ -66,26 +69,38 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     //Assuming facing = north.
     protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory};
 
-    /** Recipe Members **/
+    /**
+     * Recipe Members
+     **/
     protected RecipeMap<?> recipeMap;
 
-    /** GUI Members **/
+    /**
+     * GUI Members
+     **/
     protected GuiData guiData;
     protected ItemGroup group = Ref.TAB_MACHINES;
 
-    /** Texture Members **/
+    /**
+     * Texture Members
+     **/
     protected ITextureHandler baseTexture;
     protected IOverlayTexturer overlayTextures;
 
-    /** Multi Members **/
+    /**
+     * Multi Members
+     **/
     protected Object2ObjectMap<Tier, Structure> structures = new Object2ObjectOpenHashMap<>();
 
-    /** Energy data **/
+    /**
+     * Energy data
+     **/
     protected float efficiency = 1;
     //How many amps this machine requires.
     protected int amps = 1;
 
-    /** Behaviours **/
+    /**
+     * Behaviours
+     **/
     protected boolean allowFrontCovers = false;
     protected boolean allowVerticalFacing = false;
     protected boolean frontIO = false;
@@ -95,7 +110,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      **/
     protected CoverFactory outputCover = COVEROUTPUT;
 
-    /** Slots **/
+    /**
+     * Slots
+     **/
     private final Map<String, Object2IntOpenHashMap<SlotType<?>>> countLookup = new Object2ObjectOpenHashMap<>();
     private final Map<String, List<SlotData<?>>> slotLookup = new Object2ObjectOpenHashMap<>();
 
@@ -108,7 +125,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         overlayTextures = (type, state, tier) -> {
             if (state != MachineState.ACTIVE && state != MachineState.INVALID_STRUCTURE) state = MachineState.IDLE;
             String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
-            return new Texture[] {
+            return new Texture[]{
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "top"),
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
@@ -121,16 +138,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
         //if (FMLEnvironment.dist.isClient()) {
-            setupGui();
+        setupGui();
         //}
     }
 
     protected void setupGui() {
-        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(),t.handler.guiSize(), t.handler.guiHeight())));
+        addGuiCallback(t -> t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
     }
 
     /**
      * Sets the required amps for this machine.
+     *
      * @param amps amperage
      * @return this.
      */
@@ -141,6 +159,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /**
      * Can you place covers on the front face of this machine?
+     *
      * @return this.
      */
     public T frontCovers() {
@@ -206,7 +225,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T noCovers() {
-        covers((CoverFactory[])null);
+        covers((CoverFactory[]) null);
         return (T) this;
     }
 
@@ -225,7 +244,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry != ForgeRegistries.BLOCKS) return;
-        tileType = new TileEntityType<>(tileFunc.apply((T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
+        tileType = new TileEntityType<>(tileFunc.apply((T) this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
         AntimatterAPI.register(TileEntityType.class, getId(), getDomain(), getTileType());
     }
 
@@ -240,11 +259,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /**
      * Returns the item variant of this machine given the tier. Only use after registration or this is null!
+     *
      * @param tier the tier to get.
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMachine.class,this.getId() + "_" + tier.getId(), getDomain()));
+        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), getDomain()));
     }
 
     /**
@@ -254,7 +274,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         if (this.guiData != null && recipeMap != null) {
             //If the recipe map has another GUI present don't register it.
             if (recipeMap.getGui() == null)
-                AntimatterAPI.registerJEICategory(this.recipeMap,this.guiData, this, false);
+                AntimatterAPI.registerJEICategory(this.recipeMap, this.guiData, this, false);
         }
     }
 
@@ -268,6 +288,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Sets the recipe map this machine uses for lookup. This will also register it in JEI
      * but it can be overriden by setGuiData in the RecipeMap.
+     *
      * @param map the recipe map.
      * @return this.
      */
@@ -286,6 +307,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Set the getter for overlayTextures. All AM machines are base + overlay textures, this represents the getter for overlay texture. See default
      * behaviour in constructor.
+     *
      * @param texturer the texture handler
      * @return this
      */
@@ -297,6 +319,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Set the getter for baseTexture. All AM machines are base + overlay textures, this represents the getter for base texture. See default
      * behaviour in constructor.
+     *
      * @param handler the texture handler
      * @return this
      */
@@ -392,7 +415,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         for (MachineFlag flag : flags) {
             flag.add(this);
         }
-        return (T)this;
+        return (T) this;
     }
 
     public void setFlags(MachineFlag... flags) {
@@ -407,6 +430,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /**
      * Sets this machines GUI handler which provides containers and screens.
+     *
      * @param menuHandler the menu handler.
      */
     public void setGUI(MenuHandler<?> menuHandler) {
@@ -423,14 +447,17 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Set the multiblock structure for this machine, for all tiers.
      * Useless if the tile is not a multiblock.
+     *
      * @param func the function to build a structure.
      */
     public void setStructure(Function<StructureBuilder, Structure> func) {
         getTiers().forEach(t -> setStructure(t, func));
     }
+
     /**
      * Set the multiblock structure for this machine, for one tier.
      * Useless if the tile is not a multiblock.
+     *
      * @param func the function to build a structure.
      */
     public void setStructure(Tier tier, Function<StructureBuilder, Structure> func) {
@@ -439,6 +466,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     /**
      * Whether or not this machine has the given machine flag.
+     *
      * @param flag the flag.
      * @return if it has it.
      */
@@ -446,7 +474,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return flag.getTypes().contains(this);
     }
 
-    /** Getters **/
+    /**
+     * Getters
+     **/
     public TileEntityType<?> getTileType() {
         return tileType;
     }
@@ -476,7 +506,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return allowVerticalFacing;
     }
 
-    /** Static Methods **/
+    /**
+     * Static Methods
+     **/
     public static Optional<Machine<?>> get(String name, String domain) {
         Machine<?> machine = AntimatterAPI.get(Machine.class, name, domain);
         return Optional.ofNullable(machine);

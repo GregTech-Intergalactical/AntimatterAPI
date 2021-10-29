@@ -61,12 +61,14 @@ public final class AntimatterAPI {
 
     }
 
-    /** Internal Registry Section **/
+    /**
+     * Internal Registry Section
+     **/
 
     private static void registerInternal(Class<?> c, String id, @Nullable String domain, Object o) {
         Object present;
         if (domain != null) {
-            if((present = OBJECTS.computeIfAbsent(c, t -> new Object2ObjectLinkedOpenHashMap<>()).computeIfAbsent(domain, t -> Either.right(new Object2ObjectLinkedOpenHashMap<>())).map(t -> null, t -> t.put(id, o))) != null) {
+            if ((present = OBJECTS.computeIfAbsent(c, t -> new Object2ObjectLinkedOpenHashMap<>()).computeIfAbsent(domain, t -> Either.right(new Object2ObjectLinkedOpenHashMap<>())).map(t -> null, t -> t.put(id, o))) != null) {
                 throw new IllegalStateException(String.join("", "Class ", c.getName(), "'s object: ", id, " has already been registered by: ", present.toString()));
             }
         } else {
@@ -82,17 +84,20 @@ public final class AntimatterAPI {
             if (dataDone) {
                 throw new IllegalStateException("Registering after DataDone in AntimatterAPI - badbad!");
             }
-            if (o instanceof IAntimatterObject && !((IAntimatterObject)o).shouldRegister()) return (T) o;
+            if (o instanceof IAntimatterObject && !((IAntimatterObject) o).shouldRegister()) return (T) o;
             Class clazz = c;
             if (o instanceof ISharedAntimatterObject && getInternal(clazz, id) != null) {
                 return (T) getInternal(clazz, id);
             }
             registerInternal(c, id, o instanceof ISharedAntimatterObject ? null : domain, o);
-            if (o instanceof Block && notRegistered(Block.class, id, domain)) registerInternal(Block.class, id, domain, o);
-            else if (o instanceof Item && notRegistered(Item.class, id, domain)) registerInternal(Item.class, id, domain, o);
+            if (o instanceof Block && notRegistered(Block.class, id, domain))
+                registerInternal(Block.class, id, domain, o);
+            else if (o instanceof Item && notRegistered(Item.class, id, domain))
+                registerInternal(Item.class, id, domain, o);
             else if (o instanceof IRegistryEntryProvider) {
                 String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
-                if (notRegistered(IRegistryEntryProvider.class, changedId, domain)) registerInternal(IRegistryEntryProvider.class, changedId, domain, o);
+                if (notRegistered(IRegistryEntryProvider.class, changedId, domain))
+                    registerInternal(IRegistryEntryProvider.class, changedId, domain, o);
             }
             return (T) o;
         }
@@ -103,7 +108,7 @@ public final class AntimatterAPI {
     }
 
     private static boolean notRegistered(Class<?> c, String id, String domain) {
-        return !has(c, id ,domain);
+        return !has(c, id, domain);
     }
 
 
@@ -222,7 +227,7 @@ public final class AntimatterAPI {
         if (!dataDone) {
             List<T> list;
             synchronized (OBJECTS) {
-                list = allInternal(c,domain).collect(Collectors.toList());
+                list = allInternal(c, domain).collect(Collectors.toList());
             }
             return list;
         }
@@ -278,7 +283,9 @@ public final class AntimatterAPI {
         provider.run();
     }
 
-    /** DeferredWorkQueue Section **/
+    /**
+     * DeferredWorkQueue Section
+     **/
 
     public static Optional<Deque<Runnable>> getCommonDeferredQueue() {
         return Optional.ofNullable(DEFERRED_QUEUE.get(0));
@@ -310,7 +317,9 @@ public final class AntimatterAPI {
         }
     }
 
-    /** Registrar Section **/
+    /**
+     * Registrar Section
+     **/
 
     public static void onRegistration(RegistrationEvent event) {
         Antimatter.LOGGER.info("Registration event " + event);
@@ -335,7 +344,8 @@ public final class AntimatterAPI {
 
     public static void addRegistrar(IAntimatterRegistrar registrar) {
         if (INTERNAL_REGISTRAR == null && registrar instanceof Antimatter) INTERNAL_REGISTRAR = registrar;
-        else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS) registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar.getDomain(), registrar);
+        else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS)
+            registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar.getDomain(), registrar);
         FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
     }
 
@@ -347,11 +357,13 @@ public final class AntimatterAPI {
         return getRegistrar(id).map(IAntimatterRegistrar::isEnabled).orElse(false);
     }
 
-    /** JEI Registry Section **/
+    /**
+     * JEI Registry Section
+     **/
 
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
-            AntimatterJEIPlugin.registerCategory(map, gui,tier, model, override);
+            AntimatterJEIPlugin.registerCategory(map, gui, tier, model, override);
         }
     }
 
@@ -362,7 +374,7 @@ public final class AntimatterAPI {
     }
 
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
-       registerJEICategory(map,gui,Tier.LV, null, true);
+        registerJEICategory(map, gui, Tier.LV, null, true);
     }
 
     public static IRecipeRegistrate getRecipeRegistrate(String domain) {
@@ -379,14 +391,15 @@ public final class AntimatterAPI {
     /**
      * This must run after DataGenerators have ran OR when the tag jsons are acknowledged. Otherwise this is useless!
      *
-     * @param originalItem  Item that wants a replacement, may be null if only the tag should be the only query
-     * @param tag           Tag that wants a replacement (as the originalItem may have multiple tags to search from)
-     * @param namespaces    Namespaces of the tags to check against, by default this only checks against 'minecraft' if no namespaces are defined
+     * @param originalItem Item that wants a replacement, may be null if only the tag should be the only query
+     * @param tag          Tag that wants a replacement (as the originalItem may have multiple tags to search from)
+     * @param namespaces   Namespaces of the tags to check against, by default this only checks against 'minecraft' if no namespaces are defined
      * @return originalItem if there's nothing found, null if there is no originalItem, or an replacement
      */
     public static <T> T getReplacement(@Nullable T originalItem, ITag.INamedTag<T> tag, String... namespaces) {
         if (tag == null) throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
-        if (REPLACEMENTS.containsKey(tag.getName()))  return (T) REPLACEMENTS.get(tag.getName());//return RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
+        if (REPLACEMENTS.containsKey(tag.getName()))
+            return (T) REPLACEMENTS.get(tag.getName());//return RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
         return originalItem;
         //if (replacementsFound) return originalItem;
         //Set<String> checks = Sets.newHashSet(namespaces);
@@ -413,6 +426,7 @@ public final class AntimatterAPI {
 
     /**
      * COREMOD METHOD INSERTION: Runs every time when this is called:
+     *
      * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
      */
     @SuppressWarnings("unused")

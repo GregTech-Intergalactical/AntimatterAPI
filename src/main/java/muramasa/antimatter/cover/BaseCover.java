@@ -29,133 +29,133 @@ import java.util.function.Consumer;
 
 //The base Cover class. All cover classes extend from this.
 public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
-  public final CoverFactory factory;
-  public final ICoverHandler<?> handler;
-  @Nullable
-  public final Tier tier;
-  @Nullable
-  public final GuiData gui;
-  public final Direction side;
+    public final CoverFactory factory;
+    public final ICoverHandler<?> handler;
+    @Nullable
+    public final Tier tier;
+    @Nullable
+    public final GuiData gui;
+    public final Direction side;
 
-  private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>();
+    private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>();
 
-  @Override
-  public ResourceLocation getModel(String type, Direction dir, Direction facing) {
-    if (type.equals("pipe"))
-      return PIPE_COVER_MODEL;
-    return new ResourceLocation(getDomain() + ":block/cover/" + getRenderId());
-  }
-
-  @Override
-  public Direction side() {
-    return side;
-  }
-
-  @Override
-  public ICoverHandler<?> source() {
-    return handler;
-  }
-
-  public BaseCover(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
-    this.factory = Objects.requireNonNull(factory, "Missing factory in BaseCover");
-    this.handler = source;
-    this.tier = tier;
-    this.side = side;
-    if (factory.hasGui()) {
-      this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
-      gui.setEnablePlayerSlots(true);
-      this.addGuiCallback(t -> t
-              .addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
-    } else {
-      this.gui = null;
+    @Override
+    public ResourceLocation getModel(String type, Direction dir, Direction facing) {
+        if (type.equals("pipe"))
+            return PIPE_COVER_MODEL;
+        return new ResourceLocation(getDomain() + ":block/cover/" + getRenderId());
     }
-  }
 
-  @Override
-  public Tier getTier() {
-    return tier;
-  }
+    @Override
+    public Direction side() {
+        return side;
+    }
 
-  @Override
-  public List<Consumer<GuiInstance>> getCallbacks() {
-    return this.guiCallbacks;
-  }
+    @Override
+    public ICoverHandler<?> source() {
+        return handler;
+    }
 
-  @Override
-  public void setTextures(BiConsumer<String, Texture> texer) {
-    texer.accept("overlay", new Texture(factory.getDomain(), "block/cover/" + getRenderId()));
-  }
+    public BaseCover(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+        this.factory = Objects.requireNonNull(factory, "Missing factory in BaseCover");
+        this.handler = source;
+        this.tier = tier;
+        this.side = side;
+        if (factory.hasGui()) {
+            this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
+            gui.setEnablePlayerSlots(true);
+            this.addGuiCallback(t -> t
+                    .addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
+        } else {
+            this.gui = null;
+        }
+    }
 
-  public Texture[] getTextures() {
-    List<Texture> l = new ArrayList<>();
-    setTextures((name, tex) -> l.add(tex));
-    return l.toArray(new Texture[0]);
-  }
+    @Override
+    public Tier getTier() {
+        return tier;
+    }
 
-  // Useful for using the same model for multiple tiers where id is dependent on
-  // tier.
-  protected String getRenderId() {
-    return getId();
-  }
+    @Override
+    public List<Consumer<GuiInstance>> getCallbacks() {
+        return this.guiCallbacks;
+    }
 
-  // The default cover model
-  public static ResourceLocation getBasicModel() {
-    return new ResourceLocation(Ref.ID + ":block/cover/basic");
-  }
+    @Override
+    public void setTextures(BiConsumer<String, Texture> texer) {
+        texer.accept("overlay", new Texture(factory.getDomain(), "block/cover/" + getRenderId()));
+    }
 
-  // The default cover model with depth, see Output and Conveyor cover.
-  public static ResourceLocation getBasicDepthModel() {
-    return new ResourceLocation(Ref.ID + ":block/cover/basic_depth");
-  }
+    public Texture[] getTextures() {
+        List<Texture> l = new ArrayList<>();
+        setTextures((name, tex) -> l.add(tex));
+        return l.toArray(new Texture[0]);
+    }
 
-  @Override
-  public ItemStack getItem() {
-    return factory.getItem(tier);
-  }
+    // Useful for using the same model for multiple tiers where id is dependent on
+    // tier.
+    protected String getRenderId() {
+        return getId();
+    }
 
-  @Override
-  public void deserialize(CompoundNBT nbt) {
+    // The default cover model
+    public static ResourceLocation getBasicModel() {
+        return new ResourceLocation(Ref.ID + ":block/cover/basic");
+    }
 
-  }
+    // The default cover model with depth, see Output and Conveyor cover.
+    public static ResourceLocation getBasicDepthModel() {
+        return new ResourceLocation(Ref.ID + ":block/cover/basic_depth");
+    }
 
-  @Override
-  public boolean hasGui() {
-    return factory.hasGui();
-  }
+    @Override
+    public ItemStack getItem() {
+        return factory.getItem(tier);
+    }
 
-  @Override
-  public GuiData getGui() {
-    return gui;
-  }
+    @Override
+    public void deserialize(CompoundNBT nbt) {
 
-  @Override
-  public CompoundNBT serialize() {
-    return new CompoundNBT();
-  }
+    }
 
-  @Override
-  public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-    return hasGui() ? getGui().getMenuHandler().menu(this, p_createMenu_3_.inventory, p_createMenu_1_) : null;
-  }
+    @Override
+    public boolean hasGui() {
+        return factory.hasGui();
+    }
 
-  @Override
-  public boolean isRemote() {
-    return handler.getTile().getWorld().isRemote();
-  }
+    @Override
+    public GuiData getGui() {
+        return gui;
+    }
 
-  @Override
-  public ResourceLocation getGuiTexture() {
-    return new ResourceLocation(factory.getDomain(), "gui/cover/" + getId());
-  }
+    @Override
+    public CompoundNBT serialize() {
+        return new CompoundNBT();
+    }
 
-  @Override
-  public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
-    return null;
-  }
+    @Override
+    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+        return hasGui() ? getGui().getMenuHandler().menu(this, p_createMenu_3_.inventory, p_createMenu_1_) : null;
+    }
 
-  @Override
-  public CoverFactory getFactory() {
-    return factory;
-  }
+    @Override
+    public boolean isRemote() {
+        return handler.getTile().getWorld().isRemote();
+    }
+
+    @Override
+    public ResourceLocation getGuiTexture() {
+        return new ResourceLocation(factory.getDomain(), "gui/cover/" + getId());
+    }
+
+    @Override
+    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
+        return null;
+    }
+
+    @Override
+    public CoverFactory getFactory() {
+        return factory;
+    }
 
 }

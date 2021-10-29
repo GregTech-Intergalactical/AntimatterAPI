@@ -111,7 +111,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     public Tier getGuiTier() {
         return guiTier;
     }
-    
+
     //Object can be an IDrawable or an ItemStack or an IItemProvider.
     public RecipeMap<B> setIcon(Object object) {
         this.icon = object;
@@ -142,6 +142,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     /**
      * Sets the gui data and overrides the data in JEI.
+     *
      * @param gui the guidata.
      * @return this
      */
@@ -153,7 +154,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     /**
      * Sets the gui data and overrides the data in JEI.
-     * @param gui the guidata.
+     *
+     * @param gui     the guidata.
      * @param machine the machine.
      * @return this
      */
@@ -165,6 +167,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     /**
      * Sets a proxy for this recipe map that is used to build recipes from other maps.
+     *
      * @param proxy the proxy.
      * @return this.
      */
@@ -246,7 +249,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
         //Recipe r = recurseItemTreeFind(items, map, rr -> true);
         //if (r != null) {
-            //Antimatter.LOGGER.warn("Recipe collision, adding both but only first is available.");
+        //Antimatter.LOGGER.warn("Recipe collision, adding both but only first is available.");
         //}
         if (recurseItemTreeAdd(recipe, items, LOOKUP, 0, 0)) {
             items.forEach(t -> t.forEach(ing -> {
@@ -399,12 +402,12 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     /**
      * Recursively finds a recipe
      *
-     * @param items the items part
-     * @param map   the current branch of the tree
+     * @param items     the items part
+     * @param map       the current branch of the tree
      * @param canHandle predicate to test found recipe.
-     * @param index the index of the wrapper to get
-     * @param count how deep we are in recursion, < items.length
-     * @param skip  bitmap of items to skip, i.e. which items are used in the recursion.
+     * @param index     the index of the wrapper to get
+     * @param count     how deep we are in recursion, < items.length
+     * @param skip      bitmap of items to skip, i.e. which items are used in the recursion.
      * @return a recipe
      */
     Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map, @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
@@ -491,7 +494,8 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     public void reset() {
-        this.RECIPES_TO_COMPILE.clear();;
+        this.RECIPES_TO_COMPILE.clear();
+        ;
     }
 
     public void resetCompiled() {
@@ -558,6 +562,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     /**
      * Whether or not an ingredient is hashable.
+     *
      * @param i ingredient
      * @return if it can be hashed.
      */

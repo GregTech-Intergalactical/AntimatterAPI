@@ -47,7 +47,7 @@ public class ModelUtils {
     public static IBakedModel getSimpleBakedModel(IBakedModel baked) {
         Map<Direction, List<BakedQuad>> faceQuads = new Object2ObjectOpenHashMap<>();
         Arrays.stream(Ref.DIRS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, EmptyModelData.INSTANCE)));
-        return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.isAmbientOcclusion(), baked.isSideLit(),baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides());
+        return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.isAmbientOcclusion(), baked.isSideLit(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides());
     }
 
     public static IBakedModel getBaked(ResourceLocation loc) {

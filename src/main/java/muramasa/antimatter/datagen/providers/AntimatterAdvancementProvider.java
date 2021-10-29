@@ -35,7 +35,8 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.gen = gen;
-        if (advancements.length == 0) throw new IllegalArgumentException("AntimatterAdvancementProvider requires at least one Advancement class.");
+        if (advancements.length == 0)
+            throw new IllegalArgumentException("AntimatterAdvancementProvider requires at least one Advancement class.");
         this.advancements = Arrays.asList(advancements);
     }
 

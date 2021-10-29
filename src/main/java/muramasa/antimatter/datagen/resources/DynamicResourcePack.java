@@ -89,11 +89,12 @@ public class DynamicResourcePack implements IResourcePack {
 
     public static void addRecipe(IFinishedRecipe recipe) {
         DATA.put(getRecipeLog(recipe.getID()), recipe.getRecipeJson());
-        if (recipe.getAdvancementJson() != null) DATA.put(getAdvancementLoc(Objects.requireNonNull(recipe.getAdvancementID())), recipe.getAdvancementJson());
+        if (recipe.getAdvancementJson() != null)
+            DATA.put(getAdvancementLoc(Objects.requireNonNull(recipe.getAdvancementID())), recipe.getAdvancementJson());
     }
 
     public static void addLootEntry(ResourceLocation loc, LootTable table) {
-        JsonObject obj =  (JsonObject) LootTableManager.toJson(table);
+        JsonObject obj = (JsonObject) LootTableManager.toJson(table);
         synchronized (DATA) {
             DATA.put(getLootLoc(loc), obj);
         }
@@ -109,7 +110,7 @@ public class DynamicResourcePack implements IResourcePack {
     public static void addTag(String type, ResourceLocation loc, JsonObject obj) {
         synchronized (DATA) {
             JsonObject object = DATA.putIfAbsent(getTagLoc(type, loc), obj);
-            if (object != null){
+            if (object != null) {
                 object.getAsJsonArray("values").addAll(obj.getAsJsonArray("values"));
             }
         }
@@ -125,12 +126,14 @@ public class DynamicResourcePack implements IResourcePack {
     @Override
     public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
         if (type == ResourcePackType.SERVER_DATA) {
-            if (DATA.containsKey(location)) return new ByteArrayInputStream(DATA.get(location).toString().getBytes(StandardCharsets.UTF_8));
+            if (DATA.containsKey(location))
+                return new ByteArrayInputStream(DATA.get(location).toString().getBytes(StandardCharsets.UTF_8));
             else throw new FileNotFoundException("Can't find " + location + " " + getName());
-        }
-        else {
-            if (LANG.containsKey(location)) return new ByteArrayInputStream(LANG.get(location).toString().getBytes(StandardCharsets.UTF_8));
-            else if (ASSETS.containsKey(location)) return new ByteArrayInputStream(ASSETS.get(location).getBytes(StandardCharsets.UTF_8));
+        } else {
+            if (LANG.containsKey(location))
+                return new ByteArrayInputStream(LANG.get(location).toString().getBytes(StandardCharsets.UTF_8));
+            else if (ASSETS.containsKey(location))
+                return new ByteArrayInputStream(ASSETS.get(location).getBytes(StandardCharsets.UTF_8));
             else throw new FileNotFoundException("Can't find " + location + " " + getName());
         }
     }
@@ -151,7 +154,8 @@ public class DynamicResourcePack implements IResourcePack {
 
     @Override
     public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespace, String path, int maxDepth, Predicate<String> filter) {
-        if (type == ResourcePackType.SERVER_DATA) return DATA.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
+        if (type == ResourcePackType.SERVER_DATA)
+            return DATA.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
         else if (type == ResourcePackType.CLIENT_RESOURCES) {
             Stream<ResourceLocation> obj = LANG.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath()));
             Stream<ResourceLocation> obj2 = ASSETS.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath()));

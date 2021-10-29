@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 public class GuiSyncPacket {
     private GuiInstance.SyncHolder[] data;
     public ByteBuf clientData;
+
     public GuiSyncPacket(final List<GuiInstance.SyncHolder> data) {
         this.data = data.toArray(new GuiInstance.SyncHolder[0]);
     }
@@ -43,7 +44,7 @@ public class GuiSyncPacket {
             Screen s = Minecraft.getInstance().currentScreen;
             Container c = Minecraft.getInstance().player.openContainer;
             if (c instanceof IAntimatterContainer) {
-                ((AntimatterContainer)c).handler.receivePacket(msg);
+                ((AntimatterContainer) c).handler.receivePacket(msg);
             }
         });
         ctx.get().setPacketHandled(true);

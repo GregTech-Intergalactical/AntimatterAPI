@@ -39,7 +39,7 @@ public class Recipe implements IRecipe<IInventory> {
     public String mapId;
 
     private boolean valid;
-    
+
     public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter_machine");
 
     public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
@@ -53,6 +53,7 @@ public class Recipe implements IRecipe<IInventory> {
         this.fluidsOutput = fluidsOutput;
         this.valid = true;
     }
+
     //After data reload this is false.
     public boolean isValid() {
         return valid;
@@ -106,7 +107,7 @@ public class Recipe implements IRecipe<IInventory> {
     }
 
     public void sortInputItems() {
-        this.itemsInput.sort((a,b) -> {
+        this.itemsInput.sort((a, b) -> {
             boolean a1 = RecipeMap.isIngredientSpecial(a.get());
             boolean a2 = RecipeMap.isIngredientSpecial(b.get());
             if (a1 == a2) return 0;
@@ -144,6 +145,7 @@ public class Recipe implements IRecipe<IInventory> {
 
     /**
      * Returns a list of items not bound by chances.
+     *
      * @return list of items.
      */
     public ItemStack[] getFlatOutputItems() {

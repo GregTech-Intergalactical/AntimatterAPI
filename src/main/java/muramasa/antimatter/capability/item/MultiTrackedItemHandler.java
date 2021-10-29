@@ -12,6 +12,7 @@ public class MultiTrackedItemHandler extends CombinedInvWrapper implements ITrac
     public MultiTrackedItemHandler(IItemHandlerModifiable... itemHandler) {
         super(itemHandler);
     }
+
     @Nonnull
     @Override
     public ItemStack insertOutputItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
@@ -20,6 +21,7 @@ public class MultiTrackedItemHandler extends CombinedInvWrapper implements ITrac
         slot = getSlotFromIndex(slot, index);
         return MachineItemHandler.insertIntoOutput(handler, slot, stack, simulate);
     }
+
     @Nonnull
     @Override
     public ItemStack extractFromInput(int slot, int amount, boolean simulate) {

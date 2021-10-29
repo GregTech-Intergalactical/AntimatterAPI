@@ -43,7 +43,8 @@ public class AntimatterModelManager {
                 @Override
                 public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
                     MachineBakedModel model = new MachineBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
-                    if (json.has("particle")) model.particle(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(json.get("particle").getAsString()))));
+                    if (json.has("particle"))
+                        model.particle(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(json.get("particle").getAsString()))));
                     return model;
                 }
             };

@@ -66,14 +66,14 @@ public class RenderHelper {
 
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
-        ItemModelsProperties.registerProperty(battery, new ResourceLocation(Ref.ID,"battery"), (stack, world, living) -> {
+        ItemModelsProperties.registerProperty(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living) -> {
             LazyOptional<IEnergyHandler> handler = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
-            return handler.map(h -> ((float)h.getEnergy() /  (float)h.getCapacity())).orElse(1.0F);
+            return handler.map(h -> ((float) h.getEnergy() / (float) h.getCapacity())).orElse(1.0F);
         });
     }
 
     public static void registerProbePropertyOverrides(MaterialArmor armor) {
-        ItemModelsProperties.registerProperty(armor, new ResourceLocation(Ref.ID,"probe"), (stack, world, living) -> {
+        ItemModelsProperties.registerProperty(armor, new ResourceLocation(Ref.ID, "probe"), (stack, world, living) -> {
             CompoundNBT nbt = stack.getTag();
             return nbt != null && nbt.contains("theoneprobe") && nbt.getBoolean("theoneprobe") ? 1.0F : 0.0F;
         });
@@ -166,6 +166,7 @@ public class RenderHelper {
             vertices[offset + size * i] = convertRGB2ABGR(rgb);
         }
     }
+
     //Returns the quad that would represent the quad at the front of the side, to avoid cover z-fighting.
     //Very complicated method but pretty straight forward nonetheless.
     public static int findPipeFront(PipeSize size, List<BakedQuad> quads, Direction side) {
@@ -175,11 +176,11 @@ public class RenderHelper {
             if (quad.getFace() != side) continue;
             int[] vertices = quad.getVertexData();
             //if not two vertices then skip. (All sides of relevance have just two vertices.)
-            if (vertices.length != DefaultVertexFormats.BLOCK.getIntegerSize()*4) continue;
+            if (vertices.length != DefaultVertexFormats.BLOCK.getIntegerSize() * 4) continue;
             float p1 = Float.intBitsToFloat(vertices[0]);
             float p2 = Float.intBitsToFloat(vertices[1]);
             float p3 = Float.intBitsToFloat(vertices[2]);
-            int boff = DefaultVertexFormats.BLOCK.getIntegerSize()*2;
+            int boff = DefaultVertexFormats.BLOCK.getIntegerSize() * 2;
             float p4 = Float.intBitsToFloat(vertices[boff]);
             float p5 = Float.intBitsToFloat(vertices[1 + boff]);
             float p6 = Float.intBitsToFloat(vertices[2 + boff]);
@@ -225,7 +226,7 @@ public class RenderHelper {
         double modX = result.getPos().getX() - viewX, modY = result.getPos().getY() - viewY, modZ = result.getPos().getZ() - viewZ;
         matrix.push();
         long time = player.getEntityWorld().getGameTime();
-        float r = Math.abs(time % ((255 >> 2)*2) - (255 >> 2))*(1 << 2);
+        float r = Math.abs(time % ((255 >> 2) * 2) - (255 >> 2)) * (1 << 2);
 
         float g = r;
         float b = g;
@@ -265,34 +266,34 @@ public class RenderHelper {
 
         //TODO: Use SHAPE to get actual size of box.
 
-        builderLines.pos(matrix4f, INDENTATION_SIDE, (float) (0), (float) (0)).color(r,g,b, 0.4F).endVertex();
-        builderLines.pos(matrix4f, INDENTATION_SIDE, Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, INDENTATION_SIDE, (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, INDENTATION_SIDE, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (0), 0 + INDENTATION_SIDE, (float) (0)).color(r,g,b,  0.4F).endVertex();
-        builderLines.pos(matrix4f, X, 0 + INDENTATION_SIDE, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), 0 + INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, 0 + INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, X - INDENTATION_SIDE, (float) (0), (float) (0)).color(r,g,b,  0.4F).endVertex();
-        builderLines.pos(matrix4f, X - INDENTATION_SIDE, Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X - INDENTATION_SIDE, (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X - INDENTATION_SIDE, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (0), Y - INDENTATION_SIDE, (float) (0)).color(r,g,b, 0.4F).endVertex();
-        builderLines.pos(matrix4f, X, Y - INDENTATION_SIDE, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), Y - INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, Y - INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (0), (float) (0), (float) (0)).color(r,g,b, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (0), Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, (float) (0), (float) (0), (float) (0)).color(r,g,b,  0.4F).endVertex();
-        builderLines.pos(matrix4f, X, (float) (0), (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, X, Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
-        builderLines.pos(matrix4f, X, (float) (0), (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
 
-        builderLines.pos(matrix4f, X, Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
-        builderLines.pos(matrix4f, (float) (0), Y, (float) (0)).color(r,g,b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, X, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.pos(matrix4f, (float) (0), Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
         TileEntity tile = player.getEntityWorld().getTileEntity(result.getPos());
         if (tile != null) {
             byte sides = 0;
             Direction dir = result.getFace();
-            for (Direction d: Ref.DIRS) {
+            for (Direction d : Ref.DIRS) {
                 if (getter.apply(d, tile)) {
                     sides |= 1 << d.getIndex();
                 }
@@ -324,25 +325,25 @@ public class RenderHelper {
                 down = Connectivity.has(sides, 0);
             }
             if (back) {
-                drawX(builderLines, matrix4f, 0, 0, INDENTATION_SIDE, INDENTATION_SIDE, r,g,b);
-                drawX(builderLines, matrix4f, X, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r,g,b);
-                drawX(builderLines, matrix4f, X, Y, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
-                drawX(builderLines, matrix4f, 0, Y, INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
+                drawX(builderLines, matrix4f, 0, 0, INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, X, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, X, Y, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, 0, Y, INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
             if (left) {
-                drawX(builderLines, matrix4f, X, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
+                drawX(builderLines, matrix4f, X, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
             if (right) {
-                drawX(builderLines, matrix4f, 0, INDENTATION_SIDE, INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
+                drawX(builderLines, matrix4f, 0, INDENTATION_SIDE, INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
             if (up) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, Y - INDENTATION_SIDE, X - INDENTATION_SIDE, Y, r,g,b);
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, Y - INDENTATION_SIDE, X - INDENTATION_SIDE, Y, r, g, b);
             }
             if (down) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r,g,b);
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
             }
             if (front) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, INDENTATION_SIDE,X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r,g,b);
+                drawX(builderLines, matrix4f, INDENTATION_SIDE, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
         }
         matrix.pop();
@@ -354,10 +355,10 @@ public class RenderHelper {
     }
 
     private static void drawX(IVertexBuilder builder, Matrix4f matrix, float x1, float y1, float x2, float y2, float r, float g, float b) {
-        builder.pos(matrix, x1, y1, 0).color(r,g,b,0.4F).endVertex();
-        builder.pos(matrix, x2, y2, 0).color(r,g,b, 0.4F).endVertex();
+        builder.pos(matrix, x1, y1, 0).color(r, g, b, 0.4F).endVertex();
+        builder.pos(matrix, x2, y2, 0).color(r, g, b, 0.4F).endVertex();
 
-        builder.pos(matrix, x2, y1, 0).color(r,g,b, 0.4F).endVertex();
-        builder.pos(matrix, x1, y2, 0).color(r,g,b,  0.4F).endVertex();
+        builder.pos(matrix, x2, y1, 0).color(r, g, b, 0.4F).endVertex();
+        builder.pos(matrix, x1, y2, 0).color(r, g, b, 0.4F).endVertex();
     }
 }

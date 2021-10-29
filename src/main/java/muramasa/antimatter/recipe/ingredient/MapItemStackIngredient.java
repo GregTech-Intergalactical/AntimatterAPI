@@ -22,10 +22,10 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
     public boolean equals(Object o) {
         if (!super.equals(o)) return false;
         if (o instanceof MapTagIngredient) {
-            return stack.getItem().getTags().contains(((MapTagIngredient)o).loc);
+            return stack.getItem().getTags().contains(((MapTagIngredient) o).loc);
         }
         if (o instanceof MapItemIngredient) {
-            return ((MapItemIngredient)o).stack.equals(this.stack.getItem());
+            return ((MapItemIngredient) o).stack.equals(this.stack.getItem());
         }
         if (o instanceof MapItemStackIngredient) {
             MapItemStackIngredient s = (MapItemStackIngredient) o;
@@ -40,10 +40,12 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
         if (!aTag.equals(bTag)) return false;
         return a.areCapsCompatible(b);
     }
+
     protected static final Set<String> CUSTOM_TAGS = ImmutableSet.of(Ref.KEY_STACK_NO_CONSUME, Ref.KEY_STACK_IGNORE_NBT);
 
     /**
      * Filters out tags that are static, not used for lookup.
+     *
      * @param nbt Compound to filter.
      * @return copied, filtered compound.
      */

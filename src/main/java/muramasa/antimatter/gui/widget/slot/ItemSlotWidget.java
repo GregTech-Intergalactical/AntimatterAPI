@@ -1,2 +1,4 @@
-package muramasa.antimatter.gui.widget.slot;public class ItemSlotWidget {
+package muramasa.antimatter.gui.widget.slot;
+
+public class ItemSlotWidget {
 }

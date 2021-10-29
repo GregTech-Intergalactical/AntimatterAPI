@@ -15,7 +15,7 @@ public interface IMaterialTag extends ISharedAntimatterObject {
 
     default void register(Class<?> c, String id) {
         AntimatterAPI.register(c, this);
-        AntimatterAPI.register(IMaterialTag.class,this);
+        AntimatterAPI.register(IMaterialTag.class, this);
     }
 
     default void add(Material... m) {

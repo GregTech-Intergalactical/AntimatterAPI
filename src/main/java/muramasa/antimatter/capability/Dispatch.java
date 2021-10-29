@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Dispatch {
 
-    private final Map<Capability<?>, Holder<?,?>> capabilityHolderMap = new Object2ObjectOpenHashMap<>();
+    private final Map<Capability<?>, Holder<?, ?>> capabilityHolderMap = new Object2ObjectOpenHashMap<>();
 
     public Dispatch() {
 
@@ -45,7 +45,7 @@ public class Dispatch {
     }
 
     public void refresh() {
-        capabilityHolderMap.forEach((k,v) -> v.refresh());
+        capabilityHolderMap.forEach((k, v) -> v.refresh());
     }
 
     public void refresh(Capability<?> cap) {
@@ -53,15 +53,17 @@ public class Dispatch {
         if (holder != null) holder.refresh();
     }
 
-    public Holder<?,?> getHolder(Capability<?> cap) {
+    public Holder<?, ?> getHolder(Capability<?> cap) {
         return capabilityHolderMap.get(cap);
     }
 
     public interface Sided<U> {
         LazyOptional<? extends U> forSide(Direction side);
-        default LazyOptional<? extends U> forNullSide(){
+
+        default LazyOptional<? extends U> forNullSide() {
             return LazyOptional.empty();
         }
+
         void refresh();
     }
 }

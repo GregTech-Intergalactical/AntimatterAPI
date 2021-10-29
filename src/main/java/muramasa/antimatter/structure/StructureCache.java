@@ -53,8 +53,9 @@ public class StructureCache {
 
     /**
      * Validates a multiblock (To ensure max shares is not exceeded).
-     * @param world tile world.
-     * @param pos controller position.
+     *
+     * @param world     tile world.
+     * @param pos       controller position.
      * @param structure a packed list of multiblock positions.
      * @param maxAmount maximum number of shares allowed (0 == none).
      * @return if it was successfully added.
@@ -75,8 +76,9 @@ public class StructureCache {
 
     /**
      * Returns the number of multiblocks using this position.
+     *
      * @param world the controller world.
-     * @param pos the position.
+     * @param pos   the position.
      * @return the amount of usage.
      */
     public static int refCount(World world, BlockPos pos) {
@@ -89,8 +91,9 @@ public class StructureCache {
 
     /**
      * Is there a structure using this position?
+     *
      * @param world Controller world.
-     * @param pos Relevant position.
+     * @param pos   Relevant position.
      * @return if it is active.
      */
     public static boolean has(World world, BlockPos pos) {
@@ -104,8 +107,9 @@ public class StructureCache {
 
     /**
      * Returns all controller positions for the @pos parameter.
+     *
      * @param world relevant world.
-     * @param pos structure position.
+     * @param pos   structure position.
      * @return a mapping of positions, where boolean is the validity state. (True = formed).
      */
     @Nullable
@@ -116,10 +120,11 @@ public class StructureCache {
 
     /**
      * Attempts to get a multiblock that is of class clazz from the given structure position.
+     *
      * @param world the controller world.
-     * @param pos the structure position.
+     * @param pos   the structure position.
      * @param clazz the tile class.
-     * @param <T> any relevant multi tile.
+     * @param <T>   any relevant multi tile.
      * @return a nullable Tile Entity.
      */
     @Nullable
@@ -137,8 +142,9 @@ public class StructureCache {
 
     /**
      * Adds a structure to the cache.
-     * @param world the world the structure is in.
-     * @param pos controller position.
+     *
+     * @param world     the world the structure is in.
+     * @param pos       controller position.
      * @param structure BlockPos-packed positions
      */
     public static void add(World world, BlockPos pos, LongList structure) {
@@ -148,8 +154,9 @@ public class StructureCache {
 
     /**
      * Remove a controller from the structure cache, either valid or invalid.
+     *
      * @param world the controller world.
-     * @param pos the controller position.
+     * @param pos   the controller position.
      */
     public static void remove(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
@@ -159,8 +166,9 @@ public class StructureCache {
 
     /**
      * Invalidates a multiblock, keeping it in the cache but setting it as invalid.
-     * @param world controller world.
-     * @param pos controller position.
+     *
+     * @param world     controller world.
+     * @param pos       controller position.
      * @param structure packed multi structure.
      */
     public static void invalidate(World world, BlockPos pos, LongList structure) {
@@ -181,9 +189,10 @@ public class StructureCache {
     /**
      * Adds a structure listener to the cache. This listener is notified if there is a multiblock present at pos, either added
      * or removed.
+     *
      * @param handle the structurehandle to call.
-     * @param world the tile world.
-     * @param pos the position to listen at.
+     * @param world  the tile world.
+     * @param pos    the position to listen at.
      */
     public static void addListener(StructureHandle<?> handle, World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.computeIfAbsent(world, k -> new Long2ObjectOpenHashMap<>());
@@ -195,9 +204,10 @@ public class StructureCache {
 
     /**
      * Removes a structurelistener, stopping all callbacks.
+     *
      * @param handle the handle
-     * @param world the relevant world.
-     * @param pos the blockpos.
+     * @param world  the relevant world.
+     * @param pos    the blockpos.
      */
     public static void removeListener(StructureHandle<?> handle, World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
@@ -226,10 +236,10 @@ public class StructureCache {
 
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
-        LOOKUP.remove((World)e.getWorld());
-        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.remove((World)e.getWorld());
+        LOOKUP.remove((World) e.getWorld());
+        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.remove((World) e.getWorld());
         if (map != null)
-            map.forEach((k,v) -> v.forEach(StructureHandle::structureCacheRemoval));
+            map.forEach((k, v) -> v.forEach(StructureHandle::structureCacheRemoval));
     }
 
     public static class DimensionEntry {
@@ -251,7 +261,7 @@ public class StructureCache {
             long at = pos.toLong();
             CONTROLLER_TO_STRUCTURE.put(at, structure);
             for (long s : structure) {
-                STRUCTURE_TO_CONTROLLER.compute(s, (k,v) -> {
+                STRUCTURE_TO_CONTROLLER.compute(s, (k, v) -> {
                     if (v == null) {
                         v = new Object2BooleanOpenHashMap<>();
                     }
@@ -269,18 +279,18 @@ public class StructureCache {
                     Antimatter.LOGGER.warn("Invalid state in StructureCache, map should not be null");//throw new RuntimeException("Invalid state in StructureCache, map should not be null");
                     return Integer.MAX_VALUE;
                 }
-               return map.values().stream().mapToInt(j -> j ? 1 : 0).sum();
+                return map.values().stream().mapToInt(j -> j ? 1 : 0).sum();
             }).max().orElse(0);
             if (i <= maxAmount) {
                 LongList old = this.CONTROLLER_TO_STRUCTURE.remove(at);
-                old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
+                old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k, v) -> {
                     if (v == null) return null;
                     if (v.size() == 1) return null;
                     v.remove(pos);
                     return v;
                 }));
                 this.CONTROLLER_TO_STRUCTURE.put(at, structure);
-                structure.forEach((LongConsumer) t -> this.STRUCTURE_TO_CONTROLLER.compute(t, (k,v) -> {
+                structure.forEach((LongConsumer) t -> this.STRUCTURE_TO_CONTROLLER.compute(t, (k, v) -> {
                     if (v == null) {
                         v = new Object2BooleanOpenHashMap<>();
                     }
@@ -295,14 +305,14 @@ public class StructureCache {
         public void invalidate(BlockPos pos, LongList structure) {
             long at = pos.toLong();
             LongList old = this.CONTROLLER_TO_STRUCTURE.put(at, structure);
-            old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k,v) -> {
+            old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k, v) -> {
                 if (v == null) return null;
                 if (v.size() == 1) return null;
                 v.remove(pos);
                 return v;
             }));
             for (long s : structure) {
-                STRUCTURE_TO_CONTROLLER.compute(s, (k,v) -> {
+                STRUCTURE_TO_CONTROLLER.compute(s, (k, v) -> {
                     if (v == null) {
                         v = new Object2BooleanOpenHashMap<>();
                     }
@@ -316,12 +326,12 @@ public class StructureCache {
             long at = pos.toLong();
             LongList structure = CONTROLLER_TO_STRUCTURE.remove(at);
             for (long s : structure) {
-                STRUCTURE_TO_CONTROLLER.compute(s, (k,v) -> {
+                STRUCTURE_TO_CONTROLLER.compute(s, (k, v) -> {
                     if (v == null) return null;
                     if (v.size() == 1) return null;
                     v.remove(pos);
                     return v;
-                } );
+                });
             }
         }
     }

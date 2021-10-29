@@ -64,7 +64,8 @@ public class ClientEvents {
         PlayerEntity player = MC.player;
         World world = player.getEntityWorld();
         ItemStack stack = player.getHeldItemMainhand();
-        if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover))) return;
+        if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover)))
+            return;
         if (stack.getItem() instanceof IHaveCover) {
             if (player.isCrouching()) return;
             RenderHelper.onDrawHighlight(player, event, b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
@@ -72,7 +73,8 @@ public class ClientEvents {
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         AntimatterToolType type = item.getAntimatterToolType();
-        if (player.isCrouching() && type != Data.WRENCH && type != Data.ELECTRIC_WRENCH && type != Data.CROWBAR && type != Data.WIRE_CUTTER) return;
+        if (player.isCrouching() && type != Data.WRENCH && type != Data.ELECTRIC_WRENCH && type != Data.CROWBAR && type != Data.WIRE_CUTTER)
+            return;
         //Perform highlight of wrench
         ActionResultType res = item.onGenericHighlight(player, event);
         if (res.isSuccess()) {
@@ -90,7 +92,7 @@ public class ClientEvents {
         IVertexBuilder builderLines = event.getBuffers().getBuffer(RenderType.LINES);
         MatrixStack matrix = event.getMatrix();
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
-        ImmutableSet<BlockPos> positions =  Utils.getHarvestableBlocksToBreak(world, player, item, aoeBreakBehaviour.getColumn(), aoeBreakBehaviour.getRow(), aoeBreakBehaviour.getDepth());
+        ImmutableSet<BlockPos> positions = Utils.getHarvestableBlocksToBreak(world, player, item, aoeBreakBehaviour.getColumn(), aoeBreakBehaviour.getRow(), aoeBreakBehaviour.getDepth());
         for (BlockPos nextPos : positions) {
             double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
             VoxelShape shape = world.getBlockState(nextPos).getShape(world, nextPos, ISelectionContext.forEntity(entity));
@@ -136,7 +138,8 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
-        if (!MC.gameSettings.showDebugInfo || MC.objectMouseOver == null || MC.objectMouseOver.getType() != RayTraceResult.Type.BLOCK) return;
+        if (!MC.gameSettings.showDebugInfo || MC.objectMouseOver == null || MC.objectMouseOver.getType() != RayTraceResult.Type.BLOCK)
+            return;
         World world = Minecraft.getInstance().world;
         if (world == null) return;
         BlockPos pos = new BlockPos(MC.objectMouseOver.getHitVec());

@@ -31,7 +31,7 @@ public class MachineBakedModel extends CoveredBakedModel {
         super(bakedTuple);
     }
 
-    public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads,BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         BlockMachine bm = (BlockMachine) state.getBlock();
         if (data.hasProperty(AntimatterProperties.MACHINE_TEXTURE)) {
             Function<Direction, Texture> fn = data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE);
@@ -52,14 +52,13 @@ public class MachineBakedModel extends CoveredBakedModel {
         return quads;
     }
 
-    
 
     @Override
     public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData data) {
         data = super.getModelData(world, pos, state, data);
         TileEntityMachine machine = (TileEntityMachine) data.getData(AntimatterProperties.TILE_PROPERTY);
         data.setData(AntimatterProperties.MACHINE_TYPE, machine.getMachineType());
-        data.setData(AntimatterProperties.MACHINE_TEXTURE,a -> {
+        data.setData(AntimatterProperties.MACHINE_TEXTURE, a -> {
             Texture[] tex = machine.getMachineType().getBaseTexture(machine.getMachineTier());
             if (tex.length == 1) return tex[0];
             return tex[a.getIndex()];
@@ -71,7 +70,7 @@ public class MachineBakedModel extends CoveredBakedModel {
     @Override
     protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         List<BakedQuad> quads = super.attachQuadsForSide(state, side, rand, data);
-        return attachMultiQuads(quads,state,side,rand,data);
+        return attachMultiQuads(quads, state, side, rand, data);
     }
 
 }

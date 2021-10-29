@@ -31,10 +31,10 @@ public class KubeJSRecipe extends RecipeJS {
 
     @Override
     public void create(ListJS listJS) {
-        this.map = (String)listJS.get(0);
+        this.map = (String) listJS.get(0);
         if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
             if (inputItem instanceof ItemStackJS) {
-                this.inputItems.add(RecipeIngredientJS.of(((ItemStackJS)inputItem).toResultJson()));
+                this.inputItems.add(RecipeIngredientJS.of(((ItemStackJS) inputItem).toResultJson()));
             } else if (inputItem instanceof MapJS) {
                 MapJS map = (MapJS) inputItem;
                 this.inputItems.add(RecipeIngredientJS.of(map.toJson()));
@@ -55,15 +55,15 @@ public class KubeJSRecipe extends RecipeJS {
             MapJS map = (MapJS) outputFluid;
             this.fluidOutput.add(RecipeSerializer.getStack(map.toJson()));
         }
-        duration = ((Number)listJS.get(5)).intValue();
-        power = ((Number)listJS.get(6)).longValue();
+        duration = ((Number) listJS.get(5)).intValue();
+        power = ((Number) listJS.get(6)).longValue();
 
         if (listJS.size() > 7) {
-            amps = ((Number)listJS.get(7)).intValue();
-            special = ((Number)listJS.get(8)).intValue();
+            amps = ((Number) listJS.get(7)).intValue();
+            special = ((Number) listJS.get(8)).intValue();
             if (listJS.size() > 9) {
                 for (Object chance : ListJS.orSelf(listJS.get(9))) {
-                    this.chances.add(((Number)chance).intValue());
+                    this.chances.add(((Number) chance).intValue());
                 }
             }
         } else {
@@ -77,30 +77,25 @@ public class KubeJSRecipe extends RecipeJS {
 
     @Override
     public void deserialize() {
-        for (JsonElement e : JSONUtils.getJsonArray(json, "item_in", new JsonArray()))
-        {
+        for (JsonElement e : JSONUtils.getJsonArray(json, "item_in", new JsonArray())) {
             this.inputItems.add(RecipeIngredientJS.of(e));
         }
-        for (JsonElement e : JSONUtils.getJsonArray(json, "item_out", new JsonArray()))
-        {
+        for (JsonElement e : JSONUtils.getJsonArray(json, "item_out", new JsonArray())) {
             this.outputItems.add(ItemStackJS.of(e));
         }
-        for (JsonElement e : JSONUtils.getJsonArray(json, "fluid_in", new JsonArray()))
-        {
+        for (JsonElement e : JSONUtils.getJsonArray(json, "fluid_in", new JsonArray())) {
             this.fluidInput.add(RecipeSerializer.getStack(e));
         }
-        for (JsonElement e : JSONUtils.getJsonArray(json, "fluid_out", new JsonArray()))
-        {
+        for (JsonElement e : JSONUtils.getJsonArray(json, "fluid_out", new JsonArray())) {
             this.fluidOutput.add(RecipeSerializer.getStack(e));
         }
         this.duration = JSONUtils.getInt(json, "duration");
         this.special = JSONUtils.getInt(json, "special", 0);
         this.power = JSONUtils.getInt(json, "eu");
-        this.amps = JSONUtils.getInt(json, "amps",1);
+        this.amps = JSONUtils.getInt(json, "amps", 1);
         this.map = JSONUtils.getString(json, "map");
 
-        for (JsonElement e : JSONUtils.getJsonArray(json, "chances", new JsonArray()))
-        {
+        for (JsonElement e : JSONUtils.getJsonArray(json, "chances", new JsonArray())) {
             this.chances.add(e.getAsInt());
         }
     }
@@ -110,7 +105,7 @@ public class KubeJSRecipe extends RecipeJS {
         obj.addProperty("fluid", stack.getFluid().getRegistryName().toString());
         obj.addProperty("amount", stack.getAmount());
         if (stack.hasTag()) {
-            obj.add("tag",NBTDynamicOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getTag()));
+            obj.add("tag", NBTDynamicOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getTag()));
         }
         return obj;
     }
@@ -147,5 +142,5 @@ public class KubeJSRecipe extends RecipeJS {
         this.json.addProperty("amps", this.amps);
         this.json.addProperty("special", this.special);
         this.json.addProperty("map", this.map);
-   }
+    }
 }

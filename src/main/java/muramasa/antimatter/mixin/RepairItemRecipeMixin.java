@@ -30,10 +30,10 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
     }
 
     @Inject(/*remap = false,*/ method = "getCraftingResult", at = @At("HEAD"), cancellable = true)
-    private void getCraftingResultInject(CraftingInventory inv, CallbackInfoReturnable<ItemStack> ci){
+    private void getCraftingResultInject(CraftingInventory inv, CallbackInfoReturnable<ItemStack> ci) {
         List<ItemStack> list = Lists.newArrayList();
 
-        for(int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack itemstack = inv.getStackInSlot(i);
             if (!itemstack.isEmpty()) {
                 list.add(itemstack);
@@ -45,15 +45,15 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
                 }
             }
         }
-        if (list.size() == 2){
+        if (list.size() == 2) {
             ItemStack a = list.get(0);
             ItemStack b = list.get(1);
             if (a.getItem() == b.getItem() && a.getCount() == 1 && b.getCount() == 1 && a.isRepairable() && (a.getItem() instanceof IAntimatterTool || a.getItem() instanceof IAntimatterArmor)) {
                 boolean match = true;
-                if (a.getItem() instanceof IAntimatterTool){
+                if (a.getItem() instanceof IAntimatterTool) {
                     IAntimatterTool tool = (IAntimatterTool) a.getItem();
                     match = tool.getPrimaryMaterial(a) == tool.getPrimaryMaterial(b) && tool.getSecondaryMaterial(a) == tool.getSecondaryMaterial(b);
-                } else if (a.getItem() instanceof IAntimatterArmor){
+                } else if (a.getItem() instanceof IAntimatterArmor) {
                     IAntimatterArmor armor = (IAntimatterArmor) a.getItem();
                     match = armor.getMaterial(a) == armor.getMaterial(b);
                 }
@@ -70,7 +70,7 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
                     i1 = 0;
                 }
 
-                ItemStack output = item instanceof IAntimatterTool ? ((IAntimatterTool)item).asItemStack(((IAntimatterTool)item).getPrimaryMaterial(a), ((IAntimatterTool)item).getSecondaryMaterial(a)) : ((IAntimatterArmor)item).asItemStack(((IAntimatterArmor)item).getMaterial(a));
+                ItemStack output = item instanceof IAntimatterTool ? ((IAntimatterTool) item).asItemStack(((IAntimatterTool) item).getPrimaryMaterial(a), ((IAntimatterTool) item).getSecondaryMaterial(a)) : ((IAntimatterArmor) item).asItemStack(((IAntimatterArmor) item).getMaterial(a));
                 output.setDamage(i1);
 
                 Map<Enchantment, Integer> map = Maps.newHashMap();
@@ -93,10 +93,10 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
     }
 
     @Inject(/*remap = false,*/ method = "matches", at = @At("HEAD"), cancellable = true)
-    private void matchesInject(CraftingInventory inv, World world, CallbackInfoReturnable<Boolean> ci){
+    private void matchesInject(CraftingInventory inv, World world, CallbackInfoReturnable<Boolean> ci) {
         List<ItemStack> list = Lists.newArrayList();
 
-        for(int i = 0; i < inv.getSizeInventory(); ++i) {
+        for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack itemstack = inv.getStackInSlot(i);
             if (!itemstack.isEmpty()) {
                 list.add(itemstack);
@@ -108,14 +108,14 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
                 }
             }
         }
-        if (list.size() == 2){
+        if (list.size() == 2) {
             ItemStack a = list.get(0);
             ItemStack b = list.get(1);
             boolean match = true;
-            if (a.getItem() instanceof IAntimatterTool){
+            if (a.getItem() instanceof IAntimatterTool) {
                 IAntimatterTool tool = (IAntimatterTool) a.getItem();
                 match = tool.getPrimaryMaterial(a) == tool.getPrimaryMaterial(b) && tool.getSecondaryMaterial(a) == tool.getSecondaryMaterial(b);
-            } else if (a.getItem() instanceof IAntimatterArmor){
+            } else if (a.getItem() instanceof IAntimatterArmor) {
                 IAntimatterArmor armor = (IAntimatterArmor) a.getItem();
                 match = armor.getMaterial(a) == armor.getMaterial(b);
             }

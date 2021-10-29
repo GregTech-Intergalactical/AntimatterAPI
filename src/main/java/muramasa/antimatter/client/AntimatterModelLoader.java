@@ -82,12 +82,14 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
                 if (!json.has("config") || !json.get("config").isJsonArray()) return baseModel;
                 Int2ObjectOpenHashMap<IModelGeometry<?>[]> configs = new Int2ObjectOpenHashMap<>();
                 for (JsonElement e : json.getAsJsonArray("config")) {
-                    if (!e.isJsonObject() || !e.getAsJsonObject().has("id") || !e.getAsJsonObject().has("models")) continue;
+                    if (!e.isJsonObject() || !e.getAsJsonObject().has("id") || !e.getAsJsonObject().has("models"))
+                        continue;
                     int id = e.getAsJsonObject().get("id").getAsInt();
                     configs.put(id, buildModels(context, e.getAsJsonObject().get("models").getAsJsonArray()));
                 }
                 String staticMapId = "";
-                if (json.has("staticMap") && json.get("staticMap").isJsonPrimitive()) staticMapId = json.get("staticMap").getAsString();
+                if (json.has("staticMap") && json.get("staticMap").isJsonPrimitive())
+                    staticMapId = json.get("staticMap").getAsString();
                 return new DynamicModel(baseModel, configs, staticMapId);
             } catch (Exception e) {
                 return onModelLoadingException(e);

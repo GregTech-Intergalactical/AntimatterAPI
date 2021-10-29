@@ -5,7 +5,9 @@ import net.minecraftforge.api.distmarker.Dist;
 public interface IAntimatterRegistrar extends IAntimatterObject {
 
 
-    default String getDomain() { return getId(); }
+    default String getDomain() {
+        return getId();
+    }
 
     default boolean isEnabled() {
         return !getId().equals("minecraft");
@@ -13,7 +15,7 @@ public interface IAntimatterRegistrar extends IAntimatterObject {
 
     void onRegistrationEvent(RegistrationEvent event, Dist side);
 
-    default int getPriority(){
+    default int getPriority() {
         return 1000;
     }
 

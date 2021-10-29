@@ -40,12 +40,12 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     public MachineItemHandler(T tile) {
         this.tile = tile;
-        if (tile.has(GUI)){
+        if (tile.has(GUI)) {
             Map<SlotType<?>, List<SlotData<?>>> map = tile.getMachineType().getSlots(tile.getMachineTier()).stream().collect(Collectors.groupingBy(SlotData::getType));
             for (Map.Entry<SlotType<?>, List<SlotData<?>>> entry : map.entrySet()) {
                 SlotType<?> type = entry.getKey();
                 int count = tile.getMachineType().getCount(tile.getMachineTier(), entry.getKey());
-                if (type == SlotType.DISPLAY_SETTABLE || type == SlotType.DISPLAY){
+                if (type == SlotType.DISPLAY_SETTABLE || type == SlotType.DISPLAY) {
                     inventories.put(type, new FakeTrackedItemHandler<>(tile, count, type.output, type.input, type.tester, type.ev));
                 } else {
                     inventories.put(type, new TrackedItemHandler<>(tile, count, type.output, type.input, type.tester, type.ev));
@@ -53,7 +53,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
             }
         }
-        inventories.defaultReturnValue(new TrackedItemHandler<>(tile, 0, false, false, (a,b) -> false, null));
+        inventories.defaultReturnValue(new TrackedItemHandler<>(tile, 0, false, false, (a, b) -> false, null));
     }
 
     public Map<SlotType<?>, IItemHandler> getAll() {
@@ -108,12 +108,14 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     public static ItemStack extractFromInput(IItemHandler handler, int slot, int amount, boolean simulate) {
         if (handler instanceof ITrackedHandler) {
-            return ((ITrackedHandler)handler).extractFromInput(slot, amount, simulate);
+            return ((ITrackedHandler) handler).extractFromInput(slot, amount, simulate);
         }
         return handler.extractItem(slot, amount, simulate);
     }
 
-    /** Handler Access **/
+    /**
+     * Handler Access
+     **/
     public ITrackedHandler getInputHandler() {
         return inventories.get(SlotType.IT_IN);
     }
@@ -134,7 +136,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         return inventories.get(SlotType.ENERGY);
     }
 
-    public ITrackedHandler getHandler(SlotType<?> type){
+    public ITrackedHandler getHandler(SlotType<?> type) {
         return inventories.get(type);
     }
 
@@ -167,7 +169,9 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         return getCellInputHandler().getStackInSlot(1);
     }
 
-    /** Gets a list of non empty input Items **/
+    /**
+     * Gets a list of non empty input Items
+     **/
     public List<ItemStack> getInputList() {
         List<ItemStack> list = new ObjectArrayList<>();
         IItemHandlerModifiable inputs = getInputHandler();
@@ -179,7 +183,9 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         return list;
     }
 
-    /** Returns a non copied list of chargeable items. **/
+    /**
+     * Returns a non copied list of chargeable items.
+     **/
     public List<IEnergyHandler> getChargeableItems() {
         List<IEnergyHandler> list = new ObjectArrayList<>();
         if (tile.isServerSide()) {
@@ -194,7 +200,9 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         return list;
     }
 
-    /** Gets a list of non empty output Items **/
+    /**
+     * Gets a list of non empty output Items
+     **/
     public List<ItemStack> getOutputList() {
         List<ItemStack> list = new ObjectArrayList<>();
         IItemHandlerModifiable outputs = getOutputHandler();
@@ -242,9 +250,11 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         if (simulate) return success ? consumedItems : Collections.emptyList();
         return consumedItems;
     }
+
     /**
      * Consumes the inputs from the active recipe.
-     * @param recipe active recipe.
+     *
+     * @param recipe   active recipe.
      * @param simulate whether to execute or just return items.
      * @return a list of consumed items, or an empty list if it failed during simulation.
      */
@@ -254,6 +264,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     /**
      * Fill the output slots with @outputs items.
+     *
      * @param outputs the outputs to add.
      */
     public void addOutputs(ItemStack... outputs) {
@@ -271,14 +282,16 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         }
     }
 
-    /** Helpers **/
+    /**
+     * Helpers
+     **/
     public boolean canOutputsFit(ItemStack[] a) {
         if (a == null) return true;
         IItemHandlerModifiable outputHandler = getOutputHandler();
         boolean[] results = new boolean[a.length];
         for (int i = 0; i < a.length; i++) {
             for (int j = 0; j < outputHandler.getSlots(); j++) {
-                results[i] |=  insertIntoOutput(outputHandler, j, a[i], true).isEmpty();
+                results[i] |= insertIntoOutput(outputHandler, j, a[i], true).isEmpty();
             }
         }
         for (boolean value : results) {
@@ -306,7 +319,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
                 }
             }
         }
-        
+
         return matchCount;
     }
 

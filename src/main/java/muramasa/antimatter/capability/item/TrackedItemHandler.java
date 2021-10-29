@@ -15,14 +15,14 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
     private final ContentEvent contentEvent;
     private final boolean output;
     private final boolean input;
-    private final BiPredicate<IGuiHandler,ItemStack> validator;
+    private final BiPredicate<IGuiHandler, ItemStack> validator;
     private final int limit;
 
-    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler,ItemStack> validator, ContentEvent contentEvent) {
+    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent) {
         this(tile, size, output, input, validator, contentEvent, 64);
     }
 
-    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler,ItemStack> validator, ContentEvent contentEvent, int limit) {
+    public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent, int limit) {
         super(size);
         this.tile = tile;
         this.output = output;
@@ -33,8 +33,7 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
     }
 
     @Override
-    public int getSlotLimit(int slot)
-    {
+    public int getSlotLimit(int slot) {
         return limit;
     }
 

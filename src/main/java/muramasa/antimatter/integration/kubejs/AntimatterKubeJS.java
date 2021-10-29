@@ -12,19 +12,20 @@ public class AntimatterKubeJS {
         MinecraftForge.EVENT_BUS.addListener(AntimatterKubeJS::onBindings);
         MinecraftForge.EVENT_BUS.addListener(AntimatterKubeJS::registerRecipeHandlers);
     }
+
     public static void onBindings(BindingsEvent event) {
         event.add("antimatter", new KubeJSBindings());
     }
 
-    public static void registerRecipeHandlers(RegisterRecipeHandlersEvent event)
-    {
+    public static void registerRecipeHandlers(RegisterRecipeHandlersEvent event) {
         event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
     }
 
-    public static void loadStartupScripts(){
+    public static void loadStartupScripts() {
         new AMCreationEvent().post(ScriptType.STARTUP, "antimatter.creation");
     }
-    public static void loadWorldgenScripts(){
+
+    public static void loadWorldgenScripts() {
         new AMWorldEvent().post(ScriptType.STARTUP, "antimatter.world");
     }
 }

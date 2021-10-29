@@ -40,27 +40,39 @@ import static muramasa.antimatter.material.MaterialTag.METAL;
 
 public class Material implements ISharedAntimatterObject, IRegistryEntryProvider {
 
-    /** Basic Members **/
+    /**
+     * Basic Members
+     **/
     private String domain, id;
     private ITextComponent displayName;
     private int rgb;
     private TextureSet set;
 
-    /** Element Members **/
+    /**
+     * Element Members
+     **/
     private Element element;
     private String chemicalFormula = "";
 
-    /** Solid Members **/
+    /**
+     * Solid Members
+     **/
     private int meltingPoint, blastFurnaceTemp;
     private boolean needsBlastFurnace;
 
-    /** Gem Members **/
+    /**
+     * Gem Members
+     **/
     private boolean transparent;
 
-    /** Fluid/Gas/Plasma Members **/
+    /**
+     * Fluid/Gas/Plasma Members
+     **/
     private int fuelPower, liquidTemperature, gasTemperature;
-    
-    /** Tool Members **/
+
+    /**
+     * Tool Members
+     **/
     private float toolDamage, toolSpeed, toughness, knockbackResistance;
     private int toolDurability, toolQuality, armorDurabilityFactor;
     private int[] armor;
@@ -72,12 +84,16 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     private ImmutableMap<Enchantment, Integer> handleEnchantment;
     private List<AntimatterToolType> toolTypes;
 
-    /** Ore members **/
+    /**
+     * Ore members
+     **/
     private RangedInteger expRange = null;
 
     private final boolean enabled;
 
-    /** Processing Members **/
+    /**
+     * Processing Members
+     **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
     private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private List<MaterialStack> processInto = new ObjectArrayList<>();
@@ -138,7 +154,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     public String toString() {
         return Utils.lowerUnderscoreToUpperSpaced(getId());
     }
-    
+
     public Material asDust(IMaterialTag... tags) {
         return asDust(295, tags);
     }
@@ -178,16 +194,16 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return this;
     }
 
-    public Material asOre(int minXp, int maxXp, boolean small, IMaterialTag... tags){
+    public Material asOre(int minXp, int maxXp, boolean small, IMaterialTag... tags) {
         this.expRange = new RangedInteger(minXp, maxXp);
         return asOre(small, tags);
     }
 
-    public Material asOre(IMaterialTag... tags){
+    public Material asOre(IMaterialTag... tags) {
         return asOre(true, tags);
     }
 
-    public Material asOre(boolean small, IMaterialTag... tags){
+    public Material asOre(boolean small, IMaterialTag... tags) {
         asDust(ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
         if (!has(GEM) && Arrays.stream(tags).noneMatch(r -> r == GEM)) flags(RAW_ORE);
         if (small) flags(ORE_SMALL);
@@ -195,13 +211,13 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return this;
     }
 
-    public Material asOreStone(int minXp, int maxXp, IMaterialTag... tags){
+    public Material asOreStone(int minXp, int maxXp, IMaterialTag... tags) {
         asOre(minXp, maxXp, false, tags);
         flags(ORE_STONE);
         return this;
     }
 
-    public Material asOreStone(IMaterialTag... tags){
+    public Material asOreStone(IMaterialTag... tags) {
         asOre(tags);
         asDust(ORE_STONE, ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
         flags(tags);
@@ -244,7 +260,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     }
 
     public Material asGas(int fuelPower) {
-        return asGas(fuelPower,  Math.max(meltingPoint, 295));
+        return asGas(fuelPower, Math.max(meltingPoint, 295));
     }
 
     public Material asGas(int fuelPower, int temp) {
@@ -264,7 +280,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return this;
     }
 
-    public Material harvestLevel(int harvestLevel){
+    public Material harvestLevel(int harvestLevel) {
         this.toolQuality = harvestLevel + 1;
         return this;
     }
@@ -272,16 +288,17 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality) {
         return addTools(toolDamage, toolSpeed, toolDurability, toolQuality, ImmutableMap.of());
     }
-    
+
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
-        if (has(INGOT)) flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
+        if (has(INGOT))
+            flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(TOOLS, ROD);
         this.toolDamage = toolDamage;
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
         this.toolEnchantment = toolEnchantment;
-        if (toolTypes.length > 0){
+        if (toolTypes.length > 0) {
             this.toolTypes = Arrays.asList(toolTypes);
         } else {
             this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
@@ -290,7 +307,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         if (this.toolTypes.contains(BUZZSAW)) flags(BUZZSAW_BLADE);
         if (this.toolTypes.contains(DRILL)) flags(DRILLBIT);
         if (this.toolTypes.contains(CHAINSAW)) flags(CHAINSAWBIT);
-    	return this;
+        return this;
     }
 
     public Material addTools(Material derivedMaterial, ImmutableMap<Enchantment, Integer> toolEnchantment) {
@@ -306,7 +323,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     }
 
     public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        if (armor.length < 4){
+        if (armor.length < 4) {
             Antimatter.LOGGER.info("Material " + this.getId() + " unable to add armor, protection array must have at least 4 values");
             return this;
         }
@@ -385,14 +402,17 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         stacks.forEach((k, v) -> processInto.add(new MaterialStack(k, v)));
         return this;
     }
-    
+
     public void setChemicalFormula() {
         if (!enabled) return;
         if (element != null) chemicalFormula = element.getElement();
-    	else if (!processInto.isEmpty()) chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
+        else if (!processInto.isEmpty())
+            chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
     }
 
-    /** Basic Getters**/
+    /**
+     * Basic Getters
+     **/
     public ITextComponent getDisplayName() {
         return displayName == null ? displayName = new TranslationTextComponent("material." + getId()) : displayName;
     }
@@ -442,16 +462,20 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return (getDensity() * rAmount) / (tAmount * Ref.U);
     }
 
-    /** Element Getters **/
+    /**
+     * Element Getters
+     **/
     public Element getElement() {
         return element;
     }
-    
+
     public String getChemicalFormula() {
-    	return chemicalFormula;
+        return chemicalFormula;
     }
 
-    /** Solid Getters **/
+    /**
+     * Solid Getters
+     **/
     public int getMeltingPoint() {
         return meltingPoint;
     }
@@ -464,15 +488,23 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return needsBlastFurnace;
     }
 
-    /** Gem Getters **/
+    /**
+     * Gem Getters
+     **/
     public boolean isTransparent() {
         return transparent;
     }
 
-    /** Tool Getters **/
-    public float getToolDamage() { return toolDamage; }
+    /**
+     * Tool Getters
+     **/
+    public float getToolDamage() {
+        return toolDamage;
+    }
 
-    public float getToolSpeed() { return toolSpeed; }
+    public float getToolSpeed() {
+        return toolSpeed;
+    }
 
     public int getToolDurability() {
         return toolDurability;
@@ -481,9 +513,9 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     public int getToolQuality() {
         return toolQuality;
     }
-    
+
     public Map<Enchantment, Integer> getToolEnchantments() {
-    	return toolEnchantment != null ? toolEnchantment : Collections.emptyMap();
+        return toolEnchantment != null ? toolEnchantment : Collections.emptyMap();
     }
 
     public Map<Enchantment, Integer> getArmorEnchantments() {
@@ -514,17 +546,25 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return toolTypes != null ? toolTypes : Collections.emptyList();
     }
 
-    public boolean isHandle() { return isHandle; }
+    public boolean isHandle() {
+        return isHandle;
+    }
 
-    public int getHandleDurability() { return handleDurability; }
+    public int getHandleDurability() {
+        return handleDurability;
+    }
 
-    public float getHandleSpeed() { return handleSpeed; }
+    public float getHandleSpeed() {
+        return handleSpeed;
+    }
 
     public RangedInteger getExpRange() {
         return expRange;
     }
 
-    /** Fluid/Gas/Plasma Getters **/
+    /**
+     * Fluid/Gas/Plasma Getters
+     **/
     public Fluid getLiquid() {
         return LIQUID.get().get(this, 1).getFluid();
     }
@@ -548,21 +588,23 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     public FluidStack getPlasma(int amount) {
         return PLASMA.get().get(this, amount);
     }
-    
+
     public int getLiquidTemperature() {
-    	return liquidTemperature;
+        return liquidTemperature;
     }
 
-    
+
     public int getGasTemperature() {
-    	return gasTemperature;
+        return gasTemperature;
     }
 
     public int getFuelPower() {
         return fuelPower;
     }
 
-    /** Processing Getters/Setters **/
+    /**
+     * Processing Getters/Setters
+     **/
     public int getOreMulti() {
         return oreMulti;
     }
@@ -660,8 +702,8 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     }
 
     public ItemStack getCell(int amount, ItemFluidCell cell) {
-    	return Utils.ca(amount, cell.fill(getLiquid()));
-       // return ItemStack.EMPTY;
+        return Utils.ca(amount, cell.fill(getLiquid()));
+        // return ItemStack.EMPTY;
     }
 
     public ItemStack getCellGas(int amount, ItemFluidCell cell) {

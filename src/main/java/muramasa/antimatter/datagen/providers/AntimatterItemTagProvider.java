@@ -98,7 +98,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         this.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
         this.copy(blockTag, blockToItemTag(blockTag));
         this.copy(frameTag, blockToItemTag(frameTag));
-        if (domain.equals(Ref.ID)){
+        if (domain.equals(Ref.ID)) {
             AntimatterAPI.all(BlockOre.class, o -> {
                 //if (o.getOreType() == ORE_SMALL) return;
                 String name = String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
@@ -108,11 +108,11 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             });
             AntimatterAPI.all(BlockStone.class, s -> {
                 String id = "blocks/".concat(s.getId());
-                if (s.getSuffix().isEmpty()){
+                if (s.getSuffix().isEmpty()) {
                     this.getOrCreateBuilder(Tags.Items.STONE).add(s.asItem());
-                } else if (s.getSuffix().equals("cobble")){
+                } else if (s.getSuffix().equals("cobble")) {
                     this.getOrCreateBuilder(Tags.Items.COBBLESTONE).add(s.asItem());
-                } else if (s.getSuffix().contains("bricks")){
+                } else if (s.getSuffix().contains("bricks")) {
                     this.getOrCreateBuilder(ItemTags.STONE_BRICKS).add(s.asItem());
                 }
                 this.copy(getBlockTag(new ResourceLocation(Ref.ID, id)), getItemTag(new ResourceLocation(Ref.ID, id)));
@@ -142,7 +142,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             processSubtags();
         }
 
-        AntimatterAPI.all(IAntimatterTool.class,domain, tool -> {
+        AntimatterAPI.all(IAntimatterTool.class, domain, tool -> {
             this.getOrCreateBuilder(tool.getAntimatterToolType().getTag()).add(tool.getItem()).replace(replace);
             this.getOrCreateBuilder(tool.getAntimatterToolType().getForgeTag()).add(tool.getItem()).replace(replace);
         });
@@ -154,8 +154,8 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         for (PipeSize value : PipeSize.values()) {
             Set<Material> mats = WIRE.allSub(SubTag.COPPER_WIRE);
             if (mats.size() > 0) {
-                this.getOrCreateBuilder(TagUtils.getItemTag(new ResourceLocation(Ref.ID,SubTag.COPPER_WIRE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
-                        AntimatterAPI.get(Wire.class, "wire_"+ t.getId())).filter(Objects::nonNull).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
+                this.getOrCreateBuilder(TagUtils.getItemTag(new ResourceLocation(Ref.ID, SubTag.COPPER_WIRE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
+                        AntimatterAPI.get(Wire.class, "wire_" + t.getId())).filter(Objects::nonNull).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
             }
         }
     }
@@ -175,7 +175,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     public void addTag(ResourceLocation loc, ITag.Builder obj) {
         JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
-        if (json == null)  {
+        if (json == null) {
             addTag(loc, obj.serialize());
         } else {
             obj = obj.deserialize(json, "Antimatter - Dynamic Data");
@@ -185,6 +185,6 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
 
     @Override
     public void onCompletion() {
-        TAGS.forEach((k,v) -> DynamicResourcePack.addTag("items", k, v));
+        TAGS.forEach((k, v) -> DynamicResourcePack.addTag("items", k, v));
     }
 }

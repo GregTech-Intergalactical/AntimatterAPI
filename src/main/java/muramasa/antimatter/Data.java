@@ -128,21 +128,21 @@ public class Data {
     public static Material Diorite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "diorite", 0xf0f0f0, NONE).asDust(ROCK));
     public static Material Andesite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "andesite", 0xbfbfbf, NONE).asDust(ROCK));
 
-    public static Material Gravel =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "gravel", 0xcdcdcd, NONE).asDust(ROCK));
-    public static Material Sand =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "sand", 0xfafac8, NONE).asDust(ROCK));
-    public static Material RedSand =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "red_sand", 0xff8438, NONE).asDust(ROCK));
-    public static Material Sandstone =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "sandstone", 0xfafac8, NONE).asDust(ROCK));
-    public static Material Blackstone =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "blackstone", 0x2c272d, NONE).asDust());
-    public static Material BasaltVanilla =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "vanilla_basalt", 0x1e1414, NONE));
+    public static Material Gravel = AntimatterAPI.register(Material.class, new Material(Ref.ID, "gravel", 0xcdcdcd, NONE).asDust(ROCK));
+    public static Material Sand = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sand", 0xfafac8, NONE).asDust(ROCK));
+    public static Material RedSand = AntimatterAPI.register(Material.class, new Material(Ref.ID, "red_sand", 0xff8438, NONE).asDust(ROCK));
+    public static Material Sandstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sandstone", 0xfafac8, NONE).asDust(ROCK));
+    public static Material Blackstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "blackstone", 0x2c272d, NONE).asDust());
+    public static Material BasaltVanilla = AntimatterAPI.register(Material.class, new Material(Ref.ID, "vanilla_basalt", 0x1e1414, NONE));
 
-    public static Material Endstone =  AntimatterAPI.register(Material.class, new Material(Ref.ID, "endstone", 0xffffff, NONE).asDust());
-    public static Material Netherrack =  AntimatterAPI.register(Material.class ,new Material(Ref.ID, "netherrack", 0xc80000, NONE).asDust());
+    public static Material Endstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "endstone", 0xffffff, NONE).asDust());
+    public static Material Netherrack = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherrack", 0xc80000, NONE).asDust());
 
-    public static StoneType STONE =  AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE));
+    public static StoneType STONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE));
 
     public static StoneType GRANITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "granite", Granite, new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.GRANITE));
-    public static StoneType DIORITE =  AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DIORITE));
-    public static StoneType ANDESITE =  AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.ANDESITE));
+    public static StoneType DIORITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DIORITE));
+    public static StoneType ANDESITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.ANDESITE));
 
     public static StoneType GRAVEL = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "gravel", Gravel, new Texture("minecraft", "block/gravel"), SoundType.GROUND, false).setState(Blocks.GRAVEL).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.6F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
     public static StoneType SAND = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "sand", Sand, new Texture("minecraft", "block/sand"), SoundType.SAND, false).setState(Blocks.SAND).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
@@ -166,9 +166,9 @@ public class Data {
         });
         ORE.set((m, s) -> {
             if (m != null) {
-                Item item = AntimatterAPI.getReplacement(ORE,m);
+                Item item = AntimatterAPI.getReplacement(ORE, m);
                 if (item instanceof BlockItem) {
-                    return new MaterialTypeBlock.Container(((BlockItem)item).getBlock().getDefaultState());
+                    return new MaterialTypeBlock.Container(((BlockItem) item).getBlock().getDefaultState());
                 }
             }
             if (m == null || s == null || !ORE.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ORE, m, s);
@@ -188,9 +188,9 @@ public class Data {
         }).blockType();
         BLOCK.set(m -> {
             if (m != null) {
-                Item item = AntimatterAPI.getReplacement(BLOCK,m);
+                Item item = AntimatterAPI.getReplacement(BLOCK, m);
                 if (item instanceof BlockItem) {
-                    return new MaterialTypeBlock.Container(((BlockItem)item).getBlock().getDefaultState());
+                    return new MaterialTypeBlock.Container(((BlockItem) item).getBlock().getDefaultState());
                 }
             }
             if (m == null || !BLOCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(BLOCK, m);
@@ -332,7 +332,7 @@ public class Data {
     private static void clientBehaviours() {
         WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
         SCREWDRIVER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
-        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine ||  (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
         WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WIRE_CUTTER.getToolType(), BehaviourExtendedHighlight.PIPE_FUNCTION));
         CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
     }

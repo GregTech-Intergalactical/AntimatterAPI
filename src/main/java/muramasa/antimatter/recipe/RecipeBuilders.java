@@ -35,7 +35,10 @@ public class RecipeBuilders {
     public static void init() {
 
     }
-    /** RECIPE BUILDERS **/
+
+    /**
+     * RECIPE BUILDERS
+     **/
 
     public static final MaterialRecipe.Provider ARMOR_BUILDER = MaterialRecipe.registerProvider("armor", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
 
@@ -46,13 +49,13 @@ public class RecipeBuilders {
 
         @Override
         public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            CompoundNBT nbt = stack.getTag(). getCompound(Ref.TAG_TOOL_DATA);
+            CompoundNBT nbt = stack.getTag().getCompound(Ref.TAG_TOOL_DATA);
             Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
             return ImmutableMap.of("primary", primary != null ? primary : NULL);
         }
     });
 
-    public static final MaterialRecipe.Provider ITEM_PIPE_BUILDER = MaterialRecipe.registerProvider("pipe", Ref.ID, id  -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider ITEM_PIPE_BUILDER = MaterialRecipe.registerProvider("pipe", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -65,12 +68,13 @@ public class RecipeBuilders {
 
         @Override
         public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
+            return ImmutableMap.of("primary", ((PipeItemBlock) stack.getItem()).getPipe().getType().getMaterial());
         }
     });
 
     public static final MaterialRecipe.Provider DUST_BUILDER = MaterialRecipe.registerProvider("dust", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
         final MaterialTypeItem type = AntimatterAPI.get(MaterialTypeItem.class, id);
+
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
             Material mat = (Material) mats.mats.get("primary");
@@ -80,7 +84,7 @@ public class RecipeBuilders {
         @Override
         public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
             if (stack.getItem() instanceof MaterialItem) {
-                return ImmutableMap.of("primary", ((MaterialItem)stack.getItem()).getMaterial());
+                return ImmutableMap.of("primary", ((MaterialItem) stack.getItem()).getMaterial());
             }
             Material mat = type.tryMaterialFromItem(stack);
             if (mat != null) {
@@ -90,7 +94,7 @@ public class RecipeBuilders {
         }
     });
 
-    public static final MaterialRecipe.Provider FLUID_PIPE_BUILDER = MaterialRecipe.registerProvider("fluid", Ref.ID, id  -> new MaterialRecipe.ItemBuilder() {
+    public static final MaterialRecipe.Provider FLUID_PIPE_BUILDER = MaterialRecipe.registerProvider("fluid", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
 
         @Override
         public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
@@ -103,7 +107,7 @@ public class RecipeBuilders {
 
         @Override
         public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
-            return ImmutableMap.of("primary",((PipeItemBlock)stack.getItem()).getPipe().getType().getMaterial());
+            return ImmutableMap.of("primary", ((PipeItemBlock) stack.getItem()).getPipe().getType().getMaterial());
         }
     });
 

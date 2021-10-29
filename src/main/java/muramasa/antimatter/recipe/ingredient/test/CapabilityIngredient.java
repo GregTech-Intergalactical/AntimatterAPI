@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 public class CapabilityIngredient extends Ingredient {
 
     private final LazyValue<Capability<?>> cap;
+
     protected CapabilityIngredient(Stream<? extends IItemList> itemLists) {
         super(itemLists);
         cap = null;

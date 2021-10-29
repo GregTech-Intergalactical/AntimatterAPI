@@ -58,7 +58,7 @@ public class AntimatterItemModelBuilder extends ItemModelBuilder {
         return bucketLoader();
     }
 
-    public AntimatterItemModelBuilder tex(Consumer<Map<String,String>> texer) {
+    public AntimatterItemModelBuilder tex(Consumer<Map<String, String>> texer) {
         texer.accept(this.textures);
         return this;
     }

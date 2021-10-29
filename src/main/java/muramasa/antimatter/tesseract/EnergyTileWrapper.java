@@ -23,7 +23,7 @@ public class EnergyTileWrapper implements IEnergyHandler {
     @Override
     public long insert(long maxReceive, boolean simulate) {
         if (state.receive(simulate, getInputAmperage(), maxReceive)) {
-            return storage.receiveEnergy((int)(maxReceive * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), simulate);
+            return storage.receiveEnergy((int) (maxReceive * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), simulate);
         }
         return 0;
     }
@@ -35,12 +35,12 @@ public class EnergyTileWrapper implements IEnergyHandler {
 
     @Override
     public long getEnergy() {
-        return (long) (storage.getEnergyStored()* AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO);
+        return (long) (storage.getEnergyStored() * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO);
     }
 
     @Override
     public long getCapacity() {
-        return (long)(storage.getMaxEnergyStored()* AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO);
+        return (long) (storage.getMaxEnergyStored() * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO);
     }
 
     @Override

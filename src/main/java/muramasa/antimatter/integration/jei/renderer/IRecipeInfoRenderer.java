@@ -7,8 +7,8 @@ import net.minecraft.client.gui.FontRenderer;
 public interface IRecipeInfoRenderer {
     void render(MatrixStack stack, Recipe recipe, FontRenderer fontRenderer, int guiOffsetX, int guiOffsetY);
 
-    default void renderString(MatrixStack stack, String string,FontRenderer render, float x, float y,int guiOffsetX, int guiOffsetY) {
-        renderString(stack, string,render,x,y,0xFFFFFF, guiOffsetX, guiOffsetY);
+    default void renderString(MatrixStack stack, String string, FontRenderer render, float x, float y, int guiOffsetX, int guiOffsetY) {
+        renderString(stack, string, render, x, y, 0xFFFFFF, guiOffsetX, guiOffsetY);
     }
 
     default void renderString(MatrixStack stack, String string, FontRenderer render, float x, float y, int color, int guiOffsetX, int guiOffsetY) {

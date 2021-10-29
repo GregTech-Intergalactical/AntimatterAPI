@@ -39,7 +39,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         if (ignore || getState().receive(true, 1, toInsert)) {
             if (!simulate) {
                 energy += toInsert;
-                if (!ignore) getState().receive(false,  1, toInsert);
+                if (!ignore) getState().receive(false, 1, toInsert);
             }
         } else {
             return 0;
@@ -47,7 +47,9 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         return toInsert;
     }
 
-    /** Tesseract IGTNode Implementations **/
+    /**
+     * Tesseract IGTNode Implementations
+     **/
     @Override
     public long insert(long maxReceive, boolean simulate) {
         return insertInternal(maxReceive, simulate, false);
@@ -66,7 +68,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         return extractInternal(maxExtract, simulate, false);
     }
 
-   //Ignore means to ignore e.g. whether or not it actually can input.
+    //Ignore means to ignore e.g. whether or not it actually can input.
     //Useful for recipe handlers, to extract from input-only machines.
     public long extractInternal(long maxExtract, boolean simulate, boolean ignore) {
         if (!ignore && !canOutput()) return 0;
@@ -147,7 +149,9 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         return voltageOut > 0;
     }
 
-    /** Forge IEnergyStorage Implementations **/
+    /**
+     * Forge IEnergyStorage Implementations
+     **/
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         long receive = insert(maxReceive, simulate);

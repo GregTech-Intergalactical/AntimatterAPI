@@ -63,7 +63,9 @@ public class WorldGenHelper {
         TREE_BIOME_SET.add("ForestHills");
     }
 
-    /** Efficiently sets a BlockState, without causing block updates or notifying the client **/
+    /**
+     * Efficiently sets a BlockState, without causing block updates or notifying the client
+     **/
     public static boolean setState(IWorld world, BlockPos pos, BlockState state) {
         if (state == null) {
             Antimatter.LOGGER.error("WorldGenHelper: tried to place null state at " + pos.toString());
@@ -79,7 +81,9 @@ public class WorldGenHelper {
         return setOre(world, pos, existing, oreState);
     }
 
-    /** Raw version of setOre, will only place the passed state if the existing state is a registered stone **/
+    /**
+     * Raw version of setOre, will only place the passed state if the existing state is a registered stone
+     **/
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
         if (!ORE_PREDICATE.test(existing)) return false;
         return setState(world, pos, replacement);
@@ -90,7 +94,9 @@ public class WorldGenHelper {
         return true;
     }
 
-    /** Adds a rock to the global map for placing in a later generation stage **/
+    /**
+     * Adds a rock to the global map for placing in a later generation stage
+     **/
     public static boolean addRock(IWorld world, BlockPos pos, Material material, int chance) {
         int y = Math.min(world.getHeight(Heightmap.Type.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
         return addRockRaw(world, new BlockPos(pos.getX(), y, pos.getZ()), material, chance);
@@ -106,7 +112,9 @@ public class WorldGenHelper {
         return setStone(world, pos, existing, stoneLayer.getStoneState());
     }
 
-    /** **/
+    /**
+     *
+     **/
     public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
         if (!STONE_PREDICATE.test(existing)) return false;
         return setState(world, pos, replacement);

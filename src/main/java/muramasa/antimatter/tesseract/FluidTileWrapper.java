@@ -20,32 +20,32 @@ public class FluidTileWrapper implements IFluidNode {
 
     @Override
     public int getPriority(Direction direction) {
-        return (!(handler instanceof IFluidNode) ? 0 : ((IFluidNode)handler).getPriority(direction));
+        return (!(handler instanceof IFluidNode) ? 0 : ((IFluidNode) handler).getPriority(direction));
     }
 
     @Override
     public boolean canOutput() {
-        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canOutput());
+        return (!(handler instanceof IFluidNode) || ((IFluidNode) handler).canOutput());
     }
 
     @Override
     public boolean canInput() {
-        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput());
+        return (!(handler instanceof IFluidNode) || ((IFluidNode) handler).canInput());
     }
 
     @Override
     public boolean canInput(Direction direction) {
-        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput(direction));
+        return (!(handler instanceof IFluidNode) || ((IFluidNode) handler).canInput(direction));
     }
 
     @Override
     public boolean canOutput(Direction direction) {
-        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canOutput(direction));
+        return (!(handler instanceof IFluidNode) || ((IFluidNode) handler).canOutput(direction));
     }
 
     @Override
     public boolean canInput(FluidStack fluid, Direction direction) {
-        return (!(handler instanceof IFluidNode) || ((IFluidNode)handler).canInput(fluid, direction));
+        return (!(handler instanceof IFluidNode) || ((IFluidNode) handler).canInput(fluid, direction));
     }
 
     @Override

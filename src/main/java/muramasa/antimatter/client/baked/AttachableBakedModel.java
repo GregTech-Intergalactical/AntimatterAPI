@@ -52,11 +52,11 @@ public class AttachableBakedModel extends DynamicBakedModel {
     @Override
     public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         //if (side != null) return super.getBlockQuads(state, side, rand, data);
-       // if (side == null) return super.getBlockQuads(state, null,rand,data);
+        // if (side == null) return super.getBlockQuads(state, null,rand,data);
         //if (side == null) return super.getBlockQuads(state,null,rand,data);
         if (side == null) return Collections.emptyList();
-        List<BakedQuad> sideQuads = attachQuadsForSide(state,side,rand,data);
-        if (sideQuads.size() == 0) return super.getBlockQuads(state,side,rand,data);
+        List<BakedQuad> sideQuads = attachQuadsForSide(state, side, rand, data);
+        if (sideQuads.size() == 0) return super.getBlockQuads(state, side, rand, data);
         return sideQuads;
     }
 

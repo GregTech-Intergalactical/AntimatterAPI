@@ -12,13 +12,17 @@ import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.List;
 import java.util.function.BiConsumer;
 
+import javax.annotation.Nullable;
+
 public class CoverPlate extends CoverMaterial {
 
-    public CoverPlate(ICoverHandler<?> source, Tier tier, Direction side, CoverFactory factory, MaterialType<?> type, Material material) {
+    public CoverPlate(ICoverHandler<?> source, Tier tier, Direction side, CoverFactory factory, MaterialType<?> type,
+                      Material material) {
         super(source, tier, side, factory);
         this.type = type;
         this.material = material;
@@ -52,6 +56,11 @@ public class CoverPlate extends CoverMaterial {
 
     public Material getMaterial() {
         return material;
+    }
+
+    @Override
+    public <T> boolean blocksCapability(Capability<T> cap, @Nullable Direction side) {
+        return true;
     }
 
     @Override

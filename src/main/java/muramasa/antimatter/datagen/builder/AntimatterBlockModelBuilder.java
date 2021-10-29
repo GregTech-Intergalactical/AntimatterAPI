@@ -119,7 +119,8 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
     }
 
     public JsonObject addModelObject(JsonObject o, String parent, ImmutableMap<String, String> textures) {
-        if (!parent.contains(":")) parent = StringUtils.replace(StringUtils.replace(parent, "simple", SIMPLE), "layered", LAYERED);
+        if (!parent.contains(":"))
+            parent = StringUtils.replace(StringUtils.replace(parent, "simple", SIMPLE), "layered", LAYERED);
         o.addProperty("parent", parent);
         JsonObject texture = new JsonObject();
         textures.forEach((k, v) -> texture.addProperty(k, v.replaceAll("mc:", "minecraft:")));
@@ -172,99 +173,99 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
 
     public AntimatterBlockModelBuilder basicConfig(Block block, Texture[] tex) {
         if (!(block instanceof ITextureProvider) || tex.length < 13) return this;
-         model(SIMPLE, ((ITextureProvider) block).getTextures());
+        model(SIMPLE, ((ITextureProvider) block).getTextures());
 
         //Single (1)
-         if (tex.length < 17){
-             config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
-             config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
-             config(4, SIMPLE, c -> c.tex(tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]));
-             config(8, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]));
-             config(16, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[0], tex[12]));
-             config(32, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[12], tex[0]));
-         } else {
-             // 13 = facing right, 14 = facing down, 15 = facing left, 16 = facing up
-             config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[14], tex[14], tex[14], tex[14]));
-             config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[16], tex[16], tex[16], tex[16]));
-             config(4, SIMPLE, c -> c.tex(tex[14], tex[16], tex[0], tex[12], tex[15], tex[13]));
-             config(8, SIMPLE, c -> c.tex(tex[16], tex[14], tex[12], tex[0], tex[13], tex[15]));
-             config(16, SIMPLE, c -> c.tex(tex[15], tex[15], tex[13], tex[15], tex[0], tex[12]));
-             config(32, SIMPLE, c -> c.tex(tex[13], tex[13], tex[15], tex[13], tex[12], tex[0]));
-         }
+        if (tex.length < 17) {
+            config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
+            config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
+            config(4, SIMPLE, c -> c.tex(tex[1], tex[1], tex[0], tex[12], tex[0], tex[0]));
+            config(8, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[0], tex[0], tex[0]));
+            config(16, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[0], tex[12]));
+            config(32, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[12], tex[0]));
+        } else {
+            // 13 = facing right, 14 = facing down, 15 = facing left, 16 = facing up
+            config(1, SIMPLE, c -> c.tex(tex[12], tex[12], tex[14], tex[14], tex[14], tex[14]));
+            config(2, SIMPLE, c -> c.tex(tex[12], tex[12], tex[16], tex[16], tex[16], tex[16]));
+            config(4, SIMPLE, c -> c.tex(tex[14], tex[16], tex[0], tex[12], tex[15], tex[13]));
+            config(8, SIMPLE, c -> c.tex(tex[16], tex[14], tex[12], tex[0], tex[13], tex[15]));
+            config(16, SIMPLE, c -> c.tex(tex[15], tex[15], tex[13], tex[15], tex[0], tex[12]));
+            config(32, SIMPLE, c -> c.tex(tex[13], tex[13], tex[15], tex[13], tex[12], tex[0]));
+        }
 
 
         //Lines (2)
-         config(3, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
-         config(12, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[12], tex[0], tex[0]));
-         config(48, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[12], tex[12]));
+        config(3, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[1], tex[1], tex[1]));
+        config(12, SIMPLE, c -> c.tex(tex[1], tex[1], tex[12], tex[12], tex[0], tex[0]));
+        config(48, SIMPLE, c -> c.tex(tex[0], tex[0], tex[0], tex[0], tex[12], tex[12]));
 
         //Elbows (2)
-         config(6, SIMPLE, c -> c.tex(tex[1], tex[12], tex[0], tex[1], tex[11], tex[10]));
-         config(5, SIMPLE, c -> c.tex(tex[12], tex[1], tex[12], tex[1], tex[9], tex[8]));
-         config(9, SIMPLE, c -> c.tex(tex[12], tex[1], tex[1], tex[12], tex[8], tex[9]));
-         config(10, SIMPLE, c -> c.tex(tex[1], tex[12], tex[1], tex[12], tex[10], tex[11]));
-         config(17, SIMPLE, c -> c.tex(tex[12], tex[0], tex[8], tex[9], tex[12], tex[1]));
-         config(18, SIMPLE, c -> c.tex(tex[0], tex[12], tex[10], tex[11], tex[12], tex[1]));
-         config(33, SIMPLE, c -> c.tex(tex[12], tex[0], tex[9], tex[8], tex[1], tex[12]));
-         config(34, SIMPLE, c -> c.tex(tex[0], tex[12], tex[11], tex[10], tex[1], tex[10]));
-         config(20, SIMPLE, c -> c.tex(tex[9], tex[11], tex[0], tex[0], tex[0], tex[0]));
-         config(24, SIMPLE, c -> c.tex(tex[11], tex[9], tex[0], tex[0], tex[0], tex[0]));
-         config(36, SIMPLE, c -> c.tex(tex[8], tex[10], tex[0], tex[0], tex[0], tex[0]));
-         config(40, SIMPLE, c -> c.tex(tex[10], tex[8], tex[0], tex[0], tex[0], tex[0]));
+        config(6, SIMPLE, c -> c.tex(tex[1], tex[12], tex[0], tex[1], tex[11], tex[10]));
+        config(5, SIMPLE, c -> c.tex(tex[12], tex[1], tex[12], tex[1], tex[9], tex[8]));
+        config(9, SIMPLE, c -> c.tex(tex[12], tex[1], tex[1], tex[12], tex[8], tex[9]));
+        config(10, SIMPLE, c -> c.tex(tex[1], tex[12], tex[1], tex[12], tex[10], tex[11]));
+        config(17, SIMPLE, c -> c.tex(tex[12], tex[0], tex[8], tex[9], tex[12], tex[1]));
+        config(18, SIMPLE, c -> c.tex(tex[0], tex[12], tex[10], tex[11], tex[12], tex[1]));
+        config(33, SIMPLE, c -> c.tex(tex[12], tex[0], tex[9], tex[8], tex[1], tex[12]));
+        config(34, SIMPLE, c -> c.tex(tex[0], tex[12], tex[11], tex[10], tex[1], tex[10]));
+        config(20, SIMPLE, c -> c.tex(tex[9], tex[11], tex[0], tex[0], tex[0], tex[0]));
+        config(24, SIMPLE, c -> c.tex(tex[11], tex[9], tex[0], tex[0], tex[0], tex[0]));
+        config(36, SIMPLE, c -> c.tex(tex[8], tex[10], tex[0], tex[0], tex[0], tex[0]));
+        config(40, SIMPLE, c -> c.tex(tex[10], tex[8], tex[0], tex[0], tex[0], tex[0]));
 
         //Side (3)
-         config(7, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[1], tex[4], tex[2]));
-         config(11, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[12], tex[2], tex[4]));
-         config(13, SIMPLE, c -> c.tex(tex[12], tex[1], tex[12], tex[12], tex[3], tex[3]));
-         config(14, SIMPLE, c -> c.tex(tex[1], tex[12], tex[12], tex[12], tex[5], tex[5]));
-         config(19, SIMPLE, c -> c.tex(tex[12], tex[12], tex[2], tex[4], tex[12], tex[1]));
-         config(28, SIMPLE, c -> c.tex(tex[4], tex[4], tex[12], tex[12], tex[12], tex[0]));
-         config(35, SIMPLE, c -> c.tex(tex[12], tex[12], tex[4], tex[2], tex[1], tex[12]));
-         config(44, SIMPLE, c -> c.tex(tex[2], tex[2], tex[12], tex[12], tex[0], tex[12]));
-         config(49, SIMPLE, c -> c.tex(tex[12], tex[0], tex[3], tex[3], tex[12], tex[12]));
-         config(50, SIMPLE, c -> c.tex(tex[0], tex[12], tex[5], tex[5], tex[12], tex[12]));
-         config(52, SIMPLE, c -> c.tex(tex[3], tex[5], tex[12], tex[0], tex[12], tex[12]));
-         config(56, SIMPLE, c -> c.tex(tex[5], tex[3], tex[0], tex[12], tex[12], tex[12]));
+        config(7, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[1], tex[4], tex[2]));
+        config(11, SIMPLE, c -> c.tex(tex[12], tex[12], tex[1], tex[12], tex[2], tex[4]));
+        config(13, SIMPLE, c -> c.tex(tex[12], tex[1], tex[12], tex[12], tex[3], tex[3]));
+        config(14, SIMPLE, c -> c.tex(tex[1], tex[12], tex[12], tex[12], tex[5], tex[5]));
+        config(19, SIMPLE, c -> c.tex(tex[12], tex[12], tex[2], tex[4], tex[12], tex[1]));
+        config(28, SIMPLE, c -> c.tex(tex[4], tex[4], tex[12], tex[12], tex[12], tex[0]));
+        config(35, SIMPLE, c -> c.tex(tex[12], tex[12], tex[4], tex[2], tex[1], tex[12]));
+        config(44, SIMPLE, c -> c.tex(tex[2], tex[2], tex[12], tex[12], tex[0], tex[12]));
+        config(49, SIMPLE, c -> c.tex(tex[12], tex[0], tex[3], tex[3], tex[12], tex[12]));
+        config(50, SIMPLE, c -> c.tex(tex[0], tex[12], tex[5], tex[5], tex[12], tex[12]));
+        config(52, SIMPLE, c -> c.tex(tex[3], tex[5], tex[12], tex[0], tex[12], tex[12]));
+        config(56, SIMPLE, c -> c.tex(tex[5], tex[3], tex[0], tex[12], tex[12], tex[12]));
 
         //Corner (3)
-         config(21, SIMPLE, c -> c.tex(tex[11], tex[11], tex[0], tex[9], tex[0], tex[8]));
-         config(22, SIMPLE, c -> c.tex(tex[9], tex[9], tex[0], tex[11], tex[0], tex[10]));
-         config(25, SIMPLE, c -> c.tex(tex[9], tex[9], tex[8], tex[0], tex[0], tex[9]));
-         config(26, SIMPLE, c -> c.tex(tex[11], tex[11], tex[10], tex[0], tex[0], tex[11]));
-         config(37, SIMPLE, c -> c.tex(tex[10], tex[10], tex[0], tex[8], tex[9], tex[0]));
-         config(38, SIMPLE, c -> c.tex(tex[8], tex[8], tex[0], tex[10], tex[11], tex[0]));
-         config(41, SIMPLE, c -> c.tex(tex[8], tex[8], tex[9], tex[0], tex[8], tex[0]));
-         config(42, SIMPLE, c -> c.tex(tex[10], tex[10], tex[11], tex[0], tex[10], tex[0]));
+        config(21, SIMPLE, c -> c.tex(tex[11], tex[11], tex[0], tex[9], tex[0], tex[8]));
+        config(22, SIMPLE, c -> c.tex(tex[9], tex[9], tex[0], tex[11], tex[0], tex[10]));
+        config(25, SIMPLE, c -> c.tex(tex[9], tex[9], tex[8], tex[0], tex[0], tex[9]));
+        config(26, SIMPLE, c -> c.tex(tex[11], tex[11], tex[10], tex[0], tex[0], tex[11]));
+        config(37, SIMPLE, c -> c.tex(tex[10], tex[10], tex[0], tex[8], tex[9], tex[0]));
+        config(38, SIMPLE, c -> c.tex(tex[8], tex[8], tex[0], tex[10], tex[11], tex[0]));
+        config(41, SIMPLE, c -> c.tex(tex[8], tex[8], tex[9], tex[0], tex[8], tex[0]));
+        config(42, SIMPLE, c -> c.tex(tex[10], tex[10], tex[11], tex[0], tex[10], tex[0]));
 
         //Arrow (4)
-         config(23, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[4], tex[12], tex[2]));
-         config(27, SIMPLE, c -> c.tex(tex[12], tex[12], tex[2], tex[12], tex[12], tex[4]));
-         config(29, SIMPLE, c -> c.tex(tex[12], tex[4], tex[12], tex[12], tex[12], tex[3]));
-         config(30, SIMPLE, c -> c.tex(tex[4], tex[12], tex[12], tex[12], tex[12], tex[5]));
-         config(39, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[2], tex[4], tex[12]));
-         config(43, SIMPLE, c -> c.tex(tex[12], tex[12], tex[4], tex[12], tex[2], tex[12]));
-         config(45, SIMPLE, c -> c.tex(tex[12], tex[2], tex[12], tex[12], tex[3], tex[12]));
-         config(46, SIMPLE, c -> c.tex(tex[2], tex[12], tex[12], tex[12], tex[5], tex[12]));
-         config(53, SIMPLE, c -> c.tex(tex[12], tex[5], tex[12], tex[3], tex[12], tex[12]));
-         config(54, SIMPLE, c -> c.tex(tex[3], tex[12], tex[12], tex[5], tex[12], tex[12]));
-         config(57, SIMPLE, c -> c.tex(tex[12], tex[3], tex[3], tex[12], tex[12], tex[12]));
-         config(58, SIMPLE, c -> c.tex(tex[5], tex[12], tex[5], tex[12], tex[12], tex[12]));
+        config(23, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[4], tex[12], tex[2]));
+        config(27, SIMPLE, c -> c.tex(tex[12], tex[12], tex[2], tex[12], tex[12], tex[4]));
+        config(29, SIMPLE, c -> c.tex(tex[12], tex[4], tex[12], tex[12], tex[12], tex[3]));
+        config(30, SIMPLE, c -> c.tex(tex[4], tex[12], tex[12], tex[12], tex[12], tex[5]));
+        config(39, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[2], tex[4], tex[12]));
+        config(43, SIMPLE, c -> c.tex(tex[12], tex[12], tex[4], tex[12], tex[2], tex[12]));
+        config(45, SIMPLE, c -> c.tex(tex[12], tex[2], tex[12], tex[12], tex[3], tex[12]));
+        config(46, SIMPLE, c -> c.tex(tex[2], tex[12], tex[12], tex[12], tex[5], tex[12]));
+        config(53, SIMPLE, c -> c.tex(tex[12], tex[5], tex[12], tex[3], tex[12], tex[12]));
+        config(54, SIMPLE, c -> c.tex(tex[3], tex[12], tex[12], tex[5], tex[12], tex[12]));
+        config(57, SIMPLE, c -> c.tex(tex[12], tex[3], tex[3], tex[12], tex[12], tex[12]));
+        config(58, SIMPLE, c -> c.tex(tex[5], tex[12], tex[5], tex[12], tex[12], tex[12]));
 
         //Cross (4)
-         config(15, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[12], tex[6], tex[6]));
-         config(51, SIMPLE, c -> c.tex(tex[12], tex[12], tex[6], tex[6], tex[12], tex[12]));
-         config(60, SIMPLE, c -> c.tex(tex[6], tex[6], tex[12], tex[12], tex[12], tex[12]));
+        config(15, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[12], tex[6], tex[6]));
+        config(51, SIMPLE, c -> c.tex(tex[12], tex[12], tex[6], tex[6], tex[12], tex[12]));
+        config(60, SIMPLE, c -> c.tex(tex[6], tex[6], tex[12], tex[12], tex[12], tex[12]));
 
         //Five (5)
-         config(31, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[12], tex[12], tex[6]));
-         config(47, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[12], tex[6], tex[12]));
-         config(55, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[6], tex[12], tex[12]));
-         config(59, SIMPLE, c -> c.tex(tex[12], tex[12], tex[6], tex[12], tex[12], tex[12]));
-         config(61, SIMPLE, c -> c.tex(tex[12], tex[6], tex[12], tex[12], tex[12], tex[12]));
-         config(62, SIMPLE, c -> c.tex(tex[6], tex[12], tex[12], tex[12], tex[12], tex[12]));
+        config(31, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[12], tex[12], tex[6]));
+        config(47, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[12], tex[6], tex[12]));
+        config(55, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[6], tex[12], tex[12]));
+        config(59, SIMPLE, c -> c.tex(tex[12], tex[12], tex[6], tex[12], tex[12], tex[12]));
+        config(61, SIMPLE, c -> c.tex(tex[12], tex[6], tex[12], tex[12], tex[12], tex[12]));
+        config(62, SIMPLE, c -> c.tex(tex[6], tex[12], tex[12], tex[12], tex[12], tex[12]));
 
         //All (6)
-         config(63, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[12], tex[12], tex[12]));
+        config(63, SIMPLE, c -> c.tex(tex[12], tex[12], tex[12], tex[12], tex[12], tex[12]));
 
         return this;
     }

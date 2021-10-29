@@ -14,10 +14,14 @@ import java.util.function.Function;
 
 public class AntimatterProperties {
 
-    /** Block Dynamic Properties **/
+    /**
+     * Block Dynamic Properties
+     **/
     public static final ModelProperty<ModelConfig> DYNAMIC_CONFIG = new ModelProperty<>();
 
-    /** Block Machine Properties **/
+    /**
+     * Block Machine Properties
+     **/
     public static final ModelProperty<Machine<?>> MACHINE_TYPE = new ModelProperty<>();
     public static final ModelProperty<MachineState> MACHINE_STATE = new ModelProperty<>();
     //TODO: Probably converge these two into one somehow.
@@ -27,7 +31,9 @@ public class AntimatterProperties {
     public static final ModelProperty<BlockState> STATE_MODEL_PROPERTY = new ModelProperty<>();
     public static final ModelProperty<Texture> TEXTURE_MODEL_PROPERTY = new ModelProperty<>();
 
-    /** Block Pipe Properties **/
+    /**
+     * Block Pipe Properties
+     **/
     //public static PropertyBool PIPE_INSULATED = PropertyBool.create("insulated");
     //public static PropertyBool PIPE_RESTRICTIVE = PropertyBool.create("restrictive");
     public static final ModelProperty<PipeSize> PIPE_SIZE = new ModelProperty<>();

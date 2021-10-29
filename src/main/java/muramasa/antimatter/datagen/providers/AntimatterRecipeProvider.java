@@ -90,16 +90,16 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         registerToolRecipes(consumer, providerDomain);
         registerPipeRecipes(consumer, providerDomain);
         registerOther(consumer, providerDomain);
-        craftingLoaders.forEach(cl -> cl.loadRecipes(consumer,this));
+        craftingLoaders.forEach(cl -> cl.loadRecipes(consumer, this));
     }
 
     protected void registerOther(Consumer<IFinishedRecipe> consumer, String providerDomain) {
         final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
         if (providerDomain.equals(Ref.ID)) {
             addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "dust_small", "antimatter_dusts",
-                    "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_SMALL)).map(t -> DUST.get(t,1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_SMALL).tags(DUST).build()), "DD", "DD");
+                    "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_SMALL)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_SMALL).tags(DUST).build()), "DD", "DD");
             addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "dust_tiny", "antimatter_dusts",
-                    "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_TINY)).map(t -> DUST.get(t,1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_TINY).tags(DUST).build()), "DDD", "DDD", "DDD");
+                    "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_TINY)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_TINY).tags(DUST).build()), "DDD", "DDD", "DDD");
         }
     }
 
@@ -151,7 +151,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                 ShapelessRecipeBuilder.shapelessRecipe(dust).addIngredient(ingotTag).addIngredient(nc(MORTAR.getTag()))
                         .addCriterion("has_ingot_" + mat.getId(), this.hasItem(nc(TagUtils.getForgeItemTag("ingots/".concat(mat.getId())))))
                         .setGroup("ingots_grind_to_dust")
-                        .build(consumer, fixLoc(providerDomain,ingot.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
+                        .build(consumer, fixLoc(providerDomain, ingot.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
             }
         });
     }
@@ -160,62 +160,70 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         if (providerDomain.equals(Ref.ID)) {
             final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
             List<ItemStack> stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.TINY)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.TINY), 12)).collect(Collectors.toList());
-            Material[] mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
-            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_item_tiny", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "H W", "PPP");
+            Material[] mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0)
+                addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.TINY.getId()), consumer, Ref.ID, "pipe_item_tiny", "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "H W", "PPP");
 
             stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
-            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
-            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_item_small", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PWP", "P P", "PHP");
+            mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0)
+                addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.SMALL.getId()), consumer, Ref.ID, "pipe_item_small", "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PWP", "P P", "PHP");
 
             stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 2)).collect(Collectors.toList());
-            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
-            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.NORMAL.getId()),  consumer, Ref.ID,"pipe_item_normal", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "W H", "PPP");
+            mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0)
+                addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.NORMAL.getId()), consumer, Ref.ID, "pipe_item_normal", "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "W H", "PPP");
 
             stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.LARGE)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.LARGE), 1)).collect(Collectors.toList());
-            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
-            if (stacks.size() > 0) addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.LARGE.getId()),  consumer, Ref.ID,"pipe_item_large", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PHP", "P P", "PWP");
+            mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0)
+                addToolRecipe(ITEM_PIPE_BUILDER.get(PipeSize.LARGE.getId()), consumer, Ref.ID, "pipe_item_large", "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PHP", "P P", "PWP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.TINY)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.TINY), 12)).collect(Collectors.toList());
-            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
-            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.TINY.getId()),  consumer, Ref.ID, "pipe_fluid_tiny", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "H W", "PPP");
+            mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0)
+                addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.TINY.getId()), consumer, Ref.ID, "pipe_fluid_tiny", "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "H W", "PPP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.SMALL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.SMALL), 6)).collect(Collectors.toList());
-            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
-            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.SMALL.getId()),  consumer, Ref.ID, "pipe_fluid_small", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PWP", "P P", "PHP");
+            mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0)
+                addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.SMALL.getId()), consumer, Ref.ID, "pipe_fluid_small", "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PWP", "P P", "PHP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.NORMAL)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.NORMAL), 2)).collect(Collectors.toList());
-            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
-            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.NORMAL.getId()),  consumer, Ref.ID,"pipe_fluid_normal", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "W H", "PPP");
+            mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0)
+                addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.NORMAL.getId()), consumer, Ref.ID, "pipe_fluid_normal", "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PPP", "W H", "PPP");
 
             stacks = AntimatterAPI.all(FluidPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.LARGE)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.LARGE), 1)).collect(Collectors.toList());
-            mats = stacks.stream().map(t -> ((PipeItemBlock)t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
-            if (stacks.size() > 0) addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.LARGE.getId()),  consumer, Ref.ID,"pipe_fluid_large", "antimatter_pipes",
-                    "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PHP", "P P", "PWP");
+            mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
+            if (stacks.size() > 0)
+                addToolRecipe(FLUID_PIPE_BUILDER.get(PipeSize.LARGE.getId()), consumer, Ref.ID, "pipe_fluid_large", "antimatter_pipes",
+                        "has_wrench", in, stacks, of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PropertyIngredient.builder("primary").types(PLATE).mats(mats).build()), "PHP", "P P", "PWP");
         }
     }
 
     protected void registerToolRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
-        if (providerDomain.equals(Ref.ID)){
+        if (providerDomain.equals(Ref.ID)) {
             final ICriterionInstance in = this.hasSafeItem(WRENCH.getTag());
 
-            if (AntimatterAPI.isModLoaded(Ref.MOD_TOP)){
+            if (AntimatterAPI.isModLoaded(Ref.MOD_TOP)) {
                 addToolRecipe(PROBE_BUILDER.get(HELMET.getId()), consumer, Ref.ID, "helmet_with_probe", "antimatter_armor",
                         "has_helmet", this.hasSafeItem(HELMET.getToolStack(NULL).getItem()), Collections.singletonList(HELMET.getToolStack(NULL)), of('H', PropertyIngredient.builder("helmet").itemStacks(HELMET.getToolStack(NULL).getItem()).build(), 'P', ForgeRegistries.ITEMS.getValue(new ResourceLocation(Ref.MOD_TOP, "probe"))), "HP");
             }
 
-            addToolRecipe(TOOL_BUILDER.get(HAMMER.getId()), consumer, Ref.ID, HAMMER.getId() + "_" +"recipe", "antimatter_tools",
+            addToolRecipe(TOOL_BUILDER.get(HAMMER.getId()), consumer, Ref.ID, HAMMER.getId() + "_" + "recipe", "antimatter_tools",
                     "has_wrench", in, Collections.singletonList(HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(HAMMER, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
-            addToolRecipe(TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_" +"recipe", "antimatter_tools",
+            addToolRecipe(TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_" + "recipe", "antimatter_tools",
                     "has_wrench", in, Collections.singletonList(SOFT_HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(SOFT_HAMMER, true).tags(RUBBERTOOLS).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
             if (Material.get("wood") != NULL && Material.get("wood").getToolTypes().contains(SOFT_HAMMER)) {
-                addToolRecipe(WOOD_TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_wood_" +"recipe", "antimatter_tools",
+                addToolRecipe(WOOD_TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_wood_" + "recipe", "antimatter_tools",
                         "has_wrench", in, Collections.singletonList(SOFT_HAMMER.getToolStack(Material.get("wood"), NULL)), of('I', ItemTags.PLANKS, 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
             }
 
@@ -250,7 +258,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
             addToolRecipe(TOOL_BUILDER.get(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
                     "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
-                            b.put('P', PropertyIngredient.builder("primary").inverse().tool(SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R',PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
+                            b.put('P', PropertyIngredient.builder("primary").inverse().tool(SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
                                     .put('S', SCREWDRIVER.getTag())
                     , "PFP", "HPS", "R R");
             addToolRecipe(TOOL_BUILDER.get(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_screw", "antimatter_files",
@@ -261,7 +269,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
             addToolRecipe(TOOL_BUILDER.get(BRANCH_CUTTER.getId()), consumer, Ref.ID, BRANCH_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
                     "has_wrench", in, BRANCH_CUTTER.getToolStack(NULL, NULL), b ->
-                            b.put('P', PropertyIngredient.builder("primary").inverse().tool(SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R',PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag())
+                            b.put('P', PropertyIngredient.builder("primary").inverse().tool(SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag())
                                     .put('S', SCREWDRIVER.getTag())
                     , "PFP", "PSP", "R R");
             addToolRecipe(TOOL_BUILDER.get(BRANCH_CUTTER.getId()), consumer, Ref.ID, BRANCH_CUTTER.getId() + "_recipe_screw", "antimatter_files",
@@ -280,33 +288,33 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
             String[] strings2 = new String[]{"FPH", " R ", " R "};
             String[] strings2Gem = new String[]{"FGH", " R ", " R "};
 
-            addToolRecipe(TOOL_BUILDER.get(PICKAXE.getId()), consumer, Ref.ID, PICKAXE.getId() + "_with" , "antimatter_pickaxes",
+            addToolRecipe(TOOL_BUILDER.get(PICKAXE.getId()), consumer, Ref.ID, PICKAXE.getId() + "_with", "antimatter_pickaxes",
                     "has_wrench", in, PICKAXE.getToolStack(NULL, NULL), map1.apply(PICKAXE), strings1);
 
-            addToolRecipe(TOOL_BUILDER.get(SHOVEL.getId()), consumer, Ref.ID, SHOVEL.getId() + "_with" , "antimatter_shovels",
+            addToolRecipe(TOOL_BUILDER.get(SHOVEL.getId()), consumer, Ref.ID, SHOVEL.getId() + "_with", "antimatter_shovels",
                     "has_wrench", in, SHOVEL.getToolStack(NULL, NULL), map2.apply(SHOVEL), strings2);
 
-            addToolRecipe(TOOL_BUILDER.get(AXE.getId()), consumer, Ref.ID, AXE.getId() + "_with" , "antimatter_axes",
+            addToolRecipe(TOOL_BUILDER.get(AXE.getId()), consumer, Ref.ID, AXE.getId() + "_with", "antimatter_axes",
                     "has_wrench", in, AXE.getToolStack(NULL, NULL), map1.apply(AXE), "PIH", "PR ", "FR ");
 
 
-            addToolRecipe(TOOL_BUILDER.get(SWORD.getId()), consumer, Ref.ID, SWORD.getId() + "_with" , "antimatter_swords",
+            addToolRecipe(TOOL_BUILDER.get(SWORD.getId()), consumer, Ref.ID, SWORD.getId() + "_with", "antimatter_swords",
                     "has_wrench", in, SWORD.getToolStack(NULL, NULL), map2.apply(SWORD), " P ", "FPH", " R ");
 
-            addToolRecipe(TOOL_BUILDER.get(HOE.getId()), consumer, Ref.ID, HOE.getId() + "_with" , "antimatter_swords",
+            addToolRecipe(TOOL_BUILDER.get(HOE.getId()), consumer, Ref.ID, HOE.getId() + "_with", "antimatter_swords",
                     "has_wrench", in, HOE.getToolStack(NULL, NULL), map1.apply(HOE), "PIH", "FR ", " R ");
 
-            addToolRecipe(CROWBAR_BUILDER.get(CROWBAR.getId()),  consumer, Ref.ID, CROWBAR.getId() + "_recipe", "antimatter_crowbars",
+            addToolRecipe(CROWBAR_BUILDER.get(CROWBAR.getId()), consumer, Ref.ID, CROWBAR.getId() + "_recipe", "antimatter_crowbars",
                     "has_wrench", in, CROWBAR.getToolStack(NULL, NULL), of('H', HAMMER.getTag(), 'C', PropertyIngredient.builder("secondary").itemTags(Tags.Items.DYES).build(), 'R', PropertyIngredient.builder("primary").types(ROD).tool(CROWBAR, true).build(), 'F', FILE.getTag()), "HCR", "CRC", "RCF");
 
             addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID, KNIFE.getId() + "_with", "antimatter_knives",
                     "has_wrench", in, KNIFE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(KNIFE, true).build(), 'S', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FP", "HS");
 
-           // List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(HANDLE))).collect(Collectors.toList());
+            // List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(HANDLE))).collect(Collectors.toList());
 
             addToolRecipe(TOOL_BUILDER.get(PLUNGER.getId()), consumer, Ref.ID, PLUNGER.getId() + "_", "antimatter_plungers",
                     "has_wrench", in, PLUNGER.getToolStack(NULL, NULL),
-                    of('W', WIRE_CUTTER.getTag(), 'R', PropertyIngredient.builder("primary").tool(PLUNGER, true).types(ROD).build(), 'I',  PropertyIngredient.builder("secondary").types(PLATE).tags(HANDLE, RUBBERTOOLS).build(), 'F', FILE.getTag()), "WII", " RI", "R F");
+                    of('W', WIRE_CUTTER.getTag(), 'R', PropertyIngredient.builder("primary").tool(PLUNGER, true).types(ROD).build(), 'I', PropertyIngredient.builder("secondary").types(PLATE).tags(HANDLE, RUBBERTOOLS).build(), 'F', FILE.getTag()), "WII", " RI", "R F");
         }
 
 
@@ -405,7 +413,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
     public void addConditionalRecipe(Consumer<IFinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName) {
         ConditionalRecipe.builder().addCondition(new ConfigCondition(configClass, configFieldName))
-        .addRecipe(builtRecipe::build).build(consumer, recipeDomain, recipeName);
+                .addRecipe(builtRecipe::build).build(consumer, recipeDomain, recipeName);
     }
 
     public AntimatterShapedRecipeBuilder getItemRecipe(String groupName, String criterionName, ICriterionInstance criterion, IItemProvider output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
@@ -418,7 +426,8 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
     public AntimatterShapedRecipeBuilder getStackRecipe(String groupName, String criterionName, ICriterionInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         if (inputs.isEmpty()) Utils.onInvalidData("Inputs should not be empty!");
-        if (inputPattern.length < 1 || inputPattern.length > 3) Utils.onInvalidData("Input pattern must have between 1 and 3 rows!");
+        if (inputPattern.length < 1 || inputPattern.length > 3)
+            Utils.onInvalidData("Input pattern must have between 1 and 3 rows!");
         AntimatterShapedRecipeBuilder recipeBuilder = AntimatterShapedRecipeBuilder.shapedRecipe(output);
         recipeBuilder = resolveKeys(recipeBuilder, inputs);
         for (String s : inputPattern) {
@@ -431,17 +440,17 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     }
 
     public void shapeless(Consumer<IFinishedRecipe> consumer, String recipeID, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, Object... inputs) {
-        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapelessRecipe(output.getItem(),output.getCount()).addCriterion(criterionName,criterion)
+        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapelessRecipe(output.getItem(), output.getCount()).addCriterion(criterionName, criterion)
                 .setGroup(groupName);
         for (Object input : inputs) {
             try {
                 if (input instanceof IItemProvider) {
-                    builder.addIngredient(((IItemProvider)input));
+                    builder.addIngredient(((IItemProvider) input));
                 } else if (input instanceof ITag) {
                     if (input instanceof ITag.INamedTag) {
-                        builder.addIngredient(nc(TagUtils.getItemTag(((ITag.INamedTag)input).getName())));
+                        builder.addIngredient(nc(TagUtils.getItemTag(((ITag.INamedTag) input).getName())));
                     } else {
-                        builder.addIngredient((ITag<Item>)input);
+                        builder.addIngredient((ITag<Item>) input);
                     }
                 } else if (input instanceof Ingredient) {
                     builder.addIngredient((Ingredient) input);
@@ -450,7 +459,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                 throw new RuntimeException("ERROR PARSING SHAPELESS RECIPE" + ex.getMessage());
             }
         }
-        builder.build(consumer, new ResourceLocation(Ref.ID, output.getItem().toString()+"_"+recipeID));
+        builder.build(consumer, new ResourceLocation(Ref.ID, output.getItem().toString() + "_" + recipeID));
     }
 
     public void addItemRecipe(Consumer<IFinishedRecipe> consumer, String groupName, String criterionName, ICriterionInstance criterion, IItemProvider output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
@@ -486,7 +495,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         addToolRecipe(builder, consumer, recipeDomain, recipeName, groupName, criterionName, criterion, Collections.singletonList(output), inputs, inputPattern);
     }
 
-        public void addToolRecipe(String builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public void addToolRecipe(String builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, criterionName, criterion, output, inputs, inputPattern);
         if (recipeName.isEmpty()) recipeBuilder.build(consumer);
         else {
@@ -495,13 +504,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
         }
     }
 
-        @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     protected AntimatterShapedRecipeBuilder resolveKeys(AntimatterShapedRecipeBuilder incompleteBuilder, ImmutableMap<Character, Object> inputs) {
         for (Map.Entry<Character, Object> entry : inputs.entrySet()) {
             if (entry.getValue() instanceof IItemProvider) {
                 incompleteBuilder = incompleteBuilder.key(entry.getKey(), (IItemProvider) entry.getValue());
-            }
-            else if (entry.getValue() instanceof ITag) {
+            } else if (entry.getValue() instanceof ITag) {
                 try {
                     //Wrap the tag using tag manager.
                     if (entry.getValue() instanceof ITag.INamedTag) {
@@ -510,15 +518,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     } else {
                         incompleteBuilder = incompleteBuilder.key(entry.getKey(), (ITag<Item>) entry.getValue());
                     }
-                }
-                catch (ClassCastException e) {
+                } catch (ClassCastException e) {
                     Utils.onInvalidData("Tag inputs only allow Item Tags!");
                 }
-            }
-            else if (entry.getValue() instanceof PropertyIngredient) {
+            } else if (entry.getValue() instanceof PropertyIngredient) {
                 incompleteBuilder = incompleteBuilder.key(entry.getKey(), (PropertyIngredient) entry.getValue());
-            }
-            else if (entry.getValue() instanceof Ingredient) {
+            } else if (entry.getValue() instanceof Ingredient) {
                 incompleteBuilder = incompleteBuilder.key(entry.getKey(), (Ingredient) entry.getValue());
             }
         }

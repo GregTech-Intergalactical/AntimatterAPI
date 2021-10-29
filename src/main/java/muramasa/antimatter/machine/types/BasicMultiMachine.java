@@ -28,7 +28,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
 
     @Override
     public Item getItem(Tier tier) {
-        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMultiMachine.class,this.getId() + "_" + tier.getId(), this.getDomain()));
+        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMultiMachine.class, this.getId() + "_" + tier.getId(), this.getDomain()));
     }
 
     public BasicMultiMachine(String domain, String name) {

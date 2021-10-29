@@ -37,7 +37,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     public MachineFluidHandler(T tile, int capacity, int pressure) {
         super(tile, capacity, pressure, tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_IN, tile.getMachineTier()).size() : 0,
-            tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0);
+                tile.has(GUI) ? tile.getMachineType().getSlots(SlotType.FL_OUT, tile.getMachineTier()).size() : 0);
     }
 
     public MachineFluidHandler(T tile) {
@@ -69,26 +69,27 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 return toActOn.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(cfh -> {
                     final int actualMax = maxFill == -1 ? cfh.getTankCapacity(0) : maxFill;
                     ItemStack checkContainer = toActOn.copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(t -> {
-                                if (t.getFluidInTank(0).isEmpty()) {
-                                    t.fill(FluidUtil.tryFluidTransfer(t,this.getAllTanks(), actualMax, false), EXECUTE);
-                                } else {
-                                    t.drain(actualMax, EXECUTE);
-                                }
-                                return t.getContainer();
-                            }).orElse(null/* throw exception */);
-                    if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot,checkContainer,true).isEmpty()) return false;
+                        if (t.getFluidInTank(0).isEmpty()) {
+                            t.fill(FluidUtil.tryFluidTransfer(t, this.getAllTanks(), actualMax, false), EXECUTE);
+                        } else {
+                            t.drain(actualMax, EXECUTE);
+                        }
+                        return t.getContainer();
+                    }).orElse(null/* throw exception */);
+                    if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, checkContainer, true).isEmpty())
+                        return false;
 
                     FluidStack stack;
                     if (cfh.getFluidInTank(0).isEmpty()) {
-                        stack = FluidUtil.tryFluidTransfer(cfh,this.getAllTanks(), actualMax, true);
+                        stack = FluidUtil.tryFluidTransfer(cfh, this.getAllTanks(), actualMax, true);
                     } else {
-                        stack = FluidUtil.tryFluidTransfer(this.getAllTanks(),cfh, actualMax, true);
+                        stack = FluidUtil.tryFluidTransfer(this.getAllTanks(), cfh, actualMax, true);
                     }
                     if (!stack.isEmpty()) {
                         ItemStack insert = cfh.getContainer();
                         insert.setCount(1);
-                        MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(),cellSlot, insert, false);
-                        MachineItemHandler.extractFromInput(ih.getCellInputHandler(),cellSlot, 1, false);
+                        MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, insert, false);
+                        MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
                         lastCellSlot = cellSlot;
                         return true;
                     }
@@ -124,10 +125,10 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     }
 
     @Override
-    public void onMachineEvent(IMachineEvent event, Object ...data) {
+    public void onMachineEvent(IMachineEvent event, Object... data) {
         super.onMachineEvent(event, data);
         if (event instanceof ContentEvent) {
-            switch ((ContentEvent)event) {
+            switch ((ContentEvent) event) {
                 case ITEM_CELL_CHANGED:
                     if (data[0] instanceof Integer) tryFillCell((Integer) data[0], -1);
                     break;
@@ -161,10 +162,11 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         }
         if (fluids != null) {
             for (FluidStack input : fluids) {
-                fillOutput(input,EXECUTE);
+                fillOutput(input, EXECUTE);
             }
         }
     }
+
     @Nonnull
     public List<FluidStack> consumeAndReturnInputs(List<FluidStack> inputs, boolean simulate) {
         if (getInputTanks() == null) {
@@ -203,7 +205,8 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public boolean canOutput(Direction direction) {
-        if (tile.getFacing().getIndex() == direction.getIndex() && !tile.getMachineType().allowsFrontCovers()) return false;
+        if (tile.getFacing().getIndex() == direction.getIndex() && !tile.getMachineType().allowsFrontCovers())
+            return false;
         return super.canOutput();
     }
 
@@ -214,7 +217,8 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public boolean canInput(Direction direction) {
-        if (tile.getFacing().getIndex() == direction.getIndex() && !tile.getMachineType().allowsFrontCovers()) return false;
+        if (tile.getFacing().getIndex() == direction.getIndex() && !tile.getMachineType().allowsFrontCovers())
+            return false;
         return super.canInput();
     }
 

@@ -25,7 +25,8 @@ public class AntimatterBlockModelProvider extends BlockModelProvider {
     }
 
     @Override
-    protected void registerModels() { }
+    protected void registerModels() {
+    }
 
     @Override
     public String getName() {

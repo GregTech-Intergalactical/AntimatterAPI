@@ -76,7 +76,7 @@ public class ClientHandler implements IProxyHandler {
             AntimatterAPI.all(MenuHandler.class, h -> {
                 if (!registered.contains(h.getContainerType().getRegistryName())) {
                     registered.add(h.getContainerType().getRegistryName());
-                    ScreenManager.registerFactory(h.getContainerType(), (ScreenManager.IScreenFactory)h.screen());
+                    ScreenManager.registerFactory(h.getContainerType(), (ScreenManager.IScreenFactory) h.screen());
                 }
             });
         });
@@ -110,7 +110,8 @@ public class ClientHandler implements IProxyHandler {
 
     public static void onBlockColorHandler(ColorHandlerEvent.Block e) {
         for (Block block : AntimatterAPI.all(Block.class)) {
-            if (block instanceof IColorHandler) e.getBlockColors().register(((IColorHandler) block)::getBlockColor, block);
+            if (block instanceof IColorHandler)
+                e.getBlockColors().register(((IColorHandler) block)::getBlockColor, block);
         }
     }
 

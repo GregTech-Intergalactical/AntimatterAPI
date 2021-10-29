@@ -8,7 +8,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface IInfoRenderer<T extends InfoRenderWidget<T>> {
     /**
-     *
      * @param instance
      * @param stack
      * @param renderer

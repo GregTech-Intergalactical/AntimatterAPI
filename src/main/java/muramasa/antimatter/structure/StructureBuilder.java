@@ -16,6 +16,7 @@ public class StructureBuilder {
     public static void addGlobalElement(String key, StructureElement element) {
         globalElementLookup.put(key, element);
     }
+
     private static final Object2ObjectMap<String, StructureElement> globalElementLookup = new Object2ObjectOpenHashMap<>();
 
     private final List<String[]> slices = new ObjectArrayList<>();
@@ -74,7 +75,8 @@ public class StructureBuilder {
                     e = elementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     if (e == null) e = globalElementLookup.get(slices.get(y)[x].substring(z, z + 1));
                     //TODO log this and return null;
-                    if (e == null) throw new NullPointerException("StructureBuilder failed to parse slice: " + slices.get(y)[x]);
+                    if (e == null)
+                        throw new NullPointerException("StructureBuilder failed to parse slice: " + slices.get(y)[x]);
                     if (e.excludes()) continue;
                     elements.put(new int3(x, y, z), e);
                 }
@@ -86,7 +88,8 @@ public class StructureBuilder {
     public static IAntimatterObject[] getAntiObjects(Object... objects) {
         List<IAntimatterObject> antiObjects = new ObjectArrayList<>();
         Arrays.stream(objects).forEach(o -> {
-            if (o instanceof RegistryObject && ((RegistryObject<?>) o).get() instanceof IAntimatterObject) antiObjects.add((IAntimatterObject) ((RegistryObject<?>) o).get());
+            if (o instanceof RegistryObject && ((RegistryObject<?>) o).get() instanceof IAntimatterObject)
+                antiObjects.add((IAntimatterObject) ((RegistryObject<?>) o).get());
             if (o instanceof IAntimatterObject) antiObjects.add((IAntimatterObject) o);
         });
         return antiObjects.toArray(new IAntimatterObject[0]);

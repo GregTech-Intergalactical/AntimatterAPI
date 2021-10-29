@@ -26,12 +26,12 @@ public class ItemEnergyHandler extends EnergyHandler {
 
     @Override
     public boolean canInput() {
-        return voltageIn > 0 /*&& getTagEnergy() != capacity*/ ;
+        return voltageIn > 0 /*&& getTagEnergy() != capacity*/;
     }
 
     @Override
     public boolean canOutput() {
-        return canDischarge() && voltageOut > 0 /*&& getTagEnergy() >= voltageOut*/ ;
+        return canDischarge() && voltageOut > 0 /*&& getTagEnergy() >= voltageOut*/;
     }
 
     private boolean canDischarge() {

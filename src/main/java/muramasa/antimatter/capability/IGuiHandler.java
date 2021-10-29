@@ -20,7 +20,7 @@ public interface IGuiHandler {
 
     default void addWidgets(GuiInstance instance, IGuiElement parent) {
         if (this instanceof IHaveWidgets) {
-            ((IHaveWidgets)this).getCallbacks().forEach(t -> t.accept(instance));
+            ((IHaveWidgets) this).getCallbacks().forEach(t -> t.accept(instance));
         }
     }
 

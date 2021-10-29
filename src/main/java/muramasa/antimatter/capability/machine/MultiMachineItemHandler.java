@@ -15,6 +15,7 @@ public class MultiMachineItemHandler<T extends TileEntityMultiMachine<T>> extend
 
     Optional<ITrackedHandler> inputs = Optional.empty();
     Optional<ITrackedHandler> outputs = Optional.empty();
+
     public MultiMachineItemHandler(T tile) {
         //TODO: Won't work otherwise, requires TEM tile as argument to this constructor. Not sure why! Feel free to fix, this works thoguh
         super(tile);

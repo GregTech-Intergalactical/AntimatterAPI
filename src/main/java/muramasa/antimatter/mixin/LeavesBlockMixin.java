@@ -28,9 +28,9 @@ public abstract class LeavesBlockMixin extends Block {
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         List<ItemStack> list = super.getDrops(state, builder);
         ItemStack stack = builder.get(LootParameters.TOOL);
-        if (stack != null && !stack.isEmpty() && stack.getItem() instanceof IAntimatterTool){
+        if (stack != null && !stack.isEmpty() && stack.getItem() instanceof IAntimatterTool) {
             IAntimatterTool tool = (IAntimatterTool) stack.getItem();
-            if (tool.getAntimatterToolType() == Data.BRANCH_CUTTER){
+            if (tool.getAntimatterToolType() == Data.BRANCH_CUTTER) {
                 ResourceLocation resourcelocation = this.getLootTable();
                 if (resourcelocation == LootTables.EMPTY) {
                     return Collections.emptyList();
@@ -38,7 +38,7 @@ public abstract class LeavesBlockMixin extends Block {
                 ServerWorld serverworld = builder.getWorld();
                 LootTable loottable = serverworld.getServer().getLootTableManager().getLootTableFromLocation(resourcelocation);
                 ItemStack sapling = ItemStack.EMPTY;
-                if (ForgeRegistries.BLOCKS.containsKey(new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling")))){
+                if (ForgeRegistries.BLOCKS.containsKey(new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling")))) {
                     sapling = new ItemStack(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling"))));
                 }
                 /*for (ItemStack stack1 : list){
@@ -47,7 +47,7 @@ public abstract class LeavesBlockMixin extends Block {
                         break;
                     }
                 }*/
-                if (!sapling.isEmpty()){
+                if (!sapling.isEmpty()) {
                     list.clear();
                     list.add(sapling);
                 }

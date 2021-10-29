@@ -46,8 +46,8 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
         int i = 0;
         for (MachineFluidHandler<?> input : inputs) {
             for (int j = 0; j < input.getTanks(); j++) {
-                INPUT_TO_HANDLER.put(j+i, input);
-                if (j == 0) INPUT_START.put(input,i);
+                INPUT_TO_HANDLER.put(j + i, input);
+                if (j == 0) INPUT_START.put(input, i);
             }
             i += input.getTanks();
         }
@@ -62,8 +62,8 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
         int i = 0;
         for (MachineFluidHandler<?> output : outputs) {
             for (int j = 0; j < output.getTanks(); j++) {
-                OUTPUT_TO_HANDLER.put(j+i, output);
-                if (j == 0) OUTPUT_START.put(output,i);
+                OUTPUT_TO_HANDLER.put(j + i, output);
+                if (j == 0) OUTPUT_START.put(output, i);
             }
             i += output.getTanks();
         }
@@ -76,6 +76,7 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
         //Input tanks output into the machine.
         return new FluidTanks(Arrays.stream(inputs).filter(t -> t.getInputTanks() != null).flatMap(t -> Arrays.stream(t.getInputTanks().getBackingTanks())).collect(Collectors.toList()));
     }
+
     //TODO: Remove gettanks() != null as this is called twice.
     @Nullable
     @Override
@@ -91,7 +92,8 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
     @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) {
-        if (tank < INPUT_END) return INPUT_TO_HANDLER.get(tank).getFluidInTank(tank - INPUT_START.get(INPUT_TO_HANDLER.get(tank)));
+        if (tank < INPUT_END)
+            return INPUT_TO_HANDLER.get(tank).getFluidInTank(tank - INPUT_START.get(INPUT_TO_HANDLER.get(tank)));
         return OUTPUT_TO_HANDLER.get(tank).getFluidInTank(tank - OUTPUT_START.get(OUTPUT_TO_HANDLER.get(tank)));
     }
 

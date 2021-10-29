@@ -32,7 +32,7 @@ public class TextureSet implements IAntimatterObject {
         return new Texture(domain, "material/" + id + "/" + type.getId() + (layer == 0 ? "" : "_overlay"/*"_overlay_" + layer*/));
     }
 
-    public String getPath(){
+    public String getPath() {
         return "material/" + id;
     }
 

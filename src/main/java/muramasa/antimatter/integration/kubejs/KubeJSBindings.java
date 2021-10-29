@@ -26,7 +26,7 @@ public class KubeJSBindings {
         if (mat == null) return Items.AIR;
         if (t instanceof MaterialTypeItem) {
             if (t.allowGen(mat)) {
-                Item it = ((MaterialTypeItem)t).get(mat);
+                Item it = ((MaterialTypeItem) t).get(mat);
                 //TODO: Needed?
                 /*
                 TagCollectionManager.getManager().getItemTags().getOwningTags(it).forEach(tt -> {
@@ -83,14 +83,14 @@ public class KubeJSBindings {
 
     public Material getMat(ItemStackJS stack) {
         if (stack.getItem() instanceof MaterialItem) {
-            return ((MaterialItem)stack.getItem()).getMaterial();
+            return ((MaterialItem) stack.getItem()).getMaterial();
         }
         return null;
     }
 
     public Material getMat(Item item) {
         if (item instanceof MaterialItem) {
-            return ((MaterialItem)item).getMaterial();
+            return ((MaterialItem) item).getMaterial();
         }
         return null;
     }
@@ -101,7 +101,7 @@ public class KubeJSBindings {
         if (t instanceof MaterialTypeItem) {
             Set<Material> mat = t.all();
             MaterialTypeItem item = (MaterialTypeItem) t;
-            return mat.stream().map(tt -> ItemStackJS.of(new ItemStack(item.get(tt),count))).collect(Collectors.toList());
+            return mat.stream().map(tt -> ItemStackJS.of(new ItemStack(item.get(tt), count))).collect(Collectors.toList());
         }
         return Collections.emptyList();
     }

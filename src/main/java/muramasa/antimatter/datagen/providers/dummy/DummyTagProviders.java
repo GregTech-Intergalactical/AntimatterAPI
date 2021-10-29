@@ -20,7 +20,7 @@ public class DummyTagProviders {
 
     private static final BlockTagsProvider BLOCK = new ForgeBlockTagsProviderOverride();
     private static final ItemTagsProvider ITEM = new ForgeItemTagsProviderOverride();
-    public static final IDataProvider[] DUMMY_PROVIDERS = { BLOCK, ITEM };
+    public static final IDataProvider[] DUMMY_PROVIDERS = {BLOCK, ITEM};
 
     public static class ForgeItemTagsProviderOverride extends ForgeItemTagsProvider {
 
@@ -33,7 +33,7 @@ public class DummyTagProviders {
             Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
             this.tagToBuilder.clear();
             registerTags();
-            tagToBuilder.forEach((a,bb) -> ItemTags.makeWrapperTag(a.toString()));
+            tagToBuilder.forEach((a, bb) -> ItemTags.makeWrapperTag(a.toString()));
             b.forEach(tagToBuilder::put);
 
         }
@@ -51,7 +51,7 @@ public class DummyTagProviders {
             Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
             this.tagToBuilder.clear();
             registerTags();
-            tagToBuilder.forEach((a,bb) -> BlockTags.makeWrapperTag(a.toString()));
+            tagToBuilder.forEach((a, bb) -> BlockTags.makeWrapperTag(a.toString()));
             b.forEach(tagToBuilder::put);
         }
     }

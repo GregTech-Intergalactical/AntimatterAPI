@@ -26,7 +26,7 @@ import static muramasa.antimatter.worldgen.VeinLayerResult.*;
 /**
  * Most of the WorldGenVeinLayer code is from the GTNewHorizons GT5 fork, refactored for 1.12 and somewhat optimised
  * Written in 1.7 by moronwmachinegun and mitchej123, adapted by Muramasa
- * **/
+ **/
 public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
     static int TOTAL_WEIGHT;
@@ -55,7 +55,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         this.weight = weight;
         this.density = density;
         this.size = size;
-        this.materials = new Material[] {primary, secondary, between, sporadic};
+        this.materials = new Material[]{primary, secondary, between, sporadic};
         if (primary != null) {
             this.primary = primary.getId();
             this.secondary = secondary.getId();
@@ -84,17 +84,25 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     public WorldGenVeinLayer build() {
         super.build();
 
-        materials = new Material[] {Material.get(primary), Material.get(secondary), Material.get(between), Material.get(sporadic)};
-        if (materials[0] == null || !materials[0].has(Data.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + primary + " material either doesn't exist or doesn't have the ORE tag");
-        if (materials[1] == null || !materials[1].has(Data.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + secondary + " material either doesn't exist or doesn't have the ORE tag");
-        if (materials[2] == null || !materials[2].has(Data.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " material either doesn't exist or doesn't have the ORE tag");
-        if (materials[3] == null || !materials[3].has(Data.ORE)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + sporadic + " material either doesn't exist or doesn't have the ORE tag");
+        materials = new Material[]{Material.get(primary), Material.get(secondary), Material.get(between), Material.get(sporadic)};
+        if (materials[0] == null || !materials[0].has(Data.ORE))
+            throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + primary + " material either doesn't exist or doesn't have the ORE tag");
+        if (materials[1] == null || !materials[1].has(Data.ORE))
+            throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + secondary + " material either doesn't exist or doesn't have the ORE tag");
+        if (materials[2] == null || !materials[2].has(Data.ORE))
+            throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " material either doesn't exist or doesn't have the ORE tag");
+        if (materials[3] == null || !materials[3].has(Data.ORE))
+            throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + sporadic + " material either doesn't exist or doesn't have the ORE tag");
 
         if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
-            if (materials[0] == null || !materials[0].has(Data.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + primary + " material either doesn't exist or doesn't have the ORE_SMALL tag");
-            if (materials[1] == null || !materials[1].has(Data.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + secondary + " material either doesn't exist or doesn't have the ORE_SMALL tag");
-            if (materials[2] == null || !materials[2].has(Data.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " material either doesn't exist or doesn't have the ORE_SMALL tag");
-            if (materials[3] == null || !materials[3].has(Data.ORE_SMALL)) throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + sporadic + " material either doesn't exist or doesn't have the ORE_SMALL tag");
+            if (materials[0] == null || !materials[0].has(Data.ORE_SMALL))
+                throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + primary + " material either doesn't exist or doesn't have the ORE_SMALL tag");
+            if (materials[1] == null || !materials[1].has(Data.ORE_SMALL))
+                throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + secondary + " material either doesn't exist or doesn't have the ORE_SMALL tag");
+            if (materials[2] == null || !materials[2].has(Data.ORE_SMALL))
+                throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + between + " material either doesn't exist or doesn't have the ORE_SMALL tag");
+            if (materials[3] == null || !materials[3].has(Data.ORE_SMALL))
+                throw new IllegalArgumentException("WorldGenOreVein - " + getId() + ": " + sporadic + " material either doesn't exist or doesn't have the ORE_SMALL tag");
         }
 
         TOTAL_WEIGHT += weight;
@@ -151,7 +159,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         XSTR oreVeinRNG = new XSTR(oreVeinSeed);
         int oreVeinPercentageRoll = oreVeinRNG.nextInt(100); // Roll the dice, see if we get an orevein here at all
         if (Ref.debugOreVein)
-            Antimatter.LOGGER.info("Finding oreveins for oreVeinSeed="+ oreVeinSeed + " chunkX="+ chunkX + " chunkZ="+ chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " worldSeed=" + world.getSeed());
+            Antimatter.LOGGER.info("Finding oreveins for oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " worldSeed=" + world.getSeed());
 
         // Search for a valid orevein for this dimension
         if (!VALID_VEINS.containsKey(oreVeinSeed)) {
@@ -198,20 +206,21 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                 // Only add an empty orevein if unable to place a vein at the oreseed chunk.
                 if (!oreVeinFound && chunkX == oreSeedX && chunkZ == oreSeedZ) {
                     if (Ref.debugOreVein)
-                        Antimatter.LOGGER.info("Empty oreVeinSeed="+ oreVeinSeed + " chunkX="+ chunkX + " chunkZ="+ chunkZ + " oreSeedX="+ oreSeedX + " oreSeedZ="+ oreSeedZ + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getWorld().getDimensionKey().getLocation());
+                        Antimatter.LOGGER.info("Empty oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getWorld().getDimensionKey().getLocation());
                     VALID_VEINS.put(oreVeinSeed, NO_ORES_IN_VEIN);
                 }
             } else if (oreVeinPercentageRoll >= AntimatterConfig.WORLD.ORE_VEIN_CHANCE) {
                 if (Ref.debugOreVein)
-                    Antimatter.LOGGER.info("Skipped oreVeinSeed="+ oreVeinSeed + " chunkX="+ chunkX + " chunkZ="+ chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + AntimatterConfig.WORLD.ORE_VEIN_CHANCE + " dimension=" + world.getWorld().getDimensionKey().getLocation());
+                    Antimatter.LOGGER.info("Skipped oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + AntimatterConfig.WORLD.ORE_VEIN_CHANCE + " dimension=" + world.getWorld().getDimensionKey().getLocation());
                 VALID_VEINS.put(oreVeinSeed, NO_ORES_IN_VEIN);
             }
         } else {
             // oreseed is located in the previously processed table
             if (Ref.debugOreVein)
-                Antimatter.LOGGER.info("Valid oreVeinSeed="+ oreVeinSeed + " VALID_VEINS.size()=" + VALID_VEINS.size() + " ");
+                Antimatter.LOGGER.info("Valid oreVeinSeed=" + oreVeinSeed + " VALID_VEINS.size()=" + VALID_VEINS.size() + " ");
             WorldGenVeinLayer vein = VALID_VEINS.get(oreVeinSeed);
-            if (vein == null) throw new IllegalStateException("Valid veins returned null in WorldGenVeinlayer. This is an error");
+            if (vein == null)
+                throw new IllegalStateException("Valid veins returned null in WorldGenVeinlayer. This is an error");
             if (vein.primary != null)
                 oreVeinRNG.setSeed(oreVeinSeed ^ vein.primary.hashCode());  // Reset RNG to only be based on oreseed X/Z and type of vein
             VeinLayerResult placementResult = vein.generateChunkified(world, oreVeinRNG, chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16);
@@ -234,7 +243,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
     VeinLayerResult generateChunkified(ISeedReader world, XSTR rand, int posX, int posZ, int seedX, int seedZ) {
         int tMinY = minY + rand.nextInt(maxY - minY - 5);
-        
+
         //If the selected tMinY is more than the max height if the current position, escape
 //        if (tMinY > world.getHeight(Heightmap.Type.WORLD_SURFACE_WG, posX, posZ)) {
 //            return CHUNK_HEIGHT_TOO_LOW;
@@ -265,7 +274,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         int sZVein = seedZ + 16 + rand.nextInt(size);
 
         int nZ = Math.max(nZVein, posZ);
-        int sZ = Math.min(sZVein, posZ+ 16);
+        int sZ = Math.min(sZVein, posZ + 16);
         if (nZ >= sZ) { //No overlap between orevein and this chunk exists in Z
             if (WorldGenHelper.ORE_PREDICATE.test(centerState)) {
                 return NO_OVERLAP; // Didn't reach, but could have placed. Save orevein for future use.
@@ -275,7 +284,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
 
         if (Ref.debugOreVein)
-            Antimatter.LOGGER.info("Trying Orevein:" + getId() + " Dimension=" + world.getWorld().getDimensionKey() + " posX="+posX/16+ " posZ="+posZ/16+ " oreseedX="+ seedX/16 + " oreseedZ="+ seedZ/16 + " cY="+tMinY);
+            Antimatter.LOGGER.info("Trying Orevein:" + getId() + " Dimension=" + world.getWorld().getDimensionKey() + " posX=" + posX / 16 + " posZ=" + posZ / 16 + " oreseedX=" + seedX / 16 + " oreseedZ=" + seedZ / 16 + " cY=" + tMinY);
         //if (!generateSquare(world, rand, posX, posZ, seedX, seedZ, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
         if (!generateByFunction(world, rand, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
             return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
@@ -459,7 +468,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                         placeCount[1]++;
                 } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
                     pos.setPos(tX, level, tZ);
-                    if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE)) placeCount[3]++;
+                    if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
+                        placeCount[3]++;
                 }
             }
         }
@@ -482,28 +492,29 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
         if (Ref.debugOreVein)
             Antimatter.LOGGER.info(" wXVein" + wXVein + " eXVein" + eXVein + " nZVein" + nZVein + " sZVein" + sZVein + " locDen=" + localDensity
-                    + " Den=" + this.density + " Sec="+placeCount[1]+ " Spo="+placeCount[3]+ " Bet="+placeCount[2]+ " Pri="+placeCount[0]);
+                    + " Den=" + this.density + " Sec=" + placeCount[1] + " Spo=" + placeCount[3] + " Bet=" + placeCount[2] + " Pri=" + placeCount[0]);
         return true;
     }
+
     private boolean generateByFunction(IWorld world, XSTR rand,
                                        int tMinY, int wXVein, int eXVein, int nZVein, int sZVein, // vein
                                        int wX, int eX, int nZ, int sZ) { // vein & current chunk intersection
         BlockPos.Mutable pos = new BlockPos.Mutable();
         int[] placeCount = new int[4];
-        final int centerX = (wXVein +  eXVein)/2;
+        final int centerX = (wXVein + eXVein) / 2;
         final int centerY = tMinY + 4;
-        final int centerZ = (nZVein + sZVein)/2;
-        final double a = 4.0 / ((wXVein - eXVein) *(wXVein - eXVein)); // Elliptic shape defined as
+        final int centerZ = (nZVein + sZVein) / 2;
+        final double a = 4.0 / ((wXVein - eXVein) * (wXVein - eXVein)); // Elliptic shape defined as
         final double b = 0.04; // 1 / (5*5)
-        final double c = 4.0 / ((nZVein - sZVein) *(nZVein - sZVein)); // aX^2 + bY^2 +cZ^2 = 1
+        final double c = 4.0 / ((nZVein - sZVein) * (nZVein - sZVein)); // aX^2 + bY^2 +cZ^2 = 1
 
-        for (int y = tMinY - 1; y < (tMinY + 8); ++y){
+        for (int y = tMinY - 1; y < (tMinY + 8); ++y) {
             for (int x = wX; x < eX; ++x) {
-                for (int z = nZ; z < sZ; ++z){
-                    double p = 1.0 - a * (centerX - x)*(centerX - x) - b*(centerY - y)*(centerY - y) - c*(centerZ-z)*(centerZ-z);
+                for (int z = nZ; z < sZ; ++z) {
+                    double p = 1.0 - a * (centerX - x) * (centerX - x) - b * (centerY - y) * (centerY - y) - c * (centerZ - z) * (centerZ - z);
                     if (p <= 0)
                         continue;
-                    if (rand.nextInt(100) > 100*p)
+                    if (rand.nextInt(100) > 100 * p)
                         continue; // rolled outside the probability function
                     if (rand.nextInt(12) > density) // should be tested, but seems to be fine
                         continue;
@@ -519,7 +530,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                 }
             }
             if (y == tMinY + 1) { // early bail out test
-                if ((placeCount[0] + placeCount[1] + placeCount[2] + placeCount[3]) == 0){
+                if ((placeCount[0] + placeCount[1] + placeCount[2] + placeCount[3]) == 0) {
                     if (Ref.debugOreVein)
                         Antimatter.LOGGER.info(" No ore in bottom layer");
                     return false;
@@ -528,7 +539,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
         if (Ref.debugOreVein)
             Antimatter.LOGGER.info(" wXVein" + wXVein + " eXVein" + eXVein + " nZVein" + nZVein + " sZVein" + sZVein
-                    + " Den=" + this.density + " Sec="+placeCount[1]+ " Spo="+placeCount[3]+ " Bet="+placeCount[2]+ " Pri="+placeCount[0]);
+                    + " Den=" + this.density + " Sec=" + placeCount[1] + " Spo=" + placeCount[3] + " Bet=" + placeCount[2] + " Pri=" + placeCount[0]);
         return true;
     }
 }

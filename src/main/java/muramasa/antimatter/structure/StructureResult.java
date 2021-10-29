@@ -97,7 +97,7 @@ public class StructureResult {
         }
         for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
             Structure.Point point = it.next();
-            int count = StructureCache.refCount(machine.getWorld(),point.pos);
+            int count = StructureCache.refCount(machine.getWorld(), point.pos);
             point.el.onBuild(machine, point.pos, result, count);
         }
     }
@@ -109,7 +109,7 @@ public class StructureResult {
         }
         for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
             Structure.Point point = it.next();
-            int count = StructureCache.refCount(machine.getWorld(),point.pos);
+            int count = StructureCache.refCount(machine.getWorld(), point.pos);
             point.el.onRemove(machine, point.pos, result, count);
         }
     }
@@ -122,7 +122,7 @@ public class StructureResult {
         MachineState proper = machine.getMachineState().getTextureState();
         for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
             Structure.Point point = it.next();
-            int count = StructureCache.refCount(machine.getWorld(),point.pos);
+            int count = StructureCache.refCount(machine.getWorld(), point.pos);
             point.el.onStateChange(machine, proper, point.pos, result, count);
         }
     }

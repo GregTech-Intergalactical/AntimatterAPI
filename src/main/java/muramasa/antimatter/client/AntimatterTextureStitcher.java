@@ -24,7 +24,7 @@ public class AntimatterTextureStitcher {
     }
 
     public static void addStitcher(ITextureSticher stitcher, String name) {
-        STITCHERS.compute(name, (a,b) -> {
+        STITCHERS.compute(name, (a, b) -> {
             if (b == null) b = new ObjectArrayList<>();
             b.add(stitcher);
             return b;
@@ -32,7 +32,7 @@ public class AntimatterTextureStitcher {
     }
 
     public static void onTextureStitch(final TextureStitchEvent.Pre event) {
-        STITCHERS.forEach((k,v) -> {
+        STITCHERS.forEach((k, v) -> {
             if (!event.getMap().getTextureLocation().getPath().contains(k)) return;
             v.forEach(t -> t.stitch(event::addSprite));
         });

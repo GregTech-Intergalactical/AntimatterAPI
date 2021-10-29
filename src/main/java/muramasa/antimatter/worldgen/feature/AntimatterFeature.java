@@ -17,12 +17,12 @@ import java.util.List;
 
 public abstract class AntimatterFeature<F extends IFeatureConfig> extends Feature<F> implements ISharedAntimatterObject {
 
-    Object2ObjectMap<ResourceLocation,List<WorldGenBase<?>>> REGISTRY = new Object2ObjectOpenHashMap<>();
+    Object2ObjectMap<ResourceLocation, List<WorldGenBase<?>>> REGISTRY = new Object2ObjectOpenHashMap<>();
 
     public AntimatterFeature(Codec<F> codec, Class<?> c) {
         super(codec);
         AntimatterAPI.register(AntimatterFeature.class, c.getName(), getDomain(), this);
-        this.setRegistryName(new ResourceLocation(getDomain(),getId()));
+        this.setRegistryName(new ResourceLocation(getDomain(), getId()));
     }
 
 
@@ -34,7 +34,7 @@ public abstract class AntimatterFeature<F extends IFeatureConfig> extends Featur
 
     public abstract void init();
 
-    public Object2ObjectMap<ResourceLocation,List<WorldGenBase<?>>> getRegistry() {
+    public Object2ObjectMap<ResourceLocation, List<WorldGenBase<?>>> getRegistry() {
         return REGISTRY;
     }
 

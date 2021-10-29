@@ -23,7 +23,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
 
     public MaterialTypeItem(String id, int layers, boolean visible, int unitValue, ItemSupplier itemSupplier) {
         super(id, layers, visible, unitValue);
-        AntimatterAPI.register(MaterialTypeItem.class,  this);
+        AntimatterAPI.register(MaterialTypeItem.class, this);
         this.itemSupplier = itemSupplier;
     }
 
@@ -46,12 +46,14 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public ItemStack get(Material material, int count) {
-        if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
+        if (count < 1)
+            Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
         return new ItemStack(get(material), count);
     }
 
     public RecipeIngredient getIngredient(Material material, int count) {
-        if (count < 1) Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
+        if (count < 1)
+            Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
         return RecipeIngredient.of(new LazyValue<>(() -> new ItemStack(get(material), count)), count);
     }
 }

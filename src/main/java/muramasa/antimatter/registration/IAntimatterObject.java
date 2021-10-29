@@ -15,7 +15,7 @@ public interface IAntimatterObject {
         return true;
     }
 
-    default ResourceLocation getLoc(){
+    default ResourceLocation getLoc() {
         return new ResourceLocation(getDomain(), getId());
     }
 }

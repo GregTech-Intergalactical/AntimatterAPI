@@ -143,8 +143,7 @@ public class AntimatterShapedRecipeBuilder {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem());
         if (new ResourceLocation(save).equals(resourcelocation)) {
             throw new IllegalStateException("Shaped Recipe " + save + " should remove its 'save' argument");
-        }
-        else {
+        } else {
             this.build(consumer, new ResourceLocation(save));
         }
     }
@@ -158,9 +157,10 @@ public class AntimatterShapedRecipeBuilder {
         consumer.accept(new Result(id, this.result.get(0), this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.get(0).getItem().getGroup().getPath() + "/" + id.getPath())));
     }
 
-    public void buildTool(Consumer<IFinishedRecipe> consumer ,String builder, String id) {
+    public void buildTool(Consumer<IFinishedRecipe> consumer, String builder, String id) {
         buildTool(consumer, builder, new ResourceLocation(id));
     }
+
     /**
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
@@ -182,11 +182,9 @@ public class AntimatterShapedRecipeBuilder {
     private void validate(ResourceLocation id) {
         if (this.pattern.isEmpty()) {
             throw new IllegalStateException("No pattern is defined for shaped recipe " + id + "!");
-        }
-        else if (this.result.get(0).isItemEqual(ItemStack.EMPTY)) {
+        } else if (this.result.get(0).isItemEqual(ItemStack.EMPTY)) {
             throw new IllegalStateException("Resulting ItemStack cannot be empty!");
-        }
-        else {
+        } else {
             Set<Character> set = Sets.newHashSet(this.key.keySet());
             set.remove(' ');
             for (String s : this.pattern) {

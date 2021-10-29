@@ -25,7 +25,7 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
     @Nullable
     private T object;
 
-    public StructureHandle(Class<T> clazz, TileEntityBasicMultiMachine<?> tile, int3 off,@Nullable Consumer<T> onRemoval,@Nullable Consumer<T> onAdd) {
+    public StructureHandle(Class<T> clazz, TileEntityBasicMultiMachine<?> tile, int3 off, @Nullable Consumer<T> onRemoval, @Nullable Consumer<T> onAdd) {
         this(clazz, tile, Collections.singletonList(off), onRemoval, onAdd);
     }
 

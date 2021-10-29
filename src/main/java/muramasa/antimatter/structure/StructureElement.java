@@ -22,6 +22,7 @@ public class StructureElement {
     /**
      * Set if this element is not actually used (If this is not a cubic structure, this means the
      * multiblock does not receive structure updates at this position).
+     *
      * @return this.
      */
     public StructureElement exclude() {
@@ -35,9 +36,10 @@ public class StructureElement {
 
     /**
      * Evaluate this element and check if the given position is valid for this multiblock.
+     *
      * @param machine the multi controller tile.
-     * @param pos the current position.
-     * @param result the structure result.
+     * @param pos     the current position.
+     * @param result  the structure result.
      * @return if it is valid.
      */
     public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
@@ -47,20 +49,23 @@ public class StructureElement {
     /**
      * After evaluation, this is called to build the structure, after everything is verified. See for example
      * the fake tile element as it here sets the block as a fake tile
+     *
      * @param machine the controller tile.
-     * @param pos the current position.
-     * @param result the structure result.
-     * @param count the ref count at this position(1 == first, > 1 means there are more than 1 structure using this position.
+     * @param pos     the current position.
+     * @param result  the structure result.
+     * @param count   the ref count at this position(1 == first, > 1 means there are more than 1 structure using this position.
      */
     public void onBuild(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
 
     }
+
     /**
      * Called as the machine removes its proper structure.
+     *
      * @param machine the controller tile.
-     * @param pos the current position.
-     * @param result the structure result.
-     * @param count the ref count at this position(0 == no more structures at this position)
+     * @param pos     the current position.
+     * @param result  the structure result.
+     * @param count   the ref count at this position(0 == no more structures at this position)
      */
     public void onRemove(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
 
@@ -68,11 +73,12 @@ public class StructureElement {
 
     /**
      * called as the tile changes between texture states (For now, ACTIVE -> IDLE -> IDLE...) as INVALID_STRUCTURE does not call this.
-     * @param machine controller.
+     *
+     * @param machine  controller.
      * @param newState the new state.
-     * @param pos the blockpos.
-     * @param result the structure result.
-     * @param count refCount as usual
+     * @param pos      the blockpos.
+     * @param result   the structure result.
+     * @param count    refCount as usual
      */
     public void onStateChange(TileEntityBasicMultiMachine<?> machine, MachineState newState, BlockPos pos, StructureResult result, int count) {
 
@@ -80,6 +86,7 @@ public class StructureElement {
 
     /**
      * Should this element tick?
+     *
      * @return if it ticks.
      */
     public boolean ticks() {
@@ -88,8 +95,9 @@ public class StructureElement {
 
     /**
      * Called every tick for elements that tick.
+     *
      * @param machine the controller
-     * @param pos this elements position.
+     * @param pos     this elements position.
      */
     public void tick(TileEntityBasicMultiMachine<?> machine, BlockPos pos) {
 

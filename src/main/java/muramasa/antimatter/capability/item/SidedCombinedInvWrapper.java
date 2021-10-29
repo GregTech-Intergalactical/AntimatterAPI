@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 public class SidedCombinedInvWrapper extends CombinedInvWrapper {
     Direction side;
     CoverHandler<?> coverHandler;
+
     public SidedCombinedInvWrapper(Direction side, CoverHandler<?> coverHandler, IItemHandlerModifiable... itemHandler) {
         super(itemHandler);
         this.side = side;

@@ -24,21 +24,21 @@ public abstract class ItemStackMixin extends net.minecraftforge.common.capabilit
     }
 
     @Inject(/*remap = false,*/ method = "damageItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", ordinal = 1))
-    public<T extends LivingEntity> void inject(int amount, T entity, Consumer<T> consumer, CallbackInfo ci){
-        ItemStack invoker = ((ItemStack)(Object)this);
-        if (invoker.getItem() instanceof IAntimatterTool){
+    public <T extends LivingEntity> void inject(int amount, T entity, Consumer<T> consumer, CallbackInfo ci) {
+        ItemStack invoker = ((ItemStack) (Object) this);
+        if (invoker.getItem() instanceof IAntimatterTool) {
             if (entity instanceof PlayerEntity) {
-                ((IAntimatterTool)invoker.getItem()).onItemBreak(invoker, (PlayerEntity) entity);
+                ((IAntimatterTool) invoker.getItem()).onItemBreak(invoker, (PlayerEntity) entity);
             }
         }
-        if (invoker.getItem() instanceof IAntimatterArmor){
+        if (invoker.getItem() instanceof IAntimatterArmor) {
             IAntimatterArmor armor = (IAntimatterArmor) invoker.getItem();
-            if (armor.getAntimatterArmorType().getSlot() == EquipmentSlotType.HEAD && AntimatterAPI.isModLoaded(Ref.MOD_TOP)){
-                if (invoker.getTag() != null && invoker.getTag().contains("theoneprobe") && invoker.getTag().getBoolean("theoneprobe")){
-                    if (entity instanceof PlayerEntity){
+            if (armor.getAntimatterArmorType().getSlot() == EquipmentSlotType.HEAD && AntimatterAPI.isModLoaded(Ref.MOD_TOP)) {
+                if (invoker.getTag() != null && invoker.getTag().contains("theoneprobe") && invoker.getTag().getBoolean("theoneprobe")) {
+                    if (entity instanceof PlayerEntity) {
                         ItemStack probe = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(Ref.MOD_TOP, "probe")));
-                        if (!((PlayerEntity)entity).addItemStackToInventory(probe)){
-                            ((PlayerEntity)entity).dropItem(probe,false);
+                        if (!((PlayerEntity) entity).addItemStackToInventory(probe)) {
+                            ((PlayerEntity) entity).dropItem(probe, false);
                         }
                     }
                 }

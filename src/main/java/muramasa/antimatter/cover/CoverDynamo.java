@@ -10,18 +10,18 @@ import javax.annotation.Nullable;
 
 public class CoverDynamo extends BaseCover {
 
-  public CoverDynamo(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
-    super(source, tier, side, factory);
-  }
+    public CoverDynamo(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+        super(source, tier, side, factory);
+    }
 
-  @Override
-  public boolean ticks() {
-    return false;
-  }
+    @Override
+    public boolean ticks() {
+        return false;
+    }
 
-  @Override
-  public void onPlace() {
-    super.onPlace();
-    ((TileEntityMachine<?>) handler.getTile()).invalidateCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
-  }
+    @Override
+    public void onPlace() {
+        super.onPlace();
+        ((TileEntityMachine<?>) handler.getTile()).invalidateCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
+    }
 }

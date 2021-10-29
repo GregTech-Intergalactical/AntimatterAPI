@@ -52,7 +52,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
         data.setData(AntimatterProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, mutablePos, pos));
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityBase)
-            data.setData(AntimatterProperties.TILE_PROPERTY,(TileEntityBase) tile);
+            data.setData(AntimatterProperties.TILE_PROPERTY, (TileEntityBase) tile);
         return data;
     }
 
@@ -64,7 +64,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
         if (config == null) return bakedDefault.getQuads(state, side, rand, data);
         List<BakedQuad> configQuads = config.getQuads(new LinkedList<>(), bakedConfigs, state, side, rand, data);
         if (Arrays.stream(config.config).anyMatch(t -> t == -1) || configQuads.size() == 0) {
-            quads.addAll(bakedDefault.getQuads(state,side,rand,data));
+            quads.addAll(bakedDefault.getQuads(state, side, rand, data));
         }
         if (configQuads.size() > 0) quads.addAll(configQuads);
         return quads;

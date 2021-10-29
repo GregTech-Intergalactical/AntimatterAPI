@@ -55,7 +55,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
     }
 
     public void invalidate(Direction side) {
-        if (side == null){
+        if (side == null) {
             sided[6].invalidate();
             return;
         }
@@ -76,19 +76,19 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
 
     @Nullable
     public T get() {
-       if (flag) {
-           return resolved;
-       }
-       if (supplier == null) {
-           flag = true;
-           return null;
-       }
-       resolved = supplier.get();
+        if (flag) {
+            return resolved;
+        }
+        if (supplier == null) {
+            flag = true;
+            return null;
+        }
+        resolved = supplier.get();
         flag = true;
         for (Consumer<? super T> con : consumers) {
-           con.accept(resolved);
-       }
-       return resolved;
+            con.accept(resolved);
+        }
+        return resolved;
     }
 
     public LazyOptional<? extends T> nullSide() {
@@ -158,7 +158,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
 
     public Optional<T> filter(Predicate<? super T> predicate) {
         T value = get();
-        return value != null && predicate.test(value) ? Optional.of(value)  : Optional.empty();
+        return value != null && predicate.test(value) ? Optional.of(value) : Optional.empty();
     }
 
     public LazyOptional<? extends V> side(Direction side) {

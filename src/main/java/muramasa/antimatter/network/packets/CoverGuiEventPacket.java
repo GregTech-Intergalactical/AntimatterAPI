@@ -12,8 +12,9 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class CoverGuiEventPacket extends AbstractGuiEventPacket{
+public class CoverGuiEventPacket extends AbstractGuiEventPacket {
     Direction facing;
+
     public CoverGuiEventPacket(IGuiEvent event, BlockPos pos, Direction facing, int... data) {
         super(event, pos, data);
         this.facing = facing;

@@ -26,7 +26,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
-        return RecipeIngredient.of(getMaterialTag(m),count);
+        return RecipeIngredient.of(getMaterialTag(m), count);
     }
 
     public interface IBlockGetter {
@@ -66,7 +66,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
         }
 
         public RecipeIngredient asIngredient() {
-             return RecipeIngredient.of(asStack(1));
+            return RecipeIngredient.of(asStack(1));
         }
     }
 }

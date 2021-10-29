@@ -24,16 +24,16 @@ public class AntimatterNetwork {
 
     public AntimatterNetwork() {
         handler = NetworkRegistry.ChannelBuilder.
-            named(new ResourceLocation(Ref.ID, MAIN_CHANNEL)).
-            clientAcceptedVersions(PROTOCOL_VERSION::equals).
-            serverAcceptedVersions(PROTOCOL_VERSION::equals).
-            networkProtocolVersion(() -> PROTOCOL_VERSION).
-            simpleChannel();
+                named(new ResourceLocation(Ref.ID, MAIN_CHANNEL)).
+                clientAcceptedVersions(PROTOCOL_VERSION::equals).
+                serverAcceptedVersions(PROTOCOL_VERSION::equals).
+                networkProtocolVersion(() -> PROTOCOL_VERSION).
+                simpleChannel();
         register();
     }
 
     public void register() {
-       // handler.registerMessage(currMessageId++, SoundPacket.class, SoundPacket::encode, SoundPacket::decode, SoundPacket::handle);
+        // handler.registerMessage(currMessageId++, SoundPacket.class, SoundPacket::encode, SoundPacket::decode, SoundPacket::handle);
         handler.registerMessage(currMessageId++, TileGuiEventPacket.class, TileGuiEventPacket::encode, TileGuiEventPacket::decode, TileGuiEventPacket::handle);
         handler.registerMessage(currMessageId++, CoverGuiEventPacket.class, CoverGuiEventPacket::encode, CoverGuiEventPacket::decode, CoverGuiEventPacket::handle);
         handler.registerMessage(currMessageId++, GuiSyncPacket.class, GuiSyncPacket::encode, GuiSyncPacket::decode, GuiSyncPacket::handle);
@@ -44,7 +44,8 @@ public class AntimatterNetwork {
     }
 
     public void sendTo(Object msg, ServerPlayerEntity player) {
-        if (!(player instanceof FakePlayer)) handler.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+        if (!(player instanceof FakePlayer))
+            handler.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public void sendToAll(Object msg) {

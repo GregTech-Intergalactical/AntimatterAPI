@@ -61,7 +61,7 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
         for (int x = westX; x < eastX; x++) {
             for (int z = northZ; z < southZ; z++) {
                 if (((Math.abs(x) % 3) == 1) && ((Math.abs(z) % 3) == 1)) { //Determine if this X/Z is an oreVein seed
-                    res.add(new Tuple<>(x,z));
+                    res.add(new Tuple<>(x, z));
                 }
             }
         }

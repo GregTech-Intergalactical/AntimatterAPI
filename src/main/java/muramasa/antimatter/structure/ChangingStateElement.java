@@ -18,9 +18,10 @@ public class ChangingStateElement extends StructureElement {
 
     /**
      * ChangingStateElement allows you to vary the block state between machine texture states(Idle, Active, Invalid Structure).
+     *
      * @param defaultValidator validator for INVALID_STRUCTURE.
-     * @param builtValidator validator for all other states (Idle, Active).
-     * @param builder the builder to build a blockstate to place in the world.
+     * @param builtValidator   validator for all other states (Idle, Active).
+     * @param builder          the builder to build a blockstate to place in the world.
      */
     public ChangingStateElement(IBlockStatePredicate defaultValidator, IBlockStatePredicate builtValidator, BiFunction<MachineState, BlockState, BlockState> builder) {
         this.regular = defaultValidator;
@@ -51,7 +52,7 @@ public class ChangingStateElement extends StructureElement {
     @Override
     public void onRemove(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
         super.onRemove(machine, pos, result, count);
-        if (count == 0)  {
+        if (count == 0) {
             World world = machine.getWorld();
             BlockState state = world.getBlockState(pos);
             //Make sure that the old blockstate actually matches, since e.g. if this block is removed it will be air

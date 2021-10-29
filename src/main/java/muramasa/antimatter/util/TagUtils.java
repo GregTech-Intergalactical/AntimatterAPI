@@ -130,10 +130,11 @@ public class TagUtils {
         ITag.INamedTag<T>[] tag = new ITag.INamedTag[1];
         synchronized (TAG_MAP) {
             TAG_MAP.compute(clazz, (k, v) -> {
-            if (v == null) v = new Object2ObjectOpenHashMap<>();
-            tag[0] = v.computeIfAbsent(loc, a -> fn.apply(loc.toString()));
-            return v;
-        });}
+                if (v == null) v = new Object2ObjectOpenHashMap<>();
+                tag[0] = v.computeIfAbsent(loc, a -> fn.apply(loc.toString()));
+                return v;
+            });
+        }
 
         return tag[0];
     }

@@ -38,11 +38,11 @@ public class RecipeIngredientJS implements IngredientJS {
         }
         r.count = obj.has("count") ? obj.get("count").getAsInt() : 1;
         r.ignoreNbt = obj.has("nbt") && !obj.get("nbt").getAsBoolean();
-        r.nonConsume= obj.has("consume") && !obj.get("consume").getAsBoolean();
+        r.nonConsume = obj.has("consume") && !obj.get("consume").getAsBoolean();
         return r;
     }
 
-    public RecipeIngredient into()  {
+    public RecipeIngredient into() {
         RecipeIngredient r = new RecipeIngredient(sourceIngredient.createVanillaIngredient(), count);
         if (nonConsume) r.setNoConsume();
         if (ignoreNbt) r.setIgnoreNbt();

@@ -34,11 +34,12 @@ import java.util.stream.Collectors;
 
 public final class AntimatterRegistration {
     public static Dist side;
+
     @SubscribeEvent
-    public static void onRegister(final RegistryEvent.Register<?> e){
+    public static void onRegister(final RegistryEvent.Register<?> e) {
         final String domain = ModLoadingContext.get().getActiveNamespace();
         onRegister(domain, e);
-        if (domain.equals(Ref.ID)){
+        if (domain.equals(Ref.ID)) {
             onRegister(Ref.MOD_KJS, e);
             onRegister(Ref.SHARED_ID, e);
         }
@@ -50,7 +51,7 @@ public final class AntimatterRegistration {
         if (domain.equals(Ref.ID)) {
             if (e.getRegistry() == ForgeRegistries.BLOCKS) {
                 AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
-                if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
+                if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
                     AntimatterKubeJS.loadStartupScripts();
                 }
                 Data.postInit(side);
@@ -62,14 +63,16 @@ public final class AntimatterRegistration {
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, b -> {
-                if (b instanceof IAntimatterObject && b.getRegistryName() == null) b.setRegistryName(((IAntimatterObject)b).getDomain(), ((IAntimatterObject) b).getId());
+                if (b instanceof IAntimatterObject && b.getRegistryName() == null)
+                    b.setRegistryName(((IAntimatterObject) b).getDomain(), ((IAntimatterObject) b).getId());
                 AntimatterAPI.register(Item.class, b.getRegistryName().getPath(), b.getRegistryName().getNamespace(), b instanceof IItemBlockProvider ? ((IItemBlockProvider) b).getItemBlock() : new AntimatterItemBlock(b));
                 ((IForgeRegistry) e.getRegistry()).register(b);
             });
 
         } else if (e.getRegistry() == ForgeRegistries.ITEMS) {
             AntimatterAPI.all(Item.class, domain, i -> {
-                if (i instanceof IAntimatterObject && i.getRegistryName() == null) i.setRegistryName(((IAntimatterObject)i).getDomain(), ((IAntimatterObject) i).getId());
+                if (i instanceof IAntimatterObject && i.getRegistryName() == null)
+                    i.setRegistryName(((IAntimatterObject) i).getDomain(), ((IAntimatterObject) i).getId());
                 ((IForgeRegistry) e.getRegistry()).register(i);
             });
             registerTools(domain, e.getRegistry());
@@ -105,8 +108,7 @@ public final class AntimatterRegistration {
                     if (i.getItem().getRegistryName() == null) i.getItem().setRegistryName(domain, i.getId());
                     registry.register(i.getItem());
                 }
-            }
-            else {
+            } else {
                 IAntimatterTool i = t.instantiateTools(domain);
                 if (i.getItem().getRegistryName() == null) i.getItem().setRegistryName(domain, i.getId());
                 registry.register(i.getItem());

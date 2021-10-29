@@ -53,7 +53,7 @@ public class BlockMultiMachine extends BlockMachine {
         state = (state == MachineState.INVALID_STRUCTURE ? MachineState.INVALID_STRUCTURE : ((state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE));
         return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + ((horizontalFacing.getIndex() + 1) * 100) + (overlay.getIndex() + 1);
     }
-    
+
     @Override
     protected int getModelId(Direction facing, Direction overlay, MachineState state) {
         state = (state == MachineState.INVALID_STRUCTURE ? MachineState.INVALID_STRUCTURE : ((state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE));

@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 public class NameIngredient extends Ingredient {
 
     private final String test;
+
     protected NameIngredient(Stream<? extends IItemList> itemLists) {
         super(itemLists);
         this.test = null;

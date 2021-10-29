@@ -78,19 +78,20 @@ public class AntimatterJEIPlugin implements IModPlugin {
             Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
             return;
         }
-        REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map,map.getGui() == null ? gui : map.getGui(),tier,model));//new Tuple<>(map, new Tuple<>(gui, tier)));
+        REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map, map.getGui() == null ? gui : map.getGui(), tier, model));//new Tuple<>(map, new Tuple<>(gui, tier)));
     }
 
     public static IJeiHelpers helpers() {
         return helpers;
     }
+
     @Override
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
         //Remove fluid "blocks".
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BLOCK_TO_ITEM.get(t.getFluidBlock()))).collect(Collectors.toList()));
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Collections.singletonList(new ItemStack(Data.PROXY_INSTANCE)));
-        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Stream.concat(DUST_TINY.all().stream().map(t -> DUST_TINY.get(t, 1)),DUST_SMALL.all().stream().map(t -> DUST_SMALL.get(t, 1))).collect(Collectors.toList()));
+        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Stream.concat(DUST_TINY.all().stream().map(t -> DUST_TINY.get(t, 1)), DUST_SMALL.all().stream().map(t -> DUST_SMALL.get(t, 1))).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));
@@ -104,11 +105,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
         REGISTRY.forEach((id, tuple) -> {
             if (!registeredMachineCats.contains(tuple.map.getLoc())) {
-                registry.addRecipeCategories(new RecipeMapCategory(tuple.map,tuple.gui,tuple.tier,tuple.model));
+                registry.addRecipeCategories(new RecipeMapCategory(tuple.map, tuple.gui, tuple.tier, tuple.model));
                 registeredMachineCats.add(tuple.map.getLoc());
             }
         });
     }
+
     @Override
     public void registerRecipes(@Nonnull IRecipeRegistration registration) {
         if (helpers == null) helpers = registration.getJeiHelpers();
@@ -170,7 +172,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
             machine.ifPresent(mach -> {
                 mach.getTiers().forEach(t -> {
                     ItemStack stack = new ItemStack(mach.getItem(t));
-                    if (!stack.isEmpty()){
+                    if (!stack.isEmpty()) {
                         registration.addRecipeCatalyst(stack, id);
                     } else {
                         Antimatter.LOGGER.error("machine " + tuple.model + " has an empty item. Did you do the machine correctly?");

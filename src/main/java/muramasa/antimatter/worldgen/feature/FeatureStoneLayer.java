@@ -41,7 +41,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
     @Override
     public void init() {
         for (Biome biome : ForgeRegistries.BIOMES) {
-           // biome.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
+            // biome.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, new ConfiguredFeature<>(this, IFeatureConfig.NO_FEATURE_CONFIG));
         }
     }
 
@@ -113,7 +113,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
                     // And scan for next Block on the Stone Layer Type.
                     System.arraycopy(layers, 1, layers, 0, layers.length - 1);
-                    layers[6] = stones.get(Math.min(stonesMax, (int)(((noise.get(tX, tY + 4, tZ) + 1) / 2) * stonesSize)));
+                    layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, tY + 4, tZ) + 1) / 2) * stonesSize)));
                 }
             }
         }

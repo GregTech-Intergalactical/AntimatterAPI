@@ -21,30 +21,31 @@ public abstract class GrindstoneContainerMixin extends Container {
     private IInventory inputInventory;
     @Shadow
     private IInventory outputInventory;
+
     protected GrindstoneContainerMixin(@Nullable ContainerType<?> type, int id) {
         super(type, id);
     }
 
     @Shadow
-    private ItemStack copyEnchantments(ItemStack copyTo, ItemStack copyFrom){
+    private ItemStack copyEnchantments(ItemStack copyTo, ItemStack copyFrom) {
         throw new AssertionError();
     }
 
     @Shadow
-    private ItemStack removeEnchantments(ItemStack stack, int damage, int count){
+    private ItemStack removeEnchantments(ItemStack stack, int damage, int count) {
         throw new AssertionError();
     }
 
     @Inject(/*remap = false,*/ method = "updateRecipeOutput", at = @At(value = "HEAD"), cancellable = true)
-    private void checkTools(CallbackInfo ci){
+    private void checkTools(CallbackInfo ci) {
         ItemStack a = this.inputInventory.getStackInSlot(0);
         ItemStack b = this.inputInventory.getStackInSlot(1);
         boolean match = true;
-        if (a.getItem() == b.getItem()){
-            if (a.getItem() instanceof IAntimatterTool){
+        if (a.getItem() == b.getItem()) {
+            if (a.getItem() instanceof IAntimatterTool) {
                 IAntimatterTool tool = (IAntimatterTool) a.getItem();
                 match = tool.getPrimaryMaterial(a) == tool.getPrimaryMaterial(b) && tool.getSecondaryMaterial(a) == tool.getSecondaryMaterial(b);
-                if (match){
+                if (match) {
                     int k = a.getMaxDamage() - a.getDamage();
                     int l = a.getMaxDamage() - b.getDamage();
                     int i1 = k + l + a.getMaxDamage() * 5 / 100;
@@ -61,13 +62,13 @@ public abstract class GrindstoneContainerMixin extends Container {
                     ci.cancel();
                     return;
                 }
-            } else if (a.getItem() instanceof IAntimatterArmor){
+            } else if (a.getItem() instanceof IAntimatterArmor) {
                 IAntimatterArmor tool = (IAntimatterArmor) a.getItem();
                 match = tool.getMaterial(a) == tool.getMaterial(b);
             }
 
         }
-        if (!match){
+        if (!match) {
             this.outputInventory.setInventorySlotContents(0, ItemStack.EMPTY);
             this.detectAndSendChanges();
             ci.cancel();

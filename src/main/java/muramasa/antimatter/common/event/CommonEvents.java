@@ -41,20 +41,20 @@ public class CommonEvents {
     }
 
     @SubscribeEvent
-    public static void onAnvilUpdated(AnvilUpdateEvent event){
+    public static void onAnvilUpdated(AnvilUpdateEvent event) {
         ItemStack left = event.getLeft();
         ItemStack right = event.getRight();
-        if (left.getItem() == right.getItem()){
-            if (left.getItem() instanceof IAntimatterTool && right.getItem() instanceof IAntimatterTool){
+        if (left.getItem() == right.getItem()) {
+            if (left.getItem() instanceof IAntimatterTool && right.getItem() instanceof IAntimatterTool) {
                 IAntimatterTool leftTool = (IAntimatterTool) left.getItem();
                 IAntimatterTool rightTool = (IAntimatterTool) right.getItem();
-                if (leftTool.getPrimaryMaterial(left) != rightTool.getPrimaryMaterial(right) || leftTool.getSecondaryMaterial(left) != rightTool.getSecondaryMaterial(right)){
+                if (leftTool.getPrimaryMaterial(left) != rightTool.getPrimaryMaterial(right) || leftTool.getSecondaryMaterial(left) != rightTool.getSecondaryMaterial(right)) {
                     event.setCanceled(true);
                 }
-            } else if (left.getItem() instanceof IAntimatterArmor && right.getItem() instanceof IAntimatterArmor){
+            } else if (left.getItem() instanceof IAntimatterArmor && right.getItem() instanceof IAntimatterArmor) {
                 IAntimatterArmor leftTool = (IAntimatterArmor) left.getItem();
                 IAntimatterArmor rightTool = (IAntimatterArmor) right.getItem();
-                if (leftTool.getMaterial(left) != rightTool.getMaterial(right)){
+                if (leftTool.getMaterial(left) != rightTool.getMaterial(right)) {
                     event.setCanceled(true);
                 }
             }
@@ -62,14 +62,14 @@ public class CommonEvents {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onLootTableLoad(LootTableLoadEvent event){
+    public static void onLootTableLoad(LootTableLoadEvent event) {
         //Antimatter.LOGGER.info(event.getTable().getLootTableId().toString());
-        if (event.getTable().getLootTableId().getPath().startsWith("blocks/")){
+        if (event.getTable().getLootTableId().getPath().startsWith("blocks/")) {
             ResourceLocation blockId = new ResourceLocation(event.getTable().getLootTableId().getNamespace(), event.getName().getPath().replace("blocks/", ""));
-            if (ForgeRegistries.BLOCKS.containsKey(blockId)){
+            if (ForgeRegistries.BLOCKS.containsKey(blockId)) {
                 Block block = ForgeRegistries.BLOCKS.getValue(blockId);
                 //Antimatter.LOGGER.info(blockId.toString());
-                if (block == Blocks.ICE || block == Blocks.PACKED_ICE || block == Blocks.BLUE_ICE){
+                if (block == Blocks.ICE || block == Blocks.PACKED_ICE || block == Blocks.BLUE_ICE) {
                     event.getTable().addPool(LootPool.builder().rolls(ConstantRange.of(1)).acceptCondition(AntimatterBlockLootProvider.SAW).addEntry(ItemLootEntry.builder(block)).build());
                 }
             }

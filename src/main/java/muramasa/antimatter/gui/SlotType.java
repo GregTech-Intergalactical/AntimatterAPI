@@ -73,11 +73,11 @@ public class SlotType<T extends Slot> implements IAntimatterObject {
         T get(SlotType<T> type, IGuiHandler tile, Map<SlotType<?>, IItemHandler> slots, int index, SlotData<T> data);
     }
 
-    public static void init(){
+    public static void init() {
 
     }
 
-    public static class ItIn implements BiPredicate<IGuiHandler, ItemStack>{
+    public static class ItIn implements BiPredicate<IGuiHandler, ItemStack> {
 
         @Override
         public boolean test(IGuiHandler iGuiHandler, ItemStack stack) {

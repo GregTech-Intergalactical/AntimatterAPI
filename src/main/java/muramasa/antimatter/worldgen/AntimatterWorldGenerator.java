@@ -73,18 +73,19 @@ public class AntimatterWorldGenerator {
     public static void setup() {
         Antimatter.LOGGER.info("AntimatterAPI WorldGen Initialization Stage...");
         AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
             AntimatterKubeJS.loadWorldgenScripts();
         }
     }
 
     public static void register(Class<?> c, WorldGenBase<?> base) {
         AntimatterFeature<?> feature = AntimatterAPI.get(AntimatterFeature.class, c.getName());
-        if (feature != null) base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
+        if (feature != null)
+            base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
     }
 
     public static void register(Consumer<BiomeLoadingEvent> consumer, String id, String domain, Predicate<Biome.Category> validator) {
-        AntimatterAPI.register(GenHandler.class, id, domain,  new GenHandler(consumer, validator));
+        AntimatterAPI.register(GenHandler.class, id, domain, new GenHandler(consumer, validator));
     }
 
     public static <T> List<T> all(Class<T> c, RegistryKey<World> dim) {
@@ -102,33 +103,35 @@ public class AntimatterWorldGenerator {
 
     /**
      * Removes specific features, in specific generation stages, in all biomes registered
-     * @param stage generation stage where the feature is added to
+     *
+     * @param stage           generation stage where the feature is added to
      * @param featureToRemove feature instance wishing to be removed
-     * @param states BlockStates wish to be removed
+     * @param states          BlockStates wish to be removed
      */
     public static void removeDecoratedFeatureFromAllBiomes(BiomeGenerationSettingsBuilder builder, @Nonnull final GenerationStage.Decoration stage, @Nonnull final Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
-       // AntimatterAPI.runLaterCommon(() -> {
-          //  for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
-                for (BlockState state : states) {
-                    builder.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f.get(), featureToRemove, state));
-                }
-          //  }
-       // });
+        // AntimatterAPI.runLaterCommon(() -> {
+        //  for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
+        for (BlockState state : states) {
+            builder.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f.get(), featureToRemove, state));
+        }
+        //  }
+        // });
     }
 
     /**
      * Removes specific features, in specific generation stages, in specific biomes
-     * @param biome Biome wish to remove feature from
-     * @param stage generation stage where the feature is added to
+     *
+     * @param biome           Biome wish to remove feature from
+     * @param stage           generation stage where the feature is added to
      * @param featureToRemove feature instance wishing to be removed
-     * @param states BlockStates wish to be removed
+     * @param states          BlockStates wish to be removed
      */
     public static void removeDecoratedFeaturesFromBiome(@Nonnull final Biome biome, final @Nonnull GenerationStage.Decoration stage, final @Nonnull Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
         AntimatterAPI.runLaterCommon(() -> {
             for (BlockState state : states) {
-               // biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
+                // biome.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f, featureToRemove, state));
             }
         });
     }
@@ -140,9 +143,9 @@ public class AntimatterWorldGenerator {
         if (configuredFeature.config instanceof DecoratedFeatureConfig) {
             IFeatureConfig config = configuredFeature.config;
             Feature<?> feature = null;
-            while(config instanceof DecoratedFeatureConfig) {
-                feature = ((DecoratedFeatureConfig)config).feature.get().feature;
-                config = ((DecoratedFeatureConfig)config).feature.get().config;
+            while (config instanceof DecoratedFeatureConfig) {
+                feature = ((DecoratedFeatureConfig) config).feature.get().feature;
+                config = ((DecoratedFeatureConfig) config).feature.get().config;
                 if (!(feature instanceof DecoratedFeature)) {
                     break;
                 }
@@ -180,10 +183,10 @@ public class AntimatterWorldGenerator {
 
     private static void handleFeatureRemoval(BiomeLoadingEvent event) {
         BiomeGenerationSettingsBuilder builder = event.getGeneration();
-        if (AntimatterConfig.WORLD.VANILLA_ORE_GEN){
+        if (AntimatterConfig.WORLD.VANILLA_ORE_GEN) {
             removeOreFeatures(builder);
         }
-        if (AntimatterConfig.WORLD.VANILLA_STONE_GEN){
+        if (AntimatterConfig.WORLD.VANILLA_STONE_GEN) {
             removeStoneFeatures(builder);
         }
     }

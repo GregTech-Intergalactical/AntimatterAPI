@@ -143,8 +143,8 @@ public class Element implements IAntimatterObject {
      * @param protons         Amount of Protons. Antiprotons if negative.
      * @param neutrons        Amount of Neutrons. Antineutrons if negative. (I could have made mistakes with the Neutron amount calculation, please tell me if I did something wrong)
      * @param halfLifeSeconds Amount of Half Life this Material has in Seconds. -1 for stable Materials.
-     * @param decayInto         String representing the Elements it decays to. Separated by an '&' Character.
-     * @param id            Name of the Element
+     * @param decayInto       String representing the Elements it decays to. Separated by an '&' Character.
+     * @param id              Name of the Element
      */
     public Element(int protons, int neutrons, int additionalMass, int halfLifeSeconds, String decayInto, String id, String element, boolean isIsotope) {
         this.protons = protons;
@@ -179,7 +179,7 @@ public class Element implements IAntimatterObject {
         return protons + neutrons + additionalMass;
     }
 
-    public static Element getFromElementId(String element){
+    public static Element getFromElementId(String element) {
         return ELEMENTS.get(element);
     }
 }

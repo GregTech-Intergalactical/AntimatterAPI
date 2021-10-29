@@ -31,7 +31,7 @@ public class TileGuiEventPacket extends AbstractGuiEventPacket {
 
     public static void handle(final TileGuiEventPacket msg, @Nonnull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity sender =  ctx.get().getSender();
+            ServerPlayerEntity sender = ctx.get().getSender();
             if (sender != null) {
                 TileEntity tile = Utils.getTile(sender.getServerWorld(), msg.pos);
                 if (tile instanceof IGuiHandler) {

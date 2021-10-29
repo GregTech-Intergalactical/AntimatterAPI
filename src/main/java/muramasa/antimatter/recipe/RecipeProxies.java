@@ -23,6 +23,7 @@ public class RecipeProxies {
                     .io(t.getRecipeOutput()).build(duration, power, 0, 1);
         };
     }
+
     /*
     private static Function<IRecipe, Recipe> CRAFTING = t -> {
         if (t instanceof ShapedRecipe) return null;
@@ -48,7 +49,7 @@ public class RecipeProxies {
                 .io(t.getRecipeOutput()).build(60, 8,0, 1);
     };
 */
-    public static BiFunction<Integer, Integer, RecipeMap.Proxy> FURNACE_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.SMELTING, getDefault(power,duration));
+    public static BiFunction<Integer, Integer, RecipeMap.Proxy> FURNACE_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.SMELTING, getDefault(power, duration));
     public static BiFunction<Integer, Integer, RecipeMap.Proxy> BLASTING_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.BLASTING, getDefault(power, duration));
     public static BiFunction<Integer, Integer, RecipeMap.Proxy> SMOKING_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.SMOKING, getDefault(power, duration));
     //public static RecipeMap.Proxy CRAFTING_PROXY = new RecipeMap.Proxy(IRecipeType.CRAFTING, CRAFTING);

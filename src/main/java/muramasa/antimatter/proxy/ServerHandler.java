@@ -6,7 +6,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 
 public class ServerHandler implements IProxyHandler {
 
-    public ServerHandler() { }
+    public ServerHandler() {
+    }
 
     @SuppressWarnings("unused")
     public static void setup(FMLDedicatedServerSetupEvent e) {

@@ -20,7 +20,7 @@ import java.util.WeakHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class DynamicTextureProvider<T extends IDynamicModelProvider,U> {
+public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
     //Data required to build the textures.
     public class ModelData {
         public BlockModel model;
@@ -37,6 +37,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider,U> {
             this.key = key;
         }
     }
+
     //Data required to assemble the model.
     public class BuilderData {
         public Random rand;
@@ -60,6 +61,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider,U> {
             this.type = type;
         }
     }
+
     //The weak-reference backed hashmap.
     protected Object2ObjectMap<String, WeakHashMap<U, List<BakedQuad>[]>> MODEL_CACHE = new Object2ObjectOpenHashMap<>();
 
@@ -72,9 +74,9 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider,U> {
     }
 
     public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, IModelData data) {
-        return MODEL_CACHE.compute(t.getId(), (k,v) -> {
+        return MODEL_CACHE.compute(t.getId(), (k, v) -> {
             if (v == null) v = new WeakHashMap<>();
-            v.computeIfAbsent(key, (k1) -> bakeQuads(type, state,t, key,data));
+            v.computeIfAbsent(key, (k1) -> bakeQuads(type, state, t, key, data));
             return v;
         }).get(key);
     }
@@ -85,16 +87,17 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider,U> {
             IUnbakedModel m = ModelLoader.instance().getUnbakedModel(c.getModel(type, dir, dirFromState(state, dir)));
             if (m instanceof BlockModel) {
                 BlockModel bm = (BlockModel) m;
-                texturer.accept(new ModelData(bm, dir, data,c, key));
+                texturer.accept(new ModelData(bm, dir, data, c, key));
             }
-            bakedArray[dir.getIndex()] = builder.apply(new BuilderData(type, Ref.RNG, state, data, c,key, m, dir));
+            bakedArray[dir.getIndex()] = builder.apply(new BuilderData(type, Ref.RNG, state, data, c, key, m, dir));
         }
         return bakedArray;
     }
 
     private static Direction dirFromState(BlockState state, Direction bypass) {
         if (state.hasProperty(BlockStateProperties.FACING)) return state.get(BlockStateProperties.FACING);
-        if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) return state.get(BlockStateProperties.HORIZONTAL_FACING);
+        if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING))
+            return state.get(BlockStateProperties.HORIZONTAL_FACING);
         return bypass;
     }
 }

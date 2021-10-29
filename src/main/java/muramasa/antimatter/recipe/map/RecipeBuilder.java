@@ -39,6 +39,7 @@ public class RecipeBuilder {
 
     /**
      * Builds a recipe without adding it to a map.
+     *
      * @return the recipe.
      */
     public Recipe build(int duration, long power, int special, int amps) {
@@ -68,7 +69,7 @@ public class RecipeBuilder {
                 itemsOutput != null ? itemsOutput.toArray(new ItemStack[0]) : null,
                 fluidsInput != null ? fluidsInput.toArray(new FluidStack[0]) : null,
                 fluidsOutput != null ? fluidsOutput.toArray(new FluidStack[0]) : null,
-                duration, power, special,amps
+                duration, power, special, amps
         );
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
@@ -78,13 +79,13 @@ public class RecipeBuilder {
     }
 
     public Recipe add(long duration, long power, long special) {
-        return add(duration,power,special,1);
+        return add(duration, power, special, 1);
     }
 
     public Recipe add(long duration, long power, long special, int amps) {
-        this.duration = (int)duration;
+        this.duration = (int) duration;
         this.power = power;
-        this.special = (int)special;
+        this.special = (int) special;
         this.amps = amps;
         return add();
     }
@@ -137,7 +138,9 @@ public class RecipeBuilder {
         return this;
     }
 
-    /** 10 = 10%, 75 = 75% etc **/
+    /**
+     * 10 = 10%, 75 = 75% etc
+     **/
     public RecipeBuilder chances(int... values) {
         chances = values;
         return this;

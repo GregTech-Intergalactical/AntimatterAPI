@@ -39,7 +39,7 @@ public class SimpleReloadableResourceManagerMixin {
 
     @Inject(/*remap = false,*/ at = @At("RETURN"), method = "Lnet/minecraft/resources/SimpleReloadableResourceManager;clearResourceNamespaces()V")
     private void clearNamespaceInject(CallbackInfo info) {
-        SimpleReloadableResourceManager manager = ((SimpleReloadableResourceManager)(Object)this);
+        SimpleReloadableResourceManager manager = ((SimpleReloadableResourceManager) (Object) this);
         //if (type == ResourcePackType.SERVER_DATA)
         manager.addResourcePack(new DynamicResourcePack("Antimatter - Dynamic Data", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
     }

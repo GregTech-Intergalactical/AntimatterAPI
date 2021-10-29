@@ -127,7 +127,7 @@ public class FluidTanks implements IFluidHandler {
 
     @Override
     public int fill(FluidStack stack, FluidAction action) {
-        for (int i = 0; i < tanks.length; i++){
+        for (int i = 0; i < tanks.length; i++) {
             int fill = getTank(i).fill(stack, action);
             if (fill > 0) return fill;
         }
@@ -137,7 +137,7 @@ public class FluidTanks implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(FluidStack stack, FluidAction action) {
-        for (int i = 0; i < tanks.length; i++){
+        for (int i = 0; i < tanks.length; i++) {
             FluidStack drain = getTank(i).drain(stack, action);
             if (!drain.isEmpty()) return drain;
         }

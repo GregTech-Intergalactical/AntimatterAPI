@@ -93,7 +93,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public int getPressure() {
-        return getPipeType().getPressure(getPipeSize())*20;
+        return getPipeType().getPressure(getPipeSize()) * 20;
     }
 
     @Override

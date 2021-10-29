@@ -49,13 +49,13 @@ public class FakeTileElement extends StructureElement {
         if (state.getBlock().matchesBlock(Data.PROXY_INSTANCE)) {
             TileEntity tile = machine.getWorld().getTileEntity(pos);
             if (tile instanceof TileEntityFakeBlock) {
-                BlockState st = ((TileEntityFakeBlock)tile).getState();
+                BlockState st = ((TileEntityFakeBlock) tile).getState();
                 if (st == null) {
                     result.withError("Missing state in fake tile.");
                     return false;
                 }
                 for (IBlockStatePredicate pred : preds) {
-                    if (pred.evaluate((IWorldReader)machine.getWorld(), (BlockPos) pos, st)) {
+                    if (pred.evaluate((IWorldReader) machine.getWorld(), (BlockPos) pos, st)) {
                         result.addState("fake", pos, st);
                         return true;
                     }
@@ -80,7 +80,7 @@ public class FakeTileElement extends StructureElement {
             return true;
         }
         for (IBlockStatePredicate pred : preds) {
-            if (pred.evaluate((IWorldReader)machine.getWorld(), (BlockPos) pos, state)) {
+            if (pred.evaluate((IWorldReader) machine.getWorld(), (BlockPos) pos, state)) {
                 result.addState("fake", pos, state);
                 return true;
             }
@@ -116,11 +116,11 @@ public class FakeTileElement extends StructureElement {
         TileEntity tile = world.getTileEntity(pos);
         if (!(tile instanceof TileEntityFakeBlock)) return;
         if (count == 0) {
-            BlockState state = ((TileEntityFakeBlock)tile).getState();
+            BlockState state = ((TileEntityFakeBlock) tile).getState();
             world.setBlockState(pos, state, 1 | 2 | 8);
             return;
         } else {
-            ((TileEntityFakeBlock)tile).removeController(machine);
+            ((TileEntityFakeBlock) tile).removeController(machine);
         }
         super.onRemove(machine, pos, result, count);
     }

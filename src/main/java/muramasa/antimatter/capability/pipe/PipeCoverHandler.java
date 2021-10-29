@@ -21,5 +21,5 @@ public class PipeCoverHandler<T extends TileEntityPipe<?>> extends CoverHandler<
         }
         return ok;
     }
-    
+
 }

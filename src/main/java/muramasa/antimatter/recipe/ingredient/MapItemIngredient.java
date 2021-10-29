@@ -20,13 +20,14 @@ public class MapItemIngredient extends AbstractMapIngredient {
     public boolean equals(Object o) {
         if (!super.equals(o)) return false;
         if (o instanceof MapTagIngredient) {
-            return stack.getTags().contains(((MapTagIngredient)o).loc);
+            return stack.getTags().contains(((MapTagIngredient) o).loc);
         }
         if (o instanceof MapItemIngredient) {
-            return ((MapItemIngredient)o).stack.getItem().equals(stack);
+            return ((MapItemIngredient) o).stack.getItem().equals(stack);
         }
         return false;
     }
+
     @Override
     public String toString() {
         return stack.toString();

@@ -154,7 +154,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         if (!onlyRemove && !canRemoveCover(oldCover)) return false;
         if (get(side).isEmpty() || !set(side, ICover.empty, !onlyRemove)) return false;
         if (!onlyRemove && !player.isCreative()) player.dropItem(oldCover.getDroppedStack(), false);
-        if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != ELECTRIC_WRENCH){
+        if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != ELECTRIC_WRENCH) {
             player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
         } else {
             player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
@@ -216,7 +216,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public boolean moveCover(PlayerEntity entity,Direction oldSide, Direction newSide) {
+    public boolean moveCover(PlayerEntity entity, Direction oldSide, Direction newSide) {
         //Have to move the entire stack, due to possible tag data.
         ICover newStack = get(newSide);
         ICover oldStack = get(oldSide);
@@ -234,6 +234,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     /**
      * Checks whether a cover would block capability on this side.
+     *
      * @param side side to check
      * @return a boolean whether or not capability was blocked.
      */
@@ -245,6 +246,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     /**
      * Returns a list of item stacks to be dropped upon machine removal.
+     *
      * @return list.
      */
     public List<ItemStack> getDrops() {

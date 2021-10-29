@@ -11,7 +11,7 @@ public class MaterialStack {
         m = material;
         s = size;
     }
-    
+
     @Override
     public String toString() {
         String string = "";

@@ -29,14 +29,17 @@ public class MaterialRecipe extends ShapedRecipe {
 
     public interface Provider {
         ItemBuilder provide(String id);
+
         default String get(String identifier) {
-            if (identifier.contains("/")) throw new RuntimeException("invalid input identifier to MaterialRecipe.Provider, contains /");
+            if (identifier.contains("/"))
+                throw new RuntimeException("invalid input identifier to MaterialRecipe.Provider, contains /");
             return IDS.get(this) + "/" + identifier;
         }
     }
 
     public static Provider registerProvider(String loc, String domain, Provider obj) {
-        if (loc.contains("/")) throw new RuntimeException("invalid input identifier to MaterialRecipe.Provider, contains /");
+        if (loc.contains("/"))
+            throw new RuntimeException("invalid input identifier to MaterialRecipe.Provider, contains /");
         AntimatterAPI.register(Provider.class, loc, domain, obj);
         IDS.put(obj, new ResourceLocation(domain, loc));
         return obj;
@@ -44,8 +47,10 @@ public class MaterialRecipe extends ShapedRecipe {
 
     public interface ItemBuilder {
         ItemStack build(CraftingInventory inv, Result mats);
+
         Map<String, Object> getFromResult(@Nonnull ItemStack stack);
     }
+
     public final Map<String, Set<Integer>> materialSlots;
     public final ItemBuilder builder;
     private final int size;
@@ -74,15 +79,15 @@ public class MaterialRecipe extends ShapedRecipe {
 
     @Override
     public boolean matches(CraftingInventory inv, World worldIn) {
-       return build(inv, true) != null;
+        return build(inv, true) != null;
     }
 
     private Result build(CraftingInventory inv, boolean regularTest) {
-        for(int i = 0; i <= inv.getWidth() - this.getWidth(); ++i) {
-            for(int j = 0; j <= inv.getHeight() - this.getHeight(); ++j) {
+        for (int i = 0; i <= inv.getWidth() - this.getWidth(); ++i) {
+            for (int j = 0; j <= inv.getHeight() - this.getHeight(); ++j) {
                 //Result m = this.build(inv, i, j,regularTest, true);
                 //if (m != null) return m;
-                Result m = this.build(inv, i, j,regularTest, false);
+                Result m = this.build(inv, i, j, regularTest, false);
                 if (m != null) return m;
             }
         }
@@ -93,7 +98,7 @@ public class MaterialRecipe extends ShapedRecipe {
         Int2ObjectMap<Object> result = new Int2ObjectOpenHashMap<>(size);
         Map<String, Object> ret = new Object2ObjectOpenHashMap<>(5, 0.25f);
         Map<Ingredient, ItemStack> whichStacks = new Object2ObjectOpenHashMap<>(5, 0.25f);
-        for(int i = 0; i < inv.getWidth(); ++i) {
+        for (int i = 0; i < inv.getWidth(); ++i) {
             for (int j = 0; j < inv.getHeight(); ++j) {
                 int k = i - width;
                 int l = j - height;
@@ -107,7 +112,7 @@ public class MaterialRecipe extends ShapedRecipe {
                     ingredient = this.getIngredients().get(offset);
                     ItemStack stack = inv.getStackInSlot(i + j * inv.getWidth());
                     if (ingredient instanceof PropertyIngredient) {
-                        Object obj = getMat((PropertyIngredient)ingredient, stack);
+                        Object obj = getMat((PropertyIngredient) ingredient, stack);
                         if (obj == null) return null;
                         result.put(offset, obj);
                     }
@@ -137,7 +142,7 @@ public class MaterialRecipe extends ShapedRecipe {
                     return null;
                 }
             }
-            ret.put(((PropertyIngredient)this.getIngredients().get(l.iterator().next())).getId(), mat);
+            ret.put(((PropertyIngredient) this.getIngredients().get(l.iterator().next())).getId(), mat);
         }
         for (Object value : ret.values()) {
             if (value == null) return null;

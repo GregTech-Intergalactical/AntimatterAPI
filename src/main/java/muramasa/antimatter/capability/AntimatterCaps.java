@@ -17,7 +17,9 @@ public class AntimatterCaps {
     @CapabilityInject(IComponentHandler.class)
     public static final Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY;
 
-    /** Dummy cap **/
+    /**
+     * Dummy cap
+     **/
     public static final Capability<MachineRecipeHandler> RECIPE_HANDLER_CAPABILITY;
 
     static {

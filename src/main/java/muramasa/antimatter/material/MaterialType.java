@@ -62,13 +62,14 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         }
         return OVERRIDES.inverse().get(stack.getItem());
     }
+
     @SuppressWarnings("unchecked")
     public ITag.INamedTag<Item> getMaterialTag(Material m) {
         return (ITag.INamedTag<Item>) tagFromString(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
-        return RecipeIngredient.of(getMaterialTag(m),count);
+        return RecipeIngredient.of(getMaterialTag(m), count);
     }
 
     public MaterialType<T> blockType() {
@@ -77,7 +78,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         return this;
     }
 
-    public MaterialType<T> unSplitName(){
+    public MaterialType<T> unSplitName() {
         splitName = false;
         return this;
     }

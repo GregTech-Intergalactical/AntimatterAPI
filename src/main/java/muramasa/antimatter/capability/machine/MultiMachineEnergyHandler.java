@@ -19,7 +19,7 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
     }
 
     public MultiMachineEnergyHandler(T tile) {
-        super(tile,0,0, 0, 0,0,0);
+        super(tile, 0, 0, 0, 0, 0, 0);
     }
 
     public void onStructureBuild() {
@@ -66,7 +66,7 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
         long inserted = super.insertInternal(maxReceive, simulate, force);
         if (inserted == 0 && outputs != null) {
             for (MachineEnergyHandler<?> handler : outputs) {
-                inserted += handler.insertInternal(maxReceive-inserted, simulate, force);
+                inserted += handler.insertInternal(maxReceive - inserted, simulate, force);
                 //Output voltage as a dynamo outputs energy.
                 if (!simulate && inserted > handler.getOutputVoltage()) {
                     System.out.println("BOOM");
@@ -80,7 +80,7 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
 
     @Override
     public long getEnergy() {
-        return super.getEnergy() +(inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum() + (outputs == null ? 0 : Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum()));
+        return super.getEnergy() + (inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum() + (outputs == null ? 0 : Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum()));
     }
 
     @Override
@@ -104,7 +104,7 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
         long extracted = super.extractInternal(maxReceive, simulate, force);
         if (extracted == 0 && inputs != null) {
             for (MachineEnergyHandler<?> handler : inputs) {
-                extracted += handler.extractInternal(maxReceive-extracted, simulate, force);
+                extracted += handler.extractInternal(maxReceive - extracted, simulate, force);
                 if (extracted >= maxReceive)
                     return extracted;
             }
@@ -114,8 +114,8 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
 
     public Tier getAccumulatedPower() {
         if (inputs == null) return Tier.ULV;
-        long voltage = Arrays.stream(inputs).mapToLong(t -> (long) t.getInputVoltage() *t.getInputAmperage()).sum();
-        Tier tier = Tier.getTier((int)voltage);
-        return voltage >= tier.getVoltage() ? tier : Tier.getTier((int)(voltage >> 2));
+        long voltage = Arrays.stream(inputs).mapToLong(t -> (long) t.getInputVoltage() * t.getInputAmperage()).sum();
+        Tier tier = Tier.getTier((int) voltage);
+        return voltage >= tier.getVoltage() ? tier : Tier.getTier((int) (voltage >> 2));
     }
 }

@@ -30,11 +30,13 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
     @SafeVarargs
     protected WorldGenStoneLayer(BlockState state, int minY, int maxY, RegistryKey<World>... dims) {
         super("world_gen_stone_layer", WorldGenStoneLayer.class, dims);
-        if (state == null || state.isAir()) throw new IllegalStateException("WorldGenStoneLayer has been passed a null stone block state!");
+        if (state == null || state.isAir())
+            throw new IllegalStateException("WorldGenStoneLayer has been passed a null stone block state!");
         this.stoneState = state;
         this.minY = minY;
         this.maxY = maxY;
     }
+
     @SafeVarargs
     protected WorldGenStoneLayer(Block block, int minY, int maxY, RegistryKey<World>... dims) {
         this(block.getDefaultState(), minY, maxY, dims);

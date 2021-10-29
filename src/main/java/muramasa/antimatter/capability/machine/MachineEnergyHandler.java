@@ -40,7 +40,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     public MachineEnergyHandler(T tile, boolean isGenerator) {
-        this(tile,1,isGenerator);
+        this(tile, 1, isGenerator);
     }
 
     public MachineEnergyHandler(T tile, int amps, boolean isGenerator) {
@@ -108,7 +108,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
                     handle.addListener(h -> cache.add(dir.getIndex(), LazyOptional.empty()));
                 }
                 boolean ok = true;
-                while(ok) {
+                while (ok) {
                     if (!getState().extract(true, 1, 0)) {
                         break;
                     }
@@ -120,7 +120,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     public void onRemove() {
         if (tile.isServerSide()) {
-           // deregisterNet();
+            // deregisterNet();
         }
     }
 
@@ -148,7 +148,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     protected long insertIntoItems(long maxReceive, boolean simulate) {
         int j = 0;
-        for (int i = offsetInsert; j < cachedItems.size(); j++, i = (i == cachedItems.size() -1 ? 0 : (i+1))) {
+        for (int i = offsetInsert; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
             IEnergyHandler handler = cachedItems.get(i);
             long inserted = handler.insert(maxReceive, true);
             if (inserted > 0) {
@@ -176,7 +176,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     public long extractInternal(long maxExtract, boolean simulate, boolean force) {
         long extracted = super.extractInternal(maxExtract, simulate, force);
         if (extracted == 0) {
-            extracted = extractFromItems(maxExtract,simulate);
+            extracted = extractFromItems(maxExtract, simulate);
         }
         if (!simulate) {
             tile.onMachineEvent(MachineEvent.ENERGY_DRAINED, extracted);
@@ -187,7 +187,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     protected long extractFromItems(long maxExtract, boolean simulate) {
         int j = 0;
-        for (int i = offsetExtract; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i+1))) {
+        for (int i = offsetExtract; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
             IEnergyHandler handler = cachedItems.get(i);
             long extracted = handler.extract(maxExtract, true);
             if (extracted > 0) {

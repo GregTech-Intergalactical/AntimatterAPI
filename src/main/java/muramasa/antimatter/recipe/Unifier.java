@@ -10,7 +10,7 @@ public class Unifier {
 
     static {
         // if (AntimatterConfig.RECIPE.MOD_PRIORITY.length == 0 || AntimatterConfig.RECIPE.MOD_PRIORITY[0].equals(Ref.ID)) {
-            // AntimatterConfig.RECIPE.ENABLE_RECIPE_UNIFICATION = false;
+        // AntimatterConfig.RECIPE.ENABLE_RECIPE_UNIFICATION = false;
         // }
     }
 

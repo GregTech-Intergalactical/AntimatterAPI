@@ -64,7 +64,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
                 for (JsonElement el : json.getAsJsonArray("chances")) {
                     chances.add(el.getAsInt());
                 }
-                r.addChances(chances.stream().mapToInt(i->i).toArray());
+                r.addChances(chances.stream().mapToInt(i -> i).toArray());
             }
             r.setIds(recipeId, json.get("map").getAsString());
             return r;
@@ -82,14 +82,12 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
             JsonObject obj = (JsonObject) element;
             ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
-            if (fluid == null)
-            {
+            if (fluid == null) {
                 return FluidStack.EMPTY;
             }
             FluidStack stack = new FluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsInt() : 1000);
 
-            if (obj.has("tag"))
-            {
+            if (obj.has("tag")) {
                 stack.setTag(JsonToNBT.getTagFromJson(obj.get("tag").getAsString()));
             }
             return stack;
