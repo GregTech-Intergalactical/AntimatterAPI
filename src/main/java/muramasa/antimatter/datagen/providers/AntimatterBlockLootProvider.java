@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.providers;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.*;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
@@ -66,20 +67,22 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
 
     protected void loot() {
         AntimatterAPI.all(BlockMachine.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockMultiMachine.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockPipe.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockStorage.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockStone.class, providerDomain, b -> {
-            if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
-                tables.put(b, b2 -> droppingWithSilkTouch(b, ((CobbleStoneType) b.getType()).getBlock("cobble")));
-                return;
-            }
-            this.add(b);
-        });
-        AntimatterAPI.all(BlockStoneSlab.class, providerDomain, b -> tables.put(b, BlockLootTables::droppingSlab));
-        AntimatterAPI.all(BlockStoneStair.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockStoneWall.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockOre.class, providerDomain, this::addToFortune);
+        AntimatterAPI.all(BlockMultiMachine.class,providerDomain, this::add);
+        if (providerDomain.equals(Ref.ID)){
+            AntimatterAPI.all(BlockPipe.class, this::add);
+            AntimatterAPI.all(BlockStorage.class, this::add);
+            AntimatterAPI.all(BlockStone.class, b -> {
+                if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()){
+                    tables.put(b, b2 -> droppingWithSilkTouch(b, ((CobbleStoneType)b.getType()).getBlock("cobble")));
+                    return;
+                }
+                this.add(b);
+            });
+            AntimatterAPI.all(BlockStoneSlab.class, b -> tables.put(b, BlockLootTables::droppingSlab));
+            AntimatterAPI.all(BlockStoneStair.class, this::add);
+            AntimatterAPI.all(BlockStoneWall.class, this::add);
+            AntimatterAPI.all(BlockOre.class, this::addToFortune);
+        }
     }
 
     @Override
