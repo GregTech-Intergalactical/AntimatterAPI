@@ -7,6 +7,7 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.event.AntimatterLoaderEvent;
+import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
@@ -113,10 +114,26 @@ public class AntimatterDynamics {
         TagUtils.setSupplier(tags);
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
-        AntimatterAPI.all(RecipeMap.class, rm -> rm.compile(manager, tags));
+
+        final Set<ResourceLocation> filter;
+        // Fire KubeJS event to cancel possible maps.
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost();
+            filter = ev.forMachines;
+        } else {
+            filter = Collections.emptySet();
+        }
+        AntimatterAPI.all(RecipeMap.class, rm -> {
+            if (filter.contains(rm.getLoc())) {
+                rm.resetCompiled();
+                return;
+            }
+            rm.compile(manager, tags);
+        });
 
         List<Recipe> recipes = manager.getRecipesForType(Recipe.RECIPE_TYPE);
         Map<String, List<Recipe>> map = recipes.stream().collect(Collectors.groupingBy(recipe -> recipe.mapId));
+
         for (Map.Entry<String, List<Recipe>> entry : map.entrySet()) {
             String[] split = entry.getKey().split(":");
             if (split.length != 2)
@@ -145,12 +162,29 @@ public class AntimatterDynamics {
         if (server)
             runDataProvidersDynamically();
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
+        final Set<ResourceLocation> filter;
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost();
+            filter = ev.forLoaders;
+        } else {
+            filter = Collections.emptySet();
+        }
         Map<ResourceLocation, IRecipeRegistrate.IRecipeLoader> loaders = new Object2ObjectOpenHashMap<>(30);
         MinecraftForge.EVENT_BUS.post(new AntimatterLoaderEvent(Antimatter.INSTANCE, (a, b, c) -> {
+            if (filter.contains(new ResourceLocation(a, b)))
+                return;
             if (loaders.put(new ResourceLocation(a, b), c) != null) {
                 Antimatter.LOGGER.warn("Duplicate recipe loader: " + new ResourceLocation(a, b));
             }
         }));
+        // Fire KubeJS event to cancel possible loaers.
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost();
+            for (ResourceLocation loc : ev.forLoaders) {
+                loaders.remove(loc);
+            }
+        }
+
         loaders.values().forEach(IRecipeRegistrate.IRecipeLoader::init);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
