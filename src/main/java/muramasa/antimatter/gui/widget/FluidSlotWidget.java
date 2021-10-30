@@ -48,7 +48,8 @@ public class FluidSlotWidget extends Widget {
     public void init() {
         super.init();
         ICapabilityProvider provider = (ICapabilityProvider) this.gui.handler;
-        this.gui.syncFluidStack(() -> provider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack);
+        this.gui.syncFluidStack(() -> provider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
+                .map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack);
     }
 
     @Override
@@ -58,13 +59,16 @@ public class FluidSlotWidget extends Widget {
 
     @OnlyIn(Dist.CLIENT)
     public void renderFluid(MatrixStack stack, FluidStack fluid, int x, int y) {
-        if (fluid.isEmpty()) return;
+        if (fluid.isEmpty())
+            return;
         RenderHelper.drawFluid(stack, Minecraft.getInstance(), x, y, getW(), getH(), 16, fluid);
     }
 
     @Override
     public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
         super.mouseOver(stack, mouseX, mouseY, partialTicks);
+        if (this.stack.isEmpty())
+            return;
         int x = realX();
         int y = realY();
         RenderSystem.disableDepthTest();
@@ -75,14 +79,17 @@ public class FluidSlotWidget extends Widget {
         RenderSystem.enableDepthTest();
         List<ITextComponent> str = new ArrayList<>();
         str.add(new StringTextComponent(this.stack.getDisplayName().getString()));
-        str.add(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(this.stack.getAmount()) + " mB").mergeStyle(TextFormatting.GRAY));
+        str.add(new StringTextComponent(
+                NumberFormat.getNumberInstance(Locale.US).format(this.stack.getAmount()) + " mB")
+                        .mergeStyle(TextFormatting.GRAY));
         AntimatterJEIPlugin.addModDescriptor(str, this.stack);
         drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().fontRenderer, stack);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers, double mouseX, double mouseY) {
-        if (!isInside(mouseX, mouseY)) return super.keyPressed(keyCode, scanCode, modifiers, mouseX, mouseY);
+        if (!isInside(mouseX, mouseY))
+            return super.keyPressed(keyCode, scanCode, modifiers, mouseX, mouseY);
         InputMappings.Input input = InputMappings.getInputByCode(keyCode, scanCode);
         if (!(input.getTranslationKey().equals("key.keyboard.u") || input.getTranslationKey().equals("key.keyboard.r")))
             return false;

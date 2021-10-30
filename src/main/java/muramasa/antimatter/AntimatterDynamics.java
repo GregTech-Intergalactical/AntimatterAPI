@@ -110,7 +110,7 @@ public class AntimatterDynamics {
         Antimatter.LOGGER.info("Antimatter recipe manager done..");
     }
 
-    public static void onRecipeCompile(RecipeManager manager, ITagCollectionSupplier tags) {
+    public static void onRecipeCompile(boolean server, RecipeManager manager, ITagCollectionSupplier tags) {
         TagUtils.setSupplier(tags);
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
@@ -118,7 +118,7 @@ public class AntimatterDynamics {
         final Set<ResourceLocation> filter;
         // Fire KubeJS event to cancel possible maps.
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost();
+            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
             filter = ev.forMachines;
         } else {
             filter = Collections.emptySet();
@@ -164,7 +164,7 @@ public class AntimatterDynamics {
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost();
+            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
             filter = ev.forLoaders;
         } else {
             filter = Collections.emptySet();
@@ -177,13 +177,6 @@ public class AntimatterDynamics {
                 Antimatter.LOGGER.warn("Duplicate recipe loader: " + new ResourceLocation(a, b));
             }
         }));
-        // Fire KubeJS event to cancel possible loaers.
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost();
-            for (ResourceLocation loc : ev.forLoaders) {
-                loaders.remove(loc);
-            }
-        }
 
         loaders.values().forEach(IRecipeRegistrate.IRecipeLoader::init);
         AntimatterAPI.all(ModRegistrar.class, t -> {

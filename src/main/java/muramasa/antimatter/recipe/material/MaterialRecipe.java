@@ -54,7 +54,7 @@ public class MaterialRecipe extends ShapedRecipe {
     public final Map<String, Set<Integer>> materialSlots;
     public final ItemBuilder builder;
     private final int size;
-    public final ResourceLocation builderId;
+    public final String builderId;
     public final NonNullList<ItemStack> outputs;
 
     public MaterialRecipe(ResourceLocation idIn, String groupIn, int recipeWidthIn, int recipeHeightIn, NonNullList<Ingredient> recipeItemsIn, NonNullList<ItemStack> recipeOutputIn, String builderId, Map<String, Set<Integer>> materialSlots) {
@@ -63,7 +63,7 @@ public class MaterialRecipe extends ShapedRecipe {
         this.size = materialSlots.values().stream().mapToInt(Set::size).sum();
         String[] ids = builderId.split("/");
         ResourceLocation lookup = new ResourceLocation(ids[0]);
-        this.builderId = lookup;
+        this.builderId = builderId;
         this.builder = Objects.requireNonNull(AntimatterAPI.get(Provider.class, lookup.getPath(), lookup.getNamespace()), "Failed to get builder provider in MaterialRecipe" + builderId).provide(ids[1]);
         this.outputs = recipeOutputIn;
     }

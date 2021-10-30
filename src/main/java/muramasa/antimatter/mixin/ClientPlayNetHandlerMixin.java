@@ -24,7 +24,7 @@ public class ClientPlayNetHandlerMixin {
         if (!netManager.isLocalChannel()) {
             ClientPlayNetHandler handler = ((ClientPlayNetHandler) (Object) this);
             AntimatterDynamics.onResourceReload(false);
-            AntimatterDynamics.onRecipeCompile(handler.getRecipeManager(), handler.getTags());
+            AntimatterDynamics.onRecipeCompile(false, handler.getRecipeManager(), handler.getTags());
         }
     }
 }
