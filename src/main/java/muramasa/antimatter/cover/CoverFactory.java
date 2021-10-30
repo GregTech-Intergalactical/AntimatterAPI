@@ -52,11 +52,8 @@ public class CoverFactory implements IAntimatterObject {
         return tier == null ? getItem() : itemStacks.getOrDefault(tier, Items.AIR).getDefaultInstance();
     }
 
-  public Iterable<Texture> getTextures() {
+    public Iterable<Texture> getTextures() {
      return textures == null ? Collections::emptyIterator : textures;
-  }
-  public ItemStack getItem() {
-    return itemStack == null ? ItemStack.EMPTY : itemStack.getDefaultInstance();
   }
 
     public ItemStack getItem() {

@@ -58,12 +58,12 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public void addNode(Direction side) {
-        Tesseract.FLUID.registerNode(getWorld(), pos.offset(side).toLong(), side.getOpposite(), pos -> {
+        Tesseract.FLUID.registerNode(getWorld(), pos.offset(side).toLong(), side.getOpposite(), (pos, dir) -> {
             TileEntity tile = world.getTileEntity(BlockPos.fromLong(pos));
             if (tile == null) {
                 return null;
             }
-            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side.getOpposite());
+            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir);
             if (capability.isPresent()) {
                 FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
                 capability.addListener(o -> this.onSideCapInvalidate(side));

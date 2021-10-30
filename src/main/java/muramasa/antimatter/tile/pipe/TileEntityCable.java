@@ -33,9 +33,9 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     public void addNode(Direction side) {
-        Tesseract.GT_ENERGY.registerNode(world, pos.offset(side).toLong(), side.getOpposite(), getPos -> {
+        Tesseract.GT_ENERGY.registerNode(world, pos.offset(side).toLong(), side.getOpposite(), (getPos, dir) -> {
             TileEntity tile = world.getTileEntity(BlockPos.fromLong(getPos));
-            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, side.getOpposite());
+            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir);
             if (capability.isPresent()) {
                 capability.addListener(o -> this.onSideCapInvalidate(side));
                 return capability.resolve().get();
