@@ -157,11 +157,7 @@ public final class AntimatterAPI {
     }
 
     static boolean allowRegistration() {
-        return PHASE == RegistrationEvent.DATA_INIT;
-    }
-
-    static void onRegistrationEvent(RegistrationEvent ev) {
-        PHASE = ev;
+        return PHASE == RegistrationEvent.DATA_INIT || PHASE == RegistrationEvent.WORLDGEN_INIT;
     }
 
     private static <T extends ISharedAntimatterObject> T getInternal(Class<? extends T> c, String id) {
@@ -340,6 +336,7 @@ public final class AntimatterAPI {
      **/
 
     public static void onRegistration(RegistrationEvent event) {
+        PHASE = event;
         Antimatter.LOGGER.info("Registration event " + event);
         Dist side = (FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer()) ? Dist.DEDICATED_SERVER
                 : Dist.CLIENT;
@@ -400,11 +397,6 @@ public final class AntimatterAPI {
 
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
         registerJEICategory(map, gui, Tier.LV, null, true);
-    }
-
-    public static IRecipeRegistrate getRecipeRegistrate(String domain) {
-        return recipe -> AntimatterAPI.register(IRecipeRegistrate.IRecipeLoader.class,
-                recipe.getClass().getSimpleName(), domain, recipe);
     }
 
     // TODO: Allow other than item.

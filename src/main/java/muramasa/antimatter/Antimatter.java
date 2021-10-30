@@ -61,7 +61,7 @@ public class Antimatter extends AntimatterMod {
 
         providers();
         AntimatterAPI.init();
-        AntimatterWorldGenerator.init();
+
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
             new KubeJSRegistrar();
     }
@@ -150,6 +150,8 @@ public class Antimatter extends AntimatterMod {
             Data.init(side);
             SubTag.init();
             GuiEvent.init();
+        } else if (event == RegistrationEvent.WORLDGEN_INIT) {
+            AntimatterWorldGenerator.init();
         }
     }
 

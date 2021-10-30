@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.event.AntimatterLoaderEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
@@ -20,6 +21,8 @@ import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +37,8 @@ public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void onProviderInit(String domain, DataGenerator gen, Dist side) {
-        PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen)).filter(p -> p.getSide().equals(side) && p.shouldRun()).forEach(gen::addProvider);
+        PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
+                .filter(p -> p.getSide().equals(side) && p.shouldRun()).forEach(gen::addProvider);
     }
 
     /**
@@ -44,10 +48,14 @@ public class AntimatterDynamics {
         PROVIDERS.computeIfAbsent(domain, k -> new ObjectArrayList<>()).add(providerFunc);
     }
 
-    // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to run first
+    // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to
+    // run first
     public static void runDataProvidersDynamically() {
         DynamicResourcePack.clearServer();
-        List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER) && p.shouldRun())).collect(Collectors.toList());
+        List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
+                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN))
+                        .filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER) && p.shouldRun()))
+                .collect(Collectors.toList());
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
@@ -58,7 +66,10 @@ public class AntimatterDynamics {
 
     public static void runAssetProvidersDynamically() {
         DynamicResourcePack.clearClient();
-        List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p.getSide().equals(Dist.CLIENT) && p.shouldRun())).collect(Collectors.toList());
+        List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
+                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN))
+                        .filter(p -> p.getSide().equals(Dist.CLIENT) && p.shouldRun()))
+                .collect(Collectors.toList());
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
@@ -74,7 +85,10 @@ public class AntimatterDynamics {
      */
     public static void collectRecipes(Consumer<IFinishedRecipe> rec) {
         Set<ResourceLocation> set = Sets.newHashSet();
-        List<AntimatterRecipeProvider> providers = PROVIDERS.object2ObjectEntrySet().stream().flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)).filter(p -> p instanceof AntimatterRecipeProvider).map(t -> (AntimatterRecipeProvider) t)).collect(Collectors.toList());
+        List<AntimatterRecipeProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
+                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN))
+                        .filter(p -> p instanceof AntimatterRecipeProvider).map(t -> (AntimatterRecipeProvider) t))
+                .collect(Collectors.toList());
         providers.forEach(prov -> prov.registerRecipes(recipe -> {
             if (set.add(recipe.getID())) {
                 rec.accept(recipe);
@@ -87,7 +101,8 @@ public class AntimatterDynamics {
         collectRecipes(objectIn::accept);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
-                if (!AntimatterAPI.isModLoaded(mod)) return;
+                if (!AntimatterAPI.isModLoaded(mod))
+                    return;
             }
             t.craftingRecipes(new AntimatterRecipeProvider("Antimatter", "Custom recipes", Ref.BACKGROUND_GEN));
         });
@@ -104,9 +119,11 @@ public class AntimatterDynamics {
         Map<String, List<Recipe>> map = recipes.stream().collect(Collectors.groupingBy(recipe -> recipe.mapId));
         for (Map.Entry<String, List<Recipe>> entry : map.entrySet()) {
             String[] split = entry.getKey().split(":");
-            if (split.length != 2) continue;
+            if (split.length != 2)
+                continue;
             RecipeMap<?> rmap = AntimatterAPI.get(RecipeMap.class, split[1], split[0]);
-            if (rmap != null) entry.getValue().forEach(rec -> rmap.compileRecipe(rec, tags));
+            if (rmap != null)
+                entry.getValue().forEach(rec -> rmap.compileRecipe(rec, tags));
         }
         time = System.nanoTime() - time;
         int size = AntimatterAPI.all(RecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
@@ -115,45 +132,50 @@ public class AntimatterDynamics {
         Antimatter.LOGGER.info("No. of GT recipes: " + size);
         Antimatter.LOGGER.info("Average loading time / recipe: (µs) " + (size > 0 ? time / size : time) / 1000);
 
-        /*AntimatterAPI.all(RecipeMap.class, t -> {
-            Antimatter.LOGGER.info("Recipe map " + t.getId() + " compiled " + t.getRecipes(false).size() + " recipes.");
-        });*/
-        //Invalidate old tag getter.
+        /*
+         * AntimatterAPI.all(RecipeMap.class, t -> {
+         * Antimatter.LOGGER.info("Recipe map " + t.getId() + " compiled " +
+         * t.getRecipes(false).size() + " recipes."); });
+         */
+        // Invalidate old tag getter.
         TagUtils.resetSupplier();
     }
 
     public static void onResourceReload(boolean server) {
-        if (server) runDataProvidersDynamically();
+        if (server)
+            runDataProvidersDynamically();
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
-        AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class, IRecipeRegistrate.IRecipeLoader::init);
+        Map<ResourceLocation, IRecipeRegistrate.IRecipeLoader> loaders = new Object2ObjectOpenHashMap<>(30);
+        MinecraftForge.EVENT_BUS.post(new AntimatterLoaderEvent(Antimatter.INSTANCE, (a, b, c) -> {
+            if (loaders.put(new ResourceLocation(a, b), c) != null) {
+                Antimatter.LOGGER.warn("Duplicate recipe loader: " + new ResourceLocation(a, b));
+            }
+        }));
+        loaders.values().forEach(IRecipeRegistrate.IRecipeLoader::init);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
-                if (!AntimatterAPI.isModLoaded(mod)) return;
+                if (!AntimatterAPI.isModLoaded(mod))
+                    return;
             }
-            t.antimatterRecipes(AntimatterAPI.getRecipeRegistrate(Ref.ID));
+            // t.antimatterRecipes(AntimatterAPI.getRecipeRegistrate(Ref.ID));
         });
-        Antimatter.LOGGER.info("Amount of Antimatter Recipe Loaders registered: " + AntimatterAPI.all(IRecipeRegistrate.IRecipeLoader.class).size());
+        Antimatter.LOGGER.info("Amount of Antimatter Recipe Loaders registered: " + loaders.size());
         if (server) {
             TagUtils.getTags(Item.class).forEach((k, v) -> {
-                DynamicResourcePack.ensureTagAvailable("items", k); //builder.serialize(), false);
+                DynamicResourcePack.ensureTagAvailable("items", k); // builder.serialize(), false);
             });
             TagUtils.getTags(Fluid.class).forEach((k, v) -> {
-                DynamicResourcePack.ensureTagAvailable("fluids", k); //builder.serialize(), false);
+                DynamicResourcePack.ensureTagAvailable("fluids", k); // builder.serialize(), false);
             });
             TagUtils.getTags(Block.class).forEach((k, v) -> {
-                DynamicResourcePack.ensureTagAvailable("blocks", k); //builder.serialize(), false);
+                DynamicResourcePack.ensureTagAvailable("blocks", k); // builder.serialize(), false);
             });
         }
     }
     /*
-    public static void runBackgroundProviders() {
-        Antimatter.LOGGER.info("Running DummyTagProviders...");
-        Ref.BACKGROUND_GEN.addProviders(DummyTagProviders.DUMMY_PROVIDERS);
-        try {
-            Ref.BACKGROUND_GEN.run();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
+     * public static void runBackgroundProviders() {
+     * Antimatter.LOGGER.info("Running DummyTagProviders...");
+     * Ref.BACKGROUND_GEN.addProviders(DummyTagProviders.DUMMY_PROVIDERS); try {
+     * Ref.BACKGROUND_GEN.run(); } catch (IOException e) { e.printStackTrace(); } }
+     */
 }

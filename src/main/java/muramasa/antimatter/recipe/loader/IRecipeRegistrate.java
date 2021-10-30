@@ -2,7 +2,7 @@ package muramasa.antimatter.recipe.loader;
 
 public interface IRecipeRegistrate {
 
-    void add(IRecipeLoader load);
+    void add(String domain, String id, IRecipeLoader load);
 
     interface IRecipeLoader {
         void init();
