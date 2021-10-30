@@ -30,11 +30,10 @@ public class CoverFactory implements IAntimatterObject {
     final String id;
     final String domain;
 
-    private final CoverSupplier supplier;
-    private Map<Tier, Item> itemStacks = Collections.emptyMap();
-    private Item itemStack;
-    public final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>();
-    private Iterable<Texture> textures;
+  private final CoverSupplier supplier;
+  private Map<Tier, Item> itemStacks = Collections.emptyMap();
+  private Item itemStack;
+  private Iterable<Texture> textures;
 
     protected boolean gui = false;
 
@@ -53,9 +52,12 @@ public class CoverFactory implements IAntimatterObject {
         return tier == null ? getItem() : itemStacks.getOrDefault(tier, Items.AIR).getDefaultInstance();
     }
 
-    public Iterable<Texture> getTextures() {
-        return textures == null ? () -> Collections.emptyIterator() : textures;
-    }
+  public Iterable<Texture> getTextures() {
+     return textures == null ? Collections::emptyIterator : textures;
+  }
+  public ItemStack getItem() {
+    return itemStack == null ? ItemStack.EMPTY : itemStack.getDefaultInstance();
+  }
 
     public ItemStack getItem() {
         return itemStack == null ? ItemStack.EMPTY : itemStack.getDefaultInstance();

@@ -48,12 +48,13 @@ public final class AntimatterAPI {
 
     private static final Map<Class<?>, Map<String, Either<ISharedAntimatterObject, Map<String, Object>>>> OBJECTS = new Object2ObjectOpenHashMap<>();
     private static final EnumMap<RegistrationEvent, List<Runnable>> CALLBACKS = new EnumMap<>(RegistrationEvent.class);
-    private static final EnumSet<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = EnumSet.noneOf(RegistrationEvent.class);
+    private static final EnumSet<RegistrationEvent> REGISTRATION_EVENTS_HANDLED = EnumSet
+            .noneOf(RegistrationEvent.class);
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<ResourceLocation, Object> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
 
-    private static boolean dataDone = false;
+    private static RegistrationEvent PHASE = null;
 
     private static IAntimatterRegistrar INTERNAL_REGISTRAR;
 
@@ -86,28 +87,28 @@ public final class AntimatterAPI {
 
     @SuppressWarnings("unchecked")
     public static <T> T register(Class<?> c, String id, String domain, Object o) {
-        synchronized (OBJECTS) {
-            if (dataDone) {
-                throw new IllegalStateException("Registering after DataDone in AntimatterAPI - badbad!");
-            }
-            if (o instanceof IAntimatterObject && !((IAntimatterObject) o).shouldRegister())
-                return (T) o;
-            Class clazz = c;
-            if (o instanceof ISharedAntimatterObject && getInternal(clazz, id) != null) {
-                return (T) getInternal(clazz, id);
-            }
-            registerInternal(c, id, o instanceof ISharedAntimatterObject ? null : domain, o);
-            if (o instanceof Block && notRegistered(Block.class, id, domain))
-                registerInternal(Block.class, id, domain, o);
-            else if (o instanceof Item && notRegistered(Item.class, id, domain))
-                registerInternal(Item.class, id, domain, o);
-            else if (o instanceof IRegistryEntryProvider) {
-                String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
-                if (notRegistered(IRegistryEntryProvider.class, changedId, domain))
-                    registerInternal(IRegistryEntryProvider.class, changedId, domain, o);
-            }
-            return (T) o;
+        // synchronized (OBJECTS) {
+        if (!allowRegistration()) {
+            throw new IllegalStateException("Registering after DataDone in AntimatterAPI - badbad!");
         }
+        if (o instanceof IAntimatterObject && !((IAntimatterObject) o).shouldRegister())
+            return (T) o;
+        Class clazz = c;
+        if (o instanceof ISharedAntimatterObject && getInternal(clazz, id) != null) {
+            return (T) getInternal(clazz, id);
+        }
+        registerInternal(c, id, o instanceof ISharedAntimatterObject ? null : domain, o);
+        if (o instanceof Block && notRegistered(Block.class, id, domain))
+            registerInternal(Block.class, id, domain, o);
+        else if (o instanceof Item && notRegistered(Item.class, id, domain))
+            registerInternal(Item.class, id, domain, o);
+        else if (o instanceof IRegistryEntryProvider) {
+            String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
+            if (notRegistered(IRegistryEntryProvider.class, changedId, domain))
+                registerInternal(IRegistryEntryProvider.class, changedId, domain, o);
+        }
+        return (T) o;
+        // }
     }
 
     public static <T> T register(Class<T> c, IAntimatterObject o) {
@@ -134,19 +135,16 @@ public final class AntimatterAPI {
 
     @Nullable
     public static <T> T get(Class<T> c, String id, String domain) {
-        if (!dataDone) {
-            synchronized (OBJECTS) {
-                T obj = getInternal(c, id, domain);
-                if (obj == null) {
-                    Class clazz = c;
-                    if (domain.equals(Ref.SHARED_ID)) {
-                        Object o = getInternal(clazz, id);
-                        return o == null ? null : c.cast(o);
-                    }
-                }
-                return obj;
-            }
-        }
+        // if (!dataDone) {
+        // synchronized (OBJECTS) {
+        // T obj = getInternal(c, id, domain);
+        // if (obj == null) {
+        // Class clazz = c;
+        // Object o = getInternal(clazz, id);
+        // return o == null ? null : c.cast(o);
+        // }
+        // }
+        // }
         T obj = getInternal(c, id, domain);
         if (obj == null) {
             Class clazz = c;
@@ -158,8 +156,12 @@ public final class AntimatterAPI {
         return obj;
     }
 
-    public static void dataReady() {
-        dataDone = true;
+    static boolean allowRegistration() {
+        return PHASE == RegistrationEvent.DATA_INIT;
+    }
+
+    static void onRegistrationEvent(RegistrationEvent ev) {
+        PHASE = ev;
     }
 
     private static <T extends ISharedAntimatterObject> T getInternal(Class<? extends T> c, String id) {
@@ -171,11 +173,11 @@ public final class AntimatterAPI {
     }
 
     public static <T extends ISharedAntimatterObject> T get(Class<? extends T> c, String id) {
-        if (!dataDone) {
-            synchronized (OBJECTS) {
-                return getInternal(c, id);
-            }
-        }
+        // if (!dataDone) {
+        // synchronized (OBJECTS) {
+        // return getInternal(c, id);
+        // }
+        // }
         return getInternal(c, id);
     }
 
@@ -186,7 +188,8 @@ public final class AntimatterAPI {
     }
 
     @Nonnull
-    public static <T> T getOrThrow(Class<T> c, String id, String domain, Supplier<? extends RuntimeException> supplier) {
+    public static <T> T getOrThrow(Class<T> c, String id, String domain,
+            Supplier<? extends RuntimeException> supplier) {
         Object obj = get(c, id, domain);
         if (obj != null) {
             return c.cast(obj);
@@ -196,7 +199,7 @@ public final class AntimatterAPI {
 
     @Nonnull
     public static <T extends ISharedAntimatterObject> T getOrThrow(Class<T> c, String id,
-                                                                   Supplier<? extends RuntimeException> supplier) {
+            Supplier<? extends RuntimeException> supplier) {
         Object obj = get(c, id);
         if (obj != null) {
             return c.cast(obj);
@@ -225,24 +228,24 @@ public final class AntimatterAPI {
     }
 
     public static <T> List<T> all(Class<T> c) {
-        if (!dataDone) {
-            List<T> list;
-            synchronized (OBJECTS) {
-                list = allInternal(c).collect(Collectors.toList());
-            }
-            return list;
-        }
+        // if (!dataDone) {
+        // List<T> list;
+        // synchronized (OBJECTS) {
+        // list = allInternal(c).collect(Collectors.toList());
+        // }
+        // return list;
+        // }
         return allInternal(c).collect(Collectors.toList());
     }
 
     public static <T> List<T> all(Class<T> c, String domain) {
-        if (!dataDone) {
-            List<T> list;
-            synchronized (OBJECTS) {
-                list = allInternal(c, domain).collect(Collectors.toList());
-            }
-            return list;
-        }
+        // if (!dataDone) {
+        // List<T> list;
+        // synchronized (OBJECTS) {
+        // list = allInternal(c, domain).collect(Collectors.toList());
+        // }
+        // return list;
+        // }
         return allInternal(c, domain).collect(Collectors.toList());
     }
 
@@ -256,41 +259,41 @@ public final class AntimatterAPI {
         return allInternal(c)
                 .filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain)
                         || o instanceof IForgeRegistryEntry && ((IForgeRegistryEntry<?>) o).getRegistryName() != null
-                        && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain));
+                                && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain));
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
-        if (!dataDone) {
-            synchronized (OBJECTS) {
-                allInternal(c).forEach(consumer);
-            }
-        } else {
-            allInternal(c).forEach(consumer);
-        }
+        // if (!dataDone) {
+        // synchronized (OBJECTS) {
+        // allInternal(c).forEach(consumer);
+        // }
+        // } else {
+        allInternal(c).forEach(consumer);
+        // }
     }
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
-        if (!dataDone) {
-            synchronized (OBJECTS) {
-                allInternal(c, domain).forEach(consumer);
-            }
-        } else {
-            allInternal(c, domain).forEach(consumer);
-        }
+        // if (!dataDone) {
+        // synchronized (OBJECTS) {
+        // allInternal(c, domain).forEach(consumer);
+        // }
+        // } else {
+        allInternal(c, domain).forEach(consumer);
+        // }
     }
 
     public static <T> void all(Class<T> c, String[] domains, Consumer<T> consumer) {
-        if (!dataDone) {
-            synchronized (OBJECTS) {
-                for (String domain : domains) {
-                    allInternal(c, domain).forEach(consumer);
-                }
-            }
-        } else {
-            for (String domain : domains) {
-                allInternal(c, domain).forEach(consumer);
-            }
+        // if (!dataDone) {
+        // synchronized (OBJECTS) {
+        // for (String domain : domains) {
+        // allInternal(c, domain).forEach(consumer);
+        // }
+        // }
+        // } else {
+        for (String domain : domains) {
+            allInternal(c, domain).forEach(consumer);
         }
+        // }
     }
 
     private static void runProvider(IAntimatterProvider provider) {
@@ -382,7 +385,7 @@ public final class AntimatterAPI {
      **/
 
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model,
-                                           boolean override) {
+            boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
             AntimatterJEIPlugin.registerCategory(map, gui, tier, model, override);
         }
@@ -400,8 +403,8 @@ public final class AntimatterAPI {
     }
 
     public static IRecipeRegistrate getRecipeRegistrate(String domain) {
-        return recipe -> AntimatterAPI.register(IRecipeRegistrate.IRecipeLoader.class, recipe.getClass().getName(), domain,
-                recipe);
+        return recipe -> AntimatterAPI.register(IRecipeRegistrate.IRecipeLoader.class,
+                recipe.getClass().getSimpleName(), domain, recipe);
     }
 
     // TODO: Allow other than item.
@@ -425,14 +428,14 @@ public final class AntimatterAPI {
      *                     only checks against 'minecraft' if no namespaces are
      *                     defined
      * @return originalItem if there's nothing found, null if there is no
-     * originalItem, or an replacement
+     *         originalItem, or an replacement
      */
     public static <T> T getReplacement(@Nullable T originalItem, ITag.INamedTag<T> tag, String... namespaces) {
         if (tag == null)
             throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
         if (REPLACEMENTS.containsKey(tag.getName()))
             return (T) REPLACEMENTS.get(tag.getName());// return
-        // RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
+                                                       // RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
         return originalItem;
         // if (replacementsFound) return originalItem;
         // Set<String> checks = Sets.newHashSet(namespaces);
@@ -459,12 +462,12 @@ public final class AntimatterAPI {
 
     /**
      * COREMOD METHOD INSERTION: Runs every time when this is called:
-     *
+     * 
      * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
      */
     @SuppressWarnings("unused")
     public static void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState,
-                                           int flags) {
+            int flags) {
         BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState, flags));
     }
 

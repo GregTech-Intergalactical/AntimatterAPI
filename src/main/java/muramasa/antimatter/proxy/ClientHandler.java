@@ -36,17 +36,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.Set;
 
-
 public class ClientHandler implements IProxyHandler {
 
     @SuppressWarnings("ConstantConditions")
     public ClientHandler() {
-        if (Minecraft.getInstance() != null) { //Null with runData
-            //Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.PACK_FINDER);
-            //Minecraft.getInstance().getResourcePackList().addPackFinder(Ref.SERVER_PACK_FINDER);
-            AntimatterModelManager.init();
-            AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
-        }
         /* Client event listeners. */
         IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(ClientHandler::onItemColorHandler);
@@ -55,7 +48,8 @@ public class ClientHandler implements IProxyHandler {
         eventBus.addListener(AntimatterTextureStitcher::onTextureStitch);
 
         AntimatterTextureStitcher.addStitcher(event -> AntimatterAPI.all(CoverFactory.class).forEach(cover -> {
-            if (cover == ICover.emptyFactory) return;
+            if (cover == ICover.emptyFactory)
+                return;
             for (ResourceLocation r : cover.getTextures()) {
                 event.accept(r);
             }
@@ -63,12 +57,15 @@ public class ClientHandler implements IProxyHandler {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::preResourceRegistration);
     }
 
-    //Called before resource registration is performed.
+    // Called before resource registration is performed.
     public static void preResourceRegistration(ParticleFactoryRegisterEvent ev) {
+
+        AntimatterModelManager.init();
+        AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
         AntimatterDynamics.runAssetProvidersDynamically();
     }
 
-    @SuppressWarnings({"unchecked", "unused"})
+    @SuppressWarnings({ "unchecked", "unused" })
     public static void setup(FMLClientSetupEvent e) {
         /* Register screens. */
         AntimatterAPI.runLaterClient(() -> {
@@ -87,7 +84,8 @@ public class ClientHandler implements IProxyHandler {
             AntimatterAPI.all(BlockMultiMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(BlockPipe.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME).forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME)
+                    .forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
                 RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());
                 RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.getTranslucent());
@@ -103,7 +101,8 @@ public class ClientHandler implements IProxyHandler {
         }
         for (Block block : AntimatterAPI.all(Block.class)) {
             if (block instanceof IColorHandler && ((IColorHandler) block).registerColorHandlers()) {
-                e.getItemColors().register((stack, i) -> ((IColorHandler) block).getItemColor(stack, null, i), block.asItem());
+                e.getItemColors().register((stack, i) -> ((IColorHandler) block).getItemColor(stack, null, i),
+                        block.asItem());
             }
         }
     }

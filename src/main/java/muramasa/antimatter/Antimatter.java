@@ -41,13 +41,14 @@ public class Antimatter extends AntimatterMod {
     public static IProxyHandler PROXY;
 
     static {
-        //AntimatterAPI.runBackgroundProviders();
+        // AntimatterAPI.runBackgroundProviders();
     }
 
     public Antimatter() {
         super();
         INSTANCE = this;
-        PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to change in new Forge
+        PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to
+                                                                                             // change in new Forge
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
 
@@ -61,30 +62,38 @@ public class Antimatter extends AntimatterMod {
         providers();
         AntimatterAPI.init();
         AntimatterWorldGenerator.init();
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) new KubeJSRegistrar();
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
+            new KubeJSRegistrar();
     }
 
     private void providers() {
         final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
-        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
-        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
-        AntimatterDynamics.addProvider(Ref.SHARED_ID, g -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates", g));
-        AntimatterDynamics.addProvider(Ref.SHARED_ID, g -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models", g));
+        AntimatterDynamics.addProvider(Ref.ID,
+                g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
+        AntimatterDynamics.addProvider(Ref.ID,
+                g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
+        AntimatterDynamics.addProvider(Ref.SHARED_ID,
+                g -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates", g));
+        AntimatterDynamics.addProvider(Ref.SHARED_ID,
+                g -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models", g));
         AntimatterDynamics.addProvider(Ref.ID, g -> {
-            p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g, new ExistingFileHelperOverride());
+            p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g,
+                    new ExistingFileHelperOverride());
             return p[0];
         });
-        AntimatterDynamics.addProvider(Ref.ID, g ->
-                new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"), false, g, p[0], new ExistingFileHelperOverride()));
-        AntimatterDynamics.addProvider(Ref.ID, g ->
-                new AntimatterRecipeProvider(Ref.ID, Ref.NAME.concat(" Recipes"), g));
-        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
-        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
+        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
+                false, g, p[0], new ExistingFileHelperOverride()));
+        AntimatterDynamics.addProvider(Ref.ID,
+                g -> new AntimatterRecipeProvider(Ref.ID, Ref.NAME.concat(" Recipes"), g));
+        AntimatterDynamics.addProvider(Ref.ID,
+                g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
+        AntimatterDynamics.addProvider(Ref.ID,
+                g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup(e);
-        //AntimatterAPI.runAssetProvidersDynamically();
+        // AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         e.enqueueWork(() -> AntimatterAPI.getClientDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
@@ -134,15 +143,13 @@ public class Antimatter extends AntimatterMod {
 
     @Override
     public void onRegistrationEvent(RegistrationEvent event, Dist side) {
+        AntimatterAPI.onRegistration(event);
         if (event == RegistrationEvent.DATA_INIT) {
             SlotType.init();
             RecipeBuilders.init();
             Data.init(side);
             SubTag.init();
             GuiEvent.init();
-        }
-        if (event == RegistrationEvent.DATA_READY) {
-            AntimatterAPI.dataReady();
         }
     }
 
