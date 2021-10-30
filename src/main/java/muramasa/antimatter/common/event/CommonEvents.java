@@ -85,36 +85,36 @@ public class CommonEvents {
     }
 
     @SubscribeEvent
-    public static void remapMissingBlocks(final RegistryEvent.MissingMappings<Block> event){
+    public static void remapMissingBlocks(final RegistryEvent.MissingMappings<Block> event) {
         for (RegistryEvent.MissingMappings.Mapping<Block> map : event.getMappings(Ref.MOD_KJS)) {
             String domain = map.key.getNamespace();
             String id = map.key.getPath();
-            if (id.startsWith("block_")){
+            if (id.startsWith("block_")) {
                 Material mat = Material.get(id.replace("block_", ""));
-                if (mat != NULL){
+                if (mat != NULL) {
                     map.remap(Data.BLOCK.get().get(mat).asBlock());
                     continue;
                 }
             }
-            if (id.startsWith("ore_")){
+            if (id.startsWith("ore_")) {
                 Block replacement = AntimatterAPI.get(BlockOre.class, id);
-                if (replacement != null){
+                if (replacement != null) {
                     map.remap(replacement);
                     continue;
                 }
             }
             Block replacement = AntimatterAPI.get(Block.class, id, Ref.SHARED_ID);
-            if (replacement != null){
+            if (replacement != null) {
                 map.remap(replacement);
             }
         }
     }
 
     @SubscribeEvent
-    public static void remapMissingItems(final RegistryEvent.MissingMappings<Item> event){
+    public static void remapMissingItems(final RegistryEvent.MissingMappings<Item> event) {
         for (RegistryEvent.MissingMappings.Mapping<Item> map : event.getMappings(Ref.ID)) {
             Item replacement = AntimatterAPI.get(Item.class, map.key.getPath(), Ref.SHARED_ID);
-            if (replacement != null){
+            if (replacement != null) {
                 map.remap(replacement);
             }
         }

@@ -67,13 +67,13 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
 
     protected void loot() {
         AntimatterAPI.all(BlockMachine.class, providerDomain, this::add);
-        AntimatterAPI.all(BlockMultiMachine.class,providerDomain, this::add);
-        if (providerDomain.equals(Ref.ID)){
+        AntimatterAPI.all(BlockMultiMachine.class, providerDomain, this::add);
+        if (providerDomain.equals(Ref.ID)) {
             AntimatterAPI.all(BlockPipe.class, this::add);
             AntimatterAPI.all(BlockStorage.class, this::add);
             AntimatterAPI.all(BlockStone.class, b -> {
-                if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()){
-                    tables.put(b, b2 -> droppingWithSilkTouch(b, ((CobbleStoneType)b.getType()).getBlock("cobble")));
+                if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
+                    tables.put(b, b2 -> droppingWithSilkTouch(b, ((CobbleStoneType) b.getType()).getBlock("cobble")));
                     return;
                 }
                 this.add(b);

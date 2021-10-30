@@ -27,24 +27,29 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
-    private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional.of(() -> new HatchComponentHandler(this));
+    private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional
+            .of(() -> new HatchComponentHandler(this));
 
     public TileEntityHatch(Machine<?> type) {
         super(type);
         if (type.has(ENERGY)) {
-            energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L, type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0, type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
+            energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
+                    type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,
+                    type.getOutputCover() == COVERDYNAMO ? tier.getVoltage() : 0,
                     type.getOutputCover() == COVERENERGY ? 2 : 0, type.getOutputCover() == COVERDYNAMO ? 1 : 0) {
                 @Override
                 public boolean canInput(Direction direction) {
                     ICover out = tile.coverHandler.map(MachineCoverHandler::getOutputCover).orElse(null);
-                    if (out == null) return false;
+                    if (out == null)
+                        return false;
                     return out.isEqual(COVERENERGY) && direction == out.side();
                 }
 
                 @Override
                 public boolean canOutput(Direction direction) {
                     ICover out = tile.coverHandler.map(MachineCoverHandler::getOutputCover).orElse(null);
-                    if (out == null) return false;
+                    if (out == null)
+                        return false;
                     return out.isEqual(COVERDYNAMO) && direction == out.side();
                 }
             });
@@ -58,30 +63,35 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        if (isClientSide()) return;
+        if (isClientSide())
+            return;
         super.onMachineEvent(event, data);
         if (event instanceof ContentEvent) {
-            componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList()).forEach(controller -> {
-                switch ((ContentEvent) event) {
-                    case ITEM_INPUT_CHANGED:
-                    case ITEM_OUTPUT_CHANGED:
-                    case ITEM_CELL_CHANGED:
-                    case FLUID_INPUT_CHANGED:
-                    case FLUID_OUTPUT_CHANGED:
-                        controller.onMachineEvent(event, data);
-                        break;
-                }
-            });
+            componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList())
+                    .forEach(controller -> {
+                        switch ((ContentEvent) event) {
+                            case ITEM_INPUT_CHANGED:
+                            case ITEM_OUTPUT_CHANGED:
+                            case ITEM_CELL_CHANGED:
+                            case FLUID_INPUT_CHANGED:
+                            case FLUID_OUTPUT_CHANGED:
+                                controller.onMachineEvent(event, data);
+                                break;
+                        }
+                    });
         } else if (event instanceof MachineEvent) {
-            componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList()).forEach(controller -> {
-                switch ((MachineEvent) event) {
-                    //Forward energy event to controller.
-                    case ENERGY_DRAINED:
-                    case ENERGY_INPUTTED:
-                        controller.onMachineEvent(event, data);
-                        break;
-                }
-            });
+            componentHandler.map(ComponentHandler::getControllers).orElse(Collections.emptyList())
+                    .forEach(controller -> {
+                        switch ((MachineEvent) event) {
+                            // Forward energy event to controller.
+                            case ENERGY_DRAINED:
+                            case ENERGY_INPUTTED:
+                                controller.onMachineEvent(event, data);
+                                break;
+                            default:
+                                break;
+                        }
+                    });
         }
     }
 
@@ -89,7 +99,10 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     public void onFirstTick() {
         super.onFirstTick();
         coverHandler.ifPresent(t -> {
-            ((CoverOutput) t.getOutputCover()).setEjects(has(FLUID), has(ITEM));
+            ICover cover = t.getOutputCover();
+            if (!(cover instanceof CoverOutput))
+                return;
+            ((CoverOutput) cover).setEjects(has(FLUID), has(ITEM));
         });
     }
 
@@ -101,7 +114,8 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY) return componentHandler.cast();
+        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY)
+            return componentHandler.cast();
         return super.getCapability(cap, side);
     }
 }
