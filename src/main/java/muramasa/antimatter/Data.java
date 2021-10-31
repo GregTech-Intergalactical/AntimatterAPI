@@ -45,6 +45,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTier;
+import net.minecraft.item.Items;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.api.distmarker.Dist;
@@ -281,10 +282,13 @@ public class Data {
     public static Material EnderEye = AntimatterAPI.register(Material.class, new Material(Ref.ID, "endereye", 0xa0fae6, SHINY)).asGemBasic(false);
     public static Material Lapis = AntimatterAPI.register(Material.class, new Material(Ref.ID, "lapis", 0x4646dc, LAPIS)).asGemBasic(false).asOre(2, 5,true, RAW_ORE);
     public static Material Redstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "redstone", 0xc80000, REDSTONE)).asDust().asOre(1, 5,true);
-    public static Material Quartz = AntimatterAPI.register(Material.class, new Material(Ref.ID, "quartz", 0xffffff, NONE)).asDust();
+    public static Material Quartz = AntimatterAPI.register(Material.class, new Material(Ref.ID, "quartz", 0xe6d2d2, NONE)).asDust();
     public static Material Netherite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherite", 0x504650, DULL)).asMetal(2246,1300).addTools(3.0F, 10, 500, NETHERITE.getHarvestLevel(), of(Enchantments.FIRE_ASPECT, 3)).addArmor(new int[]{0, 1, 1, 0}, 0.5F, 0.1F, 20);
     public static Material NetherizedDiamond = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherized_diamond", 0x5a505a, DIAMOND)).asGemBasic(false).addTools(4.0F, 12, NETHERITE.getMaxUses(), NETHERITE.getHarvestLevel(), of(Enchantments.FIRE_ASPECT, 3, Enchantments.SHARPNESS, 4)).addArmor(new int[]{1, 1, 2, 1}, 3.0F, 0.1F, 37, of(Enchantments.PROTECTION, 4));
     public static Material NetheriteScrap = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherite_scrap", 0x6e505a, ROUGH)).asDust(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, RAW_ORE, DUST_IMPURE, DUST_PURE);
+
+    public static Material Lava = AntimatterAPI.register(Material.class, new Material(Ref.ID, "lava", 0xff4000, NONE)).asFluid(0, 1300);
+    public static Material Water = AntimatterAPI.register(Material.class, new Material(Ref.ID, "water", 0x0000ff, NONE)).asFluid();
 
     public static CoverFactory COVEROUTPUT = CoverFactory.builder(CoverOutput::new).addTextures(new Texture(Ref.ID, "block/cover/output")).build(Ref.ID, "output");
     public static CoverFactory COVERINPUT = CoverFactory.builder(CoverInput::new).addTextures(new Texture(Ref.ID, "block/cover/input")).build(Ref.ID, "input");
@@ -344,6 +348,32 @@ public class Data {
             if (type.getToolTypes().contains("hoe")) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
+
+        NUGGET.forceOverride(Iron, Items.IRON_NUGGET);
+        NUGGET.forceOverride(Gold, Items.GOLD_NUGGET);
+        INGOT.forceOverride(Iron, Items.IRON_INGOT);
+        INGOT.forceOverride(Gold, Items.GOLD_INGOT);
+        INGOT.forceOverride(Netherite, Items.NETHERITE_INGOT);
+        DUST.forceOverride(Redstone, Items.REDSTONE);
+        //DUST.forceOverride(Glowstone, Items.GLOWSTONE_DUST);
+        //DUST.forceOverride(Blaze, Items.BLAZE_POWDER);
+        //DUST.forceOverride(Sugar, Items.SUGAR);
+        //GEM.forceOverride(Flint, Items.FLINT);
+        GEM.forceOverride(Diamond, Items.DIAMOND);
+        GEM.forceOverride(Emerald, Items.EMERALD);
+        GEM.forceOverride(Lapis, Items.LAPIS_LAZULI);
+        GEM.forceOverride(Coal, Items.COAL);
+        //GEM.forceOverride(Charcoal, Items.CHARCOAL);
+        GEM.forceOverride(EnderEye, Items.ENDER_EYE);
+        GEM.forceOverride(EnderPearl, Items.ENDER_PEARL);
+
+
+        BLOCK.forceOverride(Iron, Items.IRON_BLOCK);
+        BLOCK.forceOverride(Gold, Items.GOLD_BLOCK);
+        BLOCK.forceOverride(Diamond, Items.DIAMOND_BLOCK);
+        BLOCK.forceOverride(Emerald, Items.EMERALD_BLOCK);
+        BLOCK.forceOverride(Lapis, Items.LAPIS_BLOCK);
+        BLOCK.forceOverride(Netherite, Items.NETHERITE_BLOCK);
 
         if (side == Dist.CLIENT) {
             clientBehaviours();

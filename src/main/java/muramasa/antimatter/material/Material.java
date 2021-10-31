@@ -369,8 +369,9 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     public Material flags(IMaterialTag... tags) {
         if (!enabled) return this;
         for (IMaterialTag t : tags) {
-            //if (t == ORE || t == ORE_SMALL || t == ORE_STONE) flags(ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, DUST);
-            t.add(this);
+            if (!this.has(t)){
+                t.add(this);
+            }
         }
         return this;
     }
