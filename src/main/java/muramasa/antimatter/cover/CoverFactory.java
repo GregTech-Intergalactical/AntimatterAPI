@@ -12,9 +12,11 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
@@ -34,6 +36,7 @@ public class CoverFactory implements IAntimatterObject {
   private Map<Tier, Item> itemStacks = Collections.emptyMap();
   private Item itemStack;
   private Iterable<Texture> textures;
+  private MenuHandler<?> menuHandler = Data.COVER_MENU_HANDLER;
 
     protected boolean gui = false;
 
@@ -60,6 +63,10 @@ public class CoverFactory implements IAntimatterObject {
         return itemStack == null ? ItemStack.EMPTY : itemStack.getDefaultInstance();
     }
 
+    public MenuHandler<?> getMenuHandler() {
+        return menuHandler;
+    }
+
     void setItems(Map<Tier, Item> stacks) {
         this.itemStack = stacks.remove(null);
         if (itemStack == null) itemStack = Items.AIR;
@@ -72,6 +79,10 @@ public class CoverFactory implements IAntimatterObject {
 
     void setHasGui() {
         this.gui = true;
+    }
+
+    void setMenuHandler(MenuHandler<?> handler){
+        this.menuHandler = handler;
     }
 
     public boolean hasGui() {
@@ -124,6 +135,7 @@ public class CoverFactory implements IAntimatterObject {
         BiFunction<CoverFactory, Tier, Item> itemBuilder;
         boolean gui = false;
         Iterable<Texture> textures;
+        MenuHandler<?> menuHandler;
 
         public Builder(final CoverSupplier supplier) {
             this.supplier = supplier;
@@ -141,6 +153,11 @@ public class CoverFactory implements IAntimatterObject {
 
         public Builder gui() {
             this.gui = true;
+            return this;
+        }
+
+        public Builder setMenuHandler(MenuHandler<?> handler){
+            this.menuHandler = handler;
             return this;
         }
 
@@ -164,7 +181,12 @@ public class CoverFactory implements IAntimatterObject {
                 }
                 factory.setItems(map);
             }
-            if (gui) factory.setHasGui();
+            if (gui) {
+                factory.setHasGui();
+                if (menuHandler != null){
+                    factory.setMenuHandler(menuHandler);
+                }
+            }
             if (textures != null) factory.addTextures(textures);
             return factory;
         }

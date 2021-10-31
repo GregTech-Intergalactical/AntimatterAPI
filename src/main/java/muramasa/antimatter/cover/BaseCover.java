@@ -62,7 +62,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         this.tier = tier;
         this.side = side;
         if (factory.hasGui()) {
-            this.gui = new GuiData(this, Data.COVER_MENU_HANDLER);
+            this.gui = new GuiData(this, factory.getMenuHandler());
             gui.setEnablePlayerSlots(true);
             this.addGuiCallback(t -> t
                     .addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
