@@ -8,6 +8,23 @@ import muramasa.antimatter.texture.Texture;
 public class TextureSet implements IAntimatterObject {
 
     public static TextureSet NONE = new TextureSet(Ref.ID, "none");
+    public static TextureSet DULL = new TextureSet(Ref.ID, "dull");
+    public static TextureSet METALLIC = new TextureSet(Ref.ID, "metallic");
+    public static TextureSet SHINY = new TextureSet(Ref.ID, "shiny");
+    public static TextureSet ROUGH = new TextureSet(Ref.ID, "rough");
+    public static TextureSet MAGNETIC = new TextureSet(Ref.ID, "magnetic");
+    public static TextureSet DIAMOND = new TextureSet(Ref.ID, "diamond");
+    public static TextureSet RUBY = new TextureSet(Ref.ID, "ruby");
+    public static TextureSet LAPIS = new TextureSet(Ref.ID, "lapis");
+    public static TextureSet GEM_H = new TextureSet(Ref.ID, "gem_h");
+    public static TextureSet GEM_V = new TextureSet(Ref.ID, "gem_v");
+    public static TextureSet GARNET = new TextureSet(Ref.ID, "garnet");
+    public static TextureSet QUARTZ = new TextureSet(Ref.ID, "quartz");
+    public static TextureSet FINE = new TextureSet(Ref.ID, "fine");
+    public static TextureSet FLINT = new TextureSet(Ref.ID, "flint");
+    public static TextureSet LIGNITE = new TextureSet(Ref.ID, "lignite");
+    public static TextureSet WOOD = new TextureSet(Ref.ID, "wood");
+    public static TextureSet REDSTONE = new TextureSet(Ref.ID, "redstone");
 
     private String domain, id;
 
