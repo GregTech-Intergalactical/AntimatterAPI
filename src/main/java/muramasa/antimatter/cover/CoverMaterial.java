@@ -26,20 +26,4 @@ public abstract class CoverMaterial extends BaseCover {
     public <T> boolean blocksCapability(Capability<T> cap, Direction side) {
         return side != null;
     }
-
-    @Override
-    public void onRemove() {
-        TileEntity tile = handler.getTile();
-        if (tile instanceof TileEntityMachine) {
-            ((TileEntityMachine) tile).refreshCaps();
-        }
-    }
-
-    @Override
-    public void onPlace() {
-        TileEntity tile = handler.getTile();
-        if (tile instanceof TileEntityMachine) {
-            ((TileEntityMachine) tile).refreshCaps();
-        }
-    }
 }

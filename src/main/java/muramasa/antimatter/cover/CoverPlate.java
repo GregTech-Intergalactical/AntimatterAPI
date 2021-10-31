@@ -7,6 +7,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.item.ItemStack;
@@ -38,6 +39,7 @@ public class CoverPlate extends CoverMaterial {
      * }
      */
 
+
     @Override
     public boolean ticks() {
         return false;
@@ -56,11 +58,6 @@ public class CoverPlate extends CoverMaterial {
 
     public Material getMaterial() {
         return material;
-    }
-
-    @Override
-    public <T> boolean blocksCapability(Capability<T> cap, @Nullable Direction side) {
-        return true;
     }
 
     @Override

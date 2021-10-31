@@ -501,6 +501,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
+    public void invalidateCaps(Direction side) {
+        if (isServerSide()) {
+            dispatch.invalidate(side);
+        }
+    }
+
     public void invalidateCap(Capability<?> cap) {
         if (isServerSide()) {
             dispatch.invalidate(cap);

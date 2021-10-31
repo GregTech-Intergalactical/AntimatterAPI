@@ -54,7 +54,11 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     @Override
     public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
-        return super.set(side, old, stack, sync);
+        boolean ok = super.set(side, old, stack, sync);
+        if (ok && getTile().getWorld() != null && !getTile().getWorld().isRemote) {
+            getTile().invalidateCaps(side);
+        }
+        return ok;
     }
 
     @Override
