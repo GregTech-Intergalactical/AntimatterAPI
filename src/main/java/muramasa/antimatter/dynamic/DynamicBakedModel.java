@@ -7,6 +7,7 @@ import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Tuple;
@@ -30,15 +31,10 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     protected boolean hasConfig;
     protected BlockPos.Mutable mutablePos = new BlockPos.Mutable();
 
-    public DynamicBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
-        super(bakedTuple.getA());
-        this.bakedDefault = bakedTuple.getA();
-        this.bakedConfigs = bakedTuple.getB();
+    public DynamicBakedModel(Int2ObjectOpenHashMap<IBakedModel[]> map) {
+        super();
+        this.bakedConfigs = map;
         this.hasConfig = bakedConfigs.size() > 0;
-    }
-
-    public IBakedModel getBakedDefault() {
-        return bakedDefault;
     }
 
     @Nonnull
@@ -73,5 +69,30 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     @Override
     public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         return bakedDefault.getQuads(null, side, rand, data);
+    }
+
+    @Override
+    public boolean isAmbientOcclusion() {
+        return true;
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return true;
+    }
+
+    @Override
+    public boolean isSideLit() {
+        return true;
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return true;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return ItemOverrideList.EMPTY;
     }
 }

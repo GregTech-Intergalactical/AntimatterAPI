@@ -29,10 +29,9 @@ public class PipeBakedModel extends DynamicBakedModel {
 
     public static final Int2ObjectOpenHashMap<IBakedModel[]> CONFIGS = new Int2ObjectOpenHashMap<>();
 
-    public PipeBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
-        super(bakedTuple);
+    public PipeBakedModel(Int2ObjectOpenHashMap<IBakedModel[]> map) {
+        super(map);
         onlyGeneralQuads();
-
     }
 
     @Override

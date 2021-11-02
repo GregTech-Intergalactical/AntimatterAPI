@@ -24,7 +24,7 @@ import java.util.Random;
 
 //For now, use only general quads.
 public class AttachableBakedModel extends DynamicBakedModel {
-    public AttachableBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
+    public AttachableBakedModel(Int2ObjectOpenHashMap<IBakedModel[]> bakedTuple) {
         super(bakedTuple);
     }
 

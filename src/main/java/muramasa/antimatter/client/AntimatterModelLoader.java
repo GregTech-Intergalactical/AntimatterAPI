@@ -17,7 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 
-public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAntimatterObject {
+public class AntimatterModelLoader<T extends IAntimatterModel<T>> implements IModelLoader<T>, IAntimatterObject {
 
     protected ResourceLocation loc;
 
@@ -41,16 +41,16 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
     }
 
     @Override
-    public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
+    public T read(JsonDeserializationContext context, JsonObject json) {
         try {
             IUnbakedModel baseModel = (json.has("model") && json.get("model").isJsonObject()) ? context.deserialize(json.get("model"), BlockModel.class) : ModelUtils.getMissingModel();
-            return new AntimatterModel(baseModel, buildRotations(json));
+            return (T) new AntimatterModel(baseModel, buildRotations(json));
         } catch (Exception e) {
-            return onModelLoadingException(e);
+            return (T) onModelLoadingException(e);
         }
     }
 
-    public AntimatterModel onModelLoadingException(Exception e) {
+    public IAntimatterModel<AntimatterModel> onModelLoadingException(Exception e) {
         Antimatter.LOGGER.error("ModelLoader Exception for " + getLoc().toString());
         e.printStackTrace();
         return new AntimatterModel(ModelUtils.getMissingModel());
@@ -69,17 +69,15 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
         return rotations;
     }
 
-    public static class DynamicModelLoader extends AntimatterModelLoader {
+    public static class DynamicModelLoader extends AntimatterModelLoader<DynamicModel> {
 
         public DynamicModelLoader(ResourceLocation loc) {
             super(loc);
         }
 
         @Override
-        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
+        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
             try {
-                AntimatterModel baseModel = super.read(context, json);
-                if (!json.has("config") || !json.get("config").isJsonArray()) return baseModel;
                 Int2ObjectOpenHashMap<IModelGeometry<?>[]> configs = new Int2ObjectOpenHashMap<>();
                 for (JsonElement e : json.getAsJsonArray("config")) {
                     if (!e.isJsonObject() || !e.getAsJsonObject().has("id") || !e.getAsJsonObject().has("models"))
@@ -90,9 +88,9 @@ public class AntimatterModelLoader implements IModelLoader<AntimatterModel>, IAn
                 String staticMapId = "";
                 if (json.has("staticMap") && json.get("staticMap").isJsonPrimitive())
                     staticMapId = json.get("staticMap").getAsString();
-                return new DynamicModel(baseModel, configs, staticMapId);
+                return new DynamicModel(configs, staticMapId);
             } catch (Exception e) {
-                return onModelLoadingException(e);
+                return new DynamicModel(null, null);
             }
         }
 

@@ -24,7 +24,7 @@ import java.util.Random;
 
 public class CoveredBakedModel extends AttachableBakedModel {
 
-    public CoveredBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
+    public CoveredBakedModel(Int2ObjectOpenHashMap<IBakedModel[]> bakedTuple) {
         super(bakedTuple);
     }
 

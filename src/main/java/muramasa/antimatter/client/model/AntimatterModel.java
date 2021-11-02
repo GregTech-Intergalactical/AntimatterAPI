@@ -2,6 +2,7 @@ package muramasa.antimatter.client.model;
 
 import com.mojang.datafixers.util.Pair;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.client.IAntimatterModel;
 import muramasa.antimatter.client.ModelUtils;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -18,7 +19,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.function.Function;
 
-public class AntimatterModel implements IModelGeometry<AntimatterModel> {
+public class AntimatterModel implements IAntimatterModel<AntimatterModel> {
 
     protected IUnbakedModel model;
     protected int[] rotations = new int[0];

@@ -38,7 +38,7 @@ public class AntimatterModelManager {
     public static final DynamicModelLoader LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
     public static final DynamicModelLoader LOADER_MACHINE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "machine")) {
         @Override
-        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
+        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
             return new DynamicModel((DynamicModel) super.read(context, json)) {
                 @Override
                 public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
@@ -52,8 +52,8 @@ public class AntimatterModelManager {
     };
     public static final DynamicModelLoader LOADER_PIPE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "pipe")) {
         @Override
-        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
-            return new DynamicModel((DynamicModel) super.read(context, json)) {
+        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
+            return new DynamicModel(super.read(context, json)) {
                 @Override
                 public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
                     return new PipeBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
@@ -62,9 +62,9 @@ public class AntimatterModelManager {
         }
     };
 
-    public static final AntimatterModelLoader LOADER_PROXY = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "proxy")) {
+    public static final AntimatterModelLoader<ProxyModel> LOADER_PROXY = new AntimatterModelLoader<ProxyModel>(new ResourceLocation(Ref.ID, "proxy")) {
         @Override
-        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
+        public ProxyModel read(JsonDeserializationContext context, JsonObject json) {
             return new ProxyModel();
         }
     };

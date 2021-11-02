@@ -27,7 +27,7 @@ import java.util.function.Function;
 
 public class MachineBakedModel extends CoveredBakedModel {
 
-    public MachineBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
+    public MachineBakedModel(Int2ObjectOpenHashMap<IBakedModel[]> bakedTuple) {
         super(bakedTuple);
     }
 
