@@ -162,7 +162,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
             AntimatterAPI.all(BlockStoneWall.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
             AntimatterAPI.all(AntimatterFluid.class).forEach(s -> {
                 add(s.getAttributes().getTranslationKey(), lowerUnderscoreToUpperSpaced(s.getId()));
-                Item bucket = AntimatterAPI.get(Item.class, s.getId() + "_bucket", Ref.ID);
+                Item bucket = AntimatterAPI.get(Item.class, s.getId() + "_bucket", Ref.SHARED_ID);
                 if (bucket != null) add(bucket, lowerUnderscoreToUpperSpaced(s.getId()) + " Bucket");
             });
             AntimatterAPI.all(BlockStorage.class).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));

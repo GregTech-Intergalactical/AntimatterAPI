@@ -1,6 +1,7 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.machine.Tier;
@@ -48,8 +49,8 @@ public class CoverPlate extends CoverMaterial {
     @Override
     public ResourceLocation getModel(String type, Direction dir, Direction facing) {
         if (type.equals("pipe"))
-            return PIPE_COVER_MODEL;
-        return getBasicModel();
+            return new ResourceLocation(Ref.ID + ":block/cover/cover_pipe_notint");
+        return new ResourceLocation(Ref.ID + ":block/cover/basic_notint");
     }
 
     public MaterialType<?> getType() {

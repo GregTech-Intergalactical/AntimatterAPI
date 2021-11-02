@@ -3,6 +3,7 @@ package muramasa.antimatter.material;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
@@ -24,7 +25,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
     protected String id;
     protected int unitValue, layers;
     protected boolean generating = true, blockType, visible, splitName;
-    protected Set<Material> materials = new ObjectOpenHashSet<>(); //Linked to preserve insertion order for JEI
+    protected Set<Material> materials = new ObjectLinkedOpenHashSet<>(); //Linked to preserve insertion order for JEI
     protected Map<MaterialType<?>, ITag.INamedTag<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
     protected BiMap<Material, Item> OVERRIDES = HashBiMap.create();

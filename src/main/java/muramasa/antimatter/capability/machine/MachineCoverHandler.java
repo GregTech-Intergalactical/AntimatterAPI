@@ -63,7 +63,7 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
 
     @Override
     protected boolean canRemoveCover(ICover cover) {
-        return getTile().getMachineType().getOutputCover() != ICover.emptyFactory;
+        return getTile().getMachineType().getOutputCover() != cover.getFactory();
     }
 
     @Override
