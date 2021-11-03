@@ -285,11 +285,11 @@ public class Data {
     public static Material Charcoal = AntimatterAPI.register(Material.class, new Material(Ref.ID, "charcoal", 0x644646, LIGNITE)).asDust(BLOCK);
     public static Material Coal = AntimatterAPI.register(Material.class, new Material(Ref.ID, "coal", 0x464646, LIGNITE)).asGemBasic(false).asOre(0, 2, true, RAW_ORE, ORE_STONE);
     public static Material Diamond = AntimatterAPI.register(Material.class, new Material(Ref.ID, "diamond", /*0x3de0e5*/0xc8ffff, DIAMOND)).asGemBasic(false).asOre(3, 7,true, RAW_ORE).addTools(ItemTier.DIAMOND.getAttackDamage(), ItemTier.DIAMOND.getEfficiency(), ItemTier.DIAMOND.getMaxUses(), ItemTier.DIAMOND.getHarvestLevel());
-    public static Material Emerald = AntimatterAPI.register(Material.class, new Material(Ref.ID, "emerald", 0x50ff50, GEM_V)).asGemBasic(false).asOre(3, 7,true, RAW_ORE);
+    public static Material Emerald = AntimatterAPI.register(Material.class, new Material(Ref.ID, "emerald", 0x50ff50, GEM_V)).asGemBasic(false).asOre(3, 7,true, RAW_ORE).harvestLevel(2);
     public static Material EnderPearl = AntimatterAPI.register(Material.class, new Material(Ref.ID, "enderpearl", 0x6cdcc8, SHINY)).asGemBasic(false);
     public static Material EnderEye = AntimatterAPI.register(Material.class, new Material(Ref.ID, "endereye", 0xa0fae6, SHINY)).asGemBasic(false);
-    public static Material Lapis = AntimatterAPI.register(Material.class, new Material(Ref.ID, "lapis", 0x4646dc, LAPIS)).asGemBasic(false).asOre(2, 5,true, RAW_ORE);
-    public static Material Redstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "redstone", 0xc80000, REDSTONE)).asDust().asOre(1, 5,true);
+    public static Material Lapis = AntimatterAPI.register(Material.class, new Material(Ref.ID, "lapis", 0x4646dc, LAPIS)).asGemBasic(false).asOre(2, 5,true, RAW_ORE).harvestLevel(1);
+    public static Material Redstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "redstone", 0xc80000, REDSTONE)).asDust().asOre(1, 5,true).harvestLevel(2);
     public static Material Quartz = AntimatterAPI.register(Material.class, new Material(Ref.ID, "quartz", 0xe6d2d2, NONE)).asDust();
     public static Material Netherite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherite", 0x504650, DULL)).asMetal(2246,1300).addTools(3.0F, 10, 500, NETHERITE.getHarvestLevel(), of(Enchantments.FIRE_ASPECT, 3)).addArmor(new int[]{0, 1, 1, 0}, 0.5F, 0.1F, 20);
     public static Material NetherizedDiamond = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherized_diamond", 0x5a505a, DIAMOND)).asGemBasic(false).addTools(4.0F, 12, NETHERITE.getMaxUses(), NETHERITE.getHarvestLevel(), of(Enchantments.FIRE_ASPECT, 3, Enchantments.SHARPNESS, 4)).addArmor(new int[]{1, 1, 2, 1}, 3.0F, 0.1F, 37, of(Enchantments.PROTECTION, 4));
