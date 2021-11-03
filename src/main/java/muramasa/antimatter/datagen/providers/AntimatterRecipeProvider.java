@@ -86,7 +86,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
 
     @Override
     public void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-        registerMaterialRecipes(consumer, providerDomain);
+        if (providerDomain.equals(Ref.ID)) {
+            registerMaterialRecipes(consumer, providerDomain);
+        }
         registerToolRecipes(consumer, providerDomain);
         registerPipeRecipes(consumer, providerDomain);
         registerOther(consumer, providerDomain);
@@ -104,7 +106,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
     }
 
     protected void registerMaterialRecipes(Consumer<IFinishedRecipe> consumer, String providerDomain) {
-        AntimatterAPI.all(BlockOre.class, providerDomain, o -> {
+        AntimatterAPI.all(BlockOre.class, o -> {
             if (o.getOreType() != ORE) return;
             if (!o.getMaterial().getSmeltInto().has(INGOT)) return;
             if (o.getMaterial().needsBlastFurnace()) return;
@@ -118,7 +120,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     .addCriterion("has_material_" + o.getMaterial().getId(), hasItem(ingotTag))
                     .build(consumer, fixLoc(providerDomain, o.getId().concat("_to_ingot_smelting")));
         });
-        AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> m.has(RAW_ORE) && m.getSmeltInto().has(INGOT) && !m.needsBlastFurnace()).forEach(m -> {
+        AntimatterAPI.all(Material.class).stream().filter(m -> m.has(RAW_ORE) && m.getSmeltInto().has(INGOT) && !m.needsBlastFurnace()).forEach(m -> {
             AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1).get(), new ItemStack(INGOT.get(m.getSmeltInto()), m.getSmeltingMulti()), 2.0F, 100)
                     .addCriterion("has_material_" + m.getId(), hasItem(INGOT.getMaterialTag(m.getSmeltInto())))
                     .build(consumer, fixLoc(providerDomain, m.getId().concat("_raw_ore_to_ingot")));
@@ -126,7 +128,7 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     .addCriterion("has_material_" + m.getId(), hasItem(INGOT.getMaterialTag(m.getSmeltInto())))
                     .build(consumer, fixLoc(providerDomain, m.getId().concat("_raw_ore_to_ingot_smelting")));
         });
-        AntimatterAPI.all(Material.class, providerDomain).stream().filter(m -> m.has(DUST)).forEach(mat -> {
+        AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
             Item dust = DUST.get(mat);
             if (mat.has(ROCK)) {
                 ITag<Item> rockTag = nc(TagUtils.getForgeItemTag("rocks/".concat(mat.getId())));
