@@ -57,7 +57,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     /**
      * Solid Members
      **/
-    private int meltingPoint, blastFurnaceTemp;
+    private int meltingPoint, blastFurnaceTemp, miningLevel = 0;
     private boolean needsBlastFurnace;
 
     /**
@@ -281,7 +281,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     }
 
     public Material harvestLevel(int harvestLevel) {
-        this.toolQuality = harvestLevel + 1;
+        this.miningLevel = harvestLevel;
         return this;
     }
 
@@ -297,6 +297,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
+        this.miningLevel = toolQuality - 1;
         this.toolEnchantment = toolEnchantment;
         if (toolTypes.length > 0) {
             this.toolTypes = Arrays.asList(toolTypes);
@@ -316,6 +317,15 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
 
     public Material addTools(Material derivedMaterial) {
         return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality);
+    }
+
+    public Material setAllowedToolTypes(AntimatterToolType... toolTypes){
+        if (toolTypes.length > 0) {
+            this.toolTypes = Arrays.asList(toolTypes);
+        } else {
+            this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
+        }
+        return this;
     }
 
     public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor) {
@@ -487,6 +497,10 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
 
     public boolean needsBlastFurnace() {
         return needsBlastFurnace;
+    }
+
+    public int getMiningLevel() {
+        return miningLevel;
     }
 
     /**

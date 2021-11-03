@@ -101,7 +101,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
 //    }
     @Override
     public int getHarvestLevel(BlockState state) {
-        return material.getToolQuality();
+        return material.getMiningLevel();
     }
 
     @Nullable

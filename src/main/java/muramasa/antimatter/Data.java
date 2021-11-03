@@ -271,10 +271,18 @@ public class Data {
 
     //Vanilla Metal/Gem Materials
     public static Material Iron = AntimatterAPI.register(Material.class, new Material(Ref.ID, "iron", 0xc8c8c8, METALLIC, Fe)).asMetal(1811, 0).asOre(1, 5, true).asPlasma().addTools(IRON.getAttackDamage(), IRON.getEfficiency(), 256, IRON.getHarvestLevel(),  of(Enchantments.SHARPNESS, 1));
-    public static Material Gold = AntimatterAPI.register(Material.class, new Material(Ref.ID, "gold", 0xffe650, SHINY, Au)).asMetal(1337, 0).asOre(1, 5, true).addTools(GOLD.getAttackDamage(), GOLD.getEfficiency(), GOLD.getMaxUses(), GOLD.getHarvestLevel());
+    public static Material Gold = AntimatterAPI.register(Material.class, new Material(Ref.ID, "gold", 0xffe650, SHINY, Au)).asMetal(1337, 0).asOre(1, 5, true).addTools(GOLD.getAttackDamage(), GOLD.getEfficiency(), GOLD.getMaxUses(), GOLD.getHarvestLevel()).harvestLevel(2);
     //cause 1.18
     public static Material Copper = AntimatterAPI.register(Material.class, new Material(Ref.ID, "copper", 0xff6400, SHINY, Cu)).asMetal(1357, 0).asOre(1, 5, true);
 
+    public static Material Glowstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "glowstone", 0xffff00, SHINY)).asDust();
+    public static Material Sugar = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sugar", 0xfafafa, DULL)).asDust();
+    public static Material Bone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "bone", 0xb3b3b3, DULL)).addHandleStat(12, 0.0F);
+    public static Material Wood = AntimatterAPI.register(Material.class, new Material(Ref.ID, "wood", 0x643200, TextureSet.WOOD)).asDust(PLATE).addTools(ItemTier.WOOD.getAttackDamage(), ItemTier.WOOD.getEfficiency(), 16, ItemTier.WOOD.getHarvestLevel(), of(), SOFT_HAMMER).addHandleStat(12, 0.0F);
+    public static Material Blaze = AntimatterAPI.register(Material.class, new Material(Ref.ID, "blaze", 0xffc800, NONE)).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
+    public static Material Flint = AntimatterAPI.register(Material.class, new Material(Ref.ID, "flint", 0x002040, FLINT)).asDust(GEM).addTools(1.25F, 2.5F, 128, 1, of(Enchantments.FIRE_ASPECT, 1), PICKAXE, AXE, SHOVEL, SWORD, HOE, MORTAR, KNIFE);
+
+    public static Material Charcoal = AntimatterAPI.register(Material.class, new Material(Ref.ID, "charcoal", 0x644646, LIGNITE)).asDust(BLOCK);
     public static Material Coal = AntimatterAPI.register(Material.class, new Material(Ref.ID, "coal", 0x464646, LIGNITE)).asGemBasic(false).asOre(0, 2, true, RAW_ORE, ORE_STONE);
     public static Material Diamond = AntimatterAPI.register(Material.class, new Material(Ref.ID, "diamond", /*0x3de0e5*/0xc8ffff, DIAMOND)).asGemBasic(false).asOre(3, 7,true, RAW_ORE).addTools(ItemTier.DIAMOND.getAttackDamage(), ItemTier.DIAMOND.getEfficiency(), ItemTier.DIAMOND.getMaxUses(), ItemTier.DIAMOND.getHarvestLevel());
     public static Material Emerald = AntimatterAPI.register(Material.class, new Material(Ref.ID, "emerald", 0x50ff50, GEM_V)).asGemBasic(false).asOre(3, 7,true, RAW_ORE);
@@ -355,18 +363,21 @@ public class Data {
         INGOT.forceOverride(Gold, Items.GOLD_INGOT);
         INGOT.forceOverride(Netherite, Items.NETHERITE_INGOT);
         DUST.forceOverride(Redstone, Items.REDSTONE);
-        //DUST.forceOverride(Glowstone, Items.GLOWSTONE_DUST);
-        //DUST.forceOverride(Blaze, Items.BLAZE_POWDER);
-        //DUST.forceOverride(Sugar, Items.SUGAR);
-        //GEM.forceOverride(Flint, Items.FLINT);
+        DUST.forceOverride(Glowstone, Items.GLOWSTONE_DUST);
+        DUST.forceOverride(Blaze, Items.BLAZE_POWDER);
+        DUST.forceOverride(Sugar, Items.SUGAR);
+        GEM.forceOverride(Flint, Items.FLINT);
         GEM.forceOverride(Diamond, Items.DIAMOND);
         GEM.forceOverride(Emerald, Items.EMERALD);
         GEM.forceOverride(Lapis, Items.LAPIS_LAZULI);
         GEM.forceOverride(Coal, Items.COAL);
-        //GEM.forceOverride(Charcoal, Items.CHARCOAL);
+        GEM.forceOverride(Charcoal, Items.CHARCOAL);
         GEM.forceOverride(EnderEye, Items.ENDER_EYE);
         GEM.forceOverride(EnderPearl, Items.ENDER_PEARL);
 
+        ROD.forceOverride(Blaze, Items.BLAZE_ROD);
+        ROD.forceOverride(Bone, Items.BONE);
+        ROD.forceOverride(Wood, Items.STICK);
 
         BLOCK.forceOverride(Iron, Items.IRON_BLOCK);
         BLOCK.forceOverride(Gold, Items.GOLD_BLOCK);
