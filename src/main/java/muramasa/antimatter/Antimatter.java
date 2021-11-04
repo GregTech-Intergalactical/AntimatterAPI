@@ -145,7 +145,6 @@ public class Antimatter extends AntimatterMod {
 
     @Override
     public void onRegistrationEvent(RegistrationEvent event, Dist side) {
-        AntimatterAPI.onRegistration(event);
         if (event == RegistrationEvent.DATA_INIT) {
             SlotType.init();
             RecipeBuilders.init();
