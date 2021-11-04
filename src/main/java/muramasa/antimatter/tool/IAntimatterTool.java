@@ -197,7 +197,11 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemHighlight)) continue;
             ActionResultType type = ((IItemHighlight) b).onDrawHighlight(player, ev);
-            if (result != ActionResultType.SUCCESS) result = type;
+            if (type != ActionResultType.SUCCESS) {
+                result = type;
+            } else {
+                ev.setCanceled(true);
+            }
         }
         return result;
     }
