@@ -3,13 +3,13 @@ package muramasa.antimatter;
 import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.data.ModelProperty;
 
+import java.util.EnumMap;
 import java.util.function.Function;
 
 public class AntimatterProperties {
@@ -18,6 +18,7 @@ public class AntimatterProperties {
      * Block Dynamic Properties
      **/
     public static final ModelProperty<ModelConfig> DYNAMIC_CONFIG = new ModelProperty<>();
+    public static final ModelProperty<EnumMap<Direction, Byte>> COVER_REMOVAL = new ModelProperty<>();
 
     /**
      * Block Machine Properties
@@ -30,12 +31,4 @@ public class AntimatterProperties {
     public static final ModelProperty<TileEntityBase<?>> TILE_PROPERTY = new ModelProperty<>();
     public static final ModelProperty<BlockState> STATE_MODEL_PROPERTY = new ModelProperty<>();
     public static final ModelProperty<Texture> TEXTURE_MODEL_PROPERTY = new ModelProperty<>();
-
-    /**
-     * Block Pipe Properties
-     **/
-    //public static PropertyBool PIPE_INSULATED = PropertyBool.create("insulated");
-    //public static PropertyBool PIPE_RESTRICTIVE = PropertyBool.create("restrictive");
-    public static final ModelProperty<PipeSize> PIPE_SIZE = new ModelProperty<>();
-    public static final ModelProperty<Byte> PIPE_CONNECTIONS = new ModelProperty<>();
 }

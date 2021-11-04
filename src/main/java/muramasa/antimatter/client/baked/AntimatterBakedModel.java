@@ -1,11 +1,7 @@
 package muramasa.antimatter.client.baked;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.data.EmptyModelData;
@@ -16,6 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public abstract class AntimatterBakedModel<T> implements IDynamicBakedModel {
@@ -23,15 +20,13 @@ public abstract class AntimatterBakedModel<T> implements IDynamicBakedModel {
     protected TextureAtlasSprite particle;
     protected boolean onlyGeneralQuads = false; //If the model only has "general quads", like pipes
 
-    public T particle(TextureAtlasSprite p) {
-        if (particle == null) this.particle = p;
-        return (T) this;
+    public AntimatterBakedModel(TextureAtlasSprite p) {
+        this.particle = Objects.requireNonNull(p, "Missing particle texture in AntimatterBakedModel");
     }
 
 
-    public T onlyGeneralQuads() {
+    public void onlyGeneralQuads() {
         this.onlyGeneralQuads = true;
-        return (T) this;
     }
 
     public abstract List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data);

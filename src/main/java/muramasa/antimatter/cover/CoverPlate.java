@@ -8,18 +8,14 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-
-import javax.annotation.Nullable;
 
 public class CoverPlate extends CoverMaterial {
 
@@ -49,7 +45,7 @@ public class CoverPlate extends CoverMaterial {
     @Override
     public ResourceLocation getModel(String type, Direction dir, Direction facing) {
         if (type.equals("pipe"))
-            return new ResourceLocation(Ref.ID + ":block/cover/cover_pipe_notint");
+            return new ResourceLocation(Ref.ID + ":block/cover/cover_pipe_test");
         return new ResourceLocation(Ref.ID + ":block/cover/basic_notint");
     }
 

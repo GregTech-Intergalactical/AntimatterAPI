@@ -27,6 +27,61 @@ import java.util.function.Function;
 
 public class ModelUtils {
 
+    private static final Direction[][] TRANSFORM = new Direction[][]{
+            new Direction[]{
+                    Direction.SOUTH,
+                    Direction.NORTH,
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{
+                    Direction.NORTH,
+                    Direction.SOUTH,
+                    Direction.UP,
+                    Direction.DOWN,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.NORTH,
+                    Direction.SOUTH,
+                    Direction.WEST,
+                    Direction.EAST
+            },
+            new Direction[]{
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.SOUTH,
+                    Direction.NORTH,
+                    Direction.EAST,
+                    Direction.WEST,
+            },
+            new Direction[]{
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.WEST,
+                    Direction.EAST,
+                    Direction.SOUTH,
+                    Direction.NORTH
+            },
+            new Direction[]{
+                    Direction.DOWN,
+                    Direction.UP,
+                    Direction.EAST,
+                    Direction.WEST,
+                    Direction.NORTH,
+                    Direction.SOUTH
+            }
+    };
+
+    public static Direction rotate(Direction facing, Direction side) {
+        return TRANSFORM[facing.getIndex()][side.getIndex()];
+    }
+
     public static IUnbakedModel getMissingModel() {
         return ModelLoader.instance().getUnbakedModel(new ModelResourceLocation("builtin/missing", "missing"));
     }

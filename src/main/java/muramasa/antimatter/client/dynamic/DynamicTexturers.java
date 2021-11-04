@@ -24,7 +24,7 @@ public class DynamicTexturers {
             t -> {
                 IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
                         Utils.getModelRotation(t.currentDir), t.source.getModel(t.type, t.currentDir, Direction.NORTH));
-                return t.source.transformQuads(t.state, b.getQuads(t.state, null, t.rand, t.data));
+                return t.source.transformQuads(t.state, b.getQuads(t.state, t.currentDir, t.rand, t.data));
             }, t -> {
         t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
         t.source.setTextures(

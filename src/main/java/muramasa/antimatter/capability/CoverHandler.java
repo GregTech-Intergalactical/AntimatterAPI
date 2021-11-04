@@ -38,7 +38,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     protected final Object2ObjectMap<Direction, ICover> covers = new Object2ObjectOpenHashMap<>(6);
     protected final Object2ObjectMap<CoverFactory, Set<Direction>> reverseLookup = new Object2ObjectOpenHashMap<>(6);
     protected List<ResourceLocation> validCovers = new ObjectArrayList<>();
-    public Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
+    public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
     public CoverHandler(T tile, ICover... validCovers) {
         this.tile = tile;

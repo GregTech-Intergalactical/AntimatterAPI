@@ -51,8 +51,13 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         return property(property, propertyObject);
     }
 
-    public AntimatterBlockModelBuilder loader(AntimatterModelLoader loader) {
+    public AntimatterBlockModelBuilder loader(AntimatterModelLoader<?> loader) {
         this.loader = loader.getLoc();
+        return this;
+    }
+
+    public AntimatterBlockModelBuilder particle(Texture tex) {
+        properties.add(o -> o.addProperty("particle", tex.toString()));
         return this;
     }
 

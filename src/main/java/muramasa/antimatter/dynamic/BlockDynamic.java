@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class BlockDynamic extends BlockBasic implements IInfoProvider {
 
-    public static final int[] DEFAULT_CONFIG = new int[]{-1};
+    public static final int[] DEFAULT_CONFIG = new int[]{0};
 
     protected ModelConfig config = new ModelConfig();
     protected Int2ObjectLinkedOpenHashMap<VoxelShape> shapes = new Int2ObjectLinkedOpenHashMap<>();

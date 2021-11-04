@@ -26,8 +26,8 @@ import java.util.*;
 
 public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
-    public ProxyBakedModel() {
-        super();
+    public ProxyBakedModel(TextureAtlasSprite particle) {
+        super(particle);
     }
 
     @Nonnull
