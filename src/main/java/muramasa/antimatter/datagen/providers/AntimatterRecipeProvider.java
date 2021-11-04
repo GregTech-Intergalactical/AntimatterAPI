@@ -280,9 +280,9 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                                     .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
                     , "PFP", "PSP", "RWR");
 
-            Function<AntimatterToolType, ImmutableMap<Character, Object>> map1 = type -> of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(type, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(type, true).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag());
+            Function<AntimatterToolType, ImmutableMap<Character, Object>> map1 = type -> of('I', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(INGOT, GEM).tool(type, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(type, true).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag());
 
-            Function<AntimatterToolType, ImmutableMap<Character, Object>> map2 = type -> of('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(type, true).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag());
+            Function<AntimatterToolType, ImmutableMap<Character, Object>> map2 = type -> of('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(type, true).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag());
 
             String[] strings1 = new String[]{"PII", "FRH", " R "};
             String[] strings3 = new String[]{" P ", "FPH", " R "};
@@ -310,13 +310,31 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     "has_wrench", in, CROWBAR.getToolStack(NULL, NULL), of('H', HAMMER.getTag(), 'C', PropertyIngredient.builder("secondary").itemTags(Tags.Items.DYES).build(), 'R', PropertyIngredient.builder("primary").types(ROD).tool(CROWBAR, true).build(), 'F', FILE.getTag()), "HCR", "CRC", "RCF");
 
             addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID, KNIFE.getId() + "_with", "antimatter_knives",
-                    "has_wrench", in, KNIFE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(KNIFE, true).build(), 'S', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FP", "HS");
+                    "has_wrench", in, KNIFE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(KNIFE, true).build(), 'S', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FP", "HS");
 
             // List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(HANDLE))).collect(Collectors.toList());
 
             addToolRecipe(TOOL_BUILDER.get(PLUNGER.getId()), consumer, Ref.ID, PLUNGER.getId() + "_", "antimatter_plungers",
                     "has_wrench", in, PLUNGER.getToolStack(NULL, NULL),
                     of('W', WIRE_CUTTER.getTag(), 'R', PropertyIngredient.builder("primary").tool(PLUNGER, true).types(ROD).build(), 'I', PropertyIngredient.builder("secondary").types(PLATE).tags(HANDLE, RUBBERTOOLS).build(), 'F', FILE.getTag()), "WII", " RI", "R F");
+
+            this.addToolRecipe(TOOL_BUILDER.get(PICKAXE.getId()), consumer, Ref.ID,  "flint_" + PICKAXE.getId() + "_" +"recipe", "antimatter_tools",
+                    "has_flint", this.hasSafeItem(GEM.getMaterialTag(Flint)), PICKAXE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "III", " R ", " R ");
+
+            this.addToolRecipe(TOOL_BUILDER.get(AXE.getId()), consumer, Ref.ID,  "flint_" + AXE.getId() + "_" +"recipe", "antimatter_tools",
+                    "has_flint", this.hasSafeItem(GEM.getMaterialTag(Flint)), AXE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II", "IR", " R");
+
+            this.addToolRecipe(TOOL_BUILDER.get(SWORD.getId()), consumer, Ref.ID,  "flint_" + SWORD.getId() + "_" +"recipe", "antimatter_tools",
+                    "has_flint", this.hasSafeItem(GEM.getMaterialTag(Flint)), SWORD.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "I", "I", "R");
+
+            this.addToolRecipe(TOOL_BUILDER.get(SHOVEL.getId()), consumer, Ref.ID,  "flint_" + SHOVEL.getId() + "_" +"recipe", "antimatter_tools",
+                    "has_flint", this.hasSafeItem(GEM.getMaterialTag(Flint)), SHOVEL.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "I", "R", "R");
+
+            this.addToolRecipe(TOOL_BUILDER.get(HOE.getId()), consumer, Ref.ID,  "flint_" + HOE.getId() + "_" +"recipe", "antimatter_tools",
+                    "has_flint", this.hasSafeItem(GEM.getMaterialTag(Flint)), HOE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II", " R", " R");
+
+            this.addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID,  "flint_" + KNIFE.getId() + "_" +"recipe", "antimatter_tools",
+                    "has_flint", this.hasSafeItem(GEM.getMaterialTag(Flint)), KNIFE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "RI");
         }
 
 

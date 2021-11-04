@@ -34,6 +34,7 @@ public class MaterialTag implements IMaterialTag {
     public static MaterialTag RUBBERTOOLS = new MaterialTag("rubber_tools");
     public static MaterialTag METAL = new MaterialTag("metal");
     public static MaterialTag ELEMENTAL = new MaterialTag("elemental");
+    public static MaterialTag FLINT = new MaterialTag("flint");
 
     /**
      * ETC
