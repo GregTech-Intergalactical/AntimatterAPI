@@ -69,6 +69,7 @@ public class ClientEvents {
         if (stack.getItem() instanceof IHaveCover) {
             if (player.isCrouching()) return;
             RenderHelper.onDrawHighlight(player, event, b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
+            event.setCanceled(true);
             return;
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();

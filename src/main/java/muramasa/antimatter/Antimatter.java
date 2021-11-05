@@ -80,6 +80,8 @@ public class Antimatter extends AntimatterMod {
                     new ExistingFileHelperOverride());
             return p[0];
         });
+        AntimatterDynamics.addProvider(Ref.SHARED_ID, g -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
+                "Antimatter Shared Fluid Tags", false, g, new ExistingFileHelperOverride()));
         AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
                 false, g, p[0], new ExistingFileHelperOverride()));
         AntimatterDynamics.addProvider(Ref.ID,

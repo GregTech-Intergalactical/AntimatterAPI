@@ -15,6 +15,8 @@ import net.minecraft.client.audio.Sound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Objects;
+
 public class AMCreationEvent extends EventJS {
     public StoneType createStoneType(String id, String material, String texture, SoundType soundType, boolean generateBlock) {
         return AntimatterAPI.register(StoneType.class, new StoneType(Ref.MOD_KJS, id, Material.get(material), new Texture(texture), soundType, generateBlock));
@@ -25,11 +27,13 @@ public class AMCreationEvent extends EventJS {
     }
 
     public Material createMaterial(String id, int rgb, String textureSet, String textureSetDomain) {
-        return AntimatterAPI.register(Material.class, new Material(Ref.MOD_KJS, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet, textureSetDomain)));
+        TextureSet set = Objects.requireNonNull(AntimatterAPI.get(TextureSet.class, textureSet, textureSetDomain), "Specified texture set in Material created via kubejs event is null");
+        return AntimatterAPI.register(Material.class, new Material(Ref.MOD_KJS, id, rgb, set));
     }
 
     public Material createMaterial(String id, int rgb, String textureSet, String textureSetDomain, String element) {
-        return AntimatterAPI.register(Material.class, new Material(Ref.MOD_KJS, id, rgb, AntimatterAPI.get(TextureSet.class, textureSet, textureSetDomain), Element.getFromElementId(element)));
+        TextureSet set = Objects.requireNonNull(AntimatterAPI.get(TextureSet.class, textureSet, textureSetDomain), "Specified texture set in Material created via kubejs event is null");
+        return AntimatterAPI.register(Material.class, new Material(Ref.MOD_KJS, id, rgb, set, Element.getFromElementId(element)));
     }
 
     public void addFlagsToMaterial(String materialId, String... flags) {

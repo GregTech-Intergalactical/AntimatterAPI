@@ -28,6 +28,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3d;
@@ -217,6 +219,8 @@ public class RenderHelper {
         BlockRayTraceResult result = player.getEntityWorld().rayTraceBlocks(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
         BlockState state = player.getEntityWorld().getBlockState(result.getPos());
         if (!validator.apply(state.getBlock())) return ActionResultType.PASS;
+        VoxelShape shape = player.getEntityWorld().getBlockState(result.getPos()).getShape(player.getEntityWorld(), result.getPos(), ISelectionContext.forEntity(player));
+
         //Build up view & matrix.
         Vector3d viewPosition = ev.getInfo().getProjectedView();
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
@@ -227,15 +231,18 @@ public class RenderHelper {
         matrix.push();
         long time = player.getEntityWorld().getGameTime();
         float r = Math.abs(time % ((255 >> 2) * 2) - (255 >> 2)) * (1 << 2);
-
         float g = r;
         float b = g;
-        // VoxelShape shape = player.getEntityWorld().getBlockState(pos).getShape(player.getEntityWorld(), pos, ISelectionContext.forEntity(player));
-        float X = 1;//(float) shape.getEnd(Direction.Axis.X);
-        float Y = 1;//(float) shape.getEnd(Direction.Axis.Y);
-        //  float Z = 1//(float) shape.getEnd(Direction.Axis.Z);
-        //TODO: Better way to do this. dont know if forge has this built in? blit on certain face
-        //Rotate & translate to the correct face.
+        float X = 1;
+        float Y = 1;
+
+        Matrix4f m = matrix.getLast().getMatrix();
+        matrix.push();
+        shape.forEachEdge((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            builderLines.pos(m, (float) (minX + modX), (float) (minY + modY), (float) (minZ + modZ)).color(r,g,b, 0.4F).endVertex();
+            builderLines.pos(m, (float) (maxX + modX), (float) (maxY + modY), (float) (maxZ + modZ)).color(r,g,b, 0.4F).endVertex();
+        });
+        matrix.pop();
         switch (result.getFace()) {
             case UP:
                 matrix.translate(modX, modY + 1, modZ + 1);

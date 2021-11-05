@@ -76,7 +76,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     @Override
     public int getHarvestLevel(BlockState state) {
         int stoneLvl = stoneType.getHarvestLevel();
-        return Math.max(stoneLvl, material.getToolQuality() > 0 ? material.getToolQuality() - 1 : 1);
+        return Math.max(stoneLvl, material.getMiningLevel() > -1 ? material.getMiningLevel() : 0);
     }
 //
 //    @Override

@@ -9,6 +9,7 @@ import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.dynamic.ModelConfigRandom;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
@@ -33,7 +34,7 @@ import java.util.stream.IntStream;
 
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable {
+public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, ISharedAntimatterObject {
 
     protected static final int SURFACE_ROCK_MODEL_COUNT = 7;
     protected static final int[] CONFIG_ARRAY = new int[SURFACE_ROCK_MODEL_COUNT];

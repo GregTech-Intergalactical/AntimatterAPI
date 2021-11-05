@@ -10,6 +10,7 @@ import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.pipe.BlockPipe;
 import net.minecraft.advancements.criterion.EnchantmentPredicate;
@@ -82,6 +83,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
             AntimatterAPI.all(BlockStoneStair.class, this::add);
             AntimatterAPI.all(BlockStoneWall.class, this::add);
             AntimatterAPI.all(BlockOre.class, this::addToFortune);
+            AntimatterAPI.all(BlockOreStone.class, this::addToStone);
         }
     }
 
@@ -138,6 +140,14 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
             return;
         }
         add(block);
+    }
+
+    protected void addToStone(BlockOreStone block) {
+        if (block.getMaterial() == Coal){
+            tables.put(block, b -> droppingItemWithFortune(b, GEM.get(block.getMaterial())));
+        } else {
+            add(block);
+        }
     }
 
     protected void add(Block block) {

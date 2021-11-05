@@ -253,6 +253,11 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
 
         }
 
+        @Override
+        public boolean ticks() {
+            return false;
+        }
+
         @Nullable
         @Override
         public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
