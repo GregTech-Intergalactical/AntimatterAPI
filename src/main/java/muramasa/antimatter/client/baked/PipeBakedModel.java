@@ -15,8 +15,8 @@ import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
@@ -29,10 +29,9 @@ public class PipeBakedModel extends DynamicBakedModel {
 
     public static final Int2ObjectOpenHashMap<IBakedModel[]> CONFIGS = new Int2ObjectOpenHashMap<>();
 
-    public PipeBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
-        super(bakedTuple);
+    public PipeBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<IBakedModel[]> map) {
+        super(particle, map);
         onlyGeneralQuads();
-
     }
 
     @Override
@@ -66,7 +65,7 @@ public class PipeBakedModel extends DynamicBakedModel {
                     }
                 }
                 coverQuads = covers.getTexturer(side).getQuads("pipe", coverQuads, state, c,
-                        new BaseCover.DynamicKey(dir, tex, c.getId()), dir.getIndex(), data);
+                        new BaseCover.DynamicKey(dir, tex, c.getId()), dir.getIndex(), CoverBakedModel.addCoverModelData(dir, covers, data));
             }
         }
         quads.addAll(coverQuads);

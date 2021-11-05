@@ -8,18 +8,14 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
 
 import java.util.List;
 import java.util.function.BiConsumer;
-
-import javax.annotation.Nullable;
 
 public class CoverPlate extends CoverMaterial {
 

@@ -363,7 +363,7 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         Direction facing = type.allowVerticalFacing() ? state.get(BlockStateProperties.FACING) : state.get(BlockStateProperties.HORIZONTAL_FACING);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEntityMachine) {
-            MachineState machineState = ((TileEntityMachine) tile).getMachineState();
+            MachineState machineState = ((TileEntityMachine<?>) tile).getMachineState();
             if (((TileEntityMachine<?>) tile).coverHandler.isPresent()) {
                 CoverHandler<?> h = ((TileEntityMachine<?>) tile).coverHandler.orElse(null);
                 if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y) {
@@ -413,8 +413,7 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
 
     protected int getModelId(Direction facing, Direction horizontalFacing, Direction overlay, MachineState state) {
         state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
-        int id = ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + ((horizontalFacing.getIndex() + 1) * 100) + (overlay.getIndex() + 1);
-        return id;
+        return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + ((horizontalFacing.getIndex() + 1) * 100) + (overlay.getIndex() + 1);
     }
 
     protected int getModelId(Direction facing, Direction overlay, MachineState state) {

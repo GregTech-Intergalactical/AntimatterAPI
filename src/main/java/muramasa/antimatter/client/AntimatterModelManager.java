@@ -8,7 +8,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
 import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.client.baked.PipeBakedModel;
-import muramasa.antimatter.client.model.AntimatterModel;
+import muramasa.antimatter.client.model.AntimatterGroupedModel;
 import muramasa.antimatter.client.model.ProxyModel;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -33,38 +33,42 @@ public class AntimatterModelManager {
     private static final Object2ObjectOpenHashMap<ResourceLocation, IItemProviderOverride> ITEM_OVERRIDES = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<ResourceLocation, IBlockProviderOverride> BLOCK_OVERRIDES = new Object2ObjectOpenHashMap<>();
 
-    public static final AntimatterModelLoader LOADER_MAIN = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "main"));
+    public static final DefaultModelLoader LOADER_MAIN = new DefaultModelLoader(new ResourceLocation(Ref.ID, "main"));
+    public static final AntimatterModelLoader.BlockBenchLoader LOADER_COVER = new AntimatterModelLoader.BlockBenchLoader(new ResourceLocation(Ref.ID, "cover")) {
+        @Override
+        public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
+            AntimatterGroupedModel model = super.read(context, json);
+            return new AntimatterGroupedModel.CoverModel(model);
+        }
+    };
 
     public static final DynamicModelLoader LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
     public static final DynamicModelLoader LOADER_MACHINE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "machine")) {
         @Override
-        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
-            return new DynamicModel((DynamicModel) super.read(context, json)) {
+        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
+            return new DynamicModel(super.read(context, json)) {
                 @Override
                 public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-                    MachineBakedModel model = new MachineBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
-                    if (json.has("particle"))
-                        model.particle(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(json.get("particle").getAsString()))));
-                    return model;
+                    return new MachineBakedModel(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };
         }
     };
     public static final DynamicModelLoader LOADER_PIPE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "pipe")) {
         @Override
-        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
-            return new DynamicModel((DynamicModel) super.read(context, json)) {
+        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
+            return new DynamicModel(super.read(context, json)) {
                 @Override
                 public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-                    return new PipeBakedModel(getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                    return new PipeBakedModel(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };
         }
     };
 
-    public static final AntimatterModelLoader LOADER_PROXY = new AntimatterModelLoader(new ResourceLocation(Ref.ID, "proxy")) {
+    public static final AntimatterModelLoader<ProxyModel> LOADER_PROXY = new AntimatterModelLoader<ProxyModel>(new ResourceLocation(Ref.ID, "proxy")) {
         @Override
-        public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
+        public ProxyModel read(JsonDeserializationContext context, JsonObject json) {
             return new ProxyModel();
         }
     };

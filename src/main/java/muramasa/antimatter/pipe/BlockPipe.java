@@ -371,6 +371,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public AntimatterBlockModelBuilder getPipeConfig(AntimatterBlockModelBuilder builder) {
         builder.model(getModelLoc("base", 0), of("all", getSide(), "overlay", getFace()));
         builder.staticConfigId("pipe");
+        builder.particle(getFace());
 
         //Default Shape (0 Connections)
         builder.config(getPipeID(0, 0), getModelLoc("base", 0), c -> c.tex(of("all", getSide(), "overlay", getFace())));

@@ -29,4 +29,9 @@ public class DynamicTexturer<T extends IDynamicModelProvider, U> {
         return currentList;
     }
 
+    public void invalidate() {
+        this.previousKey = null;
+        this.cache = null;
+    }
+
 }

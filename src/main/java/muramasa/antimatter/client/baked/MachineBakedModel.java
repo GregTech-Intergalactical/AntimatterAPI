@@ -12,9 +12,9 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.data.IModelData;
@@ -27,8 +27,8 @@ import java.util.function.Function;
 
 public class MachineBakedModel extends CoveredBakedModel {
 
-    public MachineBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
-        super(bakedTuple);
+    public MachineBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<IBakedModel[]> bakedTuple) {
+        super(particle, bakedTuple);
     }
 
     public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {

@@ -10,10 +10,7 @@ import muramasa.antimatter.tile.TileEntityFakeBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.RenderMaterial;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -29,8 +26,8 @@ import java.util.*;
 
 public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
-    public ProxyBakedModel() {
-        super();
+    public ProxyBakedModel(TextureAtlasSprite particle) {
+        super(particle);
     }
 
     @Nonnull
@@ -82,5 +79,35 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
             return Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(realState).getQuads(realState, side, rand, data);
         DynamicTexturer<ICover, ICover.DynamicKey> texturer = fake.getTexturer(side);
         return texturer.getQuads("fake", new LinkedList<>(), realState, cover, new ICover.DynamicKey(fake.facing, data.getData(AntimatterProperties.TEXTURE_MODEL_PROPERTY), Data.COVEROUTPUT.getId()), side.getIndex(), data);
+    }
+
+    @Override
+    public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public boolean isAmbientOcclusion() {
+        return false;
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return true;
+    }
+
+    @Override
+    public boolean isSideLit() {
+        return true;
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return true;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return ItemOverrideList.EMPTY;
     }
 }

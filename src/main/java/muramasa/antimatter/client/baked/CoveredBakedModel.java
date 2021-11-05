@@ -12,8 +12,8 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
@@ -24,8 +24,8 @@ import java.util.Random;
 
 public class CoveredBakedModel extends AttachableBakedModel {
 
-    public CoveredBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
-        super(bakedTuple);
+    public CoveredBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<IBakedModel[]> bakedTuple) {
+        super(particle, bakedTuple);
     }
 
     @Override

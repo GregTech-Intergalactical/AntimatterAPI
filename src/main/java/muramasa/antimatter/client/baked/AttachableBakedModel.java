@@ -7,8 +7,8 @@ import muramasa.antimatter.dynamic.DynamicBakedModel;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
@@ -24,8 +24,8 @@ import java.util.Random;
 
 //For now, use only general quads.
 public class AttachableBakedModel extends DynamicBakedModel {
-    public AttachableBakedModel(Tuple<IBakedModel, Int2ObjectOpenHashMap<IBakedModel[]>> bakedTuple) {
-        super(bakedTuple);
+    public AttachableBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<IBakedModel[]> bakedTuple) {
+        super(particle, bakedTuple);
     }
 
     @Nonnull

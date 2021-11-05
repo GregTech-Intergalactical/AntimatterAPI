@@ -27,6 +27,26 @@ import java.util.function.Function;
 
 public class ModelUtils {
 
+    //Assumes from North.
+    public static TransformationMatrix transform(Direction side) {
+        switch (side) {
+            case DOWN:
+                return new TransformationMatrix(null, new Quaternion(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), 90.0F, true)), null, null);
+            case UP:
+                return new TransformationMatrix(null, new Quaternion(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), -90.0F, true)), null, null);
+            case NORTH:
+                return TransformationMatrix.identity();
+            case SOUTH:
+                return new TransformationMatrix(null, new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), 180.0F, true), null, null);
+            case WEST:
+                return new TransformationMatrix(null, new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), 90.0f, true), null, null);
+            case EAST:
+                return new TransformationMatrix(null, new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), -90.0f, true), null, null);
+            default:
+                throw new RuntimeException("Invalid direction/null sent to transform.");
+        }
+    }
+
     public static IUnbakedModel getMissingModel() {
         return ModelLoader.instance().getUnbakedModel(new ModelResourceLocation("builtin/missing", "missing"));
     }
