@@ -32,6 +32,7 @@ public class CoverOutput extends CoverInput {
     @Override
     public void onUpdate() {
         super.onUpdate();
+        if (handler.getTile().getWorld().isRemote) return;
         if (tile.getWorld().getGameTime() % 100 == 0) {
             if (shouldOutputFluids())
                 processFluidOutput();

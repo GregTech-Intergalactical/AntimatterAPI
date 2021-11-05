@@ -7,9 +7,11 @@ import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
@@ -62,7 +64,10 @@ public class ButtonWidget extends Widget {
         if (button != 0) return;
         this.pressed = true;
         super.onClick(mouseX, mouseY, button);
-        if (this.onPress != null) this.onPress.accept(this);
+        if (this.onPress != null) {
+            Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            this.onPress.accept(this);
+        }
     }
 
     @Override

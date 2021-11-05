@@ -227,6 +227,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
+    public void onClientUpdate() {
+        super.onClientUpdate();
+        coverHandler.ifPresent(MachineCoverHandler::onUpdate);
+    }
+
+    @Override
     public void onRemove() {
         if (isServerSide()) {
             coverHandler.ifPresent(MachineCoverHandler::onRemove);
@@ -524,6 +530,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (side == getFacing() && !allowsFrontIO()) return LazyOptional.empty();
         if (blocksCapability(cap, side)) return LazyOptional.empty();
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.side(side).cast();
+        if (cap == RECIPE_HANDLER_CAPABILITY && recipeHandler.isPresent()) return recipeHandler.side(side).cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.side(side).cast();
         else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent())
             return energyHandler.side(side).cast();
