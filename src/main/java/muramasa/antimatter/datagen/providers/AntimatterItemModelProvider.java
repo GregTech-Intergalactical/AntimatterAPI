@@ -69,8 +69,8 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         AntimatterAPI.all(IAntimatterTool.class, domain).forEach(t -> tex(t.getItem(), "item/handheld", t.getTextures()));
         AntimatterAPI.all(IAntimatterArmor.class, domain).forEach(t -> tex(t.getItem(), "item/handheld", t.getTextures()));
         AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> {
-            antimatterTex(f.getContainerItem(), "forge", "item/bucket").bucketProperties(f.getFluid());
-            antimatterTex(f.getFluidBlock(), AntimatterBlockModelBuilder.getSimple()).tex(a -> a.put("all", f.getAttributes().getFlowingTexture().toString()));
+            modelAndTexture(f.getContainerItem(), "forge", "item/bucket").bucketProperties(f.getFluid());
+            modelAndTexture(f.getFluidBlock(), AntimatterBlockModelBuilder.getSimple()).tex(a -> a.put("all", f.getAttributes().getFlowingTexture().toString()));
         });
     }
 
@@ -107,11 +107,11 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         return (AntimatterItemModelBuilder) getBuilder(item.asItem().getRegistryName().getPath());
     }
 
-    public AntimatterItemModelBuilder antimatterTex(IItemProvider item, String namespace, String path) {
+    public AntimatterItemModelBuilder modelAndTexture(IItemProvider item, String namespace, String path) {
         return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(namespace, path)));
     }
 
-    public AntimatterItemModelBuilder antimatterTex(IItemProvider item, String resource) {
+    public AntimatterItemModelBuilder modelAndTexture(IItemProvider item, String resource) {
         return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(resource)));
     }
 }

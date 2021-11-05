@@ -27,59 +27,24 @@ import java.util.function.Function;
 
 public class ModelUtils {
 
-    private static final Direction[][] TRANSFORM = new Direction[][]{
-            new Direction[]{
-                    Direction.SOUTH,
-                    Direction.NORTH,
-                    Direction.DOWN,
-                    Direction.UP,
-                    Direction.WEST,
-                    Direction.EAST
-            },
-            new Direction[]{
-                    Direction.NORTH,
-                    Direction.SOUTH,
-                    Direction.UP,
-                    Direction.DOWN,
-                    Direction.WEST,
-                    Direction.EAST
-            },
-            new Direction[]{
-                    Direction.DOWN,
-                    Direction.UP,
-                    Direction.NORTH,
-                    Direction.SOUTH,
-                    Direction.WEST,
-                    Direction.EAST
-            },
-            new Direction[]{
-                    Direction.DOWN,
-                    Direction.UP,
-                    Direction.SOUTH,
-                    Direction.NORTH,
-                    Direction.EAST,
-                    Direction.WEST,
-            },
-            new Direction[]{
-                    Direction.DOWN,
-                    Direction.UP,
-                    Direction.WEST,
-                    Direction.EAST,
-                    Direction.SOUTH,
-                    Direction.NORTH
-            },
-            new Direction[]{
-                    Direction.DOWN,
-                    Direction.UP,
-                    Direction.EAST,
-                    Direction.WEST,
-                    Direction.NORTH,
-                    Direction.SOUTH
-            }
-    };
-
-    public static Direction rotate(Direction facing, Direction side) {
-        return TRANSFORM[facing.getIndex()][side.getIndex()];
+    //Assumes from North.
+    public static TransformationMatrix transform(Direction side) {
+        switch (side) {
+            case DOWN:
+                return new TransformationMatrix(null, new Quaternion(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), 90.0F, true)), null, null);
+            case UP:
+                return new TransformationMatrix(null, new Quaternion(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), -90.0F, true)), null, null);
+            case NORTH:
+                return TransformationMatrix.identity();
+            case SOUTH:
+                return new TransformationMatrix(null, new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), 180.0F, true), null, null);
+            case WEST:
+                return new TransformationMatrix(null, new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), 90.0f, true), null, null);
+            case EAST:
+                return new TransformationMatrix(null, new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), -90.0f, true), null, null);
+            default:
+                throw new RuntimeException("Invalid direction/null sent to transform.");
+        }
     }
 
     public static IUnbakedModel getMissingModel() {
