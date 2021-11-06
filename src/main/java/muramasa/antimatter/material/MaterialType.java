@@ -16,19 +16,22 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
 
-    protected String id;
+    protected final String id;
     protected int unitValue, layers;
     protected boolean generating = true, blockType, visible, splitName;
-    protected Set<Material> materials = new ObjectLinkedOpenHashSet<>(); //Linked to preserve insertion order for JEI
-    protected Map<MaterialType<?>, ITag.INamedTag<?>> tagMap = new Object2ObjectOpenHashMap<>();
+    protected final Set<Material> materials = new ObjectLinkedOpenHashSet<>(); //Linked to preserve insertion order for JEI
+    protected final Map<MaterialType<?>, ITag.INamedTag<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
-    protected BiMap<Material, Item> OVERRIDES = HashBiMap.create();
+    protected final BiMap<Material, Item> OVERRIDES = HashBiMap.create();
+    protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
+
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {
         this.id = id;
@@ -46,6 +49,15 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
     public MaterialType<T> nonGen() {
         generating = false;
         return this;
+    }
+
+    /**
+     * Adds a list of dependent flags, that is all of these flags are added as well.
+     * @param tags the list of tags.
+     * @return this
+     */
+    public void dependents(IMaterialTag... tags) {
+        dependents.addAll(Arrays.asList(tags));
     }
 
     /**
@@ -104,6 +116,11 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
     public MaterialType<T> set(T getter) {
         this.getter = getter;
         return this;
+    }
+
+    @Override
+    public Set<IMaterialTag> dependents() {
+        return this.dependents;
     }
 
     public T get() {

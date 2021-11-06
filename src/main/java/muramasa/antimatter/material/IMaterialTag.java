@@ -6,6 +6,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 public interface IMaterialTag extends ISharedAntimatterObject {
@@ -34,5 +35,9 @@ public interface IMaterialTag extends ISharedAntimatterObject {
         Set<Material> materials = new ObjectOpenHashSet<>();
         Arrays.stream(tags).forEach(t -> materials.addAll(t.all()));
         return materials;
+    }
+
+    default Set<IMaterialTag> dependents() {
+        return Collections.emptySet();
     }
 }

@@ -386,6 +386,10 @@ public class Data {
         BLOCK.forceOverride(Lapis, Items.LAPIS_BLOCK);
         BLOCK.forceOverride(Netherite, Items.NETHERITE_BLOCK);
 
+        ROTOR.dependents(PLATE, SCREW, RING);
+        SCREW.dependents(BOLT);
+        BOLT.dependents(ROD);
+
         if (side == Dist.CLIENT) {
             clientBehaviours();
         }

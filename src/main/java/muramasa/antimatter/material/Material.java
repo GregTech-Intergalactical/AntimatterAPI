@@ -381,6 +381,11 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
             if (!this.has(t)){
                 t.add(this);
             }
+            for (IMaterialTag tag : t.dependents()) {
+                if (!this.has(tag)) {
+                    tag.add(this);
+                }
+            }
         }
         return this;
     }
