@@ -38,13 +38,13 @@ public class StructureBuilder {
         return this;
     }
 
-    public StructureBuilder at(String key, Object... objects) {
-        elementLookup.put(key, new ComponentElement(getAntiObjects(objects)));
+    public StructureBuilder at(String key, IAntimatterObject... objects) {
+        elementLookup.put(key, new ComponentElement(objects));
         return this;
     }
 
-    public StructureBuilder at(String key, String name, Object... objects) {
-        elementLookup.put(key, new ComponentElement(name, getAntiObjects(objects)));
+    public StructureBuilder at(String key, String name, IAntimatterObject... objects) {
+        elementLookup.put(key, new ComponentElement(name, objects));
         return this;
     }
 
@@ -60,7 +60,7 @@ public class StructureBuilder {
 
     public StructureBuilder at(String key, RegistryObject<?>... objects) {
         Arrays.stream(objects).forEach(o -> {
-            if (o.get() instanceof IAntimatterObject) at(key, (Object) o);
+            if (o.get() instanceof IAntimatterObject) at(key, o);
         });
         return this;
     }
@@ -85,7 +85,7 @@ public class StructureBuilder {
         return new Structure(size, elements.build());
     }
 
-    public static IAntimatterObject[] getAntiObjects(Object... objects) {
+    /*public static IAntimatterObject[] getAntiObjects(Object... objects) {
         List<IAntimatterObject> antiObjects = new ObjectArrayList<>();
         Arrays.stream(objects).forEach(o -> {
             if (o instanceof RegistryObject && ((RegistryObject<?>) o).get() instanceof IAntimatterObject)
@@ -93,5 +93,5 @@ public class StructureBuilder {
             if (o instanceof IAntimatterObject) antiObjects.add((IAntimatterObject) o);
         });
         return antiObjects.toArray(new IAntimatterObject[0]);
-    }
+    }*/
 }

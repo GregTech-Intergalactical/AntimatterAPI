@@ -9,5 +9,5 @@ import java.util.List;
 @FunctionalInterface
 public interface IRequirement {
 
-    boolean test(Object2ObjectMap<String, List<IComponentHandler>> components, Object2ObjectMap<String, List<BlockState>> states);
+    boolean test(StructureResult result);
 }

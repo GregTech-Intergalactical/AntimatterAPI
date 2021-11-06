@@ -82,7 +82,7 @@ public class StructureResult {
     public boolean evaluate() {
         if (hasError) return false;
         for (Map.Entry<String, IRequirement> entry : structure.getRequirements().entrySet()) {
-            if (!entry.getValue().test(components, states)) {
+            if (!entry.getValue().test(this)) {
                 withError("Failed Element Requirement: " + entry.getKey());
                 return false;
             }
