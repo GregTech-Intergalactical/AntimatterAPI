@@ -102,6 +102,12 @@ public class AntimatterRecipeProvider extends RecipeProvider implements IAntimat
                     "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_SMALL)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_SMALL).tags(DUST).build()), "DD", "DD");
             addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "dust_tiny", "antimatter_dusts",
                     "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_TINY)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_TINY).tags(DUST).build()), "DDD", "DDD", "DDD");
+            addToolRecipe(DUST_BUILDER.get(ROD.getId()), consumer, Ref.ID, "rod", "antimatter_material",
+                    "has_wrench", in, ROD.all().stream().filter(t -> t.has(INGOT)).map(t -> ROD.get(t, 1)).collect(Collectors.toList()), of('F', FILE.getTag(), 'I', PropertyIngredient.builder("primary").types(INGOT).tags(ROD).build()), "F", "I");
+            addToolRecipe(DUST_TWO_BUILDER.get(BOLT.getId()), consumer, Ref.ID, "bolt", "antimatter_material",
+                    "has_wrench", in, BOLT.all().stream().map(t -> BOLT.get(t, 2)).collect(Collectors.toList()), of('F', SAW.getTag(), 'I', PropertyIngredient.builder("primary").types(ROD).tags(BOLT).build()), "F", "I");
+            addToolRecipe(DUST_TWO_BUILDER.get(SCREW.getId()), consumer, Ref.ID, "screw", "antimatter_material",
+                    "has_wrench", in, SCREW.all().stream().map(t -> SCREW.get(t, 1)).collect(Collectors.toList()), of('F', FILE.getTag(), 'I', PropertyIngredient.builder("primary").types(BOLT).tags(SCREW).build()), "FI", "I");
         }
     }
 

@@ -94,6 +94,28 @@ public class RecipeBuilders {
         }
     });
 
+    public static final MaterialRecipe.Provider DUST_TWO_BUILDER = MaterialRecipe.registerProvider("dust_two", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
+        final MaterialTypeItem type = AntimatterAPI.get(MaterialTypeItem.class, id);
+
+        @Override
+        public ItemStack build(CraftingInventory inv, MaterialRecipe.Result mats) {
+            Material mat = (Material) mats.mats.get("primary");
+            return type.get(mat, 2);
+        }
+
+        @Override
+        public Map<String, Object> getFromResult(@Nonnull ItemStack stack) {
+            if (stack.getItem() instanceof MaterialItem) {
+                return ImmutableMap.of("primary", ((MaterialItem) stack.getItem()).getMaterial());
+            }
+            Material mat = type.tryMaterialFromItem(stack);
+            if (mat != null) {
+                return ImmutableMap.of("primary", mat);
+            }
+            return null;
+        }
+    });
+
     public static final MaterialRecipe.Provider FLUID_PIPE_BUILDER = MaterialRecipe.registerProvider("fluid", Ref.ID, id -> new MaterialRecipe.ItemBuilder() {
 
         @Override
