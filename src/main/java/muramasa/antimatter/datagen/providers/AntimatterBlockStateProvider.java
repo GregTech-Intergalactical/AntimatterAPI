@@ -65,11 +65,6 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.CLIENT;
-    }
-
-    @Override
     public BlockModelProvider models() {
         return blockModelProvider;
     }

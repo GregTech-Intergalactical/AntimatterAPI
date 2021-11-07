@@ -8,23 +8,9 @@ public interface IAntimatterProvider extends IDataProvider {
     // Only runs when dynamically generating assets/data
     void run();
 
-    /**
-     * Return {@link Dist#CLIENT} for providers that should only run on clients
-     * Return {@link Dist#DEDICATED_SERVER} for providers that should only run on servers
-     */
-    Dist getSide();
-
-    /**
-     * @return Whether to run this provider during datagen.
-     */
-    default boolean shouldRun() {
-        return true;
-    }
-
     default boolean async() {
         return true;
     }
-
 
     default void onCompletion() {
 

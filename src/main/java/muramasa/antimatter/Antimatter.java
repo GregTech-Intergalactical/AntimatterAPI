@@ -1,8 +1,13 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
+import muramasa.antimatter.datagen.loaders.MaterialRecipes;
+import muramasa.antimatter.datagen.loaders.Pipes;
+import muramasa.antimatter.datagen.loaders.Tools;
 import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
+import muramasa.antimatter.event.AntimatterCraftingEvent;
+import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
@@ -58,15 +63,9 @@ public class Antimatter extends AntimatterMod {
         eventBus.addListener(this::serverSetup);
         eventBus.addListener(this::loadComplete);
 
-        providers();
-        AntimatterAPI.init();
+        MinecraftForge.EVENT_BUS.addListener(this::addCraftingLoaders);
+        MinecraftForge.EVENT_BUS.addListener(this::providers);
 
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
-            new KubeJSRegistrar();
-    }
-
-    private void providers() {
-        final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
         AntimatterDynamics.addProvider(Ref.ID,
                 g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
         AntimatterDynamics.addProvider(Ref.ID,
@@ -75,21 +74,38 @@ public class Antimatter extends AntimatterMod {
                 g -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates", g));
         AntimatterDynamics.addProvider(Ref.SHARED_ID,
                 g -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models", g));
-        AntimatterDynamics.addProvider(Ref.ID, g -> {
-            p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g,
-                    new ExistingFileHelperOverride());
-            return p[0];
-        });
-        AntimatterDynamics.addProvider(Ref.SHARED_ID, g -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
-                "Antimatter Shared Fluid Tags", false, g, new ExistingFileHelperOverride()));
-        AntimatterDynamics.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
-                false, g, p[0], new ExistingFileHelperOverride()));
-        AntimatterDynamics.addProvider(Ref.ID,
-                g -> new AntimatterRecipeProvider(Ref.ID, Ref.NAME.concat(" Recipes"), g));
-        AntimatterDynamics.addProvider(Ref.ID,
-                g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
         AntimatterDynamics.addProvider(Ref.ID,
                 g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
+
+        AntimatterAPI.init();
+
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
+            new KubeJSRegistrar();
+    }
+
+    private void addCraftingLoaders(AntimatterCraftingEvent ev) {
+        ev.addLoader(MaterialRecipes::init);
+        ev.addLoader(Pipes::loadRecipes);
+        ev.addLoader(Tools::init);
+    }
+
+    private void providers(AntimatterProvidersEvent ev) {
+        if (ev.getSide() == Dist.CLIENT) {
+
+        } else {
+            final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
+            ev.addProvider(Ref.ID, g -> {
+                p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g,
+                        new ExistingFileHelperOverride());
+                return p[0];
+            });
+            ev.addProvider(Ref.SHARED_ID, g -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
+                    "Antimatter Shared Fluid Tags", false, g, new ExistingFileHelperOverride()));
+            ev.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
+                    false, g, p[0], new ExistingFileHelperOverride()));
+            ev.addProvider(Ref.ID,
+                    g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
+        }
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {

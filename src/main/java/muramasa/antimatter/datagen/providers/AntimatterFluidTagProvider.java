@@ -52,11 +52,6 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.DEDICATED_SERVER;
-    }
-
-    @Override
     public boolean async() {
         return false;
     }

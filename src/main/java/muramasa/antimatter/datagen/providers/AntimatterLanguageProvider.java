@@ -69,11 +69,6 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.CLIENT;
-    }
-
-    @Override
     public void onCompletion() {
         data.forEach((k, v) -> DynamicResourcePack.addLangLoc(providerDomain, locale, k, v));
     }

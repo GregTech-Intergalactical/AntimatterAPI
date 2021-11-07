@@ -56,11 +56,6 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.DEDICATED_SERVER;
-    }
-
-    @Override
     public void act(@Nonnull DirectoryCache cache) {
         /*Path folder = this.gen.getOutputFolder();
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();

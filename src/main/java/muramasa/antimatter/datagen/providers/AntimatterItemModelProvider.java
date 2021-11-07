@@ -53,12 +53,6 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.CLIENT;
-    }
-
-
-    @Override
     protected void registerModels() {
         processItemModels(providerDomain);
     }

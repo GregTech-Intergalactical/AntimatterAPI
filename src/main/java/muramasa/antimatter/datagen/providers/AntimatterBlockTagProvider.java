@@ -60,11 +60,6 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.DEDICATED_SERVER;
-    }
-
-    @Override
     public void registerTags() {
         processTags(providerDomain);
     }

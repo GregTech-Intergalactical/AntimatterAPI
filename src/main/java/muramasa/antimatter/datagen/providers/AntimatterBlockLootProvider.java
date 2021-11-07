@@ -95,11 +95,6 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.DEDICATED_SERVER;
-    }
-
-    @Override
     public void act(DirectoryCache cache) throws IOException {
         /*loot();
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {

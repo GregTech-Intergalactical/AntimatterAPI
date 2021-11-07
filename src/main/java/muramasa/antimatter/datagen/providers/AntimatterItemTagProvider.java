@@ -72,11 +72,6 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     @Override
-    public Dist getSide() {
-        return Dist.DEDICATED_SERVER;
-    }
-
-    @Override
     public boolean async() {
         return false;
     }

@@ -4,9 +4,12 @@ import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.event.AntimatterCraftingEvent;
 import muramasa.antimatter.event.AntimatterLoaderEvent;
+import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
@@ -25,10 +28,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -38,8 +38,8 @@ public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void onProviderInit(String domain, DataGenerator gen, Dist side) {
-        PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
-                .filter(p -> p.getSide().equals(side) && p.shouldRun()).forEach(gen::addProvider);
+        //PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
+        //        .filter(p -> p.getSide().equals(side)).forEach(gen::addProvider);
     }
 
     /**
@@ -53,10 +53,9 @@ public class AntimatterDynamics {
     // run first
     public static void runDataProvidersDynamically() {
         DynamicResourcePack.clearServer();
-        List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
-                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN))
-                        .filter(p -> p.getSide().equals(Dist.DEDICATED_SERVER) && p.shouldRun()))
-                .collect(Collectors.toList());
+        AntimatterProvidersEvent ev = new AntimatterProvidersEvent(Ref.BACKGROUND_GEN, Dist.DEDICATED_SERVER, Antimatter.INSTANCE);
+        MinecraftForge.EVENT_BUS.post(ev);
+        Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
@@ -68,9 +67,11 @@ public class AntimatterDynamics {
     public static void runAssetProvidersDynamically() {
         DynamicResourcePack.clearClient();
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
-                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN))
-                        .filter(p -> p.getSide().equals(Dist.CLIENT) && p.shouldRun()))
+                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)))
                 .collect(Collectors.toList());
+        //AntimatterProvidersEvent ev = new AntimatterProvidersEvent(Ref.BACKGROUND_GEN, Dist.CLIENT, Antimatter.INSTANCE);
+        //MinecraftForge.EVENT_BUS.post(ev);
+        //Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
@@ -86,20 +87,21 @@ public class AntimatterDynamics {
      */
     public static void collectRecipes(Consumer<IFinishedRecipe> rec) {
         Set<ResourceLocation> set = Sets.newHashSet();
-        List<AntimatterRecipeProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
-                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN))
-                        .filter(p -> p instanceof AntimatterRecipeProvider).map(t -> (AntimatterRecipeProvider) t))
-                .collect(Collectors.toList());
-        providers.forEach(prov -> prov.registerRecipes(recipe -> {
-            if (set.add(recipe.getID())) {
-                rec.accept(recipe);
-            }
-        }));
+        AntimatterRecipeProvider provider = new AntimatterRecipeProvider(Ref.ID, "provider", Ref.BACKGROUND_GEN);
+        AntimatterCraftingEvent ev = new AntimatterCraftingEvent(Antimatter.INSTANCE);
+        MinecraftForge.EVENT_BUS.post(ev);
+        for (ICraftingLoader loader : ev.getLoaders()) {
+            loader.loadRecipes(t -> {
+                if (set.add(t.getID())) {
+                    rec.accept(t);
+                }
+            }, provider);
+        }
     }
 
     public static void onRecipeManagerBuild(Consumer<IFinishedRecipe> objectIn) {
         Antimatter.LOGGER.info("Antimatter recipe manager running..");
-        collectRecipes(objectIn::accept);
+        collectRecipes(objectIn);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
                 if (!AntimatterAPI.isModLoaded(mod))
