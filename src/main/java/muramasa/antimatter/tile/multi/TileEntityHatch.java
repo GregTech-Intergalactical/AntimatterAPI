@@ -13,8 +13,10 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.Explosion;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -43,6 +45,20 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                     if (out == null)
                         return false;
                     return out.isEqual(COVERENERGY) && direction == out.side();
+                }
+
+                @Override
+                protected boolean checkVoltage(long receive, boolean simulate) {
+                    boolean flag = true;
+                    if (type.getOutputCover() == COVERDYNAMO) {
+                        flag = receive <= getOutputVoltage();
+                    } else if (type.getOutputCover() == COVERENERGY) {
+                        flag = receive <= getInputVoltage();
+                    }
+                    if (!flag && !simulate) {
+                        Utils.createExplosion(tile.getWorld(), tile.getPos(), 4.0F, Explosion.Mode.BREAK);
+                    }
+                    return flag;
                 }
 
                 @Override

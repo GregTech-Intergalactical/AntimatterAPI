@@ -7,45 +7,52 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.function.*;
 
 public interface ICanSyncData {
-    <T> void bind(Supplier<T> supplier, Consumer<T> consumer, Function<PacketBuffer, T> reader, BiConsumer<PacketBuffer, T> writer, BiFunction<Object, Object, Boolean> equality);
 
-    default void syncInt(Supplier<Integer> source, Consumer<Integer> onChange) {
-        bind(source, onChange, PacketBuffer::readVarInt, PacketBuffer::writeVarInt, Object::equals);
+    enum SyncDirection {
+        SERVER_TO_CLIENT,
+        //TODO: This direction has not been tested yet.
+        CLIENT_TO_SERVER
     }
 
-    default void syncLong(Supplier<Long> source, Consumer<Long> onChange) {
-        bind(source, onChange, PacketBuffer::readLong, PacketBuffer::writeLong, Object::equals);
+    <T> void bind(Supplier<T> supplier, Consumer<T> consumer, Function<PacketBuffer, T> reader, BiConsumer<PacketBuffer, T> writer, BiFunction<Object, Object, Boolean> equality, SyncDirection direction);
+
+    default void syncInt(Supplier<Integer> source, Consumer<Integer> onChange, SyncDirection direction) {
+        bind(source, onChange, PacketBuffer::readVarInt, PacketBuffer::writeVarInt, Object::equals, direction);
     }
 
-    default void syncDouble(Supplier<Double> source, Consumer<Double> onChange) {
-        bind(source, onChange, PacketBuffer::readDouble, PacketBuffer::writeDouble, Object::equals);
+    default void syncLong(Supplier<Long> source, Consumer<Long> onChange, SyncDirection direction) {
+        bind(source, onChange, PacketBuffer::readLong, PacketBuffer::writeLong, Object::equals, direction);
     }
 
-    default void syncFloat(Supplier<Float> source, Consumer<Float> onChange) {
-        bind(source, onChange, PacketBuffer::readFloat, PacketBuffer::writeFloat, Object::equals);
+    default void syncDouble(Supplier<Double> source, Consumer<Double> onChange, SyncDirection direction) {
+        bind(source, onChange, PacketBuffer::readDouble, PacketBuffer::writeDouble, Object::equals, direction);
     }
 
-    default void syncString(Supplier<String> source, Consumer<String> onChange) {
-        bind(source, onChange, a -> a.readString(32767), PacketBuffer::writeString, Object::equals);
+    default void syncFloat(Supplier<Float> source, Consumer<Float> onChange, SyncDirection direction) {
+        bind(source, onChange, PacketBuffer::readFloat, PacketBuffer::writeFloat, Object::equals, direction);
     }
 
-    default void syncBoolean(Supplier<Boolean> source, Consumer<Boolean> onChange) {
-        bind(source, onChange, PacketBuffer::readBoolean, PacketBuffer::writeBoolean, Object::equals);
+    default void syncString(Supplier<String> source, Consumer<String> onChange, SyncDirection direction) {
+        bind(source, onChange, a -> a.readString(32767), PacketBuffer::writeString, Object::equals, direction);
     }
 
-    default void syncFluidStack(Supplier<FluidStack> source, Consumer<FluidStack> onChange) {
+    default void syncBoolean(Supplier<Boolean> source, Consumer<Boolean> onChange, SyncDirection direction) {
+        bind(source, onChange, PacketBuffer::readBoolean, PacketBuffer::writeBoolean, Object::equals, direction);
+    }
+
+    default void syncFluidStack(Supplier<FluidStack> source, Consumer<FluidStack> onChange, SyncDirection direction) {
         bind(() -> source.get().copy(), onChange, FluidStack::readFromPacket, (a, b) -> b.writeToPacket(a), (a, b) -> {
             FluidStack f = (FluidStack) a;
             if (!(b instanceof FluidStack)) return false;
             return a.equals(b) && ((FluidStack) b).getAmount() == f.getAmount();
-        });
+        }, direction);
     }
 
-    default void syncItemStack(Supplier<ItemStack> source, Consumer<ItemStack> onChange) {
-        bind(() -> source.get().copy(), onChange, PacketBuffer::readItemStack, PacketBuffer::writeItemStack, Object::equals);
+    default void syncItemStack(Supplier<ItemStack> source, Consumer<ItemStack> onChange, SyncDirection direction) {
+        bind(() -> source.get().copy(), onChange, PacketBuffer::readItemStack, PacketBuffer::writeItemStack, Object::equals, direction);
     }
 
-    default <T extends Enum<T>> void syncEnum(Supplier<T> source, Consumer<T> onChange, Class<T> clazz) {
-        bind(source, onChange, b -> b.readEnumValue(clazz), PacketBuffer::writeEnumValue, Object::equals);
+    default <T extends Enum<T>> void syncEnum(Supplier<T> source, Consumer<T> onChange, Class<T> clazz, SyncDirection direction) {
+        bind(source, onChange, b -> b.readEnumValue(clazz), PacketBuffer::writeEnumValue, Object::equals, direction);
     }
 }

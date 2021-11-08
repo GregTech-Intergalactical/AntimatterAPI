@@ -15,6 +15,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.PlayerEntity;
 import tesseract.api.capability.TesseractGTCapability;
 
+import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
+
 public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer<T>> extends TileEntityTransformer<T> implements IInfoRenderer<TileEntityDigitalTransformer.DigitalTransformerWidget> {
 
     public TileEntityDigitalTransformer(Machine<?> type) {
@@ -123,8 +125,8 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
         public void init() {
             super.init();
             TileEntityDigitalTransformer<?> m = (TileEntityDigitalTransformer<?>) gui.handler;
-            gui.syncInt(() -> m.amperage, i -> amperage = i);
-            gui.syncInt(() -> m.voltage, i -> voltage = i);
+            gui.syncInt(() -> m.amperage, i -> amperage = i, SERVER_TO_CLIENT);
+            gui.syncInt(() -> m.voltage, i -> voltage = i, SERVER_TO_CLIENT);
         }
 
         public static WidgetSupplier build() {

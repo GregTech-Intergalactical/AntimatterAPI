@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
+
 public class FluidSlotWidget extends Widget {
 
     private final int slot;
@@ -49,7 +51,7 @@ public class FluidSlotWidget extends Widget {
         super.init();
         ICapabilityProvider provider = (ICapabilityProvider) this.gui.handler;
         this.gui.syncFluidStack(() -> provider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-                .map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack);
+                .map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack, SERVER_TO_CLIENT);
     }
 
     @Override

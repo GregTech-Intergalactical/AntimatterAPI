@@ -14,6 +14,8 @@ import tesseract.api.ITickingController;
 import tesseract.api.gt.GTController;
 import tesseract.api.item.ItemController;
 
+import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
+
 public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
 
     final IInfoRenderer<T> renderer;
@@ -47,14 +49,18 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             super(gui, parent, renderer);
         }
 
+        public boolean drawActiveInfo() {
+            return true;
+        }
+
         @Override
         public void init() {
             super.init();
             TileEntityMultiMachine<?> m = (TileEntityMultiMachine<?>) gui.handler;
-            gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getCurrentProgress).orElse(0), i -> this.currentProgress = i);
-            gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getMaxProgress).orElse(0), i -> this.maxProgress = i);
-            gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getOverclock).orElse(0), i -> this.overclock = i);
-            gui.syncLong(() -> m.recipeHandler.map(MachineRecipeHandler::getPower).orElse(0L), i -> this.euT = i);
+            gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getCurrentProgress).orElse(0), i -> this.currentProgress = i, SERVER_TO_CLIENT);
+            gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getMaxProgress).orElse(0), i -> this.maxProgress = i, SERVER_TO_CLIENT);
+            gui.syncInt(() -> m.recipeHandler.map(MachineRecipeHandler::getOverclock).orElse(0), i -> this.overclock = i, SERVER_TO_CLIENT);
+            gui.syncLong(() -> m.recipeHandler.map(MachineRecipeHandler::getPower).orElse(0L), i -> this.euT = i, SERVER_TO_CLIENT);
         }
 
         public static WidgetSupplier build() {
@@ -83,25 +89,25 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.getTotalVoltage();
-            }, a -> this.voltAverage = a);
+            }, a -> this.voltAverage = a, SERVER_TO_CLIENT);
             gui.syncLong(() -> {
                 ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.totalAmps();
-            }, a -> this.ampAverage = a);
+            }, a -> this.ampAverage = a, SERVER_TO_CLIENT);
             gui.syncInt(() -> {
                 ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0;
                 GTController gt = (GTController) controller;
                 return gt.cableFrameAverage(pos);
-            }, a -> this.cableAverage = a);
+            }, a -> this.cableAverage = a, SERVER_TO_CLIENT);
             gui.syncLong(() -> {
                 ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.totalLoss();
-            }, a -> this.loss = a);
+            }, a -> this.loss = a, SERVER_TO_CLIENT);
         }
 
         public static WidgetSupplier build() {
@@ -128,13 +134,13 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 if (controller == null) return 0;
                 ItemController gt = (ItemController) controller;
                 return gt.getTransferred();
-            }, a -> this.transferred = a);
+            }, a -> this.transferred = a, SERVER_TO_CLIENT);
             gui.syncInt(() -> {
                 ITickingController controller = Tesseract.ITEM.getController(pipe.getWorld(), pipe.getPos().toLong());
                 if (controller == null) return 0;
                 ItemController gt = (ItemController) controller;
                 return gt.getCableTransferred(pipe.getPos().toLong());
-            }, a -> this.cableTransferred = a);
+            }, a -> this.cableTransferred = a, SERVER_TO_CLIENT);
         }
 
         public static WidgetSupplier build() {

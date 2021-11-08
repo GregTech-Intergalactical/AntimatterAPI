@@ -168,16 +168,31 @@ public class GuiInstance implements ICanSyncData {
     }
 
     public void update() {
-        List<SyncHolder> toSync = new ObjectArrayList<>();
-        for (SyncHolder sync : this.syncData) {
-            Object value = sync.source.get();
-            if (!sync.equality.apply(value, sync.current)) {
-                sync.current = value;
-                toSync.add(sync);
+        if (this.handler.isRemote()) {
+            unsortedWidgets().forEach(Widget::update);
+            List<SyncHolder> toSync = new ObjectArrayList<>();
+            for (SyncHolder sync : this.syncData) {
+                if (sync.direction == SyncDirection.SERVER_TO_CLIENT) continue;
+                Object value = sync.source.get();
+                if (!sync.equality.apply(value, sync.current)) {
+                    sync.current = value;
+                    toSync.add(sync);
+                }
             }
+            if (toSync.size() > 0)
+                writeToServer(toSync);
+        } else {
+            List<SyncHolder> toSync = new ObjectArrayList<>();
+            for (SyncHolder sync : this.syncData) {
+                Object value = sync.source.get();
+                if (!sync.equality.apply(value, sync.current)) {
+                    sync.current = value;
+                    toSync.add(sync);
+                }
+            }
+            if (toSync.size() > 0)
+                write(toSync);
         }
-        if (toSync.size() > 0)
-            write(toSync);
     }
 
     @Nullable
@@ -185,7 +200,7 @@ public class GuiInstance implements ICanSyncData {
         return focus;
     }
 
-    public void receivePacket(GuiSyncPacket packet) {
+    public void receivePacket(GuiSyncPacket packet, SyncDirection dir) {
         ByteBuf data = packet.clientData;
         PacketBuffer buf = new PacketBuffer(data);
         int size = buf.readVarInt();
@@ -207,11 +222,17 @@ public class GuiInstance implements ICanSyncData {
         }
     }
 
-    @Override
-    public <T> void bind(Supplier<T> supplier, Consumer<T> consumer, Function<PacketBuffer, T> reader, BiConsumer<PacketBuffer, T> writer, BiFunction<Object, Object, Boolean> equality) {
-        syncData.add(new SyncHolder(supplier, consumer, reader, writer, indexCounter++, equality));
+    private void writeToServer(final List<SyncHolder> data) {
+        GuiSyncPacket pkt = new GuiSyncPacket(data);
+        Antimatter.NETWORK.sendToServer(pkt);
     }
 
+    @Override
+    public <T> void bind(Supplier<T> supplier, Consumer<T> consumer, Function<PacketBuffer, T> reader, BiConsumer<PacketBuffer, T> writer, BiFunction<Object, Object, Boolean> equality, SyncDirection direction) {
+        syncData.add(new SyncHolder(supplier, consumer, reader, writer, indexCounter++, equality, direction));
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static class SyncHolder {
         public final Supplier source;
         public final Consumer sink;
@@ -220,14 +241,16 @@ public class GuiInstance implements ICanSyncData {
         public final BiConsumer<PacketBuffer, Object> writer;
         public final int index;
         public BiFunction<Object, Object, Boolean> equality;
+        public final SyncDirection direction;
 
-        public SyncHolder(Supplier<?> source, Consumer<?> sink, Function<PacketBuffer, ?> reader, BiConsumer<PacketBuffer, ?> writer, int index, BiFunction<Object, Object, Boolean> equality) {
+        public SyncHolder(Supplier<?> source, Consumer<?> sink, Function<PacketBuffer, ?> reader, BiConsumer<PacketBuffer, ?> writer, int index, BiFunction<Object, Object, Boolean> equality, SyncDirection direction) {
             this.source = source;
             this.index = index;
             this.sink = sink;
             this.reader = (Function<PacketBuffer, Object>) reader;
             this.writer = (BiConsumer<PacketBuffer, Object>) writer;
             this.equality = equality;
+            this.direction = direction;
         }
     }
 }

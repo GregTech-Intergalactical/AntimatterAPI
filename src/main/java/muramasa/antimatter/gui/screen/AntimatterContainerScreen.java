@@ -35,7 +35,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     @Override
     public void tick() {
         super.tick();
-        container.source().unsortedWidgets().forEach(Widget::update);
+        container.source().update();
     }
 
     @Override
