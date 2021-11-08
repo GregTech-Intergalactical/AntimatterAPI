@@ -1,5 +1,6 @@
 package muramasa.antimatter.datagen.loaders;
 
+import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
@@ -22,8 +23,7 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.GRINDABLE;
-import static muramasa.antimatter.recipe.RecipeBuilders.DUST_BUILDER;
-import static muramasa.antimatter.recipe.RecipeBuilders.DUST_TWO_BUILDER;
+import static muramasa.antimatter.recipe.RecipeBuilders.*;
 import static muramasa.antimatter.util.TagUtils.getForgeItemTag;
 import static muramasa.antimatter.util.TagUtils.nc;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
@@ -42,6 +42,46 @@ public class MaterialRecipes {
                 "has_wrench", in, BOLT.all().stream().map(t -> BOLT.get(t, 2)).collect(Collectors.toList()), of('F', SAW.getTag(), 'I', PropertyIngredient.builder("primary").types(ROD).tags(BOLT).build()), "F", "I");
         provider.addToolRecipe(DUST_TWO_BUILDER.get(SCREW.getId()), consumer, Ref.ID, "screw", "antimatter_material",
                 "has_wrench", in, SCREW.all().stream().map(t -> SCREW.get(t, 1)).collect(Collectors.toList()), of('F', FILE.getTag(), 'I', PropertyIngredient.builder("primary").types(BOLT).tags(SCREW).build()), "FI", "I ");
+
+        provider.addToolRecipe(DUST_BUILDER.get(ROTOR.getId()), consumer, Ref.ID,"rotors","antimatter_material", "has_screwdriver", provider.hasSafeItem(SCREWDRIVER.getTag()),
+                ROTOR.all().stream().map(t -> ROTOR.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
+                        .put('S', SCREWDRIVER.getTag())
+                        .put('F', FILE.getTag())
+                        .put('H', HAMMER.getTag())
+                        .put('P', PropertyIngredient.builder("primary").types(PLATE).tags(ROTOR).build())
+                        .put('W', PropertyIngredient.builder("primary").types(SCREW).tags(ROTOR).build())
+                        .put('R', PropertyIngredient.builder("primary").types(RING).tags(ROTOR).build())
+                        .build(),
+                "PHP", "WRF", "PSP");
+
+        provider.addToolRecipe(DUST_BUILDER.get(RING.getId()), consumer, Ref.ID,"ring","antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+                RING.all().stream().map(t -> RING.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
+                        .put('F', FILE.getTag())
+                        .put('H', HAMMER.getTag())
+                        .put('P', PropertyIngredient.builder("primary").types(PLATE).tags(RING).build())
+                        .put('W', PropertyIngredient.builder("primary").types(ROD).tags(RING).build())
+                        .build(),
+                " W ", "HPF");
+
+        provider.addToolRecipe(DUST_BUILDER.get(PLATE.getId()), consumer, Ref.ID,"plate","antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+                PLATE.all().stream().filter(t -> t.has(INGOT)).map(t -> PLATE.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
+                        .put('H', HAMMER.getTag())
+                        .put('P', PropertyIngredient.builder("primary").types(PLATE).tags(INGOT).build())
+                        .build(),
+                "HP", "P ");
+
+        provider.addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID,"grind_ingot","antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+                DUST.all().stream().filter(t -> t.has(INGOT, GRINDABLE)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
+                        .put('M', MORTAR.getTag())
+                        .put('I', PropertyIngredient.builder("primary").types(INGOT).tags(DUST, GRINDABLE).build())
+                        .build(),
+                "MI");
+        provider.addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID,"grind_rock","antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+                DUST.all().stream().filter(t -> t.has(INGOT)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
+                        .put('M', MORTAR.getTag())
+                        .put('I', PropertyIngredient.builder("primary").types(ROCK).tags(DUST).build())
+                        .build(),
+                "III", "III", "IIM");
         AntimatterAPI.all(BlockOre.class, o -> {
             if (o.getOreType() != ORE) return;
             if (!o.getMaterial().getSmeltInto().has(INGOT)) return;
@@ -64,7 +104,7 @@ public class MaterialRecipes {
                     .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(INGOT.getMaterialTag(m.getSmeltInto())))
                     .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot_smelting")));
         });
-        AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
+        /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
             Item dust = DUST.get(mat);
             if (mat.has(ROCK)) {
                 ITag<Item> rockTag = nc(TagUtils.getForgeItemTag("rocks/".concat(mat.getId())));
@@ -83,14 +123,6 @@ public class MaterialRecipes {
                         .addCriterion("has_rock_" + mat.getId(), provider.hasSafeItem(getForgeItemTag("rocks/".concat(mat.getId()))))
                         .setGroup("rocks_grind_to_small_dust").build(consumer, provider.fixLoc(Ref.ID, rock.getRegistryName().getPath() + "_grind_to_" + smallDust.getRegistryName().getPath()));
             }
-            if (mat.has(INGOT, GRINDABLE)) {
-                Item ingot = INGOT.get(mat);
-                ITag<Item> ingotTag = nc(TagUtils.getForgeItemTag("ingots/".concat(mat.getId())));
-                ShapelessRecipeBuilder.shapelessRecipe(dust).addIngredient(ingotTag).addIngredient(nc(MORTAR.getTag()))
-                        .addCriterion("has_ingot_" + mat.getId(), provider.hasSafeItem(nc(TagUtils.getForgeItemTag("ingots/".concat(mat.getId())))))
-                        .setGroup("ingots_grind_to_dust")
-                        .build(consumer, provider.fixLoc(Ref.ID, ingot.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
-            }
-        });
+        });*/
     }
 }

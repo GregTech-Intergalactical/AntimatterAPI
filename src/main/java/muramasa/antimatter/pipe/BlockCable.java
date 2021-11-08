@@ -7,7 +7,10 @@ import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -20,6 +23,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
+import tesseract.api.gt.GTController;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -69,6 +73,21 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     @Override
     public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
         return insulated ? i == 1 ? getRGB() : -1 : getRGB();
+    }
+
+    @Override
+    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+        super.onEntityCollision(state, worldIn, pos, entityIn);
+        if (this.insulated) return;
+        if (!(entityIn instanceof LivingEntity)) return;
+        LivingEntity entity = (LivingEntity) entityIn;
+        ITickingController<?,?,?> controller = Tesseract.GT_ENERGY.getController(worldIn, pos.toLong());
+        if (!(controller instanceof GTController)) return;
+        GTController gt = (GTController) controller;
+        long amps = gt.cableFrameAverage(pos.toLong());
+        if (amps > 0) {
+            entity.attackEntityFrom(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
+        }
     }
 
     @Nullable
