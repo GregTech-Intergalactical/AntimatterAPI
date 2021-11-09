@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.ICraftingLoader;
+import muramasa.antimatter.datagen.providers.AntimatterLanguageProvider;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.event.AntimatterCraftingEvent;
@@ -38,8 +39,8 @@ public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void onProviderInit(String domain, DataGenerator gen, Dist side) {
-        //PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
-        //        .filter(p -> p.getSide().equals(side)).forEach(gen::addProvider);
+        PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
+                .filter(p -> p instanceof AntimatterLanguageProvider).forEach(gen::addProvider);
     }
 
     /**

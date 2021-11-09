@@ -77,7 +77,7 @@ public class Antimatter extends AntimatterMod {
         AntimatterDynamics.addProvider(Ref.ID,
                 g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
         AntimatterDynamics.addProvider(Ref.SHARED_ID,
-                g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
+                g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us", g));
         AntimatterAPI.init();
 
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
