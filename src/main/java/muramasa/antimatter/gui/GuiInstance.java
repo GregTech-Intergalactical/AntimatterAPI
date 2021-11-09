@@ -85,8 +85,9 @@ public class GuiInstance implements ICanSyncData {
      *
      * @return iterable widget list
      */
-    public Iterable<Widget> getReverseWidgets() {
-        return () -> this.widgets.stream().sorted(Comparator.comparing(Widget::depth)).iterator();
+    @OnlyIn(Dist.CLIENT)
+    public Iterable<Widget> widgetsToRender() {
+        return () -> this.widgets.stream().filter(t -> t.parent == this.screen).sorted(Comparator.comparing(Widget::depth)).iterator();
     }
 
     /**
@@ -101,6 +102,15 @@ public class GuiInstance implements ICanSyncData {
         return this.getWidgets(mouseX, mouseY).iterator().next() == wid;
     }
 
+    /**
+     * Notifies the instance that a widget has rescaled.
+     *
+     * @param wid  the widget
+     * @param oldX oldX
+     * @param oldY oldY
+     * @param oldW oldW
+     * @param oldH oldH
+     */
     public void rescaleWidget(Widget wid, int oldX, int oldY, int oldW, int oldH) {
         if (!wid.isEnabled()) return;
         if (!widgets.contains(wid)) return;
@@ -148,6 +158,14 @@ public class GuiInstance implements ICanSyncData {
         }
     }
 
+    /**
+     * Adds a widget to this instance. If the widget's parent == screen
+     * the widget will be automatically rendered by the GUI.
+     * However, all widgets will receive events like mouse click.
+     *
+     * @param widget te widget to add.
+     * @return this
+     */
     public GuiInstance addWidget(Widget widget) {
         putWidget(widget);
         return this;
@@ -167,32 +185,39 @@ public class GuiInstance implements ICanSyncData {
         return widgets;
     }
 
-    public void update() {
-        if (this.handler.isRemote()) {
-            unsortedWidgets().forEach(Widget::update);
-            List<SyncHolder> toSync = new ObjectArrayList<>();
-            for (SyncHolder sync : this.syncData) {
-                if (sync.direction == SyncDirection.SERVER_TO_CLIENT) continue;
-                Object value = sync.source.get();
-                if (!sync.equality.apply(value, sync.current)) {
-                    sync.current = value;
-                    toSync.add(sync);
-                }
+    /**
+     * Called on the client to update.
+     */
+    public void update(double mouseX, double mouseY) {
+        getTopLevelWidget(mouseX, mouseY).ifPresent(t -> this.focus = t);
+        unsortedWidgets().forEach(t -> t.update(mouseX, mouseY));
+        List<SyncHolder> toSync = new ObjectArrayList<>();
+        for (SyncHolder sync : this.syncData) {
+            if (sync.direction == SyncDirection.SERVER_TO_CLIENT) continue;
+            Object value = sync.source.get();
+            if (!sync.equality.apply(value, sync.current)) {
+                sync.current = value;
+                toSync.add(sync);
             }
-            if (toSync.size() > 0)
-                writeToServer(toSync);
-        } else {
-            List<SyncHolder> toSync = new ObjectArrayList<>();
-            for (SyncHolder sync : this.syncData) {
-                Object value = sync.source.get();
-                if (!sync.equality.apply(value, sync.current)) {
-                    sync.current = value;
-                    toSync.add(sync);
-                }
-            }
-            if (toSync.size() > 0)
-                write(toSync);
         }
+        if (toSync.size() > 0)
+            writeToServer(toSync);
+    }
+
+    /**
+     * Called on the server to update.
+     */
+    public void update() {
+        List<SyncHolder> toSync = new ObjectArrayList<>();
+        for (SyncHolder sync : this.syncData) {
+            Object value = sync.source.get();
+            if (!sync.equality.apply(value, sync.current)) {
+                sync.current = value;
+                toSync.add(sync);
+            }
+        }
+        if (toSync.size() > 0)
+            write(toSync);
     }
 
     @Nullable

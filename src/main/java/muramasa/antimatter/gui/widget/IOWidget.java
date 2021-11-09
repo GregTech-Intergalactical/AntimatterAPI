@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui.widget;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
@@ -9,13 +10,16 @@ import muramasa.antimatter.gui.event.GuiEvent;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
+
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 import static muramasa.antimatter.machine.MachineFlag.FLUID;
 import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
 public class IOWidget extends AbstractSwitchWidget {
-
+    @Nullable
     protected ButtonWidget item;
+    @Nullable
     protected ButtonWidget fluid;
     private static final int4 fluidLoc = new int4(176, 18, 18, 18), itemLoc = new int4(176, 36, 18, 18);
 
@@ -41,6 +45,13 @@ public class IOWidget extends AbstractSwitchWidget {
             fluid.setEnabled(false);
             fluid.setDepth(depth() + 1);
         }
+    }
+
+    @Override
+    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        if (item != null && item.isEnabled()) item.render(matrixStack, mouseX, mouseY, partialTicks);
+        if (fluid != null && fluid.isEnabled()) fluid.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     @Override

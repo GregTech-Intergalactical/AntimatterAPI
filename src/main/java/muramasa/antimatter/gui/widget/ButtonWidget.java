@@ -13,6 +13,8 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -65,9 +67,16 @@ public class ButtonWidget extends Widget {
         this.pressed = true;
         super.onClick(mouseX, mouseY, button);
         if (this.onPress != null) {
-            Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            if (this.gui.handler.isRemote()) {
+                clientClick();
+            }
             this.onPress.accept(this);
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    protected void clientClick() {
+        Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     @Override

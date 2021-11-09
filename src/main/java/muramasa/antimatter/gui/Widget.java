@@ -194,7 +194,7 @@ public abstract class Widget implements IGuiElement {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void update() {
+    public void update(double mouseX, double mouseY) {
 
     }
 
