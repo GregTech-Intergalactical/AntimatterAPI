@@ -83,7 +83,7 @@ public class FluidSlotWidget extends Widget {
         str.add(new StringTextComponent(this.stack.getDisplayName().getString()));
         str.add(new StringTextComponent(
                 NumberFormat.getNumberInstance(Locale.US).format(this.stack.getAmount()) + " mB")
-                        .mergeStyle(TextFormatting.GRAY));
+                .mergeStyle(TextFormatting.GRAY));
         AntimatterJEIPlugin.addModDescriptor(str, this.stack);
         drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().fontRenderer, stack);
     }

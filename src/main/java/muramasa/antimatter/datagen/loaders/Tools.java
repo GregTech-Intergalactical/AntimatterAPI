@@ -131,22 +131,22 @@ public class Tools {
                 "has_wrench", in, PLUNGER.getToolStack(NULL, NULL),
                 of('W', WIRE_CUTTER.getTag(), 'R', PropertyIngredient.builder("primary").tool(PLUNGER, true).types(ROD).build(), 'I', PropertyIngredient.builder("secondary").types(PLATE).tags(HANDLE, RUBBERTOOLS).build(), 'F', FILE.getTag()), "WII", " RI", "R F");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(PICKAXE.getId()), consumer, Ref.ID,  "flint_" + PICKAXE.getId() + "_" +"recipe", "antimatter_tools",
+        provider.addToolRecipe(TOOL_BUILDER.get(PICKAXE.getId()), consumer, Ref.ID, "flint_" + PICKAXE.getId() + "_" + "recipe", "antimatter_tools",
                 "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), PICKAXE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "III", " R ", " R ");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(AXE.getId()), consumer, Ref.ID,  "flint_" + AXE.getId() + "_" +"recipe", "antimatter_tools",
+        provider.addToolRecipe(TOOL_BUILDER.get(AXE.getId()), consumer, Ref.ID, "flint_" + AXE.getId() + "_" + "recipe", "antimatter_tools",
                 "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), AXE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II", "IR", " R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(SWORD.getId()), consumer, Ref.ID,  "flint_" + SWORD.getId() + "_" +"recipe", "antimatter_tools",
+        provider.addToolRecipe(TOOL_BUILDER.get(SWORD.getId()), consumer, Ref.ID, "flint_" + SWORD.getId() + "_" + "recipe", "antimatter_tools",
                 "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), SWORD.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "I", "I", "R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(SHOVEL.getId()), consumer, Ref.ID,  "flint_" + SHOVEL.getId() + "_" +"recipe", "antimatter_tools",
+        provider.addToolRecipe(TOOL_BUILDER.get(SHOVEL.getId()), consumer, Ref.ID, "flint_" + SHOVEL.getId() + "_" + "recipe", "antimatter_tools",
                 "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), SHOVEL.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "I", "R", "R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(HOE.getId()), consumer, Ref.ID,  "flint_" + HOE.getId() + "_" +"recipe", "antimatter_tools",
+        provider.addToolRecipe(TOOL_BUILDER.get(HOE.getId()), consumer, Ref.ID, "flint_" + HOE.getId() + "_" + "recipe", "antimatter_tools",
                 "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), HOE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II", " R", " R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID,  "flint_" + KNIFE.getId() + "_" +"recipe", "antimatter_tools",
+        provider.addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID, "flint_" + KNIFE.getId() + "_" + "recipe", "antimatter_tools",
                 "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), KNIFE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "RI");
     }
 }

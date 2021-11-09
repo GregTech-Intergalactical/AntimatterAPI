@@ -40,7 +40,7 @@ public class TankMachine extends Machine<TankMachine> {
         @Override
         public void init() {
             super.init();
-            TileEntityTank<?> tank = (TileEntityTank<?>)gui.handler;
+            TileEntityTank<?> tank = (TileEntityTank<?>) gui.handler;
             gui.syncFluidStack(() -> tank.fluidHandler.map(t -> t.getFluidInTank(0)).orElse(FluidStack.EMPTY), f -> this.stack = f, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
         }
 

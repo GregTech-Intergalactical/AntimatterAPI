@@ -32,7 +32,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        ITickingController<?,?,?> controller = Tesseract.FLUID.getController(world, pos.toLong());
+        ITickingController<?, ?, ?> controller = Tesseract.FLUID.getController(world, pos.toLong());
         if (controller != null) controller.getInfo(pos.toLong(), info);
         info.add("Pressure: " + getType().getPressure(getSize()));
         info.add("Capacity: " + getType().getCapacity(getSize()));
@@ -53,7 +53,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
         super.onEntityCollision(state, worldIn, pos, entityIn);
         if (!(entityIn instanceof LivingEntity)) return;
-        ITickingController<?,?,?> controller = Tesseract.FLUID.getController(worldIn, pos.toLong());
+        ITickingController<?, ?, ?> controller = Tesseract.FLUID.getController(worldIn, pos.toLong());
         if (!(controller instanceof FluidController)) return;
         FluidController gt = (FluidController) controller;
         FluidHolder holder = gt.getCableHolder(pos.toLong());
@@ -62,8 +62,8 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         for (Fluid fluid : holder.getFluids()) {
             max = Math.max(max, fluid.getAttributes().getTemperature());
         }
-        if (max >= (295+100)) {
-            entityIn.attackEntityFrom(DamageSource.GENERIC, MathHelper.clamp(((max+200)-(295+100))/100,2,20));
+        if (max >= (295 + 100)) {
+            entityIn.attackEntityFrom(DamageSource.GENERIC, MathHelper.clamp(((max + 200) - (295 + 100)) / 100, 2, 20));
         }
     }
 

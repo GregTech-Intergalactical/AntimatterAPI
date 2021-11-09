@@ -138,7 +138,7 @@ public class AntimatterBlockLootProvider extends BlockLootTables implements IDat
     }
 
     protected void addToStone(BlockOreStone block) {
-        if (block.getMaterial() == Coal){
+        if (block.getMaterial() == Coal) {
             tables.put(block, b -> droppingItemWithFortune(b, GEM.get(block.getMaterial())));
         } else {
             add(block);

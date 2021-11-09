@@ -35,13 +35,13 @@ public class DynamicTexturers {
                         case NORTH:
                             break;
                         case SOUTH:
-                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0,0,1), 180f, true), null, null));
+                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0, 0, 1), 180f, true), null, null));
                             break;
                         case WEST:
-                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0,0,1), -90f, true), null, null));
+                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0, 0, 1), -90f, true), null, null));
                             break;
                         case EAST:
-                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0,0,1), 90f, true), null, null));
+                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0, 0, 1), 90f, true), null, null));
                             break;
                     }
                 }

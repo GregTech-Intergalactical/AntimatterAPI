@@ -1,6 +1,7 @@
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -89,7 +90,7 @@ public class FakeTileElement extends StructureElement {
         return false;
     }
 
-    public FakeTileElement cover(Direction side, ICover cover) {
+    public FakeTileElement cover(Direction side, CoverFactory cover) {
         this.covers.put(side, cover);
         return this;
     }
@@ -98,7 +99,7 @@ public class FakeTileElement extends StructureElement {
     public void onBuild(TileEntityBasicMultiMachine machine, BlockPos pos, StructureResult result, int count) {
         World world = machine.getWorld();
         BlockState oldState = world.getBlockState(pos);
-        //Already set.
+        // Already set.
         if (count > 1 || oldState.getBlock().matchesBlock(Data.PROXY_INSTANCE)) {
             ((TileEntityFakeBlock) world.getTileEntity(pos)).addController(machine);
             return;
@@ -114,7 +115,8 @@ public class FakeTileElement extends StructureElement {
     public void onRemove(TileEntityBasicMultiMachine machine, BlockPos pos, StructureResult result, int count) {
         World world = machine.getWorld();
         TileEntity tile = world.getTileEntity(pos);
-        if (!(tile instanceof TileEntityFakeBlock)) return;
+        if (!(tile instanceof TileEntityFakeBlock))
+            return;
         if (count == 0) {
             BlockState state = ((TileEntityFakeBlock) tile).getState();
             world.setBlockState(pos, state, 1 | 2 | 8);

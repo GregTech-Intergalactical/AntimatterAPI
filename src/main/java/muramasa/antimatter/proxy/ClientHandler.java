@@ -65,7 +65,7 @@ public class ClientHandler implements IProxyHandler {
         AntimatterDynamics.runAssetProvidersDynamically();
     }
 
-    @SuppressWarnings({ "unchecked", "unused" })
+    @SuppressWarnings({"unchecked", "unused"})
     public static void setup(FMLClientSetupEvent e) {
         /* Register screens. */
         AntimatterAPI.runLaterClient(() -> {

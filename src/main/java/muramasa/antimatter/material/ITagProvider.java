@@ -1,2 +1,4 @@
-package muramasa.antimatter.material;public interface ITagProvider {
+package muramasa.antimatter.material;
+
+public interface ITagProvider {
 }

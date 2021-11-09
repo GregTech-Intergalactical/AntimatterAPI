@@ -53,6 +53,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
 
     /**
      * Adds a list of dependent flags, that is all of these flags are added as well.
+     *
      * @param tags the list of tags.
      * @return this
      */

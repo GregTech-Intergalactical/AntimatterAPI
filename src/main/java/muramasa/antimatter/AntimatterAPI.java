@@ -185,7 +185,7 @@ public final class AntimatterAPI {
 
     @Nonnull
     public static <T> T getOrThrow(Class<T> c, String id, String domain,
-            Supplier<? extends RuntimeException> supplier) {
+                                   Supplier<? extends RuntimeException> supplier) {
         Object obj = get(c, id, domain);
         if (obj != null) {
             return c.cast(obj);
@@ -195,7 +195,7 @@ public final class AntimatterAPI {
 
     @Nonnull
     public static <T extends ISharedAntimatterObject> T getOrThrow(Class<T> c, String id,
-            Supplier<? extends RuntimeException> supplier) {
+                                                                   Supplier<? extends RuntimeException> supplier) {
         Object obj = get(c, id);
         if (obj != null) {
             return c.cast(obj);
@@ -255,7 +255,7 @@ public final class AntimatterAPI {
         return allInternal(c)
                 .filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain)
                         || o instanceof IForgeRegistryEntry && ((IForgeRegistryEntry<?>) o).getRegistryName() != null
-                                && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain));
+                        && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain));
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
@@ -382,7 +382,7 @@ public final class AntimatterAPI {
      **/
 
     public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model,
-            boolean override) {
+                                           boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
             AntimatterJEIPlugin.registerCategory(map, gui, tier, model, override);
         }
@@ -420,14 +420,14 @@ public final class AntimatterAPI {
      *                     only checks against 'minecraft' if no namespaces are
      *                     defined
      * @return originalItem if there's nothing found, null if there is no
-     *         originalItem, or an replacement
+     * originalItem, or an replacement
      */
     public static <T> T getReplacement(@Nullable T originalItem, ITag.INamedTag<T> tag, String... namespaces) {
         if (tag == null)
             throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
         if (REPLACEMENTS.containsKey(tag.getName()))
             return (T) REPLACEMENTS.get(tag.getName());// return
-                                                       // RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
+        // RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
         return originalItem;
         // if (replacementsFound) return originalItem;
         // Set<String> checks = Sets.newHashSet(namespaces);
@@ -454,12 +454,12 @@ public final class AntimatterAPI {
 
     /**
      * COREMOD METHOD INSERTION: Runs every time when this is called:
-     * 
+     *
      * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
      */
     @SuppressWarnings("unused")
     public static void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState,
-            int flags) {
+                                           int flags) {
         BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState, flags));
     }
 

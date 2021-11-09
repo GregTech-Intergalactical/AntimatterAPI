@@ -50,7 +50,7 @@ public class GuiSyncPacket {
                 }
             });
         } else {
-            ctx.get().enqueueWork(() -> ((AntimatterContainer)ctx.get().getSender().openContainer).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT));
+            ctx.get().enqueueWork(() -> ((AntimatterContainer) ctx.get().getSender().openContainer).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT));
         }
         ctx.get().setPacketHandled(true);
     }

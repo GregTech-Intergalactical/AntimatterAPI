@@ -239,8 +239,8 @@ public class RenderHelper {
         Matrix4f m = matrix.getLast().getMatrix();
         matrix.push();
         shape.forEachEdge((minX, minY, minZ, maxX, maxY, maxZ) -> {
-            builderLines.pos(m, (float) (minX + modX), (float) (minY + modY), (float) (minZ + modZ)).color(r,g,b, 0.4F).endVertex();
-            builderLines.pos(m, (float) (maxX + modX), (float) (maxY + modY), (float) (maxZ + modZ)).color(r,g,b, 0.4F).endVertex();
+            builderLines.pos(m, (float) (minX + modX), (float) (minY + modY), (float) (minZ + modZ)).color(r, g, b, 0.4F).endVertex();
+            builderLines.pos(m, (float) (maxX + modX), (float) (maxY + modY), (float) (maxZ + modZ)).color(r, g, b, 0.4F).endVertex();
         });
         matrix.pop();
         switch (result.getFace()) {

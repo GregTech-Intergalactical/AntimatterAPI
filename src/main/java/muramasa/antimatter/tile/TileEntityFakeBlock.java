@@ -7,8 +7,10 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockProxy;
+import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
@@ -62,10 +64,15 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         controllers.remove(controller);
     }
 
-    public TileEntityFakeBlock setCovers(Map<Direction, ICover> covers) {
-        for (Map.Entry<Direction, ICover> entry : covers.entrySet()) {
+    public TileEntityFakeBlock setCovers(Map<Direction, CoverFactory> covers) {
+        ICoverHandler<?> handler = ICoverHandler.empty(this);
+        for (Map.Entry<Direction, CoverFactory> entry : covers.entrySet()) {
             Direction dir = entry.getKey();
-            this.covers.put(Utils.coverRotateFacing(dir, facing.getAxis() == Direction.Axis.X ? facing.getOpposite() : facing), entry.getValue());
+            CoverFactory factory = entry.getValue();
+            ICover cover = factory.get().get(handler, null, dir, factory);
+            this.covers.put(
+                    Utils.coverRotateFacing(dir, facing.getAxis() == Direction.Axis.X ? facing.getOpposite() : facing),
+                    cover);
         }
         markDirty();
         return this;
@@ -79,7 +86,8 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
 
     @OnlyIn(Dist.CLIENT)
     public DynamicTexturer<ICover, ICover.DynamicKey> getTexturer(Direction side) {
-        return coverTexturer.computeIfAbsent(side, dir -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
+        return coverTexturer.computeIfAbsent(side,
+                dir -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
     }
 
     @Nonnull
@@ -91,7 +99,8 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         }
         for (TileEntityBasicMultiMachine<?> controller : controllers) {
             LazyOptional<T> opt = controller.getCapabilityFromFake(cap, getPos(), side, covers.get(side));
-            if (opt.isPresent()) return opt;
+            if (opt.isPresent())
+                return opt;
         }
         return LazyOptional.empty();
     }
@@ -112,10 +121,9 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         this.covers = new EnumMap<>(Direction.class);
         CompoundNBT c = nbt.getCompound("C");
         for (Direction dir : Ref.DIRS) {
-            String id = c.getString(dir.getName2());
-            if (id.isEmpty()) continue;
-            String[] ids = id.split(":");
-            covers.put(dir, AntimatterAPI.get(ICover.class, ids[1], ids[0]));
+            ICover cover = CoverFactory.readCover(ICoverHandler.empty(this), dir, c);
+            if (cover != null)
+                covers.put(dir, cover);
         }
         if (nbt.contains("P")) {
             ListNBT list = nbt.getList("P", 4);
@@ -127,7 +135,8 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     @Nonnull
     @Override
     public IModelData getModelData() {
-        return new ModelDataMap.Builder().withInitial(AntimatterProperties.STATE_MODEL_PROPERTY, getState()).withInitial(AntimatterProperties.TILE_PROPERTY, this).build();
+        return new ModelDataMap.Builder().withInitial(AntimatterProperties.STATE_MODEL_PROPERTY, getState())
+                .withInitial(AntimatterProperties.TILE_PROPERTY, this).build();
     }
 
     @Nonnull
@@ -146,7 +155,7 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         nbt.put("B", NBTUtil.writeBlockState(state));
         nbt.putInt("F", facing.ordinal());
         CompoundNBT n = new CompoundNBT();
-        this.covers.forEach((k, v) -> n.putString(k.getName2(), v.getDomain() + ":" + v.getId()));
+        this.covers.forEach((k, v) -> CoverFactory.writeCover(n, v));
         compound.put("C", n);
         if (!send) {
             ListNBT list = new ListNBT();
@@ -170,13 +179,16 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     @Override
     public List<String> getInfo() {
         List<String> list = super.getInfo();
-        if (getState() != null) list.add("State: " + getState().toString());
-        if (facing != null) list.add("Facing: " + facing.getName2());
+        if (getState() != null)
+            list.add("State: " + getState().toString());
+        if (facing != null)
+            list.add("Facing: " + facing.getName2());
         covers.forEach((k, v) -> {
             list.add("Cover on " + k.getName2() + ": " + v.getId());
         });
         if (controllers.size() > 0) {
-            list.add("Controller positions: " + controllers.stream().map(t -> t.getPos().toString()).reduce((k, v) -> k + ", " + v).orElse(""));
+            list.add("Controller positions: "
+                    + controllers.stream().map(t -> t.getPos().toString()).reduce((k, v) -> k + ", " + v).orElse(""));
         }
         return list;
     }

@@ -32,11 +32,11 @@ public class CoverFactory implements IAntimatterObject {
     final String id;
     final String domain;
 
-  private final CoverSupplier supplier;
-  private Map<Tier, Item> itemStacks = Collections.emptyMap();
-  private Item itemStack;
-  private Iterable<Texture> textures;
-  private MenuHandler<?> menuHandler = Data.COVER_MENU_HANDLER;
+    private final CoverSupplier supplier;
+    private Map<Tier, Item> itemStacks = Collections.emptyMap();
+    private Item itemStack;
+    private Iterable<Texture> textures;
+    private MenuHandler<?> menuHandler = Data.COVER_MENU_HANDLER;
 
     protected boolean gui = false;
 
@@ -56,8 +56,8 @@ public class CoverFactory implements IAntimatterObject {
     }
 
     public Iterable<Texture> getTextures() {
-     return textures == null ? Collections::emptyIterator : textures;
-  }
+        return textures == null ? Collections::emptyIterator : textures;
+    }
 
     public ItemStack getItem() {
         return itemStack == null ? ItemStack.EMPTY : itemStack.getDefaultInstance();
@@ -69,7 +69,8 @@ public class CoverFactory implements IAntimatterObject {
 
     void setItems(Map<Tier, Item> stacks) {
         this.itemStack = stacks.remove(null);
-        if (itemStack == null) itemStack = Items.AIR;
+        if (itemStack == null)
+            itemStack = Items.AIR;
         this.itemStacks = ImmutableMap.copyOf(stacks);
     }
 
@@ -81,7 +82,7 @@ public class CoverFactory implements IAntimatterObject {
         this.gui = true;
     }
 
-    void setMenuHandler(MenuHandler<?> handler){
+    void setMenuHandler(MenuHandler<?> handler) {
         this.menuHandler = handler;
     }
 
@@ -107,7 +108,8 @@ public class CoverFactory implements IAntimatterObject {
         CoverFactory factory = cover.getFactory();
         nbt.putString(cover.side().getIndex() + "d", factory.getDomain());
         nbt.putString(cover.side().getIndex() + "i", factory.getId());
-        if (cover.getTier() != null) nbt.putString(cover.side().getIndex() + "t", cover.getTier().getId());
+        if (cover.getTier() != null)
+            nbt.putString(cover.side().getIndex() + "t", cover.getTier().getId());
         CompoundNBT inner = cover.serialize();
         if (!inner.isEmpty())
             nbt.put(cover.side().getIndex() + "c", inner);
@@ -115,13 +117,17 @@ public class CoverFactory implements IAntimatterObject {
     }
 
     public static ICover readCover(ICoverHandler<?> source, Direction dir, CompoundNBT nbt) {
+        if (!nbt.contains(dir.getIndex() + "d"))
+            return null;
         String domain = nbt.getString(dir.getIndex() + "d");
         String id = nbt.getString(dir.getIndex() + "i");
         CoverFactory factory = AntimatterAPI.get(CoverFactory.class, id, domain);
         if (factory == null) {
             throw new IllegalStateException("Reading a cover with null factory, game in bad state");
         }
-        Tier tier = nbt.contains(dir.getIndex() + "t") ? AntimatterAPI.get(Tier.class, nbt.getString(dir.getIndex() + "t")) : null;
+        Tier tier = nbt.contains(dir.getIndex() + "t")
+                ? AntimatterAPI.get(Tier.class, nbt.getString(dir.getIndex() + "t"))
+                : null;
         ICover cover = factory.supplier.get(source, tier, dir, factory);
         if (nbt.contains(dir.getIndex() + "c"))
             cover.deserialize((CompoundNBT) nbt.get(dir.getIndex() + "c"));
@@ -156,7 +162,7 @@ public class CoverFactory implements IAntimatterObject {
             return this;
         }
 
-        public Builder setMenuHandler(MenuHandler<?> handler){
+        public Builder setMenuHandler(MenuHandler<?> handler) {
             this.menuHandler = handler;
             return this;
         }
@@ -183,11 +189,12 @@ public class CoverFactory implements IAntimatterObject {
             }
             if (gui) {
                 factory.setHasGui();
-                if (menuHandler != null){
+                if (menuHandler != null) {
                     factory.setMenuHandler(menuHandler);
                 }
             }
-            if (textures != null) factory.addTextures(textures);
+            if (textures != null)
+                factory.addTextures(textures);
             return factory;
         }
 

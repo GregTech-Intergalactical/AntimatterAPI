@@ -50,13 +50,13 @@ public class CoverMuffler extends BaseCover {
             if (tile == null || tile.getMachineState() != MachineState.ACTIVE) return;
             Random rand = world.rand;
             Direction dir = this.side;
-            double d0 = (double)pos.getX() + 0.5D + (dir.getAxis() == Direction.Axis.X ? 0f : (rand.nextDouble() - 0.5f)/2);
-            double d1 = (double)pos.getY() + 0.5D + (dir.getAxis() == Direction.Axis.Y ? 0f : (rand.nextDouble() - 0.5f)/2);
-            double d2 = (double)pos.getZ() + 0.5D + (dir.getAxis() == Direction.Axis.Z ? 0f : (rand.nextDouble() - 0.5f)/2);
+            double d0 = (double) pos.getX() + 0.5D + (dir.getAxis() == Direction.Axis.X ? 0f : (rand.nextDouble() - 0.5f) / 2);
+            double d1 = (double) pos.getY() + 0.5D + (dir.getAxis() == Direction.Axis.Y ? 0f : (rand.nextDouble() - 0.5f) / 2);
+            double d2 = (double) pos.getZ() + 0.5D + (dir.getAxis() == Direction.Axis.Z ? 0f : (rand.nextDouble() - 0.5f) / 2);
             if (rand.nextDouble() < 0.1D) {
                 //world.playSound(d0, d1, d2, SoundEvents.FIRE, SoundCategory.BLOCKS, 1.0F, 1.0F, false);
             }
-            world.addParticle(ParticleTypes.SMOKE, d0 + 0.6f*this.side.getXOffset(), d1 + 0.6*this.side.getYOffset(), d2 + 0.6f*this.side.getZOffset(),
+            world.addParticle(ParticleTypes.SMOKE, d0 + 0.6f * this.side.getXOffset(), d1 + 0.6 * this.side.getYOffset(), d2 + 0.6f * this.side.getZOffset(),
                     this.side.getXOffset(), this.side.getYOffset(), this.side.getZOffset());
         }
     }

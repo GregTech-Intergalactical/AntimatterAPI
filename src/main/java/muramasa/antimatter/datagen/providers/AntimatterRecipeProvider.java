@@ -249,7 +249,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     public void addToolRecipe(String builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
-        if (output.isEmpty()){
+        if (output.isEmpty()) {
             Antimatter.LOGGER.warn("Material recipe " + recipeDomain + ":" + recipeName + "has an empty output.");
             return;
         }

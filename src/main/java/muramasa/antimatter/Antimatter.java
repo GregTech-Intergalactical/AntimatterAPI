@@ -52,7 +52,7 @@ public class Antimatter extends AntimatterMod {
         super();
         INSTANCE = this;
         PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to
-                                                                                             // change in new Forge
+        // change in new Forge
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
 

@@ -43,7 +43,7 @@ public class MaterialRecipes {
         provider.addToolRecipe(DUST_TWO_BUILDER.get(SCREW.getId()), consumer, Ref.ID, "screw", "antimatter_material",
                 "has_wrench", in, SCREW.all().stream().map(t -> SCREW.get(t, 1)).collect(Collectors.toList()), of('F', FILE.getTag(), 'I', PropertyIngredient.builder("primary").types(BOLT).tags(SCREW).build()), "FI", "I ");
 
-        provider.addToolRecipe(DUST_BUILDER.get(ROTOR.getId()), consumer, Ref.ID,"rotors","antimatter_material", "has_screwdriver", provider.hasSafeItem(SCREWDRIVER.getTag()),
+        provider.addToolRecipe(DUST_BUILDER.get(ROTOR.getId()), consumer, Ref.ID, "rotors", "antimatter_material", "has_screwdriver", provider.hasSafeItem(SCREWDRIVER.getTag()),
                 ROTOR.all().stream().map(t -> ROTOR.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
                         .put('S', SCREWDRIVER.getTag())
                         .put('F', FILE.getTag())
@@ -54,7 +54,7 @@ public class MaterialRecipes {
                         .build(),
                 "PHP", "WRF", "PSP");
 
-        provider.addToolRecipe(DUST_BUILDER.get(RING.getId()), consumer, Ref.ID,"ring","antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+        provider.addToolRecipe(DUST_BUILDER.get(RING.getId()), consumer, Ref.ID, "ring", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
                 RING.all().stream().map(t -> RING.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
                         .put('F', FILE.getTag())
                         .put('H', HAMMER.getTag())
@@ -63,20 +63,20 @@ public class MaterialRecipes {
                         .build(),
                 " W ", "HPF");
 
-        provider.addToolRecipe(DUST_BUILDER.get(PLATE.getId()), consumer, Ref.ID,"plate","antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+        provider.addToolRecipe(DUST_BUILDER.get(PLATE.getId()), consumer, Ref.ID, "plate", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
                 PLATE.all().stream().filter(t -> t.has(INGOT)).map(t -> PLATE.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
                         .put('H', HAMMER.getTag())
                         .put('P', PropertyIngredient.builder("primary").types(PLATE).tags(INGOT).build())
                         .build(),
                 "HP", "P ");
 
-        provider.addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID,"grind_ingot","antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+        provider.addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "grind_ingot", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
                 DUST.all().stream().filter(t -> t.has(INGOT, GRINDABLE)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
                         .put('M', MORTAR.getTag())
                         .put('I', PropertyIngredient.builder("primary").types(INGOT).tags(DUST, GRINDABLE).build())
                         .build(),
                 "MI");
-        provider.addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID,"grind_rock","antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+        provider.addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "grind_rock", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
                 DUST.all().stream().filter(t -> t.has(INGOT)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
                         .put('M', MORTAR.getTag())
                         .put('I', PropertyIngredient.builder("primary").types(ROCK).tags(DUST).build())

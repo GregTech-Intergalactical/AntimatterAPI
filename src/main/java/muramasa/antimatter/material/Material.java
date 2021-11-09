@@ -318,7 +318,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality);
     }
 
-    public Material setAllowedToolTypes(AntimatterToolType... toolTypes){
+    public Material setAllowedToolTypes(AntimatterToolType... toolTypes) {
         if (toolTypes.length > 0) {
             this.toolTypes = Arrays.asList(toolTypes);
         } else {
@@ -378,7 +378,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     public Material flags(IMaterialTag... tags) {
         if (!enabled) return this;
         for (IMaterialTag t : tags) {
-            if (!this.has(t)){
+            if (!this.has(t)) {
                 t.add(this);
             }
             flags(t.dependents().stream().filter(d -> !this.has(d)).toArray(IMaterialTag[]::new));

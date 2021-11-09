@@ -23,7 +23,7 @@ public interface IItemBlockProvider {
         return new TranslationTextComponent(stack.getTranslationKey());
     }
 
-    default boolean generateItemBlock(){
+    default boolean generateItemBlock() {
         return true;
     }
 }

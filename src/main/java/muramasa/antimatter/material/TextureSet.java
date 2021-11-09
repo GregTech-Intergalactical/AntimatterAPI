@@ -61,7 +61,7 @@ public class TextureSet implements IAntimatterObject {
         return textures;
     }
 
-    public static void init(){
+    public static void init() {
 
     }
 }

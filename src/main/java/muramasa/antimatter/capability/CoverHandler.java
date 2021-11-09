@@ -46,7 +46,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         Arrays.stream(validCovers).forEach(c -> this.validCovers.add(new ResourceLocation(c.getDomain(), c.getId())));
         Arrays.stream(Ref.DIRS).forEach(t -> this.set(t, ICover.empty, false));
         coverTexturer = new HashMap<>(6);// LazyHolder.of(() -> new
-                                         // DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
+        // DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -117,7 +117,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     @Override
     public ICover get(Direction side) {
         return covers.getOrDefault(side, ICover.empty); // Should never return null, as COVER_NONE is inserted for every
-                                                        // direction
+        // direction
     }
 
     public ICover[] getAll() {
