@@ -100,7 +100,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
             dispatch.invalidate();
             for (Direction side : Ref.DIRS) {
                 if (validate(side)) {
-                    getWrapper().remove(getWorld(), this.getPos().offset(side).toLong());
+                    removeNode(side);
                 }
             }
             getWrapper().remove(getWorld(), getPos().toLong());
@@ -154,7 +154,10 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     @Override
     public void removeNode(Direction side) {
+        byte old = this.connection;
+        this.connection = Connectivity.clear(this.connection, side.getIndex());
         getWrapper().remove(getWorld(), getPos().offset(side).toLong());//registerNode(getPos().offset(side), side, true);
+        this.connection = old;
     }
 
     @Override
@@ -202,7 +205,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     @Override
-    public boolean registerAsNode() {
+    public boolean needsPath() {
         return this.coverHandler.map(t -> {
             for (ICover coverStack : t.getAll()) {
                 if (coverStack.ticks()) return true;
