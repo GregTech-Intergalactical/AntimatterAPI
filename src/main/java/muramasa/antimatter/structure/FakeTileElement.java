@@ -18,27 +18,35 @@ import java.util.Arrays;
 import java.util.EnumMap;
 
 /**
- * FakeTileElement represents a fake block for this multiblock. It takes on the appearance of another block
- * as well as rendering possible covers on it. It also forwards capability calls to the master controller.
- * (In the case of multiple controllers, it returns the first one that is non-empty).
+ * FakeTileElement represents a fake block for this multiblock. It takes on the
+ * appearance of another block
+ * as well as rendering possible covers on it. It also forwards capability calls
+ * to the master controller.
+ * (In the case of multiple controllers, it returns the first one that is
+ * non-empty).
  */
 public class FakeTileElement extends StructureElement {
 
     private final IBlockStatePredicate[] preds;
-    private final EnumMap<Direction, ICover> covers = new EnumMap<>(Direction.class);
+    private final EnumMap<Direction, CoverFactory> covers = new EnumMap<>(Direction.class);
 
     public FakeTileElement(IBlockStatePredicate... pred) {
         this.preds = pred;
     }
 
     public FakeTileElement(Block... pred) {
-        this.preds = Arrays.stream(pred).map(t -> (IBlockStatePredicate) (reader, pos, state) -> state.getBlock() == Data.PROXY_INSTANCE || state.getBlock().matchesBlock(t)).toArray(IBlockStatePredicate[]::new);
+        this.preds = Arrays
+                .stream(pred).map(t -> (IBlockStatePredicate) (reader, pos,
+                        state) -> state.getBlock() == Data.PROXY_INSTANCE || state.getBlock().matchesBlock(t))
+                .toArray(IBlockStatePredicate[]::new);
     }
 
     public FakeTileElement(BlockState... pred) {
-        this.preds = Arrays.stream(pred).map(t -> (IBlockStatePredicate) (reader, pos, state) -> state.getBlock() == Data.PROXY_INSTANCE || state.equals(t)).toArray(IBlockStatePredicate[]::new);
+        this.preds = Arrays
+                .stream(pred).map(t -> (IBlockStatePredicate) (reader, pos,
+                        state) -> state.getBlock() == Data.PROXY_INSTANCE || state.equals(t))
+                .toArray(IBlockStatePredicate[]::new);
     }
-
 
     public FakeTileElement() {
         this.preds = new IBlockStatePredicate[0];
