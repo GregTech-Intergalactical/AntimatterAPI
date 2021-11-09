@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen.providers;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -248,6 +249,10 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     public void addToolRecipe(String builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+        if (output.isEmpty()){
+            Antimatter.LOGGER.warn("Material recipe " + recipeDomain + ":" + recipeName + "has an empty output.");
+            return;
+        }
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, criterionName, criterion, output, inputs, inputPattern);
         if (recipeName.isEmpty()) recipeBuilder.build(consumer);
         else {
