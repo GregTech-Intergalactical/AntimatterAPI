@@ -99,7 +99,7 @@ public class StructureElement {
      * @param machine the controller
      * @param pos     this elements position.
      */
-    public void tick(TileEntityBasicMultiMachine<?> machine, BlockPos pos) {
+    public void tick(TileEntityBasicMultiMachine<?> machine, StructureResult res, BlockPos pos) {
 
     }
 }

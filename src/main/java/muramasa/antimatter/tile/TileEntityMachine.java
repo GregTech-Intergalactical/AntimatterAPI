@@ -625,7 +625,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return this.getMachineType().getOverlayModel(Utils.coverRotateFacing(dir, facing));
     }
 
-
     @Override
     public String getId() {
         return this.getMachineType().getId();

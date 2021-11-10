@@ -88,7 +88,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             super.onFirstTick();
             return;
         }
-        StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).getStructure(this, getFacing()));
+        StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).allPositions(this));
         if (!isStructureValid() && shouldCheckFirstTick) {
             checkStructure();
         }
@@ -202,7 +202,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             return;
         }
         checkingStructure++;
-        StructureCache.invalidate(this.getWorld(), getPos(), getMachineType().getStructure(getMachineTier()).getStructure(this, oldState != null ? Utils.dirFromState(oldState) : getFacing()));
+        StructureCache.invalidate(this.getWorld(), getPos(), result.positions);
         if (isServerSide()) {
             onStructureInvalidated();
             result.remove(this, result);

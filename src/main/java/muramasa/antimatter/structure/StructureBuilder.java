@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.structure.impl.SimpleStructure;
 import muramasa.antimatter.util.int3;
 import net.minecraftforge.fml.RegistryObject;
 
@@ -65,7 +66,7 @@ public class StructureBuilder {
         return this;
     }
 
-    public Structure build() {
+    public SimpleStructure build() {
         ImmutableMap.Builder<int3, StructureElement> elements = ImmutableMap.builder();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
@@ -82,7 +83,7 @@ public class StructureBuilder {
                 }
             }
         }
-        return new Structure(size, elements.build());
+        return new SimpleStructure(size, elements.build());
     }
 
     /*public static IAntimatterObject[] getAntiObjects(Object... objects) {

@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -18,26 +19,22 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static muramasa.antimatter.util.Dir.*;
 
-public class Structure {
+public abstract class Structure {
 
-    private final ImmutableMap<int3, StructureElement> elements;
-    private final Object2ObjectMap<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
-    private final int3 size;
-    private final int2 offset = new int2();
+    private final Map<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
 
-    public Structure(int3 size, ImmutableMap<int3, StructureElement> elements) {
-        this.size = size;
-        this.elements = elements;
-    }
+    public abstract StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile);
 
-    public Structure offset(int x, int y) {
-        offset.set(x, y);
-        return this;
-    }
+    public abstract LongList allPositions(TileEntityBasicMultiMachine<?> tile);
+
+    public abstract int3 size();
+
+    public abstract int2 offset();
 
     public Structure exact(int i, IAntimatterObject... objects) {
         Arrays.stream(objects).forEach(o -> addReq(o.getId(), r -> (r.components.containsKey(o.getId()) && r.components.get(o.getId()).size() == i) || (r.states.containsKey(o.getId()) && r.states.get(o.getId()).size() == i)));
@@ -54,29 +51,8 @@ public class Structure {
         return this;
     }
 
-    public Map<int3, StructureElement> getElements() {
-        return elements;
-    }
-
     public Map<String, IRequirement> getRequirements() {
         return requirements;
-    }
-
-    public StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile) {
-        StructureResult result = new StructureResult(this);
-        Direction h = null;
-        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y) {
-            h = tile.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
-        }
-        for (Iterator<Point> it = forAllElements(tile.getPos(), tile.getFacing(), h); it.hasNext(); ) {
-            Point point = it.next();
-            if (!point.el.evaluate(tile, point.pos, result)) {
-                return result;
-            } else {
-                result.register(point.pos.toImmutable(), point.el);
-            }
-        }
-        return result;
     }
 
     public boolean evaluatePosition(@Nonnull StructureResult res, @Nonnull TileEntityBasicMultiMachine<?> tile, @Nonnull BlockPos pos) {
@@ -88,15 +64,13 @@ public class Structure {
     }
 
     public static class Point {
-        public int3 pos;
-        public int3 offset;
+        public int3 pos = new int3();
         public StructureElement el;
     }
 
-
-    public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing, @Nullable Direction hFacing) {
+    /*public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing, @Nullable Direction hFacing) {
         return new Iterator<Point>() {
-            final int3 corner = hFacing == null ? new int3(source, facing).left(size.getX() / 2).back(offset.x).up(offset.y) : new int3(source, facing, hFacing).left(size.getX() / 2).back(offset.x).up(offset.y);
+            final int3 corner = hFacing == null ? new int3(source, facing).left(size().getX() / 2).back(offset().x).up(offset().y) : new int3(source, facing, hFacing).left(size().getX() / 2).back(offset().x).up(offset().y);
             final int3 working = new int3(facing, hFacing);
             final Point point = new Point();
             final Iterator<Map.Entry<int3, StructureElement>> it = elements.entrySet().iterator();
@@ -116,25 +90,5 @@ public class Structure {
                 return point;
             }
         };
-    }
-
-    public LongList getStructure(TileEntityBasicMultiMachine<?> tile, Direction face) {
-        LongList l = new LongArrayList();
-        Direction h = null;
-        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Axis.Y) {
-            h = tile.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
-        }
-        for (Iterator<Point> it = forAllElements(tile.getPos(), face, h); it.hasNext(); ) {
-            l.add(it.next().pos.toLong());
-        }
-        return l;
-    }
-
-    public int3 size() {
-        return size;
-    }
-
-    public int2 getOffset() {
-        return offset;
-    }
+    }*/
 }

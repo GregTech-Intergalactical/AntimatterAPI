@@ -91,11 +91,11 @@ public class RecipeBuilder {
     }
 
     public Recipe add(long duration, long power) {
-        return add(duration, power, 0);
+        return add(duration, power, this.special);
     }
 
     public Recipe add(int duration) {
-        return add(duration, 0, 0);
+        return add(duration, 0, this.special);
     }
 
     public RecipeBuilder ii(RecipeIngredient... stacks) {

@@ -6,15 +6,11 @@ import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.block.BlockState;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,14 +20,11 @@ public class StructureResult {
     private boolean hasError;
     private String error = "";
 
-    //TODO compile list of positions
-
     public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
     public Object2ObjectMap<String, List<BlockState>> states = new Object2ObjectOpenHashMap<>();
-    public LongList positions = new LongArrayList();
-    //Used to quickly find the element in StructureCache lookup.
-    private final Map<BlockPos, StructureElement> ELEMENT_LOOKUP = new Object2ObjectOpenHashMap<>();
-    private final Map<BlockPos, StructureElement> TICKING = new Object2ObjectOpenHashMap<>();
+    private final Map<BlockPos, StructureElement> elementLookup = new Object2ObjectOpenHashMap<>();
+    private final Map<BlockPos, StructureElement> tickingElements = new Object2ObjectOpenHashMap<>();
+    public final LongList positions = new LongArrayList();
 
     public StructureResult(Structure structure) {
         this.structure = structure;
@@ -43,15 +36,15 @@ public class StructureResult {
     }
 
     public StructureResult register(BlockPos pos, StructureElement el) {
-        ELEMENT_LOOKUP.put(pos, el);
+        elementLookup.put(pos, el);
         if (el.ticks()) {
-            TICKING.put(pos, el);
+            tickingElements.put(pos, el);
         }
         return this;
     }
 
     public StructureElement get(BlockPos pos) {
-        return ELEMENT_LOOKUP.get(pos);
+        return elementLookup.get(pos);
     }
 
     public String getError() {
@@ -91,46 +84,31 @@ public class StructureResult {
     }
 
     public void build(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
-        Direction h = null;
-        if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
-            h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
-        }
-        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
-            Structure.Point point = it.next();
-            int count = StructureCache.refCount(machine.getWorld(), point.pos);
-            point.el.onBuild(machine, point.pos, result, count);
+        for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
+            int count = StructureCache.refCount(machine.getWorld(), entry.getKey());
+            entry.getValue().onBuild(machine, entry.getKey(), result, count);
         }
     }
 
     public void remove(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
-        Direction h = null;
-        if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
-            h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
-        }
-        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
-            Structure.Point point = it.next();
-            int count = StructureCache.refCount(machine.getWorld(), point.pos);
-            point.el.onRemove(machine, point.pos, result, count);
+        for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
+            int count = StructureCache.refCount(machine.getWorld(), entry.getKey());
+            entry.getValue().onRemove(machine, entry.getKey(), result, count);
         }
     }
 
     public void updateState(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
-        Direction h = null;
-        if (machine.getMachineType().allowVerticalFacing() && machine.getFacing().getAxis() == Axis.Y) {
-            h = machine.getBlockState().get(BlockMachine.HORIZONTAL_FACING);
-        }
         MachineState proper = machine.getMachineState().getTextureState();
-        for (Iterator<Structure.Point> it = structure.forAllElements(machine.getPos(), machine.getFacing(), h); it.hasNext(); ) {
-            Structure.Point point = it.next();
-            int count = StructureCache.refCount(machine.getWorld(), point.pos);
-            point.el.onStateChange(machine, proper, point.pos, result, count);
+        for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
+            int count = StructureCache.refCount(machine.getWorld(), entry.getKey());
+            entry.getValue().onStateChange(machine, proper, entry.getKey(), result, count);
         }
     }
 
     public void tick(TileEntityBasicMultiMachine<?> machine) {
-        if (TICKING.isEmpty()) return;
-        for (Map.Entry<BlockPos, StructureElement> entry : TICKING.entrySet()) {
-            entry.getValue().tick(machine, entry.getKey());
+        if (tickingElements.isEmpty()) return;
+        for (Map.Entry<BlockPos, StructureElement> entry : tickingElements.entrySet()) {
+            entry.getValue().tick(machine, this, entry.getKey());
         }
     }
 }
