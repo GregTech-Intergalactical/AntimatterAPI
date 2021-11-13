@@ -5,6 +5,7 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
+import muramasa.antimatter.client.scene.TrackedDummyWorld;
 import muramasa.antimatter.cover.CoverDynamo;
 import muramasa.antimatter.cover.CoverEnergy;
 import muramasa.antimatter.cover.CoverInput;
@@ -106,7 +107,11 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         checkingStructure++;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            if (StructureCache.validate(world, pos, result.positions, maxShares())) {
+            if (world instanceof TrackedDummyWorld) {
+                StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).allPositions(this));
+                StructureCache.validate(world, pos, result.positions, maxShares());
+                return true;
+            } else if (StructureCache.validate(world, pos, result.positions, maxShares())) {
                 this.result = result;
                 if (isServerSide()) {
                     result.build(this, result);

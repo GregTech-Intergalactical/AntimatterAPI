@@ -11,6 +11,7 @@ import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
+import muramasa.antimatter.integration.jei.category.MultiMachineInfoPage;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -44,6 +45,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.DrawHighlightEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -172,6 +174,37 @@ public class ClientEvents {
                     list.add(new StringTextComponent(loc.toString()).mergeStyle(TextFormatting.DARK_GRAY));
                 }
             }
+        }
+    }
+
+    public static double lastDelta;
+    @SubscribeEvent
+    public static void onGuiMouseScrollPre(GuiScreenEvent.MouseScrollEvent.Pre e) {
+        lastDelta = e.getScrollDelta();
+    }
+
+    public static boolean leftDown;
+    public static boolean rightDown;
+    public static boolean middleDown;
+    @SubscribeEvent
+    public static void onGuiMouseClickPre(GuiScreenEvent.MouseClickedEvent.Pre e) {
+        if (e.getButton() == 0) {
+            leftDown = true;
+        } else if (e.getButton() == 1) {
+            rightDown = true;
+        } else {
+            middleDown = true;
+        }
+    }
+
+    @SubscribeEvent
+    public static void onGuiMouseReleasedPre(GuiScreenEvent.MouseReleasedEvent.Pre e) {
+        if (e.getButton() == 0) {
+            leftDown = false;
+        } else if (e.getButton() == 1) {
+            rightDown = false;
+        } else {
+            middleDown = false;
         }
     }
 }

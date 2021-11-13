@@ -368,4 +368,36 @@ public class RenderHelper {
         builder.pos(matrix, x2, y1, 0).color(r, g, b, 0.4F).endVertex();
         builder.pos(matrix, x1, y2, 0).color(r, g, b, 0.4F).endVertex();
     }
+
+    public static void renderCubeFace(IVertexBuilder buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float r, float g, float b, float a) {
+        buffer.pos(minX, minY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(minX, minY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(minX, maxY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(minX, maxY, minZ).color(r, g, b, a).endVertex();
+
+        buffer.pos(maxX, minY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, maxY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, maxY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, minY, maxZ).color(r, g, b, a).endVertex();
+
+        buffer.pos(minX, minY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, minY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, minY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(minX, minY, maxZ).color(r, g, b, a).endVertex();
+
+        buffer.pos(minX, maxY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(minX, maxY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, maxY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, maxY, minZ).color(r, g, b, a).endVertex();
+
+        buffer.pos(minX, minY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(minX, maxY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, maxY, minZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, minY, minZ).color(r, g, b, a).endVertex();
+
+        buffer.pos(minX, minY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, minY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(maxX, maxY, maxZ).color(r, g, b, a).endVertex();
+        buffer.pos(minX, maxY, maxZ).color(r, g, b, a).endVertex();
+    }
 }

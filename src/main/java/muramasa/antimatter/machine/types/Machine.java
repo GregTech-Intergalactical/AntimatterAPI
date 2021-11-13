@@ -28,6 +28,7 @@ import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
@@ -255,6 +256,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     protected Block getBlock(Machine<T> type, Tier tier) {
         return new BlockMachine(type, tier);
+    }
+
+    public BlockMachine getBlockState(Tier tier) {
+        if (tileType == null) return null;
+        return AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), this.getDomain());
     }
 
     /**

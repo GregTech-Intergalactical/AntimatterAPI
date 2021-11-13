@@ -19,6 +19,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
 import muramasa.antimatter.machine.Tier;
@@ -100,6 +101,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         RecipeMapCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
+        MultiMachineInfoCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
         if (helpers == null) helpers = registry.getJeiHelpers();
         Set<ResourceLocation> registeredMachineCats = new ObjectOpenHashSet<>();
 
@@ -109,6 +111,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
                 registeredMachineCats.add(tuple.map.getLoc());
             }
         });
+        
+        // multi machine
+        registry.addRecipeCategories(new MultiMachineInfoCategory());
     }
 
     @Override
@@ -117,6 +122,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         REGISTRY.forEach((id, tuple) -> {
             registration.addRecipes(tuple.map.getRecipes(true), id);
         });
+        MultiMachineInfoCategory.registerRecipes(registration);
     }
 
     public static void showCategory(Machine<?>... types) {
