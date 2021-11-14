@@ -53,7 +53,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
      * Element Members
      **/
     private Element element;
-    private String chemicalFormula = "";
+    private String chemicalFormula = null;
 
     /**
      * Solid Members
@@ -417,9 +417,12 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
 
     public void setChemicalFormula() {
         if (!enabled) return;
+        if (chemicalFormula != null) return;
         if (element != null) chemicalFormula = element.getElement();
-        else if (!processInto.isEmpty())
+        else if (!processInto.isEmpty()) {
+            processInto.forEach(t -> t.m.setChemicalFormula());
             chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
+        }
     }
 
     /**
@@ -482,7 +485,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     }
 
     public String getChemicalFormula() {
-        return chemicalFormula;
+        return chemicalFormula == null ? "" : chemicalFormula;
     }
 
     /**
