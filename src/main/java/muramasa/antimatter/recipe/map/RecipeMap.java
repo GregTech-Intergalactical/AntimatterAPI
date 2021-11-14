@@ -17,6 +17,7 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.*;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -47,7 +48,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
+public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObject {
 
     private static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
     private static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
@@ -81,17 +82,11 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
         AntimatterAPI.register(RecipeMap.class, this);
     }
 
-    @Override
-    public String getDomain() {
-        return loc.getNamespace();
-    }
-
     // In the case of split stacks, merge the items, 2 aluminium dust in separate
     // stacks -> 1 stack with additive count.
     public static ItemStack[] uniqueItems(ItemStack[] input) {
         List<ItemStack> list = new ObjectArrayList<>(input.length);
-        loop:
-        for (ItemStack item : input) {
+        loop: for (ItemStack item : input) {
             for (ItemStack obj : list) {
                 if (item.equals(obj, false)) {
                     obj.grow(item.getCount());
@@ -272,7 +267,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, FluidStack[] ingredients,
-                                   boolean insideMap) {
+            boolean insideMap) {
         for (FluidStack t : ingredients) {
             List<AbstractMapIngredient> inner = new ObjectArrayList<>(1 + t.getFluid().getTags().size());
             inner.add(new MapFluidIngredient(t, insideMap));
@@ -297,7 +292,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<RecipeIngredient> ingredients,
-                                  ITagCollectionSupplier tags, boolean insideMap) {
+            ITagCollectionSupplier tags, boolean insideMap) {
         for (RecipeIngredient r : ingredients) {
             Ingredient t = r.get();
             if (!isIngredientSpecial(t)) {
@@ -343,7 +338,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @param count       how many added already.
      */
     boolean recurseItemTreeAdd(@Nonnull Recipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients,
-                               @Nonnull Branch map, int index, int count) {
+            @Nonnull Branch map, int index, int count) {
         if (count >= ingredients.size())
             return true;
         if (index >= ingredients.size()) {
@@ -410,7 +405,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @return a recipe
      */
     Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-                               @Nonnull Predicate<Recipe> canHandle) {
+            @Nonnull Predicate<Recipe> canHandle) {
         // Try each ingredient as a starting point, adding it to the skiplist.
         for (int i = 0; i < items.size(); i++) {
             Recipe r = recurseItemTreeFind(items, map, canHandle, i, 0, (1L << i));
@@ -433,7 +428,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
      * @return a recipe
      */
     Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-                               @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
+            @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
         if (count == items.size())
             return null;
         List<AbstractMapIngredient> wr = items.get(index);
@@ -468,7 +463,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     private Recipe callback(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-                            Predicate<Recipe> canHandle, int index, int count, long skip) {
+            Predicate<Recipe> canHandle, int index, int count, long skip) {
         // We loop around items.size() if we reach the end.
         int counter = (index + 1) % items.size();
         while (counter != index) {
@@ -486,7 +481,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
 
     @Nullable
     public Recipe find(@Nonnull LazyOptional<MachineItemHandler<?>> itemHandler,
-                       @Nonnull LazyOptional<MachineFluidHandler<?>> fluidHandler, Predicate<Recipe> validator) {
+            @Nonnull LazyOptional<MachineFluidHandler<?>> fluidHandler, Predicate<Recipe> validator) {
         return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
                 fluidHandler.map(MachineFluidHandler::getInputs).orElse(EMPTY_FLUID), validator);
     }
@@ -615,7 +610,7 @@ public class RecipeMap<B extends RecipeBuilder> implements IAntimatterObject {
     }
 
     public <T extends TileEntityMachine<T>> Recipe find(Holder<IItemHandler, MachineItemHandler<T>> itemHandler,
-                                                        Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler, Predicate<Recipe> validateRecipe) {
+            Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler, Predicate<Recipe> validateRecipe) {
         return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
                 fluidHandler.map(FluidHandler::getInputs).orElse(EMPTY_FLUID), validateRecipe);
     }
