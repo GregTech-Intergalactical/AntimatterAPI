@@ -1,5 +1,6 @@
 package muramasa.antimatter.client.scene;
 
+import muramasa.antimatter.mixin.DimensionTypeAccessor;
 import muramasa.antimatter.structure.BlockInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -46,11 +47,7 @@ import java.util.function.Predicate;
 public class TrackedDummyWorld extends World {
     private static DimensionType DIMENSION_TYPE;
     static {
-        try {
-            DIMENSION_TYPE = (DimensionType) ObfuscationReflectionHelper.findField(DimensionType.class, "OVERWORLD_TYPE").get(DimensionType.class);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        DIMENSION_TYPE = DimensionTypeAccessor.getOVERWORLD_TYPE();
     }
 
     private Predicate<BlockPos> renderFilter;

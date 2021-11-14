@@ -6,7 +6,8 @@
   "client": [
     "ChunkReaderAccessor",
     "ClientBlockUpdateMixin",
-    "ClientPlayNetHandlerMixin"
+    "ClientPlayNetHandlerMixin",
+    "DimensionTypeAccessor"
   ],
   "mixins": [
     "BlockLootTablesAccessor",
