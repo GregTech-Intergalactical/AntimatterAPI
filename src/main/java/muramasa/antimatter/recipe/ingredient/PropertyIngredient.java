@@ -95,7 +95,7 @@ public class PropertyIngredient extends Ingredient {
 
     public Object getMat(ItemStack stack) {
         for (MaterialTypeItem<?> materialType : getTypes()) {
-            Material mat = materialType.tryMaterialFromItem(stack);
+            Material mat = materialType.getMaterialFromStack(stack);
             if (mat != null) {
                 return mat;
             }

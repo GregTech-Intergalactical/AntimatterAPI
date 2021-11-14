@@ -2,19 +2,30 @@ package muramasa.antimatter.material;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ITag;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -70,7 +81,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         AntimatterAPI.addReplacement(getMaterialTag(mat), replacement);
     }
 
-    public Material tryMaterialFromItem(ItemStack stack) {
+    public Material getMaterialFromStack(ItemStack stack) {
         if (stack.getItem() instanceof MaterialItem) {
             return ((MaterialItem) stack.getItem()).getMaterial();
         }
@@ -152,5 +163,41 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
 
     public BiMap<Material, Item> getOVERRIDES() {
         return OVERRIDES;
+    }
+
+
+    static {
+        AntimatterAPI.runOnEvent(RegistrationEvent.DATA_READY, MaterialType::buildTooltips);
+    }
+
+    private static ImmutableMap<Item, Material> tooltipCache;
+
+    @OnlyIn(Dist.CLIENT)
+    public static void buildTooltips() {
+        ImmutableMap.Builder<Item, Material> builder = ImmutableMap.builder();
+        AntimatterAPI.all(MaterialType.class, t -> {
+            BiMap<Item, Material> map = t.getOVERRIDES().inverse();
+            for (Map.Entry<Item, Material> entry : map.entrySet()) {
+                builder.put(entry.getKey(), entry.getValue());
+            }
+        });
+        tooltipCache = builder.build();
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    protected static void onTooltipAdd(final ItemTooltipEvent ev) {
+        if (ev.getPlayer() == null) return;
+        if (tooltipCache == null) return;
+        if (ev.getItemStack().getItem() instanceof MaterialItem) return;
+        if (ev.getItemStack().getItem().getRegistryName().getNamespace().equals(Ref.ID)) return;
+
+        Material mat = tooltipCache.get(ev.getItemStack().getItem());
+        if (mat == null) return;
+        if (!Screen.hasShiftDown()) {
+            ev.getToolTip().add(new StringTextComponent("Hold Shift to show formula").mergeStyle(TextFormatting.AQUA).mergeStyle(TextFormatting.ITALIC));
+        } else {
+            ev.getToolTip().add(new StringTextComponent(mat.getChemicalFormula()).mergeStyle(TextFormatting.DARK_AQUA));
+        }
     }
 }

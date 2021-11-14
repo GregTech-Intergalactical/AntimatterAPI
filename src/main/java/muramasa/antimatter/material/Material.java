@@ -43,10 +43,11 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     /**
      * Basic Members
      **/
-    private String domain, id;
+    private final String domain;
+    private final String id;
     private ITextComponent displayName;
-    private int rgb;
-    private TextureSet set;
+    private final int rgb;
+    private final TextureSet set;
 
     /**
      * Element Members
@@ -96,8 +97,8 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
      **/
     private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
     private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
-    private List<MaterialStack> processInto = new ObjectArrayList<>();
-    private List<Material> byProducts = new ObjectArrayList<>();
+    private final List<MaterialStack> processInto = new ObjectArrayList<>();
+    private final List<Material> byProducts = new ObjectArrayList<>();
 
     public Material(String domain, String id, int rgb, TextureSet set, String... modIds) {
         this.domain = domain;

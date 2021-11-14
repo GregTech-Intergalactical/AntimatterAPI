@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static muramasa.antimatter.Data.HELMET;
 import static muramasa.antimatter.Data.NULL;
 
 public class RecipeBuilders {
@@ -86,7 +85,7 @@ public class RecipeBuilders {
             if (stack.getItem() instanceof MaterialItem) {
                 return ImmutableMap.of("primary", ((MaterialItem) stack.getItem()).getMaterial());
             }
-            Material mat = type.tryMaterialFromItem(stack);
+            Material mat = type.getMaterialFromStack(stack);
             if (mat != null) {
                 return ImmutableMap.of("primary", mat);
             }
@@ -108,7 +107,7 @@ public class RecipeBuilders {
             if (stack.getItem() instanceof MaterialItem) {
                 return ImmutableMap.of("primary", ((MaterialItem) stack.getItem()).getMaterial());
             }
-            Material mat = type.tryMaterialFromItem(stack);
+            Material mat = type.getMaterialFromStack(stack);
             if (mat != null) {
                 return ImmutableMap.of("primary", mat);
             }
