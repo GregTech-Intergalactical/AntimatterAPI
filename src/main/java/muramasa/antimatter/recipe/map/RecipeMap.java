@@ -79,7 +79,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         this.loc = new ResourceLocation(domain, categoryId);
         this.builder = builder;
         this.builder.setMap(this);
-        AntimatterAPI.register(RecipeMap.class, this);
+        //AntimatterAPI.register(RecipeMap.class, this);
     }
 
     // In the case of split stacks, merge the items, 2 aluminium dust in separate
@@ -97,11 +97,6 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
             list.add(item.copy());
         }
         return list.toArray(new ItemStack[0]);
-    }
-
-    @Nonnull
-    public ResourceLocation getLoc() {
-        return loc;
     }
 
     @Nullable
