@@ -1,7 +1,7 @@
 package muramasa.antimatter.cover;
 
 import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -105,13 +105,13 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
-        if (event == GuiEvent.ITEM_EJECT) {
+    public void onGuiEvent(IGuiEvent event, PlayerEntity player) {
+        if (event.getFactory() == GuiEvents.ITEM_EJECT) {
             ejectItems = !ejectItems;
             processItemOutput();
             Utils.markTileForNBTSync(tile);
         }
-        if (event == GuiEvent.FLUID_EJECT) {
+        if (event.getFactory() == GuiEvents.FLUID_EJECT) {
             ejectFluids = !ejectFluids;
             processFluidOutput();
             Utils.markTileForNBTSync(tile);

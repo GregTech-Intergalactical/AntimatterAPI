@@ -49,7 +49,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         return new StringTextComponent(Utils.underscoreToUpperCamel(this.getId()));
     }
 
-    default void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
+    default void onGuiEvent(IGuiEvent event, PlayerEntity player) {
         // NOOP
     }
 
@@ -234,7 +234,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         }
 
         @Override
-        public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
+        public AbstractGuiEventPacket createGuiPacket(IGuiEvent event) {
             return null;
         }
 

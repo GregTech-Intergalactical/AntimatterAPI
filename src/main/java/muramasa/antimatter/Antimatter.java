@@ -9,7 +9,7 @@ import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
 import muramasa.antimatter.event.AntimatterCraftingEvent;
 import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.material.SubTag;
@@ -166,7 +166,7 @@ public class Antimatter extends AntimatterMod {
             RecipeBuilders.init();
             Data.init(side);
             SubTag.init();
-            GuiEvent.init();
+            GuiEvents.init();
         } else if (event == RegistrationEvent.WORLDGEN_INIT) {
             AntimatterWorldGenerator.init();
         }

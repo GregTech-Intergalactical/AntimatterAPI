@@ -3,7 +3,7 @@ package muramasa.antimatter.tile.single;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
-import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
@@ -24,11 +24,13 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, PlayerEntity playerEntity, int... data) {
-        if (event == GuiEvent.EXTRA_BUTTON) {
+    public void onGuiEvent(IGuiEvent event, PlayerEntity playerEntity) {
+        if (event.getFactory() == GuiEvents.EXTRA_BUTTON) {
             energyHandler.ifPresent(h -> {
-                boolean shiftHold = data[1] != 0;
-                switch (data[0]) {
+                GuiEvents.GuiEvent ev = (GuiEvents.GuiEvent) event;
+                int[] data = ev.data;
+                boolean shiftHold = data[0] != 0;
+                switch (data[1]) {
                     case 0:
                         voltage /= shiftHold ? 512 : 64;
                         break;
@@ -78,7 +80,8 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
                         amperage *= shiftHold ? 16 : 2;
                         break;
                 }
-
+                amperage = Math.max(amperage, 0);
+                voltage = Math.max(voltage, 0);
                 setMachineState((long) (amperage * voltage) >= 0L ? getDefaultMachineState() : MachineState.DISABLED);
 
                 if (isDefaultMachineState()) {

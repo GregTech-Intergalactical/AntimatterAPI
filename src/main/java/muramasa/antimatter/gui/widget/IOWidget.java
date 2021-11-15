@@ -6,7 +6,7 @@ import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.util.int4;
 import net.minecraft.util.ResourceLocation;
 
@@ -34,13 +34,13 @@ public class IOWidget extends AbstractSwitchWidget {
         this.setH(h);
         ContainerMachine<?> m = (ContainerMachine<?>) instance.container;
         if (m.getTile().getMachineType().has(ITEM)) {
-            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvent.ITEM_EJECT, 0).setSize(26, 0, w, h).buildAndAdd(instance, this);
+            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), itemLoc, null, GuiEvents.ITEM_EJECT, 0).setSize(26, 0, w, h).buildAndAdd(instance, this);
             item.setEnabled(false);
             item.setStateHandler(wid -> itemState);
             item.setDepth(depth() + 1);
         }
         if (m.getTile().getMachineType().has(FLUID)) {
-            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvent.FLUID_EJECT, 0).setSize(44, 0, w, h).buildAndAdd(instance, this);
+            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(instance.handler.handlerDomain(), "textures/gui/button/gui_buttons.png"), instance.handler.getGuiTexture(), fluidLoc, null, GuiEvents.FLUID_EJECT, 0).setSize(44, 0, w, h).buildAndAdd(instance, this);
             fluid.setStateHandler(wid -> fluidState);
             fluid.setEnabled(false);
             fluid.setDepth(depth() + 1);

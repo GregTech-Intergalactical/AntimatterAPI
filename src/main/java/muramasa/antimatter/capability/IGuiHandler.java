@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public interface IGuiHandler {
 
-    default void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
+    default void onGuiEvent(IGuiEvent event, PlayerEntity player) {
         // NOOP
     }
 
@@ -37,10 +37,10 @@ public interface IGuiHandler {
     /**
      * Creates a gui packet, depending on the type of gui handler.
      *
-     * @param data the input data.
+     * @param event the event container.
      * @return a packet to send.
      */
-    AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data);
+    AbstractGuiEventPacket createGuiPacket(IGuiEvent event);
 
     String handlerDomain();
 

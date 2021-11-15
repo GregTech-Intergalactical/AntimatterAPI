@@ -6,15 +6,17 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.core.RTree;
-import muramasa.antimatter.gui.event.GuiEvent;
+import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.mixin.IContainerListeners;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.IContainerListener;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -177,7 +179,7 @@ public class GuiInstance implements ICanSyncData {
     }
 
     public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body) {
-        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvent.EXTRA_BUTTON, buttonCounter++).setSize(x, y, w, h));
+        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++).setSize(x, y, w, h));
         return this;
     }
 
@@ -204,6 +206,10 @@ public class GuiInstance implements ICanSyncData {
             writeToServer(toSync);
     }
 
+    public void sendPacket(Object pkt) {
+        Antimatter.NETWORK.sendToServer(pkt);
+    }
+
     /**
      * Called on the server to update.
      */
@@ -218,6 +224,11 @@ public class GuiInstance implements ICanSyncData {
         }
         if (toSync.size() > 0)
             write(toSync);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public ItemStack getHeldItem() {
+        return Minecraft.getInstance().player.inventory.getItemStack();
     }
 
     @Nullable

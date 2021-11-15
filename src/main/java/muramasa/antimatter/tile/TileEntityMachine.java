@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
@@ -16,6 +17,7 @@ import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.gui.event.SlotClickEvent;
 import muramasa.antimatter.gui.widget.FluidSlotWidget;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
@@ -38,6 +40,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.*;
@@ -62,8 +65,8 @@ import java.util.Set;
 
 import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
-import static muramasa.antimatter.gui.event.GuiEvent.FLUID_EJECT;
-import static muramasa.antimatter.gui.event.GuiEvent.ITEM_EJECT;
+import static muramasa.antimatter.gui.event.GuiEvents.FLUID_EJECT;
+import static muramasa.antimatter.gui.event.GuiEvents.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 import static net.minecraft.block.Blocks.AIR;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
@@ -348,17 +351,23 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, PlayerEntity player, int... data) {
-        if (event == ITEM_EJECT || event == FLUID_EJECT) {
+    public void onGuiEvent(IGuiEvent event, PlayerEntity player) {
+        if (event.getFactory() == ITEM_EJECT || event.getFactory() == FLUID_EJECT) {
             coverHandler.ifPresent(ch -> {
-                ch.get(ch.getOutputFacing()).onGuiEvent(event, player, data);
+                ch.get(ch.getOutputFacing()).onGuiEvent(event, player);
+            });
+        }
+        if (event.getFactory() == SlotClickEvent.SLOT_CLICKED) {
+            itemHandler.ifPresent(t -> {
+                ItemStack stack = player.inventory.getItemStack();
+                Antimatter.LOGGER.info("packet got");
             });
         }
     }
 
     @Override
-    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
-        return new TileGuiEventPacket(event, getPos(), data);
+    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event) {
+        return new TileGuiEventPacket(event, getPos());
     }
 
     @Override

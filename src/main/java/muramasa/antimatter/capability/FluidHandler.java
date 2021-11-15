@@ -175,6 +175,11 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         return FluidStack.EMPTY;
     }
 
+    public FluidStack drainInput(int maxDrain, IFluidHandler.FluidAction action) {
+        if (getInputTanks() == null) return FluidStack.EMPTY;
+        return getInputTanks().drain(maxDrain, action);
+    }
+
     @Nonnull
     public FluidStack drain(int maxDrain, IFluidHandler.FluidAction action) {
         if (getOutputTanks() != null) {

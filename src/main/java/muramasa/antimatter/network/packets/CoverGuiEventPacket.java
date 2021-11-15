@@ -1,5 +1,6 @@
 package muramasa.antimatter.network.packets;
 
+import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -15,20 +16,19 @@ import java.util.function.Supplier;
 public class CoverGuiEventPacket extends AbstractGuiEventPacket {
     Direction facing;
 
-    public CoverGuiEventPacket(IGuiEvent event, BlockPos pos, Direction facing, int... data) {
-        super(event, pos, data);
+    public CoverGuiEventPacket(IGuiEvent event, BlockPos pos, Direction facing) {
+        super(event, pos);
         this.facing = facing;
     }
 
     public static void encode(CoverGuiEventPacket msg, PacketBuffer buf) {
-        msg.event.write(buf);
+        msg.event.getFactory().write(msg.event, buf);
         buf.writeBlockPos(msg.pos);
         buf.writeEnumValue(msg.facing);
-        buf.writeVarIntArray(msg.data);
     }
 
     public static CoverGuiEventPacket decode(PacketBuffer buf) {
-        return new CoverGuiEventPacket(IGuiEvent.read(buf), buf.readBlockPos(), buf.readEnumValue(Direction.class), buf.readVarIntArray());
+        return new CoverGuiEventPacket(IGuiEvent.IGuiEventFactory.read(buf), buf.readBlockPos(), buf.readEnumValue(Direction.class));
     }
 
     public static void handle(final CoverGuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -37,7 +37,11 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
             if (sender != null) {
                 TileEntity tile = Utils.getTile(sender.getServerWorld(), msg.pos);
                 if (tile instanceof TileEntityMachine) {
-                    ((TileEntityMachine<?>) tile).coverHandler.ifPresent(ch -> ch.get(msg.facing).onGuiEvent(msg.event, sender, msg.data));
+                    if (msg.event.forward()) {
+                        ((TileEntityMachine<?>) tile).coverHandler.ifPresent(ch -> ch.get(msg.facing).onGuiEvent(msg.event, sender));
+                    } else {
+                        msg.event.handle(sender, ((IAntimatterContainer) sender.openContainer).source());
+                    }
                 }
             }
         });

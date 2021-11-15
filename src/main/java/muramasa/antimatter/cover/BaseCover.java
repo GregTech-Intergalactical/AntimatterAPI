@@ -1,7 +1,6 @@
 package muramasa.antimatter.cover;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
@@ -11,6 +10,7 @@ import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.network.packets.CoverGuiEventPacket;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -149,8 +149,8 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     }
 
     @Override
-    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
-        return null;
+    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event) {
+        return new CoverGuiEventPacket(event, this.handler.getTile().getPos(), this.side);
     }
 
     @Override

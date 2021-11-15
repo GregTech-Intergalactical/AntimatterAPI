@@ -386,7 +386,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     @Override
-    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event, int... data) {
+    public AbstractGuiEventPacket createGuiPacket(IGuiEvent event) {
         return null;
     }
 

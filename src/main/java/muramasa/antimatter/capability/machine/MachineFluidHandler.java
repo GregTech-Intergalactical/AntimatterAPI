@@ -237,4 +237,50 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     public void refresh() {
         Tesseract.FLUID.refreshNode(tile.getWorld(), tile.getPos().toLong());
     }
+
+    public IFluidHandler getGuiHandler() {
+        return new IFluidHandler() {
+
+            @Override
+            public int getTanks() {
+                return MachineFluidHandler.this.getTanks();
+            }
+
+            @Nonnull
+            @Override
+            public FluidStack getFluidInTank(int tank) {
+                return MachineFluidHandler.this.getFluidInTank(tank);
+            }
+
+            @Override
+            public int getTankCapacity(int tank) {
+                return MachineFluidHandler.this.getTankCapacity(tank);
+            }
+
+            @Override
+            public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+                return MachineFluidHandler.this.isFluidValid(tank, stack);
+            }
+
+            @Override
+            public int fill(FluidStack resource, FluidAction action) {
+                int ret = MachineFluidHandler.this.fill(resource, action);
+                return ret == 0 ? MachineFluidHandler.this.fillOutput(resource, action) : ret;
+            }
+
+            @Nonnull
+            @Override
+            public FluidStack drain(FluidStack resource, FluidAction action) {
+                FluidStack ret = MachineFluidHandler.this.drain(resource, action);
+                return ret.isEmpty() ? MachineFluidHandler.this.drainInput(resource, action) : ret;
+            }
+
+            @Nonnull
+            @Override
+            public FluidStack drain(int maxDrain, FluidAction action) {
+                FluidStack ret = MachineFluidHandler.this.drain(maxDrain, action);
+                return ret.isEmpty() ? MachineFluidHandler.this.drainInput(maxDrain, action) : ret;
+            }
+        };
+    }
 }

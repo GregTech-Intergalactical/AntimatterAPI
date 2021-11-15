@@ -7,7 +7,9 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.Widget;
+import muramasa.antimatter.gui.event.SlotClickEvent;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.util.text.ITextComponent;
@@ -99,4 +101,10 @@ public class FluidSlotWidget extends Widget {
         return true;
     }
 
+    @Override
+    public void onClick(double mouseX, double mouseY, int button) {
+        super.onClick(mouseX, mouseY, button);
+        AbstractGuiEventPacket pkt = gui.handler.createGuiPacket(new SlotClickEvent(this.slot, this.slots.getType()));
+        gui.sendPacket(pkt);
+    }
 }

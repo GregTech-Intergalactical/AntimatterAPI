@@ -4,6 +4,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.*;
+import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
@@ -130,12 +131,12 @@ public class ButtonWidget extends Widget {
         return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, onPress)).clientSide();
     }
 
-    public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0)))).clientSide();
+    public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
+        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
     }
 
-    public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent ev, int id) {
-        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(ev, id, Screen.hasShiftDown() ? 1 : 0))))).clientSide();
+    public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
+        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
     }
 
 }

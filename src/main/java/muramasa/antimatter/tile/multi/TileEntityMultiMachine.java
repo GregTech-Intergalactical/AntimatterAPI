@@ -78,8 +78,8 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, PlayerEntity playerEntity, int... data) {
-        super.onGuiEvent(event, playerEntity, data);
+    public void onGuiEvent(IGuiEvent event, PlayerEntity playerEntity) {
+        super.onGuiEvent(event, playerEntity);
         /*if (event == GuiEvent.MULTI_ACTIVATE) {
             checkStructure();
             recipeHandler.ifPresent(MachineRecipeHandler::checkRecipe);

@@ -203,6 +203,7 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                     if (coverInteract) return ActionResultType.SUCCESS;
                     //Has gui?
                     if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> {
+                        fh = tile.fluidHandler.map(t -> t.getGuiHandler()).orElse(fh);
                         FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true);
                         if (res.isSuccess() && !player.isCreative()) {
                             boolean single = stack.getCount() == 1;

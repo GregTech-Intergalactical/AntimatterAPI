@@ -32,19 +32,22 @@ public abstract class Widget implements IGuiElement {
     public final GuiInstance gui;
     public final boolean isRemote;
     protected IGuiElement parent;
+    private ITextComponent message = StringTextComponent.EMPTY;
+    public final int id;
+
     protected boolean enabled = true;
     protected boolean shouldRender = true;
-    private int x, y, w, h = 0;
     protected boolean isClicking = false;
-    private int depth;
-    private ITextComponent message = StringTextComponent.EMPTY;
 
+    private int depth;
+    private int x, y, w, h = 0;
     private int realX, realY;
 
     protected Widget(@Nonnull final GuiInstance gui, @Nullable final IGuiElement parent) {
         this.gui = gui;
         this.isRemote = gui.isRemote;
         this.parent = parent;
+        this.id = 0;
         updateSize();
     }
 
