@@ -9,10 +9,17 @@ import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.Minecraft;
+import net.minecraft.fluid.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
+import tesseract.api.fluid.FluidController;
+import tesseract.api.fluid.FluidHolder;
+import tesseract.api.fluid.FluidStatus;
 import tesseract.api.gt.GTController;
 import tesseract.api.item.ItemController;
+
+import java.util.Set;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 
@@ -145,6 +152,47 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
 
         public static WidgetSupplier build() {
             return builder((a, b) -> new TesseractItemWidget(a, b, (IInfoRenderer<TesseractItemWidget>) a.handler));
+        }
+    }
+
+    public static class TesseractFluidWidget extends InfoRenderWidget<TesseractFluidWidget> {
+
+        public int holderPressure = 0;
+        public FluidStack stack = FluidStack.EMPTY;
+
+        protected TesseractFluidWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TesseractFluidWidget> renderer) {
+            super(gui, parent, renderer);
+        }
+
+        @Override
+        public void init() {
+            super.init();
+            TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
+            final long pos = pipe.getPos().toLong();
+            gui.syncInt(() -> {
+                ITickingController controller = Tesseract.FLUID.getController(pipe.getWorld(), pipe.getPos().toLong());
+                if (controller == null) return 0;
+                FluidController gt = (FluidController) controller;
+                FluidHolder holder = gt.getCableHolder(pos);
+                return holder == null ? 0 : holder.getPressure();
+            }, a -> this.holderPressure = a, SERVER_TO_CLIENT);
+            gui.syncFluidStack(() -> {
+                ITickingController controller = Tesseract.FLUID.getController(pipe.getWorld(), pipe.getPos().toLong());
+                if (controller == null) return FluidStack.EMPTY;
+                FluidController gt = (FluidController) controller;
+                FluidHolder holder = gt.getCableHolder(pos);
+                if (holder != null) {
+                    Set<Fluid> fluids = holder.getFluids();
+                    if (fluids != null && fluids.size() > 0) {
+                        return new FluidStack(fluids.iterator().next(), holder.getPressure());
+                    }
+                }
+                return FluidStack.EMPTY;
+            }, a -> this.stack = a, SERVER_TO_CLIENT);
+        }
+
+        public static WidgetSupplier build() {
+            return builder((a, b) -> new TesseractFluidWidget(a, b, (IInfoRenderer<TesseractFluidWidget>) a.handler));
         }
     }
 }

@@ -9,7 +9,10 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
+import muramasa.antimatter.gui.widget.TextWidget;
+import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
@@ -403,7 +406,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     @Override
     public void addWidgets(GuiInstance instance, IGuiElement parent) {
-        //instance.addWidget(WidgetSupplier.build((a,b) -> TextWidget.build(a.screen.getTitle().getString(), 4210752).setPos(10,10).build(a,b)).clientSide());
+        instance.addWidget(WidgetSupplier.build((a, b) -> TextWidget.build(((AntimatterContainerScreen<?>) b).getTitle().getString(), 4210752).build(a, b)).setPos(9, 5).clientSide());
         instance.addWidget(BackgroundWidget.build(instance.handler.getGuiTexture(), instance.handler.guiSize(), instance.handler.guiHeight()));
     }
 }
