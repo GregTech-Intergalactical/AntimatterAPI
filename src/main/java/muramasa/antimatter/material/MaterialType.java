@@ -165,11 +165,6 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         return OVERRIDES;
     }
 
-
-    static {
-        AntimatterAPI.runOnEvent(RegistrationEvent.DATA_READY, MaterialType::buildTooltips);
-    }
-
     private static ImmutableMap<Item, Material> tooltipCache;
 
     @OnlyIn(Dist.CLIENT)

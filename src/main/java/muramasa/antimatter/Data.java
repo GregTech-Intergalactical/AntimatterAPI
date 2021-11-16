@@ -391,7 +391,7 @@ public class Data {
         BOLT.dependents(ROD);
 
         if (side == Dist.CLIENT) {
-            clientBehaviours();
+            clientInit();
         }
     }
 
@@ -403,11 +403,13 @@ public class Data {
         if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) ORE.all().forEach(m -> m.flags(ORE_SMALL));
     }
 
-    private static void clientBehaviours() {
+    private static void clientInit() {
         WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
         SCREWDRIVER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
         ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
         WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WIRE_CUTTER.getToolType(), BehaviourExtendedHighlight.PIPE_FUNCTION));
         CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
+
+        MaterialType.buildTooltips();
     }
 }
