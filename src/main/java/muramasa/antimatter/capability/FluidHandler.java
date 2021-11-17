@@ -1,5 +1,8 @@
 package muramasa.antimatter.capability;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -15,6 +18,9 @@ import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
+
 import java.util.Arrays;
 import java.util.EnumMap;
 
@@ -50,18 +56,6 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         }
     }
 
-    protected void markDirty() {
-        dirty = true;
-    }
-
-    public boolean isDirty() {
-        return dirty;
-    }
-
-    public void markSynced() {
-        dirty = false;
-    }
-
     public void onRemove() {
 
     }
@@ -85,33 +79,38 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     }
 
     protected FluidTank getTank(int tank) {
-        if (getInputTanks() == null) {
-            if (getOutputTanks() != null)
-                return getOutputTanks().getTank(tank);
-        } else if (getInputTanks() != null && getOutputTanks() != null) {
-            if (tank >= getInputTanks().getTanks())
-                return getOutputTanks().getTank(offsetTank(tank));
-            else
-                return getInputTanks().getTank(tank);
-        } else if (getOutputTanks() == null && getInputTanks() != null) {
-            return getInputTanks().getTank(tank);
-        }
-        return null;
+        FluidTanks tanks = getTanks(tank);
+        if (tanks == null)
+            return null;
+        return tanks.getTank(offsetTank(tank));
     }
 
     protected FluidTanks getTanks(int tank) {
-        if (getInputTanks() == null) {
-            return getOutputTanks();
-        } else if (getOutputTanks() == null) {
-            return getInputTanks();
-        } else {
-            if (tank >= getInputTanks().getTanks()) return getOutputTanks();
+        FluidTanks input = getInputTanks();
+        FluidTanks output = getOutputTanks();
+        boolean hasInput = input != null;
+        boolean hasOutput = output != null;
+        if (hasInput && !hasOutput) {
+            return input;
+        } else if (!hasInput && hasOutput) {
+            return output;
+        } else if (!hasOutput && !hasOutput) {
+            return null;
         }
-        return getInputTanks();
+
+        boolean isOutput = tank >= input.getTanks();
+
+        if (!isOutput) {
+            return input;
+        } else {
+            return output;
+        }
     }
 
     protected int offsetTank(int tank) {
-        if (getInputTanks() != null && tank >= getInputTanks().getTanks()) return tank - getInputTanks().getTanks();
+        FluidTanks in = getInputTanks();
+        if (in != null && tank >= getInputTanks().getTanks())
+            return tank - in.getTanks();
         return tank;
     }
 
@@ -125,11 +124,12 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         return getTank(tank).isFluidValid(stack);
     }
 
-
     public FluidTanks getAllTanks() {
         ObjectArrayList<FluidTank> list = new ObjectArrayList<>();
-        if (getInputTanks() != null) list.addAll(Arrays.asList(getInputTanks().getBackingTanks()));
-        if (getOutputTanks() != null) list.addAll(Arrays.asList(getOutputTanks().getBackingTanks()));
+        if (getInputTanks() != null)
+            list.addAll(Arrays.asList(getInputTanks().getBackingTanks()));
+        if (getOutputTanks() != null)
+            list.addAll(Arrays.asList(getOutputTanks().getBackingTanks()));
         return new FluidTanks(list);
     }
 
@@ -176,7 +176,8 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     }
 
     public FluidStack drainInput(int maxDrain, IFluidHandler.FluidAction action) {
-        if (getInputTanks() == null) return FluidStack.EMPTY;
+        if (getInputTanks() == null)
+            return FluidStack.EMPTY;
         return getInputTanks().drain(maxDrain, action);
     }
 
@@ -194,14 +195,6 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        if (event instanceof ContentEvent) {
-            switch ((ContentEvent) event) {
-                case FLUID_INPUT_CHANGED:
-                case FLUID_OUTPUT_CHANGED:
-                    this.markDirty();
-                    break;
-            }
-        }
     }
 
     /**
@@ -290,6 +283,8 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     public void deserializeNBT(CompoundNBT nbt) {
         tanks.forEach((k, v) -> {
+            if (!nbt.contains(k.toString()))
+                return;
             v.deserializeNBT(nbt.getList(k.toString(), Constants.NBT.TAG_COMPOUND));
         });
     }

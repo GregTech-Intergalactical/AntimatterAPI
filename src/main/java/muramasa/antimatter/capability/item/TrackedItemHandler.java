@@ -4,6 +4,7 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -17,6 +18,7 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
     private final boolean input;
     private final BiPredicate<IGuiHandler, ItemStack> validator;
     private final int limit;
+    private final int size;
 
     public TrackedItemHandler(T tile, int size, boolean output, boolean input, BiPredicate<IGuiHandler, ItemStack> validator, ContentEvent contentEvent) {
         this(tile, size, output, input, validator, contentEvent, 64);
@@ -30,6 +32,7 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
         this.contentEvent = contentEvent;
         this.validator = validator;
         this.limit = limit;
+        this.size = size;
     }
 
     @Override
@@ -74,7 +77,13 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
     public ItemStack extractFromInput(int slot, int amount, boolean simulate) {
         return super.extractItem(slot, amount, simulate);
     }
-
+    //Size is defined by GUI and not the NBT data.
+    @Override
+    public CompoundNBT serializeNBT() {
+        CompoundNBT nbt = super.serializeNBT();
+        nbt.remove("Size");
+        return nbt;
+    }
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack) {

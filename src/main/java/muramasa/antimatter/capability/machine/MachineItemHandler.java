@@ -74,7 +74,10 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-        this.inventories.forEach((f, i) -> i.deserializeNBT(nbt.getCompound(f.getId())));
+        this.inventories.forEach((f, i) -> {
+            if (!nbt.contains(f.getId())) return;
+            i.deserializeNBT(nbt.getCompound(f.getId()));
+        });
     }
 
     public T getTile() {

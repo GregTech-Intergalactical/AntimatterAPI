@@ -24,7 +24,8 @@ import java.util.stream.IntStream;
  */
 public class FluidTanks implements IFluidHandler {
 
-    public static <T extends TileEntityBase<T> & IMachineHandler> FluidTanks create(T tile, ContentEvent contentEvent, UnaryOperator<Builder<T>> builder) {
+    public static <T extends TileEntityBase<T> & IMachineHandler> FluidTanks create(T tile, ContentEvent contentEvent,
+            UnaryOperator<Builder<T>> builder) {
         return builder.apply(new Builder<>(tile, contentEvent)).build();
     }
 
@@ -72,13 +73,13 @@ public class FluidTanks implements IFluidHandler {
             if (tank.isEmpty()) {
                 firstAvailable = i;
                 break;
-            } else if ((drain && !tank.drain(stack, FluidAction.SIMULATE).isEmpty()) || (!drain && tank.fill(stack, FluidAction.SIMULATE) != 0)) {
+            } else if ((drain && !tank.drain(stack, FluidAction.SIMULATE).isEmpty())
+                    || (!drain && tank.fill(stack, FluidAction.SIMULATE) != 0)) {
                 return i;
             }
         }
         return firstAvailable;
     }
-
 
     public FluidTank getTank(int tank) {
         return this.tanks[tank];
@@ -129,7 +130,8 @@ public class FluidTanks implements IFluidHandler {
     public int fill(FluidStack stack, FluidAction action) {
         for (int i = 0; i < tanks.length; i++) {
             int fill = getTank(i).fill(stack, action);
-            if (fill > 0) return fill;
+            if (fill > 0)
+                return fill;
         }
         return 0;
     }
@@ -139,7 +141,8 @@ public class FluidTanks implements IFluidHandler {
     public FluidStack drain(FluidStack stack, FluidAction action) {
         for (int i = 0; i < tanks.length; i++) {
             FluidStack drain = getTank(i).drain(stack, action);
-            if (!drain.isEmpty()) return drain;
+            if (!drain.isEmpty())
+                return drain;
         }
         return FluidStack.EMPTY;
     }
@@ -155,6 +158,8 @@ public class FluidTanks implements IFluidHandler {
         for (INBT tank : nbt) {
             if (tank instanceof CompoundNBT) {
                 CompoundNBT cnbt = (CompoundNBT) tank;
+                if (i > tanks.length - 1)
+                    break;
                 tanks[i++].setFluid(FluidStack.loadFluidStackFromNBT(cnbt));
             }
         }
