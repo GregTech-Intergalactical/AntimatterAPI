@@ -8,6 +8,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 /**
  * BlockInfo represents immutable information for block in world
  * This includes block state and tile entity, and needed for complete representation
@@ -19,6 +21,7 @@ public class BlockInfo {
 
     private final BlockState blockState;
     private final TileEntity tileEntity;
+    private StructureElement element;
 
     public BlockInfo(Block block) {
         this(block.getDefaultState());
@@ -33,6 +36,16 @@ public class BlockInfo {
         this.tileEntity = tileEntity;
         Preconditions.checkArgument(tileEntity == null || blockState.getBlock().hasTileEntity(blockState),
                 "Cannot create block info with tile entity for block not having it");
+    }
+
+    public BlockInfo setElement(StructureElement element) {
+        this.element = element;
+        return this;
+    }
+
+    @Nullable
+    public StructureElement getElement() {
+        return element;
     }
 
     public BlockState getBlockState() {

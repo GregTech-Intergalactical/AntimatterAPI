@@ -255,7 +255,12 @@ public class MultiMachineInfoPage {
                 ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getPos(), minecraft.player);
                 if (itemStack != null && !itemStack.isEmpty()) {
                     ITooltipFlag flag = minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
-                    return itemStack.getTooltip(minecraft.player, flag);
+                    List<ITextComponent> list = itemStack.getTooltip(minecraft.player, flag);
+                    BlockInfo info = this.getCurrentRenderer().world.getRenderedBlocks().get(rayTraceResult.getPos());
+                    if (info != null && info.getElement() != null) {
+                        info.getElement().onInfoTooltip(list);
+                    }
+                    return list;
                 }
             }
         }

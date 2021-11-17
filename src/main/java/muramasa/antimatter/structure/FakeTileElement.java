@@ -11,11 +11,14 @@ import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 
 /**
  * FakeTileElement represents a fake block for this multiblock. It takes on the
@@ -117,6 +120,12 @@ public class FakeTileElement extends StructureElement {
         tile.setState(oldState).setFacing(machine.getFacing()).setCovers(covers);
         tile.addController(machine);
         super.onBuild(machine, pos, result, count);
+    }
+
+    @Override
+    public void onInfoTooltip(List<ITextComponent> text) {
+        super.onInfoTooltip(text);
+        text.add(new StringTextComponent("Element replaced with a TileEntity to allow input/output."));
     }
 
     @Override
