@@ -7,7 +7,7 @@ import org.lwjgl.opengl.GL11;
 
 public class ImmediateWorldSceneRenderer extends WorldSceneRenderer {
 
-    public ImmediateWorldSceneRenderer(TrackedDummyWorld world) {
+    public ImmediateWorldSceneRenderer(IBlockDisplayReader world) {
         super(world);
     }
 

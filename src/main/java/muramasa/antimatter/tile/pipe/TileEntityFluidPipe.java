@@ -1,12 +1,18 @@
 package muramasa.antimatter.tile.pipe;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.IGuiElement;
+import muramasa.antimatter.gui.widget.InfoRenderWidget;
+import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.tesseract.FluidTileWrapper;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
@@ -25,7 +31,7 @@ import tesseract.api.fluid.IFluidPipe;
 
 import java.util.List;
 
-public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<IFluidHandler> {
+public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<IFluidHandler>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
     protected LazyOptional<PipeFluidHandler> fluidHandler;
 
@@ -80,6 +86,13 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         fluidHandler.invalidate();
         super.onRemove();
     }
+
+    @Override
+    public void addWidgets(GuiInstance instance, IGuiElement parent) {
+        super.addWidgets(instance, parent);
+        instance.addWidget(InfoRenderWidget.TesseractFluidWidget.build().setPos(10, 10));
+    }
+
 
     @Override
     public boolean isGasProof() {
@@ -139,6 +152,14 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void refresh() {
 
+    }
+
+    @Override
+    public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+        renderer.drawString(stack, "Pressure: " + instance.holderPressure, left, top, 16448255);
+        renderer.drawString(stack, "Fluid: " + instance.stack.getFluid().getRegistryName().toString(), left, top, 16448255);
+        renderer.drawString(stack, "Amount: " + instance.stack.getAmount(), left, top, 16448255);
+        return 16;
     }
 
     public static class TileEntityCoveredFluidPipe<T extends FluidPipe<T>> extends TileEntityFluidPipe<T> implements ITickablePipe {

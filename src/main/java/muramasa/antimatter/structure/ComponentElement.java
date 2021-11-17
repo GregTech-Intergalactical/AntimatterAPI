@@ -6,6 +6,10 @@ import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+
+import java.util.List;
 
 public class ComponentElement extends StructureElement {
 
@@ -51,5 +55,16 @@ public class ComponentElement extends StructureElement {
         }
         result.withError("No valid component found @" + pos);
         return false;
+    }
+
+    @Override
+    public boolean renderShared() {
+        return true;
+    }
+
+    @Override
+    public void onInfoTooltip(List<ITextComponent> text, long count, TileEntityBasicMultiMachine<?> machine) {
+        super.onInfoTooltip(text, count, machine);
+        if (count > 0) text.add(new StringTextComponent("Can be in multiple positions."));
     }
 }

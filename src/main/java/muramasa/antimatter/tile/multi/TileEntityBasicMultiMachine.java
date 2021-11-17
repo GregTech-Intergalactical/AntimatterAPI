@@ -25,6 +25,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.capability.TesseractGTCapability;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +69,11 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         StructureCache.remove(world, pos);
     }
 
+    @Nullable
+    public StructureResult getResult() {
+        return result;
+    }
+
     /**
      * How many multiblocks you can share components with.
      *
@@ -108,6 +114,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             if (world instanceof TrackedDummyWorld) {
+                this.result = result;
                 StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).allPositions(this));
                 StructureCache.validate(world, pos, result.positions, maxShares());
                 return true;
@@ -200,6 +207,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     protected void invalidateStructure() {
         if (removed) return;
+        if (this.getWorld() instanceof TrackedDummyWorld) return;
         if (result == null) {
             if (isServerSide() && getMachineState() != getDefaultMachineState()) {
                 resetMachine();

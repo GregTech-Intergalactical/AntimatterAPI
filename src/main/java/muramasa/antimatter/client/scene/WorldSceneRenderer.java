@@ -53,7 +53,7 @@ public abstract class WorldSceneRenderer {
     protected static final FloatBuffer PIXEL_DEPTH_BUFFER = ByteBuffer.allocateDirect(4).order(ByteOrder.nativeOrder()).asFloatBuffer();
     protected static final FloatBuffer OBJECT_POS_BUFFER = ByteBuffer.allocateDirect(3 * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
     //Changed from IBlockDisplayReader to TrackedDummyWorld to access BlockInfo, for now.
-    public final TrackedDummyWorld world;
+    public final IBlockDisplayReader world;
     public final Map<Collection<BlockPos>, ISceneRenderHook> renderedBlocksMap;
     private Consumer<WorldSceneRenderer> beforeRender;
     private Consumer<WorldSceneRenderer> afterRender;
@@ -64,7 +64,7 @@ public abstract class WorldSceneRenderer {
     private Vector3f lookAt = new Vector3f(0, 0, 0);
     private Vector3f worldUp = new Vector3f(0, 1, 0);
 
-    public WorldSceneRenderer(TrackedDummyWorld world) {
+    public WorldSceneRenderer(IBlockDisplayReader world) {
         this.world = world;
         renderedBlocksMap = new LinkedHashMap<>();
     }

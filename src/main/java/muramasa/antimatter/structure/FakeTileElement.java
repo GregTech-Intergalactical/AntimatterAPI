@@ -123,8 +123,8 @@ public class FakeTileElement extends StructureElement {
     }
 
     @Override
-    public void onInfoTooltip(List<ITextComponent> text) {
-        super.onInfoTooltip(text);
+    public void onInfoTooltip(List<ITextComponent> text, long count, TileEntityBasicMultiMachine<?> machine) {
+        super.onInfoTooltip(text, count, machine);
         text.add(new StringTextComponent("Element replaced with a TileEntity to allow input/output."));
     }
 

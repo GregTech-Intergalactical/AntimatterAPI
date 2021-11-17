@@ -47,10 +47,6 @@ public class PatternBuilder {
         return at(key, new BlockInfo(blockState));
     }
 
-    public PatternBuilder at(String key, BlockState blockState, StructureElement element) {
-        return at(key, new BlockInfo(blockState).setElement(element));
-    }
-
     public PatternBuilder at(String key, Machine<?> machine, Tier tier, Direction frontSide) {
         BlockMachine block = machine.getBlockState(tier);
         BlockState state;

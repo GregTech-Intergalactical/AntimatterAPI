@@ -17,10 +17,7 @@ import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static muramasa.antimatter.util.Dir.*;
 
@@ -49,6 +46,10 @@ public abstract class Structure {
     public Structure addReq(String id, IRequirement req) {
         requirements.put(id, req);
         return this;
+    }
+
+    public List<BlockPos> allShared(StructureElement element, TileEntityBasicMultiMachine<?> tile) {
+        return Collections.emptyList();
     }
 
     public Map<String, IRequirement> getRequirements() {

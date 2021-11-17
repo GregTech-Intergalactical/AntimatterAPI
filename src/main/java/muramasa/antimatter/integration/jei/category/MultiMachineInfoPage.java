@@ -14,8 +14,11 @@ import muramasa.antimatter.client.scene.WorldSceneRenderer;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.structure.BlockInfo;
 import muramasa.antimatter.structure.Pattern;
+import muramasa.antimatter.structure.StructureElement;
+import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
@@ -36,6 +39,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MultiMachineInfoPage {
@@ -61,11 +65,13 @@ public class MultiMachineInfoPage {
 
     private final WorldSceneRenderer[] renderers;
     private final ITextComponent[] descriptions;
+    private final TileEntityBasicMultiMachine<?>[] controllers;
     private static MultiMachineInfoPage LAST_PAGE;
 
     public MultiMachineInfoPage(BasicMultiMachine<?> machine, List<Pattern> patterns) {
         this.machine = machine;
         renderers = new WorldSceneRenderer[patterns.size()];
+        this.controllers = new TileEntityBasicMultiMachine[patterns.size()];
         descriptions = new ITextComponent[patterns.size()];
 
         this.buttonNextLayer = new Button(WIDTH - (20 + RIGHT_PADDING), 65, ICON_SIZE, ICON_SIZE, new StringTextComponent("A"), (b)->toggleNextLayer());
@@ -88,6 +94,7 @@ public class MultiMachineInfoPage {
                         blockMap.put(blockPos, blockInfo);
                         if (blockInfo.getTileEntity() instanceof TileEntityBasicMultiMachine) {
                             controllers = (TileEntityBasicMultiMachine<?>) blockInfo.getTileEntity();
+                            this.controllers[i] = controllers;
                         }
                     }
                 }
@@ -216,6 +223,17 @@ public class MultiMachineInfoPage {
 
     private void renderBlockOverLay(BlockRayTraceResult rayTraceResult) {
         BlockPos pos = rayTraceResult.getPos();
+        doOverlay(pos, 1,1,1,0.7f);
+        StructureResult res =this.controllers[currentRendererPage].getResult();
+        if (res != null) {
+            StructureElement el = res.get(pos);
+            if (el != null && el.renderShared()) {
+                this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(pos) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.getDefaultState()).forEach(b -> this.doOverlay(b, 0.5f,1,0.5f,0.4f));
+            }
+        }
+    }
+
+    private void doOverlay(BlockPos pos, float r, float g, float b, float alpha) {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
         RenderSystem.translated((pos.getX() + 0.5), (pos.getY() + 0.5), (pos.getZ() + 0.5));
@@ -225,7 +243,7 @@ public class MultiMachineInfoPage {
         RenderSystem.disableTexture();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        RenderHelper.renderCubeFace(buffer, -0.5f, -0.5f, -0.5f, 0.5, 0.5, 0.5, 1, 1, 1, 0.7f);
+        RenderHelper.renderCubeFace(buffer, -0.5f, -0.5f, -0.5f, 0.5, 0.5, 0.5, r,g,b, alpha);
         tessellator.draw();
         RenderSystem.scaled(1 / 1.01, 1 / 1.01, 1 / 1.01);
         RenderSystem.translated(-(pos.getX() + 0.5), -(pos.getY() + 0.5), -(pos.getZ() + 0.5));
@@ -256,9 +274,13 @@ public class MultiMachineInfoPage {
                 if (itemStack != null && !itemStack.isEmpty()) {
                     ITooltipFlag flag = minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
                     List<ITextComponent> list = itemStack.getTooltip(minecraft.player, flag);
-                    BlockInfo info = this.getCurrentRenderer().world.getRenderedBlocks().get(rayTraceResult.getPos());
-                    if (info != null && info.getElement() != null) {
-                        info.getElement().onInfoTooltip(list);
+                    StructureResult res = this.controllers[currentRendererPage].getResult();
+                    if (res != null) {
+                        StructureElement el = res.get(rayTraceResult.getPos());
+                        if (el != null) {
+                            long count = this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(rayTraceResult.getPos()) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.getDefaultState()).count();
+                            el.onInfoTooltip(list, count, this.controllers[currentRendererPage]);
+                        }
                     }
                     return list;
                 }
