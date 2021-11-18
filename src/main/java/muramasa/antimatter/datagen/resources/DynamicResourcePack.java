@@ -88,13 +88,13 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     public static void addRecipe(IFinishedRecipe recipe) {
-        DATA.put(getRecipeLog(recipe.getID()), recipe.getRecipeJson());
-        if (recipe.getAdvancementJson() != null)
-            DATA.put(getAdvancementLoc(Objects.requireNonNull(recipe.getAdvancementID())), recipe.getAdvancementJson());
+        DATA.put(getRecipeLog(recipe.getId()), recipe.serializeRecipe());
+        if (recipe.serializeAdvancement() != null)
+            DATA.put(getAdvancementLoc(Objects.requireNonNull(recipe.getAdvancementId())), recipe.serializeAdvancement());
     }
 
     public static void addLootEntry(ResourceLocation loc, LootTable table) {
-        JsonObject obj = (JsonObject) LootTableManager.toJson(table);
+        JsonObject obj = (JsonObject) LootTableManager.serialize(table);
         synchronized (DATA) {
             DATA.put(getLootLoc(loc), obj);
         }
@@ -119,12 +119,12 @@ public class DynamicResourcePack implements IResourcePack {
     public static void ensureTagAvailable(String id, ResourceLocation loc) {
         if (loc.getNamespace().contains("minecraft")) return;
         synchronized (DATA) {
-            DATA.putIfAbsent(getTagLoc(id, loc), ITag.Builder.create().serialize());
+            DATA.putIfAbsent(getTagLoc(id, loc), ITag.Builder.tag().serializeToJson());
         }
     }
 
     @Override
-    public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
+    public InputStream getResource(ResourcePackType type, ResourceLocation location) throws IOException {
         if (type == ResourcePackType.SERVER_DATA) {
             if (DATA.containsKey(location))
                 return new ByteArrayInputStream(DATA.get(location).toString().getBytes(StandardCharsets.UTF_8));
@@ -139,12 +139,12 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     @Override
-    public InputStream getRootResourceStream(String fileName) {
+    public InputStream getRootResource(String fileName) {
         throw new UnsupportedOperationException("Dynamic Resource Pack cannot have root resources");
     }
 
     @Override
-    public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
+    public boolean hasResource(ResourcePackType type, ResourceLocation location) {
         if (type == ResourcePackType.CLIENT_RESOURCES) {
             return ASSETS.containsKey(location) || LANG.containsKey(location);
         } else {
@@ -153,7 +153,7 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     @Override
-    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String namespace, String path, int maxDepth, Predicate<String> filter) {
+    public Collection<ResourceLocation> getResources(ResourcePackType type, String namespace, String path, int maxDepth, Predicate<String> filter) {
         if (type == ResourcePackType.SERVER_DATA)
             return DATA.keySet().stream().filter(loc -> loc.getPath().startsWith(path) && filter.test(loc.getPath())).collect(Collectors.toList());
         else if (type == ResourcePackType.CLIENT_RESOURCES) {
@@ -165,7 +165,7 @@ public class DynamicResourcePack implements IResourcePack {
     }
 
     @Override
-    public Set<String> getResourceNamespaces(ResourcePackType type) {
+    public Set<String> getNamespaces(ResourcePackType type) {
         return type == ResourcePackType.SERVER_DATA ? SERVER_DOMAINS : CLIENT_DOMAINS;
     }
 
@@ -176,7 +176,7 @@ public class DynamicResourcePack implements IResourcePack {
 
     @Nullable
     @Override
-    public <T> T getMetadata(IMetadataSectionSerializer<T> deserializer) {
+    public <T> T getMetadataSection(IMetadataSectionSerializer<T> deserializer) {
         return null;
     }
 

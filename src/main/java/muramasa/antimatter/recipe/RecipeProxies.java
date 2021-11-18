@@ -17,10 +17,10 @@ public class RecipeProxies {
         return (t, b) -> {
             List<Ingredient> ingredients = t.getIngredients();
             Ingredient input = ingredients.get(0);
-            ItemStack[] stacks = input.getMatchingStacks();
-            RecipeIngredient ing = stacks.length == 1 ? RecipeIngredient.of(stacks[0]) : RecipeIngredient.of(1, input.getMatchingStacks());
+            ItemStack[] stacks = input.getItems();
+            RecipeIngredient ing = stacks.length == 1 ? RecipeIngredient.of(stacks[0]) : RecipeIngredient.of(1, input.getItems());
             return b.ii(ing)
-                    .io(t.getRecipeOutput()).build(duration, power, 0, 1);
+                    .io(t.getResultItem()).build(duration, power, 0, 1);
         };
     }
 

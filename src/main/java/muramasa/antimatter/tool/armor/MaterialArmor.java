@@ -59,7 +59,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeab
         return resolveStack(primary);
     }
 
-    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
+    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
         return getRepairMaterial(toRepair).test(repair);
     }
 
@@ -75,16 +75,16 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeab
         if (mat == null || mat == NULL || slotType != this.slot) return super.getAttributeModifiers(slotType, stack);
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
-        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDamageReductionAmount(slot) + mat.getArmor()[slot.getIndex()], AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDefenseForSlot(slot) + mat.getArmor()[slot.getIndex()], AttributeModifier.Operation.ADDITION));
         modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + mat.getToughness(), AttributeModifier.Operation.ADDITION));
         modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", mat.getKnockbackResistance(), AttributeModifier.Operation.ADDITION));
         return modifiers;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         onGenericAddInformation(stack, tooltip, flag);
-        super.addInformation(stack, world, tooltip, flag);
+        super.appendHoverText(stack, world, tooltip, flag);
     }
 
     @Nullable
@@ -104,7 +104,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeab
     }
 
     @Override
-    public boolean hasColor(ItemStack stack) {
+    public boolean hasCustomColor(ItemStack stack) {
         Material mat = getMaterial(stack);
         return mat != null;
     }
@@ -115,7 +115,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, IDyeab
     }
 
     @Override
-    public void removeColor(ItemStack stack) {
+    public void clearColor(ItemStack stack) {
 
     }
 }

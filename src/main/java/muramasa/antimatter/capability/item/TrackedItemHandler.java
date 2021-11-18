@@ -42,7 +42,7 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
 
     @Override
     public void onContentsChanged(int slot) {
-        tile.markDirty();
+        tile.setChanged();
         tile.onMachineEvent(contentEvent, slot);
     }
 

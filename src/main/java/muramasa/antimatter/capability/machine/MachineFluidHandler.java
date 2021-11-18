@@ -205,7 +205,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public boolean canOutput(Direction direction) {
-        if (tile.getFacing().getIndex() == direction.getIndex() && !tile.getMachineType().allowsFrontCovers())
+        if (tile.getFacing().get3DDataValue() == direction.get3DDataValue() && !tile.getMachineType().allowsFrontCovers())
             return false;
         return super.canOutput();
     }
@@ -217,7 +217,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public boolean canInput(Direction direction) {
-        if (tile.getFacing().getIndex() == direction.getIndex() && !tile.getMachineType().allowsFrontCovers())
+        if (tile.getFacing().get3DDataValue() == direction.get3DDataValue() && !tile.getMachineType().allowsFrontCovers())
             return false;
         return super.canInput();
     }
@@ -235,7 +235,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public void refresh() {
-        Tesseract.FLUID.refreshNode(tile.getWorld(), tile.getPos().toLong());
+        Tesseract.FLUID.refreshNode(tile.getLevel(), tile.getBlockPos().asLong());
     }
 
     public IFluidHandler getGuiHandler() {

@@ -5,9 +5,7 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.ICanSyncData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
-import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -44,13 +42,13 @@ public class GuiSyncPacket {
     public static void handle(final GuiSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
         if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
             ctx.get().enqueueWork(() -> {
-                Container c = Minecraft.getInstance().player.openContainer;
+                Container c = Minecraft.getInstance().player.containerMenu;
                 if (c instanceof IAntimatterContainer) {
                     ((AntimatterContainer) c).handler.receivePacket(msg, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
                 }
             });
         } else {
-            ctx.get().enqueueWork(() -> ((AntimatterContainer) ctx.get().getSender().openContainer).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT));
+            ctx.get().enqueueWork(() -> ((AntimatterContainer) ctx.get().getSender().containerMenu).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT));
         }
         ctx.get().setPacketHandled(true);
     }

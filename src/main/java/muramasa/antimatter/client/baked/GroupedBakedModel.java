@@ -28,7 +28,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
 
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        int offset = side == null ? 6 : side.getIndex();
+        int offset = side == null ? 6 : side.get3DDataValue();
         BakedQuad[] arr = CACHE[offset];
         if (arr == null) {
             CACHE[offset] = models.values().stream().flatMap(t -> t.getQuads(state, side, rand, data).stream()).toArray(BakedQuad[]::new);
@@ -39,7 +39,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
 
     @Override
     public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        int offset = side == null ? 6 : side.getIndex();
+        int offset = side == null ? 6 : side.get3DDataValue();
         BakedQuad[] arr = CACHE_ITEM[offset];
         if (arr == null) {
             CACHE_ITEM[offset] = models.values().stream().flatMap(t -> t.getQuads(null, side, rand).stream()).toArray(BakedQuad[]::new);
@@ -49,7 +49,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+    public boolean useAmbientOcclusion() {
         return true;
     }
 
@@ -59,12 +59,12 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
     }
 
     @Override
-    public boolean isSideLit() {
+    public boolean usesBlockLight() {
         return true;
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+    public boolean isCustomRenderer() {
         return false;
     }
 

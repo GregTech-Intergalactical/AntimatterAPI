@@ -55,7 +55,7 @@ public class PropertyIngredient extends Ingredient {
     private final boolean inverse;
 
     protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type, Set<ITag.INamedTag<Item>> itemTags, Set<IItemProvider> items, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
-        Stream<IItemList> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new StackList(TagUtils.nc(t).getAllElements().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new StackList((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
+        Stream<IItemList> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new StackList(TagUtils.nc(t).getValues().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new StackList((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
             boolean ok = t.has(tags);
             boolean types = true;
             if (tools.size() > 0) {
@@ -133,7 +133,7 @@ public class PropertyIngredient extends Ingredient {
     }
 
     @Override
-    public JsonElement serialize() {
+    public JsonElement toJson() {
         JsonObject obj = new JsonObject();
         JsonArray materialArr = new JsonArray();
         for (MaterialTypeItem<?> materialTypeItem : this.type) {
@@ -213,11 +213,11 @@ public class PropertyIngredient extends Ingredient {
 
         @Override
         public PropertyIngredient parse(PacketBuffer buffer) {
-            String id = buffer.readString();
+            String id = buffer.readUtf();
             int size = buffer.readVarInt();
             Set<MaterialTypeItem<?>> items = new ObjectArraySet<>(size);
             for (int i = 0; i < size; i++) {
-                items.add(AntimatterAPI.get(MaterialTypeItem.class, buffer.readString()));
+                items.add(AntimatterAPI.get(MaterialTypeItem.class, buffer.readUtf()));
             }
             size = buffer.readVarInt();
             Set<ITag.INamedTag<Item>> t = new ObjectArraySet<>(size);
@@ -227,29 +227,29 @@ public class PropertyIngredient extends Ingredient {
             boolean inverse = buffer.readBoolean();
             IMaterialTag[] tags = new IMaterialTag[buffer.readVarInt()];
             for (int i = 0; i < tags.length; i++) {
-                tags[i] = AntimatterAPI.get(IMaterialTag.class, buffer.readString());
+                tags[i] = AntimatterAPI.get(IMaterialTag.class, buffer.readUtf());
             }
             size = buffer.readVarInt();
             Object2BooleanMap<AntimatterToolType> map = new Object2BooleanOpenHashMap<>(size);
             for (int i = 0; i < size; i++) {
-                map.put(AntimatterAPI.get(AntimatterToolType.class, buffer.readString()), buffer.readBoolean());
+                map.put(AntimatterAPI.get(AntimatterToolType.class, buffer.readUtf()), buffer.readBoolean());
             }
             size = buffer.readVarInt();
             Set<Material> fixedMats = new ObjectArraySet<>(size);
             for (int i = 0; i < size; i++) {
-                fixedMats.add(AntimatterAPI.get(Material.class, buffer.readString()));
+                fixedMats.add(AntimatterAPI.get(Material.class, buffer.readUtf()));
             }
             size = buffer.readVarInt();
             Set<IItemProvider> itemProviders = new ObjectArraySet<>(size);
             for (int i = 0; i < size; i++) {
-                ResourceLocation name = new ResourceLocation(buffer.readString());
+                ResourceLocation name = new ResourceLocation(buffer.readUtf());
                 if (ForgeRegistries.ITEMS.containsKey(name)) {
                     itemProviders.add(ForgeRegistries.ITEMS.getValue(name));
                 }
             }
             ItemStack[] stacks = new ItemStack[buffer.readVarInt()];
             for (int i = 0; i < stacks.length; i++) {
-                stacks[i] = buffer.readItemStack();
+                stacks[i] = buffer.readItem();
             }
             return new PropertyIngredient(Stream.of(new StackList(Arrays.asList(stacks))), items, t, itemProviders, id, tags, fixedMats, inverse, map);
         }
@@ -272,29 +272,29 @@ public class PropertyIngredient extends Ingredient {
             boolean inverse = json.get("inverse").getAsBoolean();
             IMaterialTag[] tags;
             if (json.has("tags")) {
-                tags = Streams.stream(JSONUtils.getJsonArray(json, "tags")).map(t -> AntimatterAPI.get(IMaterialTag.class, t.getAsString())).toArray(IMaterialTag[]::new);
+                tags = Streams.stream(JSONUtils.getAsJsonArray(json, "tags")).map(t -> AntimatterAPI.get(IMaterialTag.class, t.getAsString())).toArray(IMaterialTag[]::new);
             } else {
                 tags = new IMaterialTag[0];
             }
             Object2BooleanMap<AntimatterToolType> map = new Object2BooleanOpenHashMap<>();
             if (json.has("tools")) {
-                for (Map.Entry<String, JsonElement> entry : JSONUtils.getJsonObject(json, "tools").entrySet()) {
+                for (Map.Entry<String, JsonElement> entry : JSONUtils.getAsJsonObject(json, "tools").entrySet()) {
                     map.put(AntimatterAPI.get(AntimatterToolType.class, entry.getKey()), entry.getValue().getAsBoolean());
                 }
             }
             Set<Material> fixedMats = Collections.emptySet();
             if (json.has("fixed")) {
-                fixedMats = Streams.stream(JSONUtils.getJsonArray(json, "fixed")).map(t -> AntimatterAPI.get(Material.class, t.getAsString())).collect(Collectors.toSet());
+                fixedMats = Streams.stream(JSONUtils.getAsJsonArray(json, "fixed")).map(t -> AntimatterAPI.get(Material.class, t.getAsString())).collect(Collectors.toSet());
             }
             return PropertyIngredient.build(items, itemTags, items2, ingId, tags, fixedMats, inverse, map);
         }
 
         @Override
         public void write(PacketBuffer buffer, PropertyIngredient ingredient) {
-            buffer.writeString(ingredient.id);
+            buffer.writeUtf(ingredient.id);
             buffer.writeVarInt(ingredient.type.size());
             for (MaterialTypeItem<?> materialTypeItem : ingredient.type) {
-                buffer.writeString(materialTypeItem.getId());
+                buffer.writeUtf(materialTypeItem.getId());
             }
             buffer.writeVarInt(ingredient.itemTags.size());
             for (ITag.INamedTag<Item> itemTag : ingredient.itemTags) {
@@ -303,28 +303,28 @@ public class PropertyIngredient extends Ingredient {
             buffer.writeBoolean(ingredient.inverse);
             buffer.writeVarInt(ingredient.tags.length);
             for (IMaterialTag tag : ingredient.tags) {
-                buffer.writeString(tag.getId());
+                buffer.writeUtf(tag.getId());
             }
             buffer.writeVarInt(ingredient.optionalTools.size());
             for (Object2BooleanMap.Entry<AntimatterToolType> entry : ingredient.optionalTools.object2BooleanEntrySet()) {
-                buffer.writeString(entry.getKey().getId());
+                buffer.writeUtf(entry.getKey().getId());
                 buffer.writeBoolean(entry.getBooleanValue());
             }
             buffer.writeVarInt(ingredient.fixedMats.size());
             for (Material fixedMat : ingredient.fixedMats) {
-                buffer.writeString(fixedMat.getId());
+                buffer.writeUtf(fixedMat.getId());
             }
             buffer.writeVarInt(ingredient.items.size());
             for (IItemProvider item : ingredient.items) {
                 ResourceLocation name = item.asItem().getRegistryName();
-                if (name != null) buffer.writeString(name.toString());
+                if (name != null) buffer.writeUtf(name.toString());
             }
             //Needed because tags might not be available on client.
-            ItemStack[] items = ingredient.getMatchingStacks();
+            ItemStack[] items = ingredient.getItems();
             buffer.writeVarInt(items.length);
 
             for (ItemStack stack : items)
-                buffer.writeItemStack(stack);
+                buffer.writeItem(stack);
 
 
         }

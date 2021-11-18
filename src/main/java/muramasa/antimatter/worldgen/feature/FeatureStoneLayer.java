@@ -2,11 +2,7 @@ package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
-import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.NoiseGenerator;
-import muramasa.antimatter.worldgen.StoneLayerOre;
-import muramasa.antimatter.worldgen.WorldGenHelper;
+import muramasa.antimatter.worldgen.*;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
@@ -47,12 +43,12 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, AntimatterConfiguredFeatures.STONE_LAYER);
+        event.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, AntimatterConfiguredFeatures.STONE_LAYER);
     }
 
     @Override
-    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        List<WorldGenStoneLayer> stones = AntimatterWorldGenerator.all(WorldGenStoneLayer.class, world.getWorld().getDimensionKey());
+    public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+        List<WorldGenStoneLayer> stones = AntimatterWorldGenerator.all(WorldGenStoneLayer.class, world.getLevel().dimension());
         if (stones.size() == 0) return false;
         WorldGenStoneLayer[] layers = new WorldGenStoneLayer[7];
         NoiseGenerator noise = new NoiseGenerator(world);
@@ -73,15 +69,15 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                 layers[5] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 3, tZ) + 1) / 2) * stonesSize)));
                 layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 4, tZ) + 1) / 2) * stonesSize)));
 
-                maxHeight = world.getHeight(Heightmap.Type.OCEAN_FLOOR_WG, pos.add(i, 0, j)).getY() + 1; //+1 for placing rocks on top of the max height
+                maxHeight = world.getHeightmapPos(Heightmap.Type.OCEAN_FLOOR_WG, pos.offset(i, 0, j)).getY() + 1; //+1 for placing rocks on top of the max height
                 for (int tY = 1; tY < maxHeight; tY++) {
                     lastMaterial = null;
-                    existing = world.getBlockState(pos.add(i, tY, j));
-                    isAir = existing.isAir(world, pos.add(i, tY, j));
+                    existing = world.getBlockState(pos.offset(i, tY, j));
+                    isAir = existing.isAir(world, pos.offset(i, tY, j));
 
                     //If we haven't placed an ore, and not trying to set the same state as existing
                     if (!isAir && /*lastMaterial == null &&*/ existing != layers[3].getStoneState()) {
-                        if (WorldGenHelper.setStone(world, pos.add(i, tY, j), existing, layers[3])) {
+                        if (WorldGenHelper.setStone(world, pos.offset(i, tY, j), existing, layers[3])) {
                             lastMaterial = layers[3].getStoneType() != null ? layers[3].getStoneType().getMaterial() : null;
                         }
                     }
@@ -89,14 +85,14 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                     if (!isAir && AntimatterConfig.WORLD.STONE_LAYER_ORES) {
                         if (layers[1] == layers[5]) {
                             for (StoneLayerOre ore : layers[3].getOres()) {
-                                if (ore.canPlace(pos.add(i, tY, j), rand) && WorldGenHelper.addOre(world, pos.add(i, tY, j), ore.getMaterial(), layers[0] == layers[6])) {
+                                if (ore.canPlace(pos.offset(i, tY, j), rand) && WorldGenHelper.addOre(world, pos.offset(i, tY, j), ore.getMaterial(), layers[0] == layers[6])) {
                                     lastMaterial = ore.getMaterial();
                                     break;
                                 }
                             }
                         } else {
                             for (StoneLayerOre ore : WorldGenStoneLayer.getCollision(layers[3].getStoneType(), layers[5].getStoneState(), layers[1].getStoneState())) {
-                                if (ore.canPlace(pos.add(i, tY, j), rand) && WorldGenHelper.addOre(world, pos.add(i, tY, j), ore.getMaterial(), true)) {
+                                if (ore.canPlace(pos.offset(i, tY, j), rand) && WorldGenHelper.addOre(world, pos.offset(i, tY, j), ore.getMaterial(), true)) {
                                     lastMaterial = ore.getMaterial();
                                     break;
                                 }
@@ -105,9 +101,9 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                     }
 
                     if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && lastMaterial != null) {
-                        BlockState below = world.getBlockState(pos.add(i, tY - 1, j));
-                        if (!below.isAir(world, pos.add(i, tY - 1, j)) && below != WorldGenHelper.WATER_STATE) {
-                            WorldGenHelper.addRockRaw(world, pos.add(i, tY, j), lastMaterial, AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
+                        BlockState below = world.getBlockState(pos.offset(i, tY - 1, j));
+                        if (!below.isAir(world, pos.offset(i, tY - 1, j)) && below != WorldGenHelper.WATER_STATE) {
+                            WorldGenHelper.addRockRaw(world, pos.offset(i, tY, j), lastMaterial, AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
                         }
                     }
 

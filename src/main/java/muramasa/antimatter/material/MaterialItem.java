@@ -3,7 +3,10 @@ package muramasa.antimatter.material;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBasic;
-import muramasa.antimatter.registration.*;
+import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
@@ -46,7 +49,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     }
 
     public MaterialItem(String domain, MaterialType<?> type, Material material) {
-        this(domain, type, material, new Properties().group(Ref.TAB_MATERIALS));
+        this(domain, type, material, new Properties().tab(Ref.TAB_MATERIALS));
     }
 
     public MaterialType<?> getType() {
@@ -58,43 +61,43 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (isInGroup(group) && getType().isVisible()) items.add(new ItemStack(this));
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+        if (allowdedIn(group) && getType().isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (!getMaterial().getChemicalFormula().isEmpty()) {
             if (Screen.hasShiftDown()) {
-                tooltip.add(new StringTextComponent(getMaterial().getChemicalFormula()).mergeStyle(TextFormatting.DARK_AQUA));
+                tooltip.add(new StringTextComponent(getMaterial().getChemicalFormula()).withStyle(TextFormatting.DARK_AQUA));
             } else {
-                tooltip.add(new StringTextComponent("Hold Shift to show formula").mergeStyle(TextFormatting.AQUA).mergeStyle(TextFormatting.ITALIC));
+                tooltip.add(new StringTextComponent("Hold Shift to show formula").withStyle(TextFormatting.AQUA).withStyle(TextFormatting.ITALIC));
             }
         }
         if (type == Data.ROCK) {
-            tooltip.add(new TranslationTextComponent("antimatter.tooltip.occurrence").appendSibling(new StringTextComponent(material.getDisplayName().getString()).mergeStyle(TextFormatting.YELLOW)));
+            tooltip.add(new TranslationTextComponent("antimatter.tooltip.occurrence").append(new StringTextComponent(material.getDisplayName().getString()).withStyle(TextFormatting.YELLOW)));
         }
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
+    public ActionResultType useOn(ItemUseContext context) {
         if (context.getPlayer() == null) return ActionResultType.PASS;
-        World world = context.getWorld();
+        World world = context.getLevel();
         PlayerEntity player = context.getPlayer();
-        BlockPos pos = context.getPos();
-        ItemStack stack = player.getHeldItem(context.getHand());
+        BlockPos pos = context.getClickedPos();
+        ItemStack stack = player.getItemInHand(context.getHand());
         BlockState state = world.getBlockState(pos);
         if (type == Data.DUST_IMPURE && state.getBlock() instanceof CauldronBlock) {
-            int level = state.get(CauldronBlock.LEVEL);
+            int level = state.getValue(CauldronBlock.LEVEL);
             if (level > 0) {
                 MaterialItem item = (MaterialItem) stack.getItem();
                 if (item.getMaterial().has(DUST)) {
                     stack.shrink(1);
-                    if (!player.addItemStackToInventory(DUST.get(item.getMaterial(), 1))) {
-                        player.dropItem(DUST.get(item.getMaterial(), 1), false);
+                    if (!player.addItem(DUST.get(item.getMaterial(), 1))) {
+                        player.drop(DUST.get(item.getMaterial(), 1), false);
                     }
-                    world.setBlockState(context.getPos(), state.with(CauldronBlock.LEVEL, --level));
-                    world.playSound(player, pos, SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                    world.setBlockAndUpdate(context.getClickedPos(), state.setValue(CauldronBlock.LEVEL, --level));
+                    world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
                     return ActionResultType.SUCCESS;
                 }
             }

@@ -22,12 +22,12 @@ public class AntimatterItemGroup extends ItemGroup {
         return domain;
     }
 
-    public String getId() {
+    public String getGroupId() {
         return id;
     }
 
     @Override
-    public ItemStack createIcon() {
+    public ItemStack makeIcon() {
         return iconSupplier.get();
     }
 }

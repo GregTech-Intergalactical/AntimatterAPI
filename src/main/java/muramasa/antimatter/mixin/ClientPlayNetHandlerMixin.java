@@ -14,14 +14,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetHandler.class)
 public class ClientPlayNetHandlerMixin {
     @Final
-    @Shadow
-    private NetworkManager netManager;
+    @Shadow(remap = false)
+    private NetworkManager connection;
 
     //Because recipes are sent before tags we have to mixin.
-    @Inject(/*remap = false,*/ method = "handleTags(Lnet/minecraft/network/play/server/STagsListPacket;)V", at = @At("TAIL"))
+    @Inject(remap = false, method = "handleUpdateTags(Lnet/minecraft/network/play/server/STagsListPacket;)V", at = @At("TAIL"))
     private void clientRecipesInjection(STagsListPacket packetIn, CallbackInfo info) {
         //Since recipe maps are static we don't have to double compile when playing a local server.
-        if (!netManager.isLocalChannel()) {
+        if (!connection.isMemoryConnection()) {
             ClientPlayNetHandler handler = ((ClientPlayNetHandler) (Object) this);
             AntimatterDynamics.onResourceReload(false);
             AntimatterDynamics.onRecipeCompile(false, handler.getRecipeManager(), handler.getTags());

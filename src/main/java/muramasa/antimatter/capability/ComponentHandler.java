@@ -68,7 +68,7 @@ public class ComponentHandler<T extends TileEntityBase<T>> implements IComponent
 
     @Override
     public boolean hasLinkedController() {
-        return StructureCache.has(getTile().getWorld(), getTile().getPos());
+        return StructureCache.has(getTile().getLevel(), getTile().getBlockPos());
     }
 
     @Nonnull

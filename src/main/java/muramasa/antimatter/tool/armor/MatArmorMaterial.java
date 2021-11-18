@@ -15,27 +15,27 @@ public class MatArmorMaterial implements IArmorMaterial {
     }
 
     @Override
-    public int getDurability(EquipmentSlotType slotIn) {
+    public int getDurabilityForSlot(EquipmentSlotType slotIn) {
         return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * toolType.getDurabilityFactor();
     }
 
     @Override
-    public int getDamageReductionAmount(EquipmentSlotType slotIn) {
+    public int getDefenseForSlot(EquipmentSlotType slotIn) {
         return toolType.getBaseArmor();
     }
 
     @Override
-    public int getEnchantability() {
-        return ArmorMaterial.IRON.getEnchantability();
+    public int getEnchantmentValue() {
+        return ArmorMaterial.IRON.getEnchantmentValue();
     }
 
     @Override
-    public SoundEvent getSoundEvent() {
+    public SoundEvent getEquipSound() {
         return toolType.getEvent();
     }
 
     @Override
-    public Ingredient getRepairMaterial() {
+    public Ingredient getRepairIngredient() {
         return null;
     }
 

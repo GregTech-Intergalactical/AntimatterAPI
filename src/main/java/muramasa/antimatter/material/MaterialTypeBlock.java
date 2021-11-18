@@ -22,7 +22,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
 
     public static Container getEmptyBlockAndLog(MaterialType<?> type, IAntimatterObject... objects) {
         Utils.onInvalidData("Tried to create " + type.getId() + " for objects: " + Arrays.toString(Arrays.stream(objects).map(IAntimatterObject::getId).toArray(String[]::new)));
-        return new Container(Blocks.AIR.getDefaultState());
+        return new Container(Blocks.AIR.defaultBlockState());
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {

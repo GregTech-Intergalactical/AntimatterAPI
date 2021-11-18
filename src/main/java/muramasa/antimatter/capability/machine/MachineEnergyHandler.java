@@ -58,7 +58,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         if (receive > this.getInputVoltage()) {
             if (!this.tile.recipeHandler.map(t -> t.generator).orElse(false)) {
                 if (!simulate)
-                    Utils.createExplosion(tile.getWorld(), tile.getPos(), 4.0F, Explosion.Mode.BREAK);
+                    Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.Mode.BREAK);
                 return false;
             }
         }
@@ -92,9 +92,9 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         }));
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
-                LazyOptional<IEnergyHandler> handle = cache.get(dir.getIndex());
+                LazyOptional<IEnergyHandler> handle = cache.get(dir.get3DDataValue());
                 if (!handle.isPresent()) {
-                    TileEntity tile = this.tile.getWorld().getTileEntity(this.tile.getPos().offset(dir));
+                    TileEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
                     if (tile == null) continue;
                     handle = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
                     if (!handle.isPresent()) {
@@ -104,8 +104,8 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
                         LazyOptional<IEnergyHandler> finalHandle = handle;
                         cap.addListener(list -> finalHandle.invalidate());
                     }
-                    cache.add(dir.getIndex(), handle);
-                    handle.addListener(h -> cache.add(dir.getIndex(), LazyOptional.empty()));
+                    cache.add(dir.get3DDataValue(), handle);
+                    handle.addListener(h -> cache.add(dir.get3DDataValue(), LazyOptional.empty()));
                 }
                 boolean ok = true;
                 while (ok) {
@@ -227,6 +227,6 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     @Override
     public void refresh() {
-        Tesseract.GT_ENERGY.refreshNode(tile.getWorld(), tile.getPos().toLong());
+        Tesseract.GT_ENERGY.refreshNode(tile.getLevel(), tile.getBlockPos().asLong());
     }
 }

@@ -65,22 +65,22 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         buildLookup(old.getFactory(), stack.getFactory(), side);
         old.onRemove();
         stack.onPlace();
-        if (tile.getWorld() != null && sync) {
+        if (tile.getLevel() != null && sync) {
             sync();
         }
         return true;
     }
 
     protected void sync() {
-        World world = tile.getWorld();
+        World world = tile.getLevel();
         if (world == null)
             return;
-        if (!world.isRemote) {
-            tile.markDirty();
+        if (!world.isClientSide) {
+            tile.setChanged();
             Utils.markTileForNBTSync(tile);
         } else {
             Utils.markTileForRenderUpdate(tile);
-            tile.getWorld().playSound(null, tile.getPos(), SoundEvents.BLOCK_METAL_PLACE, SoundCategory.BLOCKS, 1.0f,
+            tile.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.METAL_PLACE, SoundCategory.BLOCKS, 1.0f,
                     1.0f);
         }
     }
@@ -167,11 +167,11 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         if (get(side).isEmpty() || !set(side, ICover.empty, !onlyRemove))
             return false;
         if (!onlyRemove && !player.isCreative())
-            player.dropItem(oldCover.getDroppedStack(), false);
+            player.drop(oldCover.getDroppedStack(), false);
         if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != ELECTRIC_WRENCH) {
-            player.playSound(SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            player.playNotifySound(SoundEvents.ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
         } else {
-            player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            player.playNotifySound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
         }
         return true;
     }
@@ -196,7 +196,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         byte[] sides = new byte[1];
         covers.forEach((s, c) -> {
             if (!c.isEmpty()) { // Don't store EMPTY covers unnecessarily
-                sides[0] |= (1 << s.getIndex());
+                sides[0] |= (1 << s.get3DDataValue());
                 CoverFactory.writeCover(tag, c);
             }
         });
@@ -209,7 +209,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
-                ICover cover = CoverFactory.readCover(this, Direction.byIndex(i), nbt);
+                ICover cover = CoverFactory.readCover(this, Direction.from3DDataValue(i), nbt);
                 buildLookup(covers.get(Ref.DIRS[i]).getFactory(), cover.getFactory(), Ref.DIRS[i]);
                 covers.put(Ref.DIRS[i], cover);
             } else {
@@ -217,8 +217,8 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
                 covers.put(Ref.DIRS[i], ICover.empty);
             }
         }
-        World w = tile.getWorld();
-        if (w != null && w.isRemote) {
+        World w = tile.getLevel();
+        if (w != null && w.isClientSide) {
             Utils.markTileForRenderUpdate(this.tile);
         }
     }

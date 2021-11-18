@@ -33,7 +33,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
     }
 
     @Override
-    public Recipe read(ResourceLocation recipeId, JsonObject json) {
+    public Recipe fromJson(ResourceLocation recipeId, JsonObject json) {
         try {
             List<RecipeIngredient> list = new ObjectArrayList<>();
             if (json.has("item_in")) {
@@ -88,7 +88,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
             FluidStack stack = new FluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsInt() : 1000);
 
             if (obj.has("tag")) {
-                stack.setTag(JsonToNBT.getTagFromJson(obj.get("tag").getAsString()));
+                stack.setTag(JsonToNBT.parseTag(obj.get("tag").getAsString()));
             }
             return stack;
         } catch (Exception ex) {
@@ -99,7 +99,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
 
     @Nullable
     @Override
-    public Recipe read(ResourceLocation recipeId, PacketBuffer buffer) {
+    public Recipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
         int size = buffer.readInt();
         List<RecipeIngredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
@@ -111,7 +111,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         ItemStack[] out = new ItemStack[size];
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                out[i] = buffer.readItemStack();
+                out[i] = buffer.readItem();
             }
         }
         size = buffer.readInt();
@@ -139,7 +139,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         int dur = buffer.readInt();
         int special = buffer.readInt();
         int amps = buffer.readInt();
-        String map = buffer.readString();
+        String map = buffer.readUtf();
         ResourceLocation id = buffer.readResourceLocation();
 
         Recipe r = new Recipe(
@@ -159,14 +159,14 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
     }
 
     @Override
-    public void write(PacketBuffer buffer, Recipe recipe) {
+    public void toNetwork(PacketBuffer buffer, Recipe recipe) {
         buffer.writeInt(!recipe.hasInputItems() ? 0 : recipe.getInputItems().size());
         if (recipe.hasInputItems()) {
             recipe.getInputItems().forEach(t -> t.writeToBuffer(buffer));
         }
         buffer.writeInt(!recipe.hasOutputItems() ? 0 : recipe.getOutputItems().length);
         if (recipe.hasOutputItems()) {
-            Arrays.stream(recipe.getOutputItems()).forEach(buffer::writeItemStack);
+            Arrays.stream(recipe.getOutputItems()).forEach(buffer::writeItem);
         }
         buffer.writeInt(!recipe.hasInputFluids() ? 0 : recipe.getInputFluids().length);
         if (recipe.hasInputFluids()) {
@@ -184,7 +184,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
         buffer.writeInt(recipe.getDuration());
         buffer.writeInt(recipe.getSpecialValue());
         buffer.writeInt(recipe.getAmps());
-        buffer.writeString(recipe.mapId);
+        buffer.writeUtf(recipe.mapId);
         buffer.writeResourceLocation(recipe.id);
     }
 }

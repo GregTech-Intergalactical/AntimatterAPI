@@ -194,7 +194,7 @@ public class RecipeBuilders {
             int dye = ((DyeColor) mats.mats.get("secondary")).getColorValue();
             AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
             ItemStack stack = type.getToolStack(((Material) mats.mats.get("primary")), NULL);
-            stack.getChildTag(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, dye);
+            stack.getTagElement(Ref.TAG_TOOL_DATA).putInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR, dye);
             return stack;
         }
 

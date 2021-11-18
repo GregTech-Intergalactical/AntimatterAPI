@@ -24,7 +24,7 @@ public class ContainerPipe<T extends TileEntityPipe<?>> extends AntimatterContai
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity player) {
-        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, tile.getBlockState().getBlock());
+    public boolean stillValid(PlayerEntity player) {
+        return stillValid(IWorldPosCallable.create(tile.getLevel(), tile.getBlockPos()), player, tile.getBlockState().getBlock());
     }
 }

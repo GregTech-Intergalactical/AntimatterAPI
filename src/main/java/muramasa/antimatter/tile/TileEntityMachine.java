@@ -157,7 +157,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     @Override
     public boolean isRemote() {
-        return world.isRemote;
+        return level.isClientSide;
     }
 
     @Override
@@ -202,7 +202,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
-        Direction facing = Utils.getOffsetFacing(this.getPos(), neighbor);
+        Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
         coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
     }
 
@@ -222,9 +222,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
         if (false) {
             double d = Ref.RNG.nextDouble();
-            if (d > 0.97D && this.world.isRainingAt(new BlockPos(this.pos.getX(), this.pos.getY() + 1, this.pos.getZ()))) {
+            if (d > 0.97D && this.level.isRainingAt(new BlockPos(this.worldPosition.getX(), this.worldPosition.getY() + 1, this.worldPosition.getZ()))) {
                 if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false))
-                    Utils.createExplosion(this.world, pos, 6.0F, Explosion.Mode.DESTROY);
+                    Utils.createExplosion(this.level, worldPosition, 6.0F, Explosion.Mode.DESTROY);
             }
         }
     }
@@ -250,7 +250,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
-        if (this.getWorld() != null && !this.getWorld().isRemote) {
+        if (this.getLevel() != null && !this.getLevel().isClientSide) {
             coverHandler.ifPresent(c -> c.onMachineEvent(event, data));
             itemHandler.ifPresent(i -> i.onMachineEvent(event, data));
             energyHandler.ifPresent(e -> e.onMachineEvent(event, data));
@@ -303,15 +303,15 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     public Direction getFacing() {
-        if (this.world == null) return Direction.NORTH;
+        if (this.level == null) return Direction.NORTH;
         BlockState state = getBlockState();
-        if (state == AIR.getDefaultState()) {
+        if (state == AIR.defaultBlockState()) {
             return Direction.NORTH;
         }
         if (getMachineType().allowVerticalFacing()) {
-            return state.get(BlockStateProperties.FACING);
+            return state.getValue(BlockStateProperties.FACING);
         }
-        return state.get(BlockStateProperties.HORIZONTAL_FACING);
+        return state.getValue(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     public boolean setFacing(Direction side) {
@@ -321,14 +321,14 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (isEmpty) {
             BlockState state = getBlockState();
             if (getMachineType().allowVerticalFacing()) {
-                state = state.with(BlockStateProperties.FACING, side);
+                state = state.setValue(BlockStateProperties.FACING, side);
                 if (side.getAxis() != Direction.Axis.Y) {
-                    state = state.with(BlockMachine.HORIZONTAL_FACING, side);
+                    state = state.setValue(BlockMachine.HORIZONTAL_FACING, side);
                 }
             } else {
-                state = state.with(BlockStateProperties.HORIZONTAL_FACING, side);
+                state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, side);
             }
-            getWorld().setBlockState(getPos(), state);
+            getLevel().setBlockAndUpdate(getBlockPos(), state);
             refreshCaps();
 
             return true;
@@ -338,7 +338,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     protected boolean setFacing(PlayerEntity player, Direction side) {
         boolean setFacing = setFacing(side);
-        if (setFacing) player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        if (setFacing) player.playNotifySound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
         return setFacing;
     }
 
@@ -359,7 +359,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
         if (event.getFactory() == SlotClickEvent.SLOT_CLICKED) {
             itemHandler.ifPresent(t -> {
-                ItemStack stack = player.inventory.getItemStack();
+                ItemStack stack = player.inventory.getCarried();
                 Antimatter.LOGGER.info("packet got");
             });
         }
@@ -367,7 +367,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     @Override
     public AbstractGuiEventPacket createGuiPacket(IGuiEvent event) {
-        return new TileGuiEventPacket(event, getPos());
+        return new TileGuiEventPacket(event, getBlockPos());
     }
 
     @Override
@@ -436,9 +436,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (this.machineState != newState) {
             MachineState old = this.machineState;
             this.machineState = newState;
-            if (world != null) {
+            if (level != null) {
                 sidedSync(true);
-                if (!world.isRemote) {
+                if (!level.isClientSide) {
                     if (old == MachineState.ACTIVE) {
                         this.onMachineStop();
                     } else if (newState == MachineState.ACTIVE) {
@@ -449,7 +449,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                     }
                 }
             }
-            markDirty();
+            setChanged();
         }
     }
 
@@ -465,12 +465,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     @Override
     public IModelData getModelData() {
         ModelDataMap.Builder builder = new ModelDataMap.Builder();
-        TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getWorld(), pos, TileEntityBasicMultiMachine.class);
+        TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
         if (mTile != null) {
             builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE, a -> {
                 Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
                 if (tex.length == 1) return tex[0];
-                return tex[a.getIndex()];
+                return tex[a.get3DDataValue()];
             });
         }
 
@@ -551,8 +551,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT tag) {
-        super.read(state, tag);
+    public void load(BlockState state, CompoundNBT tag) {
+        super.load(state, tag);
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
         if (tag.contains(Ref.KEY_MACHINE_STATE_D)) {
@@ -571,8 +571,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
-        super.write(tag);
+    public CompoundNBT save(CompoundNBT tag) {
+        super.save(tag);
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         if (disabledState != null)

@@ -26,7 +26,7 @@ public class WorldGenBase<T extends WorldGenBase<?>> {
 
     public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, RegistryKey<World>... dimensions) {
         this.id = id;
-        this.dimensions = Arrays.stream(dimensions).map(RegistryKey::getLocation).collect(Collectors.toCollection(ObjectOpenHashSet::new));
+        this.dimensions = Arrays.stream(dimensions).map(RegistryKey::location).collect(Collectors.toCollection(ObjectOpenHashSet::new));
         AntimatterWorldGenerator.register(c, this);
     }
 

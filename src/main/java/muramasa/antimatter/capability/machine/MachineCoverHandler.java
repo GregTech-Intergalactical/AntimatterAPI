@@ -55,8 +55,8 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     public boolean set(Direction side, ICover old, ICover stack, boolean sync) {
         if (getTileFacing() == side && !getTile().getMachineType().allowsFrontCovers()) return false;
         boolean ok = super.set(side, old, stack, sync);
-        if (ok && getTile().getWorld() != null) {
-            if (!getTile().getWorld().isRemote) {
+        if (ok && getTile().getLevel() != null) {
+            if (!getTile().getLevel().isClientSide) {
                 getTile().invalidateCaps(side);
             } else {
                 if (coverTexturer != null) getTexturer(side).invalidate();

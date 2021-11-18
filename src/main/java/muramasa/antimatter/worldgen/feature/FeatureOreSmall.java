@@ -40,19 +40,19 @@ public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.ORE_SMALL);
+        event.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.ORE_SMALL);
     }
 
     @Override
-    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        List<WorldGenOreSmall> ores = AntimatterWorldGenerator.all(WorldGenOreSmall.class, world.getWorld().getDimensionKey());
+    public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+        List<WorldGenOreSmall> ores = AntimatterWorldGenerator.all(WorldGenOreSmall.class, world.getLevel().dimension());
         BlockPos.Mutable mut = new BlockPos.Mutable();
         int amount;
         BlockState existing;
         for (WorldGenOreSmall ore : ores) {
             amount = Math.max(1, ore.getAmount() / 2 + rand.nextInt(1 + ore.getAmount()) / 2);
             for (int i = 0; i < amount; i++) {
-                mut.setPos(pos.getX() + rand.nextInt(16), ore.getMinY() + rand.nextInt(Math.max(1, ore.getMaxY() - ore.getMinY())), pos.getZ() + rand.nextInt(16));
+                mut.set(pos.getX() + rand.nextInt(16), ore.getMinY() + rand.nextInt(Math.max(1, ore.getMaxY() - ore.getMinY())), pos.getZ() + rand.nextInt(16));
                 existing = world.getBlockState(mut);
                 WorldGenHelper.setOre(world, mut, existing, ore.getMaterial(), Data.ORE_SMALL);
             }

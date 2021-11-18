@@ -1,11 +1,9 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
@@ -32,9 +30,9 @@ public class BlockStoneSlab extends SlabBlock implements ISharedAntimatterObject
     }
 
     private static Properties getProps(StoneType type) {
-        Properties props = Block.Properties.create(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).hardnessAndResistance(type.getHardness(), type.getResistence());
+        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).strength(type.getHardness(), type.getResistence());
         if (type.doesRequireTool()) {
-            props.setRequiresTool();
+            props.requiresCorrectToolForDrops();
         }
         return props;
     }
@@ -54,10 +52,10 @@ public class BlockStoneSlab extends SlabBlock implements ISharedAntimatterObject
         BlockModelBuilder bottom = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/slab")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
         ModelFile.ExistingModelFile both = prov.existing(this.getDomain(), "block/" + this.getId().replace("_slab", ""));
         prov.getVariantBuilder(block).forAllStates(s -> {
-            if (s.get(TYPE) == SlabType.DOUBLE) {
+            if (s.getValue(TYPE) == SlabType.DOUBLE) {
                 return ConfiguredModel.builder().modelFile(both).build();
             }
-            return ConfiguredModel.builder().modelFile(s.get(TYPE) == SlabType.TOP ? top : bottom).build();
+            return ConfiguredModel.builder().modelFile(s.getValue(TYPE) == SlabType.TOP ? top : bottom).build();
         });
     }
 }

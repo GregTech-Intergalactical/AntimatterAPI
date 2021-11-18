@@ -4,7 +4,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
@@ -25,7 +24,7 @@ public class BlockStoneStair extends StairsBlock implements ISharedAntimatterObj
     CobbleStoneType type;
 
     public BlockStoneStair(CobbleStoneType type, String suffix, Block baseState) {
-        super(baseState::getDefaultState, getProps(type));
+        super(baseState::defaultBlockState, getProps(type));
         domain = type.getDomain();
         id = type.getId() + "_" + suffix + "_stairs";
         this.suffix = suffix;
@@ -34,9 +33,9 @@ public class BlockStoneStair extends StairsBlock implements ISharedAntimatterObj
     }
 
     private static Properties getProps(StoneType type) {
-        Properties props = Block.Properties.create(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).hardnessAndResistance(type.getHardness(), type.getResistence());
+        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).strength(type.getHardness(), type.getResistence());
         if (type.doesRequireTool()) {
-            props.setRequiresTool();
+            props.requiresCorrectToolForDrops();
         }
         return props;
     }
@@ -58,12 +57,12 @@ public class BlockStoneStair extends StairsBlock implements ISharedAntimatterObj
         prov.getVariantBuilder(block).forAllStates(s -> {
             ConfiguredModel.Builder<?> builder = ConfiguredModel.builder();
             BlockModelBuilder b = regular;
-            StairsShape shape = s.get(SHAPE);
-            Half half = s.get(HALF);
-            Direction facing = s.get(FACING);
-            boolean left = shape.getString().contains("left"), right = shape.getString().contains("right");
-            if (shape.getString().contains("outer")) b = outer;
-            if (shape.getString().contains("inner")) b = inner;
+            StairsShape shape = s.getValue(SHAPE);
+            Half half = s.getValue(HALF);
+            Direction facing = s.getValue(FACING);
+            boolean left = shape.getSerializedName().contains("left"), right = shape.getSerializedName().contains("right");
+            if (shape.getSerializedName().contains("outer")) b = outer;
+            if (shape.getSerializedName().contains("inner")) b = inner;
             builder.modelFile(b);
             if (half == Half.TOP) {
                 builder.rotationX(180);

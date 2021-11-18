@@ -228,7 +228,7 @@ public class GuiInstance implements ICanSyncData {
 
     @OnlyIn(Dist.CLIENT)
     public ItemStack getHeldItem() {
-        return Minecraft.getInstance().player.inventory.getItemStack();
+        return Minecraft.getInstance().player.inventory.getCarried();
     }
 
     @Nullable
@@ -251,7 +251,7 @@ public class GuiInstance implements ICanSyncData {
 
     private void write(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new GuiSyncPacket(data);
-        for (IContainerListener listener : ((IContainerListeners) container).getListeners()) {
+        for (IContainerListener listener : ((IContainerListeners) container).getcontainerListeners()) {
             if (listener instanceof ServerPlayerEntity) {
                 Antimatter.NETWORK.sendTo(pkt, (ServerPlayerEntity) listener);
             }

@@ -40,12 +40,12 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     }
 
     public BlockOre(String domain, Material material, StoneType stoneType, MaterialType<?> oreType) {
-        this(domain, material, stoneType, oreType, getOreProperties(Block.Properties.create(stoneType.getBlockMaterial()), stoneType));
+        this(domain, material, stoneType, oreType, getOreProperties(Block.Properties.of(stoneType.getBlockMaterial()), stoneType));
     }
 
     @Nonnull
     @Override
-    public String getTranslationKey() {
+    public String getDescriptionId() {
         return getId();
     }
 
@@ -54,7 +54,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
         if (stoneType.getId().equals("stone")) items.add(new ItemStack(this)); //todo move stonetype to antimatter
     }
 
@@ -131,9 +131,9 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
      * Falling block stuff
      **/
     @Override
-    public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+    public void onPlace(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (this.stoneType.getGravity()) {
-            worldIn.getPendingBlockTicks().scheduleTick(pos, this, this.getFallDelay());
+            worldIn.getBlockTicks().scheduleTick(pos, this, this.getFallDelay());
         }
     }
 
@@ -144,20 +144,20 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
      * Note that this method should ideally consider only the specific face passed in.
      */
     @Override
-    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (this.stoneType.getGravity()) {
-            worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, this.getFallDelay());
+            worldIn.getBlockTicks().scheduleTick(currentPos, this, this.getFallDelay());
         }
-        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @Override
     public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
         if (this.stoneType.getGravity()) {
-            if (worldIn.isAirBlock(pos.down()) || canFallThrough(worldIn.getBlockState(pos.down())) && pos.getY() >= 0) {
+            if (worldIn.isEmptyBlock(pos.below()) || canFallThrough(worldIn.getBlockState(pos.below())) && pos.getY() >= 0) {
                 FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, worldIn.getBlockState(pos));
                 this.onStartFalling(fallingblockentity);
-                worldIn.addEntity(fallingblockentity);
+                worldIn.addFreshEntity(fallingblockentity);
             }
         }
     }
@@ -171,15 +171,15 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     public static boolean canFallThrough(BlockState state) {
         net.minecraft.block.material.Material material = state.getMaterial();
-        return state.isAir() || state.isIn(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
+        return state.isAir() || state.is(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
     }
 
     @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
         if (this.stoneType.getGravity()) {
             if (rand.nextInt(16) == 0) {
-                BlockPos blockpos = pos.down();
-                if (worldIn.isAirBlock(blockpos) || canFallThrough(worldIn.getBlockState(blockpos))) {
+                BlockPos blockpos = pos.below();
+                if (worldIn.isEmptyBlock(blockpos) || canFallThrough(worldIn.getBlockState(blockpos))) {
                     double d0 = (double) pos.getX() + rand.nextDouble();
                     double d1 = (double) pos.getY() - 0.05D;
                     double d2 = (double) pos.getZ() + rand.nextDouble();
@@ -200,20 +200,20 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     }
 
     public static Block.Properties getOreProperties(Block.Properties properties, StoneType type) {
-        if (AntimatterConfig.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.notSolid().setLightLevel(b -> 15);
-        properties.hardnessAndResistance(type.getHardness() * 2, type.getResistence() / 2).harvestTool(type.getToolType()).sound(type.getSoundType());
-        if (type.doesRequireTool()) properties.setRequiresTool();
+        if (AntimatterConfig.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.noOcclusion().lightLevel(b -> 15);
+        properties.strength(type.getHardness() * 2, type.getResistence() / 2).harvestTool(type.getToolType()).sound(type.getSoundType());
+        if (type.doesRequireTool()) properties.requiresCorrectToolForDrops();
         return properties;
     }
 
     @Override
     public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) {
         if (silktouch == 0 && material.getExpRange() != null) {
-            List<ItemStack> self = getDrops(state, ((ServerWorld) world), pos, world.getTileEntity(pos));
+            List<ItemStack> self = getDrops(state, ((ServerWorld) world), pos, world.getBlockEntity(pos));
             if (self.stream().anyMatch(i -> i.getItem() == this.asItem())) {
                 return 0;
             }
-            return material.getExpRange().getRandomWithinRange(RANDOM);
+            return material.getExpRange().randomValue(RANDOM);
         }
         return 0;
     }

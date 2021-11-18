@@ -52,7 +52,7 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
     public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bindTexture(res);
+        minecraft.getTextureManager().bind(res);
         RenderSystem.disableDepthTest();
         boolean mouseOver = isInside(mouseX, mouseY);
         if (body == null) {

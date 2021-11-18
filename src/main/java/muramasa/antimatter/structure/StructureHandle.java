@@ -45,24 +45,24 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
     public void register() {
         BlockState state = source.getBlockState();
         boolean vertical = source.getMachineType().allowVerticalFacing();
-        Direction facing = vertical ? state.get(BlockStateProperties.FACING) : state.get(BlockStateProperties.HORIZONTAL_FACING);
-        Direction hFacing = vertical ? state.get(BlockMachine.HORIZONTAL_FACING) : null;
+        Direction facing = vertical ? state.getValue(BlockStateProperties.FACING) : state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        Direction hFacing = vertical ? state.getValue(BlockMachine.HORIZONTAL_FACING) : null;
         int3 newOff = new int3(facing, hFacing);
         for (int3 offset : offsets) {
-            newOff.set(source.getPos()).offset(offset, Dir.RIGHT, Dir.UP, Dir.FORWARD);
-            StructureCache.addListener(this, source.getWorld(), newOff);
+            newOff.set(source.getBlockPos()).offset(offset, Dir.RIGHT, Dir.UP, Dir.FORWARD);
+            StructureCache.addListener(this, source.getLevel(), newOff);
         }
     }
 
     public void deregister() {
         BlockState state = source.getBlockState();
         boolean vertical = source.getMachineType().allowVerticalFacing();
-        Direction facing = vertical ? state.get(BlockStateProperties.FACING) : state.get(BlockStateProperties.HORIZONTAL_FACING);
-        Direction hFacing = vertical ? state.get(BlockMachine.HORIZONTAL_FACING) : null;
+        Direction facing = vertical ? state.getValue(BlockStateProperties.FACING) : state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        Direction hFacing = vertical ? state.getValue(BlockMachine.HORIZONTAL_FACING) : null;
         int3 newOff = new int3(facing, hFacing);
         for (int3 offset : offsets) {
-            newOff.set(source.getPos()).offset(offset, Dir.RIGHT, Dir.UP, Dir.FORWARD);
-            StructureCache.removeListener(this, source.getWorld(), newOff);
+            newOff.set(source.getBlockPos()).offset(offset, Dir.RIGHT, Dir.UP, Dir.FORWARD);
+            StructureCache.removeListener(this, source.getLevel(), newOff);
         }
     }
 

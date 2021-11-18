@@ -14,14 +14,14 @@ public class ImmediateWorldSceneRenderer extends WorldSceneRenderer {
     @Override
     protected int[] getPositionedRect(int x, int y, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
-        
-        MainWindow window = mc.getMainWindow();
+
+        MainWindow window = mc.getWindow();
         //compute window size from scaled width & height
-        int windowWidth = (int) (width / (window.getScaledWidth() * 1.0) * window.getFramebufferWidth());
-        int windowHeight = (int) (height / (window.getScaledHeight() * 1.0) * window.getFramebufferHeight());
+        int windowWidth = (int) (width / (window.getGuiScaledWidth() * 1.0) * window.getWidth());
+        int windowHeight = (int) (height / (window.getGuiScaledHeight() * 1.0) * window.getHeight());
         //translate gui coordinates to window's ones (y is inverted)
-        int windowX = (int) (x / (window.getScaledWidth() * 1.0) * window.getFramebufferWidth());
-        int windowY = window.getFramebufferHeight() - (int) (y / (window.getScaledHeight() * 1.0) * window.getFramebufferHeight()) - windowHeight;
+        int windowX = (int) (x / (window.getGuiScaledWidth() * 1.0) * window.getWidth());
+        int windowY = window.getHeight() - (int) (y / (window.getGuiScaledHeight() * 1.0) * window.getHeight()) - windowHeight;
 
         return super.getPositionedRect(windowX, windowY, windowWidth, windowHeight);
     }

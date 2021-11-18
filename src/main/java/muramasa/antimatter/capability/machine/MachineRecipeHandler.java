@@ -574,7 +574,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     public void deserializeNBT(CompoundNBT nbt) {
         itemInputs = new ObjectArrayList<>();
         fluidInputs = new ObjectArrayList<>();
-        nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.read((CompoundNBT) t)));
+        nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundNBT) t)));
         nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundNBT) t)));
         this.currentProgress = nbt.getInt("P");
     }

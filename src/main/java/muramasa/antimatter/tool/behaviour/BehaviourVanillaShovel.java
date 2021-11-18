@@ -26,24 +26,24 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
 
     @Override
     public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
-        if (c.getFace() == Direction.DOWN) return ActionResultType.PASS;
-        BlockState state = c.getWorld().getBlockState(c.getPos());
+        if (c.getClickedFace() == Direction.DOWN) return ActionResultType.PASS;
+        BlockState state = c.getLevel().getBlockState(c.getClickedPos());
         BlockState changedState = null;
-        if (state.getBlock() == Blocks.GRASS_BLOCK && c.getWorld().isAirBlock(c.getPos().up())) {
-            changedState = getToolModifiedState(state, Blocks.GRASS_PATH.getDefaultState(), c.getWorld(), c.getPos(), c.getPlayer(), c.getItem(), ToolType.SHOVEL);
+        if (state.getBlock() == Blocks.GRASS_BLOCK && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
+            changedState = getToolModifiedState(state, Blocks.GRASS_PATH.defaultBlockState(), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolType.SHOVEL);
             if (changedState != null) {
-                SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.ITEM_SHOVEL_FLATTEN : instance.getAntimatterToolType().getUseSound();
-                c.getWorld().playSound(c.getPlayer(), c.getPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.SHOVEL_FLATTEN : instance.getAntimatterToolType().getUseSound();
+                c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
             }
-        } else if (state.getBlock() instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
-            changedState = getToolModifiedState(state, state.with(CampfireBlock.LIT, false), c.getWorld(), c.getPos(), c.getPlayer(), c.getItem(), ToolType.SHOVEL);
+        } else if (state.getBlock() instanceof CampfireBlock && state.getValue(CampfireBlock.LIT)) {
+            changedState = getToolModifiedState(state, state.setValue(CampfireBlock.LIT, false), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolType.SHOVEL);
             if (changedState != null) {
-                c.getWorld().playEvent(c.getPlayer(), 1009, c.getPos(), 0);
+                c.getLevel().levelEvent(c.getPlayer(), 1009, c.getClickedPos(), 0);
             }
         }
         if (changedState != null) {
-            c.getWorld().setBlockState(c.getPos(), changedState, 11);
-            Utils.damageStack(c.getItem(), c.getPlayer());
+            c.getLevel().setBlock(c.getClickedPos(), changedState, 11);
+            Utils.damageStack(c.getItemInHand(), c.getPlayer());
             return ActionResultType.SUCCESS;
         } else return ActionResultType.PASS;
     }

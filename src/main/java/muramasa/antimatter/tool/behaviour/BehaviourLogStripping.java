@@ -41,15 +41,15 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
 
     @Override
     public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
-        BlockState state = c.getWorld().getBlockState(c.getPos());
-        BlockState stripped = getToolModifiedState(state, c.getWorld(), c.getPos(), c.getPlayer(), c.getItem(), ToolType.AXE);
+        BlockState state = c.getLevel().getBlockState(c.getClickedPos());
+        BlockState stripped = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolType.AXE);
         if (stripped != null) {
             if (state.hasProperty(RotatedPillarBlock.AXIS) && stripped.hasProperty(RotatedPillarBlock.AXIS)) {
-                stripped = stripped.with(RotatedPillarBlock.AXIS, state.get(RotatedPillarBlock.AXIS));
+                stripped = stripped.setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
             }
-            c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
-            c.getWorld().setBlockState(c.getPos(), stripped);
-            Utils.damageStack(c.getItem(), c.getPlayer());
+            c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), SoundEvents.AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            c.getLevel().setBlockAndUpdate(c.getClickedPos(), stripped);
+            Utils.damageStack(c.getItemInHand(), c.getPlayer());
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;
@@ -61,7 +61,7 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
     }
 
     public static void addStrippedBlock(Block from, Block to) {
-        addStrippedState(from.getDefaultState(), to.getDefaultState());
+        addStrippedState(from.defaultBlockState(), to.defaultBlockState());
     }
 
     public static void addStrippedState(BlockState from, BlockState to) {

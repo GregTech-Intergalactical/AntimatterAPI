@@ -35,7 +35,7 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
     public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
         ItemStack stack = ItemStack.EMPTY;
         if (c.getPlayer() == null) return ActionResultType.PASS;
-        for (ItemStack stack1 : c.getPlayer().inventory.mainInventory) {
+        for (ItemStack stack1 : c.getPlayer().inventory.items) {
             if (stack1.getItem() == Items.TORCH || stack1.getItem() == Items.SOUL_TORCH) {
                 stack = stack1;
                 break;
@@ -43,7 +43,7 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
         }
         if (!stack.isEmpty() || c.getPlayer().isCreative()) {
             ActionResultType resultType = tryPlace(new BlockItemUseContext(c), stack);
-            if (resultType.isSuccessOrConsume()) {
+            if (resultType.consumesAction()) {
                 if (!c.getPlayer().isCreative()) stack.shrink(1);
                 return resultType;
             }
@@ -61,16 +61,16 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
             } else if (!this.placeBlock(context, blockstate)) {
                 return ActionResultType.FAIL;
             } else {
-                BlockPos blockpos = context.getPos();
-                World world = context.getWorld();
+                BlockPos blockpos = context.getClickedPos();
+                World world = context.getLevel();
                 PlayerEntity playerentity = context.getPlayer();
-                ItemStack itemstack = context.getItem();
+                ItemStack itemstack = context.getItemInHand();
                 BlockState blockstate1 = world.getBlockState(blockpos);
                 Block block = blockstate1.getBlock();
                 if (block == blockstate.getBlock()) {
-                    blockstate1 = this.func_219985_a(blockpos, world, itemstack, blockstate1);
+                    blockstate1 = this.updateBlockStateFromTag(blockpos, world, itemstack, blockstate1);
                     this.onBlockPlaced(blockpos, world, playerentity, itemstack, blockstate1);
-                    block.onBlockPlacedBy(world, blockpos, blockstate1, playerentity, itemstack);
+                    block.setPlacedBy(world, blockpos, blockstate1, playerentity, itemstack);
                     if (playerentity instanceof ServerPlayerEntity) {
                         CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity) playerentity, blockpos, itemstack);
                     }
@@ -79,65 +79,65 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
                 SoundType soundtype = blockstate1.getSoundType(world, blockpos, context.getPlayer());
                 world.playSound(playerentity, blockpos, Blocks.TORCH.getSoundType(blockstate1, world, blockpos, context.getPlayer()).getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 
-                return ActionResultType.func_233537_a_(world.isRemote);
+                return ActionResultType.sidedSuccess(world.isClientSide);
             }
         }
     }
 
     protected boolean onBlockPlaced(BlockPos pos, World worldIn, @Nullable PlayerEntity player, ItemStack stack, BlockState state) {
-        return BlockItem.setTileEntityNBT(worldIn, player, pos, stack);
+        return BlockItem.updateCustomBlockEntityTag(worldIn, player, pos, stack);
     }
 
-    private BlockState func_219985_a(BlockPos p_219985_1_, World p_219985_2_, ItemStack p_219985_3_, BlockState p_219985_4_) {
+    private BlockState updateBlockStateFromTag(BlockPos p_219985_1_, World p_219985_2_, ItemStack p_219985_3_, BlockState p_219985_4_) {
         BlockState blockstate = p_219985_4_;
         CompoundNBT compoundnbt = p_219985_3_.getTag();
         if (compoundnbt != null) {
             CompoundNBT compoundnbt1 = compoundnbt.getCompound("BlockStateTag");
-            StateContainer<Block, BlockState> statecontainer = p_219985_4_.getBlock().getStateContainer();
+            StateContainer<Block, BlockState> statecontainer = p_219985_4_.getBlock().getStateDefinition();
 
-            for (String s : compoundnbt1.keySet()) {
+            for (String s : compoundnbt1.getAllKeys()) {
                 Property<?> property = statecontainer.getProperty(s);
                 if (property != null) {
-                    String s1 = compoundnbt1.get(s).getString();
-                    blockstate = func_219988_a(blockstate, property, s1);
+                    String s1 = compoundnbt1.get(s).getAsString();
+                    blockstate = updateState(blockstate, property, s1);
                 }
             }
         }
 
         if (blockstate != p_219985_4_) {
-            p_219985_2_.setBlockState(p_219985_1_, blockstate, 2);
+            p_219985_2_.setBlock(p_219985_1_, blockstate, 2);
         }
 
         return blockstate;
     }
 
-    private static <T extends Comparable<T>> BlockState func_219988_a(BlockState p_219988_0_, Property<T> p_219988_1_, String p_219988_2_) {
-        return p_219988_1_.parseValue(p_219988_2_).map((p_219986_2_) -> {
-            return p_219988_0_.with(p_219988_1_, p_219986_2_);
+    private static <T extends Comparable<T>> BlockState updateState(BlockState p_219988_0_, Property<T> p_219988_1_, String p_219988_2_) {
+        return p_219988_1_.getValue(p_219988_2_).map((p_219986_2_) -> {
+            return p_219988_0_.setValue(p_219988_1_, p_219986_2_);
         }).orElse(p_219988_0_);
     }
 
     protected boolean placeBlock(BlockItemUseContext context, BlockState state) {
-        return context.getWorld().setBlockState(context.getPos(), state, 11);
+        return context.getLevel().setBlock(context.getClickedPos(), state, 11);
     }
 
     @Nullable
     protected BlockState getStateForPlacement(BlockItemUseContext context, ItemStack torch) {
         BlockState blockstate = torch.getItem() == Items.SOUL_TORCH ? Blocks.SOUL_WALL_TORCH.getStateForPlacement(context) : Blocks.WALL_TORCH.getStateForPlacement(context);
         BlockState blockstate1 = null;
-        IWorldReader iworldreader = context.getWorld();
-        BlockPos blockpos = context.getPos();
+        IWorldReader iworldreader = context.getLevel();
+        BlockPos blockpos = context.getClickedPos();
 
         for (Direction direction : context.getNearestLookingDirections()) {
             if (direction != Direction.UP) {
                 BlockState blockstate2 = direction == Direction.DOWN ? (torch.getItem() == Items.SOUL_TORCH ? Blocks.SOUL_TORCH.getStateForPlacement(context) : Blocks.TORCH.getStateForPlacement(context)) : blockstate;
-                if (blockstate2 != null && blockstate2.isValidPosition(iworldreader, blockpos)) {
+                if (blockstate2 != null && blockstate2.canSurvive(iworldreader, blockpos)) {
                     blockstate1 = blockstate2;
                     break;
                 }
             }
         }
 
-        return blockstate1 != null && iworldreader.placedBlockCollides(blockstate1, blockpos, ISelectionContext.dummy()) ? blockstate1 : null;
+        return blockstate1 != null && iworldreader.isUnobstructed(blockstate1, blockpos, ISelectionContext.empty()) ? blockstate1 : null;
     }
 }

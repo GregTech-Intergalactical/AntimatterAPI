@@ -27,7 +27,7 @@ public class ContainerCover extends AntimatterContainer {
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerIn) {
-        return isWithinUsableDistance(IWorldPosCallable.of(onEntity.getWorld(), onEntity.getPos()), playerIn, onEntity.getBlockState().getBlock());
+    public boolean stillValid(PlayerEntity playerIn) {
+        return stillValid(IWorldPosCallable.create(onEntity.getLevel(), onEntity.getBlockPos()), playerIn, onEntity.getBlockState().getBlock());
     }
 }

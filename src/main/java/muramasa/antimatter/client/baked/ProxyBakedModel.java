@@ -40,17 +40,17 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         if (tileData.hasProperty(AntimatterProperties.TILE_PROPERTY)) {
             fake = (TileEntityFakeBlock) tileData.getData(AntimatterProperties.TILE_PROPERTY);
         } else {
-            fake = (TileEntityFakeBlock) world.getTileEntity(pos);
+            fake = (TileEntityFakeBlock) world.getBlockEntity(pos);
         }
         if (fake.getState() == null) {
             return tileData;
         }
-        IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(fake.getState());
-        IUnbakedModel m = ModelLoader.instance().getUnbakedModel(BlockModelShapes.getModelLocation(fake.getState()));
+        IBakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fake.getState());
+        IUnbakedModel m = ModelLoader.instance().getModel(BlockModelShapes.stateToModelLocation(fake.getState()));
 
-        Collection<RenderMaterial> mats = m.getTextures(ModelLoader.defaultModelGetter(), Sets.newLinkedHashSet());
+        Collection<RenderMaterial> mats = m.getMaterials(ModelLoader.defaultModelGetter(), Sets.newLinkedHashSet());
         RenderMaterial first = mats.iterator().next();
-        tileData.setData(AntimatterProperties.TEXTURE_MODEL_PROPERTY, new Texture(first.getTextureLocation().toString()));
+        tileData.setData(AntimatterProperties.TEXTURE_MODEL_PROPERTY, new Texture(first.texture().toString()));
         tileData = model.getModelData(world, pos, state, tileData);
 
         if (!tileData.hasProperty(AntimatterProperties.STATE_MODEL_PROPERTY))
@@ -63,8 +63,8 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
     @Override
     public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data) {
-        IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(data.getData(AntimatterProperties.STATE_MODEL_PROPERTY));
-        return model != null ? model.getParticleTexture(data) : getParticleTexture();
+        IBakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(data.getData(AntimatterProperties.STATE_MODEL_PROPERTY));
+        return model != null ? model.getParticleTexture(data) : getParticleIcon();
     }
 
     @Override
@@ -73,12 +73,12 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         if (realState == null) return Collections.emptyList();
         TileEntityFakeBlock fake = (TileEntityFakeBlock) data.getData(AntimatterProperties.TILE_PROPERTY);
         if (side == null)
-            return Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(realState).getQuads(realState, side, rand, data);
+            return Minecraft.getInstance().getBlockRenderer().getBlockModel(realState).getQuads(realState, side, rand, data);
         ICover cover = fake.getCover(side);
         if (cover == null)
-            return Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(realState).getQuads(realState, side, rand, data);
+            return Minecraft.getInstance().getBlockRenderer().getBlockModel(realState).getQuads(realState, side, rand, data);
         DynamicTexturer<ICover, ICover.DynamicKey> texturer = fake.getTexturer(side);
-        return texturer.getQuads("fake", new LinkedList<>(), realState, cover, new ICover.DynamicKey(fake.facing, data.getData(AntimatterProperties.TEXTURE_MODEL_PROPERTY), Data.COVEROUTPUT.getId()), side.getIndex(), data);
+        return texturer.getQuads("fake", new LinkedList<>(), realState, cover, new ICover.DynamicKey(fake.facing, data.getData(AntimatterProperties.TEXTURE_MODEL_PROPERTY), Data.COVEROUTPUT.getId()), side.get3DDataValue(), data);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+    public boolean useAmbientOcclusion() {
         return false;
     }
 
@@ -97,12 +97,12 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
     }
 
     @Override
-    public boolean isSideLit() {
+    public boolean usesBlockLight() {
         return true;
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+    public boolean isCustomRenderer() {
         return true;
     }
 

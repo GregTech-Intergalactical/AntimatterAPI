@@ -51,8 +51,8 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        if (this.isInGroup(group)) {
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+        if (this.allowdedIn(group)) {
             ItemStack stack = new ItemStack(this);
             getCastedHandler(stack).ifPresent(e -> {
                 e.setEnergy(e.getCapacity());
@@ -85,14 +85,14 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Nonnull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
-        ItemStack stack = player.getHeldItem(hand);
-        if (!world.isRemote() && player.isCrouching()) {
+    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (!world.isClientSide() && player.isCrouching()) {
             boolean newMode = chargeModeSwitch(stack);
-            player.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"), player.getUniqueID());
-            return ActionResult.resultSuccess(stack);
+            player.sendMessage(new TranslationTextComponent(newMode ? "message.discharge.on" : "message.discharge.off"), player.getUUID());
+            return ActionResult.success(stack);
         }
-        return ActionResult.resultPass(stack);
+        return ActionResult.pass(stack);
     }
 
     private LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
@@ -110,14 +110,14 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     }
 
     @Override
-    public void addInformation(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flag) {
+    public void appendHoverText(@Nonnull ItemStack stack, @Nullable World worldIn, @Nonnull List<ITextComponent> tooltip, @Nonnull ITooltipFlag flag) {
         //TODO: Translateable
         if (reusable) {
             tooltip.add(new TranslationTextComponent("item.reusable"));
         }
         long energy = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IGTNode::getEnergy).orElse(0L);
-        tooltip.add(new TranslationTextComponent("item.charge").appendString(": ").appendSibling(new StringTextComponent(energy + "/" + cap).mergeStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).appendString(" (" + tier.getId().toUpperCase() + ")"));
-        super.addInformation(stack, worldIn, tooltip, flag);
+        tooltip.add(new TranslationTextComponent("item.charge").append(": ").append(new StringTextComponent(energy + "/" + cap).withStyle(energy == 0 ? TextFormatting.RED : TextFormatting.GREEN)).append(" (" + tier.getId().toUpperCase() + ")"));
+        super.appendHoverText(stack, worldIn, tooltip, flag);
     }
 
     @Nullable

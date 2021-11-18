@@ -11,7 +11,6 @@ import muramasa.antimatter.material.TextureSet;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.block.SoundType;
-import net.minecraft.client.audio.Sound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -23,7 +22,7 @@ public class AMCreationEvent extends EventJS {
     }
 
     public StoneType createStoneType(String id, String material, String texture, SoundType soundType, String stoneState) {
-        return AntimatterAPI.register(StoneType.class, new StoneType(Ref.MOD_KJS, id, Material.get(material), new Texture(texture), soundType, false).setStateSupplier(() -> ForgeRegistries.BLOCKS.getValue(new ResourceLocation(stoneState)).getDefaultState()));
+        return AntimatterAPI.register(StoneType.class, new StoneType(Ref.MOD_KJS, id, Material.get(material), new Texture(texture), soundType, false).setStateSupplier(() -> ForgeRegistries.BLOCKS.getValue(new ResourceLocation(stoneState)).defaultBlockState()));
     }
 
     public Material createMaterial(String id, int rgb, String textureSet, String textureSetDomain) {

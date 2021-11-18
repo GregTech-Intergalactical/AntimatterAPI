@@ -44,8 +44,8 @@ public class MachineBakedModel extends CoveredBakedModel {
                 ICover c = covers == null ? null : covers.get(side);
                 if (c == null || c.isEmpty()) {
                     TileEntityMachine.DynamicKey key = new TileEntityMachine.DynamicKey(new ResourceLocation(bm.getType().getId()), tex, Utils.dirFromState(state), data.getData(AntimatterProperties.MACHINE_STATE));
-                    quads = t.multiTexturer.getValue().getQuads("machine", quads, state, t, key, side.getIndex(), data);
-                    assert quads.size() == 0 || quads.get(0).getFace() == side;
+                    quads = t.multiTexturer.get().getQuads("machine", quads, state, t, key, side.get3DDataValue(), data);
+                    assert quads.size() == 0 || quads.get(0).getDirection() == side;
                 }
             }
         }
@@ -61,7 +61,7 @@ public class MachineBakedModel extends CoveredBakedModel {
         data.setData(AntimatterProperties.MACHINE_TEXTURE, a -> {
             Texture[] tex = machine.getMachineType().getBaseTexture(machine.getMachineTier());
             if (tex.length == 1) return tex[0];
-            return tex[a.getIndex()];
+            return tex[a.get3DDataValue()];
         });
         data.setData(AntimatterProperties.MACHINE_STATE, machine.getMachineState());
         return data;

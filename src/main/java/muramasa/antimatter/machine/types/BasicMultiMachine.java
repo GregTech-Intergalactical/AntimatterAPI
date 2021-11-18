@@ -13,7 +13,6 @@ import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.Pattern;
-import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.block.Block;
@@ -22,9 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
@@ -43,7 +40,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
 
     @Override
     public Item getItem(Tier tier) {
-        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMultiMachine.class, this.getId() + "_" + tier.getId(), this.getDomain()));
+        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(BlockMultiMachine.class, this.getId() + "_" + tier.getId(), this.getDomain()));
     }
 
     public BasicMultiMachine(String domain, String name) {

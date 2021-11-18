@@ -85,19 +85,19 @@ public class FluidSlotWidget extends Widget {
         str.add(new StringTextComponent(this.stack.getDisplayName().getString()));
         str.add(new StringTextComponent(
                 NumberFormat.getNumberInstance(Locale.US).format(this.stack.getAmount()) + " mB")
-                .mergeStyle(TextFormatting.GRAY));
+                .withStyle(TextFormatting.GRAY));
         AntimatterJEIPlugin.addModDescriptor(str, this.stack);
-        drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().fontRenderer, stack);
+        drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().font, stack);
     }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers, double mouseX, double mouseY) {
         if (!isInside(mouseX, mouseY))
             return super.keyPressed(keyCode, scanCode, modifiers, mouseX, mouseY);
-        InputMappings.Input input = InputMappings.getInputByCode(keyCode, scanCode);
-        if (!(input.getTranslationKey().equals("key.keyboard.u") || input.getTranslationKey().equals("key.keyboard.r")))
+        InputMappings.Input input = InputMappings.getKey(keyCode, scanCode);
+        if (!(input.getName().equals("key.keyboard.u") || input.getName().equals("key.keyboard.r")))
             return false;
-        AntimatterJEIPlugin.uses(stack, input.getTranslationKey().equals("key.keyboard.u"));
+        AntimatterJEIPlugin.uses(stack, input.getName().equals("key.keyboard.u"));
         return true;
     }
 

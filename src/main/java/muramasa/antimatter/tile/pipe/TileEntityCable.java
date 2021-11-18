@@ -33,8 +33,8 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     public void addNode(Direction side) {
-        Tesseract.GT_ENERGY.registerNode(world, pos.offset(side).toLong(), side.getOpposite(), (getPos, dir) -> {
-            TileEntity tile = world.getTileEntity(BlockPos.fromLong(getPos));
+        Tesseract.GT_ENERGY.registerNode(level, worldPosition.relative(side).asLong(), side.getOpposite(), (getPos, dir) -> {
+            TileEntity tile = level.getBlockEntity(BlockPos.of(getPos));
             LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir);
             if (capability.isPresent()) {
                 capability.addListener(o -> this.onSideCapInvalidate(side));
@@ -78,13 +78,13 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     public boolean connects(Direction direction) {
-        return canConnect(direction.getIndex());
+        return canConnect(direction.get3DDataValue());
     }
 
     @Override
     public boolean validate(Direction dir) {
         if (!super.validate(dir)) return false;
-        TileEntity tile = world.getTileEntity(getPos().offset(dir));
+        TileEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
         return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite()).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
     }
@@ -112,11 +112,11 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     public int drawInfo(InfoRenderWidget.TesseractGTWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
-        renderer.drawString(stack, "Amp average: " + instance.ampAverage, left, top, 16448255);
-        renderer.drawString(stack, "Cable average: " + instance.cableAverage, left, top + 8, 16448255);
-        renderer.drawString(stack, "Average extracted: " + ((double) instance.voltAverage) / 20, left, top + 16, 16448255);
-        renderer.drawString(stack, "Average inserted: " + ((double) (instance.voltAverage - instance.loss)) / 20, left, top + 24, 16448255);
-        renderer.drawString(stack, "Loss average: " + (double) instance.loss / 20, left, top + 32, 16448255);
+        renderer.draw(stack, "Amp average: " + instance.ampAverage, left, top, 16448255);
+        renderer.draw(stack, "Cable average: " + instance.cableAverage, left, top + 8, 16448255);
+        renderer.draw(stack, "Average extracted: " + ((double) instance.voltAverage) / 20, left, top + 16, 16448255);
+        renderer.draw(stack, "Average inserted: " + ((double) (instance.voltAverage - instance.loss)) / 20, left, top + 24, 16448255);
+        renderer.draw(stack, "Loss average: " + (double) instance.loss / 20, left, top + 32, 16448255);
         return 40;
     }
 

@@ -39,7 +39,6 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class MultiMachineInfoPage {
@@ -108,7 +107,7 @@ public class MultiMachineInfoPage {
             }
             Vector3f size = world.getSize();
             Vector3f minPos = world.getMinPos();
-            center = new Vector3f(minPos.getX() + size.getX() / 2, minPos.getY() + size.getY() / 2, minPos.getZ() + size.getZ() / 2);
+            center = new Vector3f(minPos.x() + size.x() / 2, minPos.y() + size.y() / 2, minPos.z() + size.z() / 2);
             worldSceneRenderer.addRenderedBlocks(world.getRenderedBlocks().keySet(), null);
             worldSceneRenderer.setOnLookingAt(this::renderBlockOverLay);
             world.setRenderFilter(pos->worldSceneRenderer.renderedBlocksMap.keySet().stream().anyMatch(c->c.contains(pos)));
@@ -140,7 +139,7 @@ public class MultiMachineInfoPage {
 
     private void toggleNextLayer() {
         WorldSceneRenderer renderer = getCurrentRenderer();
-        int height = (int) ((TrackedDummyWorld)renderer.world).getSize().getY() - 1;
+        int height = (int) ((TrackedDummyWorld) renderer.world).getSize().y() - 1;
         if (++this.layerIndex > height) {
             //if current layer index is more than max height, reset it
             //to display all layers
@@ -169,7 +168,7 @@ public class MultiMachineInfoPage {
             TrackedDummyWorld world = ((TrackedDummyWorld)renderer.world);
             resetCenter(world);
             renderer.renderedBlocksMap.clear();
-            int minY = (int) world.getMinPos().getY();
+            int minY = (int) world.getMinPos().y();
             Collection<BlockPos> renderBlocks;
             if (newLayer == -1) {
                 renderBlocks = world.getRenderedBlocks().keySet();
@@ -187,21 +186,21 @@ public class MultiMachineInfoPage {
     private void resetCenter(TrackedDummyWorld world) {
         Vector3f size = world.getSize();
         Vector3f minPos = world.getMinPos();
-        center = new Vector3f(minPos.getX() + size.getX() / 2, minPos.getY() + size.getY() / 2, minPos.getZ() + size.getZ() / 2);
+        center = new Vector3f(minPos.x() + size.x() / 2, minPos.y() + size.y() / 2, minPos.z() + size.z() / 2);
         getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
     }
     
     public void drawInfo(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         Vector4f transform = new Vector4f(0, 0, 0, 1);
-        transform.transform(matrixStack.getLast().getMatrix());
+        transform.transform(matrixStack.last().pose());
 
-        renderer.render(transform.getX(), transform.getY(), WIDTH, HEIGHT, mouseX + (int)transform.getX(), mouseY + (int)transform.getY());
+        renderer.render(transform.x(), transform.y(), WIDTH, HEIGHT, mouseX + (int) transform.x(), mouseY + (int) transform.y());
 
         buttonNextPattern.render(matrixStack, mouseX, mouseY, 0);
         buttonPreviousPattern.render(matrixStack, mouseX, mouseY, 0);
         buttonNextLayer.render(matrixStack, mouseX, mouseY, 0);
-        Widget.drawCenteredString(matrixStack, Minecraft.getInstance().fontRenderer, descriptions[currentRendererPage], WIDTH / 2, 15, -1);
+        Widget.drawCenteredString(matrixStack, Minecraft.getInstance().font, descriptions[currentRendererPage], WIDTH / 2, 15, -1);
         boolean insideView = mouseX >= 0 && mouseY >= 0 && mouseX < WIDTH && mouseY < HEIGHT;
         if (insideView) {
             if (ClientEvents.leftDown) {
@@ -222,13 +221,13 @@ public class MultiMachineInfoPage {
     }
 
     private void renderBlockOverLay(BlockRayTraceResult rayTraceResult) {
-        BlockPos pos = rayTraceResult.getPos();
+        BlockPos pos = rayTraceResult.getBlockPos();
         doOverlay(pos, 1,1,1,0.7f);
         StructureResult res =this.controllers[currentRendererPage].getResult();
         if (res != null) {
             StructureElement el = res.get(pos);
             if (el != null && el.renderShared()) {
-                this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(pos) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.getDefaultState()).forEach(b -> this.doOverlay(b, 0.5f,1,0.5f,0.4f));
+                this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(pos) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.defaultBlockState()).forEach(b -> this.doOverlay(b, 0.5f, 1, 0.5f, 0.4f));
             }
         }
     }
@@ -241,10 +240,10 @@ public class MultiMachineInfoPage {
 
         Tessellator tessellator = Tessellator.getInstance();
         RenderSystem.disableTexture();
-        BufferBuilder buffer = tessellator.getBuffer();
+        BufferBuilder buffer = tessellator.getBuilder();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        RenderHelper.renderCubeFace(buffer, -0.5f, -0.5f, -0.5f, 0.5, 0.5, 0.5, r,g,b, alpha);
-        tessellator.draw();
+        RenderHelper.renderCubeFace(buffer, -0.5f, -0.5f, -0.5f, 0.5, 0.5, 0.5, r, g, b, alpha);
+        tessellator.end();
         RenderSystem.scaled(1 / 1.01, 1 / 1.01, 1 / 1.01);
         RenderSystem.translated(-(pos.getX() + 0.5), -(pos.getY() + 0.5), -(pos.getZ() + 0.5));
         RenderSystem.enableTexture();
@@ -269,16 +268,16 @@ public class MultiMachineInfoPage {
             BlockRayTraceResult rayTraceResult = renderer.getLastTraceResult();
             if (rayTraceResult != null) {
                 Minecraft minecraft = Minecraft.getInstance();
-                BlockState blockState = renderer.world.getBlockState(rayTraceResult.getPos());
-                ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getPos(), minecraft.player);
+                BlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
+                ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
                 if (itemStack != null && !itemStack.isEmpty()) {
-                    ITooltipFlag flag = minecraft.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
-                    List<ITextComponent> list = itemStack.getTooltip(minecraft.player, flag);
+                    ITooltipFlag flag = minecraft.options.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
+                    List<ITextComponent> list = itemStack.getTooltipLines(minecraft.player, flag);
                     StructureResult res = this.controllers[currentRendererPage].getResult();
                     if (res != null) {
-                        StructureElement el = res.get(rayTraceResult.getPos());
+                        StructureElement el = res.get(rayTraceResult.getBlockPos());
                         if (el != null) {
-                            long count = this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(rayTraceResult.getPos()) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.getDefaultState()).count();
+                            long count = this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(rayTraceResult.getBlockPos()) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.defaultBlockState()).count();
                             el.onInfoTooltip(list, count, this.controllers[currentRendererPage]);
                         }
                     }

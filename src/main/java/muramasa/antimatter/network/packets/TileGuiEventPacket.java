@@ -32,12 +32,12 @@ public class TileGuiEventPacket extends AbstractGuiEventPacket {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity sender = ctx.get().getSender();
             if (sender != null) {
-                TileEntity tile = Utils.getTile(sender.getServerWorld(), msg.pos);
+                TileEntity tile = Utils.getTile(sender.getLevel(), msg.pos);
                 if (tile instanceof IGuiHandler) {
                     if (msg.event.forward()) {
                         ((IGuiHandler) tile).onGuiEvent(msg.event, sender);
                     } else {
-                        msg.event.handle(sender, ((IAntimatterContainer) sender.openContainer).source());
+                        msg.event.handle(sender, ((IAntimatterContainer) sender.containerMenu).source());
                     }
                 }
             }

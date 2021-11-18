@@ -1,14 +1,12 @@
 package muramasa.antimatter.client;
 
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.dynamic.DynamicBakedModel;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.SimpleModelTransform;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.common.model.TransformationHelper;
@@ -31,7 +29,7 @@ public interface IAntimatterModel<T extends IAntimatterModel<T>> extends IModelG
         } catch (Exception e) {
             Antimatter.LOGGER.error("ModelBaking Exception for " + owner.getModelName());
             e.printStackTrace();
-            return ModelUtils.getMissingModel().bakeModel(bakery, getter, transform, loc);
+            return ModelUtils.getMissingModel().bake(bakery, getter, transform, loc);
         }
     }
 }

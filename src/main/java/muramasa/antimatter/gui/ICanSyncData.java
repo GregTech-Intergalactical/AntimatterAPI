@@ -33,7 +33,7 @@ public interface ICanSyncData {
     }
 
     default void syncString(Supplier<String> source, Consumer<String> onChange, SyncDirection direction) {
-        bind(source, onChange, a -> a.readString(32767), PacketBuffer::writeString, Object::equals, direction);
+        bind(source, onChange, a -> a.readUtf(32767), PacketBuffer::writeUtf, Object::equals, direction);
     }
 
     default void syncBoolean(Supplier<Boolean> source, Consumer<Boolean> onChange, SyncDirection direction) {
@@ -49,10 +49,10 @@ public interface ICanSyncData {
     }
 
     default void syncItemStack(Supplier<ItemStack> source, Consumer<ItemStack> onChange, SyncDirection direction) {
-        bind(() -> source.get().copy(), onChange, PacketBuffer::readItemStack, PacketBuffer::writeItemStack, Object::equals, direction);
+        bind(() -> source.get().copy(), onChange, PacketBuffer::readItem, PacketBuffer::writeItem, Object::equals, direction);
     }
 
     default <T extends Enum<T>> void syncEnum(Supplier<T> source, Consumer<T> onChange, Class<T> clazz, SyncDirection direction) {
-        bind(source, onChange, b -> b.readEnumValue(clazz), PacketBuffer::writeEnumValue, Object::equals, direction);
+        bind(source, onChange, b -> b.readEnum(clazz), PacketBuffer::writeEnum, Object::equals, direction);
     }
 }

@@ -45,14 +45,14 @@ public class MapTagIngredient extends AbstractMapIngredient {
     private static final boolean ENABLE_TAGS_LOOKUP = true;
 
     public static Optional<ResourceLocation> findCommonTag(Ingredient ing, ITagCollectionSupplier tags) {
-        if (!ENABLE_TAGS_LOOKUP || ing.getMatchingStacks().length < 2) return Optional.empty();
-        Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getMatchingStacks()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(tags.getItemTags().getOwningTags(t.getItem()))).reduce((s, b) -> {
+        if (!ENABLE_TAGS_LOOKUP || ing.getItems().length < 2) return Optional.empty();
+        Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getItems()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(tags.getItems().getMatchingTags(t.getItem()))).reduce((s, b) -> {
             s.retainAll(b);
             return s;
         });
         return l.map(t -> {
             for (ResourceLocation rl : l.get()) {
-                if (tags.getItemTags().getTagByID(rl).getAllElements().size() == ing.getMatchingStacks().length) {
+                if (tags.getItems().getTagOrEmpty(rl).getValues().size() == ing.getItems().length) {
                     return rl;
                 }
             }

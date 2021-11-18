@@ -37,7 +37,7 @@ public class ItemBasic<T extends ItemBasic<T>> extends Item implements IAntimatt
     }
 
     public ItemBasic(String domain, String id) {
-        this(domain, id, new Properties().group(Ref.TAB_ITEMS));
+        this(domain, id, new Properties().tab(Ref.TAB_ITEMS));
     }
 
     public T tip(String tooltip) {

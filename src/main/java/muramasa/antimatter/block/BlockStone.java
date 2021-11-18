@@ -24,9 +24,9 @@ public class BlockStone extends BlockBasic implements ISharedAntimatterObject {
     }
 
     private static Properties getProps(StoneType type) {
-        Properties props = Block.Properties.create(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).hardnessAndResistance(type.getHardness(), type.getResistence());
+        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).strength(type.getHardness(), type.getResistence());
         if (type.doesRequireTool()) {
-            props.setRequiresTool();
+            props.requiresCorrectToolForDrops();
         }
         return props;
     }

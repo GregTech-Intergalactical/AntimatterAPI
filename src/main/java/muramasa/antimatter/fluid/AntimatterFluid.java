@@ -2,7 +2,6 @@ package muramasa.antimatter.fluid;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import net.minecraft.block.Block;
@@ -14,10 +13,11 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.ForgeFlowingFluid.Flowing;
+import net.minecraftforge.fluids.ForgeFlowingFluid.Properties;
+import net.minecraftforge.fluids.ForgeFlowingFluid.Source;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-
-import static net.minecraftforge.fluids.ForgeFlowingFluid.*;
 
 /**
  * AntimatterFluid is an object that includes all essential information of what a normal fluid would compose of in Minecraft
@@ -77,7 +77,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.ITEMS) {
-            AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this::getFluid, new Item.Properties().maxStackSize(1).containerItem(Items.BUCKET).group(ItemGroup.MISC)).setRegistryName(getDomain(), getId() + "_bucket"));
+            AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this::getFluid, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(ItemGroup.TAB_MISC)).setRegistryName(getDomain(), getId() + "_bucket"));
         } else if (registry == ForgeRegistries.BLOCKS) {
             this.fluidBlock = new FlowingFluidBlock(this::getFluid, blockProperties);
             this.fluidBlock.setRegistryName(getDomain(), "block_fluid_".concat(getId()));
@@ -144,7 +144,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     }
 
     protected static Block.Properties getDefaultBlockProperties() {
-        return Block.Properties.create(Material.WATER).hardnessAndResistance(100.0F).noDrops();
+        return Block.Properties.of(Material.WATER).strength(100.0F).noDrops();
     }
 
     protected static FluidAttributes.Builder getDefaultAttributesBuilder() {

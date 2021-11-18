@@ -99,7 +99,7 @@ public class StructureCache {
     public static boolean has(World world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return false;
-        long p = pos.toLong();
+        long p = pos.asLong();
         LongList l = entry.CONTROLLER_TO_STRUCTURE.get(p);
         if (l == null || l.size() == 0) return false;
         return entry.STRUCTURE_TO_CONTROLLER.get(l.iterator().nextLong()).getBoolean(pos);
@@ -134,7 +134,7 @@ public class StructureCache {
         Object2BooleanMap<BlockPos> list = entry.get(pos);
         if (list == null || list.size() == 0) return null;
         for (Object2BooleanMap.Entry<BlockPos> e : list.object2BooleanEntrySet()) {
-            TileEntity tile = world.getTileEntity(e.getKey());
+            TileEntity tile = world.getBlockEntity(e.getKey());
             if (tile != null && clazz.isInstance(tile) && e.getBooleanValue()) return (T) tile;
         }
         return null;
@@ -182,7 +182,7 @@ public class StructureCache {
     }
 
     private static void refreshController(World world, BlockPos controller, BlockPos at) {
-        TileEntity tile = world.getTileEntity(controller);
+        TileEntity tile = world.getBlockEntity(controller);
         if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).onBlockUpdate(at);
     }
 
@@ -196,9 +196,9 @@ public class StructureCache {
      */
     public static void addListener(StructureHandle<?> handle, World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.computeIfAbsent(world, k -> new Long2ObjectOpenHashMap<>());
-        Set<StructureHandle<?>> set = map.computeIfAbsent(pos.toLong(), k -> new ObjectOpenHashSet<>());
+        Set<StructureHandle<?>> set = map.computeIfAbsent(pos.asLong(), k -> new ObjectOpenHashSet<>());
         set.add(handle);
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = world.getBlockEntity(pos);
         if (tile != null) handle.structureCacheAddition(tile);
     }
 
@@ -212,7 +212,7 @@ public class StructureCache {
     public static void removeListener(StructureHandle<?> handle, World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
         if (map != null) {
-            Set<StructureHandle<?>> set = map.get(pos.toLong());
+            Set<StructureHandle<?>> set = map.get(pos.asLong());
             if (set != null) {
                 set.remove(handle);
             }
@@ -222,15 +222,15 @@ public class StructureCache {
     private static void notifyListenersAdd(World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
         if (map != null) {
-            TileEntity tile = world.getTileEntity(pos);
-            map.getOrDefault(pos.toLong(), Collections.emptySet()).forEach(handle -> handle.structureCacheAddition(tile));
+            TileEntity tile = world.getBlockEntity(pos);
+            map.getOrDefault(pos.asLong(), Collections.emptySet()).forEach(handle -> handle.structureCacheAddition(tile));
         }
     }
 
     private static void notifyListenersRemove(World world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
         if (map != null) {
-            map.getOrDefault(pos.toLong(), Collections.emptySet()).forEach(StructureHandle::structureCacheRemoval);
+            map.getOrDefault(pos.asLong(), Collections.emptySet()).forEach(StructureHandle::structureCacheRemoval);
         }
     }
 
@@ -254,11 +254,11 @@ public class StructureCache {
 
         @Nullable
         public Object2BooleanMap<BlockPos> get(BlockPos pos) {
-            return STRUCTURE_TO_CONTROLLER.get(pos.toLong());
+            return STRUCTURE_TO_CONTROLLER.get(pos.asLong());
         }
 
         public void add(BlockPos pos, LongList structure) {
-            long at = pos.toLong();
+            long at = pos.asLong();
             CONTROLLER_TO_STRUCTURE.put(at, structure);
             for (long s : structure) {
                 STRUCTURE_TO_CONTROLLER.compute(s, (k, v) -> {
@@ -272,7 +272,7 @@ public class StructureCache {
         }
 
         public boolean validate(BlockPos pos, int maxAmount, LongList structure) {
-            long at = pos.toLong();
+            long at = pos.asLong();
             int i = structure.stream().mapToInt(t -> {
                 Object2BooleanMap<BlockPos> map = this.STRUCTURE_TO_CONTROLLER.get((long) t);
                 if (map == null) {
@@ -303,7 +303,7 @@ public class StructureCache {
         }
 
         public void invalidate(BlockPos pos, LongList structure) {
-            long at = pos.toLong();
+            long at = pos.asLong();
             LongList old = this.CONTROLLER_TO_STRUCTURE.put(at, structure);
             old.forEach((LongConsumer) l -> this.STRUCTURE_TO_CONTROLLER.compute(l, (k, v) -> {
                 if (v == null) return null;
@@ -323,7 +323,7 @@ public class StructureCache {
         }
 
         public void remove(BlockPos pos) {
-            long at = pos.toLong();
+            long at = pos.asLong();
             LongList structure = CONTROLLER_TO_STRUCTURE.remove(at);
             for (long s : structure) {
                 STRUCTURE_TO_CONTROLLER.compute(s, (k, v) -> {

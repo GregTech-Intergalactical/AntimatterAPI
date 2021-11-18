@@ -27,7 +27,7 @@ public abstract class LeavesBlockMixin extends Block {
     @Override
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         List<ItemStack> list = super.getDrops(state, builder);
-        ItemStack stack = builder.get(LootParameters.TOOL);
+        ItemStack stack = builder.getOptionalParameter(LootParameters.TOOL);
         if (stack != null && !stack.isEmpty() && stack.getItem() instanceof IAntimatterTool) {
             IAntimatterTool tool = (IAntimatterTool) stack.getItem();
             if (tool.getAntimatterToolType() == Data.BRANCH_CUTTER) {
@@ -35,8 +35,8 @@ public abstract class LeavesBlockMixin extends Block {
                 if (resourcelocation == LootTables.EMPTY) {
                     return Collections.emptyList();
                 }
-                ServerWorld serverworld = builder.getWorld();
-                LootTable loottable = serverworld.getServer().getLootTableManager().getLootTableFromLocation(resourcelocation);
+                ServerWorld serverworld = builder.getLevel();
+                LootTable loottable = serverworld.getServer().getLootTables().get(resourcelocation);
                 ItemStack sapling = ItemStack.EMPTY;
                 if (ForgeRegistries.BLOCKS.containsKey(new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling")))) {
                     sapling = new ItemStack(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling"))));

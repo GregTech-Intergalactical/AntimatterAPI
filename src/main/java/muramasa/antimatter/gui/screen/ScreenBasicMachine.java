@@ -19,15 +19,15 @@ public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends Contai
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack stack, int mouseX, int mouseY) {
-        super.drawGuiContainerForegroundLayer(stack, mouseX, mouseY);
+    protected void renderLabels(MatrixStack stack, int mouseX, int mouseY) {
+        super.renderLabels(stack, mouseX, mouseY);
         //if (container.getTile().has(MachineFlag.RECIPE))
         //    drawTooltipInArea(stack, container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(stack, partialTicks, mouseX, mouseY);
     }
 
     @Override

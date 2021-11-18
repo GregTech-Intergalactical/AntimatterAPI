@@ -8,6 +8,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class Ingredients {
 
-    public static final Ingredient BURNABLES = Ingredient.fromStacks(ForgeRegistries.ITEMS.getValues().stream().map(Item::getDefaultInstance).filter(t -> ForgeHooks.getBurnTime(t) > 0));
+    public static final Ingredient BURNABLES = Ingredient.of(ForgeRegistries.ITEMS.getValues().stream().map(Item::getDefaultInstance).filter(t -> ForgeHooks.getBurnTime(t) > 0));
 
 }

@@ -66,7 +66,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         //Remove handlers from the structure cache.
         allHandlers.forEach(StructureHandle::deregister);
         invalidateStructure();
-        StructureCache.remove(world, pos);
+        StructureCache.remove(level, worldPosition);
     }
 
     @Nullable
@@ -95,7 +95,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             super.onFirstTick();
             return;
         }
-        StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).allPositions(this));
+        StructureCache.add(level, worldPosition, getMachineType().getStructure(getMachineTier()).allPositions(this));
         if (!isStructureValid() && shouldCheckFirstTick) {
             checkStructure();
         }
@@ -113,12 +113,12 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         checkingStructure++;
         StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
-            if (world instanceof TrackedDummyWorld) {
+            if (level instanceof TrackedDummyWorld) {
                 this.result = result;
-                StructureCache.add(world, pos, getMachineType().getStructure(getMachineTier()).allPositions(this));
-                StructureCache.validate(world, pos, result.positions, maxShares());
+                StructureCache.add(level, worldPosition, getMachineType().getStructure(getMachineTier()).allPositions(this));
+                StructureCache.validate(level, worldPosition, result.positions, maxShares());
                 return true;
-            } else if (StructureCache.validate(world, pos, result.positions, maxShares())) {
+            } else if (StructureCache.validate(level, worldPosition, result.positions, maxShares())) {
                 this.result = result;
                 if (isServerSide()) {
                     result.build(this, result);
@@ -185,9 +185,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
-    public void updateContainingBlockInfo() {
+    public void clearCache() {
         BlockState old = this.getBlockState();
-        super.updateContainingBlockInfo();
+        super.clearCache();
         BlockState newState = this.getBlockState();
         if (!old.equals(newState)) {
             oldState = old;
@@ -206,8 +206,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     protected void invalidateStructure() {
-        if (removed) return;
-        if (this.getWorld() instanceof TrackedDummyWorld) return;
+        if (remove) return;
+        if (this.getLevel() instanceof TrackedDummyWorld) return;
         if (result == null) {
             if (isServerSide() && getMachineState() != getDefaultMachineState()) {
                 resetMachine();
@@ -215,7 +215,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             return;
         }
         checkingStructure++;
-        StructureCache.invalidate(this.getWorld(), getPos(), result.positions);
+        StructureCache.invalidate(this.getLevel(), getBlockPos(), result.positions);
         if (isServerSide()) {
             onStructureInvalidated();
             result.remove(this, result);
@@ -255,7 +255,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     public boolean isStructureValid() {
-        return StructureCache.has(world, pos);
+        return StructureCache.has(level, worldPosition);
     }
 
     @Override
@@ -300,8 +300,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT tag) {
-        super.read(state, tag);
+    public void load(BlockState state, CompoundNBT tag) {
+        super.load(state, tag);
         if (getMachineState() == MachineState.INVALID_STRUCTURE) {
             shouldCheckFirstTick = false;
         }

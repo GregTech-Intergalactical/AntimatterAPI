@@ -17,8 +17,8 @@ import java.util.Map;
 @Mixin(value = RecipeManager.class)
 public class RecipeManagerMixin {
     /* Inject recipes into recipe map. */
-    @Inject(/*remap = false,*/method = "apply(Ljava/util/Map;Lnet/minecraft/resources/IResourceManager;Lnet/minecraft/profiler/IProfiler;)V", at = @At("HEAD"))
+    @Inject(remap = false, method = "apply(Ljava/util/Map;Lnet/minecraft/resources/IResourceManager;Lnet/minecraft/profiler/IProfiler;)V", at = @At("HEAD"))
     private void apply(Map<ResourceLocation, JsonElement> objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn, CallbackInfo info) {
-        AntimatterDynamics.onRecipeManagerBuild(rec -> objectIn.put(rec.getID(), rec.getRecipeJson()));
+        AntimatterDynamics.onRecipeManagerBuild(rec -> objectIn.put(rec.getId(), rec.serializeRecipe()));
     }
 }

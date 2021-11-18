@@ -15,12 +15,12 @@ public class SlotOutput extends AbstractSlot<SlotOutput> {
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity player) {
+    public boolean mayPickup(PlayerEntity player) {
         return true;
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@Nonnull ItemStack stack) {
         return false;
     }
 }

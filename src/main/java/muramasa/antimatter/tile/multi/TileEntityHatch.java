@@ -56,7 +56,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                         flag = receive <= getInputVoltage();
                     }
                     if (!flag && !simulate) {
-                        Utils.createExplosion(tile.getWorld(), tile.getPos(), 4.0F, Explosion.Mode.BREAK);
+                        Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.Mode.BREAK);
                     }
                     return flag;
                 }

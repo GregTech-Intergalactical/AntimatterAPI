@@ -45,40 +45,40 @@ public class AntimatterItemTier implements IItemTier {
     }
 
     @Override
-    public int getMaxUses() {
+    public int getUses() {
         return primary.getToolDurability() + secondary.getHandleDurability();
     }
 
     @Override
-    public float getEfficiency() {
+    public float getSpeed() {
         return primary.getToolSpeed() + secondary.getHandleSpeed();
     }
 
     @Override
-    public float getAttackDamage() {
+    public float getAttackDamageBonus() {
         return primary.getToolDamage();
     }
 
     @Override
-    public int getHarvestLevel() {
+    public int getLevel() {
         return primary.getToolQuality();
     }
 
     @Override
-    public int getEnchantability() {
-        return (int) (getHarvestLevel() + getEfficiency());
+    public int getEnchantmentValue() {
+        return (int) (getLevel() + getSpeed());
     }
 
     @Override
-    public Ingredient getRepairMaterial() {
+    public Ingredient getRepairIngredient() {
         if (primary.has(Data.GEM)) {
-            return Ingredient.fromTag(TagUtils.getForgeItemTag("gems/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgeItemTag("gems/".concat(primary.getId())));
         } else if (primary.has(Data.INGOT)) {
-            return Ingredient.fromTag(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
         } else if (primary.has(Data.DUST)) {
-            return Ingredient.fromTag(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
-        } else if (ItemTags.getCollection().get(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
-            return Ingredient.fromTag(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
+        } else if (ItemTags.getAllTags().getTag(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
+            return Ingredient.of(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
         }
         return Ingredient.EMPTY;
         // return null;

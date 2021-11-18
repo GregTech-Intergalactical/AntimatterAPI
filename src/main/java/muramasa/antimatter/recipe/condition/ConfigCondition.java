@@ -52,7 +52,7 @@ public class ConfigCondition implements ICondition {
 
         @Override
         public ConfigCondition read(JsonObject json) {
-            return new ConfigCondition(JSONUtils.getString(json, "config"));
+            return new ConfigCondition(JSONUtils.getAsString(json, "config"));
         }
 
         @Override

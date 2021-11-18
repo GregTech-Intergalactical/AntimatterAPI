@@ -20,7 +20,7 @@ public interface IItemBlockProvider {
     }
 
     default ITextComponent getDisplayName(ItemStack stack) {
-        return new TranslationTextComponent(stack.getTranslationKey());
+        return new TranslationTextComponent(stack.getDescriptionId());
     }
 
     default boolean generateItemBlock() {

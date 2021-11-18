@@ -7,7 +7,6 @@ import net.minecraft.world.World;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
@@ -18,8 +17,8 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        ITickingController<?, ?, ?> controller = Tesseract.ITEM.getController(world, pos.toLong());
-        if (controller != null) controller.getInfo(pos.toLong(), info);
+        ITickingController<?, ?, ?> controller = Tesseract.ITEM.getController(world, pos.asLong());
+        if (controller != null) controller.getInfo(pos.asLong(), info);
         info.add("Capacity: " + getType().getCapacity(getSize()));
         return info;
     }

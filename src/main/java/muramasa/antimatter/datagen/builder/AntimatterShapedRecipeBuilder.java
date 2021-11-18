@@ -37,7 +37,7 @@ public class AntimatterShapedRecipeBuilder {
     private final List<ItemStack> result;
     private final List<String> pattern = Lists.newArrayList();
     private final Map<Character, Ingredient> key = Maps.newLinkedHashMap();
-    private final Advancement.Builder advBuilder = Advancement.Builder.builder();
+    private final Advancement.Builder advBuilder = Advancement.Builder.advancement();
     private final Int2ObjectOpenHashMap<IntList> materialSlots = new Int2ObjectOpenHashMap<>();
     private String group;
 
@@ -79,14 +79,14 @@ public class AntimatterShapedRecipeBuilder {
      * Adds a key to the recipe pattern.
      */
     public AntimatterShapedRecipeBuilder key(Character symbol, ITag<Item> tag) {
-        return this.key(symbol, Ingredient.fromTag(tag));
+        return this.key(symbol, Ingredient.of(tag));
     }
 
     /**
      * Adds a key to the recipe pattern.
      */
     public AntimatterShapedRecipeBuilder key(Character symbol, IItemProvider item) {
-        return this.key(symbol, Ingredient.fromItems(item));
+        return this.key(symbol, Ingredient.of(item));
     }
 
     /**
@@ -119,7 +119,7 @@ public class AntimatterShapedRecipeBuilder {
      * Adds a criterion needed to unlock the recipe.
      */
     public AntimatterShapedRecipeBuilder addCriterion(String name, ICriterionInstance criterion) {
-        this.advBuilder.withCriterion(name, criterion);
+        this.advBuilder.addCriterion(name, criterion);
         return this;
     }
 
@@ -153,8 +153,8 @@ public class AntimatterShapedRecipeBuilder {
      */
     public void build(Consumer<IFinishedRecipe> consumer, ResourceLocation id) {
         this.validate(id);
-        this.advBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumer.accept(new Result(id, this.result.get(0), this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.get(0).getItem().getGroup().getPath() + "/" + id.getPath())));
+        this.advBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        consumer.accept(new Result(id, this.result.get(0), this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.get(0).getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
     public void buildTool(Consumer<IFinishedRecipe> consumer, String builder, String id) {
@@ -170,9 +170,9 @@ public class AntimatterShapedRecipeBuilder {
             throw new IllegalStateException("Shaped Recipe " + id + " should remove its 'save' argument");
         }
         this.validate(id);
-        this.advBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        ItemGroup group = this.result.get(0).getItem().getGroup();
-        String groupId = group != null ? group.getPath() : "";
+        this.advBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        ItemGroup group = this.result.get(0).getItem().getItemCategory();
+        String groupId = group != null ? group.getRecipeFolderName() : "";
         consumer.accept(new ToolResult(builder, id, this.result, this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + groupId + "/" + id.getPath())));
     }
 
@@ -182,7 +182,7 @@ public class AntimatterShapedRecipeBuilder {
     private void validate(ResourceLocation id) {
         if (this.pattern.isEmpty()) {
             throw new IllegalStateException("No pattern is defined for shaped recipe " + id + "!");
-        } else if (this.result.get(0).isItemEqual(ItemStack.EMPTY)) {
+        } else if (this.result.get(0).sameItem(ItemStack.EMPTY)) {
             throw new IllegalStateException("Resulting ItemStack cannot be empty!");
         } else {
             Set<Character> set = Sets.newHashSet(this.key.keySet());
@@ -227,7 +227,7 @@ public class AntimatterShapedRecipeBuilder {
         }
 
         @Override
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             if (!this.group.isEmpty()) {
                 json.addProperty("group", this.group);
             }
@@ -238,7 +238,7 @@ public class AntimatterShapedRecipeBuilder {
             json.add("pattern", jsonarray);
             JsonObject jsonobject = new JsonObject();
             for (Map.Entry<Character, Ingredient> entry : this.key.entrySet()) {
-                jsonobject.add(String.valueOf(entry.getKey()), entry.getValue().serialize());
+                jsonobject.add(String.valueOf(entry.getKey()), entry.getValue().toJson());
             }
             json.add("key", jsonobject);
             JsonObject resultObj = new JsonObject();
@@ -253,24 +253,24 @@ public class AntimatterShapedRecipeBuilder {
         }
 
         @Override
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return this.id;
         }
 
         @Override
-        public IRecipeSerializer<?> getSerializer() {
-            return IRecipeSerializer.CRAFTING_SHAPED;
+        public IRecipeSerializer<?> getType() {
+            return IRecipeSerializer.SHAPED_RECIPE;
         }
 
         @Nullable
         @Override
-        public JsonObject getAdvancementJson() {
-            return this.advBuilder.serialize();
+        public JsonObject serializeAdvancement() {
+            return this.advBuilder.serializeToJson();
         }
 
         @Nullable
         @Override
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return this.advId;
         }
     }
@@ -288,8 +288,8 @@ public class AntimatterShapedRecipeBuilder {
         }
 
         @Override
-        public void serialize(JsonObject json) {
-            super.serialize(json);
+        public void serializeRecipeData(JsonObject json) {
+            super.serializeRecipeData(json);
             json.addProperty("builder", builderId);
             JsonArray arr = new JsonArray();
             result.forEach(el -> {
@@ -304,7 +304,7 @@ public class AntimatterShapedRecipeBuilder {
         }
 
         @Override
-        public IRecipeSerializer<?> getSerializer() {
+        public IRecipeSerializer<?> getType() {
             return MaterialSerializer.INSTANCE;
         }
     }

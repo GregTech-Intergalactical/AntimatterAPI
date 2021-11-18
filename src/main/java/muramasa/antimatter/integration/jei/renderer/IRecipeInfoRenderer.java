@@ -12,10 +12,10 @@ public interface IRecipeInfoRenderer {
     }
 
     default void renderString(MatrixStack stack, String string, FontRenderer render, float x, float y, int color, int guiOffsetX, int guiOffsetY) {
-        render.drawStringWithShadow(stack, string, (guiOffsetX + x), guiOffsetY + y, color);
+        render.drawShadow(stack, string, (guiOffsetX + x), guiOffsetY + y, color);
     }
 
     default int stringWidth(String string, FontRenderer renderer) {
-        return renderer.getStringWidth(string);
+        return renderer.width(string);
     }
 }

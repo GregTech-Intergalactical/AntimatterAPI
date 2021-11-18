@@ -29,12 +29,12 @@ public class DummyTagProviders {
         }
 
         @Override
-        public void act(DirectoryCache cache) {
-            Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
-            this.tagToBuilder.clear();
-            registerTags();
-            tagToBuilder.forEach((a, bb) -> ItemTags.makeWrapperTag(a.toString()));
-            b.forEach(tagToBuilder::put);
+        public void run(DirectoryCache cache) {
+            Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.builders);
+            this.builders.clear();
+            addTags();
+            builders.forEach((a, bb) -> ItemTags.bind(a.toString()));
+            b.forEach(builders::put);
 
         }
 
@@ -47,12 +47,12 @@ public class DummyTagProviders {
         }
 
         @Override
-        public void act(DirectoryCache cache) {
-            Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
-            this.tagToBuilder.clear();
-            registerTags();
-            tagToBuilder.forEach((a, bb) -> BlockTags.makeWrapperTag(a.toString()));
-            b.forEach(tagToBuilder::put);
+        public void run(DirectoryCache cache) {
+            Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.builders);
+            this.builders.clear();
+            addTags();
+            builders.forEach((a, bb) -> BlockTags.bind(a.toString()));
+            b.forEach(builders::put);
         }
     }
 }

@@ -103,11 +103,11 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
 
     @Override
     public int drawInfo(DigitalTransformerWidget widget, MatrixStack stack, FontRenderer renderer, int left, int top) {
-        renderer.drawString(stack, "Control Panel", left + 43, top + 21, 16448255);
-        renderer.drawString(stack, "VOLT: " + widget.voltage, left + 43, top + 40, 16448255);
-        renderer.drawString(stack, "TIER: " + Tier.getTier(widget.voltage < 0 ? -widget.voltage : widget.voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);
-        renderer.drawString(stack, "AMP: " + widget.amperage, left + 43, top + 56, 16448255);
-        renderer.drawString(stack, "SUM: " + (long) (widget.amperage * widget.voltage), left + 43, top + 64, 16448255);
+        renderer.draw(stack, "Control Panel", left + 43, top + 21, 16448255);
+        renderer.draw(stack, "VOLT: " + widget.voltage, left + 43, top + 40, 16448255);
+        renderer.draw(stack, "TIER: " + Tier.getTier(widget.voltage < 0 ? -widget.voltage : widget.voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);
+        renderer.draw(stack, "AMP: " + widget.amperage, left + 43, top + 56, 16448255);
+        renderer.draw(stack, "SUM: " + (long) (widget.amperage * widget.voltage), left + 43, top + 64, 16448255);
         return 72;
     }
 

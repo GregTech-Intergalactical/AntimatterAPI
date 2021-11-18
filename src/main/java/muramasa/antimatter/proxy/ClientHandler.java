@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
@@ -27,14 +26,12 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -81,22 +78,22 @@ public class ClientHandler implements IProxyHandler {
             AntimatterAPI.all(MenuHandler.class, h -> {
                 if (!registered.contains(h.getContainerType().getRegistryName())) {
                     registered.add(h.getContainerType().getRegistryName());
-                    ScreenManager.registerFactory(h.getContainerType(), (ScreenManager.IScreenFactory) h.screen());
+                    ScreenManager.register(h.getContainerType(), (ScreenManager.IScreenFactory) h.screen());
                 }
             });
         });
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
-            RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.getCutout());
-            AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-            AntimatterAPI.all(BlockMultiMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-            AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
-            AntimatterAPI.all(BlockPipe.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+            RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.cutout());
+            AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockMultiMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockPipe.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME)
-                    .forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.getCutout()));
+                    .forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
-                RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.getTranslucent());
-                RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.getTranslucent());
+                RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.translucent());
+                RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
             });
         });
     }
@@ -128,7 +125,7 @@ public class ClientHandler implements IProxyHandler {
 
     @Override
     public World getClientWorld() {
-        return Minecraft.getInstance().world;
+        return Minecraft.getInstance().level;
     }
 
     @Override

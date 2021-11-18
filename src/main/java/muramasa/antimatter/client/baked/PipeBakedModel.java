@@ -37,7 +37,7 @@ public class PipeBakedModel extends DynamicBakedModel {
     @Override
     public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData data) {
         data = super.getModelData(world, pos, state, data);
-        data.setData(AntimatterProperties.TILE_PROPERTY, ((TileEntityPipe) world.getTileEntity(pos)));
+        data.setData(AntimatterProperties.TILE_PROPERTY, ((TileEntityPipe) world.getBlockEntity(pos)));
         return data;
     }
 
@@ -58,14 +58,14 @@ public class PipeBakedModel extends DynamicBakedModel {
                 if (c.isEmpty())
                     continue;
                 // Depth model only causes z fighting of sizes larger than tiny.
-                if (pipe.canConnect(dir.getIndex()) && pipe.getPipeSize().compareTo(PipeSize.TINY) > 0) {
+                if (pipe.canConnect(dir.get3DDataValue()) && pipe.getPipeSize().compareTo(PipeSize.TINY) > 0) {
                     int index = RenderHelper.findPipeFront(pipe.getPipeSize(), quads, dir);
                     if (index != -1) {
                         quads.remove(index);
                     }
                 }
                 coverQuads = covers.getTexturer(side).getQuads("pipe", coverQuads, state, c,
-                        new BaseCover.DynamicKey(dir, tex, c.getId()), dir.getIndex(), CoverBakedModel.addCoverModelData(dir, covers, data));
+                        new BaseCover.DynamicKey(dir, tex, c.getId()), dir.get3DDataValue(), CoverBakedModel.addCoverModelData(dir, covers, data));
             }
         }
         quads.addAll(coverQuads);

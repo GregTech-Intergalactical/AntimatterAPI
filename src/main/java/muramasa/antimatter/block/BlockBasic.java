@@ -23,7 +23,7 @@ public class BlockBasic extends Block implements IAntimatterObject, ITextureProv
     }
 
     public BlockBasic(String domain, String id) {
-        this(domain, id, Block.Properties.create(Material.IRON).hardnessAndResistance(1.0f, 1.0f).sound(SoundType.STONE));
+        this(domain, id, Block.Properties.of(Material.METAL).strength(1.0f, 1.0f).sound(SoundType.STONE));
     }
 
     public String getDomain() {

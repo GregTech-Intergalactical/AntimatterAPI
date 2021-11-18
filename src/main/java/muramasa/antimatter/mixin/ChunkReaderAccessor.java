@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(ChunkRenderCache.class)
 public interface ChunkReaderAccessor {
 
-    @Accessor
-    World getWorld();
+    @Accessor(remap = false)
+    World getLevel();
 }

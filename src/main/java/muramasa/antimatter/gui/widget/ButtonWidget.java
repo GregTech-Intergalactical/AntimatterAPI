@@ -77,13 +77,13 @@ public class ButtonWidget extends Widget {
 
     @OnlyIn(Dist.CLIENT)
     protected void clientClick() {
-        Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     @Override
     public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bindTexture(res);
+        minecraft.getTextureManager().bind(res);
         RenderSystem.disableDepthTest();
         if (body != null) {
             int xTex = body.getX();
@@ -102,14 +102,14 @@ public class ButtonWidget extends Widget {
         if (overlay != null) {
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), overlay.getX(), overlay.getY(), overlay.getW(), overlay.getH(), 256, 256);
         } else if (this.bodyLoc != null) {
-            minecraft.getTextureManager().bindTexture(this.bodyLoc);
+            minecraft.getTextureManager().bind(this.bodyLoc);
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), resLoc.x, resLoc.y, resLoc.z, resLoc.w, 256, 256);
         }
         RenderSystem.enableDepthTest();
         RenderSystem.color4f(1, 1, 1, 1);
         ITextComponent message = getMessage();
         if (!message.getString().isEmpty()) {
-            AbstractGui.drawCenteredString(matrixStack, minecraft.fontRenderer, message, realX() + getW() / 2, realY() + (getH() - 8) / 2, 16777215);
+            AbstractGui.drawCenteredString(matrixStack, minecraft.font, message, realX() + getW() / 2, realY() + (getH() - 8) / 2, 16777215);
         }
     }
 

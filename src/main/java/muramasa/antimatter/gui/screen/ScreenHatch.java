@@ -19,21 +19,21 @@ public class ScreenHatch<T extends TileEntityHatch<T>, U extends ContainerHatch<
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(stack, partialTicks, mouseX, mouseY);
+    protected void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+        super.renderBg(stack, partialTicks, mouseX, mouseY);
         ResourceLocation gui = container.source().handler.getGuiTexture();
         List<SlotData<?>> list = container.getTile().getMachineType().getSlots(container.getTile().getMachineTier());
         for (SlotData<?> slot : list) {
             if (slot.getType() == SlotType.IT_IN || slot.getType() == SlotType.IT_OUT) {
-                drawTexture(stack, gui, guiLeft + slot.getX() - 1, guiTop + slot.getY() - 1, xSize, 0, 18, 18);
+                drawTexture(stack, gui, leftPos + slot.getX() - 1, topPos + slot.getY() - 1, imageWidth, 0, 18, 18);
             } else if (slot.getType() == SlotType.FL_IN) {
-                drawTexture(stack, gui, guiLeft + slot.getX() - 1, guiTop + slot.getY() - 1, xSize, 90, 18, 18);
+                drawTexture(stack, gui, leftPos + slot.getX() - 1, topPos + slot.getY() - 1, imageWidth, 90, 18, 18);
             } else if (slot.getType() == SlotType.FL_OUT) {
-                drawTexture(stack, gui, guiLeft + slot.getX() - 1, guiTop + slot.getY() - 1, xSize, 108, 18, 18);
+                drawTexture(stack, gui, leftPos + slot.getX() - 1, topPos + slot.getY() - 1, imageWidth, 108, 18, 18);
             }
         }
         if (container.getTile().getMachineType().has(MachineFlag.FLUID)) {
-            drawTexture(stack, gui, guiLeft + 8, guiTop + 21, xSize, 36, 18, 54);
+            drawTexture(stack, gui, leftPos + 8, topPos + 21, imageWidth, 36, 18, 54);
         }
     }
 }

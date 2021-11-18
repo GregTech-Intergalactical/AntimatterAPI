@@ -70,7 +70,7 @@ public class SlotClickEvent implements IGuiEvent {
     public void handle(PlayerEntity player, GuiInstance instance) {
         IFluidHandler sink = tryGetCap(instance.handler);
         if (sink == null) return;
-        ItemStack stack = player.inventory.getItemStack();
+        ItemStack stack = player.inventory.getCarried();
         if (type == SlotType.FL_IN || type == SlotType.FL_OUT) {
             int max;
             if (stack.getItem() instanceof ItemFluidCell) {
@@ -82,12 +82,12 @@ public class SlotClickEvent implements IGuiEvent {
             boolean hasFluid = iHandler.map(t -> t.getTanks() > 0 && !t.getFluidInTank(0).isEmpty()).orElse(false);
             FluidActionResult res;
             if (hasFluid && type == SlotType.FL_IN) {
-                res = FluidUtil.tryEmptyContainerAndStow(stack, sink, new ItemStackHandler(player.inventory.mainInventory), max, player, true);
+                res = FluidUtil.tryEmptyContainerAndStow(stack, sink, new ItemStackHandler(player.inventory.items), max, player, true);
             } else {
-                res = FluidUtil.tryFillContainerAndStow(stack, sink, new ItemStackHandler(player.inventory.mainInventory), max, player, true);
+                res = FluidUtil.tryFillContainerAndStow(stack, sink, new ItemStackHandler(player.inventory.items), max, player, true);
             }
             if (res.isSuccess() && !player.isCreative()) {
-                player.inventory.setItemStack(res.getResult());
+                player.inventory.setCarried(res.getResult());
             }
         }
     }

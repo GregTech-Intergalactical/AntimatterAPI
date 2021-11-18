@@ -221,7 +221,7 @@ public class Recipe implements IRecipe<IInventory> {
             for (int i = 0; i < itemsInput.size(); i++) {
                 builder.append("\n Item ").append(i);
                 //builder.append(itemsInput.get(i).get().getMatchingStacks()[0].getDisplayName()).append(" x").append(itemsInput.get(i).get().getMatchingStacks()[0].getCount());
-                builder.append(itemsInput.get(i).get().serialize().toString());
+                builder.append(itemsInput.get(i).get().toJson().toString());
                 if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");
@@ -229,7 +229,7 @@ public class Recipe implements IRecipe<IInventory> {
         if (itemsOutput != null) {
             builder.append("Output Items: { ");
             for (int i = 0; i < itemsOutput.length; i++) {
-                builder.append(itemsOutput[i].getDisplayName()).append(" x").append(itemsOutput[i].getCount());
+                builder.append(itemsOutput[i].getHoverName()).append(" x").append(itemsOutput[i].getCount());
                 if (i != itemsOutput.length - 1) builder.append(", ");
             }
             builder.append(" }\n");
@@ -268,17 +268,17 @@ public class Recipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public ItemStack getCraftingResult(IInventory inv) {
+    public ItemStack assemble(IInventory inv) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return false;
     }
 
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return ItemStack.EMPTY;
     }
 
@@ -299,7 +299,7 @@ public class Recipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public boolean isDynamic() {
+    public boolean isSpecial() {
         return true;
     }
 }

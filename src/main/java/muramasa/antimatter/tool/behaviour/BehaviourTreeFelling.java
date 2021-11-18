@@ -27,7 +27,7 @@ public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
             if (Utils.isToolEffective(instance, state) && !player.isCrouching()) { // Only when player isn't shifting/crouching this ability activates
-                if (state.getBlock().isIn(BlockTags.LOGS)) {
+                if (state.getBlock().is(BlockTags.LOGS)) {
                     Utils.treeLogging(instance, stack, pos, player, world);
                 }
             }

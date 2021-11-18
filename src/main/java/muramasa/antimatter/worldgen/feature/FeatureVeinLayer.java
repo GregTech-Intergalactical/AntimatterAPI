@@ -41,7 +41,7 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
     }
 
     @Override
-    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
         int chunkX = pos.getX() >> 4;
         int chunkZ = pos.getZ() >> 4;
         for (Tuple<Integer, Integer> seed : getVeinSeeds(chunkX, chunkZ)) {
@@ -70,6 +70,6 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.VEIN_LAYER);
+        event.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.VEIN_LAYER);
     }
 }

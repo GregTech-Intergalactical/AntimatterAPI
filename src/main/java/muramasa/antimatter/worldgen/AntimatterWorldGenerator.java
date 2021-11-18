@@ -90,15 +90,15 @@ public class AntimatterWorldGenerator {
 
     public static <T> List<T> all(Class<T> c, RegistryKey<World> dim) {
         AntimatterFeature<?> feat = AntimatterAPI.get(AntimatterFeature.class, c.getName());
-        return feat != null ? feat.getRegistry().computeIfAbsent(dim.getLocation(), k -> new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
+        return feat != null ? feat.getRegistry().computeIfAbsent(dim.location(), k -> new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
     private static void removeStoneFeatures(BiomeGenerationSettingsBuilder builder) {
-        removeDecoratedFeatureFromAllBiomes(builder, GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.ANDESITE.getDefaultState(), Blocks.GRANITE.getDefaultState(), Blocks.DIORITE.getDefaultState());
+        removeDecoratedFeatureFromAllBiomes(builder, GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.ANDESITE.defaultBlockState(), Blocks.GRANITE.defaultBlockState(), Blocks.DIORITE.defaultBlockState());
     }
 
     private static void removeOreFeatures(BiomeGenerationSettingsBuilder builder) {
-        removeDecoratedFeatureFromAllBiomes(builder, GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.COAL_ORE.getDefaultState(), Blocks.IRON_ORE.getDefaultState(), Blocks.GOLD_ORE.getDefaultState(), Blocks.REDSTONE_ORE.getDefaultState(), Blocks.LAPIS_ORE.getDefaultState(), Blocks.DIAMOND_ORE.getDefaultState());
+        removeDecoratedFeatureFromAllBiomes(builder, GenerationStage.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.COAL_ORE.defaultBlockState(), Blocks.IRON_ORE.defaultBlockState(), Blocks.GOLD_ORE.defaultBlockState(), Blocks.REDSTONE_ORE.defaultBlockState(), Blocks.LAPIS_ORE.defaultBlockState(), Blocks.DIAMOND_ORE.defaultBlockState());
     }
 
     /**

@@ -48,7 +48,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         this.resistence = 6.0F;
         this.toolType = ToolType.PICKAXE;
         this.fallingDustColor = -16777216;
-        this.blockMaterial = net.minecraft.block.material.Material.ROCK;
+        this.blockMaterial = net.minecraft.block.material.Material.STONE;
     }
 
     public StoneType setHarvestLevel(int harvestLevel) {
@@ -149,7 +149,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     }
 
     public StoneType setState(Block block) {
-        this.state = block.getDefaultState();
+        this.state = block.defaultBlockState();
         return this;
     }
 

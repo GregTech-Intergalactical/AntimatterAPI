@@ -14,7 +14,6 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 
 import java.util.HashMap;
@@ -38,16 +37,16 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
 
     @Override
     public void run() {
-        Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
-        this.tagToBuilder.clear();
-        registerTags();
+        Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.builders);
+        this.builders.clear();
+        addTags();
         //TagUtils.getTags(Fluid.class).forEach((k,v)-> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
-        tagToBuilder.forEach(this::addTag);
-        b.forEach(tagToBuilder::put);
+        builders.forEach(this::addTag);
+        b.forEach(builders::put);
     }
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void run(DirectoryCache cache) {
 
     }
 
@@ -57,18 +56,18 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
     }
 
     @Override
-    public void registerTags() {
+    public void addTags() {
         processTags(providerDomain);
     }
 
     protected void processTags(String domain) {
         AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> {
-            getOrCreateBuilder(getForgeFluidTag(f.getId()))
+            tag(getForgeFluidTag(f.getId()))
                     .add(f.getFluid(), f.getFlowingFluid())
                     .replace(replace);
             if (f instanceof AntimatterMaterialFluid) {
                 Material m = ((AntimatterMaterialFluid) f).getMaterial();
-                getOrCreateBuilder(getForgeFluidTag(m.getId()))
+                tag(getForgeFluidTag(m.getId()))
                         .add(f.getFluid(), f.getFlowingFluid())
                         .replace(replace);
             }
@@ -91,10 +90,10 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
         JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
         if (json == null) {
-            addTag(loc, obj.serialize());
+            addTag(loc, obj.serializeToJson());
         } else {
-            obj = obj.deserialize(json, "Antimatter - Dynamic Data");
-            TAGS.put(loc, obj.serialize());
+            obj = obj.addFromJson(json, "Antimatter - Dynamic Data");
+            TAGS.put(loc, obj.serializeToJson());
         }
     }
 

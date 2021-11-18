@@ -25,6 +25,6 @@ public class CapabilityIngredient extends Ingredient {
 
     @Override
     public boolean test(@Nullable ItemStack p_test_1_) {
-        return p_test_1_ != null && p_test_1_.getCapability(cap.getValue()).isPresent();
+        return p_test_1_ != null && p_test_1_.getCapability(cap.get()).isPresent();
     }
 }

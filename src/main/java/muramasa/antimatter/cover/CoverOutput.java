@@ -32,8 +32,8 @@ public class CoverOutput extends CoverInput {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (handler.getTile().getWorld().isRemote) return;
-        if (tile.getWorld().getGameTime() % 100 == 0) {
+        if (handler.getTile().getLevel().isClientSide) return;
+        if (tile.getLevel().getGameTime() % 100 == 0) {
             if (shouldOutputFluids())
                 processFluidOutput();
             if (shouldOutputItems())
@@ -85,7 +85,7 @@ public class CoverOutput extends CoverInput {
     }
 
     protected void processItemOutput() {
-        TileEntity adjTile = Utils.getTile(tile.getWorld(), tile.getPos().offset(this.side));
+        TileEntity adjTile = Utils.getTile(tile.getLevel(), tile.getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
         adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
@@ -95,7 +95,7 @@ public class CoverOutput extends CoverInput {
     }
 
     protected void processFluidOutput() {
-        TileEntity adjTile = Utils.getTile(handler.getTile().getWorld(), handler.getTile().getPos().offset(this.side));
+        TileEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
         adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())

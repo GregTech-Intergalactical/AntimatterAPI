@@ -41,11 +41,11 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
         int[] ct = new int[1];
         for (Direction side : Ref.DIRS) {
-            mut.setPos(pos.offset(side));
+            mut.set(pos.relative(side));
             BlockState adjState = world.getBlockState(mut);
-            TileEntity adjTile = world.getTileEntity(mut);
+            TileEntity adjTile = world.getBlockEntity(mut);
             if (canConnect(world, adjState, adjTile, mut)) {
-                ct[0] += 1 << side.getIndex();
+                ct[0] += 1 << side.get3DDataValue();
             }
         }
         return config.set(ct[0] == 0 ? DEFAULT_CONFIG : ct);
@@ -71,7 +71,7 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
             index = r.nextInt(shapes.size());
         }
 
-        return shapes.containsKey(index) ? shapes.get(index) : VoxelShapes.fullCube();
+        return shapes.containsKey(index) ? shapes.get(index) : VoxelShapes.block();
     }
 
     @Override

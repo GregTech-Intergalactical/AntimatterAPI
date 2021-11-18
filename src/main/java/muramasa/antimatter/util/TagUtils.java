@@ -26,7 +26,7 @@ public class TagUtils {
      * @return BlockTag variant of the ItemTag
      */
     public static ITag.INamedTag<Block> itemToBlockTag(ITag.INamedTag<Item> tag) {
-        return createTag(tag.getName(), Block.class, BlockTags::makeWrapperTag);
+        return createTag(tag.getName(), Block.class, BlockTags::bind);
     }
 
     /**
@@ -38,7 +38,7 @@ public class TagUtils {
      * @return ItemTag variant of the BlockTag
      */
     public static ITag.INamedTag<Item> blockToItemTag(ITag.INamedTag<Block> tag) {
-        return createTag(tag.getName(), Item.class, ItemTags::makeWrapperTag);
+        return createTag(tag.getName(), Item.class, ItemTags::bind);
     }
 
     /**
@@ -46,7 +46,7 @@ public class TagUtils {
      * @return BlockTag
      */
     public static ITag.INamedTag<Block> getBlockTag(ResourceLocation loc) {
-        return createTag(loc, Block.class, BlockTags::makeWrapperTag);
+        return createTag(loc, Block.class, BlockTags::bind);
     }
 
     public static Map<ResourceLocation, ITag.INamedTag> getTags(Class clazz) {
@@ -68,7 +68,7 @@ public class TagUtils {
      * @return ItemTag
      */
     public static ITag.INamedTag<Item> getItemTag(ResourceLocation loc) {
-        return createTag(loc, Item.class, ItemTags::makeWrapperTag);
+        return createTag(loc, Item.class, ItemTags::bind);
     }
 
     /**
@@ -87,7 +87,7 @@ public class TagUtils {
      * @return FluidTag
      */
     public static ITag.INamedTag<Fluid> getForgeFluidTag(String name) {
-        return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::makeWrapperTag);
+        return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::bind);
     }
 
     /**
@@ -111,7 +111,7 @@ public class TagUtils {
      * @return
      */
     public static ITag<Item> nc(ResourceLocation tag) {
-        return TagCollectionManager.getManager().getItemTags().get(tag);
+        return TagCollectionManager.getInstance().getItems().getTag(tag);
     }
 
     public static ITagCollectionSupplier getSupplier() {

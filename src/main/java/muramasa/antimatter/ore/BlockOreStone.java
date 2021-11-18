@@ -10,7 +10,7 @@ import net.minecraftforge.common.ToolType;
 public class BlockOreStone extends BlockMaterialType implements ISharedAntimatterObject {
 
     public BlockOreStone(String domain, Material material) {
-        super(domain, material, Data.ORE_STONE, Block.Properties.create(net.minecraft.block.material.Material.ROCK).harvestLevel(material.getMiningLevel() > -1 ? material.getMiningLevel() : 0).setRequiresTool().harvestTool(ToolType.PICKAXE).hardnessAndResistance(1.0F, 7.5F));
+        super(domain, material, Data.ORE_STONE, Block.Properties.of(net.minecraft.block.material.Material.STONE).harvestLevel(material.getMiningLevel() > -1 ? material.getMiningLevel() : 0).requiresCorrectToolForDrops().harvestTool(ToolType.PICKAXE).strength(1.0F, 7.5F));
         instancedTextures("stone");
     }
 

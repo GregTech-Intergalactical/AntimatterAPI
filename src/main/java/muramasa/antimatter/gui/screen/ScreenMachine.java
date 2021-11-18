@@ -28,7 +28,7 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
     }
 
     protected void drawTitle(MatrixStack stack, int mouseX, int mouseY) {
-        Minecraft.getInstance().fontRenderer.drawString(stack, name, getCenteredStringX(name), 4, 0x404040);
+        Minecraft.getInstance().font.draw(stack, name, getCenteredStringX(name), 4, 0x404040);
     }
 
     /*
@@ -56,11 +56,11 @@ public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMa
     //@Nonnull final ItemStack stack, MatrixStack mStack, List<? extends ITextProperties> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font
     protected void drawText(List<? extends ITextProperties> textLines, int x, int y, FontRenderer font, MatrixStack matrixStack) {
         Minecraft minecraft = Minecraft.getInstance();
-        GuiUtils.drawHoveringText(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getMainWindow().getScaledWidth(), minecraft.getMainWindow().getScaledHeight(), -1, font);
+        GuiUtils.drawHoveringText(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight(), -1, font);
     }
 
     private boolean isSlotSelected(int x, int y, double mouseX, double mouseY) {
-        return this.isPointInRegion(x, y, 16, 16, mouseX, mouseY);
+        return this.isHovering(x, y, 16, 16, mouseX, mouseY);
     }
 
     @Override

@@ -37,9 +37,9 @@ public class CommonEvents {
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent e) {
         if (!AntimatterConfig.GAMEPLAY.PLAY_CRAFTING_SOUNDS) return;
         IInventory inv = e.getInventory();
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            if (inv.getStackInSlot(i).getItem() instanceof IAntimatterTool) {
-                IAntimatterTool tool = (IAntimatterTool) inv.getStackInSlot(i).getItem();
+        for (int i = 0; i < inv.getContainerSize(); i++) {
+            if (inv.getItem(i).getItem() instanceof IAntimatterTool) {
+                IAntimatterTool tool = (IAntimatterTool) inv.getItem(i).getItem();
                 SoundEvent type = tool.getAntimatterToolType().getUseSound();
                 if (type != null) {
                     e.getPlayer().playSound(type, 0.75F, 0.75F);
@@ -78,7 +78,7 @@ public class CommonEvents {
                 Block block = ForgeRegistries.BLOCKS.getValue(blockId);
                 //Antimatter.LOGGER.info(blockId.toString());
                 if (block == Blocks.ICE || block == Blocks.PACKED_ICE || block == Blocks.BLUE_ICE) {
-                    event.getTable().addPool(LootPool.builder().rolls(ConstantRange.of(1)).acceptCondition(AntimatterBlockLootProvider.SAW).addEntry(ItemLootEntry.builder(block)).build());
+                    event.getTable().addPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).when(AntimatterBlockLootProvider.SAW).add(ItemLootEntry.lootTableItem(block)).build());
                 }
             }
         }

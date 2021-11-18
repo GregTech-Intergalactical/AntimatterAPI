@@ -26,18 +26,18 @@ public class BehaviourPumpkinCarving implements IItemUse<IAntimatterTool> {
 
     @Override
     public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
-        World worldIn = c.getWorld();
-        BlockPos pos = c.getPos();
+        World worldIn = c.getLevel();
+        BlockPos pos = c.getClickedPos();
         BlockState state = worldIn.getBlockState(pos);
-        if (c.getPlayer() != null && state.matchesBlock(Blocks.PUMPKIN)) {
-            Direction facing = c.getFace().getAxis() == Direction.Axis.Y ? c.getPlayer().getHorizontalFacing().getOpposite() : c.getFace();
-            worldIn.playSound(null, pos, SoundEvents.BLOCK_PUMPKIN_CARVE, SoundCategory.BLOCKS, 1.0F, 1.0F);
-            worldIn.setBlockState(pos, Blocks.CARVED_PUMPKIN.getDefaultState().with(CarvedPumpkinBlock.FACING, facing), 11);
-            ItemEntity itementity = new ItemEntity(worldIn, (double) pos.getX() + 0.5D + (double) facing.getXOffset() * 0.65D, (double) pos.getY() + 0.1D, (double) pos.getZ() + 0.5D + (double) facing.getZOffset() * 0.65D, new ItemStack(Items.PUMPKIN_SEEDS, 4));
-            itementity.setMotion(0.05D * (double) facing.getXOffset() + worldIn.rand.nextDouble() * 0.02D, 0.05D, 0.05D * (double) facing.getZOffset() + worldIn.rand.nextDouble() * 0.02D);
-            worldIn.addEntity(itementity);
-            c.getItem().damageItem(1, c.getPlayer(), (playerIn) -> {
-                playerIn.sendBreakAnimation(c.getHand());
+        if (c.getPlayer() != null && state.is(Blocks.PUMPKIN)) {
+            Direction facing = c.getClickedFace().getAxis() == Direction.Axis.Y ? c.getPlayer().getDirection().getOpposite() : c.getClickedFace();
+            worldIn.playSound(null, pos, SoundEvents.PUMPKIN_CARVE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            worldIn.setBlock(pos, Blocks.CARVED_PUMPKIN.defaultBlockState().setValue(CarvedPumpkinBlock.FACING, facing), 11);
+            ItemEntity itementity = new ItemEntity(worldIn, (double) pos.getX() + 0.5D + (double) facing.getStepX() * 0.65D, (double) pos.getY() + 0.1D, (double) pos.getZ() + 0.5D + (double) facing.getStepZ() * 0.65D, new ItemStack(Items.PUMPKIN_SEEDS, 4));
+            itementity.setDeltaMovement(0.05D * (double) facing.getStepX() + worldIn.random.nextDouble() * 0.02D, 0.05D, 0.05D * (double) facing.getStepZ() + worldIn.random.nextDouble() * 0.02D);
+            worldIn.addFreshEntity(itementity);
+            c.getItemInHand().hurtAndBreak(1, c.getPlayer(), (playerIn) -> {
+                playerIn.broadcastBreakEvent(c.getHand());
             });
             return ActionResultType.SUCCESS;
         }

@@ -25,12 +25,12 @@ public class IceBlockMixin extends BreakableBlock {
         super(properties);
     }
 
-    @Inject(/*remap = false,*/ method = "harvestBlock", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(remap = false, method = "playerDestroy", at = @At(value = "HEAD"), cancellable = true)
     private void stopSpawnWater(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack, CallbackInfo info) {
         if (!stack.isEmpty() && stack.getItem() instanceof IAntimatterTool) {
             AntimatterToolType type = ((IAntimatterTool) stack.getItem()).getAntimatterToolType();
             if (type == SAW) {
-                super.harvestBlock(worldIn, player, pos, state, te, stack);
+                super.playerDestroy(worldIn, player, pos, state, te, stack);
                 info.cancel();
             }
         }

@@ -46,12 +46,12 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
 
 
     @Override
-    public boolean generate(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
         List<Tuple<BlockPos, Material>> rocks = ROCKS.remove(world.getChunk(pos).getPos());
         if (rocks == null) return false;
         StoneType stoneType;
         for (Tuple<BlockPos, Material> r : rocks) {
-            stoneType = WorldGenHelper.STONE_MAP.get(world.getBlockState(r.getA().down()));
+            stoneType = WorldGenHelper.STONE_MAP.get(world.getBlockState(r.getA().below()));
             if (stoneType == null)
                 stoneType = StoneType.get("stone"); //TODO change to direct ref when vanilla types are in AM
             BlockState rockState = Data.ROCK.get().get(r.getB(), stoneType).asState();
@@ -64,6 +64,6 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.SURFACE_ROCK);
+        event.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.SURFACE_ROCK);
     }
 }

@@ -27,7 +27,6 @@ import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -93,7 +92,7 @@ public class AntimatterDynamics {
         MinecraftForge.EVENT_BUS.post(ev);
         for (ICraftingLoader loader : ev.getLoaders()) {
             loader.loadRecipes(t -> {
-                if (set.add(t.getID())) {
+                if (set.add(t.getId())) {
                     rec.accept(t);
                 }
             }, provider);
@@ -134,7 +133,7 @@ public class AntimatterDynamics {
             rm.compile(manager, tags);
         });
 
-        List<Recipe> recipes = manager.getRecipesForType(Recipe.RECIPE_TYPE);
+        List<Recipe> recipes = manager.getAllRecipesFor(Recipe.RECIPE_TYPE);
         Map<String, List<Recipe>> map = recipes.stream().collect(Collectors.groupingBy(recipe -> recipe.mapId));
 
         for (Map.Entry<String, List<Recipe>> entry : map.entrySet()) {

@@ -11,12 +11,12 @@ public class SlotEnergy extends AbstractSlot<SlotEnergy> {
     }
 
     @Override
-    public int getSlotStackLimit() {
+    public int getMaxStackSize() {
         return 1;
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity playerIn) {
+    public boolean mayPickup(PlayerEntity playerIn) {
         return true;
     }
 }

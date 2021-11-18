@@ -78,7 +78,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
                 Map<Integer, String> offsets = new Object2ObjectOpenHashMap<>();
                 if (json.has("groups")) {
                     int index = 0;
-                    for (JsonElement jsonelement : JSONUtils.getJsonArray(json, "groups")) {
+                    for (JsonElement jsonelement : JSONUtils.getAsJsonArray(json, "groups")) {
                         if (jsonelement.isJsonObject()) {
                             JsonObject obj = jsonelement.getAsJsonObject();
                             String name = obj.get("name").getAsString();
@@ -92,7 +92,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
                 Map<String, List<BlockPart>> map = new Object2ObjectOpenHashMap<>();
                 if (json.has("elements")) {
                     int index = 0;
-                    for (JsonElement jsonelement : JSONUtils.getJsonArray(json, "elements")) {
+                    for (JsonElement jsonelement : JSONUtils.getAsJsonArray(json, "elements")) {
                         String name = offsets.get(index++);
                         map.computeIfAbsent(name == null ? "" : name, a -> new ObjectArrayList<>()).add(context.deserialize(jsonelement, BlockPart.class));
                     }

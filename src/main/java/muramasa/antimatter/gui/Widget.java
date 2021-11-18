@@ -69,10 +69,10 @@ public abstract class Widget implements IGuiElement {
         float f5 = (float) (colorB >> 16 & 255) / 255.0F;
         float f6 = (float) (colorB >> 8 & 255) / 255.0F;
         float f7 = (float) (colorB & 255) / 255.0F;
-        builder.pos(matrix, (float) x2, (float) y1, (float) z).color(f1, f2, f3, f).endVertex();
-        builder.pos(matrix, (float) x1, (float) y1, (float) z).color(f1, f2, f3, f).endVertex();
-        builder.pos(matrix, (float) x1, (float) y2, (float) z).color(f5, f6, f7, f4).endVertex();
-        builder.pos(matrix, (float) x2, (float) y2, (float) z).color(f5, f6, f7, f4).endVertex();
+        builder.vertex(matrix, (float) x2, (float) y1, (float) z).color(f1, f2, f3, f).endVertex();
+        builder.vertex(matrix, (float) x1, (float) y1, (float) z).color(f1, f2, f3, f).endVertex();
+        builder.vertex(matrix, (float) x1, (float) y2, (float) z).color(f5, f6, f7, f4).endVertex();
+        builder.vertex(matrix, (float) x2, (float) y2, (float) z).color(f5, f6, f7, f4).endVertex();
     }
 
     public void init() {
@@ -122,7 +122,7 @@ public abstract class Widget implements IGuiElement {
 
     @OnlyIn(Dist.CLIENT)
     protected void renderTooltip(MatrixStack matrixStack, ITextComponent text, double mouseX, double mouseY) {
-        net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, Arrays.asList(text), (int) mouseX, (int) mouseY, parent.getW(), parent.getH(), -1, Minecraft.getInstance().fontRenderer);
+        net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, Arrays.asList(text), (int) mouseX, (int) mouseY, parent.getW(), parent.getH(), -1, Minecraft.getInstance().font);
     }
 
     @Override
@@ -171,7 +171,7 @@ public abstract class Widget implements IGuiElement {
     @OnlyIn(Dist.CLIENT)
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (this.isEnabled() && isInside(mouseX, mouseY)) {
-            this.clickSound(Minecraft.getInstance().getSoundHandler());
+            this.clickSound(Minecraft.getInstance().getSoundManager());
             this.onClick(mouseX, mouseY, button);
             return true;
         }
@@ -193,7 +193,7 @@ public abstract class Widget implements IGuiElement {
 
     @OnlyIn(Dist.CLIENT)
     public void clickSound(SoundHandler handler) {
-        handler.play(SimpleSound.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        handler.play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -262,10 +262,10 @@ public abstract class Widget implements IGuiElement {
         RenderSystem.defaultBlendFunc();
         RenderSystem.shadeModel(7425);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        BufferBuilder bufferbuilder = tessellator.getBuilder();
         bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        fillGradient(matrixStack.getLast().getMatrix(), bufferbuilder, x1, y1, x2, y2, 0, colorFrom, colorTo);
-        tessellator.draw();
+        fillGradient(matrixStack.last().pose(), bufferbuilder, x1, y1, x2, y2, 0, colorFrom, colorTo);
+        tessellator.end();
         RenderSystem.shadeModel(7424);
         RenderSystem.disableBlend();
         RenderSystem.enableAlphaTest();
@@ -275,18 +275,18 @@ public abstract class Widget implements IGuiElement {
     @OnlyIn(Dist.CLIENT)
     protected void drawHoverText(List<? extends ITextProperties> textLines, int x, int y, FontRenderer font, MatrixStack matrixStack) {
         Minecraft minecraft = Minecraft.getInstance();
-        GuiUtils.drawHoveringText(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getMainWindow().getScaledWidth(), minecraft.getMainWindow().getScaledHeight(), -1, font);
+        GuiUtils.drawHoveringText(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight(), -1, font);
     }
 
     @OnlyIn(Dist.CLIENT)
     public int drawText(MatrixStack matrixStack, ITextComponent text, float x, float y, int color) {
-        return Minecraft.getInstance().fontRenderer.drawText(matrixStack, text, x, y, color);
+        return Minecraft.getInstance().font.draw(matrixStack, text, x, y, color);
     }
 
     @OnlyIn(Dist.CLIENT)
     protected void drawTexture(MatrixStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
         RenderSystem.color4f(1, 1, 1, 1);
-        Minecraft.getInstance().textureManager.bindTexture(loc);
+        Minecraft.getInstance().textureManager.bind(loc);
         //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
         AbstractGui.blit(stack, left, top, 0, x, y, sizeX, sizeY, 256, 256);
     }

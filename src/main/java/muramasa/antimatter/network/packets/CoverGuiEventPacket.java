@@ -24,23 +24,23 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
     public static void encode(CoverGuiEventPacket msg, PacketBuffer buf) {
         msg.event.getFactory().write(msg.event, buf);
         buf.writeBlockPos(msg.pos);
-        buf.writeEnumValue(msg.facing);
+        buf.writeEnum(msg.facing);
     }
 
     public static CoverGuiEventPacket decode(PacketBuffer buf) {
-        return new CoverGuiEventPacket(IGuiEvent.IGuiEventFactory.read(buf), buf.readBlockPos(), buf.readEnumValue(Direction.class));
+        return new CoverGuiEventPacket(IGuiEvent.IGuiEventFactory.read(buf), buf.readBlockPos(), buf.readEnum(Direction.class));
     }
 
     public static void handle(final CoverGuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity sender = ctx.get().getSender();
             if (sender != null) {
-                TileEntity tile = Utils.getTile(sender.getServerWorld(), msg.pos);
+                TileEntity tile = Utils.getTile(sender.getLevel(), msg.pos);
                 if (tile instanceof TileEntityMachine) {
                     if (msg.event.forward()) {
                         ((TileEntityMachine<?>) tile).coverHandler.ifPresent(ch -> ch.get(msg.facing).onGuiEvent(msg.event, sender));
                     } else {
-                        msg.event.handle(sender, ((IAntimatterContainer) sender.openContainer).source());
+                        msg.event.handle(sender, ((IAntimatterContainer) sender.containerMenu).source());
                     }
                 }
             }

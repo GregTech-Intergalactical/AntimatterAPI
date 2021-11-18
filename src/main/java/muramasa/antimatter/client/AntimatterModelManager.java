@@ -49,7 +49,7 @@ public class AntimatterModelManager {
             return new DynamicModel(super.read(context, json)) {
                 @Override
                 public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-                    return new MachineBakedModel(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                    return new MachineBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };
         }
@@ -60,7 +60,7 @@ public class AntimatterModelManager {
             return new DynamicModel(super.read(context, json)) {
                 @Override
                 public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-                    return new PipeBakedModel(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                    return new PipeBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };
         }

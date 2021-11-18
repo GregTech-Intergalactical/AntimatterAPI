@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
 public class FluidTanks implements IFluidHandler {
 
     public static <T extends TileEntityBase<T> & IMachineHandler> FluidTanks create(T tile, ContentEvent contentEvent,
-            UnaryOperator<Builder<T>> builder) {
+                                                                                    UnaryOperator<Builder<T>> builder) {
         return builder.apply(new Builder<>(tile, contentEvent)).build();
     }
 

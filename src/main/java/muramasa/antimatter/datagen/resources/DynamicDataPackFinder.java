@@ -42,10 +42,10 @@ public class DynamicDataPackFinder implements IPackFinder {
     }
 
     @Override
-    public void findPacks(Consumer<ResourcePackInfo> infoConsumer, ResourcePackInfo.IFactory infoFactory) {
+    public void loadPacks(Consumer<ResourcePackInfo> infoConsumer, ResourcePackInfo.IFactory infoFactory) {
         DynamicResourcePack dynamicPack = new DynamicResourcePack(name, AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet()));
         //TODO: not sure here
-        ResourcePackInfo genericPackInfo = ResourcePackInfo.createResourcePack(id, true, () -> dynamicPack, infoFactory, ResourcePackInfo.Priority.TOP, IPackNameDecorator.BUILTIN);
+        ResourcePackInfo genericPackInfo = ResourcePackInfo.create(id, true, () -> dynamicPack, infoFactory, ResourcePackInfo.Priority.TOP, IPackNameDecorator.BUILT_IN);
         infoConsumer.accept(genericPackInfo);
 
     }

@@ -140,7 +140,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
     @Override
     public boolean isRemote() {
-        return handler.getTile().getWorld().isRemote();
+        return handler.getTile().getLevel().isClientSide();
     }
 
     @Override
@@ -150,7 +150,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
 
     @Override
     public AbstractGuiEventPacket createGuiPacket(IGuiEvent event) {
-        return new CoverGuiEventPacket(event, this.handler.getTile().getPos(), this.side);
+        return new CoverGuiEventPacket(event, this.handler.getTile().getBlockPos(), this.side);
     }
 
     @Override

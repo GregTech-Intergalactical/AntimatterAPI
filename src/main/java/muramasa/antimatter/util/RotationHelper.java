@@ -50,7 +50,7 @@ public class RotationHelper {
         ModelRotation(int x, int y) {
             this.combinedXY = combineXY(x, y);
             Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float) (-y), true);
-            quaternion.multiply(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float) (-x), true));
+            quaternion.mul(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float) (-x), true));
             this.transformation = new TransformationMatrix(quaternion);
         }
 
@@ -59,7 +59,7 @@ public class RotationHelper {
         }
 
         public static ModelRotation getModelRotation(int x, int y) {
-            return MAP_ROTATIONS.get(combineXY(MathHelper.normalizeAngle(x, 360), MathHelper.normalizeAngle(y, 360)));
+            return MAP_ROTATIONS.get(combineXY(MathHelper.positiveModulo(x, 360), MathHelper.positiveModulo(y, 360)));
         }
     }
 
@@ -82,10 +82,10 @@ public class RotationHelper {
 
 
         public Direction rotateFace(Direction facing) {
-            Vector3i vector3i = facing.getDirectionVec();
+            Vector3i vector3i = facing.getNormal();
             Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
             vector4f.transform(new net.minecraft.util.math.vector.Matrix4f(matrix.values()));
-            return Direction.getFacingFromVector(vector4f.getX(), vector4f.getY(), vector4f.getZ());
+            return Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
         }
     }
 
@@ -166,10 +166,10 @@ public class RotationHelper {
         }
 
         public Matrix4f(Quaternion quaternionIn) {
-            float f = quaternionIn.getX();
-            float f1 = quaternionIn.getY();
-            float f2 = quaternionIn.getZ();
-            float f3 = quaternionIn.getW();
+            float f = quaternionIn.i();
+            float f1 = quaternionIn.j();
+            float f2 = quaternionIn.k();
+            float f3 = quaternionIn.r();
             float f4 = 2.0F * f * f;
             float f5 = 2.0F * f1 * f1;
             float f6 = 2.0F * f2 * f2;

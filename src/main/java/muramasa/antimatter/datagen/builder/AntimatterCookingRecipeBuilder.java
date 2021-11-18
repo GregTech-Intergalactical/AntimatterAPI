@@ -23,7 +23,7 @@ public class AntimatterCookingRecipeBuilder {
     private final Ingredient ingredient;
     private final float experience;
     private final int cookingTime;
-    private final Advancement.Builder advancementBuilder = Advancement.Builder.builder();
+    private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
     private String group;
     private final CookingRecipeSerializer<?> recipeSerializer;
 
@@ -40,15 +40,15 @@ public class AntimatterCookingRecipeBuilder {
     }
 
     public static AntimatterCookingRecipeBuilder blastingRecipe(Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookingTimeIn) {
-        return cookingRecipe(ingredientIn, resultIn, experienceIn, cookingTimeIn, IRecipeSerializer.BLASTING);
+        return cookingRecipe(ingredientIn, resultIn, experienceIn, cookingTimeIn, IRecipeSerializer.BLASTING_RECIPE);
     }
 
     public static AntimatterCookingRecipeBuilder smeltingRecipe(Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookingTimeIn) {
-        return cookingRecipe(ingredientIn, resultIn, experienceIn, cookingTimeIn, IRecipeSerializer.SMELTING);
+        return cookingRecipe(ingredientIn, resultIn, experienceIn, cookingTimeIn, IRecipeSerializer.SMELTING_RECIPE);
     }
 
     public AntimatterCookingRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
-        this.advancementBuilder.withCriterion(name, criterionIn);
+        this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
@@ -68,8 +68,8 @@ public class AntimatterCookingRecipeBuilder {
 
     public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
         this.validate(id);
-        this.advancementBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", RecipeUnlockedTrigger.create(id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumerIn.accept(new Result(id, this.group == null ? "" : this.group, this.ingredient, this.result, this.experience, this.cookingTime, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getGroup().getPath() + "/" + id.getPath()), this.recipeSerializer));
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        consumerIn.accept(new Result(id, this.group == null ? "" : this.group, this.ingredient, this.result, this.experience, this.cookingTime, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath()), this.recipeSerializer));
     }
 
     /**
@@ -104,12 +104,12 @@ public class AntimatterCookingRecipeBuilder {
             this.serializer = serializerIn;
         }
 
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             if (!this.group.isEmpty()) {
                 json.addProperty("group", this.group);
             }
 
-            json.add("ingredient", this.ingredient.serialize());
+            json.add("ingredient", this.ingredient.toJson());
             JsonObject resultObj = new JsonObject();
             resultObj.addProperty("item", Registry.ITEM.getKey(this.result.getItem()).toString());
             if (this.result.getCount() > 1) {
@@ -123,14 +123,14 @@ public class AntimatterCookingRecipeBuilder {
             json.addProperty("cookingtime", this.cookingTime);
         }
 
-        public IRecipeSerializer<?> getSerializer() {
+        public IRecipeSerializer<?> getType() {
             return this.serializer;
         }
 
         /**
          * Gets the ID for the recipe.
          */
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return this.id;
         }
 
@@ -138,8 +138,8 @@ public class AntimatterCookingRecipeBuilder {
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
          */
         @Nullable
-        public JsonObject getAdvancementJson() {
-            return this.advancementBuilder.serialize();
+        public JsonObject serializeAdvancement() {
+            return this.advancementBuilder.serializeToJson();
         }
 
         /**
@@ -147,7 +147,7 @@ public class AntimatterCookingRecipeBuilder {
          * is non-null.
          */
         @Nullable
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return this.advancementId;
         }
     }

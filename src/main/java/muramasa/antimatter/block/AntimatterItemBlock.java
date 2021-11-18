@@ -14,13 +14,13 @@ import javax.annotation.Nonnull;
 public class AntimatterItemBlock extends BlockItem {
 
     public AntimatterItemBlock(Block block) {
-        super(block, new Item.Properties().group(block instanceof IItemBlockProvider ? ((IItemBlockProvider) block).getItemGroup() : Ref.TAB_BLOCKS));
+        super(block, new Item.Properties().tab(block instanceof IItemBlockProvider ? ((IItemBlockProvider) block).getItemGroup() : Ref.TAB_BLOCKS));
         if (block.getRegistryName() != null) setRegistryName(block.getRegistryName());
     }
 
     @Nonnull
     @Override
-    public ITextComponent getDisplayName(@Nonnull ItemStack stack) {
-        return getBlock() instanceof IItemBlockProvider ? ((IItemBlockProvider) getBlock()).getDisplayName(stack) : new TranslationTextComponent(stack.getTranslationKey());
+    public ITextComponent getName(@Nonnull ItemStack stack) {
+        return getBlock() instanceof IItemBlockProvider ? ((IItemBlockProvider) getBlock()).getDisplayName(stack) : new TranslationTextComponent(stack.getDescriptionId());
     }
 }

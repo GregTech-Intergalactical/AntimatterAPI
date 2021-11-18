@@ -21,11 +21,11 @@ public class PipeItemBlock extends AntimatterItemBlock {
 
     @Nonnull
     @Override
-    public ActionResultType tryPlace(BlockItemUseContext context) {
-        ActionResultType action = super.tryPlace(context);
-        if (action.isSuccessOrConsume()) {
+    public ActionResultType place(BlockItemUseContext context) {
+        ActionResultType action = super.place(context);
+        if (action.consumesAction()) {
             if (context.replacingClickedOnBlock()) return action;
-            if (pipe.onBlockPlacedTo(context.getWorld(), context.getPos(), context.getFace())) {
+            if (pipe.onBlockPlacedTo(context.getLevel(), context.getClickedPos(), context.getClickedFace())) {
                 return ActionResultType.SUCCESS;
             }
         }

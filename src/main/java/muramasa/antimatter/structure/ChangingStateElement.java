@@ -1,6 +1,5 @@
 package muramasa.antimatter.structure;
 
-import muramasa.antimatter.Data;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
@@ -31,9 +30,9 @@ public class ChangingStateElement extends StructureElement {
 
     @Override
     public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
-        BlockState state = machine.getWorld().getBlockState(pos);
+        BlockState state = machine.getLevel().getBlockState(pos);
         IBlockStatePredicate pred = machine.getMachineState() == MachineState.INVALID_STRUCTURE ? regular : built;
-        if (pred.evaluate(machine.getWorld(), pos, machine.getWorld().getBlockState(pos))) {
+        if (pred.evaluate(machine.getLevel(), pos, machine.getLevel().getBlockState(pos))) {
             result.addState("changing", pos, state);
             return true;
         }
@@ -44,21 +43,21 @@ public class ChangingStateElement extends StructureElement {
     public void onBuild(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
         super.onBuild(machine, pos, result, count);
         if (count > 1) return;
-        World world = machine.getWorld();
+        World world = machine.getLevel();
         //No need to test here because we know it already matches.
-        world.setBlockState(pos, builder.apply(MachineState.IDLE, world.getBlockState(pos)), 2 | 8);
+        world.setBlock(pos, builder.apply(MachineState.IDLE, world.getBlockState(pos)), 2 | 8);
     }
 
     @Override
     public void onRemove(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
         super.onRemove(machine, pos, result, count);
         if (count == 0) {
-            World world = machine.getWorld();
+            World world = machine.getLevel();
             BlockState state = world.getBlockState(pos);
             //Make sure that the old blockstate actually matches, since e.g. if this block is removed it will be air
             //and setting it again will cause it to loop.
-            if (built.evaluate(machine.getWorld(), pos, state)) {
-                world.setBlockState(pos, builder.apply(MachineState.INVALID_STRUCTURE, world.getBlockState(pos)), 2 | 8);
+            if (built.evaluate(machine.getLevel(), pos, state)) {
+                world.setBlock(pos, builder.apply(MachineState.INVALID_STRUCTURE, world.getBlockState(pos)), 2 | 8);
             }
         }
     }
@@ -66,10 +65,10 @@ public class ChangingStateElement extends StructureElement {
     @Override
     public void onStateChange(TileEntityBasicMultiMachine<?> machine, MachineState newState, BlockPos pos, StructureResult result, int count) {
         super.onStateChange(machine, newState, pos, result, count);
-        World world = machine.getWorld();
+        World world = machine.getLevel();
         BlockState bs = builder.apply(newState, world.getBlockState(pos));
         if (!bs.equals(world.getBlockState(pos))) {
-            world.setBlockState(pos, bs, 2 | 8);
+            world.setBlock(pos, bs, 2 | 8);
         }
     }
 }

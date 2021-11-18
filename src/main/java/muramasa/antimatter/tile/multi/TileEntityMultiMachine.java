@@ -240,14 +240,14 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 
     @Override
     public int drawInfo(InfoRenderWidget.MultiRenderWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
-        renderer.drawString(stack, this.getDisplayName().getString(), left, top, 16448255);
+        renderer.draw(stack, this.getDisplayName().getString(), left, top, 16448255);
         if (getMachineState() != MachineState.ACTIVE) {
-            renderer.drawString(stack, "Inactive.", left, top + 8, 16448255);
+            renderer.draw(stack, "Inactive.", left, top + 8, 16448255);
             return 16;
         } else if (instance.drawActiveInfo()) {
-            renderer.drawString(stack, "Progress: " + instance.currentProgress + "/" + instance.maxProgress, left, top + 8, 16448255);
-            renderer.drawString(stack, "Overclock: " + instance.overclock, left, top + 16, 16448255);
-            renderer.drawString(stack, "EU/t: " + instance.euT, left, top + 24, 16448255);
+            renderer.draw(stack, "Progress: " + instance.currentProgress + "/" + instance.maxProgress, left, top + 8, 16448255);
+            renderer.draw(stack, "Overclock: " + instance.overclock, left, top + 16, 16448255);
+            renderer.draw(stack, "EU/t: " + instance.euT, left, top + 24, 16448255);
             return 32;
         }
         return 8;

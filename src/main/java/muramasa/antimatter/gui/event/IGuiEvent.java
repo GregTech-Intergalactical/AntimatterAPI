@@ -64,7 +64,7 @@ public interface IGuiEvent extends IMachineEvent {
          * @param buffer the buffer to write to.
          */
         default void write(IGuiEvent event, PacketBuffer buffer) {
-            buffer.writeString(this.getId());
+            buffer.writeUtf(this.getId());
             event.write(buffer);
         }
 
@@ -80,7 +80,7 @@ public interface IGuiEvent extends IMachineEvent {
          * @return an IGuiEvent instance.
          */
         static IGuiEvent read(PacketBuffer buffer) {
-            IGuiEventFactory ev = AntimatterAPI.get(IGuiEventFactory.class, buffer.readString(32767));
+            IGuiEventFactory ev = AntimatterAPI.get(IGuiEventFactory.class, buffer.readUtf(32767));
             return ev.factory().apply(ev, buffer);
         }
     }

@@ -31,7 +31,7 @@ public class DynamicTexturers {
             t -> {
                 TransformationMatrix base = Utils.getModelRotation(t.currentDir).getRotation();
                 if (t.state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
-                    switch (t.state.get(BlockMachine.HORIZONTAL_FACING)) {
+                    switch (t.state.getValue(BlockMachine.HORIZONTAL_FACING)) {
                         case NORTH:
                             break;
                         case SOUTH:
@@ -45,31 +45,31 @@ public class DynamicTexturers {
                             break;
                     }
                 }
-                IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
+                IBakedModel b = t.sourceModel.bake(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
                         new SimpleModelTransform(base), t.source.getModel(t.type, t.currentDir, Direction.NORTH));
                 return t.source.transformQuads(t.state, Stream.concat(b.getQuads(t.state, t.currentDir, t.rand, t.data).stream(), b.getQuads(t.state, null, t.rand, t.data).stream()).collect(Collectors.toList()));
             }, t -> {
-        t.model.textures.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
+        t.model.textureMap.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
         t.source.setTextures(
-                (name, texture) -> t.model.textures.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
+                (name, texture) -> t.model.textureMap.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
     });
 
     public static final DynamicTextureProvider<TileEntityMachine<?>, TileEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<TileEntityMachine<?>, TileEntityMachine.DynamicKey>(
             t -> {
-                IBakedModel b = t.sourceModel.bakeModel(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
+                IBakedModel b = t.sourceModel.bake(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
                         new SimpleModelTransform(
                                 Utils.getModelRotationCoverClient(Utils.dirFromState(t.state)).getRotation().inverse()),
                         new ResourceLocation(t.source.getId()));
                 return b.getQuads(t.state, null, t.rand, t.data);
             }, t -> {
-        t.model.textures.put("base", Either.left(
+        t.model.textureMap.put("base", Either.left(
                 ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(t.dir))));
-        t.model.textures.put("overlay",
+        t.model.textureMap.put("overlay",
                 Either
                         .left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_TYPE).getOverlayTextures(
                                 t.data.getData(AntimatterProperties.MACHINE_STATE), t.source.getMachineTier())[Direction
-                                .rotateFace(Utils.getModelRotation(Utils.dirFromState(t.source.getBlockState())).getRotation()
+                                .rotate(Utils.getModelRotation(Utils.dirFromState(t.source.getBlockState())).getRotation()
                                         .inverse().getMatrix(), t.dir)
-                                .getIndex()])));
+                                .get3DDataValue()])));
     });
 }

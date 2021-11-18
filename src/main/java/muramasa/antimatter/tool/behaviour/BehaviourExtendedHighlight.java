@@ -13,7 +13,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 
 import java.util.function.BiFunction;
@@ -37,7 +36,7 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
 
     public final static BiFunction<Direction, TileEntity, Boolean> PIPE_FUNCTION = (dir, tile) -> {
         if (tile instanceof TileEntityPipe) {
-            return ((TileEntityPipe) tile).canConnect(dir.getIndex());
+            return ((TileEntityPipe) tile).canConnect(dir.get3DDataValue());
         }
         if (tile instanceof TileEntityMachine) {
             Direction direction = ((TileEntityMachine) tile).getOutputFacing();

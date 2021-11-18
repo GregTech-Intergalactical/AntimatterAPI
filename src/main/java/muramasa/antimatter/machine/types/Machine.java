@@ -28,7 +28,6 @@ import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
@@ -231,7 +230,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public CoverFactory defaultCover(Direction dir) {
-        return DEFAULT_COVERS[dir.getIndex()];
+        return DEFAULT_COVERS[dir.get3DDataValue()];
     }
 
     public int amps() {
@@ -270,7 +269,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return BlockItem.BLOCK_TO_ITEM.get(AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), getDomain()));
+        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), getDomain()));
     }
 
     /**
@@ -393,7 +392,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public Texture getBaseTexture(Tier tier, Direction dir) {
         Texture[] texes = baseTexture.getBase(this, tier);
         if (texes.length == 1) return texes[0];
-        return texes[dir.getIndex()];
+        return texes[dir.get3DDataValue()];
     }
 
 
@@ -406,7 +405,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public ResourceLocation getOverlayModel(Direction side) {
-        return new ResourceLocation(domain, "block/machine/overlay/" + id + "/" + side.getString());
+        return new ResourceLocation(domain, "block/machine/overlay/" + id + "/" + side.getSerializedName());
     }
 
     public RecipeMap<?> getRecipeMap() {

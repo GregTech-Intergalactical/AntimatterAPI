@@ -12,7 +12,6 @@ import net.minecraft.data.IDataProvider;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,13 +49,13 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {
             if (!locs.add(a.getId())) throw new IllegalStateException("Duplicate advancement " + a.getId());
-            else DynamicResourcePack.addAdvancement(a.getId(), a.copy().serialize());
+            else DynamicResourcePack.addAdvancement(a.getId(), a.deconstruct().serializeToJson());
         };
         advancements.forEach(a -> a.accept(consumer));
     }
 
     @Override
-    public void act(@Nonnull DirectoryCache cache) {
+    public void run(@Nonnull DirectoryCache cache) {
         /*Path folder = this.gen.getOutputFolder();
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {
@@ -84,11 +83,11 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
     }
 
     public static Advancement.Builder buildRootAdvancement(IItemProvider provider, ResourceLocation backgroundPath, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.builder().withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), backgroundPath, type, toast, announce, hide).withRewards(AdvancementRewards.Builder.experience(10));
+        return Advancement.Builder.advancement().display(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), backgroundPath, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
     }
 
     public static Advancement.Builder buildAdvancement(Advancement parent, IItemProvider provider, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.builder().withParent(parent).withDisplay(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), null, type, toast, announce, hide).withRewards(AdvancementRewards.Builder.experience(10));
+        return Advancement.Builder.advancement().parent(parent).display(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), null, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
     }
 
     public static String getLoc(String domain, String id) {

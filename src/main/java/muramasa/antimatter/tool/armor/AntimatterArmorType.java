@@ -58,7 +58,7 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
         this.baseKnockback = baseKnockback;
         this.itemGroup = Ref.TAB_TOOLS;
         this.slot = slot;
-        this.event = SoundEvents.ITEM_ARMOR_EQUIP_IRON;
+        this.event = SoundEvents.ARMOR_EQUIP_IRON;
         this.overlayLayers = 0;
         AntimatterAPI.register(AntimatterArmorType.class, this);
     }
@@ -73,7 +73,7 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
 
     private Item.Properties prepareInstantiation(String domain) {
         if (domain.isEmpty()) Utils.onInvalidData("An AntimatterArmorType was instantiated with an empty domain name!");
-        Item.Properties properties = new Item.Properties().group(itemGroup);
+        Item.Properties properties = new Item.Properties().tab(itemGroup);
         if (!repairable) properties.setNoRepair();
         // if (!TOOL_TYPES.isEmpty()) TOOL_TYPES.forEach(t -> properties.addToolType(t, tier.getHarvestLevel()));
         return properties;

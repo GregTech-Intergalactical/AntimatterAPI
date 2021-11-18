@@ -33,14 +33,14 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
     }
 
     @Override
-    public void onContainerClosed(PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
+    public void removed(PlayerEntity playerIn) {
+        super.removed(playerIn);
         tile.onContainerClose(this);
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+    public void broadcastChanges() {
+        super.broadcastChanges();
     }
 
     protected void addSlots(TileEntityMachine<?> tile) {
@@ -57,7 +57,7 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity player) {
-        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, tile.getBlockState().getBlock());
+    public boolean stillValid(PlayerEntity player) {
+        return stillValid(IWorldPosCallable.create(tile.getLevel(), tile.getBlockPos()), player, tile.getBlockState().getBlock());
     }
 }

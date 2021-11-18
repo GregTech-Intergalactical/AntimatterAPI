@@ -33,7 +33,7 @@ public class AntimatterTextureStitcher {
 
     public static void onTextureStitch(final TextureStitchEvent.Pre event) {
         STITCHERS.forEach((k, v) -> {
-            if (!event.getMap().getTextureLocation().getPath().contains(k)) return;
+            if (!event.getMap().location().getPath().contains(k)) return;
             v.forEach(t -> t.stitch(event::addSprite));
         });
     }

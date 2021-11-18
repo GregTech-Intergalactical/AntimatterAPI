@@ -38,8 +38,8 @@ public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMa
     public int drawInfo(TankMachine.TankRenderWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
         left = left + 55;
         top = top + 24;
-        renderer.drawString(stack, instance.stack.getDisplayName().getString(), left, top, 16448255);
-        renderer.drawString(stack, instance.stack.getAmount() + " mb", left, top + 8, 16448255);
+        renderer.draw(stack, instance.stack.getDisplayName().getString(), left, top, 16448255);
+        renderer.draw(stack, instance.stack.getAmount() + " mb", left, top + 8, 16448255);
         return 16;
     }
 }

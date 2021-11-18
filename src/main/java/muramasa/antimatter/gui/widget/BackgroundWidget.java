@@ -50,7 +50,7 @@ public class BackgroundWidget extends Widget {
     @Override
     protected void drawTexture(MatrixStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
         RenderSystem.color4f(1, 1, 1, 1);
-        Minecraft.getInstance().textureManager.bindTexture(loc);
+        Minecraft.getInstance().textureManager.bind(loc);
         //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
         AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY, this.guiXSize, this.guiYSize);
     }

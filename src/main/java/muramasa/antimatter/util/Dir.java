@@ -18,9 +18,9 @@ public enum Dir {
             case DOWN:
                 return Direction.DOWN;
             case LEFT:
-                return side.rotateYCCW();
+                return side.getCounterClockWise();
             case RIGHT:
-                return side.rotateY();
+                return side.getClockWise();
             case FORWARD:
                 return side;
             case BACK:
@@ -37,9 +37,9 @@ public enum Dir {
             case DOWN:
                 return hSide;
             case LEFT:
-                return hSide.rotateYCCW();
+                return hSide.getCounterClockWise();
             case RIGHT:
-                return hSide.rotateY();
+                return hSide.getClockWise();
             case FORWARD:
                 return side;
             case BACK:

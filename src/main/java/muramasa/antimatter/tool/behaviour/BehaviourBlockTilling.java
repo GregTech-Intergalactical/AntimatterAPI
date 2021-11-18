@@ -38,15 +38,15 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
 
     @Override
     public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
-        if (c.getFace() != Direction.DOWN && c.getWorld().isAirBlock(c.getPos().up())) {
-            BlockState blockstate = getToolModifiedState(c.getWorld().getBlockState(c.getPos()), c.getWorld(), c.getPos(), c.getPlayer(), c.getItem(), ToolType.HOE);
+        if (c.getClickedFace() != Direction.DOWN && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
+            BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolType.HOE);
             if (blockstate == null) return ActionResultType.PASS;
             UseHoeEvent hoeEvent = new UseHoeEvent(c);
             if (MinecraftForge.EVENT_BUS.post(hoeEvent)) return ActionResultType.PASS;
-            Utils.damageStack(c.getItem(), c.getPlayer());
-            SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.ITEM_HOE_TILL : instance.getAntimatterToolType().getUseSound();
-            c.getWorld().playSound(c.getPlayer(), c.getPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
-            if (!c.getWorld().isRemote) c.getWorld().setBlockState(c.getPos(), blockstate, 11);
+            Utils.damageStack(c.getItemInHand(), c.getPlayer());
+            SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.HOE_TILL : instance.getAntimatterToolType().getUseSound();
+            c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            if (!c.getLevel().isClientSide) c.getLevel().setBlock(c.getClickedPos(), blockstate, 11);
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.PASS;
@@ -58,7 +58,7 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
     }
 
     public static void addStrippedBlock(Block from, Block to) {
-        addStrippedState(from.getDefaultState(), to.getDefaultState());
+        addStrippedState(from.defaultBlockState(), to.defaultBlockState());
     }
 
     public static void addStrippedState(BlockState from, BlockState to) {

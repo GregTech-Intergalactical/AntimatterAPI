@@ -5,7 +5,6 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
@@ -34,9 +33,9 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
     }
 
     private static Properties getProps(StoneType type) {
-        Properties props = Block.Properties.create(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).hardnessAndResistance(type.getHardness(), type.getResistence());
+        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).strength(type.getHardness(), type.getResistence());
         if (type.doesRequireTool()) {
-            props.setRequiresTool();
+            props.requiresCorrectToolForDrops();
         }
         return props;
     }
@@ -63,14 +62,14 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
         BlockModelBuilder side_tall = prov.models().getBuilder(getId() + "_side_tall").parent(prov.existing("minecraft", "block/template_wall_side_tall")).texture("wall", getTextures()[0]);
         prov.getMultipartBuilder(block)
                 .part().modelFile(post).addModel().condition(UP, true).end()
-                .part().modelFile(side).uvLock(true).addModel().condition(WALL_HEIGHT_NORTH, LOW).end()
-                .part().modelFile(side).rotationY(90).uvLock(true).addModel().condition(WALL_HEIGHT_EAST, LOW).end()
-                .part().modelFile(side).rotationY(180).uvLock(true).addModel().condition(WALL_HEIGHT_SOUTH, LOW).end()
-                .part().modelFile(side).rotationY(270).uvLock(true).addModel().condition(WALL_HEIGHT_WEST, LOW).end()
-                .part().modelFile(side_tall).uvLock(true).addModel().condition(WALL_HEIGHT_NORTH, TALL).end()
-                .part().modelFile(side_tall).rotationY(90).uvLock(true).addModel().condition(WALL_HEIGHT_EAST, TALL).end()
-                .part().modelFile(side_tall).rotationY(180).uvLock(true).addModel().condition(WALL_HEIGHT_SOUTH, TALL).end()
-                .part().modelFile(side_tall).rotationY(270).uvLock(true).addModel().condition(WALL_HEIGHT_WEST, TALL).end();
+                .part().modelFile(side).uvLock(true).addModel().condition(NORTH_WALL, LOW).end()
+                .part().modelFile(side).rotationY(90).uvLock(true).addModel().condition(EAST_WALL, LOW).end()
+                .part().modelFile(side).rotationY(180).uvLock(true).addModel().condition(SOUTH_WALL, LOW).end()
+                .part().modelFile(side).rotationY(270).uvLock(true).addModel().condition(WEST_WALL, LOW).end()
+                .part().modelFile(side_tall).uvLock(true).addModel().condition(NORTH_WALL, TALL).end()
+                .part().modelFile(side_tall).rotationY(90).uvLock(true).addModel().condition(EAST_WALL, TALL).end()
+                .part().modelFile(side_tall).rotationY(180).uvLock(true).addModel().condition(SOUTH_WALL, TALL).end()
+                .part().modelFile(side_tall).rotationY(270).uvLock(true).addModel().condition(WEST_WALL, TALL).end();
 
     }
 }

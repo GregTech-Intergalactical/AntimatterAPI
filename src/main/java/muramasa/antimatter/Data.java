@@ -57,19 +57,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.material.Element.Au;
-import static muramasa.antimatter.material.Element.Cu;
-import static muramasa.antimatter.material.Element.Fe;
+import static muramasa.antimatter.material.Element.*;
+import static muramasa.antimatter.material.TextureSet.DIAMOND;
 import static muramasa.antimatter.material.TextureSet.*;
-import static net.minecraft.block.material.Material.*;
 import static net.minecraft.block.material.Material.WOOD;
-import static net.minecraft.item.ItemTier.GOLD;
-import static net.minecraft.item.ItemTier.IRON;
-import static net.minecraft.item.ItemTier.NETHERITE;
+import static net.minecraft.block.material.Material.*;
+import static net.minecraft.item.ItemTier.*;
 
 public class Data {
 
-    public static final net.minecraft.block.material.Material WRENCH_MATERIAL = new net.minecraft.block.material.Material(MaterialColor.IRON, false, true, true, true, false, false, PushReaction.NORMAL);
+    public static final net.minecraft.block.material.Material WRENCH_MATERIAL = new net.minecraft.block.material.Material(MaterialColor.METAL, false, true, true, true, false, false, PushReaction.NORMAL);
 
     //CELLS
     public final static Set<ItemFluidCell> EMPTY_CELLS = new HashSet<>();
@@ -130,7 +127,7 @@ public class Data {
     public static MaterialType<?> TOOLS = new MaterialType<>("tools", 1, false, -1).nonGen();
     public static MaterialType<?> ARMOR = new MaterialType<>("armor", 1, false, -1).nonGen();
 
-    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.FORTUNE, 3)).addHandleStat(0, 0.0F));
+    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)).addHandleStat(0, 0.0F));
 
     //Vanilla Stone Materials
     public static Material Stone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F));
@@ -156,7 +153,7 @@ public class Data {
     public static StoneType DIORITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DIORITE));
     public static StoneType ANDESITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.ANDESITE));
 
-    public static StoneType GRAVEL = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "gravel", Gravel, new Texture("minecraft", "block/gravel"), SoundType.GROUND, false).setState(Blocks.GRAVEL).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.6F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
+    public static StoneType GRAVEL = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "gravel", Gravel, new Texture("minecraft", "block/gravel"), SoundType.GRAVEL, false).setState(Blocks.GRAVEL).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.6F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
     public static StoneType SAND = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "sand", Sand, new Texture("minecraft", "block/sand"), SoundType.SAND, false).setState(Blocks.SAND).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
     public static StoneType SAND_RED = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "sand_red", RedSand, new Texture("minecraft", "block/red_sand"), SoundType.SAND, false).setState(Blocks.RED_SAND).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
     public static StoneType SANDSTONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "sandstone", Sandstone, new Texture("minecraft", "block/sandstone"), SoundType.STONE, false).setState(Blocks.SANDSTONE));
@@ -174,45 +171,45 @@ public class Data {
         ROCK.set((m, s) -> {
             if (m == null || s == null || !ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ROCK, m, s);
             BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + Utils.getConventionalStoneType(s), m.materialDomain());
-            return new MaterialTypeBlock.Container(rock != null ? rock.getDefaultState() : Blocks.AIR.getDefaultState());
+            return new MaterialTypeBlock.Container(rock != null ? rock.defaultBlockState() : Blocks.AIR.defaultBlockState());
         });
         ORE.set((m, s) -> {
             if (m != null) {
                 Item item = AntimatterAPI.getReplacement(ORE, m);
                 if (item instanceof BlockItem) {
-                    return new MaterialTypeBlock.Container(((BlockItem) item).getBlock().getDefaultState());
+                    return new MaterialTypeBlock.Container(((BlockItem) item).getBlock().defaultBlockState());
                 }
             }
             if (m == null || s == null || !ORE.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ORE, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, ORE.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
-            return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
+            return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
         }).blockType();
         ORE_SMALL.set((m, s) -> {
             if (m == null || s == null || !ORE_SMALL.allowGen(m))
                 return MaterialTypeBlock.getEmptyBlockAndLog(ORE_SMALL, m, s);
             BlockOre block = AntimatterAPI.get(BlockOre.class, ORE_SMALL.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
-            return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
+            return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
         }).blockType();
         ORE_STONE.set(m -> {
             if (m == null || !ORE_STONE.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ORE_STONE, m);
             BlockOreStone block = AntimatterAPI.get(BlockOreStone.class, ORE_STONE.getId() + "_" + m.getId());
-            return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
+            return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
         }).blockType();
         BLOCK.set(m -> {
             if (m != null) {
                 Item item = AntimatterAPI.getReplacement(BLOCK, m);
                 if (item instanceof BlockItem) {
-                    return new MaterialTypeBlock.Container(((BlockItem) item).getBlock().getDefaultState());
+                    return new MaterialTypeBlock.Container(((BlockItem) item).getBlock().defaultBlockState());
                 }
             }
             if (m == null || !BLOCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(BLOCK, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, BLOCK.getId() + "_" + m.getId());
-            return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
+            return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
         }).blockType();
         FRAME.set(m -> {
             if (m == null || !FRAME.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(FRAME, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, FRAME.getId() + "_" + m.getId());
-            return new MaterialTypeBlock.Container(block != null ? block.getDefaultState() : Blocks.AIR.getDefaultState());
+            return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
         }).blockType();
 
         LIQUID.set((m, i) -> {
@@ -240,27 +237,27 @@ public class Data {
     public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(TextFormatting.AQUA + "" + TextFormatting.ITALIC + "Development Item");
 
     public static final AntimatterToolType SWORD = new AntimatterToolType(Ref.ID, "sword", 2, 1, 10, 3.0F, -2.4F).setToolClass(MaterialSword.class).addEffectiveBlocks(Blocks.COBWEB).setHasContainer(false);
-    public static final AntimatterToolType PICKAXE = new AntimatterToolType(Ref.ID, "pickaxe", 1, 2, 10, 1.0F, -2.8F).addEffectiveMaterials(PACKED_ICE, net.minecraft.block.material.Material.IRON, net.minecraft.block.material.Material.ROCK, ANVIL, PISTON).setHasContainer(false);
-    public static final AntimatterToolType SHOVEL = new AntimatterToolType(Ref.ID, "shovel", 1, 2, 10, 1.5F, -3.0F).addEffectiveMaterials(CLAY, net.minecraft.block.material.Material.SAND, SNOW, SNOW_BLOCK, EARTH).setHasContainer(false);
-    public static final AntimatterToolType AXE = new AntimatterToolType(Ref.ID, "axe", 1, 1, 10, 6.0F, -3.0F).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO).setHasContainer(false);
+    public static final AntimatterToolType PICKAXE = new AntimatterToolType(Ref.ID, "pickaxe", 1, 2, 10, 1.0F, -2.8F).addEffectiveMaterials(ICE_SOLID, net.minecraft.block.material.Material.METAL, net.minecraft.block.material.Material.STONE, HEAVY_METAL, PISTON).setHasContainer(false);
+    public static final AntimatterToolType SHOVEL = new AntimatterToolType(Ref.ID, "shovel", 1, 2, 10, 1.5F, -3.0F).addEffectiveMaterials(CLAY, net.minecraft.block.material.Material.SAND, TOP_SNOW, SNOW, DIRT).setHasContainer(false);
+    public static final AntimatterToolType AXE = new AntimatterToolType(Ref.ID, "axe", 1, 1, 10, 6.0F, -3.0F).addEffectiveMaterials(WOOD, PLANT, REPLACEABLE_PLANT, BAMBOO).setHasContainer(false);
     public static final AntimatterToolType HOE = new AntimatterToolType(Ref.ID, "hoe", 1, 2, 10, -2.0F, -1.0F).setHasContainer(false);
-    public static final AntimatterToolType HAMMER = new AntimatterToolType(Ref.ID, "hammer", 1, 2, 2, 3.0F, -3.0F).addToolTypes("pickaxe").addEffectiveMaterials(net.minecraft.block.material.Material.IRON, net.minecraft.block.material.Material.ROCK).setUseSound(SoundEvents.BLOCK_ANVIL_PLACE).setRepairability(false);
+    public static final AntimatterToolType HAMMER = new AntimatterToolType(Ref.ID, "hammer", 1, 2, 2, 3.0F, -3.0F).addToolTypes("pickaxe").addEffectiveMaterials(net.minecraft.block.material.Material.METAL, net.minecraft.block.material.Material.STONE).setUseSound(SoundEvents.ANVIL_PLACE).setRepairability(false);
     public static final AntimatterToolType WRENCH = new AntimatterToolType(Ref.ID, "wrench", 2, 2, 2, 1.5F, -2.8F).setUseSound(Ref.WRENCH).setOverlayLayers(0).setRepairability(false);
     public static final AntimatterToolType SAW = new AntimatterToolType(Ref.ID, "saw", 2, 2, 2, 2.0F, -2.8F).addEffectiveBlocks(Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE).setRepairability(false);
     public static final AntimatterToolType FILE = new AntimatterToolType(Ref.ID, "file", 2, 2, 2, -2.0F, -2.4F).setRepairability(false);
-    public static final AntimatterToolType CROWBAR = new AntimatterToolType(Ref.ID, "crowbar", 2, 10, 5, 1.0F, -2.0F).setUseSound(SoundEvents.ENTITY_ITEM_BREAK).setSecondaryRequirement(MaterialTag.RUBBERTOOLS).setRepairability(false);
-    public static final AntimatterToolType DRILL = new AntimatterToolType(Ref.ID, "drill", 2, 2, 10, 3.0F, -3.0F).setPowered(100000, 1, 2, 3).setUseSound(Ref.DRILL).addToolTypes("pickaxe", "shovel").addEffectiveMaterials(PACKED_ICE, net.minecraft.block.material.Material.IRON, net.minecraft.block.material.Material.ROCK, ANVIL, PISTON, EARTH, CLAY, net.minecraft.block.material.Material.SAND).setRepairability(false);
+    public static final AntimatterToolType CROWBAR = new AntimatterToolType(Ref.ID, "crowbar", 2, 10, 5, 1.0F, -2.0F).setUseSound(SoundEvents.ITEM_BREAK).setSecondaryRequirement(MaterialTag.RUBBERTOOLS).setRepairability(false);
+    public static final AntimatterToolType DRILL = new AntimatterToolType(Ref.ID, "drill", 2, 2, 10, 3.0F, -3.0F).setPowered(100000, 1, 2, 3).setUseSound(Ref.DRILL).addToolTypes("pickaxe", "shovel").addEffectiveMaterials(ICE_SOLID, net.minecraft.block.material.Material.METAL, net.minecraft.block.material.Material.STONE, HEAVY_METAL, PISTON, DIRT, CLAY, net.minecraft.block.material.Material.SAND).setRepairability(false);
     public static final AntimatterToolType SOFT_HAMMER = new AntimatterToolType(Ref.ID, "soft_hammer", 2, 2, 2, 1.0F, -3.0F).setRepairability(false);//.setUseSound();
     public static final AntimatterToolType SCREWDRIVER = new AntimatterToolType(Ref.ID, "screwdriver", 2, 2, 2, 0.0F, -1.0F).setUseSound(Ref.WRENCH).setRepairability(false);
-    public static final AntimatterToolType MORTAR = new AntimatterToolType(Ref.ID, "mortar", 5, 5, 2, -2.0F, 0.0F).setUseSound(SoundEvents.BLOCK_GRINDSTONE_USE).setBlockBreakability(false).setRepairability(false);
-    public static final AntimatterToolType WIRE_CUTTER = new AntimatterToolType(Ref.ID, "wire_cutter", 5, 3, 2, 0.0F, -1.5F).setUseSound(SoundEvents.ENTITY_SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CARPET).setRepairability(false);
+    public static final AntimatterToolType MORTAR = new AntimatterToolType(Ref.ID, "mortar", 5, 5, 2, -2.0F, 0.0F).setUseSound(SoundEvents.GRINDSTONE_USE).setBlockBreakability(false).setRepairability(false);
+    public static final AntimatterToolType WIRE_CUTTER = new AntimatterToolType(Ref.ID, "wire_cutter", 5, 3, 2, 0.0F, -1.5F).setUseSound(SoundEvents.SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CLOTH_DECORATION).setRepairability(false);
     public static final AntimatterToolType BRANCH_CUTTER = new AntimatterToolType(Ref.ID, "branch_cutter", 1, 3, 2, 0.0F, -1.5F).addToolTypes("grafter").addEffectiveMaterials(LEAVES).setHasContainer(false);
     public static final AntimatterToolType KNIFE = new AntimatterToolType(Ref.ID, "knife", 2, 2, 5, 2.1F, -2.0F).setToolClass(MaterialSword.class).addEffectiveBlocks(Blocks.COBWEB).setRepairability(false);
-    public static final AntimatterToolType PLUNGER = new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F).setUseSound(SoundEvents.ITEM_BUCKET_EMPTY).setPrimaryRequirement(MaterialTag.RUBBERTOOLS).setRepairability(false);
-    public static final AntimatterToolType CHAINSAW = new AntimatterToolType(Ref.ID, "chainsaw", 2, 1, 5, 3.0F, -2.0F).setPowered(100000, 1, 2, 3).addEffectiveMaterials(WOOD, PLANTS, TALL_PLANTS, BAMBOO, LEAVES).addToolTypes("axe", "saw");
+    public static final AntimatterToolType PLUNGER = new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F).setUseSound(SoundEvents.BUCKET_EMPTY).setPrimaryRequirement(MaterialTag.RUBBERTOOLS).setRepairability(false);
+    public static final AntimatterToolType CHAINSAW = new AntimatterToolType(Ref.ID, "chainsaw", 2, 1, 5, 3.0F, -2.0F).setPowered(100000, 1, 2, 3).addEffectiveMaterials(WOOD, PLANT, REPLACEABLE_PLANT, BAMBOO, LEAVES).addToolTypes("axe", "saw");
     public static final AntimatterToolType ELECTRIC_WRENCH = new AntimatterToolType(Ref.ID, "electric_wrench", WRENCH).setTag(WRENCH).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).addToolTypes("wrench");
     public static final AntimatterToolType ELECTRIC_SCREWDRIVER = new AntimatterToolType(Ref.ID, "electric_screwdriver", SCREWDRIVER).setTag(SCREWDRIVER).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).setOverlayLayers(2);
-    public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseSound(Ref.DRILL).addEffectiveMaterials(net.minecraft.block.material.Material.ROCK, EARTH, net.minecraft.block.material.Material.SAND, ORGANIC);
+    public static final AntimatterToolType JACKHAMMER = new AntimatterToolType(Ref.ID, "jackhammer", 2, 2, 10, 1.0F, -3.2F).setPowered(100000, 1, 2, 3).setUseSound(Ref.DRILL).addEffectiveMaterials(net.minecraft.block.material.Material.STONE, DIRT, net.minecraft.block.material.Material.SAND, GRASS);
     public static final AntimatterToolType BUZZSAW = new AntimatterToolType(Ref.ID, "buzzsaw", 2, 2, 2, 0.5F, -2.7F).setTag(SAW).setPowered(100000, 1, 2, 3).setOverlayLayers(2).addToolTypes("saw");
     public static final AntimatterArmorType HELMET = new AntimatterArmorType(Ref.ID, "helmet", 40, 2, 0.0F, 0.0F, EquipmentSlotType.HEAD);
     public static final AntimatterArmorType CHESTPLATE = new AntimatterArmorType(Ref.ID, "chestplate", 40, 6, 0.0F, 0.0F, EquipmentSlotType.CHEST);
@@ -270,29 +267,29 @@ public class Data {
     //public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
 
     //Vanilla Metal/Gem Materials
-    public static Material Iron = AntimatterAPI.register(Material.class, new Material(Ref.ID, "iron", 0xc8c8c8, METALLIC, Fe)).asMetal(1811, 0).asOre(1, 5, true).asPlasma().addTools(IRON.getAttackDamage(), IRON.getEfficiency(), 256, IRON.getHarvestLevel(), of(Enchantments.SHARPNESS, 1));
-    public static Material Gold = AntimatterAPI.register(Material.class, new Material(Ref.ID, "gold", 0xffe650, SHINY, Au)).asMetal(1337, 0).asOre(1, 5, true).addTools(GOLD.getAttackDamage(), GOLD.getEfficiency(), GOLD.getMaxUses(), GOLD.getHarvestLevel()).harvestLevel(2);
+    public static Material Iron = AntimatterAPI.register(Material.class, new Material(Ref.ID, "iron", 0xc8c8c8, METALLIC, Fe)).asMetal(1811, 0).asOre(1, 5, true).asPlasma().addTools(IRON.getAttackDamageBonus(), IRON.getSpeed(), 256, IRON.getLevel(), of(Enchantments.SHARPNESS, 1));
+    public static Material Gold = AntimatterAPI.register(Material.class, new Material(Ref.ID, "gold", 0xffe650, SHINY, Au)).asMetal(1337, 0).asOre(1, 5, true).addTools(GOLD.getAttackDamageBonus(), GOLD.getSpeed(), GOLD.getUses(), GOLD.getLevel()).harvestLevel(2);
     //cause 1.18
     public static Material Copper = AntimatterAPI.register(Material.class, new Material(Ref.ID, "copper", 0xff6400, SHINY, Cu)).asMetal(1357, 0).asOre(1, 5, true);
 
     public static Material Glowstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "glowstone", 0xffff00, SHINY)).asDust();
     public static Material Sugar = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sugar", 0xfafafa, DULL)).asDust();
     public static Material Bone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "bone", 0xb3b3b3, DULL)).addHandleStat(12, 0.0F);
-    public static Material Wood = AntimatterAPI.register(Material.class, new Material(Ref.ID, "wood", 0x643200, TextureSet.WOOD)).asDust(PLATE).addTools(ItemTier.WOOD.getAttackDamage(), ItemTier.WOOD.getEfficiency(), 16, ItemTier.WOOD.getHarvestLevel(), of(), SOFT_HAMMER).addHandleStat(12, 0.0F);
+    public static Material Wood = AntimatterAPI.register(Material.class, new Material(Ref.ID, "wood", 0x643200, TextureSet.WOOD)).asDust(PLATE).addTools(ItemTier.WOOD.getAttackDamageBonus(), ItemTier.WOOD.getSpeed(), 16, ItemTier.WOOD.getLevel(), of(), SOFT_HAMMER).addHandleStat(12, 0.0F);
     public static Material Blaze = AntimatterAPI.register(Material.class, new Material(Ref.ID, "blaze", 0xffc800, NONE)).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
     public static Material Flint = AntimatterAPI.register(Material.class, new Material(Ref.ID, "flint", 0x002040, FLINT)).asDust(GEM, MaterialTag.FLINT).addTools(1.25F, 2.5F, 128, 1, of(Enchantments.FIRE_ASPECT, 1), PICKAXE, AXE, SHOVEL, SWORD, HOE, MORTAR, KNIFE);
 
     public static Material Charcoal = AntimatterAPI.register(Material.class, new Material(Ref.ID, "charcoal", 0x644646, LIGNITE)).asDust(BLOCK);
     public static Material Coal = AntimatterAPI.register(Material.class, new Material(Ref.ID, "coal", 0x464646, LIGNITE)).asGemBasic(false).asOre(0, 2, true, ORE_STONE);
-    public static Material Diamond = AntimatterAPI.register(Material.class, new Material(Ref.ID, "diamond", /*0x3de0e5*/0xc8ffff, DIAMOND)).asGemBasic(false).asOre(3, 7, true).addTools(ItemTier.DIAMOND.getAttackDamage(), ItemTier.DIAMOND.getEfficiency(), ItemTier.DIAMOND.getMaxUses(), ItemTier.DIAMOND.getHarvestLevel());
+    public static Material Diamond = AntimatterAPI.register(Material.class, new Material(Ref.ID, "diamond", /*0x3de0e5*/0xc8ffff, DIAMOND)).asGemBasic(false).asOre(3, 7, true).addTools(ItemTier.DIAMOND.getAttackDamageBonus(), ItemTier.DIAMOND.getSpeed(), ItemTier.DIAMOND.getUses(), ItemTier.DIAMOND.getLevel());
     public static Material Emerald = AntimatterAPI.register(Material.class, new Material(Ref.ID, "emerald", 0x50ff50, GEM_V)).asGemBasic(false).asOre(3, 7, true).harvestLevel(2);
     public static Material EnderPearl = AntimatterAPI.register(Material.class, new Material(Ref.ID, "enderpearl", 0x6cdcc8, SHINY)).asGemBasic(false);
     public static Material EnderEye = AntimatterAPI.register(Material.class, new Material(Ref.ID, "endereye", 0xa0fae6, SHINY)).asGemBasic(false);
     public static Material Lapis = AntimatterAPI.register(Material.class, new Material(Ref.ID, "lapis", 0x4646dc, LAPIS)).asGemBasic(false).asOre(2, 5, true).harvestLevel(1);
     public static Material Redstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "redstone", 0xc80000, REDSTONE)).asDust().asOre(1, 5, true).harvestLevel(2);
     public static Material Quartz = AntimatterAPI.register(Material.class, new Material(Ref.ID, "quartz", 0xe6d2d2, NONE)).asDust();
-    public static Material Netherite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherite", 0x504650, DULL)).asMetal(2246, 1300).addTools(3.0F, 10, 500, NETHERITE.getHarvestLevel(), of(Enchantments.FIRE_ASPECT, 3)).addArmor(new int[]{0, 1, 1, 0}, 0.5F, 0.1F, 20);
-    public static Material NetherizedDiamond = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherized_diamond", 0x5a505a, DIAMOND)).asGemBasic(false).addTools(4.0F, 12, NETHERITE.getMaxUses(), NETHERITE.getHarvestLevel(), of(Enchantments.FIRE_ASPECT, 3, Enchantments.SHARPNESS, 4)).addArmor(new int[]{1, 1, 2, 1}, 3.0F, 0.1F, 37, of(Enchantments.PROTECTION, 4));
+    public static Material Netherite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherite", 0x504650, DULL)).asMetal(2246, 1300).addTools(3.0F, 10, 500, NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3)).addArmor(new int[]{0, 1, 1, 0}, 0.5F, 0.1F, 20);
+    public static Material NetherizedDiamond = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherized_diamond", 0x5a505a, DIAMOND)).asGemBasic(false).addTools(4.0F, 12, NETHERITE.getUses(), NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3, Enchantments.SHARPNESS, 4)).addArmor(new int[]{1, 1, 2, 1}, 3.0F, 0.1F, 37, of(Enchantments.ALL_DAMAGE_PROTECTION, 4));
     public static Material NetheriteScrap = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherite_scrap", 0x6e505a, ROUGH)).asDust(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, RAW_ORE, DUST_IMPURE, DUST_PURE);
 
     public static Material Lava = AntimatterAPI.register(Material.class, new Material(Ref.ID, "lava", 0xff4000, NONE)).asFluid(0, 1300);
@@ -304,7 +301,7 @@ public class Data {
     public static CoverFactory COVERDYNAMO = CoverFactory.builder(CoverDynamo::new).addTextures(new Texture(Ref.ID, "block/cover/dynamo")).build(Ref.ID, "dynamo");
     public static CoverFactory COVERENERGY = CoverFactory.builder(CoverEnergy::new).addTextures(new Texture(Ref.ID, "block/cover/energy")).build(Ref.ID, "energy");
 
-    public static BlockProxy PROXY_INSTANCE = new BlockProxy(Ref.ID, "proxy", AbstractBlock.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 1.0f).notSolid());
+    public static BlockProxy PROXY_INSTANCE = new BlockProxy(Ref.ID, "proxy", AbstractBlock.Properties.of(net.minecraft.block.material.Material.STONE).strength(1.0f, 1.0f).noOcclusion());
 
 
     public static MenuHandlerMachine<? extends TileEntityMachine, ? extends ContainerBasicMachine> BASIC_MENU_HANDLER = new MenuHandlerMachine(Ref.ID, "container_basic") {
@@ -404,10 +401,10 @@ public class Data {
     }
 
     private static void clientInit() {
-        WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.defaultBlockState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
         SCREWDRIVER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
-        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
-        WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && b.getHarvestTool(b.getDefaultState()) == WIRE_CUTTER.getToolType(), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.getHarvestTool(b.defaultBlockState()) == WRENCH.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && b.getHarvestTool(b.defaultBlockState()) == WIRE_CUTTER.getToolType(), BehaviourExtendedHighlight.PIPE_FUNCTION));
         CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
 
         MaterialType.buildTooltips();

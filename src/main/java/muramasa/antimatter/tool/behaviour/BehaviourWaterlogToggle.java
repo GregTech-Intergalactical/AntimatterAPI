@@ -21,12 +21,12 @@ public class BehaviourWaterlogToggle implements IItemUse<IAntimatterTool> {
 
     @Override
     public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
-        BlockState state = c.getWorld().getBlockState(c.getPos());
+        BlockState state = c.getLevel().getBlockState(c.getClickedPos());
         if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
-            if (state.get(BlockStateProperties.WATERLOGGED)) {
-                c.getWorld().setBlockState(c.getPos(), state.with(BlockStateProperties.WATERLOGGED, false), 11);
-                c.getWorld().playSound(c.getPlayer(), c.getPos(), SoundEvents.ITEM_BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                Utils.damageStack(c.getItem(), c.getPlayer());
+            if (state.getValue(BlockStateProperties.WATERLOGGED)) {
+                c.getLevel().setBlock(c.getClickedPos(), state.setValue(BlockStateProperties.WATERLOGGED, false), 11);
+                c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                Utils.damageStack(c.getItemInHand(), c.getPlayer());
                 return ActionResultType.SUCCESS;
             }
         }

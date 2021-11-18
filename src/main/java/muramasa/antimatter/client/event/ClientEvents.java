@@ -11,7 +11,6 @@ import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
-import muramasa.antimatter.integration.jei.category.MultiMachineInfoPage;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -64,8 +63,8 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onBlockHighlight(DrawHighlightEvent.HighlightBlock event) throws IllegalAccessException {
         PlayerEntity player = MC.player;
-        World world = player.getEntityWorld();
-        ItemStack stack = player.getHeldItemMainhand();
+        World world = player.getCommandSenderWorld();
+        ItemStack stack = player.getMainHandItem();
         if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover)))
             return;
         if (stack.getItem() instanceof IHaveCover) {
@@ -80,45 +79,45 @@ public class ClientEvents {
             return;
         //Perform highlight of wrench
         ActionResultType res = item.onGenericHighlight(player, event);
-        if (res.isSuccess()) {
+        if (res.shouldSwing()) {
             return;
         }
         IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
         if (!(behaviour instanceof BehaviourAOEBreak)) return;
         BehaviourAOEBreak aoeBreakBehaviour = (BehaviourAOEBreak) behaviour;
 
-        BlockPos currentPos = event.getTarget().getPos();
+        BlockPos currentPos = event.getTarget().getBlockPos();
         BlockState state = world.getBlockState(currentPos);
         if (state.isAir(world, currentPos) || !Utils.isToolEffective(item, state)) return;
-        Vector3d viewPosition = event.getInfo().getProjectedView();
-        Entity entity = event.getInfo().getRenderViewEntity();
+        Vector3d viewPosition = event.getInfo().getPosition();
+        Entity entity = event.getInfo().getEntity();
         IVertexBuilder builderLines = event.getBuffers().getBuffer(RenderType.LINES);
         MatrixStack matrix = event.getMatrix();
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
         ImmutableSet<BlockPos> positions = Utils.getHarvestableBlocksToBreak(world, player, item, aoeBreakBehaviour.getColumn(), aoeBreakBehaviour.getRow(), aoeBreakBehaviour.getDepth());
         for (BlockPos nextPos : positions) {
             double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
-            VoxelShape shape = world.getBlockState(nextPos).getShape(world, nextPos, ISelectionContext.forEntity(entity));
-            Matrix4f matrix4f = matrix.getLast().getMatrix();
-            matrix.push();
-            shape.forEachEdge((minX, minY, minZ, maxX, maxY, maxZ) -> {
-                builderLines.pos(matrix4f, (float) (minX + modX), (float) (minY + modY), (float) (minZ + modZ)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-                builderLines.pos(matrix4f, (float) (maxX + modX), (float) (maxY + modY), (float) (maxZ + modZ)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+            VoxelShape shape = world.getBlockState(nextPos).getShape(world, nextPos, ISelectionContext.of(entity));
+            Matrix4f matrix4f = matrix.last().pose();
+            matrix.pushPose();
+            shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
+                builderLines.vertex(matrix4f, (float) (minX + modX), (float) (minY + modY), (float) (minZ + modZ)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
+                builderLines.vertex(matrix4f, (float) (maxX + modX), (float) (maxY + modY), (float) (maxZ + modZ)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
             });
-            matrix.pop();
+            matrix.popPose();
         }
-        if (MC.playerController.getIsHittingBlock()) {
+        if (MC.gameMode.isDestroying()) {
             for (BlockPos nextPos : positions) {
                 double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
-                int partialDamage = (int) (ObfuscationReflectionHelper.findField(PlayerController.class, "field_78770_f").getFloat(MC.playerController) * 10) - 1; // field_78770_f = curBlockDamageMP
-                matrix.push();
+                int partialDamage = (int) (ObfuscationReflectionHelper.findField(PlayerController.class, "destroyProgress").getFloat(MC.gameMode) * 10) - 1; // destroyProgress = curBlockDamageMP
+                matrix.pushPose();
                 matrix.translate(modX, modY, modZ);
                 if (partialDamage == -1)
                     return; // Not sure why this happens, but it certainly is an edge-case, if we made it so it returns 0 every time it hit -1, the animation will have a delay
-                IVertexBuilder builderBreak = new MatrixApplyingVertexBuilder(event.getBuffers().getBuffer(ModelBakery.DESTROY_RENDER_TYPES.get(partialDamage)), matrix.getLast().getMatrix(), matrix.getLast().getNormal());
-                MC.getBlockRendererDispatcher().renderBlockDamage(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak);
+                IVertexBuilder builderBreak = new MatrixApplyingVertexBuilder(event.getBuffers().getBuffer(ModelBakery.DESTROY_TYPES.get(partialDamage)), matrix.last().pose(), matrix.last().normal());
+                MC.getBlockRenderer().renderBreakingTexture(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak);
                 // MC.getBlockRendererDispatcher().renderModel(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak, ModelDataManager.getModelData(world, nextPos));
-                matrix.pop();
+                matrix.popPose();
             }
         }
     }
@@ -128,11 +127,11 @@ public class ClientEvents {
     public static void onPlayerTick(TickEvent.PlayerTickEvent e) {
         if (e.phase == TickEvent.Phase.END) {
             PlayerEntity player = e.player;
-            if (player == null || player.getHeldItemMainhand().isEmpty()) return;
-            ItemStack stack = player.getHeldItemMainhand();
+            if (player == null || player.getMainHandItem().isEmpty()) return;
+            ItemStack stack = player.getMainHandItem();
             if (!(stack.getItem() instanceof IAntimatterTool)) return;
             IAntimatterTool item = (IAntimatterTool) stack.getItem();
-            if (item.getAntimatterToolType().getUseAction() != UseAction.NONE && player.isSwingInProgress) {
+            if (item.getAntimatterToolType().getUseAction() != UseAction.NONE && player.swinging) {
                 item.getItem().onUsingTick(stack, player, stack.getCount());
                 //player.swingProgress = player.prevSwingProgress;
             }
@@ -141,18 +140,18 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
-        if (!MC.gameSettings.showDebugInfo || MC.objectMouseOver == null || MC.objectMouseOver.getType() != RayTraceResult.Type.BLOCK)
+        if (!MC.options.renderDebug || MC.hitResult == null || MC.hitResult.getType() != RayTraceResult.Type.BLOCK)
             return;
-        World world = Minecraft.getInstance().world;
+        World world = Minecraft.getInstance().level;
         if (world == null) return;
-        BlockPos pos = new BlockPos(MC.objectMouseOver.getHitVec());
+        BlockPos pos = new BlockPos(MC.hitResult.getLocation());
         BlockState state = world.getBlockState(pos);
         if (state.getBlock() instanceof IInfoProvider) {
             e.getLeft().add("");
             e.getLeft().add(TextFormatting.AQUA + "[Antimatter Debug Server]");
             e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ObjectArrayList<>(), world, state, pos));
         }
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEntityBase) {
             e.getLeft().addAll(((TileEntityBase) tile).getInfo());
         }
@@ -166,12 +165,12 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent e) {
         if (e.getFlags().isAdvanced() && Ref.SHOW_ITEM_TAGS) {
-            Collection<ResourceLocation> tags = ItemTags.getCollection().getOwningTags(e.getItemStack().getItem());
+            Collection<ResourceLocation> tags = ItemTags.getAllTags().getMatchingTags(e.getItemStack().getItem());
             if (!tags.isEmpty()) {
                 List<ITextComponent> list = e.getToolTip();
-                list.add(new StringTextComponent("Tags:").mergeStyle(TextFormatting.DARK_GRAY));
+                list.add(new StringTextComponent("Tags:").withStyle(TextFormatting.DARK_GRAY));
                 for (ResourceLocation loc : tags) {
-                    list.add(new StringTextComponent(loc.toString()).mergeStyle(TextFormatting.DARK_GRAY));
+                    list.add(new StringTextComponent(loc.toString()).withStyle(TextFormatting.DARK_GRAY));
                 }
             }
         }

@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability.fluid;
 
-import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 

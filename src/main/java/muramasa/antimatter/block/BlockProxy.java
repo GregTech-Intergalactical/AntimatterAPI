@@ -51,7 +51,7 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
 
     @Override
     public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
-        TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getTileEntity(pos);
+        TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getBlockEntity(pos);
         return tile != null && tile.getState() != null ? tile.getState().getBlock().asItem().getDefaultInstance() : ItemStack.EMPTY;
     }
 
@@ -66,16 +66,16 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
     }
 
     @Override
-    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        super.onReplaced(state, worldIn, pos, newState, isMoving);
+    public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        super.onRemove(state, worldIn, pos, newState, isMoving);
     }
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
-        TileEntity tileentity = builder.get(LootParameters.BLOCK_ENTITY);
+        TileEntity tileentity = builder.getOptionalParameter(LootParameters.BLOCK_ENTITY);
         if (tileentity instanceof TileEntityFakeBlock) {
             TileEntityFakeBlock fake = (TileEntityFakeBlock) tileentity;
-            ForgeRegistries.ITEMS.getValues().parallelStream().filter(t -> t.canHarvestBlock(fake.getState())).findFirst().ifPresent(item -> {
+            ForgeRegistries.ITEMS.getValues().parallelStream().filter(t -> t.isCorrectToolForDrops(fake.getState())).findFirst().ifPresent(item -> {
                 builder.withParameter(LootParameters.TOOL, new ItemStack(item));
             });
             return fake.getState().getDrops(builder);

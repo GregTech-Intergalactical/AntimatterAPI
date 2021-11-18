@@ -104,10 +104,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         if (!hasGui())
             return false;
         NetworkHooks.openGui((ServerPlayerEntity) player, this, packetBuffer -> {
-            packetBuffer.writeBlockPos(this.source().getTile().getPos());
-            packetBuffer.writeInt(side.getIndex());
+            packetBuffer.writeBlockPos(this.source().getTile().getBlockPos());
+            packetBuffer.writeInt(side.get3DDataValue());
         });
-        player.playSound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 2.0f);
+        player.playNotifySound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 2.0f);
         return true;
     }
 

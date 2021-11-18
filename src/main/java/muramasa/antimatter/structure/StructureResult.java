@@ -60,7 +60,7 @@ public class StructureResult {
             if (existing == null) components.put(elementId, Lists.newArrayList(component));
             else existing.add(component);
         }
-        positions.add(component.getTile().getPos().toLong());
+        positions.add(component.getTile().getBlockPos().asLong());
     }
 
     public void addState(String elementId, BlockPos pos, BlockState state) {
@@ -68,7 +68,7 @@ public class StructureResult {
             List<BlockState> existing = states.get(elementId);
             if (existing == null) states.put(elementId, Lists.newArrayList(state));
             else existing.add(state);
-            positions.add(pos.toLong());
+            positions.add(pos.asLong());
         }
     }
 
@@ -85,14 +85,14 @@ public class StructureResult {
 
     public void build(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
         for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
-            int count = StructureCache.refCount(machine.getWorld(), entry.getKey());
+            int count = StructureCache.refCount(machine.getLevel(), entry.getKey());
             entry.getValue().onBuild(machine, entry.getKey(), result, count);
         }
     }
 
     public void remove(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
         for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
-            int count = StructureCache.refCount(machine.getWorld(), entry.getKey());
+            int count = StructureCache.refCount(machine.getLevel(), entry.getKey());
             entry.getValue().onRemove(machine, entry.getKey(), result, count);
         }
     }
@@ -100,7 +100,7 @@ public class StructureResult {
     public void updateState(TileEntityBasicMultiMachine<?> machine, StructureResult result) {
         MachineState proper = machine.getMachineState().getTextureState();
         for (Map.Entry<BlockPos, StructureElement> entry : this.elementLookup.entrySet()) {
-            int count = StructureCache.refCount(machine.getWorld(), entry.getKey());
+            int count = StructureCache.refCount(machine.getLevel(), entry.getKey());
             entry.getValue().onStateChange(machine, proper, entry.getKey(), result, count);
         }
     }

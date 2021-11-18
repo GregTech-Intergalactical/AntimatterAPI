@@ -146,7 +146,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     // in the dimension. For example veins that range above and below the average height
     // will be less, and veins that are completely above the average height will be much less.
     public static void generate(ISeedReader world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ) {
-        List<WorldGenVeinLayer> veins = AntimatterWorldGenerator.all(WorldGenVeinLayer.class, world.getWorld().getDimensionKey());
+        List<WorldGenVeinLayer> veins = AntimatterWorldGenerator.all(WorldGenVeinLayer.class, world.getLevel().dimension());
         if (veins == null || veins.size() == 0)
             return;
 
@@ -180,7 +180,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                             switch (placementResult) {
                                 case ORE_PLACED:
                                     if (Ref.debugOreVein)
-                                        Antimatter.LOGGER.info("Added near oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getWorld().getDimensionKey().getLocation());
+                                        Antimatter.LOGGER.info("Added near oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getLevel().dimension().location());
                                     VALID_VEINS.put(oreVeinSeed, vein);
                                     oreVeinFound = true;
                                     break;
@@ -189,13 +189,13 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                                     break; // Should do retry in this case until out of chances
                                 case NO_OVERLAP:
                                     if (Ref.debugOreVein)
-                                        Antimatter.LOGGER.info("Added far oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getWorld().getDimensionKey().getLocation());
+                                        Antimatter.LOGGER.info("Added far oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getLevel().dimension().location());
                                     VALID_VEINS.put(oreVeinSeed, vein);
                                     oreVeinFound = true;
                                     break;
                                 case NO_OVERLAP_AIR_BLOCK:
                                     if (Ref.debugOreVein)
-                                        Antimatter.LOGGER.info("No overlap and air block in test spot=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getWorld().getDimensionKey().getLocation());
+                                        Antimatter.LOGGER.info("No overlap and air block in test spot=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getLevel().dimension().location());
                                     placementAttempts++;
                                     break; // Should do retry in this case until out of chances
                             }
@@ -206,12 +206,12 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                 // Only add an empty orevein if unable to place a vein at the oreseed chunk.
                 if (!oreVeinFound && chunkX == oreSeedX && chunkZ == oreSeedZ) {
                     if (Ref.debugOreVein)
-                        Antimatter.LOGGER.info("Empty oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getWorld().getDimensionKey().getLocation());
+                        Antimatter.LOGGER.info("Empty oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getLevel().dimension().location());
                     VALID_VEINS.put(oreVeinSeed, NO_ORES_IN_VEIN);
                 }
             } else if (oreVeinPercentageRoll >= AntimatterConfig.WORLD.ORE_VEIN_CHANCE) {
                 if (Ref.debugOreVein)
-                    Antimatter.LOGGER.info("Skipped oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + AntimatterConfig.WORLD.ORE_VEIN_CHANCE + " dimension=" + world.getWorld().getDimensionKey().getLocation());
+                    Antimatter.LOGGER.info("Skipped oreVeinSeed=" + oreVeinSeed + " chunkX=" + chunkX + " chunkZ=" + chunkZ + " oreSeedX=" + oreSeedX + " oreSeedZ=" + oreSeedZ + " RNG=" + oreVeinPercentageRoll + " %=" + AntimatterConfig.WORLD.ORE_VEIN_CHANCE + " dimension=" + world.getLevel().dimension().location());
                 VALID_VEINS.put(oreVeinSeed, NO_ORES_IN_VEIN);
             }
         } else {
@@ -238,7 +238,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     }
 
     public static long getOreVeinSeed(ISeedReader world, long oreSeedX, long oreSeedZ) {
-        return world.getSeed() << 16 ^ ((world.getWorld().getDimensionKey().getLocation().hashCode() & 0xffL) << 56 | (oreSeedX & 0x000000000fffffffL) << 28 | oreSeedZ & 0x000000000fffffffL);
+        return world.getSeed() << 16 ^ ((world.getLevel().dimension().location().hashCode() & 0xffL) << 56 | (oreSeedX & 0x000000000fffffffL) << 28 | oreSeedZ & 0x000000000fffffffL);
     }
 
     VeinLayerResult generateChunkified(ISeedReader world, XSTR rand, int posX, int posZ, int seedX, int seedZ) {
@@ -284,7 +284,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
 
         if (Ref.debugOreVein)
-            Antimatter.LOGGER.info("Trying Orevein:" + getId() + " Dimension=" + world.getWorld().getDimensionKey() + " posX=" + posX / 16 + " posZ=" + posZ / 16 + " oreseedX=" + seedX / 16 + " oreseedZ=" + seedZ / 16 + " cY=" + tMinY);
+            Antimatter.LOGGER.info("Trying Orevein:" + getId() + " Dimension=" + world.getLevel().dimension() + " posX=" + posX / 16 + " posZ=" + posZ / 16 + " oreseedX=" + seedX / 16 + " oreseedZ=" + seedZ / 16 + " cY=" + tMinY);
         //if (!generateSquare(world, rand, posX, posZ, seedX, seedZ, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
         if (!generateByFunction(world, rand, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
             return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
@@ -305,25 +305,25 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             int tX = rand.nextInt(16) + posX;
             int tZ = rand.nextInt(16) + posZ;
             int tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
-            pos.setPos(tX, tY, tZ);
+            pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], Data.ORE_SMALL);
 
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
             tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
-            pos.setPos(tX, tY, tZ);
+            pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], Data.ORE_SMALL);
 
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
             tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
-            pos.setPos(tX, tY, tZ);
+            pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE_SMALL);
 
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
             tY = rand.nextInt(190) + 10; // Y height can vary from 10 to 200 for small ores.
-            pos.setPos(tX, tY, tZ);
+            pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE_SMALL);
         }
     }
@@ -344,11 +344,11 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], Data.ORE))
                         placeCount[1]++;
                 } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                         placeCount[3]++;
                 }
@@ -366,11 +366,11 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                 for (int tZ = nZ; tZ < sZ; tZ++) {
                     int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
                     if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
-                        pos.setPos(tX, level, tZ);
+                        pos.set(tX, level, tZ);
                         if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], Data.ORE))
                             placeCount[1]++;
                     } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
-                        pos.setPos(tX, level, tZ);
+                        pos.set(tX, level, tZ);
                         if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                             placeCount[3]++;
                     }
@@ -383,15 +383,15 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE))
                         placeCount[2]++;
                 } else if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], Data.ORE))
                         placeCount[1]++;
                 } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                         placeCount[3]++;
                 }
@@ -404,11 +404,11 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE))
                         placeCount[2]++;
                 } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                         placeCount[3]++;
                 }
@@ -421,15 +421,15 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE))
                         placeCount[2]++;
                 } else if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], Data.ORE))
                         placeCount[1]++;
                 } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                         placeCount[3]++;
                 }
@@ -442,15 +442,15 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE))
                         placeCount[2]++;
                 } else if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], Data.ORE))
                         placeCount[1]++;
                 } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                         placeCount[3]++;
                 }
@@ -463,11 +463,11 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], Data.ORE))
                         placeCount[1]++;
                 } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                         placeCount[3]++;
                 }
@@ -480,11 +480,11 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             for (int tZ = nZ; tZ < sZ; tZ++) {
                 int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], Data.ORE))
                         placeCount[1]++;
                 } else if (rand.nextInt(7) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Sporadics are reduce by 1/7 to compensate
-                    pos.setPos(tX, level, tZ);
+                    pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                         placeCount[3]++;
                 }
@@ -518,7 +518,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                         continue; // rolled outside the probability function
                     if (rand.nextInt(12) > density) // should be tested, but seems to be fine
                         continue;
-                    pos.setPos(x, y, z);
+                    pos.set(x, y, z);
                     if (rand.nextInt(100) < 10) { // let each 10th be sproradic
                         if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE))
                             placeCount[3]++;

@@ -30,7 +30,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         //7th side is null side
         this.sided = new LazyOptional[Ref.DIRS.length + 1];
         for (Direction dir : Ref.DIRS) {
-            sided[dir.getIndex()] = LazyOptional.empty();
+            sided[dir.get3DDataValue()] = LazyOptional.empty();
         }
         sided[6] = LazyOptional.empty();
         this.flag = false;
@@ -59,7 +59,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
             sided[6].invalidate();
             return;
         }
-        sided[side.getIndex()].invalidate();
+        sided[side.get3DDataValue()].invalidate();
     }
 
     public void invalidate() {
@@ -168,7 +168,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         if (resolved == null) {
             get();
         }
-        int index = side == null ? 6 : side.getIndex();
+        int index = side == null ? 6 : side.get3DDataValue();
         LazyOptional<? extends V> t = sided[index];
         if (!t.isPresent()) {
             sided[index] = (t = (side == null ? resolved.forNullSide() : resolved.forSide(side)));

@@ -249,7 +249,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
             return failed;
         }).sum() == 0;
         //onSlotChanged should call dirty though, not sure if needed.
-        if (!simulate && success) tile.markDirty();
+        if (!simulate && success) tile.setChanged();
         if (simulate) return success ? consumedItems : Collections.emptyList();
         return consumedItems;
     }
@@ -379,6 +379,6 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     @Override
     public void refresh() {
-        Tesseract.ITEM.refreshNode(this.tile.getWorld(), this.tile.getPos().toLong());
+        Tesseract.ITEM.refreshNode(this.tile.getLevel(), this.tile.getBlockPos().asLong());
     }
 }

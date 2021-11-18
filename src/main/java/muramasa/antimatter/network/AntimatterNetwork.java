@@ -45,7 +45,7 @@ public class AntimatterNetwork {
 
     public void sendTo(Object msg, ServerPlayerEntity player) {
         if (!(player instanceof FakePlayer))
-            handler.sendTo(msg, player.connection.netManager, NetworkDirection.PLAY_TO_CLIENT);
+            handler.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public void sendToAll(Object msg) {
@@ -55,7 +55,7 @@ public class AntimatterNetwork {
     }
 
     public void sendToAllAround(Object msg, ServerWorld world, AxisAlignedBB alignedBB) {
-        for (ServerPlayerEntity player : world.getEntitiesWithinAABB(ServerPlayerEntity.class, alignedBB)) {
+        for (ServerPlayerEntity player : world.getEntitiesOfClass(ServerPlayerEntity.class, alignedBB)) {
             sendTo(msg, player);
         }
     }

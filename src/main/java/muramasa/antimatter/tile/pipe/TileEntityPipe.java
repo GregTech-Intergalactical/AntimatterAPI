@@ -79,13 +79,13 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Override
     public void onLoad() {
         if (isServerSide()) {
-            getWrapper().registerConnector(getWorld(), getPos().toLong(), this);
+            getWrapper().registerConnector(getLevel(), getBlockPos().asLong(), this);
             addSides();
         }
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
-        Direction facing = Utils.getOffsetFacing(this.getPos(), neighbor);
+        Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
         coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
     }
 
@@ -106,7 +106,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
                     removeNode(side);
                 }
             }
-            getWrapper().remove(getWorld(), getPos().toLong());
+            getWrapper().remove(getLevel(), getBlockPos().asLong());
         }
     }
 
@@ -138,10 +138,10 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         if (blocksSide(side)) return;
         IPipe pipe = getValidPipe(side);
         //If it is a tile but invalid do not connect.
-        connection = Connectivity.set(connection, side.getIndex());
+        connection = Connectivity.set(connection, side.get3DDataValue());
         boolean ok = validate(side);
-        if (!ok && pipe == null && world.getBlockState(pos.offset(side)).hasTileEntity()) {
-            connection = Connectivity.clear(connection, side.getIndex());
+        if (!ok && pipe == null && level.getBlockState(worldPosition.relative(side)).hasTileEntity()) {
+            connection = Connectivity.clear(connection, side.get3DDataValue());
             return;
         }
 
@@ -158,14 +158,14 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Override
     public void removeNode(Direction side) {
         byte old = this.connection;
-        this.connection = Connectivity.clear(this.connection, side.getIndex());
-        getWrapper().remove(getWorld(), getPos().offset(side).toLong());//registerNode(getPos().offset(side), side, true);
+        this.connection = Connectivity.clear(this.connection, side.get3DDataValue());
+        getWrapper().remove(getLevel(), getBlockPos().relative(side).asLong());//registerNode(getPos().offset(side), side, true);
         this.connection = old;
     }
 
     @Override
     public void refresh(Direction side) {
-        getWrapper().refreshNode(getWorld(), getPos().offset(side).toLong());
+        getWrapper().refreshNode(getLevel(), getBlockPos().relative(side).asLong());
     }
 
     public void clearConnection(Direction side) {
@@ -174,7 +174,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         if (validate(side)) {
             removeNode(side);
         }
-        connection = Connectivity.clear(connection, side.getIndex());
+        connection = Connectivity.clear(connection, side.get3DDataValue());
         dispatch.invalidate(side);
         refreshConnection();
         IPipe pipe = getValidPipe(side);
@@ -196,15 +196,15 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
         if (isServerSide()) {
             GraphWrapper wrapper = getWrapper();
-            if (wrapper.remove(getWorld(), getPos().toLong())) {
-                wrapper.registerConnector(getWorld(), getPos().toLong(), this);
+            if (wrapper.remove(getLevel(), getBlockPos().asLong())) {
+                wrapper.registerConnector(getLevel(), getBlockPos().asLong(), this);
             }
         }
     }
 
     @Override
     public boolean connects(Direction direction) {
-        return Connectivity.has(connection, direction.getIndex());
+        return Connectivity.has(connection, direction.get3DDataValue());
     }
 
     @Override
@@ -220,7 +220,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Override
     public boolean validate(Direction dir) {
         if (!connects(dir)) return false;
-        BlockState state = world.getBlockState(pos.offset(dir));
+        BlockState state = level.getBlockState(worldPosition.relative(dir));
         if (state.getBlock() instanceof IPipeBlock) {
             return false;
         }
@@ -230,7 +230,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Override
     @Nullable
     public IPipe getValidPipe(Direction side) {
-        TileEntity tile = world.getTileEntity(pos.offset(side));
+        TileEntity tile = level.getBlockEntity(worldPosition.relative(side));
         if (tile instanceof TileEntityPipe && ((TileEntityPipe) tile).getCapability() == this.getCapability()) {
             return (IPipe) tile;
         }
@@ -253,21 +253,21 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         }
         if (this instanceof ITickablePipe) {
             if (remove && !hasNonEmpty) {
-                CompoundNBT nbt = this.write(new CompoundNBT());
-                world.setBlockState(getPos(), getBlockState().with(BlockPipe.COVERED, false), 11);
-                TileEntityPipe pipe = (TileEntityPipe) world.getTileEntity(getPos());
+                CompoundNBT nbt = this.save(new CompoundNBT());
+                level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.COVERED, false), 11);
+                TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
                 if (pipe != this) {
-                    pipe.read(pipe.getBlockState(), nbt);
+                    pipe.load(pipe.getBlockState(), nbt);
                 }
                 return true;
             }
         } else if (!remove && hasNonEmpty) {
             //set this to be covered.
-            CompoundNBT nbt = this.write(new CompoundNBT());
-            world.setBlockState(getPos(), getBlockState().with(BlockPipe.COVERED, true), 11);
-            TileEntityPipe pipe = (TileEntityPipe) world.getTileEntity(getPos());
+            CompoundNBT nbt = this.save(new CompoundNBT());
+            level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.COVERED, true), 11);
+            TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
             if (pipe != this) {
-                pipe.read(pipe.getBlockState(), nbt);
+                pipe.load(pipe.getBlockState(), nbt);
             }
             return true;
         }
@@ -314,17 +314,17 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT tag) {
-        super.read(state, tag); //TODO get tile data tag
+    public void load(BlockState state, CompoundNBT tag) {
+        super.load(state, tag); //TODO get tile data tag
         ofState(state);
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER))
             coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         byte newConnection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
-        if (newConnection != connection && (world != null && world.isRemote)) {
+        if (newConnection != connection && (level != null && level.isClientSide)) {
             Utils.markTileForRenderUpdate(this);
         }
-        if (connection != newConnection && world != null) {
-            if (!world.isRemote) getWrapper().registerConnector(getWorld(), pos.toLong(), this);
+        if (connection != newConnection && level != null) {
+            if (!level.isClientSide) getWrapper().registerConnector(getLevel(), worldPosition.asLong(), this);
             for (int i = 0; i < Ref.DIRS.length; i++) {
                 boolean firstHas = Connectivity.has(connection, i);
                 boolean secondHas = Connectivity.has(newConnection, i);
@@ -339,7 +339,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
                     }
                 }
             }
-        } else if (world == null) {
+        } else if (level == null) {
             connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         }
         //E.g. replaced with cover or created from a create contraption. 
@@ -357,8 +357,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     @Nonnull
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
-        super.write(tag);
+    public CompoundNBT save(CompoundNBT tag) {
+        super.save(tag);
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
         return tag;
@@ -366,7 +366,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     public CompoundNBT getUpdateTag() {
         CompoundNBT tag = super.getUpdateTag();
-        this.write(tag);
+        this.save(tag);
         return tag;
     }
 
@@ -380,7 +380,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     @Override
     public boolean isRemote() {
-        return this.getWorld().isRemote;
+        return this.getLevel().isClientSide;
     }
 
     @Override

@@ -1,24 +1,11 @@
 package muramasa.antimatter.datagen.providers;
 
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.ICraftingLoader;
-import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.pipe.PipeItemBlock;
-import muramasa.antimatter.pipe.PipeSize;
-import muramasa.antimatter.pipe.types.FluidPipe;
-import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.ICriterionInstance;
@@ -27,29 +14,17 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.MaterialTag.*;
-import static muramasa.antimatter.recipe.RecipeBuilders.*;
-import static muramasa.antimatter.util.TagUtils.getForgeItemTag;
 import static muramasa.antimatter.util.TagUtils.nc;
-import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
-import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
 //Only extending RecipeProvider for static purposes.
 public class AntimatterRecipeProvider extends RecipeProvider {
@@ -63,12 +38,12 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void run(DirectoryCache cache) {
 
     }
 
     @Override
-    public void registerRecipes(Consumer<IFinishedRecipe> consumer) {
+    public void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
 
     }
 
@@ -193,26 +168,26 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     public void shapeless(Consumer<IFinishedRecipe> consumer, String recipeID, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, Object... inputs) {
-        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapelessRecipe(output.getItem(), output.getCount()).addCriterion(criterionName, criterion)
-                .setGroup(groupName);
+        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(output.getItem(), output.getCount()).unlockedBy(criterionName, criterion)
+                .group(groupName);
         for (Object input : inputs) {
             try {
                 if (input instanceof IItemProvider) {
-                    builder.addIngredient(((IItemProvider) input));
+                    builder.requires(((IItemProvider) input));
                 } else if (input instanceof ITag) {
                     if (input instanceof ITag.INamedTag) {
-                        builder.addIngredient(nc(TagUtils.getItemTag(((ITag.INamedTag) input).getName())));
+                        builder.requires(nc(TagUtils.getItemTag(((ITag.INamedTag) input).getName())));
                     } else {
-                        builder.addIngredient((ITag<Item>) input);
+                        builder.requires((ITag<Item>) input);
                     }
                 } else if (input instanceof Ingredient) {
-                    builder.addIngredient((Ingredient) input);
+                    builder.requires((Ingredient) input);
                 }
             } catch (ClassCastException ex) {
                 throw new RuntimeException("ERROR PARSING SHAPELESS RECIPE" + ex.getMessage());
             }
         }
-        builder.build(consumer, new ResourceLocation(Ref.ID, output.getItem().toString() + "_" + recipeID));
+        builder.save(consumer, new ResourceLocation(Ref.ID, output.getItem().toString() + "_" + recipeID));
     }
 
     public void addItemRecipe(Consumer<IFinishedRecipe> consumer, String groupName, String criterionName, ICriterionInstance criterion, IItemProvider output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
@@ -297,10 +272,10 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     public ICriterionInstance hasSafeItem(ITag<Item> tag) {
-        return RecipeProvider.hasItem(tag);
+        return RecipeProvider.has(tag);
     }
 
     public ICriterionInstance hasSafeItem(IItemProvider stack) {
-        return RecipeProvider.hasItem(stack);
+        return RecipeProvider.has(stack);
     }
 }

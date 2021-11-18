@@ -47,41 +47,41 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, IS
     protected StoneType stoneType;
 
     public BlockSurfaceRock(String domain, Material material, StoneType stoneType) {
-        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Block.Properties.create(net.minecraft.block.material.Material.ROCK).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.STONE).doesNotBlockMovement().notSolid());
+        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Block.Properties.of(net.minecraft.block.material.Material.STONE).strength(1.0f, 10.0f).sound(SoundType.STONE).noCollission().noOcclusion());
         this.material = material;
         this.stoneType = stoneType;
-        setDefaultState(getStateContainer().getBaseState().with(WATERLOGGED, false));
+        registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false));
 
         //BlockDynamic
         config = new ModelConfigRandom().set(CONFIG_ARRAY);
         //TODO allow AntimatterModelLoader to load this data from the dynamic model json
-        shapes.put(0, Block.makeCuboidShape(5.0D, 0.0D, 5.0D, 11.0D, 2.0D, 11.0D));
-        shapes.put(1, Block.makeCuboidShape(6.0D, 0.0D, 6.0D, 10.0D, 3.0D, 10.0D));
-        shapes.put(2, Block.makeCuboidShape(4.0D, 0.0D, 4.0D, 10.0D, 1.0D, 10.0D));
-        shapes.put(3, Block.makeCuboidShape(7.0D, 0.0D, 8.0D, 13.0D, 1.0D, 12.0D));
-        shapes.put(4, Block.makeCuboidShape(6.0D, 0.0D, 2.0D, 11.0D, 3.0D, 9.0D));
-        shapes.put(5, Block.makeCuboidShape(9.0D, 0.0D, 4.0D, 12.0D, 1.0D, 8.0D));
-        shapes.put(6, Block.makeCuboidShape(5.0D, 0.0D, 4.0D, 12.0D, 2.0D, 8.0D));
+        shapes.put(0, Block.box(5.0D, 0.0D, 5.0D, 11.0D, 2.0D, 11.0D));
+        shapes.put(1, Block.box(6.0D, 0.0D, 6.0D, 10.0D, 3.0D, 10.0D));
+        shapes.put(2, Block.box(4.0D, 0.0D, 4.0D, 10.0D, 1.0D, 10.0D));
+        shapes.put(3, Block.box(7.0D, 0.0D, 8.0D, 13.0D, 1.0D, 12.0D));
+        shapes.put(4, Block.box(6.0D, 0.0D, 2.0D, 11.0D, 3.0D, 9.0D));
+        shapes.put(5, Block.box(9.0D, 0.0D, 4.0D, 12.0D, 1.0D, 8.0D));
+        shapes.put(6, Block.box(5.0D, 0.0D, 4.0D, 12.0D, 2.0D, 8.0D));
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
         if (Data.ROCK.isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED);
     }
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        if (neighbor.up().equals(pos) && !world.getBlockState(neighbor).isSolid()) {
+        if (neighbor.above().equals(pos) && !world.getBlockState(neighbor).canOcclude()) {
             //world.destroyBlock(pos, true);
         }
     }
@@ -100,18 +100,18 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, IS
 //    }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
         if (player.isCrouching()) return ActionResultType.FAIL;
-        harvestBlock(world, player, pos, state, world.getTileEntity(pos), player.getHeldItem(hand));
+        playerDestroy(world, player, pos, state, world.getBlockEntity(pos), player.getItemInHand(hand));
         if (super.removedByPlayer(state, world, pos, player, true, null)) {
-            player.addItemStackToInventory(Data.ROCK.get(material, 1));
+            player.addItem(Data.ROCK.get(material, 1));
             return ActionResultType.SUCCESS;
         }
         return ActionResultType.FAIL;
     }
 
     @Override
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader world, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, IBlockReader world, BlockPos pos) {
         return 0f;
     }
 

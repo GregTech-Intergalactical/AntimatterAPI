@@ -67,7 +67,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     }
 
     public PipeItemBlock getBlockItem(PipeSize size) {
-        return (PipeItemBlock) Item.BLOCK_TO_ITEM.get(getBlock(size));
+        return (PipeItemBlock) Item.BY_BLOCK.get(getBlock(size));
     }
 
     public abstract Set<Block> getBlocks();

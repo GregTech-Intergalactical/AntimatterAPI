@@ -9,11 +9,11 @@ import net.minecraft.world.gen.feature.NoFeatureConfig;
 
 public class AntimatterConfiguredFeatures {
 
-    public static final ConfiguredFeature<?, ?> VEIN_LAYER = register("stone_layer", AntimatterWorldGenerator.VEIN_LAYER.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
-    public static final ConfiguredFeature<?, ?> ORE = register("stone_layer", AntimatterWorldGenerator.ORE.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
-    public static final ConfiguredFeature<?, ?> ORE_SMALL = register("stone_layer", AntimatterWorldGenerator.ORE_SMALL.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
-    public static final ConfiguredFeature<?, ?> STONE_LAYER = register("stone_layer", AntimatterWorldGenerator.STONE_LAYER.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
-    public static final ConfiguredFeature<?, ?> SURFACE_ROCK = register("stone_layer", AntimatterWorldGenerator.SURFACE_ROCK.withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG));
+    public static final ConfiguredFeature<?, ?> VEIN_LAYER = register("stone_layer", AntimatterWorldGenerator.VEIN_LAYER.configured(NoFeatureConfig.NONE));
+    public static final ConfiguredFeature<?, ?> ORE = register("stone_layer", AntimatterWorldGenerator.ORE.configured(NoFeatureConfig.NONE));
+    public static final ConfiguredFeature<?, ?> ORE_SMALL = register("stone_layer", AntimatterWorldGenerator.ORE_SMALL.configured(NoFeatureConfig.NONE));
+    public static final ConfiguredFeature<?, ?> STONE_LAYER = register("stone_layer", AntimatterWorldGenerator.STONE_LAYER.configured(NoFeatureConfig.NONE));
+    public static final ConfiguredFeature<?, ?> SURFACE_ROCK = register("stone_layer", AntimatterWorldGenerator.SURFACE_ROCK.configured(NoFeatureConfig.NONE));
 
     public static ConfiguredFeature<?, ?> register(String id, ConfiguredFeature<?, ?> feature) {
         return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(Ref.ID, id), feature);

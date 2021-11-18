@@ -34,7 +34,7 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         tooltip.add(new StringTextComponent(this.tooltip));
         if (Screen.hasShiftDown()) {
             tooltip.add(new StringTextComponent("Blocks: " + AntimatterAPI.all(Block.class).size()));
@@ -51,22 +51,22 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
 
     @Nonnull
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        if (context.getWorld().isRemote) return super.onItemUse(context);
-        BlockState state = context.getWorld().getBlockState(context.getPos());
-        TileEntity tile = context.getWorld().getTileEntity(context.getPos());
+    public ActionResultType useOn(ItemUseContext context) {
+        if (context.getLevel().isClientSide) return super.useOn(context);
+        BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+        TileEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
         if (tile instanceof TileEntityBase) {
-            ((TileEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new StringTextComponent(s), context.getPlayer().getUniqueID()));
+            ((TileEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new StringTextComponent(s), context.getPlayer().getUUID()));
         }
         if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
-            ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getWorld(), state, context.getPos()).forEach(s -> {
-                context.getPlayer().sendMessage(new StringTextComponent(s), context.getPlayer().getUniqueID());
+            ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
+                context.getPlayer().sendMessage(new StringTextComponent(s), context.getPlayer().getUUID());
             });
             return ActionResultType.SUCCESS;
         } else {
 
         }
-        return super.onItemUse(context);
+        return super.useOn(context);
     }
 
     @Override

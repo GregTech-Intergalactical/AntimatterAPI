@@ -33,7 +33,7 @@ public class RecipeIngredient {
     }
 
     private void setStacksCounts(Ingredient i) {
-        for (ItemStack matchingStack : i.getMatchingStacks()) {
+        for (ItemStack matchingStack : i.getItems()) {
             matchingStack.setCount(count);
         }
     }
@@ -53,10 +53,10 @@ public class RecipeIngredient {
             if (element.isJsonObject()) {
                 JsonObject obj = element.getAsJsonObject();
                 if (obj.has("ingredient")) {
-                    return Ingredient.deserialize(obj.get("ingredient"));
+                    return Ingredient.fromJson(obj.get("ingredient"));
                 }
             }
-            return Ingredient.deserialize(element);
+            return Ingredient.fromJson(element);
         });
         if (element.isJsonObject()) {
             JsonObject obj = (JsonObject) element;
@@ -69,7 +69,7 @@ public class RecipeIngredient {
     }
 
     public RecipeIngredient(PacketBuffer buffer) {
-        Ingredient i = Ingredient.read(buffer);
+        Ingredient i = Ingredient.fromNetwork(buffer);
         this.value = new LazyValue<>(() -> i);
         this.count = buffer.readInt();
         this.nonConsume = buffer.readBoolean();
@@ -77,7 +77,7 @@ public class RecipeIngredient {
     }
 
     public void writeToBuffer(PacketBuffer buffer) {
-        CraftingHelper.write(buffer, this.value.getValue());
+        CraftingHelper.write(buffer, this.value.get());
         buffer.writeInt(count);
         buffer.writeBoolean(nonConsume);
         buffer.writeBoolean(ignoreNbt);
@@ -102,11 +102,11 @@ public class RecipeIngredient {
     }
 
     public Ingredient get() {
-        Ingredient v = value.getValue();
+        Ingredient v = value.get();
         if (!setStacks) {
             setStacksCounts(v);
             setStacks = true;
-            for (ItemStack stack : v.getMatchingStacks()) {
+            for (ItemStack stack : v.getItems()) {
                 if (stack.isEmpty()) throw new RuntimeException("Empty item matched in RecipeIngredient");
             }
         }
@@ -114,11 +114,11 @@ public class RecipeIngredient {
     }
 
     public static RecipeIngredient of(int count, ItemStack... provider) {
-        return new RecipeIngredient(Ingredient.fromStacks(provider), count);
+        return new RecipeIngredient(Ingredient.of(provider), count);
     }
 
     public static RecipeIngredient of(ItemStack stack) {
-        return new RecipeIngredient(Ingredient.fromStacks(stack), stack.getCount());
+        return new RecipeIngredient(Ingredient.of(stack), stack.getCount());
     }
 
     public static RecipeIngredient of(Ingredient custom, int count) {
@@ -130,14 +130,14 @@ public class RecipeIngredient {
     }
 
     public static RecipeIngredient of(LazyValue<ItemStack> provider, int count) {
-        return new RecipeIngredient(() -> Ingredient.fromStacks(provider.getValue()), count);
+        return new RecipeIngredient(() -> Ingredient.of(provider.get()), count);
     }
 
     public static RecipeIngredient of(ResourceLocation tagIn, int count) {
         ensureRegisteredTag(tagIn);
         return new RecipeIngredient(() -> {
             ITag<Item> tag = collectTag(tagIn);
-            return tag != null ? Ingredient.fromTag(tag) : Ingredient.fromItemListStream(Stream.empty());
+            return tag != null ? Ingredient.of(tag) : Ingredient.fromValues(Stream.empty());
         }, count);
     }
 
@@ -145,7 +145,7 @@ public class RecipeIngredient {
         ensureRegisteredTag(tagIn.getName());
         return new RecipeIngredient(() -> {
             ITag<Item> tag = collectTag(tagIn.getName());
-            return tag != null ? Ingredient.fromTag(tag) : Ingredient.fromItemListStream(Stream.empty());
+            return tag != null ? Ingredient.of(tag) : Ingredient.fromValues(Stream.empty());
         }, count);
     }
 
@@ -154,7 +154,7 @@ public class RecipeIngredient {
         if (getter == null) {
             return TagUtils.nc(loc);
         }
-        return getter.getItemTags().get(loc);
+        return getter.getItems().getTag(loc);
     }
 
     private static void ensureRegisteredTag(ResourceLocation loc) {

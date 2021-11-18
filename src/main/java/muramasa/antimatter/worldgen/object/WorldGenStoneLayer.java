@@ -39,7 +39,7 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
 
     @SafeVarargs
     protected WorldGenStoneLayer(Block block, int minY, int maxY, RegistryKey<World>... dims) {
-        this(block.getDefaultState(), minY, maxY, dims);
+        this(block.defaultBlockState(), minY, maxY, dims);
     }
 
     @SafeVarargs
@@ -50,7 +50,7 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
 
     @SafeVarargs
     public static List<WorldGenStoneLayer> add(Block block, int weight, RegistryKey<World>... dims) {
-        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.getDefaultState(), 0, 256, dims)).collect(Collectors.toList());
+        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.defaultBlockState(), 0, 256, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs
@@ -65,7 +65,7 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
 
     @SafeVarargs
     public static List<WorldGenStoneLayer> add(Block block, int weight, int minY, int maxY, RegistryKey<World>... dims) {
-        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.getDefaultState(), minY, maxY, dims)).collect(Collectors.toList());
+        return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.defaultBlockState(), minY, maxY, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs

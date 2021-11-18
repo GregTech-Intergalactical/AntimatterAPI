@@ -6,13 +6,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
@@ -51,9 +49,9 @@ public class PatternBuilder {
         BlockMachine block = machine.getBlockState(tier);
         BlockState state;
         if (block.getType().allowVerticalFacing()) {
-            state = block.getDefaultState().with(BlockMachine.HORIZONTAL_FACING, Direction.EAST).with(BlockStateProperties.FACING, frontSide.getAxis() == Direction.Axis.Y ? frontSide : frontSide.getOpposite());
+            state = block.defaultBlockState().setValue(BlockMachine.HORIZONTAL_FACING, Direction.EAST).setValue(BlockStateProperties.FACING, frontSide.getAxis() == Direction.Axis.Y ? frontSide : frontSide.getOpposite());
         } else {
-            state = block.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, frontSide);
+            state = block.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, frontSide);
         }
         TileEntity te = block.createTileEntity(state, null);
         return at(key, new BlockInfo(state, te));

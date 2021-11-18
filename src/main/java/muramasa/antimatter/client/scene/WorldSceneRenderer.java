@@ -15,8 +15,10 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.IBlockDisplayReader;
@@ -146,9 +148,9 @@ public abstract class WorldSceneRenderer {
     public void setCameraLookAt(Vector3f lookAt, double radius, double rotationPitch, double rotationYaw) {
         this.lookAt = lookAt;
         Vector3d vecX = new Vector3d(Math.cos(rotationPitch), 0, Math.sin(rotationPitch));
-        Vector3d vecY = new Vector3d(0, Math.tan(rotationYaw) * vecX.length(),0);
-        Vector3d pos = new Vector3d(vecX.x, vecX.y, vecX.z).add(vecY).normalize().mul(radius, radius, radius);
-        this.eyePos = new Vector3f(pos.add(lookAt.getX(), lookAt.getY(), lookAt.getZ()));
+        Vector3d vecY = new Vector3d(0, Math.tan(rotationYaw) * vecX.length(), 0);
+        Vector3d pos = new Vector3d(vecX.x, vecX.y, vecX.z).add(vecY).normalize().multiply(radius, radius, radius);
+        this.eyePos = new Vector3f(pos.add(lookAt.x(), lookAt.y(), lookAt.z()));
     }
 
     protected int[] getPositionedRect(int x, int y, int width, int height) {
@@ -186,7 +188,7 @@ public abstract class WorldSceneRenderer {
         RenderSystem.matrixMode(GL11.GL_MODELVIEW);
         RenderSystem.pushMatrix();
         RenderSystem.loadIdentity();
-        GLU.gluLookAt(eyePos.getX(), eyePos.getY(), eyePos.getZ(), lookAt.getX(), lookAt.getY(), lookAt.getZ(), worldUp.getX(), worldUp.getY(), worldUp.getZ());
+        GLU.gluLookAt(eyePos.x(), eyePos.y(), eyePos.z(), lookAt.x(), lookAt.y(), lookAt.z(), worldUp.x(), worldUp.y(), worldUp.z());
     }
 
     protected void clearView(int x, int y, int width, int height) {
@@ -197,7 +199,7 @@ public abstract class WorldSceneRenderer {
     protected void resetCamera() {
         //reset viewport
         Minecraft minecraft = Minecraft.getInstance();
-        RenderSystem.viewport(0, 0, minecraft.getMainWindow().getFramebufferWidth(), minecraft.getMainWindow().getFramebufferHeight());
+        RenderSystem.viewport(0, 0, minecraft.getWindow().getWidth(), minecraft.getWindow().getHeight());
 
         //reset projection matrix
         RenderSystem.matrixMode(GL11.GL_PROJECTION);
@@ -221,70 +223,70 @@ public abstract class WorldSceneRenderer {
         Minecraft mc = Minecraft.getInstance();
         RenderSystem.enableCull();
         RenderSystem.enableRescaleNormal();
-        RenderHelper.disableStandardItemLighting();
-        mc.getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        RenderHelper.turnOff();
+        mc.getTextureManager().bind(AtlasTexture.LOCATION_BLOCKS);
         RenderType oldRenderLayer = MinecraftForgeClient.getRenderLayer();
         RenderSystem.disableLighting();
         RenderSystem.enableTexture();
         RenderSystem.enableAlphaTest();
 
         try { // render block in each layer
-            for (RenderType layer : RenderType.getBlockRenderTypes()) {
+            for (RenderType layer : RenderType.chunkBufferLayers()) {
                 ForgeHooksClient.setRenderLayer(layer);
                 MatrixStack matrixstack = new MatrixStack();
                 Random random = new Random();
-                renderedBlocksMap.forEach((renderedBlocks, hook)->{
-                    if (layer == RenderType.getTranslucent()) {
-                        IRenderTypeBuffer.Impl buffers = mc.getRenderTypeBuffers().getBufferSource();
+                renderedBlocksMap.forEach((renderedBlocks, hook) -> {
+                    if (layer == RenderType.translucent()) {
+                        IRenderTypeBuffer.Impl buffers = mc.renderBuffers().bufferSource();
                         if (hook != null) {
                             hook.apply(true, layer);
                         }
                         for (BlockPos pos : renderedBlocks) {
-                            TileEntity tile = world.getTileEntity(pos);
+                            TileEntity tile = world.getBlockEntity(pos);
                             if (tile != null) {
-                                matrixstack.push();
+                                matrixstack.pushPose();
                                 matrixstack.translate(pos.getX(), pos.getY(), pos.getZ());
-                                TileEntityRendererDispatcher.instance.renderTileEntity(tile, 0, matrixstack, buffers);
-                                matrixstack.pop();
+                                TileEntityRendererDispatcher.instance.render(tile, 0, matrixstack, buffers);
+                                matrixstack.popPose();
                             }
                         }
-                        buffers.finish();
+                        buffers.endBatch();
                     }
                     if (hook != null) {
                         hook.apply(false, layer);
                     } else {
                         setDefaultRenderLayerState(layer);
                     }
-                    BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+                    BufferBuilder buffer = Tessellator.getInstance().getBuilder();
                     buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                    BlockRendererDispatcher blockrendererdispatcher = mc.getBlockRendererDispatcher();
+                    BlockRendererDispatcher blockrendererdispatcher = mc.getBlockRenderer();
 
                     for (BlockPos pos : renderedBlocks) {
                         BlockState state = world.getBlockState(pos);
                         Block block = state.getBlock();
-                        TileEntity te = world.getTileEntity(pos);
+                        TileEntity te = world.getBlockEntity(pos);
                         IModelData modelData = net.minecraftforge.client.model.data.EmptyModelData.INSTANCE;
                         if (te != null) {
                             modelData = te.getModelData();
                         }
                         if (block == Blocks.AIR) continue;
-                        if (state.getRenderType() != BlockRenderType.INVISIBLE && RenderTypeLookup.canRenderInLayer(state, layer)) {
-                            matrixstack.push();
+                        if (state.getRenderShape() != BlockRenderType.INVISIBLE && RenderTypeLookup.canRenderInLayer(state, layer)) {
+                            matrixstack.pushPose();
                             matrixstack.translate(pos.getX(), pos.getY(), pos.getZ());
                             blockrendererdispatcher.renderModel(state, pos, world, matrixstack, buffer, false, random, modelData);
-                            matrixstack.pop();
+                            matrixstack.popPose();
                         }
                     }
 
-                    Tessellator.getInstance().draw();
-                    Tessellator.getInstance().getBuffer();
+                    Tessellator.getInstance().end();
+                    Tessellator.getInstance().getBuilder();
                 });
             }
         } finally {
             ForgeHooksClient.setRenderLayer(oldRenderLayer);
         }
 
-        RenderHelper.enableStandardItemLighting();
+        RenderHelper.turnBackOn();
         RenderSystem.enableLighting();
         RenderSystem.enableDepthTest();
         RenderSystem.disableBlend();
@@ -297,7 +299,7 @@ public abstract class WorldSceneRenderer {
 
     public static void setDefaultRenderLayerState(RenderType layer) {
         RenderSystem.color4f(1, 1, 1, 1);
-        if (layer == RenderType.getTranslucent()) { // SOLID
+        if (layer == RenderType.translucent()) { // SOLID
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             RenderSystem.depthMask(false);
@@ -310,10 +312,10 @@ public abstract class WorldSceneRenderer {
     }
 
     public BlockRayTraceResult rayTrace(Vector3f hitPos) {
-        Vector3d startPos = new Vector3d(this.eyePos.getX(), this.eyePos.getY(), this.eyePos.getZ());
+        Vector3d startPos = new Vector3d(this.eyePos.x(), this.eyePos.y(), this.eyePos.z());
         hitPos.mul(2); // Double view range to ensure pos can be seen.
-        Vector3d endPos = new Vector3d((hitPos.getX() - startPos.x), (hitPos.getY() - startPos.y), (hitPos.getZ() - startPos.z));
-        return this.world.rayTraceBlocks(new RayTraceContext(startPos, endPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, null));
+        Vector3d endPos = new Vector3d((hitPos.x() - startPos.x), (hitPos.y() - startPos.y), (hitPos.z() - startPos.z));
+        return this.world.clip(new RayTraceContext(startPos, endPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, null));
     }
 
     public Vector3f project(BlockPos pos) {

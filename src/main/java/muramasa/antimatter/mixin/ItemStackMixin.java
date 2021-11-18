@@ -23,7 +23,7 @@ public abstract class ItemStackMixin extends net.minecraftforge.common.capabilit
         super(baseClass);
     }
 
-    @Inject(/*remap = false,*/ method = "damageItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", ordinal = 1))
+    @Inject(remap = false, method = "hurtAndBreak", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getItem()Lnet/minecraft/item/Item;", ordinal = 1))
     public <T extends LivingEntity> void inject(int amount, T entity, Consumer<T> consumer, CallbackInfo ci) {
         ItemStack invoker = ((ItemStack) (Object) this);
         if (invoker.getItem() instanceof IAntimatterTool) {
@@ -37,8 +37,8 @@ public abstract class ItemStackMixin extends net.minecraftforge.common.capabilit
                 if (invoker.getTag() != null && invoker.getTag().contains("theoneprobe") && invoker.getTag().getBoolean("theoneprobe")) {
                     if (entity instanceof PlayerEntity) {
                         ItemStack probe = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(Ref.MOD_TOP, "probe")));
-                        if (!((PlayerEntity) entity).addItemStackToInventory(probe)) {
-                            ((PlayerEntity) entity).dropItem(probe, false);
+                        if (!((PlayerEntity) entity).addItem(probe)) {
+                            ((PlayerEntity) entity).drop(probe, false);
                         }
                     }
                 }

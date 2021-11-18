@@ -36,56 +36,56 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
     private static final int MAX_WIDTH = 3;
 
     @Override
-    public MaterialRecipe read(ResourceLocation recipeId, JsonObject json) {
-        String s = JSONUtils.getString(json, "group", "");
-        Map<String, Ingredient> map = deserializeKey(JSONUtils.getJsonObject(json, "key"));
-        String[] astring = shrink(patternFromJson(JSONUtils.getJsonArray(json, "pattern")));
+    public MaterialRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
+        String s = JSONUtils.getAsString(json, "group", "");
+        Map<String, Ingredient> map = deserializeKey(JSONUtils.getAsJsonObject(json, "key"));
+        String[] astring = shrink(patternFromJson(JSONUtils.getAsJsonArray(json, "pattern")));
         int i = astring[0].length();
         int j = astring.length;
         NonNullList<Ingredient> nonnulllist = deserializeIngredients(astring, map, i, j);
         NonNullList<ItemStack> out = NonNullList.create();
-        for (JsonElement output : JSONUtils.getJsonArray(json, "output")) {
-            out.add(ShapedRecipe.deserializeItem(output.getAsJsonObject()));
+        for (JsonElement output : JSONUtils.getAsJsonArray(json, "output")) {
+            out.add(ShapedRecipe.itemFromJson(output.getAsJsonObject()));
         }
         return new MaterialRecipe(recipeId, s, i, j, nonnulllist, out, json.get("builder").getAsString(), buildMaterialInput(nonnulllist));
     }
 
     @Nullable
     @Override
-    public MaterialRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
+    public MaterialRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
         int i = buffer.readVarInt();
         int j = buffer.readVarInt();
-        String s = buffer.readString(32767);
+        String s = buffer.readUtf(32767);
         NonNullList<Ingredient> nonnulllist = NonNullList.withSize(i * j, Ingredient.EMPTY);
 
         for (int k = 0; k < nonnulllist.size(); ++k) {
-            nonnulllist.set(k, Ingredient.read(buffer));
+            nonnulllist.set(k, Ingredient.fromNetwork(buffer));
         }
         int size = buffer.readVarInt();
         NonNullList<ItemStack> out = NonNullList.create();
         for (int ii = 0; ii < size; ii++) {
-            out.add(ii, buffer.readItemStack());
+            out.add(ii, buffer.readItem());
         }
-        return new MaterialRecipe(recipeId, s, i, j, nonnulllist, out, buffer.readString(), buildMaterialInput(nonnulllist));
+        return new MaterialRecipe(recipeId, s, i, j, nonnulllist, out, buffer.readUtf(), buildMaterialInput(nonnulllist));
     }
 
     @Override
-    public void write(PacketBuffer buffer, MaterialRecipe recipe) {
+    public void toNetwork(PacketBuffer buffer, MaterialRecipe recipe) {
         buffer.writeVarInt(recipe.getRecipeWidth());
         buffer.writeVarInt(recipe.getRecipeHeight());
-        buffer.writeString(recipe.getGroup());
+        buffer.writeUtf(recipe.getGroup());
 
         for (Ingredient ingredient : recipe.getIngredients()) {
-            ingredient.write(buffer);
+            ingredient.toNetwork(buffer);
         }
 
         buffer.writeVarInt(recipe.outputs.size());
         for (ItemStack stack : recipe.outputs) {
-            buffer.writeItemStack(stack);
+            buffer.writeItem(stack);
         }
 
         //buffer.writeItemStack(recipe.getRecipeOutput());
-        buffer.writeString(recipe.builderId.toString());
+        buffer.writeUtf(recipe.builderId);
     }
 
     private static Map<String, Set<Integer>> buildMaterialInput(NonNullList<Ingredient> ingredients) {
@@ -141,7 +141,7 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
                 throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
             }
 
-            map.put(entry.getKey(), Ingredient.deserialize(entry.getValue()));
+            map.put(entry.getKey(), Ingredient.fromJson(entry.getValue()));
         }
 
         map.put(" ", Ingredient.EMPTY);
@@ -156,7 +156,7 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
             throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
         } else {
             for (int i = 0; i < astring.length; ++i) {
-                String s = JSONUtils.getString(jsonArr.get(i), "pattern[" + i + "]");
+                String s = JSONUtils.convertToString(jsonArr.get(i), "pattern[" + i + "]");
                 if (s.length() > MAX_WIDTH) {
                     throw new JsonSyntaxException("Invalid pattern: too many columns, " + MAX_WIDTH + " is maximum");
                 }

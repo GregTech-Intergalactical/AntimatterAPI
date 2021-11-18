@@ -36,8 +36,8 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public void addNode(Direction side) {
-        Tesseract.ITEM.registerNode(getWorld(), pos.offset(side).toLong(), side.getOpposite(), (pos, dir) -> {
-            TileEntity tile = getWorld().getTileEntity(BlockPos.fromLong(pos));
+        Tesseract.ITEM.registerNode(getLevel(), worldPosition.relative(side).asLong(), side.getOpposite(), (pos, dir) -> {
+            TileEntity tile = getLevel().getBlockEntity(BlockPos.of(pos));
             if (tile == null) {
                 return null;
             }
@@ -59,13 +59,13 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public boolean connects(Direction direction) {
-        return canConnect(direction.getIndex());
+        return canConnect(direction.get3DDataValue());
     }
 
     @Override
     public boolean validate(Direction dir) {
         if (!super.validate(dir)) return false;
-        TileEntity tile = world.getTileEntity(getPos().offset(dir));
+        TileEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
         return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
     }
@@ -98,8 +98,8 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public int drawInfo(InfoRenderWidget.TesseractItemWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
-        renderer.drawString(stack, "Total transferred in net: " + instance.transferred, left, top, 16448255);
-        renderer.drawString(stack, "Cable transfers (stacks): " + instance.cableTransferred, left, top + 8, 16448255);
+        renderer.draw(stack, "Total transferred in net: " + instance.transferred, left, top, 16448255);
+        renderer.draw(stack, "Cable transfers (stacks): " + instance.cableTransferred, left, top + 8, 16448255);
         return 16;
     }
 

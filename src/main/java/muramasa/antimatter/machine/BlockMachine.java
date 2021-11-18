@@ -36,6 +36,7 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.*;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
@@ -71,7 +72,7 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
     protected final StateContainer<Block, BlockState> stateContainer;
 
     public BlockMachine(Machine<?> type, Tier tier) {
-        this(type, tier, Properties.create(WRENCH_MATERIAL).hardnessAndResistance(1.0f, 10.0f).sound(SoundType.METAL).setRequiresTool());
+        this(type, tier, Properties.of(WRENCH_MATERIAL).strength(1.0f, 10.0f).sound(SoundType.METAL).requiresCorrectToolForDrops());
     }
 
     public BlockMachine(Machine<?> type, Tier tier, Properties properties) {
@@ -79,9 +80,9 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         StateContainer.Builder<Block, BlockState> builder = new StateContainer.Builder<>(this);
         this.type = type;
         this.tier = tier;
-        this.fillStateContainer(builder);
-        this.stateContainer = builder.createStateContainer(Block::getDefaultState, BlockState::new);
-        this.setDefaultState(this.stateContainer.getBaseState());
+        this.createBlockStateDefinition(builder);
+        this.stateContainer = builder.create(Block::defaultBlockState, BlockState::new);
+        this.registerDefaultState(this.stateContainer.any());
     }
 
     public Machine<?> getType() {
@@ -93,7 +94,7 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         if (type == null) return; // means this is the first run
         if (type.allowVerticalFacing()) {
             builder.add(BlockStateProperties.FACING).add(HORIZONTAL_FACING);
@@ -103,7 +104,7 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
     }
 
     @Override
-    public StateContainer<Block, BlockState> getStateContainer() {
+    public StateContainer<Block, BlockState> getStateDefinition() {
         return stateContainer;
     }
 
@@ -113,9 +114,9 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         if (type.allowVerticalFacing()) {
             Direction dir = context.getNearestLookingDirection().getOpposite();
             dir = dir.getAxis() == Axis.Y ? dir.getOpposite() : dir;
-            return this.getDefaultState().with(HORIZONTAL_FACING, type.handlePlacementFacing(context, BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite())).with(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));
+            return this.defaultBlockState().setValue(HORIZONTAL_FACING, type.handlePlacementFacing(context, BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite())).setValue(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));
         } else {
-            return this.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite()));
+            return this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()));
         }
     }
 
@@ -135,8 +136,8 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
     @Override
     public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-        if (!worldIn.isRemote) {
-            TileEntityMachine<?> tile = (TileEntityMachine<?>) worldIn.getTileEntity(pos);
+        if (!worldIn.isClientSide) {
+            TileEntityMachine<?> tile = (TileEntityMachine<?>) worldIn.getBlockEntity(pos);
             if (tile != null) {
                 tile.onBlockUpdate(fromPos);
             }
@@ -145,18 +146,17 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
 
     @Nonnull
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        ActionResultType ty = onBlockActivatedBoth(state, world, pos, player, hand, hit);
-        if (ty.isSuccessOrConsume()) return ty;
-        if (!world.isRemote) {
-            TileEntityMachine<?> tile = (TileEntityMachine<?>) world.getTileEntity(pos);
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        ActionResultType ty; //= onBlockActivatedBoth(state, world, pos, player, hand, hit);
+        if (!world.isClientSide) {
+            TileEntityMachine<?> tile = (TileEntityMachine<?>) world.getBlockEntity(pos);
             if (tile != null) {
-                ItemStack stack = player.getHeldItem(hand);
+                ItemStack stack = player.getItemInHand(hand);
                 AntimatterToolType type = Utils.getToolType(player);
                 ty = tile.onInteract(state, world, pos, player, hand, hit, type);
-                if (ty.isSuccessOrConsume()) return ty;
+                if (ty.consumesAction()) return ty;
                 if (hand == Hand.MAIN_HAND) {
-                    if (player.getHeldItem(hand).getItem() instanceof IHaveCover) {
+                    if (player.getItemInHand(hand).getItem() instanceof IHaveCover) {
                         CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
                         Direction dir = Utils.getInteractSide(hit);
                         boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
@@ -172,9 +172,9 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                     } else if (type == SOFT_HAMMER) {
                         tile.toggleMachine();
                         if (tile.getMachineState() == MachineState.DISABLED) {
-                            player.sendMessage(new StringTextComponent("Disabled machine."), player.getUniqueID());
+                            player.sendMessage(new StringTextComponent("Disabled machine."), player.getUUID());
                         } else {
-                            player.sendMessage(new StringTextComponent("Enabled machine."), player.getUniqueID());
+                            player.sendMessage(new StringTextComponent("Enabled machine."), player.getUUID());
                         }
                         Utils.damageStack(stack, player);
                         return ActionResultType.SUCCESS;
@@ -185,34 +185,34 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                                 return ActionResultType.SUCCESS;
                             }
                         } else {
-                            if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getFace(), Utils.getInteractSide(hit))).orElse(false)) {
+                            if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
                                 Utils.damageStack(stack, player);
                                 return ActionResultType.SUCCESS;
                             }
                         }
                     } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
-                        ICover instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getFace())).orElse(ICover.empty);
+                        ICover instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getDirection())).orElse(ICover.empty);
                         if (!player.isCrouching()) {
-                            if (!instance.isEmpty() && instance.openGui(player, hit.getFace())) {
+                            if (!instance.isEmpty() && instance.openGui(player, hit.getDirection())) {
                                 Utils.damageStack(stack, player);
                                 return ActionResultType.SUCCESS;
                             }
                         }
                     }
-                    boolean coverInteract = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getFace()).map(h -> h.onInteract(player, hand, hit.getFace(), Utils.getToolType(player))).orElse(false);
+                    boolean coverInteract = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getDirection()).map(h -> h.onInteract(player, hand, hit.getDirection(), Utils.getToolType(player))).orElse(false);
                     if (coverInteract) return ActionResultType.SUCCESS;
                     //Has gui?
-                    if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getFace()).map(fh -> {
+                    if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection()).map(fh -> {
                         fh = tile.fluidHandler.map(t -> t.getGuiHandler()).orElse(fh);
                         FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true);
                         if (res.isSuccess() && !player.isCreative()) {
                             boolean single = stack.getCount() == 1;
                             stack.shrink(1);
                             if (single) {
-                                player.setHeldItem(hand, res.result);
+                                player.setItemInHand(hand, res.result);
                             } else {
-                                if (!player.addItemStackToInventory(res.result)) {
-                                    player.dropItem(res.result, true);
+                                if (!player.addItem(res.result)) {
+                                    player.drop(res.result, true);
                                 }
                             }
 
@@ -223,10 +223,10 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                                 boolean single = stack.getCount() == 1;
                                 stack.shrink(1);
                                 if (single) {
-                                    player.setHeldItem(hand, res.result);
+                                    player.setItemInHand(hand, res.result);
                                 } else {
-                                    if (!player.addItemStackToInventory(res.result)) {
-                                        player.dropItem(res.result, true);
+                                    if (!player.addItem(res.result)) {
+                                        player.drop(res.result, true);
                                     }
                                 }
                             }
@@ -246,21 +246,6 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
             }
         }
         return ActionResultType.CONSUME;
-    }
-
-    //This is also a hack. Since the game relies on multiblock checks being done on both sides this method is split out.
-    protected ActionResultType onBlockActivatedBoth(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
-        /*TileEntityMachine tile = (TileEntityMachine)world.getTileEntity(pos);
-        if (tile != null) {
-            AntimatterToolType type = Utils.getToolType(player);
-            if (type == WRENCH || type == ELECTRIC_WRENCH) {
-                if (player.isCrouching()) {
-                    boolean ok = tile.setFacing(Utils.getInteractSide(hit));
-                    return ok ? ActionResultType.CONSUME : ActionResultType.PASS;
-                }
-            }
-        }*/
-        return ActionResultType.PASS;
     }
 
     /* //This messes up cover logic.
@@ -287,17 +272,17 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
     }
 
     @Override
-    public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.getBlock().matchesBlock(newState.getBlock())) {
-            if (!worldIn.isRemote) {
-                TileEntity tile = worldIn.getTileEntity(pos);
+    public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!state.getBlock().is(newState.getBlock())) {
+            if (!worldIn.isClientSide) {
+                TileEntity tile = worldIn.getBlockEntity(pos);
                 if (tile == null) return;
                 TileEntityMachine<?> machine = (TileEntityMachine<?>) tile;
-                machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, machine.getPos().getX(), machine.getPos().getY(), machine.getPos().getZ(), stack)));
-                machine.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.spawnItemStack(worldIn, machine.getPos().getX(), machine.getPos().getY(), machine.getPos().getZ(), stack)));
+                machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> InventoryHelper.dropItemStack(worldIn, machine.getBlockPos().getX(), machine.getBlockPos().getY(), machine.getBlockPos().getZ(), stack)));
+                machine.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.dropItemStack(worldIn, machine.getBlockPos().getX(), machine.getBlockPos().getY(), machine.getBlockPos().getZ(), stack)));
             }
         }
-        super.onReplaced(state, worldIn, pos, newState, isMoving);
+        super.onRemove(state, worldIn, pos, newState, isMoving);
     }
 
     @Override
@@ -311,11 +296,11 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         if (getType().has(BASIC)) {
             if (getTier().getVoltage() > 0) {
-                tooltip.add(new TranslationTextComponent("machine.voltage.in").appendString(": ").appendSibling(new StringTextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).mergeStyle(TextFormatting.GREEN));
-                tooltip.add(new TranslationTextComponent("machine.power.capacity").appendString(": ").appendSibling(new StringTextComponent("" + (getTier().getVoltage() * 64))).mergeStyle(TextFormatting.BLUE));
+                tooltip.add(new TranslationTextComponent("machine.voltage.in").append(": ").append(new StringTextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(TextFormatting.GREEN));
+                tooltip.add(new TranslationTextComponent("machine.power.capacity").append(": ").append(new StringTextComponent("" + (getTier().getVoltage() * 64))).withStyle(TextFormatting.BLUE));
             }
         }
     }
@@ -361,14 +346,14 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
 
     @Override
     public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
-        Direction facing = type.allowVerticalFacing() ? state.get(BlockStateProperties.FACING) : state.get(BlockStateProperties.HORIZONTAL_FACING);
-        TileEntity tile = world.getTileEntity(pos);
+        Direction facing = type.allowVerticalFacing() ? state.getValue(BlockStateProperties.FACING) : state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        TileEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEntityMachine) {
             MachineState machineState = ((TileEntityMachine<?>) tile).getMachineState();
             if (((TileEntityMachine<?>) tile).coverHandler.isPresent()) {
                 CoverHandler<?> h = ((TileEntityMachine<?>) tile).coverHandler.orElse(null);
                 if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y) {
-                    Direction horizontalFacing = state.get(HORIZONTAL_FACING);
+                    Direction horizontalFacing = state.getValue(HORIZONTAL_FACING);
                     return config.set(new int[]{
                             h.get(DOWN).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, DOWN, facing), facing), machineState) : 0,
                             h.get(UP).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, UP, facing), facing), machineState) : 0,
@@ -388,7 +373,7 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
                 });
             } else {
                 if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y) {
-                    Direction horizontalFacing = state.get(HORIZONTAL_FACING);
+                    Direction horizontalFacing = state.getValue(HORIZONTAL_FACING);
                     int[] configInts = new int[]{
                             getModelId(facing, horizontalFacing, DOWN, machineState),
                             getModelId(facing, horizontalFacing, UP, machineState),
@@ -414,12 +399,12 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
 
     protected int getModelId(Direction facing, Direction horizontalFacing, Direction overlay, MachineState state) {
         state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
-        return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + ((horizontalFacing.getIndex() + 1) * 100) + (overlay.getIndex() + 1);
+        return ((state.ordinal() + 1) * 10000) + ((facing.get3DDataValue() + 1) * 1000) + ((horizontalFacing.get3DDataValue() + 1) * 100) + (overlay.get3DDataValue() + 1);
     }
 
     protected int getModelId(Direction facing, Direction overlay, MachineState state) {
         state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
-        return ((state.ordinal() + 1) * 10000) + ((facing.getIndex() + 1) * 1000) + (overlay.getIndex() + 1);
+        return ((state.ordinal() + 1) * 10000) + ((facing.get3DDataValue() + 1) * 1000) + (overlay.get3DDataValue() + 1);
     }
 
     @Override
@@ -428,12 +413,12 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         Texture[] base = type.getBaseTexture(tier);
         if (base.length >= 6) {
             for (int s = 0; s < 6; s++) {
-                b.texture("base" + Ref.DIRS[s].getString(), base[s]);
+                b.texture("base" + Ref.DIRS[s].getSerializedName(), base[s]);
             }
         }
         Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE, tier);
         for (int s = 0; s < 6; s++) {
-            b.texture("overlay" + Ref.DIRS[s].getString(), overlays[s]);
+            b.texture("overlay" + Ref.DIRS[s].getSerializedName(), overlays[s]);
         }
     }
 
@@ -451,14 +436,14 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         Texture[] overlays = type.getOverlayTextures(state, tier);
         for (Direction f : Plane.HORIZONTAL) {
             for (Direction o : Ref.DIRS) {
-                builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.getIndex()])).rot(f)));
+                builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.get3DDataValue()])).rot(f)));
             }
         }
         if (type.allowVerticalFacing()) {
             for (Direction f : Plane.VERTICAL) {
                 for (Direction h : Plane.HORIZONTAL) {
                     for (Direction o : Ref.DIRS) {
-                        builder.config(getModelId(f, h, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.getIndex()])).rot(f, h)));
+                        builder.config(getModelId(f, h, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.get3DDataValue()])).rot(f, h)));
                     }
                 }
             }
@@ -466,22 +451,22 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
     }
 
     @Override
-    public int getWeakPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        TileEntity entity = blockAccess.getTileEntity(pos);
+    public int getSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+        TileEntity entity = blockAccess.getBlockEntity(pos);
         if (entity instanceof TileEntityMachine) {
             TileEntityMachine<?> machine = (TileEntityMachine<?>) entity;
             return machine.getWeakRedstonePower(side);
         }
-        return super.getWeakPower(blockState, blockAccess, pos, side);
+        return super.getSignal(blockState, blockAccess, pos, side);
     }
 
     @Override
-    public int getStrongPower(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
-        TileEntity entity = blockAccess.getTileEntity(pos);
+    public int getDirectSignal(BlockState blockState, IBlockReader blockAccess, BlockPos pos, Direction side) {
+        TileEntity entity = blockAccess.getBlockEntity(pos);
         if (entity instanceof TileEntityMachine) {
             TileEntityMachine<?> machine = (TileEntityMachine<?>) entity;
             return machine.getStrongRedstonePower(side);
         }
-        return super.getStrongPower(blockState, blockAccess, pos, side);
+        return super.getDirectSignal(blockState, blockAccess, pos, side);
     }
 }

@@ -12,7 +12,7 @@ public class SlotInput extends AbstractSlot<SlotInput> {
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity player) {
+    public boolean mayPickup(PlayerEntity player) {
         return true;
     }
 }

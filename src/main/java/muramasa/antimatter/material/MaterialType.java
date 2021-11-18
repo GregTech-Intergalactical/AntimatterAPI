@@ -5,15 +5,11 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
-import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.gui.screen.Screen;
@@ -28,7 +24,6 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -190,9 +185,9 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         Material mat = tooltipCache.get(ev.getItemStack().getItem());
         if (mat == null) return;
         if (!Screen.hasShiftDown()) {
-            ev.getToolTip().add(new StringTextComponent("Hold Shift to show formula").mergeStyle(TextFormatting.AQUA).mergeStyle(TextFormatting.ITALIC));
+            ev.getToolTip().add(new StringTextComponent("Hold Shift to show formula").withStyle(TextFormatting.AQUA).withStyle(TextFormatting.ITALIC));
         } else {
-            ev.getToolTip().add(new StringTextComponent(mat.getChemicalFormula()).mergeStyle(TextFormatting.DARK_AQUA));
+            ev.getToolTip().add(new StringTextComponent(mat.getChemicalFormula()).withStyle(TextFormatting.DARK_AQUA));
         }
     }
 }

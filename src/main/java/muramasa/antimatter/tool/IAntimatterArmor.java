@@ -44,7 +44,7 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
     ItemStack asItemStack(Material primary);
 
     default CompoundNBT getDataTag(ItemStack stack) {
-        CompoundNBT dataTag = stack.getChildTag(Ref.TAG_TOOL_DATA);
+        CompoundNBT dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
         return dataTag != null ? dataTag : validateTag(stack, Data.NULL);
     }
 
@@ -53,14 +53,14 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
         validateTag(stack, primary);
         Map<Enchantment, Integer> mainEnchants = primary.getArmorEnchantments();
         if (!mainEnchants.isEmpty()) {
-            mainEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+            mainEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack)).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
             return stack;
         }
         return stack;
     }
 
     default CompoundNBT validateTag(ItemStack stack, Material primary) {
-        CompoundNBT dataTag = stack.getOrCreateChildTag(Ref.TAG_TOOL_DATA);
+        CompoundNBT dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
         dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
         return dataTag;
     }
@@ -81,13 +81,13 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
             return Ingredient.EMPTY;
         }
         if (primary.has(Data.GEM)) {
-            return Ingredient.fromTag(TagUtils.getForgeItemTag("gems/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgeItemTag("gems/".concat(primary.getId())));
         } else if (primary.has(Data.INGOT)) {
-            return Ingredient.fromTag(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
         } else if (primary.has(Data.DUST)) {
-            return Ingredient.fromTag(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
-        } else if (ItemTags.getCollection().get(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
-            return Ingredient.fromTag(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
+        } else if (ItemTags.getAllTags().getTag(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
+            return Ingredient.of(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
         }
         return Ingredient.EMPTY;
     }

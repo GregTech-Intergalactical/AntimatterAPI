@@ -31,8 +31,8 @@ public class WorldGenHelper {
     public static ObjectOpenHashSet<BlockState> TREE_SET = new ObjectOpenHashSet<>();
     public static ObjectOpenHashSet<String> TREE_BIOME_SET = new ObjectOpenHashSet<>();
 
-    public static BlockState STONE_STATE = Blocks.STONE.getDefaultState();
-    public static BlockState WATER_STATE = Blocks.WATER.getDefaultState();
+    public static BlockState STONE_STATE = Blocks.STONE.defaultBlockState();
+    public static BlockState WATER_STATE = Blocks.WATER.defaultBlockState();
 
     public static Predicate<BlockState> ORE_PREDICATE = state -> STONE_MAP.containsKey(state);
     public static Predicate<BlockState> ROCK_PREDICATE = state -> ROCK_SET.contains(state);
@@ -41,24 +41,24 @@ public class WorldGenHelper {
     public static void init() {
         AntimatterAPI.all(StoneType.class).forEach(t -> STONE_MAP.put(t.getState(), t));
 
-        ROCK_SET.add(Blocks.WATER.getDefaultState());
+        ROCK_SET.add(Blocks.WATER.defaultBlockState());
 
-        STONE_SET.add(Blocks.STONE.getDefaultState());
-        STONE_SET.add(Blocks.GRANITE.getDefaultState());
-        STONE_SET.add(Blocks.ANDESITE.getDefaultState());
-        STONE_SET.add(Blocks.DIORITE.getDefaultState());
-        STONE_SET.add(Blocks.END_STONE.getDefaultState());
-        STONE_SET.add(Blocks.NETHERRACK.getDefaultState());
+        STONE_SET.add(Blocks.STONE.defaultBlockState());
+        STONE_SET.add(Blocks.GRANITE.defaultBlockState());
+        STONE_SET.add(Blocks.ANDESITE.defaultBlockState());
+        STONE_SET.add(Blocks.DIORITE.defaultBlockState());
+        STONE_SET.add(Blocks.END_STONE.defaultBlockState());
+        STONE_SET.add(Blocks.NETHERRACK.defaultBlockState());
 
-        STONE_SET.add(Blocks.COAL_ORE.getDefaultState());
-        STONE_SET.add(Blocks.IRON_ORE.getDefaultState());
-        STONE_SET.add(Blocks.GOLD_ORE.getDefaultState());
-        STONE_SET.add(Blocks.DIAMOND_ORE.getDefaultState());
-        STONE_SET.add(Blocks.EMERALD_ORE.getDefaultState());
-        STONE_SET.add(Blocks.LAPIS_ORE.getDefaultState());
-        STONE_SET.add(Blocks.REDSTONE_ORE.getDefaultState());
+        STONE_SET.add(Blocks.COAL_ORE.defaultBlockState());
+        STONE_SET.add(Blocks.IRON_ORE.defaultBlockState());
+        STONE_SET.add(Blocks.GOLD_ORE.defaultBlockState());
+        STONE_SET.add(Blocks.DIAMOND_ORE.defaultBlockState());
+        STONE_SET.add(Blocks.EMERALD_ORE.defaultBlockState());
+        STONE_SET.add(Blocks.LAPIS_ORE.defaultBlockState());
+        STONE_SET.add(Blocks.REDSTONE_ORE.defaultBlockState());
 
-        TREE_SET.add(Blocks.GRASS.getDefaultState());
+        TREE_SET.add(Blocks.GRASS.defaultBlockState());
         TREE_BIOME_SET.add("Forest");
         TREE_BIOME_SET.add("ForestHills");
     }
@@ -71,7 +71,7 @@ public class WorldGenHelper {
             Antimatter.LOGGER.error("WorldGenHelper: tried to place null state at " + pos.toString());
             return false;
         }
-        return world.setBlockState(pos, state, 0);
+        return world.setBlock(pos, state, 0);
     }
 
     public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType<?> type) {
@@ -121,6 +121,6 @@ public class WorldGenHelper {
     }
 
     public static BlockState waterLogState(BlockState state) {
-        return state.hasProperty(BlockStateProperties.WATERLOGGED) ? state.with(BlockStateProperties.WATERLOGGED, true) : state;
+        return state.hasProperty(BlockStateProperties.WATERLOGGED) ? state.setValue(BlockStateProperties.WATERLOGGED, true) : state;
     }
 }

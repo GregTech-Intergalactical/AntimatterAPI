@@ -26,7 +26,6 @@ import tesseract.api.ITickingController;
 import tesseract.api.gt.GTController;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 
 public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
@@ -76,17 +75,17 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
-        super.onEntityCollision(state, worldIn, pos, entityIn);
+    public void entityInside(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+        super.entityInside(state, worldIn, pos, entityIn);
         if (this.insulated) return;
         if (!(entityIn instanceof LivingEntity)) return;
         LivingEntity entity = (LivingEntity) entityIn;
-        ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(worldIn, pos.toLong());
+        ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(worldIn, pos.asLong());
         if (!(controller instanceof GTController)) return;
         GTController gt = (GTController) controller;
-        long amps = gt.cableFrameAverage(pos.toLong());
+        long amps = gt.cableFrameAverage(pos.asLong());
         if (amps > 0) {
-            entity.attackEntityFrom(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
+            entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
         }
     }
 
@@ -98,18 +97,18 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
-        ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(world, pos.toLong());
-        if (controller != null) controller.getInfo(pos.toLong(), info);
+        ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(world, pos.asLong());
+        if (controller != null) controller.getInfo(pos.asLong(), info);
         return info;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        super.addInformation(stack, worldIn, tooltip, flagIn);
+    public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
-        tooltip.add(new TranslationTextComponent("generic.amp").appendString(": ").appendSibling(new StringTextComponent("" + this.type.getAmps(this.size)).mergeStyle(TextFormatting.GREEN)));
-        tooltip.add(new TranslationTextComponent("generic.voltage").appendString(": ").appendSibling(new StringTextComponent("" + this.type.getTier().getVoltage()).mergeStyle(TextFormatting.BLUE)));
-        tooltip.add(new TranslationTextComponent("generic.loss").appendString(": ").appendSibling(new StringTextComponent("" + this.type.getLoss()).mergeStyle(TextFormatting.BLUE)));
+        tooltip.add(new TranslationTextComponent("generic.amp").append(": ").append(new StringTextComponent("" + this.type.getAmps(this.size)).withStyle(TextFormatting.GREEN)));
+        tooltip.add(new TranslationTextComponent("generic.voltage").append(": ").append(new StringTextComponent("" + this.type.getTier().getVoltage()).withStyle(TextFormatting.BLUE)));
+        tooltip.add(new TranslationTextComponent("generic.loss").append(": ").append(new StringTextComponent("" + this.type.getLoss()).withStyle(TextFormatting.BLUE)));
     }
 
     //    @Override

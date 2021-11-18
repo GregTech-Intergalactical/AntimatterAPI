@@ -77,25 +77,25 @@ public class KubeJSRecipe extends RecipeJS {
 
     @Override
     public void deserialize() {
-        for (JsonElement e : JSONUtils.getJsonArray(json, "item_in", new JsonArray())) {
+        for (JsonElement e : JSONUtils.getAsJsonArray(json, "item_in", new JsonArray())) {
             this.inputItems.add(RecipeIngredientJS.of(e));
         }
-        for (JsonElement e : JSONUtils.getJsonArray(json, "item_out", new JsonArray())) {
+        for (JsonElement e : JSONUtils.getAsJsonArray(json, "item_out", new JsonArray())) {
             this.outputItems.add(ItemStackJS.of(e));
         }
-        for (JsonElement e : JSONUtils.getJsonArray(json, "fluid_in", new JsonArray())) {
+        for (JsonElement e : JSONUtils.getAsJsonArray(json, "fluid_in", new JsonArray())) {
             this.fluidInput.add(RecipeSerializer.getStack(e));
         }
-        for (JsonElement e : JSONUtils.getJsonArray(json, "fluid_out", new JsonArray())) {
+        for (JsonElement e : JSONUtils.getAsJsonArray(json, "fluid_out", new JsonArray())) {
             this.fluidOutput.add(RecipeSerializer.getStack(e));
         }
-        this.duration = JSONUtils.getInt(json, "duration");
-        this.special = JSONUtils.getInt(json, "special", 0);
-        this.power = JSONUtils.getInt(json, "eu");
-        this.amps = JSONUtils.getInt(json, "amps", 1);
-        this.map = JSONUtils.getString(json, "map");
+        this.duration = JSONUtils.getAsInt(json, "duration");
+        this.special = JSONUtils.getAsInt(json, "special", 0);
+        this.power = JSONUtils.getAsInt(json, "eu");
+        this.amps = JSONUtils.getAsInt(json, "amps", 1);
+        this.map = JSONUtils.getAsString(json, "map");
 
-        for (JsonElement e : JSONUtils.getJsonArray(json, "chances", new JsonArray())) {
+        for (JsonElement e : JSONUtils.getAsJsonArray(json, "chances", new JsonArray())) {
             this.chances.add(e.getAsInt());
         }
     }

@@ -27,7 +27,6 @@ import net.minecraft.item.Items;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.Tags;
 
 import java.util.HashMap;
@@ -58,16 +57,16 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
 
     @Override
     public void run() {
-        Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.tagToBuilder);
-        this.tagToBuilder.clear();
-        registerTags();
+        Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.builders);
+        this.builders.clear();
+        addTags();
         //TagUtils.getTags(Item.class).forEach((k,v) -> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
-        tagToBuilder.forEach(this::addTag);
-        b.forEach(tagToBuilder::put);
+        builders.forEach(this::addTag);
+        b.forEach(builders::put);
     }
 
     @Override
-    public void act(DirectoryCache cache) {
+    public void run(DirectoryCache cache) {
 
     }
 
@@ -77,13 +76,13 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     @Override
-    public void registerTags() {
+    public void addTags() {
         processTags(providerDomain);
         if (this.providerDomain.equals(Ref.ID)) antimatterTags();
     }
 
     private void antimatterTags() {
-        this.getOrCreateBuilder(TagUtils.getForgeItemTag("pistons")).add(Items.PISTON, Items.STICKY_PISTON);
+        this.tag(TagUtils.getForgeItemTag("pistons")).add(Items.PISTON, Items.STICKY_PISTON);
     }
 
     protected void processTags(String domain) {
@@ -104,11 +103,11 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             AntimatterAPI.all(BlockStone.class, s -> {
                 String id = "blocks/".concat(s.getId());
                 if (s.getSuffix().isEmpty()) {
-                    this.getOrCreateBuilder(Tags.Items.STONE).add(s.asItem());
+                    this.tag(Tags.Items.STONE).add(s.asItem());
                 } else if (s.getSuffix().equals("cobble")) {
-                    this.getOrCreateBuilder(Tags.Items.COBBLESTONE).add(s.asItem());
+                    this.tag(Tags.Items.COBBLESTONE).add(s.asItem());
                 } else if (s.getSuffix().contains("bricks")) {
-                    this.getOrCreateBuilder(ItemTags.STONE_BRICKS).add(s.asItem());
+                    this.tag(ItemTags.STONE_BRICKS).add(s.asItem());
                 }
                 this.copy(getBlockTag(new ResourceLocation(Ref.ID, id)), getItemTag(new ResourceLocation(Ref.ID, id)));
             });
@@ -123,33 +122,33 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             });
             AntimatterAPI.all(MaterialItem.class, item -> {
                 ITag.INamedTag<Item> type = item.getType().getTag();
-                TagsProvider.Builder<Item> provider = this.getOrCreateBuilder(type);
+                TagsProvider.Builder<Item> provider = this.tag(type);
                 provider.add(item).replace(replace);
-                this.getOrCreateBuilder(item.getTag()).add(item).replace(replace);
+                this.tag(item.getTag()).add(item).replace(replace);
                 //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
             });
             AntimatterAPI.all(MaterialType.class, t -> {
                 t.getOVERRIDES().forEach((m, i) -> {
-                    this.getOrCreateBuilder(t.getMaterialTag((Material) m)).add(i).replace(replace);
-                    this.getOrCreateBuilder(t.getTag()).add(i).replace(replace);
+                    this.tag(t.getMaterialTag((Material) m)).add(i).replace(replace);
+                    this.tag(t.getTag()).add(i).replace(replace);
                 });
             });
             processSubtags();
         }
 
         AntimatterAPI.all(IAntimatterTool.class, domain, tool -> {
-            this.getOrCreateBuilder(tool.getAntimatterToolType().getTag()).add(tool.getItem()).replace(replace);
-            this.getOrCreateBuilder(tool.getAntimatterToolType().getForgeTag()).add(tool.getItem()).replace(replace);
+            this.tag(tool.getAntimatterToolType().getTag()).add(tool.getItem()).replace(replace);
+            this.tag(tool.getAntimatterToolType().getForgeTag()).add(tool.getItem()).replace(replace);
         });
         this.copy(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe")), TagUtils.getItemTag(new ResourceLocation(Ref.ID, "item_pipe")));
-        this.getOrCreateBuilder(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
+        this.tag(ItemFluidCell.getTag()).add(AntimatterAPI.all(ItemFluidCell.class, domain).toArray(new Item[0]));
     }
 
     protected void processSubtags() {
         for (PipeSize value : PipeSize.values()) {
             Set<Material> mats = WIRE.allSub(SubTag.COPPER_WIRE);
             if (mats.size() > 0) {
-                this.getOrCreateBuilder(TagUtils.getItemTag(new ResourceLocation(Ref.ID, SubTag.COPPER_WIRE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
+                this.tag(TagUtils.getItemTag(new ResourceLocation(Ref.ID, SubTag.COPPER_WIRE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
                         AntimatterAPI.get(Wire.class, "wire_" + t.getId())).filter(Objects::nonNull).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
             }
         }
@@ -171,10 +170,10 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
         if (json == null) {
-            addTag(loc, obj.serialize());
+            addTag(loc, obj.serializeToJson());
         } else {
-            obj = obj.deserialize(json, "Antimatter - Dynamic Data");
-            TAGS.put(loc, obj.serialize());
+            obj = obj.addFromJson(json, "Antimatter - Dynamic Data");
+            TAGS.put(loc, obj.serializeToJson());
         }
     }
 

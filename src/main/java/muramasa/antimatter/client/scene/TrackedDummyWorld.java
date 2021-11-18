@@ -29,7 +29,6 @@ import net.minecraft.world.chunk.AbstractChunkProvider;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraft.world.storage.MapData;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -45,9 +44,9 @@ import java.util.function.Predicate;
  * @Description: TrackedDummyWorld. Used to build a Fake World.
  */
 public class TrackedDummyWorld extends World {
-    private static DimensionType DIMENSION_TYPE;
+    private static final DimensionType DIMENSION_TYPE;
     static {
-        DIMENSION_TYPE = DimensionTypeAccessor.getOVERWORLD_TYPE();
+        DIMENSION_TYPE = DimensionTypeAccessor.getDEFAULT_OVERWORLD();
     }
 
     private Predicate<BlockPos> renderFilter;
@@ -82,40 +81,40 @@ public class TrackedDummyWorld extends World {
         if (blockInfo.getBlockState().getBlock() == Blocks.AIR)
             return;
         if (blockInfo.getTileEntity() != null) {
-            blockInfo.getTileEntity().setWorldAndPos(this, pos);
+            blockInfo.getTileEntity().setLevelAndPosition(this, pos);
         }
         this.renderedBlocks.put(pos, blockInfo);
-        minPos.setX(Math.min(minPos.getX(), pos.getX()));
-        minPos.setY(Math.min(minPos.getY(), pos.getY()));
-        minPos.setZ(Math.min(minPos.getZ(), pos.getZ()));
-        maxPos.setX(Math.max(maxPos.getX(), pos.getX()));
-        maxPos.setY(Math.max(maxPos.getY(), pos.getY()));
-        maxPos.setZ(Math.max(maxPos.getZ(), pos.getZ()));
+        minPos.setX(Math.min(minPos.x(), pos.getX()));
+        minPos.setY(Math.min(minPos.y(), pos.getY()));
+        minPos.setZ(Math.min(minPos.z(), pos.getZ()));
+        maxPos.setX(Math.max(maxPos.x(), pos.getX()));
+        maxPos.setY(Math.max(maxPos.y(), pos.getY()));
+        maxPos.setZ(Math.max(maxPos.z(), pos.getZ()));
     }
 
     @Override
-    public void setTileEntity(@Nonnull BlockPos pos, TileEntity tileEntity) {
+    public void setBlockEntity(@Nonnull BlockPos pos, TileEntity tileEntity) {
         renderedBlocks.put(pos, new BlockInfo(renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getBlockState(), tileEntity));
     }
 
     @Override
-    public boolean setBlockState(@Nonnull BlockPos pos, BlockState state, int a, int b) {
+    public boolean setBlock(@Nonnull BlockPos pos, BlockState state, int a, int b) {
         renderedBlocks.put(pos, new BlockInfo(state, renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getTileEntity()));
         return true;
     }
 
     @Override
-    public TileEntity getTileEntity(@Nonnull BlockPos pos) {
+    public TileEntity getBlockEntity(@Nonnull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return null;
-        return proxyWorld != null ? proxyWorld.getTileEntity(pos) : renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getTileEntity();
+        return proxyWorld != null ? proxyWorld.getBlockEntity(pos) : renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getTileEntity();
     }
 
     @Nonnull
     @Override
     public BlockState getBlockState(@Nonnull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
-            return Blocks.AIR.getDefaultState(); //return air if not rendering this block
+            return Blocks.AIR.defaultBlockState(); //return air if not rendering this block
         return proxyWorld != null ? proxyWorld.getBlockState(pos) : renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getBlockState();
     }
 
@@ -126,9 +125,9 @@ public class TrackedDummyWorld extends World {
 
     public Vector3f getSize() {
         Vector3f result = new Vector3f();
-        result.setX(maxPos.getX() - minPos.getX() + 1);
-        result.setY(maxPos.getY() - minPos.getY() + 1);
-        result.setZ(maxPos.getZ() - minPos.getZ() + 1);
+        result.setX(maxPos.x() - minPos.x() + 1);
+        result.setY(maxPos.y() - minPos.y() + 1);
+        result.setZ(maxPos.z() - minPos.z() + 1);
         return result;
     }
 
@@ -141,8 +140,8 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public float func_230487_a_(Direction direction, boolean b) {
-        switch(direction) {
+    public float getShade(Direction direction, boolean b) {
+        switch (direction) {
             case DOWN:
             case UP:
                 return 0.9F;
@@ -158,22 +157,22 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public WorldLightManager getLightManager() {
+    public WorldLightManager getLightEngine() {
         return null;
     }
 
     @Override
-    public int getBlockColor(@Nonnull BlockPos blockPos, @Nonnull ColorResolver colorResolver) {
+    public int getBlockTint(@Nonnull BlockPos blockPos, @Nonnull ColorResolver colorResolver) {
         return colorResolver.getColor(BiomeRegistry.PLAINS, blockPos.getX(), blockPos.getY());
     }
 
     @Override
-    public int getLightFor(@Nonnull LightType lightType, @Nonnull BlockPos pos) {
+    public int getBrightness(@Nonnull LightType lightType, @Nonnull BlockPos pos) {
         return lightType == LightType.SKY ? 15 : 0;
     }
 
     @Override
-    public int getLightSubtracted(@Nonnull BlockPos pos, int p_226659_2_) {
+    public int getRawBrightness(@Nonnull BlockPos pos, int p_226659_2_) {
         return 15;
     }
 
@@ -183,18 +182,18 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public void notifyBlockUpdate(BlockPos pos, BlockState oldState, BlockState newState, int flags) {
+    public void sendBlockUpdated(BlockPos pos, BlockState oldState, BlockState newState, int flags) {
 
     }
 
     @Override
-    public Biome getNoiseBiomeRaw(int x, int y, int z) {
+    public Biome getUncachedNoiseBiome(int x, int y, int z) {
         return null;
     }
 
 
     @Override
-    public Entity getEntityByID(int id) {
+    public Entity getEntity(int id) {
         return null;
     }
 
@@ -204,18 +203,18 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public void registerMapData(MapData mapDataIn) {
+    public void setMapData(MapData mapDataIn) {
 
     }
 
     @Override
-    public int getNextMapId() {
+    public int getFreeMapId() {
         return 0;
     }
 
     @Override
-    public void sendBlockBreakProgress(int breakerId,
-                                       BlockPos pos, int progress) {
+    public void destroyBlockProgress(int breakerId,
+                                     BlockPos pos, int progress) {
 
     }
 
@@ -230,7 +229,7 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public ITagCollectionSupplier getTags() {
+    public ITagCollectionSupplier getTagManager() {
         return null;
     }
 
@@ -240,37 +239,37 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public void playMovingSound(PlayerEntity playerIn, Entity entityIn,SoundEvent eventIn, SoundCategory categoryIn, float volume, float pitch) {
+    public void playSound(PlayerEntity playerIn, Entity entityIn, SoundEvent eventIn, SoundCategory categoryIn, float volume, float pitch) {
 
     }
 
     @Override
-    public ITickList<Block> getPendingBlockTicks() {
+    public ITickList<Block> getBlockTicks() {
         return null;
     }
 
     @Override
-    public ITickList<Fluid> getPendingFluidTicks() {
+    public ITickList<Fluid> getLiquidTicks() {
         return null;
     }
 
     @Override
-    public AbstractChunkProvider getChunkProvider() {
+    public AbstractChunkProvider getChunkSource() {
         return null;
     }
 
     @Override
-    public void playEvent(PlayerEntity playerEntity, int i, BlockPos blockPos, int i1) {
+    public void levelEvent(PlayerEntity playerEntity, int i, BlockPos blockPos, int i1) {
 
     }
 
     @Override
-    public DynamicRegistries func_241828_r() {
+    public DynamicRegistries registryAccess() {
         return null;
     }
 
     @Override
-    public List<? extends PlayerEntity> getPlayers() {
+    public List<? extends PlayerEntity> players() {
         return null;
     }
 }

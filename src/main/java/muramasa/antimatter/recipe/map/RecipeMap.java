@@ -16,7 +16,6 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.*;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -234,8 +233,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                     flag = true;
                     continue;
                 }
-                if (inputItem.get().hasNoMatchingItems() || (inputItem.get().getMatchingStacks().length == 1
-                        && inputItem.get().getMatchingStacks()[0].getItem() == Items.BARRIER)) {
+                if (inputItem.get().isEmpty() || (inputItem.get().getItems().length == 1
+                        && inputItem.get().getItems()[0].getItem() == Items.BARRIER)) {
                     Utils.onInvalidData("RECIPE WITH EMPTY INPUT (MAP): " + this.loc.getPath());
                     return;
                 }
@@ -295,8 +294,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                 if (rl.isPresent()) {
                     list.add(Collections.singletonList(new MapTagIngredient(rl.get(), insideMap)));
                 } else {
-                    List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getMatchingStacks().length);
-                    for (ItemStack stack : t.getMatchingStacks()) {
+                    List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getItems().length);
+                    for (ItemStack stack : t.getItems()) {
                         if (r.ignoreNbt()) {
                             inner.add(new MapItemIngredient(stack.getItem(), insideMap));
                         } else {
@@ -548,7 +547,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
             regular.forEach(t -> compileRecipe(t, tags));
         }
         if (PROXY != null) {
-            List<IRecipe<?>> recipes = (List<IRecipe<?>>) reg.getRecipesForType(PROXY.loc);
+            List<IRecipe<?>> recipes = (List<IRecipe<?>>) reg.getAllRecipesFor(PROXY.loc);
             recipes.forEach(recipe -> {
                 Recipe r = PROXY.handler.apply(recipe, RB());
                 if (r != null)

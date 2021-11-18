@@ -49,23 +49,23 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT tag) {
-        super.read(state, tag);
+    public void load(BlockState state, CompoundNBT tag) {
+        super.load(state, tag);
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS))
             fluidHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag) {
-        CompoundNBT nbt = super.write(tag);
+    public CompoundNBT save(CompoundNBT tag) {
+        CompoundNBT nbt = super.save(tag);
         fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serializeNBT()));
         return nbt;
     }
 
     @Override
     public void addNode(Direction side) {
-        Tesseract.FLUID.registerNode(getWorld(), pos.offset(side).toLong(), side.getOpposite(), (pos, dir) -> {
-            TileEntity tile = world.getTileEntity(BlockPos.fromLong(pos));
+        Tesseract.FLUID.registerNode(getLevel(), worldPosition.relative(side).asLong(), side.getOpposite(), (pos, dir) -> {
+            TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
             if (tile == null) {
                 return null;
             }
@@ -116,13 +116,13 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public boolean connects(Direction direction) {
-        return canConnect(direction.getIndex());
+        return canConnect(direction.get3DDataValue());
     }
 
     @Override
     public boolean validate(Direction dir) {
         if (!super.validate(dir)) return false;
-        TileEntity tile = world.getTileEntity(getPos().offset(dir));
+        TileEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
         return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
     }
@@ -156,9 +156,9 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
-        renderer.drawString(stack, "Pressure: " + instance.holderPressure, left, top, 16448255);
-        renderer.drawString(stack, "Fluid: " + instance.stack.getFluid().getRegistryName().toString(), left, top, 16448255);
-        renderer.drawString(stack, "Amount: " + instance.stack.getAmount(), left, top, 16448255);
+        renderer.draw(stack, "Pressure: " + instance.holderPressure, left, top, 16448255);
+        renderer.draw(stack, "Fluid: " + instance.stack.getFluid().getRegistryName().toString(), left, top, 16448255);
+        renderer.draw(stack, "Amount: " + instance.stack.getAmount(), left, top, 16448255);
         return 16;
     }
 

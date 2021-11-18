@@ -20,7 +20,7 @@ public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHan
     public T onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data) {
         TileEntity tile = Utils.getTileFromBuf(data);
         if (tile != null) {
-            Direction dir = Direction.byIndex(data.readInt());
+            Direction dir = Direction.from3DDataValue(data.readInt());
             LazyOptional<ICoverHandler> coverHandler = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, dir);
             return menu(coverHandler.map(ch -> ch.get(dir)).orElse(null), inv, windowId);
         }

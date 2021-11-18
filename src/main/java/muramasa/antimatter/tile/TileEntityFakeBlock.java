@@ -3,7 +3,6 @@ package muramasa.antimatter.tile;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockProxy;
@@ -53,14 +52,14 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     }
 
     public void addController(TileEntityBasicMultiMachine<?> controller) {
-        if (world != null)
-            world.notifyNeighborsOfStateChange(pos, getBlockState().getBlock());
+        if (level != null)
+            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         controllers.add(controller);
     }
 
     public void removeController(TileEntityBasicMultiMachine<?> controller) {
-        if (world != null)
-            world.notifyNeighborsOfStateChange(pos, getBlockState().getBlock());
+        if (level != null)
+            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         controllers.remove(controller);
     }
 
@@ -74,13 +73,13 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
                     Utils.coverRotateFacing(dir, facing.getAxis() == Direction.Axis.X ? facing.getOpposite() : facing),
                     cover);
         }
-        markDirty();
+        setChanged();
         return this;
     }
 
     public TileEntityFakeBlock setFacing(Direction facing) {
         this.facing = facing;
-        markDirty();
+        setChanged();
         return this;
     }
 
@@ -94,11 +93,11 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (controllerPos != null) {
-            controllerPos.forEach(t -> controllers.add((TileEntityBasicMultiMachine<?>) world.getTileEntity(t)));
+            controllerPos.forEach(t -> controllers.add((TileEntityBasicMultiMachine<?>) level.getBlockEntity(t)));
             controllerPos = null;
         }
         for (TileEntityBasicMultiMachine<?> controller : controllers) {
-            LazyOptional<T> opt = controller.getCapabilityFromFake(cap, getPos(), side, covers.get(side));
+            LazyOptional<T> opt = controller.getCapabilityFromFake(cap, getBlockPos(), side, covers.get(side));
             if (opt.isPresent())
                 return opt;
         }
@@ -111,11 +110,11 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(BlockState state, CompoundNBT nbt) {
+        super.load(state, nbt);
         this.state = NBTUtil.readBlockState(nbt.getCompound("B"));
-        this.facing = Direction.byIndex(nbt.getInt("F"));
-        if (world != null && world.isRemote) {
+        this.facing = Direction.from3DDataValue(nbt.getInt("F"));
+        if (level != null && level.isClientSide) {
             Utils.markTileForRenderUpdate(this);
         }
         this.covers = new EnumMap<>(Direction.class);
@@ -128,7 +127,7 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         if (nbt.contains("P")) {
             ListNBT list = nbt.getList("P", 4);
             this.controllerPos = new ObjectArrayList<>(list.size());
-            list.forEach(n -> controllerPos.add(BlockPos.fromLong(((LongNBT) n).getLong())));
+            list.forEach(n -> controllerPos.add(BlockPos.of(((LongNBT) n).getAsLong())));
         }
     }
 
@@ -146,12 +145,12 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT compound) {
+    public CompoundNBT save(CompoundNBT compound) {
         return writeTag(compound, false);
     }
 
     private CompoundNBT writeTag(CompoundNBT compound, boolean send) {
-        CompoundNBT nbt = super.write(compound);
+        CompoundNBT nbt = super.save(compound);
         nbt.put("B", NBTUtil.writeBlockState(state));
         nbt.putInt("F", facing.ordinal());
         CompoundNBT n = new CompoundNBT();
@@ -160,7 +159,7 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         if (!send) {
             ListNBT list = new ListNBT();
             for (TileEntityBasicMultiMachine<?> controller : controllers) {
-                list.add(LongNBT.valueOf(controller.getPos().toLong()));
+                list.add(LongNBT.valueOf(controller.getBlockPos().asLong()));
             }
             compound.put("P", list);
         }
@@ -182,13 +181,13 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         if (getState() != null)
             list.add("State: " + getState().toString());
         if (facing != null)
-            list.add("Facing: " + facing.getName2());
+            list.add("Facing: " + facing.getName());
         covers.forEach((k, v) -> {
-            list.add("Cover on " + k.getName2() + ": " + v.getId());
+            list.add("Cover on " + k.getName() + ": " + v.getId());
         });
         if (controllers.size() > 0) {
             list.add("Controller positions: "
-                    + controllers.stream().map(t -> t.getPos().toString()).reduce((k, v) -> k + ", " + v).orElse(""));
+                    + controllers.stream().map(t -> t.getBlockPos().toString()).reduce((k, v) -> k + ", " + v).orElse(""));
         }
         return list;
     }

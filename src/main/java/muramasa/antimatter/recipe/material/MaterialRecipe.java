@@ -110,7 +110,7 @@ public class MaterialRecipe extends ShapedRecipe {
                     else
                         offset = k + l * this.getRecipeWidth();
                     ingredient = this.getIngredients().get(offset);
-                    ItemStack stack = inv.getStackInSlot(i + j * inv.getWidth());
+                    ItemStack stack = inv.getItem(i + j * inv.getWidth());
                     if (ingredient instanceof PropertyIngredient) {
                         Object obj = getMat((PropertyIngredient) ingredient, stack);
                         if (obj == null) return null;
@@ -121,7 +121,7 @@ public class MaterialRecipe extends ShapedRecipe {
                     }
                     whichStacks.put(ingredient, stack);
                 } else {
-                    if (regularTest && !Ingredient.EMPTY.test(inv.getStackInSlot(i + j * inv.getWidth()))) {
+                    if (regularTest && !Ingredient.EMPTY.test(inv.getItem(i + j * inv.getWidth()))) {
                         return null;
                     }
                 }
@@ -156,7 +156,7 @@ public class MaterialRecipe extends ShapedRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingInventory inv) {
         Result m = build(inv, false);
 
         return this.builder.build(inv, m);

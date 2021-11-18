@@ -31,8 +31,8 @@ public class CoverMaterialItem extends MaterialItem implements IHaveCover {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        super.addInformation(stack, world, tooltip, flag);
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+        super.appendHoverText(stack, world, tooltip, flag);
         tooltip.add(new StringTextComponent("Has cover."));
     }
 }

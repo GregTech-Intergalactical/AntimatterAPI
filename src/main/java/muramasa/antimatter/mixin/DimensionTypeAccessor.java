@@ -6,8 +6,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(DimensionType.class)
 public interface DimensionTypeAccessor {
-    @Accessor
-    static DimensionType getOVERWORLD_TYPE() {
+    @Accessor(remap = false)
+    static DimensionType getDEFAULT_OVERWORLD() {
         throw new AssertionError();
     }
 }

@@ -26,7 +26,7 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.getFacing();
-                return dir != null && dir.getIndex() == direction.getIndex();
+                return dir != null && dir.get3DDataValue() == direction.get3DDataValue();
             }
 
             @Override

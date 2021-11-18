@@ -76,7 +76,7 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.UNBOUNDED;
+import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.ANY;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
@@ -93,7 +93,7 @@ public class Utils {
      * Returns true of A is not empty, has the same Item and damage is equal to B
      **/
     public static boolean equals(ItemStack a, ItemStack b) {
-        return a.isItemEqual(b);
+        return a.sameItem(b);
     }
 
     /**
@@ -129,8 +129,8 @@ public class Utils {
     }
 
     public static Direction dirFromState(BlockState state) {
-        if (state.hasProperty(BlockStateProperties.FACING)) return state.get(BlockStateProperties.FACING);
-        return state.get(BlockStateProperties.HORIZONTAL_FACING);
+        if (state.hasProperty(BlockStateProperties.FACING)) return state.getValue(BlockStateProperties.FACING);
+        return state.getValue(BlockStateProperties.HORIZONTAL_FACING);
     }
 
     public static ItemStack extractAny(IItemHandler handler) {
@@ -201,8 +201,8 @@ public class Utils {
     }
 
     public static void damageStack(int durability, ItemStack stack, LivingEntity player) {
-        stack.damageItem(durability, player, p -> {
-            p.sendBreakAnimation(EquipmentSlotType.MAINHAND);
+        stack.hurtAndBreak(durability, player, p -> {
+            p.broadcastBreakEvent(EquipmentSlotType.MAINHAND);
         });
     }
 
@@ -434,28 +434,28 @@ public class Utils {
      * Creates a new {@link EnterBlockTrigger} for use with recipe unlock criteria.
      */
     public static EnterBlockTrigger.Instance enteredBlock(Block blockIn) {
-        return new EnterBlockTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, blockIn, StatePropertiesPredicate.EMPTY);
+        return new EnterBlockTrigger.Instance(EntityPredicate.AndPredicate.ANY, blockIn, StatePropertiesPredicate.ANY);
     }
 
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
      */
     public static InventoryChangeTrigger.Instance hasItem(IItemProvider itemIn) {
-        return hasItem(ItemPredicate.Builder.create().item(itemIn).build());
+        return hasItem(ItemPredicate.Builder.item().of(itemIn).build());
     }
 
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having an item within the given tag.
      */
     public static InventoryChangeTrigger.Instance hasItem(ITag<Item> tagIn) {
-        return hasItem(ItemPredicate.Builder.create().tag(tagIn).build());
+        return hasItem(ItemPredicate.Builder.item().of(tagIn).build());
     }
 
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
      */
     public static InventoryChangeTrigger.Instance hasItem(ItemPredicate... predicates) {
-        return new InventoryChangeTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, UNBOUNDED, UNBOUNDED, UNBOUNDED, predicates);
+        return new InventoryChangeTrigger.Instance(EntityPredicate.AndPredicate.ANY, ANY, ANY, ANY, predicates);
     }
 
 //    @Nullable
@@ -542,7 +542,7 @@ public class Utils {
     @Nullable
     public static TileEntity getTile(@Nullable IBlockReader reader, BlockPos pos) {
         if (reader == null) return null;
-        return reader.getTileEntity(pos);
+        return reader.getBlockEntity(pos);
         //TODO validate and redo
 //        if (pos == null || blockAccess == null) return null;
 //        if (blockAccess instanceof ChunkRenderCache) {
@@ -558,7 +558,7 @@ public class Utils {
 
     @Nullable
     public static TileEntity getTileFromBuf(PacketBuffer buf) {
-        return DistExecutor.runForDist(() -> () -> Antimatter.PROXY.getClientWorld().getTileEntity(buf.readBlockPos()), () -> () -> {
+        return DistExecutor.runForDist(() -> () -> Antimatter.PROXY.getClientWorld().getBlockEntity(buf.readBlockPos()), () -> () -> {
             throw new RuntimeException("Shouldn't be called on server!");
         });
     }
@@ -567,17 +567,17 @@ public class Utils {
      * Syncs NBT between Client & Server
      **/
     public static void markTileForNBTSync(TileEntity tile) {
-        BlockState state = tile.getWorld().getBlockState(tile.getPos());
-        tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, 3);
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        tile.getLevel().sendBlockUpdated(tile.getBlockPos(), state, state, 3);
     }
 
     /**
      * Sends block update to clients
      **/
     public static void markTileForRenderUpdate(TileEntity tile) {
-        BlockState state = tile.getWorld().getBlockState(tile.getPos());
-        if (tile.getWorld().isRemote) {
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), state, state, Constants.BlockFlags.RERENDER_MAIN_THREAD);
+        BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
+        if (tile.getLevel().isClientSide) {
+            tile.getLevel().sendBlockUpdated(tile.getBlockPos(), state, state, Constants.BlockFlags.RERENDER_MAIN_THREAD);
             ModelDataManager.requestModelDataRefresh(tile);
         }
     }
@@ -634,7 +634,7 @@ public class Utils {
     };
 
     public static Direction rotate(Direction facing, Direction side) {
-        return TRANSFORM[facing.getIndex()][side.getIndex()];
+        return TRANSFORM[facing.get3DDataValue()][side.get3DDataValue()];
     }
 
     public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy) {
@@ -655,13 +655,13 @@ public class Utils {
     final static double INTERACTION_OFFSET = 0.25;
 
     public static Direction getInteractSide(BlockRayTraceResult res) {
-        Vector3d vec = res.getHitVec();
-        return getInteractSide(res.getFace(), (float) vec.x - res.getPos().getX(), (float) vec.y - res.getPos().getY(), (float) vec.z - res.getPos().getZ());
+        Vector3d vec = res.getLocation();
+        return getInteractSide(res.getDirection(), (float) vec.x - res.getBlockPos().getX(), (float) vec.y - res.getBlockPos().getY(), (float) vec.z - res.getBlockPos().getZ());
     }
 
     public static Direction getInteractSide(Direction side, float x, float y, float z) {
         Direction backSide = side.getOpposite();
-        switch (side.getIndex()) {
+        switch (side.get3DDataValue()) {
             case 0:
             case 1:
                 if (x < INTERACTION_OFFSET) {
@@ -721,15 +721,15 @@ public class Utils {
             yRadius = area.getY();
             zRadius = area.getZ();
         } else {
-            center = origin.offset(side.getOpposite(), area.getZ());
+            center = origin.relative(side.getOpposite(), area.getZ());
             if (side.getAxis() == Direction.Axis.Y) {
-                xRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.X ? area.getY() : area.getX();
+                xRadius = player.getDirection().getAxis() == Direction.Axis.X ? area.getY() : area.getX();
                 yRadius = area.getZ();
-                zRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.Z ? area.getY() : area.getX();
+                zRadius = player.getDirection().getAxis() == Direction.Axis.Z ? area.getY() : area.getX();
             } else {
-                xRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.X ? area.getZ() : area.getX();
+                xRadius = player.getDirection().getAxis() == Direction.Axis.X ? area.getZ() : area.getX();
                 yRadius = area.getY();
-                zRadius = player.getHorizontalFacing().getAxis() == Direction.Axis.Z ? area.getZ() : area.getX();
+                zRadius = player.getDirection().getAxis() == Direction.Axis.Z ? area.getZ() : area.getX();
             }
         }
 
@@ -741,8 +741,8 @@ public class Utils {
                     BlockPos harvestPos = new BlockPos(x, y, z);
                     if (harvestPos.equals(origin)) continue;
                     if (excludeAir) {
-                        state = player.world.getBlockState(harvestPos);
-                        if (state.getBlock().isAir(state, player.world, harvestPos)) continue;
+                        state = player.level.getBlockState(harvestPos);
+                        if (state.getBlock().isAir(state, player.level, harvestPos)) continue;
                     }
                     set.add(new BlockPos(x, y, z));
                 }
@@ -755,17 +755,17 @@ public class Utils {
     public static ModelRotation getModelRotation(Direction dir) {
         switch (dir) {
             case DOWN:
-                return ModelRotation.getModelRotation(90, 0);
+                return ModelRotation.by(90, 0);
             case UP:
-                return ModelRotation.getModelRotation(-90, 0);
+                return ModelRotation.by(-90, 0);
             case NORTH:
-                return ModelRotation.getModelRotation(0, 0);
+                return ModelRotation.by(0, 0);
             case SOUTH:
-                return ModelRotation.getModelRotation(0, 180);
+                return ModelRotation.by(0, 180);
             case EAST:
-                return ModelRotation.getModelRotation(0, 90);
+                return ModelRotation.by(0, 90);
             case WEST:
-                return ModelRotation.getModelRotation(0, 270);
+                return ModelRotation.by(0, 270);
         }
         return null;
     }
@@ -773,8 +773,8 @@ public class Utils {
     public static TransformationMatrix getRotation(Direction dir, Direction face) {
         int[] vec = rotationVector(dir, face);
         Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float) (-vec[1]), true);
-        quaternion.multiply(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float) (-vec[0]), true));
-        quaternion.multiply(new Quaternion(new Vector3f(0.0F, 0.0F, 1.0F), (float) (-vec[2]), true));
+        quaternion.mul(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float) (-vec[0]), true));
+        quaternion.mul(new Quaternion(new Vector3f(0.0F, 0.0F, 1.0F), (float) (-vec[2]), true));
         return new TransformationMatrix(null, quaternion, null, null);
     }
 
@@ -804,17 +804,17 @@ public class Utils {
     public static ModelRotation getModelRotationCoverClient(Direction dir) {
         switch (dir) {
             case DOWN:
-                return ModelRotation.getModelRotation(90, 0);
+                return ModelRotation.by(90, 0);
             case UP:
-                return ModelRotation.getModelRotation(-90, 0);
+                return ModelRotation.by(-90, 0);
             case NORTH:
-                return ModelRotation.getModelRotation(0, 0);
+                return ModelRotation.by(0, 0);
             case SOUTH:
-                return ModelRotation.getModelRotation(0, 180);
+                return ModelRotation.by(0, 180);
             case EAST:
-                return ModelRotation.getModelRotation(0, 270);
+                return ModelRotation.by(0, 270);
             case WEST:
-                return ModelRotation.getModelRotation(0, 90);
+                return ModelRotation.by(0, 90);
         }
         return null;
     }
@@ -862,12 +862,12 @@ public class Utils {
 
     public static void createExplosion(@Nullable World world, BlockPos pos, float explosionRadius, Explosion.Mode modeIn) {
         if (world != null) {
-            if (!world.isRemote) {
-                world.createExplosion(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), explosionRadius, modeIn);
+            if (!world.isClientSide) {
+                world.explode(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), explosionRadius, modeIn);
             } else {
                 world.addParticle(ParticleTypes.SMOKE, pos.getX(), pos.getY() + 0.5D, pos.getZ(), 0.0D, 0.0D, 0.0D);
             }
-            world.setBlockState(pos, Blocks.AIR.getDefaultState());
+            world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
         }
     }
 
@@ -875,13 +875,13 @@ public class Utils {
         if (world != null) {
             boolean fired = false;
             for (Direction side : Ref.DIRS) {
-                BlockPos offset = pos.offset(side);
-                if (world.getBlockState(offset) == Blocks.AIR.getDefaultState()) {
-                    world.setBlockState(offset, Blocks.FIRE.getDefaultState());
+                BlockPos offset = pos.relative(side);
+                if (world.getBlockState(offset) == Blocks.AIR.defaultBlockState()) {
+                    world.setBlockAndUpdate(offset, Blocks.FIRE.defaultBlockState());
                     fired = true;
                 }
             }
-            if (!fired) world.setBlockState(pos, Blocks.FIRE.getDefaultState());
+            if (!fired) world.setBlockAndUpdate(pos, Blocks.FIRE.defaultBlockState());
         }
     }
 
@@ -896,17 +896,17 @@ public class Utils {
      * @return true if block is successfully broken, false if not
      */
     public static boolean breakBlock(World world, @Nullable PlayerEntity player, ItemStack stack, BlockPos pos, int damage) {
-        if (world.isRemote) return false;
+        if (world.isClientSide) return false;
         BlockState state = world.getBlockState(pos);
         ServerPlayerEntity serverPlayer = ((ServerPlayerEntity) player);
-        int exp = ForgeHooks.onBlockBreakEvent(world, serverPlayer.interactionManager.getGameType(), serverPlayer, pos);
+        int exp = ForgeHooks.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
 
         if (exp == -1) return false;
-        stack.damageItem(state.getBlockHardness(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.sendBreakAnimation(EquipmentSlotType.MAINHAND));
-        boolean destroyed = world.removeBlock(pos, false);// world.func_225521_a_(pos, !player.isCreative(), player);
+        stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+        boolean destroyed = world.removeBlock(pos, false);// world.destroyBlock(pos, !player.isCreative(), player);
         if (destroyed && state.canHarvestBlock(world, pos, player))
-            state.getBlock().harvestBlock(world, player, pos, state, world.getTileEntity(pos), stack);
-        if (exp > 0) state.getBlock().dropXpOnBlockBreak((ServerWorld) world, pos, exp);
+            state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
+        if (exp > 0) state.getBlock().popExperience((ServerWorld) world, pos, exp);
         return destroyed;
     }
 
@@ -945,12 +945,12 @@ public class Utils {
         if (!AntimatterConfig.GAMEPLAY.SMARTER_TREE_DETECTION) {
             BlockPos.Mutable tempPos = new BlockPos.Mutable(start.getX(), start.getY(), start.getZ());
             for (int y = start.getY() + 1; y < start.getY() + AntimatterConfig.GAMEPLAY.AXE_TIMBER_MAX; y++) {
-                if (stack.getDamage() < 2) return false;
+                if (stack.getDamageValue() < 2) return false;
                 tempPos.move(Direction.UP);
                 BlockState state = world.getBlockState(tempPos);
                 if (state.isAir(world, tempPos) || !ForgeHooks.canHarvestBlock(state, player, world, tempPos))
                     return false;
-                else if (state.getBlock().isIn(BlockTags.LOGS)) {
+                else if (state.getBlock().is(BlockTags.LOGS)) {
                     breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability());
                 }
             }
@@ -962,18 +962,18 @@ public class Utils {
             BlockPos pos;
             Direction[] dirs = {Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
             while (amount > 0) {
-                if (blocks.isEmpty() || (stack.isDamaged() && stack.getDamage() < tool.getAntimatterToolType().getUseDurability()))
+                if (blocks.isEmpty() || (stack.isDamaged() && stack.getDamageValue() < tool.getAntimatterToolType().getUseDurability()))
                     return false;
                 pos = blocks.remove();
                 if (!visited.add(pos)) continue;
-                if (!world.getBlockState(pos).getBlock().isIn(BlockTags.LOGS)) continue;
+                if (!world.getBlockState(pos).getBlock().is(BlockTags.LOGS)) continue;
                 for (Direction side : dirs) {
-                    BlockPos dirPos = pos.offset(side);
+                    BlockPos dirPos = pos.relative(side);
                     if (!visited.contains(dirPos)) blocks.add(dirPos);
                 }
                 for (int x = 0; x < 3; x++) {
                     for (int z = 0; z < 3; z++) {
-                        BlockPos branchPos = pos.add(-1 + x, 1, -1 + z);
+                        BlockPos branchPos = pos.offset(-1 + x, 1, -1 + z);
                         if (!visited.contains(branchPos)) blocks.add(branchPos);
                     }
                 }
@@ -1012,11 +1012,11 @@ public class Utils {
      * @return set of BlockPos in the specified range
      */
     public static ImmutableSet<BlockPos> getBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, int column, int row, int depth) {
-        Vector3d lookPos = player.getEyePosition(1), rotation = player.getLook(1), realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
-        BlockRayTraceResult result = world.rayTraceBlocks(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
-        Direction playerDirection = player.getHorizontalFacing();
-        Direction.Axis playerAxis = playerDirection.getAxis(), faceAxis = result.getFace().getAxis();
-        Direction.AxisDirection faceAxisDir = result.getFace().getAxisDirection();
+        Vector3d lookPos = player.getEyePosition(1), rotation = player.getViewVector(1), realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
+        BlockRayTraceResult result = world.clip(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
+        Direction playerDirection = player.getDirection();
+        Direction.Axis playerAxis = playerDirection.getAxis(), faceAxis = result.getDirection().getAxis();
+        Direction.AxisDirection faceAxisDir = result.getDirection().getAxisDirection();
         ImmutableSet.Builder<BlockPos> blockPositions = ImmutableSet.builder();
         if (faceAxis.isVertical()) {
             boolean isX = playerAxis == Direction.Axis.X;
@@ -1025,7 +1025,7 @@ public class Utils {
                 for (int x = isX ? -column : -row; x <= (isX ? column : row); x++) {
                     for (int z = isX ? -row : -column; z <= (isX ? row : column); z++) {
                         if (!(x == 0 && y == 0 && z == 0))
-                            blockPositions.add(result.getPos().add(x, isDown ? y : -y, z));
+                            blockPositions.add(result.getBlockPos().offset(x, isDown ? y : -y, z));
                     }
                 }
             }
@@ -1036,7 +1036,7 @@ public class Utils {
                 for (int y = -column; y <= column; y++) {
                     for (int z = -row; z <= row; z++) {
                         if (!(x == 0 && y == 0 && z == 0))
-                            blockPositions.add(result.getPos().add(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x)));
+                            blockPositions.add(result.getBlockPos().offset(isX ? (isNegative ? x : -x) : (isNegative ? z : -z), y, isX ? (isNegative ? z : -z) : (isNegative ? x : -x)));
                     }
                 }
             }
@@ -1151,8 +1151,8 @@ public class Utils {
      * @param dir  the direction to spawn it in.
      */
     public static void dropItemInWorldAtTile(TileEntity tile, Item item, Direction dir) {
-        ItemEntity entity = new ItemEntity(tile.getWorld(), tile.getPos().getX() + dir.getXOffset(), tile.getPos().getY() + dir.getYOffset(), tile.getPos().getZ() + dir.getZOffset(), new ItemStack(item, 1));
-        tile.getWorld().addEntity(entity);
+        ItemEntity entity = new ItemEntity(tile.getLevel(), tile.getBlockPos().getX() + dir.getStepX(), tile.getBlockPos().getY() + dir.getStepY(), tile.getBlockPos().getZ() + dir.getStepZ(), new ItemStack(item, 1));
+        tile.getLevel().addFreshEntity(entity);
     }
 
     public static String[] getLocalizedMaterialType(MaterialType<?> type) {
@@ -1202,7 +1202,7 @@ public class Utils {
     }
 
     public static boolean isPlayerHolding(PlayerEntity player, Hand hand, ToolType... toolTypes) {
-        return doesStackHaveToolTypes(player.getHeldItem(hand), toolTypes);
+        return doesStackHaveToolTypes(player.getItemInHand(hand), toolTypes);
     }
 
     public static boolean isPlayerHolding(PlayerEntity player, Hand hand, AntimatterToolType... antimatterToolTypes) {
@@ -1217,7 +1217,7 @@ public class Utils {
     //@Deprecated // Ready to use the methods above instead
     //Not deprecated so you don't have to call methods multiple times.
     public static AntimatterToolType getToolType(PlayerEntity player) {
-        ItemStack stack = player.getHeldItemMainhand();
+        ItemStack stack = player.getMainHandItem();
         if (!stack.isEmpty()) {
             Item item = stack.getItem();
             if (item instanceof IAntimatterTool) {

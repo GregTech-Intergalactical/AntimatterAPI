@@ -25,7 +25,7 @@ public class BackgroundDataGenerator extends DataGenerator {
     @SuppressWarnings("all")
     public void run() throws IOException {
         for (IDataProvider provider : PROVIDERS) {
-            provider.act(null);
+            provider.run(null);
         }
     }
 

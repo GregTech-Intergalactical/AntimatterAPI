@@ -107,7 +107,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     @Override
-    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
+    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> list) {
         onGenericFillItemGroup(group, list, maxEnergy);
     }
 
@@ -124,9 +124,9 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
      */
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
         onGenericAddInformation(stack, tooltip, flag);
-        super.addInformation(stack, world, tooltip, flag);
+        super.appendHoverText(stack, world, tooltip, flag);
     }
 
     @Override
@@ -135,7 +135,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
+    public UseAction getUseAnimation(ItemStack stack) {
         return type.getUseAction();
     }
 
@@ -146,39 +146,39 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean canHarvestBlock(ItemStack stack, BlockState state) {
-        return Utils.isToolEffective(this, state) && getTier(stack).getHarvestLevel() >= state.getHarvestLevel();
+        return Utils.isToolEffective(this, state) && getTier(stack).getLevel() >= state.getHarvestLevel();
     }
 
     @Override
     public int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
-        return getToolTypes().contains(tool) ? getTier(stack).getHarvestLevel() : -1;
+        return getToolTypes().contains(tool) ? getTier(stack).getLevel() : -1;
     }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
         if (getId().equals("branch_cutter")) {
-            return Math.round((float) getTier(stack).getMaxUses() / 4);
+            return Math.round((float) getTier(stack).getUses() / 4);
         }
-        return getTier(stack).getMaxUses();
+        return getTier(stack).getUses();
     }
 
     @Override
-    public boolean hitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+    public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         return onGenericHitEntity(stack, target, attacker, 0.75F, 0.75F);
     }
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        return Utils.isToolEffective(this, state) ? getTier(stack).getEfficiency() : 1.0F;
+        return Utils.isToolEffective(this, state) ? getTier(stack).getSpeed() : 1.0F;
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
+    public boolean mineBlock(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
         return onGenericBlockDestroyed(stack, world, state, pos, entity);
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext ctx) {
+    public ActionResultType useOn(ItemUseContext ctx) {
         return onGenericItemUse(ctx);
     }
 
@@ -187,7 +187,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     @Override
-    public boolean canPlayerBreakBlockWhileHolding(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+    public boolean canAttackBlock(BlockState state, World world, BlockPos pos, PlayerEntity player) {
         return type.getBlockBreakability();
     }
 
@@ -200,8 +200,8 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlotType.MAINHAND) {
-            modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", type.getBaseAttackDamage() + getTier(stack).getAttackDamage(), AttributeModifier.Operation.ADDITION));
-            modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
+            modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", type.getBaseAttackDamage() + getTier(stack).getAttackDamageBonus(), AttributeModifier.Operation.ADDITION));
+            modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
         }
         return modifiers;
     }
@@ -252,12 +252,12 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public int getItemEnchantability(ItemStack stack) {
-        return getTier(stack).getEnchantability();
+        return getTier(stack).getEnchantmentValue();
     }
 
     @Override
-    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair) {
-        return !type.isPowered() && getTier(toRepair).getRepairMaterial().test(repair);
+    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
+        return !type.isPowered() && getTier(toRepair).getRepairIngredient().test(repair);
     }
 
     @Override
@@ -267,7 +267,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (type.getActualToolTypes().contains(ToolType.AXE) && enchantment.type == EnchantmentType.WEAPON) {
+        if (type.getActualToolTypes().contains(ToolType.AXE) && enchantment.category == EnchantmentType.WEAPON) {
             return true;
         }
         return type.isPowered() ? enchantment != Enchantments.UNBREAKING : super.canApplyAtEnchantingTable(stack, enchantment);

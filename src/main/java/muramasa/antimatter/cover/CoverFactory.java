@@ -1,21 +1,10 @@
 package muramasa.antimatter.cover;
 
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableMap;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -25,7 +14,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 
 public class CoverFactory implements IAntimatterObject {
 
@@ -106,31 +101,31 @@ public class CoverFactory implements IAntimatterObject {
 
     public static CompoundNBT writeCover(CompoundNBT nbt, ICover cover) {
         CoverFactory factory = cover.getFactory();
-        nbt.putString(cover.side().getIndex() + "d", factory.getDomain());
-        nbt.putString(cover.side().getIndex() + "i", factory.getId());
+        nbt.putString(cover.side().get3DDataValue() + "d", factory.getDomain());
+        nbt.putString(cover.side().get3DDataValue() + "i", factory.getId());
         if (cover.getTier() != null)
-            nbt.putString(cover.side().getIndex() + "t", cover.getTier().getId());
+            nbt.putString(cover.side().get3DDataValue() + "t", cover.getTier().getId());
         CompoundNBT inner = cover.serialize();
         if (!inner.isEmpty())
-            nbt.put(cover.side().getIndex() + "c", inner);
+            nbt.put(cover.side().get3DDataValue() + "c", inner);
         return nbt;
     }
 
     public static ICover readCover(ICoverHandler<?> source, Direction dir, CompoundNBT nbt) {
-        if (!nbt.contains(dir.getIndex() + "d"))
+        if (!nbt.contains(dir.get3DDataValue() + "d"))
             return null;
-        String domain = nbt.getString(dir.getIndex() + "d");
-        String id = nbt.getString(dir.getIndex() + "i");
+        String domain = nbt.getString(dir.get3DDataValue() + "d");
+        String id = nbt.getString(dir.get3DDataValue() + "i");
         CoverFactory factory = AntimatterAPI.get(CoverFactory.class, id, domain);
         if (factory == null) {
             throw new IllegalStateException("Reading a cover with null factory, game in bad state");
         }
-        Tier tier = nbt.contains(dir.getIndex() + "t")
-                ? AntimatterAPI.get(Tier.class, nbt.getString(dir.getIndex() + "t"))
+        Tier tier = nbt.contains(dir.get3DDataValue() + "t")
+                ? AntimatterAPI.get(Tier.class, nbt.getString(dir.get3DDataValue() + "t"))
                 : null;
         ICover cover = factory.supplier.get(source, tier, dir, factory);
-        if (nbt.contains(dir.getIndex() + "c"))
-            cover.deserialize((CompoundNBT) nbt.get(dir.getIndex() + "c"));
+        if (nbt.contains(dir.get3DDataValue() + "c"))
+            cover.deserialize((CompoundNBT) nbt.get(dir.get3DDataValue() + "c"));
         return cover;
     }
 

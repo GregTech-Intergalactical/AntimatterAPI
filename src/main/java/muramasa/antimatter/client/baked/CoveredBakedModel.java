@@ -50,7 +50,7 @@ public class CoveredBakedModel extends AttachableBakedModel {
         if (c.isEmpty())
             return quads;
         quads = covers.getTexturer(side).getQuads("cover", quads, state, c,
-                new BaseCover.DynamicKey(Utils.dirFromState(state), tex, c.getId()), side.getIndex(),
+                new BaseCover.DynamicKey(Utils.dirFromState(state), tex, c.getId()), side.get3DDataValue(),
                 data);
         return quads;
     }

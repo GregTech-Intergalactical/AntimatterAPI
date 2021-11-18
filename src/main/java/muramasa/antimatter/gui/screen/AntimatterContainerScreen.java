@@ -29,18 +29,18 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     @Override
     protected void init() {
         super.init();
-        container.source().rescale(this);
+        menu.source().rescale(this);
     }
 
     @Override
     public void tick() {
         super.tick();
-        container.source().update(this.mouseX(), this.mouseY());
+        menu.source().update(this.mouseX(), this.mouseY());
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        for (Widget widget : container.source().getWidgets(mouseX, mouseY)) {
+        for (Widget widget : menu.source().getWidgets(mouseX, mouseY)) {
             if (!widget.isEnabled()) continue;
             if (widget.mouseClicked(mouseX, mouseY, button)) {
                 return true;
@@ -50,16 +50,16 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     }
 
     public double mouseX() {
-        return minecraft.mouseHelper.getMouseX() * (double) this.minecraft.getMainWindow().getScaledWidth() / (double) this.minecraft.getMainWindow().getWidth();
+        return minecraft.mouseHandler.xpos() * (double) this.minecraft.getWindow().getGuiScaledWidth() / (double) this.minecraft.getWindow().getScreenWidth();
     }
 
     public double mouseY() {
-        return minecraft.mouseHelper.getMouseY() * (double) this.minecraft.getMainWindow().getScaledHeight() / (double) this.minecraft.getMainWindow().getHeight();
+        return minecraft.mouseHandler.ypos() * (double) this.minecraft.getWindow().getGuiScaledHeight() / (double) this.minecraft.getWindow().getScreenHeight();
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        for (Widget wid : container.source().getWidgets(mouseX, mouseY)) {
+        for (Widget wid : menu.source().getWidgets(mouseX, mouseY)) {
             if (!wid.isEnabled()) continue;
             if (wid.mouseDragged(mouseX, mouseY, button, dragX, dragY)) return true;
         }
@@ -68,7 +68,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        for (Widget wid : container.source().getWidgets(mouseX, mouseY)) {
+        for (Widget wid : menu.source().getWidgets(mouseX, mouseY)) {
             if (!wid.isEnabled()) continue;
             if (wid.mouseReleased(mouseX, mouseY, button)) return true;
         }
@@ -79,7 +79,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         double x = mouseX();
         double y = mouseY();
-        for (Widget wid : container.source().getWidgets(x, y)) {
+        for (Widget wid : menu.source().getWidgets(x, y)) {
             if (!wid.isEnabled()) continue;
             if (wid.keyPressed(keyCode, scanCode, modifiers, x, y)) return true;
         }
@@ -89,41 +89,41 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        this.renderTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-        float ticks = Minecraft.getInstance().getRenderPartialTicks();
+    protected void renderLabels(MatrixStack matrixStack, int x, int y) {
+        float ticks = Minecraft.getInstance().getFrameTime();
         RenderSystem.pushMatrix();
-        RenderSystem.translatef((float) -this.guiLeft, (float) -this.guiTop, 0.0F);
-        for (Widget widget : container.source().widgetsToRender()) {
+        RenderSystem.translatef((float) -this.leftPos, (float) -this.topPos, 0.0F);
+        for (Widget widget : menu.source().widgetsToRender()) {
             if (!widget.isEnabled() || !widget.isVisible() || widget.depth() < this.depth()) continue;
             widget.render(matrixStack, x, y, ticks);
         }
-        container.source().getTopLevelWidget(x, y).ifPresent(t -> t.mouseOver(matrixStack, x, y, ticks));
+        menu.source().getTopLevelWidget(x, y).ifPresent(t -> t.mouseOver(matrixStack, x, y, ticks));
         RenderSystem.popMatrix();
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(MatrixStack matrixStack, float partialTicks, int x, int y) {
         this.renderBackground(matrixStack);
-        for (Widget widget : container.source().widgetsToRender()) {
+        for (Widget widget : menu.source().widgetsToRender()) {
             if (!widget.isEnabled() || !widget.isVisible()) continue;
             if (widget.depth() >= this.depth()) return;
-            widget.render(matrixStack, x, y, Minecraft.getInstance().getRenderPartialTicks());
+            widget.render(matrixStack, x, y, Minecraft.getInstance().getFrameTime());
         }
     }
 
 
     public void drawTexture(MatrixStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
         RenderSystem.color4f(1, 1, 1, 1);
-        Minecraft.getInstance().textureManager.bindTexture(loc);
+        Minecraft.getInstance().textureManager.bind(loc);
         blit(stack, left, top, x, y, sizeX, sizeY);
     }
 
     public int getCenteredStringX(String s) {
-        return xSize / 2 - Minecraft.getInstance().fontRenderer.getStringWidth(s) / 2;
+        return imageWidth / 2 - Minecraft.getInstance().font.width(s) / 2;
     }
 
     public void drawTooltipInArea(MatrixStack stack, String line, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
@@ -134,7 +134,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     public void drawTooltipInArea(MatrixStack stack, List<String> lines, int mouseX, int mouseY, int x, int y, int sizeX, int sizeY) {
         if (isInGui(x, y, sizeX, sizeY, mouseX, mouseY)) {
-            renderTooltip(stack, lines.stream().map(t -> IReorderingProcessor.fromString(t, Style.EMPTY)).collect(Collectors.toList()), mouseX - guiLeft, mouseY - guiTop);
+            renderTooltip(stack, lines.stream().map(t -> IReorderingProcessor.forward(t, Style.EMPTY)).collect(Collectors.toList()), mouseX - leftPos, mouseY - topPos);
         }
     }
 
@@ -144,7 +144,7 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
     }
 
     public boolean isInGui(int x, int y, int xSize, int ySize, double mouseX, double mouseY) {
-        return isInRect(x, y, xSize, ySize, mouseX - guiLeft, mouseY - guiTop);
+        return isInRect(x, y, xSize, ySize, mouseX - leftPos, mouseY - topPos);
     }
 
     protected void removeButton(Widget widget) {
@@ -154,12 +154,12 @@ public class AntimatterContainerScreen<T extends Container & IAntimatterContaine
 
     @Override
     public int getX() {
-        return guiLeft;
+        return leftPos;
     }
 
     @Override
     public int getY() {
-        return guiTop;
+        return topPos;
     }
 
     @Override

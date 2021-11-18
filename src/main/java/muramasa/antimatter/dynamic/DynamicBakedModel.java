@@ -42,9 +42,9 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
         if (data instanceof EmptyModelData) {
             data = new ModelDataMap.Builder().build();
         }
-        mutablePos.setPos(pos);
+        mutablePos.set(pos);
         data.setData(AntimatterProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, mutablePos, pos));
-        TileEntity tile = world.getTileEntity(pos);
+        TileEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEntityBase)
             data.setData(AntimatterProperties.TILE_PROPERTY, (TileEntityBase) tile);
         return data;
@@ -74,7 +74,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
+    public boolean useAmbientOcclusion() {
         return true;
     }
 
@@ -84,12 +84,12 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     }
 
     @Override
-    public boolean isSideLit() {
+    public boolean usesBlockLight() {
         return true;
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+    public boolean isCustomRenderer() {
         return false;
     }
 

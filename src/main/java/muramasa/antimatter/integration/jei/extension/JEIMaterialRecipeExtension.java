@@ -62,7 +62,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                     PropertyIngredient inner = (PropertyIngredient) j;
                     Object o = m.get(inner.getId());
                     if (o == null) continue;
-                    List<ItemStack> st = Arrays.stream(inner.getMatchingStacks()).filter(t -> MaterialRecipe.getMat(inner, t).equals(o)).collect(Collectors.toList());
+                    List<ItemStack> st = Arrays.stream(inner.getItems()).filter(t -> MaterialRecipe.getMat(inner, t).equals(o)).collect(Collectors.toList());
                     if (st.size() > 0) {
                         newInputs.set(i, st);
                         final Item item = stack.getItem();
@@ -92,7 +92,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
                             }
                             PropertyIngredient inner = (PropertyIngredient) innerIngredient;
                             if (inner.getId().equals(prop.getId())) {
-                                List<ItemStack> st = Arrays.stream(inner.getMatchingStacks()).filter(t -> MaterialRecipe.getMat(inner, t).equals(obj)).collect(Collectors.toList());
+                                List<ItemStack> st = Arrays.stream(inner.getItems()).filter(t -> MaterialRecipe.getMat(inner, t).equals(obj)).collect(Collectors.toList());
                                 if (st.size() > 0) {
                                     newInputs.set(i, st);
                                     out.put(prop.getId(), obj);
@@ -137,8 +137,8 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
         guiItemStacks.addTooltipCallback((a, b, c, d) -> {
             if (!b) {
                 Map<String, Object> o = recipe.builder.getFromResult(c);
-                d.add(new StringTextComponent("Properties:").mergeStyle(TextFormatting.GOLD));
-                o.forEach((k, v) -> d.add(new StringTextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).appendSibling(new StringTextComponent(" - " + v.toString()))));
+                d.add(new StringTextComponent("Properties:").withStyle(TextFormatting.GOLD));
+                o.forEach((k, v) -> d.add(new StringTextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new StringTextComponent(" - " + v.toString()))));
             }
         });
         helper.setInputs(guiItemStacks, shouldReplace ? newInputs : inputs, recipe.getWidth(), recipe.getHeight());

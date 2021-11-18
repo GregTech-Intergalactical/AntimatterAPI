@@ -26,7 +26,7 @@ public class ComponentElement extends StructureElement {
 
     @Override
     public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
-        TileEntity tile = machine.getWorld().getTileEntity(pos);
+        TileEntity tile = machine.getLevel().getBlockEntity(pos);
         if (tile instanceof IComponent) {
             if (((IComponent) tile).getComponentHandler().isPresent()) {
                 IComponentHandler component = ((IComponent) tile).getComponentHandler().orElse(null);
@@ -40,7 +40,7 @@ public class ComponentElement extends StructureElement {
                 return false;
             }
         }
-        BlockState state = machine.getWorld().getBlockState(pos);
+        BlockState state = machine.getLevel().getBlockState(pos);
         if (state.getBlock() instanceof IAntimatterObject) {
             for (int i = 0; i < objects.length; i++) {
                 if (objects[i].getId().equals(((IAntimatterObject) state.getBlock()).getId())) {

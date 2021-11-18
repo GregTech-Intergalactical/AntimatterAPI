@@ -87,7 +87,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     ItemStack asItemStack(Material primary, Material secondary);
 
     default CompoundNBT getDataTag(ItemStack stack) {
-        CompoundNBT dataTag = stack.getChildTag(Ref.TAG_TOOL_DATA);
+        CompoundNBT dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
         return dataTag != null ? dataTag : validateTag(stack, NULL, NULL, 0, 10000);
     }
 
@@ -102,16 +102,16 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
         Map<Enchantment, Integer> mainEnchants = primary.getToolEnchantments(), handleEnchants = secondary.getHandleEnchantments();
         if (!mainEnchants.isEmpty()) {
-            mainEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack)).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+            mainEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack)).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
             //return stack;
         }
         if (!handleEnchants.isEmpty())
-            handleEnchants.entrySet().stream().filter(e -> e.getKey().canApply(stack) && !mainEnchants.containsKey(e.getKey())).forEach(e -> stack.addEnchantment(e.getKey(), e.getValue()));
+            handleEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack) && !mainEnchants.containsKey(e.getKey())).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
         return stack;
     }
 
     default CompoundNBT validateTag(ItemStack stack, Material primary, Material secondary, long startingEnergy, long maxEnergy) {
-        CompoundNBT dataTag = stack.getOrCreateChildTag(Ref.TAG_TOOL_DATA);
+        CompoundNBT dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
         dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
         dataTag.putString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL, secondary.getId());
         if (!getAntimatterToolType().isPowered()) return dataTag;
@@ -153,7 +153,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default boolean onGenericHitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker, float volume, float pitch) {
         if (getAntimatterToolType().getUseSound() != null)
-            target.getEntityWorld().playSound(null, target.getPosX(), target.getPosY(), target.getPosZ(), getAntimatterToolType().getUseSound(), SoundCategory.HOSTILE, volume, pitch);
+            target.getCommandSenderWorld().playSound(null, target.getX(), target.getY(), target.getZ(), getAntimatterToolType().getUseSound(), SoundCategory.HOSTILE, volume, pitch);
         Utils.damageStack(getAntimatterToolType().getAttackDurability(), stack, attacker);
         return true;
     }
@@ -163,9 +163,9 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) entity;
             if (getAntimatterToolType().getUseSound() != null)
-                player.playSound(getAntimatterToolType().getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
+                player.playNotifySound(getAntimatterToolType().getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
             boolean isToolEffective = Utils.isToolEffective(getAntimatterToolType(), getToolTypes(), state);
-            if (state.getBlockHardness(world, pos) != 0.0F) {
+            if (state.getDestroySpeed(world, pos) != 0.0F) {
                 Utils.damageStack(isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1, stack, entity);
             }
         }
@@ -210,16 +210,16 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         ItemStack stack = oldStack.copy();
         int amount = damage(stack, getAntimatterToolType().getCraftingDurability());
         if (!getAntimatterToolType().isPowered()) { // Powered items can't enchant with Unbreaking
-            int level = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack), j = 0;
+            int level = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack), j = 0;
             for (int k = 0; level > 0 && k < amount; k++) {
-                if (UnbreakingEnchantment.negateDamage(stack, level, Ref.RNG)) j++;
+                if (UnbreakingEnchantment.shouldIgnoreDurabilityDrop(stack, level, Ref.RNG)) j++;
             }
             amount -= j;
         }
         boolean empty = false;
         if (amount > 0) {
-            int l = stack.getDamage() + amount;
-            stack.setDamage(l);
+            int l = stack.getDamageValue() + amount;
+            stack.setDamageValue(l);
             empty = l >= stack.getMaxDamage();
         }
         if (empty) {
@@ -255,7 +255,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default boolean hasEnoughDurability(ItemStack stack, int damage, boolean energy) {
         if (energy && getCurrentEnergy(stack) >= damage * 100) return true;
-        return stack.getDamage() >= damage;
+        return stack.getDamageValue() >= damage;
     }
 
     default void onItemBreak(ItemStack stack, PlayerEntity entity) {
@@ -265,8 +265,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             return;
         }
         ItemStack item = type.getBrokenItems().get(name).apply(stack);
-        if (!item.isEmpty() && !entity.addItemStackToInventory(item)) {
-            entity.dropItem(item, true);
+        if (!item.isEmpty() && !entity.addItem(item)) {
+            entity.drop(item, true);
         }
     }
 

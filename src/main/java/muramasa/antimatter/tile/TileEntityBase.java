@@ -21,9 +21,9 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEn
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         onRemove();
-        super.remove();
+        super.setRemoved();
     }
 
     public void onRemove() {
@@ -31,11 +31,11 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEn
     }
 
     public boolean isClientSide() {
-        return world.isRemote;
+        return level.isClientSide;
     }
 
     public boolean isServerSide() {
-        return !world.isRemote;
+        return !level.isClientSide;
     }
 
 
@@ -47,9 +47,9 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEn
     }
 
     public void sidedSync(boolean renderUpdate) {
-        if (this.getWorld() == null) return;
-        if (!this.getWorld().isRemote) {
-            this.markDirty();
+        if (this.getLevel() == null) return;
+        if (!this.getLevel().isClientSide) {
+            this.setChanged();
             Utils.markTileForNBTSync(this);
         } else if (renderUpdate) {
             Utils.markTileForRenderUpdate(this);
@@ -59,13 +59,13 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEn
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.pos, 3, this.getUpdateTag());
+        return new SUpdateTileEntityPacket(this.worldPosition, 3, this.getUpdateTag());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
-        handleUpdateTag(getBlockState(), pkt.getNbtCompound());
+        handleUpdateTag(getBlockState(), pkt.getTag());
         sidedSync(true);
     }
 

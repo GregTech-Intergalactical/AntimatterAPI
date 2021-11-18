@@ -36,14 +36,14 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
     }
 
     @Override
-    public void addListener(IContainerListener listener) {
-        super.addListener(listener);
+    public void addSlotListener(IContainerListener listener) {
+        super.addSlotListener(listener);
         this.listeners.add(listener);
     }
 
     @Override
-    public void removeListener(IContainerListener listener) {
-        super.removeListener(listener);
+    public void removeSlotListener(IContainerListener listener) {
+        super.removeSlotListener(listener);
         this.listeners.remove(listener);
     }
 
@@ -60,55 +60,55 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
     }
 
     @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
+    public void broadcastChanges() {
+        super.broadcastChanges();
         source().update();
     }
 
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         if (slotId >= 0 && this.getSlot(slotId) instanceof IClickableSlot) {
             try {
                 return ((IClickableSlot) this.getSlot(slotId)).clickSlot(dragType, clickTypeIn, player, this);
             } catch (Exception exception) {
-                CrashReport crashreport = CrashReport.makeCrashReport(exception, "Container click");
-                CrashReportCategory crashreportcategory = crashreport.makeCategory("Click info");
-                crashreportcategory.addDetail("Menu Type", () -> {
+                CrashReport crashreport = CrashReport.forThrowable(exception, "Container click");
+                CrashReportCategory crashreportcategory = crashreport.addCategory("Click info");
+                crashreportcategory.setDetail("Menu Type", () -> {
                     return this.containerType != null ? Registry.MENU.getKey(this.containerType).toString() : "<no type>";
                 });
-                crashreportcategory.addDetail("Menu Class", () -> {
+                crashreportcategory.setDetail("Menu Class", () -> {
                     return this.getClass().getCanonicalName();
                 });
-                crashreportcategory.addDetail("Slot Count", this.inventorySlots.size());
-                crashreportcategory.addDetail("Slot", slotId);
-                crashreportcategory.addDetail("Button", dragType);
-                crashreportcategory.addDetail("Type", clickTypeIn);
+                crashreportcategory.setDetail("Slot Count", this.slots.size());
+                crashreportcategory.setDetail("Slot", slotId);
+                crashreportcategory.setDetail("Button", dragType);
+                crashreportcategory.setDetail("Type", clickTypeIn);
                 throw new ReportedException(crashreport);
             }
         }
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
+        return super.clicked(slotId, dragType, clickTypeIn, player);
     }
 
     @Override
-    public ItemStack transferStackInSlot(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(PlayerEntity player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
+        Slot slot = this.slots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack slotStack = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack slotStack = slot.getItem();
             itemstack = slotStack.copy();
 
             if (index < invSize) {
-                if (!this.mergeItemStack(slotStack, invSize, this.inventorySlots.size(), true)) {
+                if (!this.moveItemStackTo(slotStack, invSize, this.slots.size(), true)) {
                     return ItemStack.EMPTY;
                 }
-            } else if (!this.mergeItemStack(slotStack, 0, invSize, false)) {
+            } else if (!this.moveItemStackTo(slotStack, 0, invSize, false)) {
                 return ItemStack.EMPTY;
             }
 
             if (slotStack.getCount() == 0) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
         }
 
@@ -117,7 +117,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
 
     //Because top level doesn't verify anything. Just a 1-1 copy but adds slot.isItemValid.
     @Override
-    protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+    protected boolean moveItemStackTo(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
         boolean flag = false;
         int i = startIndex;
         if (reverseDirection) {
@@ -134,31 +134,31 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                     break;
                 }
 
-                Slot slot = this.inventorySlots.get(i);
+                Slot slot = this.slots.get(i);
                 boolean continueLoop = false;
-                if (slot instanceof SlotFake || !slot.isItemValid(stack)) {
+                if (slot instanceof SlotFake || !slot.mayPlace(stack)) {
                     continueLoop = true;
                 }
-                ItemStack itemstack = slot.getStack();
-                if (!continueLoop && !itemstack.isEmpty() && areItemsAndTagsEqual(stack, itemstack)) {
+                ItemStack itemstack = slot.getItem();
+                if (!continueLoop && !itemstack.isEmpty() && consideredTheSameItem(stack, itemstack)) {
                     int j = itemstack.getCount() + stack.getCount();
-                    int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+                    int maxSize = Math.min(slot.getMaxStackSize(), stack.getMaxStackSize());
                     if (j <= maxSize) {
                         stack.setCount(0);
                         itemstack.setCount(j);
-                        slot.onSlotChanged();
+                        slot.setChanged();
                         if (slot instanceof SlotItemHandler) {
                             SlotItemHandler handler = (SlotItemHandler) slot;
                             IItemHandler handle = handler.getItemHandler();
                             if (handle instanceof TrackedItemHandler<?>) {
-                                ((TrackedItemHandler<?>) handle).onContentsChanged(slot.slotNumber);
+                                ((TrackedItemHandler<?>) handle).onContentsChanged(slot.index);
                             }
                         }
                         flag = true;
                     } else if (itemstack.getCount() < maxSize) {
                         stack.shrink(maxSize - itemstack.getCount());
                         itemstack.setCount(maxSize);
-                        slot.onSlotChanged();
+                        slot.setChanged();
                         flag = true;
                     }
                 }
@@ -187,20 +187,20 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                     break;
                 }
 
-                Slot slot1 = this.inventorySlots.get(i);
+                Slot slot1 = this.slots.get(i);
                 boolean continueLoop = false;
                 if (slot1 instanceof SlotFake) {
                     continueLoop = true;
                 }
-                ItemStack itemstack1 = slot1.getStack();
-                if (!continueLoop && itemstack1.isEmpty() && slot1.isItemValid(stack)) {
-                    if (stack.getCount() > slot1.getSlotStackLimit()) {
-                        slot1.putStack(stack.split(slot1.getSlotStackLimit()));
+                ItemStack itemstack1 = slot1.getItem();
+                if (!continueLoop && itemstack1.isEmpty() && slot1.mayPlace(stack)) {
+                    if (stack.getCount() > slot1.getMaxStackSize()) {
+                        slot1.set(stack.split(slot1.getMaxStackSize()));
                     } else {
-                        slot1.putStack(stack.split(stack.getCount()));
+                        slot1.set(stack.split(stack.getCount()));
                     }
 
-                    slot1.onSlotChanged();
+                    slot1.setChanged();
                     flag = true;
                     break;
                 }

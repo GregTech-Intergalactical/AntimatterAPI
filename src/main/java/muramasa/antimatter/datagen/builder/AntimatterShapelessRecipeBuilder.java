@@ -27,7 +27,7 @@ public class AntimatterShapelessRecipeBuilder {
 
     private final ItemStack result;
     private final List<Ingredient> ingredients = Lists.newArrayList();
-    private final Advancement.Builder advancementBuilder = Advancement.Builder.builder();
+    private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
     private String group;
 
     public AntimatterShapelessRecipeBuilder(ItemStack result) {
@@ -59,7 +59,7 @@ public class AntimatterShapelessRecipeBuilder {
      * Adds an ingredient that can be any item in the given tag.
      */
     public AntimatterShapelessRecipeBuilder addIngredient(Tag<Item> tagIn) {
-        return this.addIngredient(Ingredient.fromTag(tagIn));
+        return this.addIngredient(Ingredient.of(tagIn));
     }
 
     /**
@@ -74,7 +74,7 @@ public class AntimatterShapelessRecipeBuilder {
      */
     public AntimatterShapelessRecipeBuilder addIngredient(IItemProvider itemIn, int quantity) {
         for (int i = 0; i < quantity; ++i) {
-            this.addIngredient(Ingredient.fromItems(itemIn));
+            this.addIngredient(Ingredient.of(itemIn));
         }
         return this;
     }
@@ -100,7 +100,7 @@ public class AntimatterShapelessRecipeBuilder {
      * Adds a criterion needed to unlock the recipe.
      */
     public AntimatterShapelessRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
-        this.advancementBuilder.withCriterion(name, criterionIn);
+        this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
@@ -134,8 +134,8 @@ public class AntimatterShapelessRecipeBuilder {
      */
     public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
         this.validate(id);
-        this.advancementBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY_AND, id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumerIn.accept(new AntimatterShapelessRecipeBuilder.Result(id, this.result, this.group == null ? "" : this.group, this.ingredients, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getGroup().getPath() + "/" + id.getPath())));
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        consumerIn.accept(new AntimatterShapelessRecipeBuilder.Result(id, this.result, this.group == null ? "" : this.group, this.ingredients, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
     /**
@@ -164,13 +164,13 @@ public class AntimatterShapelessRecipeBuilder {
             this.advId = advId;
         }
 
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             if (!this.group.isEmpty()) {
                 json.addProperty("group", this.group);
             }
             JsonArray jsonarray = new JsonArray();
             for (Ingredient ingredient : this.ingredients) {
-                jsonarray.add(ingredient.serialize());
+                jsonarray.add(ingredient.toJson());
             }
             json.add("ingredients", jsonarray);
             JsonObject resultObj = new JsonObject();
@@ -184,14 +184,14 @@ public class AntimatterShapelessRecipeBuilder {
             }
         }
 
-        public IRecipeSerializer<?> getSerializer() {
-            return IRecipeSerializer.CRAFTING_SHAPELESS;
+        public IRecipeSerializer<?> getType() {
+            return IRecipeSerializer.SHAPELESS_RECIPE;
         }
 
         /**
          * Gets the ID for the recipe.
          */
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return this.id;
         }
 
@@ -199,8 +199,8 @@ public class AntimatterShapelessRecipeBuilder {
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
          */
         @Nullable
-        public JsonObject getAdvancementJson() {
-            return this.advBuilder.serialize();
+        public JsonObject serializeAdvancement() {
+            return this.advBuilder.serializeToJson();
         }
 
         /**
@@ -208,7 +208,7 @@ public class AntimatterShapelessRecipeBuilder {
          * is non-null.
          */
         @Nullable
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return this.advId;
         }
     }

@@ -33,7 +33,7 @@ public class AntimatterModel implements IAntimatterModel<AntimatterModel> {
     }
 
     public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        return model != null ? model.bakeModel(bakery, getter, getModelTransform(transform, rotations), loc) : ModelUtils.getMissingModel().bakeModel(bakery, getter, transform, loc);
+        return model != null ? model.bake(bakery, getter, getModelTransform(transform, rotations), loc) : ModelUtils.getMissingModel().bake(bakery, getter, transform, loc);
     }
 
     @Override
@@ -43,13 +43,13 @@ public class AntimatterModel implements IAntimatterModel<AntimatterModel> {
         } catch (Exception e) {
             Antimatter.LOGGER.error("ModelBaking Exception for " + owner.getModelName());
             e.printStackTrace();
-            return ModelUtils.getMissingModel().bakeModel(bakery, getter, transform, loc);
+            return ModelUtils.getMissingModel().bake(bakery, getter, transform, loc);
         }
     }
 
     @Override
     public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
-        return model != null ? model.getTextures(getter, errors) : Collections.emptyList();
+        return model != null ? model.getMaterials(getter, errors) : Collections.emptyList();
     }
 
     public IModelTransform getModelTransform(IModelTransform base, int[] rots) {

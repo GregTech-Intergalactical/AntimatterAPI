@@ -33,7 +33,7 @@ public class CoverBakedModel extends GroupedBakedModel {
             if (key.isEmpty()) return true;
             Direction dir = Direction.byName(key);
             if (dir == null) throw new NullPointerException("Dir null in getBlockQuads");
-            boolean ok = (filter & (1 << dir.getIndex())) > 0;
+            boolean ok = (filter & (1 << dir.get3DDataValue())) > 0;
             return ok;
         }).flatMap(t -> t.getValue().getQuads(state, null, rand).stream()).collect(Collectors.toList());
     }
@@ -50,7 +50,7 @@ public class CoverBakedModel extends GroupedBakedModel {
             Direction rotated = Utils.rotate(side, dir);
             ICover cover = handler.get(rotated);
             if (cover.isEmpty()) {
-                value |= (1 << dir.getIndex());
+                value |= (1 << dir.get3DDataValue());
             }
         }
         map.put(side, value);

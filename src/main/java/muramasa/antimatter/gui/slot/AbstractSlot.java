@@ -25,16 +25,16 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
     }
 
     @Override
-    public void onSlotChange(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
-        super.onSlotChange(oldStackIn, newStackIn);
+    public void onQuickCraft(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn) {
+        super.onQuickCraft(oldStackIn, newStackIn);
         if (this.getItemHandler() instanceof TrackedItemHandler) {
             ((TrackedItemHandler<?>) this.getItemHandler()).onContentsChanged(this.index);
         }
     }
 
     @Override
-    public void onSlotChanged() {
-        super.onSlotChanged();
+    public void setChanged() {
+        super.setChanged();
         if (this.getItemHandler() instanceof TrackedItemHandler) {
             ((TrackedItemHandler<?>) this.getItemHandler()).onContentsChanged(this.index);
         }
@@ -43,22 +43,22 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
 
     @Override
     @Nonnull
-    public ItemStack decrStackSize(int amount) {
+    public ItemStack remove(int amount) {
         return MachineItemHandler.extractFromInput(this.getItemHandler(), index, amount, false);
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity playerIn) {
+    public boolean mayPickup(PlayerEntity playerIn) {
         return !MachineItemHandler.extractFromInput(this.getItemHandler(), index, 1, true).isEmpty();
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack) {
+    public boolean mayPlace(@Nonnull ItemStack stack) {
         return this.type.tester.test(this.holder, stack);
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack) {
+    public int getMaxStackSize(@Nonnull ItemStack stack) {
        /* IItemHandler handler = this.getItemHandler();
         if (handler instanceof TrackedItemHandler) {
             ItemStack maxAdd = stack.copy();
@@ -76,7 +76,7 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
 
             return maxInput - remainder.getCount();
         } else {*/
-        return super.getItemStackLimit(stack);
+        return super.getMaxStackSize(stack);
         //  }
     }
 }

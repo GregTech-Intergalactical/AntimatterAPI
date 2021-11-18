@@ -23,7 +23,7 @@ public class ProxyModel implements IAntimatterModel<ProxyModel> {
 
     @Override
     public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        return new ProxyBakedModel(getter.apply(new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, MissingTextureSprite.getLocation())));
+        return new ProxyBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, MissingTextureSprite.getLocation())));
     }
 
     @Override

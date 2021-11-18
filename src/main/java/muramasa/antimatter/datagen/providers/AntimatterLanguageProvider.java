@@ -35,7 +35,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
-import net.minecraftforge.api.distmarker.Dist;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
@@ -74,7 +73,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     @Override
-    public void act(DirectoryCache cache) throws IOException {
+    public void run(DirectoryCache cache) throws IOException {
         addTranslations();
         if (!data.isEmpty())
             save(cache, data, this.gen.getOutputFolder().resolve(String.join("", "assets/", providerDomain, "/lang/", locale, ".json")));
@@ -85,14 +84,14 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     private void save(DirectoryCache cache, Object object, Path target) throws IOException {
         String data = Ref.GSON.toJson(object);
         data = JavaUnicodeEscaper.outsideOf(0, 0x7f).translate(data); // Escape unicode after the fact so that it's not double escaped by GSON
-        String hash = HASH_FUNCTION.hashUnencodedChars(data).toString();
-        if (!Objects.equals(cache.getPreviousHash(target), hash) || !Files.exists(target)) {
+        String hash = SHA1.hashUnencodedChars(data).toString();
+        if (!Objects.equals(cache.getHash(target), hash) || !Files.exists(target)) {
             Files.createDirectories(target.getParent());
             try (BufferedWriter bufferedwriter = Files.newBufferedWriter(target)) {
                 bufferedwriter.write(data);
             }
         }
-        cache.recordHash(target, hash);
+        cache.putNew(target, hash);
     }
 
     protected void addTranslations() {
@@ -119,9 +118,9 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
 
         AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
             if (t.getAntimatterToolType().isPowered()) {
-                add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
             } else {
-                add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
+                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
             }
 
         });
@@ -181,7 +180,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
                 }
             });
             AntimatterAPI.all(IAntimatterArmor.class, domain, t -> {
-                add(t.getItem().getTranslationKey(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
             });
         }
 
@@ -225,7 +224,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     public void add(Block key, String name) {
-        add(key.getTranslationKey(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addItem(Supplier<? extends Item> key, String name) {
@@ -233,7 +232,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     public void add(Item key, String name) {
-        add(key.getTranslationKey(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addItemStack(Supplier<ItemStack> key, String name) {
@@ -241,7 +240,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     public void add(ItemStack key, String name) {
-        add(key.getTranslationKey(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addEnchantment(Supplier<? extends Enchantment> key, String name) {
@@ -249,7 +248,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     public void add(Enchantment key, String name) {
-        add(key.getName(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addEffect(Supplier<? extends Effect> key, String name) {
@@ -257,7 +256,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     public void add(Effect key, String name) {
-        add(key.getName(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addEntityType(Supplier<? extends EntityType<?>> key, String name) {
@@ -265,7 +264,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     public void add(EntityType<?> key, String name) {
-        add(key.getTranslationKey(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addItemGroup(Supplier<? extends ItemGroup> key, String name) {
@@ -273,7 +272,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     public void add(ItemGroup key, String name) {
-        add("itemGroup." + key.getPath(), name);
+        add("itemGroup." + key.getRecipeFolderName(), name);
     }
 
     public void add(String key, String value) {

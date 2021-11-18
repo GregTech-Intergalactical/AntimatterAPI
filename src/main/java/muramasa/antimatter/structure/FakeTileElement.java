@@ -2,7 +2,6 @@ package muramasa.antimatter.structure;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
@@ -40,7 +39,7 @@ public class FakeTileElement extends StructureElement {
     public FakeTileElement(Block... pred) {
         this.preds = Arrays
                 .stream(pred).map(t -> (IBlockStatePredicate) (reader, pos,
-                        state) -> state.getBlock() == Data.PROXY_INSTANCE || state.getBlock().matchesBlock(t))
+                                                               state) -> state.getBlock() == Data.PROXY_INSTANCE || state.getBlock().is(t))
                 .toArray(IBlockStatePredicate[]::new);
     }
 
@@ -57,9 +56,9 @@ public class FakeTileElement extends StructureElement {
 
     @Override
     public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
-        BlockState state = machine.getWorld().getBlockState(pos);
-        if (state.getBlock().matchesBlock(Data.PROXY_INSTANCE)) {
-            TileEntity tile = machine.getWorld().getTileEntity(pos);
+        BlockState state = machine.getLevel().getBlockState(pos);
+        if (state.getBlock().is(Data.PROXY_INSTANCE)) {
+            TileEntity tile = machine.getLevel().getBlockEntity(pos);
             if (tile instanceof TileEntityFakeBlock) {
                 BlockState st = ((TileEntityFakeBlock) tile).getState();
                 if (st == null) {
@@ -67,7 +66,7 @@ public class FakeTileElement extends StructureElement {
                     return false;
                 }
                 for (IBlockStatePredicate pred : preds) {
-                    if (pred.evaluate((IWorldReader) machine.getWorld(), (BlockPos) pos, st)) {
+                    if (pred.evaluate(machine.getLevel(), pos, st)) {
                         result.addState("fake", pos, st);
                         return true;
                     }
@@ -79,7 +78,7 @@ public class FakeTileElement extends StructureElement {
             }
             result.withError("Invalid BlockProxy state.");
             return false;
-        } else if (StructureCache.refCount(machine.getWorld(), pos) > 0) {
+        } else if (StructureCache.refCount(machine.getLevel(), pos) > 0) {
             result.withError("FakeTile sharing a block that is not of proxy type.");
             return false;
         }
@@ -92,7 +91,7 @@ public class FakeTileElement extends StructureElement {
             return true;
         }
         for (IBlockStatePredicate pred : preds) {
-            if (pred.evaluate((IWorldReader) machine.getWorld(), (BlockPos) pos, state)) {
+            if (pred.evaluate(machine.getLevel(), pos, state)) {
                 result.addState("fake", pos, state);
                 return true;
             }
@@ -108,15 +107,15 @@ public class FakeTileElement extends StructureElement {
 
     @Override
     public void onBuild(TileEntityBasicMultiMachine machine, BlockPos pos, StructureResult result, int count) {
-        World world = machine.getWorld();
+        World world = machine.getLevel();
         BlockState oldState = world.getBlockState(pos);
         // Already set.
-        if (count > 1 || oldState.getBlock().matchesBlock(Data.PROXY_INSTANCE)) {
-            ((TileEntityFakeBlock) world.getTileEntity(pos)).addController(machine);
+        if (count > 1 || oldState.getBlock().is(Data.PROXY_INSTANCE)) {
+            ((TileEntityFakeBlock) world.getBlockEntity(pos)).addController(machine);
             return;
         }
-        world.setBlockState(pos, Data.PROXY_INSTANCE.getDefaultState(), 2 | 8);
-        TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getTileEntity(pos);
+        world.setBlock(pos, Data.PROXY_INSTANCE.defaultBlockState(), 2 | 8);
+        TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getBlockEntity(pos);
         tile.setState(oldState).setFacing(machine.getFacing()).setCovers(covers);
         tile.addController(machine);
         super.onBuild(machine, pos, result, count);
@@ -130,13 +129,13 @@ public class FakeTileElement extends StructureElement {
 
     @Override
     public void onRemove(TileEntityBasicMultiMachine machine, BlockPos pos, StructureResult result, int count) {
-        World world = machine.getWorld();
-        TileEntity tile = world.getTileEntity(pos);
+        World world = machine.getLevel();
+        TileEntity tile = world.getBlockEntity(pos);
         if (!(tile instanceof TileEntityFakeBlock))
             return;
         if (count == 0) {
             BlockState state = ((TileEntityFakeBlock) tile).getState();
-            world.setBlockState(pos, state, 1 | 2 | 8);
+            world.setBlock(pos, state, 1 | 2 | 8);
             return;
         } else {
             ((TileEntityFakeBlock) tile).removeController(machine);

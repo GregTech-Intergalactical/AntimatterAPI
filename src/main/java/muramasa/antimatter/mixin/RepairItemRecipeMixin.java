@@ -29,12 +29,12 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
         super(idIn);
     }
 
-    @Inject(/*remap = false,*/ method = "getCraftingResult", at = @At("HEAD"), cancellable = true)
+    @Inject(remap = false, method = "assemble", at = @At("HEAD"), cancellable = true)
     private void getCraftingResultInject(CraftingInventory inv, CallbackInfoReturnable<ItemStack> ci) {
         List<ItemStack> list = Lists.newArrayList();
 
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
-            ItemStack itemstack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); ++i) {
+            ItemStack itemstack = inv.getItem(i);
             if (!itemstack.isEmpty()) {
                 list.add(itemstack);
                 if (list.size() > 1) {
@@ -62,8 +62,8 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
                     return;
                 }
                 Item item = a.getItem();
-                int j = a.getMaxDamage() - a.getDamage();
-                int k = a.getMaxDamage() - b.getDamage();
+                int j = a.getMaxDamage() - a.getDamageValue();
+                int k = a.getMaxDamage() - b.getDamageValue();
                 int l = j + k + a.getMaxDamage() * 5 / 100;
                 int i1 = a.getMaxDamage() - l;
                 if (i1 < 0) {
@@ -71,7 +71,7 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
                 }
 
                 ItemStack output = item instanceof IAntimatterTool ? ((IAntimatterTool) item).asItemStack(((IAntimatterTool) item).getPrimaryMaterial(a), ((IAntimatterTool) item).getSecondaryMaterial(a)) : ((IAntimatterArmor) item).asItemStack(((IAntimatterArmor) item).getMaterial(a));
-                output.setDamage(i1);
+                output.setDamageValue(i1);
 
                 Map<Enchantment, Integer> map = Maps.newHashMap();
                 Map<Enchantment, Integer> map1 = EnchantmentHelper.getEnchantments(a);
@@ -92,12 +92,12 @@ public abstract class RepairItemRecipeMixin extends SpecialRecipe {
         }
     }
 
-    @Inject(/*remap = false,*/ method = "matches", at = @At("HEAD"), cancellable = true)
+    @Inject(remap = false, method = "matches", at = @At("HEAD"), cancellable = true)
     private void matchesInject(CraftingInventory inv, World world, CallbackInfoReturnable<Boolean> ci) {
         List<ItemStack> list = Lists.newArrayList();
 
-        for (int i = 0; i < inv.getSizeInventory(); ++i) {
-            ItemStack itemstack = inv.getStackInSlot(i);
+        for (int i = 0; i < inv.getContainerSize(); ++i) {
+            ItemStack itemstack = inv.getItem(i);
             if (!itemstack.isEmpty()) {
                 list.add(itemstack);
                 if (list.size() > 1) {

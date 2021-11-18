@@ -42,7 +42,6 @@ import static muramasa.antimatter.Data.DUST_SMALL;
 import static muramasa.antimatter.Data.DUST_TINY;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
-
 @JeiPlugin
 public class AntimatterJEIPlugin implements IModPlugin {
 
@@ -90,7 +89,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
         //Remove fluid "blocks".
-        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BLOCK_TO_ITEM.get(t.getFluidBlock()))).collect(Collectors.toList()));
+        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BY_BLOCK.get(t.getFluidBlock()))).collect(Collectors.toList()));
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Collections.singletonList(new ItemStack(Data.PROXY_INSTANCE)));
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Stream.concat(DUST_TINY.all().stream().map(t -> DUST_TINY.get(t, 1)), DUST_SMALL.all().stream().map(t -> DUST_SMALL.get(t, 1))).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));

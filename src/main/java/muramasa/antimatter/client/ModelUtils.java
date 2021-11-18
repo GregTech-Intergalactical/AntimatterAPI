@@ -48,26 +48,26 @@ public class ModelUtils {
     }
 
     public static IUnbakedModel getMissingModel() {
-        return ModelLoader.instance().getUnbakedModel(new ModelResourceLocation("builtin/missing", "missing"));
+        return ModelLoader.instance().getModel(new ModelResourceLocation("builtin/missing", "missing"));
     }
 
     public static IBakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads, Function<RenderMaterial, TextureAtlasSprite> getter) {
-        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrideList.EMPTY, true).setTexture(getter.apply(model.resolveTextureName("particle")));
-        quads.forEach(builder::addGeneralQuad);
+        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrideList.EMPTY, true).particle(getter.apply(model.getMaterial("particle")));
+        quads.forEach(builder::addUnculledFace);
         return builder.build();
     }
 
     public static IBakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ResourceLocation loc) {
-        List<BakedQuad> generalQuads = model.bakeModel(bakery, model, getter, transform, loc, true).getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE);
-        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrideList.EMPTY, true).setTexture(getter.apply(model.resolveTextureName("particle")));
-        generalQuads.forEach(builder::addGeneralQuad);
+        List<BakedQuad> generalQuads = model.bake(bakery, model, getter, transform, loc, true).getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE);
+        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrideList.EMPTY, true).particle(getter.apply(model.getMaterial("particle")));
+        generalQuads.forEach(builder::addUnculledFace);
         return builder.build();
     }
 
     public static IBakedModel getSimpleBakedModel(IBakedModel baked) {
         Map<Direction, List<BakedQuad>> faceQuads = new Object2ObjectOpenHashMap<>();
         Arrays.stream(Ref.DIRS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, EmptyModelData.INSTANCE)));
-        return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.isAmbientOcclusion(), baked.isSideLit(), baked.isGui3d(), baked.getParticleTexture(), baked.getItemCameraTransforms(), baked.getOverrides());
+        return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.useAmbientOcclusion(), baked.usesBlockLight(), baked.isGui3d(), baked.getParticleIcon(), baked.getTransforms(), baked.getOverrides());
     }
 
     public static IBakedModel getBaked(ResourceLocation loc) {
@@ -75,19 +75,19 @@ public class ModelUtils {
     }
 
     public static IBakedModel getBakedFromState(BlockState state) {
-        return Minecraft.getInstance().getModelManager().getModel(BlockModelShapes.getModelLocation(state));
+        return Minecraft.getInstance().getModelManager().getModel(BlockModelShapes.stateToModelLocation(state));
     }
 
     public static IBakedModel getBakedFromItem(Item item) {
-        return Minecraft.getInstance().getItemRenderer().getItemModelMesher().getModelManager().getModel(new ModelResourceLocation(item.getRegistryName(), "inventory"));
+        return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getModelManager().getModel(new ModelResourceLocation(item.getRegistryName(), "inventory"));
     }
 
     public static TextureAtlasSprite getSprite(ResourceLocation loc) {
-        return Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(loc);
+        return Minecraft.getInstance().getTextureAtlas(PlayerContainer.BLOCK_ATLAS).apply(loc);
     }
 
     public static RenderMaterial getBlockMaterial(ResourceLocation loc) {
-        return new RenderMaterial(PlayerContainer.LOCATION_BLOCKS_TEXTURE, loc);
+        return new RenderMaterial(PlayerContainer.BLOCK_ATLAS, loc);
     }
 
     public static List<BakedQuad> trans(List<BakedQuad> quads, Vector3f rotationL, Vector3f rotationR) {

@@ -20,8 +20,8 @@ public class BlockStateElement extends StructureElement {
 
     @Override
     public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
-        BlockState state = machine.getWorld().getBlockState(pos);
-        if (predicate.evaluate(machine.getWorld(), pos, state)) {
+        BlockState state = machine.getLevel().getBlockState(pos);
+        if (predicate.evaluate(machine.getLevel(), pos, state)) {
             result.addState(elementId, pos, state);
             return true;
         }
