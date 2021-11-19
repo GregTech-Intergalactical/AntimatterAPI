@@ -19,27 +19,27 @@ import javax.annotation.Nullable;
 @Mixin(GrindstoneContainer.class)
 public abstract class GrindstoneContainerMixin extends Container {
     @Final
-    @Shadow(remap = false)
+    @Shadow
     private IInventory repairSlots;
     @Final
-    @Shadow(remap = false)
+    @Shadow
     private IInventory resultSlots;
 
     protected GrindstoneContainerMixin(@Nullable ContainerType<?> type, int id) {
         super(type, id);
     }
 
-    @Shadow(remap = false)
+    @Shadow
     private ItemStack mergeEnchants(ItemStack copyTo, ItemStack copyFrom) {
         throw new AssertionError();
     }
 
-    @Shadow(remap = false)
+    @Shadow
     private ItemStack removeNonCurses(ItemStack stack, int damage, int count) {
         throw new AssertionError();
     }
 
-    @Inject(remap = false, method = "createResult", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "createResult", at = @At(value = "HEAD"), cancellable = true)
     private void checkTools(CallbackInfo ci) {
         ItemStack a = this.repairSlots.getItem(0);
         ItemStack b = this.repairSlots.getItem(1);

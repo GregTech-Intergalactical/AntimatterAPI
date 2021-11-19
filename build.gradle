@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
         maven {
             name = 'sponge'
-            url = 'https://repo.spongepowered.org/maven'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
         maven {
             name = "sonatype"
@@ -196,7 +196,7 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
     //MIXIN
-    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
 
     /** KUBEJS STUFF **/
     implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")

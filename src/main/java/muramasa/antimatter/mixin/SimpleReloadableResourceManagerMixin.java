@@ -26,18 +26,18 @@ import java.util.stream.Collectors;
 @Mixin(SimpleReloadableResourceManager.class)
 public class SimpleReloadableResourceManagerMixin {
 
-    @Shadow(remap = false)
+    @Shadow
     @Final
     private ResourcePackType type;
 
-    @Inject(remap = false, method = "createReload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/List;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/resources/IAsyncReloader;", at = @At("HEAD"))
+    @Inject(method = "createReload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/List;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/resources/IAsyncReloader;", at = @At("HEAD"))
     private void callback(Executor backgroundExecutor, Executor gameExecutor, List<IFutureReloadListener> listeners, CompletableFuture<Unit> waitingFor, CallbackInfoReturnable<IAsyncReloader> cir) {
         if (type == ResourcePackType.SERVER_DATA) {
             AntimatterDynamics.onResourceReload(true);
         }
     }
 
-    @Inject(remap = false, at = @At("RETURN"), method = "Lnet/minecraft/resources/SimpleReloadableResourceManager;clear()V")
+    @Inject(at = @At("RETURN"), method = "Lnet/minecraft/resources/SimpleReloadableResourceManager;clear()V")
     private void clearNamespaceInject(CallbackInfo info) {
         SimpleReloadableResourceManager manager = ((SimpleReloadableResourceManager) (Object) this);
         //if (type == ResourcePackType.SERVER_DATA)
