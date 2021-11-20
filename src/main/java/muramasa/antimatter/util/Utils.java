@@ -75,6 +75,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.ANY;
@@ -434,6 +435,12 @@ public class Utils {
             }
         }
         return successful;
+    }
+
+    private static final Consumer<?> SINK = a -> {};
+    @SuppressWarnings("unchecked")
+    public static <T> Consumer<T> sink() {
+        return (Consumer<T>) SINK;
     }
 
     public static boolean transferFluids(IFluidHandler from, IFluidHandler to, int cap) {

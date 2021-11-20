@@ -14,6 +14,7 @@ import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.MenuHandlerPipe;
 import muramasa.antimatter.gui.container.*;
 import muramasa.antimatter.item.DebugScannerItem;
+import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.material.*;
@@ -296,6 +297,9 @@ public class Data {
     public static Material Water = AntimatterAPI.register(Material.class, new Material(Ref.ID, "water", 0x0000ff, NONE)).asFluid();
 
     public static CoverFactory COVEROUTPUT = CoverFactory.builder(CoverOutput::new).addTextures(new Texture(Ref.ID, "block/cover/output")).build(Ref.ID, "output");
+    public static CoverFactory COVERDEBUG = CoverFactory.builder(CoverDebug::new).addTextures(new Texture(Ref.ID, "block/cover/debug")).build(Ref.ID, "debug_cover");
+    public static ItemCover COVERDEBUG_ITEM = new ItemCover(Ref.ID, "debug_cover");
+
     public static CoverFactory COVERINPUT = CoverFactory.builder(CoverInput::new).addTextures(new Texture(Ref.ID, "block/cover/input")).build(Ref.ID, "input");
     public static CoverFactory COVERMUFFLER = CoverFactory.builder(CoverMuffler::new).addTextures(new Texture(Ref.ID, "block/cover/muffler")).build(Ref.ID, "muffler");
     public static CoverFactory COVERDYNAMO = CoverFactory.builder(CoverDynamo::new).addTextures(new Texture(Ref.ID, "block/cover/dynamo")).build(Ref.ID, "dynamo");

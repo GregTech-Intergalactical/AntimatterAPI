@@ -15,8 +15,8 @@ import java.util.Locale;
 @Mixin(GameData.class)
 public class GameDataMixin {
 
-    @Inject(method = "checkPrefix", at = @At(value = "HEAD"), cancellable = true)
-    private void injectCheckPrefix(String name, boolean warnOverrides, CallbackInfoReturnable<ResourceLocation> info) {
+    @Inject(remap = false, method = "checkPrefix", at = @At(value = "HEAD"), cancellable = true)
+    private static void injectCheckPrefix(String name, boolean warnOverrides, CallbackInfoReturnable<ResourceLocation> info) {
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
         String name2 = index == -1 ? name : name.substring(index + 1);

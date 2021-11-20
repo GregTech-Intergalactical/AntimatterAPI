@@ -81,7 +81,7 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
 
     @Override
     public long getEnergy() {
-        return super.getEnergy() + (inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum()); //+ (outputs == null ? 0 : Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum()));
+        return super.getEnergy() + (inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum()) + (outputs == null ? 0 : Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum());
     }
 
     @Override
