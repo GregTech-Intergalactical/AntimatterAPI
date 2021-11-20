@@ -64,6 +64,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
+import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
@@ -360,16 +361,29 @@ public class Utils {
      * @return if energy was inserted
      */
     public static boolean transferEnergy(IEnergyHandler from, IEnergyHandler to) {
-        long extracted = from.extract(from.getOutputVoltage(), true);
-        if (extracted > 0) {
-            long inputted = to.insert(extracted, true);
-            if (inputted > 0) {
-                to.insert(inputted, false);
-                from.extract(inputted, false);
-                return true;
+        GTTransaction extracted = from.extract(GTTransaction.Mode.TRANSMIT);
+        if (extracted.isValid()) {
+            if (to.insert(extracted)) {
+                extracted.commit();
             }
         }
         return false;
+    }
+
+    public static boolean addEnergy(IEnergyHandler to, long eu) {
+        GTTransaction transaction = new GTTransaction(eu, a -> {
+        });
+        to.insert(transaction);
+        transaction.commit();
+        return transaction.getData().size() > 0;
+    }
+
+    public static boolean extractEnergy(IEnergyHandler from, long eu) {
+        GTTransaction transaction = from.extract(GTTransaction.Mode.INTERNAL);
+        transaction.addData(eu, a -> {
+        });
+        transaction.commit();
+        return transaction.getData().get(0).getEu() > 0;
     }
 
     /**
@@ -381,13 +395,13 @@ public class Utils {
      * @return number of amps
      */
     public static boolean transferEnergyWithLoss(IEnergyHandler from, IEnergyHandler to, int loss) {
-        long extracted = from.extract(from.getOutputVoltage(), true);
-        if (extracted > 0) {
-            long inputted = to.insert(extracted - loss, true);
-            if (inputted > 0) {
-                to.insert(inputted - loss, false);
-                from.extract(inputted, false);
-                return true;
+        GTTransaction extracted = from.extract(GTTransaction.Mode.TRANSMIT);
+        if (extracted.isValid()) {
+            if (to.insert(extracted)) {
+                for (GTTransaction.TransferData data : extracted.getData()) {
+                    data.setLoss(loss);
+                }
+                extracted.commit();
             }
         }
         return false;

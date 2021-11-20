@@ -50,10 +50,10 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
         itemHandler.ifPresent(h -> {
             energyHandler.ifPresent(e -> {
                 // Check all items that match the given voltage, and allow either input/output.
-                int out = h.getChargeableItems().stream().filter(item -> (item.getOutputVoltage() == 0 || item.getOutputVoltage() == e.getOutputVoltage())).mapToInt(IEnergyHandler::getOutputAmperage).sum();
-                int in = h.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == e.getInputVoltage())).mapToInt(IEnergyHandler::getInputAmperage).sum();
-                int oldOut = e.getOutputAmperage();
-                int oldIn = e.getInputAmperage();
+                long out = h.getChargeableItems().stream().filter(item -> (item.getOutputVoltage() == 0 || item.getOutputVoltage() == e.getOutputVoltage())).mapToLong(IEnergyHandler::getOutputAmperage).sum();
+                long in = h.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == e.getInputVoltage())).mapToLong(IEnergyHandler::getInputAmperage).sum();
+                long oldOut = e.getOutputAmperage();
+                long oldIn = e.getInputAmperage();
                 // 2 amps per battery input.
                 e.setInputAmperage(in);
                 e.setOutputAmperage(out);

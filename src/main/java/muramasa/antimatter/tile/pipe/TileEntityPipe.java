@@ -35,13 +35,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.GraphWrapper;
 import tesseract.api.IPipe;
+import tesseract.api.ITransactionModifier;
 import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, INamedContainerProvider, IGuiHandler, IPipe {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, INamedContainerProvider, IGuiHandler, IPipe, ITransactionModifier {
 
     /**
      * Pipe Data
@@ -115,6 +116,20 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
             type = getPipeType(getBlockState());
         }
         return type;
+    }
+
+    @Override
+    public boolean canModify(Direction incoming, Direction towards) {
+        return coverHandler.map(t -> !t.get(incoming).isEmpty() || !t.get(towards).isEmpty()).orElse(false);
+    }
+
+    @Override
+    public void modify(Direction incoming, Direction towards, Object object, boolean simulate) {
+        this.coverHandler.ifPresent(t -> t.onTransfer(object, incoming, towards, simulate));
+        /*if (object instanceof FluidStack && simulate) {
+            ((FluidStack)object).setAmount(1);
+        }
+        Antimatter.LOGGER.info("Modify txn: " + object.getClass().getSimpleName() + " simulate: " + simulate);*/
     }
 
     @SuppressWarnings("unchecked")

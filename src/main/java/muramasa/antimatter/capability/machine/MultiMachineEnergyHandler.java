@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;
 
@@ -60,7 +61,7 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
         this.outputs = null;
     }
 
-    @Override
+   /* @Override
     public long insertInternal(long maxReceive, boolean simulate, boolean force) {
         if (outputs == null) cacheOutputs();
         long inserted = super.insertInternal(maxReceive, simulate, force);
@@ -76,11 +77,11 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
             }
         }
         return inserted;
-    }
+    }*/
 
     @Override
     public long getEnergy() {
-        return super.getEnergy() + (inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum() + (outputs == null ? 0 : Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum()));
+        return super.getEnergy() + (inputs == null ? 0 : Arrays.stream(inputs).mapToLong(IGTNode::getEnergy).sum()); //+ (outputs == null ? 0 : Arrays.stream(outputs).mapToLong(IGTNode::getEnergy).sum()));
     }
 
     @Override
@@ -99,17 +100,30 @@ public class MultiMachineEnergyHandler<T extends TileEntityMultiMachine<T>> exte
     }
 
     @Override
-    public long extractInternal(long maxReceive, boolean simulate, boolean force) {
-        if (inputs == null) cacheInputs();
-        long extracted = super.extractInternal(maxReceive, simulate, force);
-        if (extracted == 0 && inputs != null) {
+    public boolean extractEnergy(GTTransaction.TransferData data) {
+        boolean ok = super.extractEnergy(data);
+        if (data.transaction.mode == GTTransaction.Mode.INTERNAL) {
             for (MachineEnergyHandler<?> handler : inputs) {
-                extracted += handler.extractInternal(maxReceive - extracted, simulate, force);
-                if (extracted >= maxReceive)
-                    return extracted;
+                ok |= handler.extractEnergy(data);
             }
         }
-        return extracted;
+        return ok;
+    }
+
+    @Override
+    public boolean addEnergy(GTTransaction.TransferData data) {
+        boolean ok = super.addEnergy(data);
+        if (data.transaction.mode == GTTransaction.Mode.INTERNAL) {
+            for (MachineEnergyHandler<?> handler : outputs) {
+                ok |= handler.addEnergy(data);
+            }
+        }
+        return ok;
+    }
+
+    @Override
+    public boolean insert(GTTransaction transaction) {
+        return super.insert(transaction);
     }
 
     public Tier getAccumulatedPower() {

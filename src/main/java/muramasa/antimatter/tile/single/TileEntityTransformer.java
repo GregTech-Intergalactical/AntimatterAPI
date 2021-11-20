@@ -75,7 +75,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
         if (type == SOFT_HAMMER && hand == Hand.MAIN_HAND) {
             toggleMachine();
             energyHandler.ifPresent(h -> {
-                int temp = h.getOutputAmperage();
+                long temp = h.getOutputAmperage();
                 h.setOutputAmperage(h.getInputAmperage());
                 h.setInputAmperage(temp);
                 temp = h.getOutputVoltage();

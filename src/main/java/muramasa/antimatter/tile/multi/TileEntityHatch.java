@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.Explosion;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -48,14 +49,14 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                 }
 
                 @Override
-                protected boolean checkVoltage(long receive, boolean simulate) {
+                protected boolean checkVoltage(GTTransaction.TransferData data) {
                     boolean flag = true;
                     if (type.getOutputCover() == COVERDYNAMO) {
-                        flag = receive <= getOutputVoltage();
+                        flag = data.getVoltage() <= getOutputVoltage();
                     } else if (type.getOutputCover() == COVERENERGY) {
-                        flag = receive <= getInputVoltage();
+                        flag = data.getVoltage() <= getInputVoltage();
                     }
-                    if (!flag && !simulate) {
+                    if (!flag) {
                         Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.Mode.BREAK);
                     }
                     return flag;

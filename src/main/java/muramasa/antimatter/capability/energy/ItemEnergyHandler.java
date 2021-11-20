@@ -43,19 +43,8 @@ public class ItemEnergyHandler extends EnergyHandler {
         return discharge;
     }
 
-    @Override
-    public long insert(long maxReceive, boolean simulate) {
-        return super.insert(maxReceive, simulate);
-    }
-
-
     public void setEnergy(long energy) {
         this.energy = energy;
-    }
-
-    @Override
-    public long extract(long maxExtract, boolean simulate) {
-        return super.extract(maxExtract, simulate);
     }
 
     @Override

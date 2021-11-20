@@ -19,9 +19,9 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends EnergyHandler implements IMachineHandler, Dispatch.Sided<IEnergyHandler> {
@@ -31,12 +31,10 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
     protected int offsetInsert = 0;
     protected int offsetExtract = 0;
-    private final List<LazyOptional<IEnergyHandler>> cache = new ObjectArrayList<>(6);
 
     public MachineEnergyHandler(T tile, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.tile = tile;
-        Arrays.stream(Ref.DIRS).forEach(dir -> cache.add(LazyOptional.empty()));
     }
 
     public MachineEnergyHandler(T tile, boolean isGenerator) {
@@ -50,17 +48,12 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public void init() {
         cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).orElse(cachedItems);
-        //registerNet();
     }
 
     @Override
-    protected boolean checkVoltage(long receive, boolean simulate) {
-        if (receive > this.getInputVoltage()) {
-            if (!this.tile.recipeHandler.map(t -> t.generator).orElse(false)) {
-                if (!simulate)
-                    Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.Mode.BREAK);
-                return false;
-            }
+    protected boolean checkVoltage(GTTransaction.TransferData data) {
+        if (data.getVoltage() > this.tile.getMachineTier().getVoltage()) {
+            Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.Mode.BREAK);
         }
         return true;
     }
@@ -71,6 +64,40 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
             return super.getCapacity() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getCapacity).sum() : 0);
         }
         return super.getCapacity();
+    }
+
+    @Override
+    public boolean addEnergy(GTTransaction.TransferData data) {
+        int j = 0;
+        boolean ok = super.addEnergy(data);
+        for (int i = offsetInsert; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
+            IEnergyHandler handler = cachedItems.get(i);
+            if (handler.addEnergy(data)) {
+                offsetInsert = (offsetInsert + 1) % cachedItems.size();
+                ok = true;
+            }
+        }
+        if (ok) {
+            tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED);
+        }
+        return ok;
+    }
+
+    @Override
+    public boolean extractEnergy(GTTransaction.TransferData data) {
+        boolean ok = super.extractEnergy(data);
+        int j = 0;
+        for (int i = offsetExtract; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
+            IEnergyHandler handler = cachedItems.get(i);
+            if (handler.extractEnergy(data)) {
+                offsetExtract = (offsetExtract + 1) % cachedItems.size();
+                ok = true;
+            }
+        }
+        if (ok) {
+            tile.onMachineEvent(MachineEvent.ENERGY_DRAINED);
+        }
+        return ok;
     }
 
     @Override
@@ -85,35 +112,17 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     public void onUpdate() {
         super.onUpdate();
         cachedItems.forEach(t -> t.getState().onTick());
-        cache.forEach(v -> v.ifPresent(t -> {
-            if (t instanceof EnergyTileWrapper) {
-                t.tesseractTick();
-            }
-        }));
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
-                LazyOptional<IEnergyHandler> handle = cache.get(dir.get3DDataValue());
+                TileEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
+                if (tile == null) continue;
+                LazyOptional<IEnergyHandler> handle = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
                 if (!handle.isPresent()) {
-                    TileEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
-                    if (tile == null) continue;
-                    handle = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
-                    if (!handle.isPresent()) {
-                        LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, dir.getOpposite());
-                        if (!cap.isPresent()) continue;
-                        handle = LazyOptional.of(() -> new EnergyTileWrapper(tile, cap.orElse(null)));
-                        LazyOptional<IEnergyHandler> finalHandle = handle;
-                        cap.addListener(list -> finalHandle.invalidate());
-                    }
-                    cache.add(dir.get3DDataValue(), handle);
-                    handle.addListener(h -> cache.add(dir.get3DDataValue(), LazyOptional.empty()));
+                    LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, dir.getOpposite());
+                    if (!cap.isPresent()) continue;
+                    handle = LazyOptional.of(() -> new EnergyTileWrapper(tile, cap.orElse(null)));
                 }
-                boolean ok = true;
-                while (ok) {
-                    if (!getState().extract(true, 1, 0)) {
-                        break;
-                    }
-                    ok = handle.map(eh -> Utils.transferEnergy(this, eh)).orElse(false);
-                }
+                handle.ifPresent(eh -> Utils.transferEnergy(this, eh));
             }
         }
     }
@@ -125,81 +134,42 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     @Override
+    public boolean insert(GTTransaction transaction) {
+        boolean ok = super.insert(transaction);
+        if (transaction.canContinue()) {
+            ok |= insertIntoItems(transaction);
+        }
+        return ok;
+    }
+
+    @Override
+    public GTTransaction extract(GTTransaction.Mode mode) {
+        GTTransaction transaction = super.extract(mode);
+        extractFromItems(transaction);
+        return transaction;
+    }
+
+    protected void extractFromItems(GTTransaction transaction) {
+        for (IEnergyHandler cachedItem : this.cachedItems) {
+            transaction.addAmps(cachedItem.availableAmpsOutput());
+        }
+    }
+
+    protected boolean insertIntoItems(GTTransaction transaction) {
+        for (IEnergyHandler cachedItem : this.cachedItems) {
+            transaction.addAmps(cachedItem.availableAmpsInput());
+        }
+        return transaction.availableAmps > 0;
+    }
+
+
+    @Override
     public boolean canInput(Direction direction) {
         return super.canInput(direction) && tile.getFacing() != direction;
     }
 
-    @Override
-    public long insert(long maxReceive, boolean simulate) {
-        return this.insertInternal(maxReceive, simulate, false);
-    }
-
-    @Override
-    public long insertInternal(long maxReceive, boolean simulate, boolean force) {
-        long inserted = super.insertInternal(maxReceive, simulate, force);
-        if (inserted == 0 && canChargeItem()) {
-            inserted = insertIntoItems(maxReceive, simulate);
-        }
-        if (!simulate) {
-            tile.onMachineEvent(MachineEvent.ENERGY_INPUTTED, inserted);
-        }
-        return inserted;
-    }
-
-    protected long insertIntoItems(long maxReceive, boolean simulate) {
-        int j = 0;
-        for (int i = offsetInsert; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
-            IEnergyHandler handler = cachedItems.get(i);
-            long inserted = handler.insert(maxReceive, true);
-            if (inserted > 0) {
-                if (!simulate) {
-                    offsetInsert = offsetInsert == cachedItems.size() - 1 ? 0 : offsetInsert + 1;
-                    return handler.insert(maxReceive, false);
-                } else {
-                    return inserted;
-                }
-            }
-        }
-        return 0;
-    }
-
     public boolean canChargeItem() {
         return true;
-    }
-
-    @Override
-    public long extract(long maxExtract, boolean simulate) {
-        return extractInternal(maxExtract, simulate, false);
-    }
-
-    @Override
-    public long extractInternal(long maxExtract, boolean simulate, boolean force) {
-        long extracted = super.extractInternal(maxExtract, simulate, force);
-        if (extracted == 0) {
-            extracted = extractFromItems(maxExtract, simulate);
-        }
-        if (!simulate) {
-            tile.onMachineEvent(MachineEvent.ENERGY_DRAINED, extracted);
-            // tile.markDirty();
-        }
-        return extracted;
-    }
-
-    protected long extractFromItems(long maxExtract, boolean simulate) {
-        int j = 0;
-        for (int i = offsetExtract; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
-            IEnergyHandler handler = cachedItems.get(i);
-            long extracted = handler.extract(maxExtract, true);
-            if (extracted > 0) {
-                if (!simulate) {
-                    offsetExtract = offsetExtract == cachedItems.size() - 1 ? 0 : offsetExtract + 1;
-                    return handler.extract(maxExtract, false);
-                } else {
-                    return extracted;
-                }
-            }
-        }
-        return 0;
     }
 
     @Override

@@ -312,9 +312,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             if (tile.energyHandler.isPresent()) {
                 if (!generator) {
                     long power = getPower();
-                    if (tile.energyHandler.map(t -> t.extractInternal(power, true, true)).orElse(0L) >= power) {
+                    if (tile.energyHandler.map(MachineEnergyHandler::getEnergy).orElse(0L) >= power) {
                         if (!simulate)
-                            tile.energyHandler.map(t -> t.extractInternal(power, false, true));
+                            tile.energyHandler.ifPresent(t -> Utils.extractEnergy(t, power));
                         return true;
                     } else {
                         return false;
@@ -328,7 +328,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     protected boolean validateRecipe(Recipe r) {
-        int voltage = this.generator ? tile.getMaxOutputVoltage() : tile.getMachineType().amps() * tile.getMaxInputVoltage();
+        long voltage = this.generator ? tile.getMaxOutputVoltage() : tile.getMachineType().amps() * tile.getMaxInputVoltage();
         boolean ok = voltage >= r.getPower() / r.getAmps();
         List<ItemStack> consumed = this.tile.itemHandler.map(t -> t.consumeInputs(r, true)).orElse(Collections.emptyList());
         return ok && (consumed.size() > 0 || !r.hasInputItems());
@@ -434,7 +434,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
 
         final long t = inserted;
-        long actual = tile.energyHandler.map(h -> h.insertInternal(t, true, true)).orElse(0L);
+        long actual = tile.energyHandler.map(h -> Math.min(h.getEnergy(), t)).orElse(0L);
         //If there isn't enough room for an entire run reduce output.
         //E.g. if recipe is 24 eu per MB then you have to run 2x to match 48 eu/t
         //but eventually it will be too much so reduce output.
@@ -443,7 +443,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             toConsume--;
             inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
             final long temp = inserted;
-            actual = tile.energyHandler.map(h -> h.insertInternal(temp, true, true)).orElse(0L);
+            actual = tile.energyHandler.map(h -> Math.min(h.getEnergy(), temp)).orElse(0L);
         }
         //If nothing to insert.
         if (actual == 0) return false;
@@ -462,7 +462,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         }).orElse(false)) {
             //insert power!
             if (!simulate)
-                tile.energyHandler.ifPresent(handler -> handler.insertInternal(actualInsert, false, true));
+                tile.energyHandler.ifPresent(handler -> Utils.addEnergy(handler, actualInsert));
             return true;
         }
         return false;

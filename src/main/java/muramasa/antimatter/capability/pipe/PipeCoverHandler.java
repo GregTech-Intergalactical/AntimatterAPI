@@ -22,4 +22,9 @@ public class PipeCoverHandler<T extends TileEntityPipe<?>> extends CoverHandler<
         return ok;
     }
 
+
+    public void onTransfer(Object obj, Direction from, Direction towards, boolean execute) {
+        this.get(from).onTransfer(obj, true, execute);
+        this.get(towards).onTransfer(obj, false, execute);
+    }
 }

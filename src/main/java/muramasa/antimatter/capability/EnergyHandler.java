@@ -1,10 +1,12 @@
 package muramasa.antimatter.capability;
 
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.gt.GTConsumer;
+import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 
 
@@ -13,7 +15,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     protected final long capacity;
 
     protected long energy;
-    protected int voltageIn, voltageOut, amperageIn, amperageOut;
+    protected long voltageIn, voltageOut, amperageIn, amperageOut;
 
     protected GTConsumer.State state = new GTConsumer.State(this);
 
@@ -26,36 +28,11 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         this.amperageOut = amperageOut;
     }
 
-    //Ignore means to ignore e.g. whether or not it actually can input.
-    //Useful for recipe handlers, to extract from input-only machines.
-    public long insertInternal(long maxReceive, boolean simulate, boolean ignore) {
-        if (!ignore && !canInput()) return 0;
-        if (!simulate) {
-            if (!checkVoltage(maxReceive, false)) {
-                return 0;
-            }
-        }
-        long toInsert = Math.max(Math.min(capacity - energy, maxReceive), 0);
-        if (ignore || getState().receive(true, 1, toInsert)) {
-            if (!simulate) {
-                energy += toInsert;
-                if (!ignore) getState().receive(false, 1, toInsert);
-            }
-        } else {
-            return 0;
-        }
-        return toInsert;
-    }
-
     /**
      * Tesseract IGTNode Implementations
      **/
-    @Override
-    public long insert(long maxReceive, boolean simulate) {
-        return insertInternal(maxReceive, simulate, false);
-    }
 
-    protected boolean checkVoltage(long receive, boolean simulate) {
+    protected boolean checkVoltage(GTTransaction.TransferData data) {
         return true;
     }
 
@@ -63,40 +40,60 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
         this.state.onTick();
     }
 
-    @Override
-    public long extract(long maxExtract, boolean simulate) {
-        return extractInternal(maxExtract, simulate, false);
-    }
-
-    //Ignore means to ignore e.g. whether or not it actually can input.
-    //Useful for recipe handlers, to extract from input-only machines.
-    public long extractInternal(long maxExtract, boolean simulate, boolean ignore) {
-        if (!ignore && !canOutput()) return 0;
-        if (ignore || getState().extract(true, 1, maxExtract)) {
-            long toExtract = Math.max(Math.min(energy, maxExtract), 0);
-            if (!simulate) {
-                energy -= toExtract;
-                if (!ignore) getState().extract(false, 1, maxExtract);
-            }
-            return toExtract;
-        }
-        return 0;
-    }
-
-    public void setOutputAmperage(int amperageOut) {
+    public void setOutputAmperage(long amperageOut) {
         this.amperageOut = amperageOut;
     }
 
-    public void setInputAmperage(int amperageIn) {
+    public void setInputAmperage(long amperageIn) {
         this.amperageIn = amperageIn;
     }
 
-    public void setOutputVoltage(int voltageOut) {
+    public void setOutputVoltage(long voltageOut) {
         this.voltageOut = voltageOut;
     }
 
-    public void setInputVoltage(int voltageIn) {
+    public void setInputVoltage(long voltageIn) {
         this.voltageIn = voltageIn;
+    }
+
+    @Override
+    public boolean extractEnergy(GTTransaction.TransferData data) {
+        if (data.transaction.mode == GTTransaction.Mode.TRANSMIT) {
+            long amps = Math.min(data.getAmps(false), this.availableAmpsOutput());
+            amps = Math.min(amps, this.energy / this.getOutputVoltage());
+            this.energy -= data.getEnergy(amps, false);
+            this.getState().extract(false, amps);
+            data.useAmps(false, amps);
+            return amps > 0;
+        } else {
+            long toDrain = Math.min(data.getEu(), this.energy);
+            this.energy -= data.drainEu(toDrain);
+            return toDrain > 0;
+        }
+    }
+
+    protected void overVolt() {
+
+    }
+
+    @Override
+    public boolean addEnergy(GTTransaction.TransferData data) {
+        if (data.transaction.mode == GTTransaction.Mode.TRANSMIT) {
+            boolean ok = checkVoltage(data);
+            if (!ok) {
+                return false;
+            }
+            long amps = Math.min(data.getAmps(true), this.availableAmpsInput());
+            amps = Math.min(amps, (this.capacity - this.energy) / this.getInputVoltage());
+            this.energy += data.getEnergy(amps, true);
+            data.useAmps(true, amps);
+            this.getState().receive(false, amps);
+            return amps > 0;
+        } else {
+            long toAdd = Math.min(data.getEu(), this.capacity - this.energy);
+            this.energy += data.drainEu(toAdd);
+            return toAdd > 0;
+        }
     }
 
     @Override
@@ -110,22 +107,22 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
-    public int getInputAmperage() {
+    public long getInputAmperage() {
         return amperageIn;
     }
 
     @Override
-    public int getOutputAmperage() {
+    public long getOutputAmperage() {
         return amperageOut;
     }
 
     @Override
-    public int getInputVoltage() {
+    public long getInputVoltage() {
         return voltageIn;
     }
 
     @Override
-    public int getOutputVoltage() {
+    public long getOutputVoltage() {
         return voltageOut;
     }
 
@@ -154,14 +151,19 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
      **/
     @Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
-        long receive = insert(maxReceive, simulate);
-        return receive > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) receive;
+        GTTransaction transaction = new GTTransaction((long) (maxReceive / AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), a -> {
+        });
+        insert(transaction);
+        if (!simulate) transaction.commit();
+        return transaction.isValid() ? (int) transaction.getData().stream().mapToLong(t -> t.getEnergy((long) (t.getAmps(true) * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), true)).sum() : 0;
     }
 
     @Override
     public int extractEnergy(int maxExtract, boolean simulate) {
-        long extract = extract(maxExtract, simulate);
-        return extract > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) extract;
+        GTTransaction transaction = extract(GTTransaction.Mode.INTERNAL);
+        transaction.addData((long) (maxExtract / AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), this::extractEnergy);
+        if (!simulate) transaction.commit();
+        return transaction.isValid() ? (int) transaction.getData().stream().mapToLong(t -> t.getEnergy((long) (t.getAmps(false) * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), false)).sum() : 0;
     }
 
     @Override
@@ -190,20 +192,20 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     public CompoundNBT serializeNBT() {
         CompoundNBT tag = new CompoundNBT();
         tag.putLong(Ref.TAG_MACHINE_ENERGY, this.energy);
-        tag.putInt(Ref.TAG_MACHINE_VOLTAGE_IN, this.voltageIn);
-        tag.putInt(Ref.TAG_MACHINE_VOLTAGE_OUT, this.voltageOut);
-        tag.putInt(Ref.TAG_MACHINE_AMPERAGE_IN, this.amperageIn);
-        tag.putInt(Ref.TAG_MACHINE_AMPERAGE_OUT, this.amperageOut);
+        tag.putLong(Ref.TAG_MACHINE_VOLTAGE_IN, this.voltageIn);
+        tag.putLong(Ref.TAG_MACHINE_VOLTAGE_OUT, this.voltageOut);
+        tag.putLong(Ref.TAG_MACHINE_AMPERAGE_IN, this.amperageIn);
+        tag.putLong(Ref.TAG_MACHINE_AMPERAGE_OUT, this.amperageOut);
         return tag;
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
         this.energy = nbt.getLong(Ref.TAG_MACHINE_ENERGY);
-        this.voltageIn = nbt.getInt(Ref.TAG_MACHINE_VOLTAGE_IN);
-        this.voltageOut = nbt.getInt(Ref.TAG_MACHINE_VOLTAGE_OUT);
-        this.amperageIn = nbt.getInt(Ref.TAG_MACHINE_AMPERAGE_IN);
-        this.amperageOut = nbt.getInt(Ref.TAG_MACHINE_AMPERAGE_OUT);
+        this.voltageIn = nbt.getLong(Ref.TAG_MACHINE_VOLTAGE_IN);
+        this.voltageOut = nbt.getLong(Ref.TAG_MACHINE_VOLTAGE_OUT);
+        this.amperageIn = nbt.getLong(Ref.TAG_MACHINE_AMPERAGE_IN);
+        this.amperageOut = nbt.getLong(Ref.TAG_MACHINE_AMPERAGE_OUT);
     }
 
     public GTConsumer.State getState() {

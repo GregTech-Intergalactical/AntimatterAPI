@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.gt.GTConsumer;
+import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 
 public class EnergyTileWrapper implements IEnergyHandler {
@@ -21,16 +22,28 @@ public class EnergyTileWrapper implements IEnergyHandler {
     }
 
     @Override
-    public long insert(long maxReceive, boolean simulate) {
-        if (state.receive(simulate, getInputAmperage(), maxReceive)) {
-            return storage.receiveEnergy((int) (maxReceive * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), simulate);
+    public boolean insert(GTTransaction transaction) {
+        if (storage.getEnergyStored() >= transaction.voltageOut * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO) {
+            transaction.addData(1, 0, this::extractEnergy, null);
+            return true;
         }
-        return 0;
+        return false;
     }
 
     @Override
-    public long extract(long maxExtract, boolean simulate) {
-        return 0;
+    public boolean extractEnergy(GTTransaction.TransferData data) {
+        return storage.extractEnergy((int) (data.getEnergy(1, false) * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), false) > 0;
+    }
+
+    @Override
+    public boolean addEnergy(GTTransaction.TransferData data) {
+        return storage.receiveEnergy((int) (data.getEnergy(1, true) * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), false) > 0;
+    }
+
+    @Override
+    public GTTransaction extract(GTTransaction.Mode mode) {
+        return new GTTransaction(0, 0, a -> {
+        });
     }
 
     @Override
@@ -44,22 +57,22 @@ public class EnergyTileWrapper implements IEnergyHandler {
     }
 
     @Override
-    public int getOutputAmperage() {
+    public long getOutputAmperage() {
         return 0;
     }
 
     @Override
-    public int getOutputVoltage() {
+    public long getOutputVoltage() {
         return 0;
     }
 
     @Override
-    public int getInputAmperage() {
+    public long getInputAmperage() {
         return 1;
     }
 
     @Override
-    public int getInputVoltage() {
+    public long getInputVoltage() {
         return Integer.MAX_VALUE;
     }
 

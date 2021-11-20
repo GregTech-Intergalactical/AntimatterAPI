@@ -53,6 +53,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         // NOOP
     }
 
+    default void onTransfer(Object object, boolean inputSide, boolean execute) {
+
+    }
+
     Direction side();
 
     default ResourceLocation getLoc() {

@@ -400,12 +400,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getMachineState() == getDefaultMachineState();
     }
 
-    public int getMaxInputVoltage() {
-        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0);
+    public long getMaxInputVoltage() {
+        return energyHandler.map(EnergyHandler::getInputVoltage).orElse(0L);
     }
 
-    public int getMaxOutputVoltage() {
-        return energyHandler.map(EnergyHandler::getOutputVoltage).orElse(0);
+    public long getMaxOutputVoltage() {
+        return energyHandler.map(EnergyHandler::getOutputVoltage).orElse(0L);
     }
 
     /**

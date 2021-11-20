@@ -31,7 +31,7 @@ public class TankMachine extends Machine<TankMachine> {
 
     public static class TankRenderWidget extends InfoRenderWidget<TankRenderWidget> {
 
-        public FluidStack stack= FluidStack.EMPTY;
+        public FluidStack stack = FluidStack.EMPTY;
 
         protected TankRenderWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TankRenderWidget> renderer) {
             super(gui, parent, renderer);

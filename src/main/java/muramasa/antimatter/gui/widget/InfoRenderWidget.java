@@ -9,7 +9,6 @@ import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.Minecraft;
-import net.minecraft.fluid.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
@@ -173,7 +172,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 if (controller == null) return 0;
                 FluidController gt = (FluidController) controller;
                 FluidHolder holder = gt.getCableHolder(pos);
-                return holder == null ? 0 : holder.getPressure();
+                return holder == null ? 0 : holder.getPressureAvailable();
             }, a -> this.holderPressure = a, SERVER_TO_CLIENT);
             gui.syncFluidStack(() -> {
                 ITickingController controller = Tesseract.FLUID.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
@@ -181,9 +180,9 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 FluidController gt = (FluidController) controller;
                 FluidHolder holder = gt.getCableHolder(pos);
                 if (holder != null) {
-                    Set<Fluid> fluids = holder.getFluids();
+                    Set<FluidHolder.SetHolder> fluids = holder.getFluids();
                     if (fluids != null && fluids.size() > 0) {
-                        return new FluidStack(fluids.iterator().next(), holder.getPressure());
+                        return new FluidStack(fluids.iterator().next().fluid, holder.getPressureAvailable());
                     }
                 }
                 return FluidStack.EMPTY;
