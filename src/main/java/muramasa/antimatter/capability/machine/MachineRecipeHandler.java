@@ -438,9 +438,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
 
         final long t = inserted;
-        GTTransaction transaction = tile.energyHandler.map(eh -> eh.extract(GTTransaction.Mode.INTERNAL)).orElse(null);
-        if (transaction == null) return false;
-        long actual = Math.min(t, transaction.eu);
+        GTTransaction transaction = new GTTransaction(t, Utils.sink());
+        if (!tile.energyHandler.map(eh -> eh.insert(transaction)).orElse(false)) {
+            return false;
+        }
+        //Check leftover eu.
+        long actual = t - transaction.eu;
         //If there isn't enough room for an entire run reduce output.
         //E.g. if recipe is 24 eu per MB then you have to run 2x to match 48 eu/t
         //but eventually it will be too much so reduce output.
@@ -454,7 +457,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (actual == 0) return false;
         //because lambda don't like primitives
         final long actualConsume = toConsume;
-        final long actualInsert = inserted;
         //make sure there are fluids avaialble
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             int amount = h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
@@ -467,7 +469,6 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         }).orElse(false)) {
             //insert power!
             if (!simulate) {
-                transaction.addData(actualInsert, Utils.sink());
                 transaction.commit();
             }
             return true;
