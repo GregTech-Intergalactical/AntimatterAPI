@@ -93,8 +93,7 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
                     for (IBakedModel iBakedModel : arr) {
                         if (iBakedModel instanceof BakedMachineSide) {
                             BakedMachineSide toRender = (BakedMachineSide) iBakedModel;
-                            for (Map.Entry<String, IBakedModel> customPart : toRender.customParts()) {
-                                IBakedModel temp = renderInner(stack, tile.getBlockState(), tile.getLevel().getRandom(),buffer, light, overlay, customPart.getValue(), getter.apply(customPart.getKey()));
+                                IBakedModel temp = renderInner(stack, tile.getBlockState(), tile.getLevel().getRandom(), light, overlay, customPart.getValue(), getter.apply(customPart.getKey()));
                                 long t = tile.getBlockState().getSeed(tile.getBlockPos());
                                 net.minecraftforge.client.ForgeHooksClient.setRenderLayer(RenderType.cutout());
                                 Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModelSmooth(tile.getLevel(), temp, tile.getBlockState(), tile.getBlockPos(), stack, builder, false, tile.getLevel().getRandom(),t, overlay, data);
@@ -107,9 +106,9 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
         stack.popPose();
     }
 
-    private IBakedModel renderInner(MatrixStack stack, BlockState state, Random rand, int color, int light, int overlay, IBakedModel inner, TextureAtlasSprite name) {
+    private IBakedModel renderInner(MatrixStack stack, BlockState state, Random rand, int light, int overlay, IBakedModel inner, Fluid fluid) {
         List<BakedQuad> quads = inner.getQuads(state, null, rand, EmptyModelData.INSTANCE);
-        List<BakedQuad> out = VertexTransformer.processMany(quads, name);
+        List<BakedQuad> out = VertexTransformer.processMany(quads, fluid.getAttributes().getColor(), Minecraft.getInstance().getTextureAtlas(PlayerContainer.BLOCK_ATLAS).apply(fluid.getAttributes().getFlowingTexture()));
         IBakedModel temp = new IBakedModel() {
             @Override
             public List<BakedQuad> getQuads(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_) {
@@ -148,7 +147,7 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
         };
         if (true) return temp;
         for (BakedQuad quad : quads) {
-            BakedQuadBuilder consumer = new BakedQuadBuilder(name);
+            BakedQuadBuilder consumer = new BakedQuadBuilder(null);
             consumer.setContractUVs(true);
             consumer.setApplyDiffuseLighting(true);
             for(int e = 0; e < 4; e++)

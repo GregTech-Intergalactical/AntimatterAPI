@@ -18,8 +18,12 @@ public class VertexTransformer {
     private static final int POSITION = findPositionOffset(DefaultVertexFormats.BLOCK);
     private static final int NORMAL = findNormalOffset(DefaultVertexFormats.BLOCK);
     private static final int UV = findUVOffset(DefaultVertexFormats.BLOCK);
-    public static void processVertices(int[] inData, int[] outData, TextureAtlasSprite sprite)
+    private static final int COLOR = findColorOffset(DefaultVertexFormats.BLOCK);
+    public static void processVertices(int[] inData, int[] outData, int color, TextureAtlasSprite sprite)
     {
+        float r = (float)(color >> 16 & 255) / 255.0F;
+        float g = (float)(color >> 8 & 255) / 255.0F;
+        float b  = (float)(color & 255) / 255.0F;
         float u0 = sprite.getU(0.0f);
         float u1 = sprite.getU(16.0f);
         float v0 = sprite.getU(0.0f);
@@ -45,8 +49,10 @@ public class VertexTransformer {
                     outData[i*stride/4 + UV] = Float.floatToIntBits(sprite.getU(0.0f));
                     outData[i*stride/4 + UV + 1] = Float.floatToIntBits(sprite.getV(0.0f));
                     break;
-
             }
+            outData[i*stride/4 + COLOR] = Float.floatToIntBits(r);
+            outData[i*stride/4 + COLOR + 1] = Float.floatToIntBits(r);
+            outData[i*stride/4 + COLOR + 2] = Float.floatToIntBits(r);
         }
     }
 /*
@@ -149,13 +155,29 @@ public class VertexTransformer {
         return fmt.getOffset(index)/4;
     }
 
-
+    private static int findColorOffset(VertexFormat fmt)
+    {
+        int index;
+        VertexFormatElement element = null;
+        for (index = 0; index < fmt.getElements().size(); index++)
+        {
+            VertexFormatElement el = fmt.getElements().get(index);
+            if (el.getUsage() == VertexFormatElement.Usage.COLOR)
+            {
+                element = el;
+                break;
+            }
+        }
+        if (index == fmt.getElements().size() || element == null)
+            throw new IllegalStateException("BLOCK format does not have normals?");
+        return fmt.getOffset(index)/4;
+    }
     /**
      * Processes multiple quads, producing a new array of new quads.
      * @param inputs The list of quads to transform
      * @return A new array of new BakedQuad objects.
      */
-    public static List<BakedQuad> processMany(List<BakedQuad> inputs, TextureAtlasSprite sprite)
+    public static List<BakedQuad> processMany(List<BakedQuad> inputs, int color, TextureAtlasSprite sprite)
     {
         if(inputs.size() == 0)
             return Collections.emptyList();
@@ -165,7 +187,7 @@ public class VertexTransformer {
         {
             int[] inData = input.getVertices();
             int[] outData = Arrays.copyOf(inData, inData.length);
-            processVertices(inData, outData, sprite);
+            processVertices(inData, outData, color, sprite);
 
             outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getDirection(), sprite, input.isShade()));
         }
@@ -184,7 +206,7 @@ public class VertexTransformer {
         for(BakedQuad input : inputs)
         {
             int[] data = input.getVertices();
-            processVertices(data, data, null);
+            processVertices(data, data, 0,null);
         }
     }
 }
