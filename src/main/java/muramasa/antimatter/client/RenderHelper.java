@@ -66,6 +66,33 @@ public class RenderHelper {
 //        return Minecraft.getInstance().getTextureMap().getSprite(fluid.getAttributes().getStillTexture());
 //    }*/
 
+    public static float xFromQuad(BakedQuad quad, int index) {
+        int size = DefaultVertexFormats.BLOCK.getOffset(index);
+
+        return Float.intBitsToFloat(quad.getVertices()[size]);
+    }
+
+    public static float yFromQuad(BakedQuad quad, int index) {
+        int size = DefaultVertexFormats.BLOCK.getOffset(index);
+
+        return Float.intBitsToFloat(quad.getVertices()[size + 1]);
+    }
+
+    public static float zFromQuad(BakedQuad quad, int index) {
+        int size = DefaultVertexFormats.BLOCK.getOffset(index);
+
+        return Float.intBitsToFloat(quad.getVertices()[size + 2]);
+    }
+
+    public static Vector3f normalFromQuad(BakedQuad quad, int index) {
+        int size = DefaultVertexFormats.BLOCK.getOffset(index);
+        int off = DefaultVertexFormats.ELEMENT_POSITION.getByteSize() + DefaultVertexFormats.ELEMENT_COLOR.getByteSize() + DefaultVertexFormats.ELEMENT_UV0.getByteSize() + DefaultVertexFormats.ELEMENT_UV2.getByteSize();
+        float first = Float.intBitsToFloat(quad.getVertices()[off]);
+        float two = Float.intBitsToFloat(quad.getVertices()[off+1]);
+        float three = Float.intBitsToFloat(quad.getVertices()[off+2]);
+        return new Vector3f(first, two, three);
+    }
+
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
         ItemModelsProperties.register(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living) -> {

@@ -28,6 +28,7 @@ import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
@@ -38,6 +39,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -104,6 +107,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean allowFrontCovers = false;
     protected boolean allowVerticalFacing = false;
     protected boolean frontIO = false;
+
+    /**
+     * Rendering
+     */
+    protected boolean renderTesr = false;
+    protected boolean renderContainedLiquids = false;
 
     /**
      * Covers
@@ -467,6 +476,25 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     public void setStructure(Tier tier, Function<StructureBuilder, Structure> func) {
         structures.put(tier, func.apply(new StructureBuilder()));
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public boolean renderAsTesr() {
+        return renderTesr;
+    }
+
+    public T tesr() {
+        this.renderTesr = true;
+        return (T) this;
+    }
+
+    public T renderContainedLiquids() {
+        this.renderContainedLiquids = true;
+        return tesr();
+    }
+
+    public boolean renderContainerLiquids() {
+        return renderContainedLiquids;
     }
 
     /**

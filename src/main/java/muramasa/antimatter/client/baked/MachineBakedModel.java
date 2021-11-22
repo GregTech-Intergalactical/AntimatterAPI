@@ -31,6 +31,10 @@ public class MachineBakedModel extends CoveredBakedModel {
         super(particle, bakedTuple);
     }
 
+    public Int2ObjectOpenHashMap<IBakedModel[]> getConfigs() {
+        return this.bakedConfigs;
+    }
+
     public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         BlockMachine bm = (BlockMachine) state.getBlock();
         if (data.hasProperty(AntimatterProperties.MACHINE_TEXTURE)) {

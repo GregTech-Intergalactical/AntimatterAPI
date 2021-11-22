@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
+import muramasa.antimatter.client.baked.BakedMachineSide;
 import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterGroupedModel;
@@ -41,6 +42,15 @@ public class AntimatterModelManager {
             return new AntimatterGroupedModel.CoverModel(model);
         }
     };
+
+    public static final AntimatterModelLoader.BlockBenchLoader LOADER_MACHINE_SIDE = new AntimatterModelLoader.BlockBenchLoader(new ResourceLocation(Ref.ID, "machine_side")) {
+        @Override
+        public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
+            AntimatterGroupedModel model = super.read(context, json);
+            return new AntimatterGroupedModel.MachineSideModel(model);
+        }
+    };
+
 
     public static final DynamicModelLoader LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
     public static final DynamicModelLoader LOADER_MACHINE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "machine")) {

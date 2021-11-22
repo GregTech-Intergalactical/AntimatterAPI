@@ -3,6 +3,7 @@ package muramasa.antimatter.client.model;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import muramasa.antimatter.client.IAntimatterModel;
+import muramasa.antimatter.client.baked.BakedMachineSide;
 import muramasa.antimatter.client.baked.CoverBakedModel;
 import muramasa.antimatter.client.baked.GroupedBakedModel;
 import net.minecraft.client.renderer.model.*;
@@ -57,6 +58,19 @@ public class AntimatterGroupedModel implements IAntimatterModel<AntimatterGroupe
         public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
             ImmutableMap.Builder<String, IBakedModel> builder = buildParts(owner, bakery, getter, transform, overrides, loc, this.models.entrySet());
             return new CoverBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, MissingTextureSprite.getLocation())), builder.build());
+        }
+    }
+
+    public static class MachineSideModel extends AntimatterGroupedModel {
+
+        public MachineSideModel(AntimatterGroupedModel model) {
+            super(model.particle, model.models);
+        }
+
+        @Override
+        public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+            ImmutableMap.Builder<String, IBakedModel> builder = buildParts(owner, bakery, getter, transform, overrides, loc, this.models.entrySet());
+            return new BakedMachineSide(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, MissingTextureSprite.getLocation())), builder.build());
         }
     }
 }

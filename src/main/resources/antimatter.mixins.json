@@ -7,10 +7,12 @@
     "ChunkReaderAccessor",
     "ClientBlockUpdateMixin",
     "ClientPlayNetHandlerMixin",
-    "DimensionTypeAccessor"
+    "DimensionTypeAccessor",
+    "TESRMixin"
   ],
   "mixins": [
     "BlockLootTablesAccessor",
+    "GameDataMixin",
     "GrindstoneContainerMixin",
     "IceBlockMixin",
     "IContainerListeners",
@@ -19,8 +21,7 @@
     "RecipeManagerMixin",
     "RepairItemRecipeMixin",
     "ServerBlockUpdateMixin",
-    "SimpleReloadableResourceManagerMixin",
-    "GameDataMixin"
+    "SimpleReloadableResourceManagerMixin"
   ],
   "minVersion": "0.8"
 }

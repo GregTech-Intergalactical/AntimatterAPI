@@ -37,6 +37,14 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
         return Arrays.asList(arr);
     }
 
+    public IBakedModel getPart(String name) {
+        return models.get(name);
+    }
+
+    public Iterable<Map.Entry<String, IBakedModel>> customParts() {
+        return () -> this.models.entrySet().stream().filter(t -> !t.getKey().equals("")).iterator();
+    }
+
     @Override
     public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         int offset = side == null ? 6 : side.get3DDataValue();

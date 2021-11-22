@@ -135,6 +135,9 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 case FLUID_INPUT_CHANGED:
                 case FLUID_OUTPUT_CHANGED:
                     if (data[0] instanceof Integer) tryFillCell((Integer) data[0], -1);
+                    if (this.tile.getMachineType().renderContainerLiquids()) {
+                        tile.sidedSync(true);
+                    }
                     break;
             }
         }

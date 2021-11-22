@@ -8,12 +8,14 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
+import muramasa.antimatter.client.tesr.MachineTESR;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
@@ -33,6 +35,7 @@ import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -96,6 +99,7 @@ public class ClientHandler implements IProxyHandler {
                 RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
             });
         });
+        AntimatterAPI.all(Machine.class).stream().filter(Machine::renderAsTesr).map(Machine::getTileType).distinct().forEach(i -> ClientRegistry.bindTileEntityRenderer(i, MachineTESR::new));
     }
 
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {
