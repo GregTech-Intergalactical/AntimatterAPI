@@ -590,6 +590,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public CompoundNBT getUpdateTag() {
         CompoundNBT tag = super.getUpdateTag();
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));
+        fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         return tag;
