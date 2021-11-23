@@ -268,7 +268,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             @Override
             public int fill(FluidStack resource, FluidAction action) {
                 int ret = MachineFluidHandler.this.fill(resource, action);
-                return ret == 0 ? MachineFluidHandler.this.fillOutput(resource, action) : ret;
+                return ret;
             }
 
             @Nonnull
