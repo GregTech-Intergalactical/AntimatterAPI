@@ -10,6 +10,8 @@ import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
+import muramasa.antimatter.client.tesr.Caches;
+import muramasa.antimatter.client.tesr.MachineTESR;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -33,6 +35,7 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.Cache;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -104,9 +107,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public Holder<MachineRecipeHandler, MachineRecipeHandler<T>> recipeHandler = new Holder<>(RECIPE_HANDLER_CAPABILITY, dispatch);
 
     /**
-     * Texture related areas.
+     * Client related fields.
      **/
     public LazyValue<DynamicTexturer<TileEntityMachine<?>, DynamicKey>> multiTexturer;
+    public Cache<List<Caches.LiquidCache>> liquidCache;
 
     public TileEntityMachine(Machine<?> type) {
         super(type.getTileType());
@@ -127,8 +131,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (type.has(COVERABLE)) {
             coverHandler.set(() -> new MachineCoverHandler<>((T) this));
         }
-        multiTexturer = new LazyValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER));
-    }
+        multiTexturer = new LazyValue<>(() -> new DynamicTexturer<>(DynamicTexturers.TILE_DYNAMIC_TEXTURER)); }
 
     public void addOpenContainer(ContainerMachine<T> c) {
         this.openContainers.add(c);
@@ -149,6 +152,13 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (this.level.isClientSide) {
+            liquidCache = new Cache<>(() -> MachineTESR.buildLiquids(this));
+        }
+    }
 
     @Override
     public String getDomain() {
@@ -564,9 +574,13 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         if (tag.contains(Ref.KEY_MACHINE_COVER))
             coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
-        if (tag.contains(Ref.KEY_MACHINE_FLUIDS))
+        if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) {
             fluidHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
-        if (tag.contains(Ref.KEY_MACHINE_RECIPE))
+            if (level != null && level.isClientSide) {
+                if (liquidCache != null) liquidCache.invalidate();
+            }
+
+        }if (tag.contains(Ref.KEY_MACHINE_RECIPE))
             recipeHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
     }
 
@@ -582,6 +596,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));
         fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
         recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serializeNBT()));
+
         return tag;
     }
 
@@ -590,7 +605,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public CompoundNBT getUpdateTag() {
         CompoundNBT tag = super.getUpdateTag();
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER, e.serializeNBT()));
-        fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
+        if (this.getMachineType().renderContainerLiquids()) {
+            fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
+        }
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         return tag;

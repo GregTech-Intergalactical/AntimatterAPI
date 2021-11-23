@@ -2,6 +2,7 @@ package muramasa.antimatter.client;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -79,7 +80,7 @@ public class VertexTransformer {
         if(inputs.size() == 0)
             return Collections.emptyList();
 
-        List<BakedQuad> outputs = Lists.newArrayList();
+        List<BakedQuad> outputs = new ObjectArrayList<>(inputs.size());
         for(BakedQuad input : inputs)
         {
             int[] inData = input.getVertices();

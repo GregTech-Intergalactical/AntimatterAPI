@@ -2,11 +2,13 @@ package muramasa.antimatter.client.tesr;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.VertexTransformer;
 import muramasa.antimatter.client.baked.BakedMachineSide;
+import muramasa.antimatter.client.baked.ListBakedModel;
 import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -25,6 +27,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Vector4f;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -56,12 +59,37 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
     }
 
     private void renderLiquids(@Nonnull TileEntityMachine<?> tile, float partialTicks, @Nonnull MatrixStack stack, @Nonnull IRenderTypeBuffer buffer, int light, int overlay) {
-        MachineFluidHandler<?> handler = tile.fluidHandler.map(t -> t).orElse(null);
-        if (handler == null) return;
         IVertexBuilder builder = buffer.getBuffer(RenderType.cutout());
-        IBakedModel bakedModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(tile.getBlockState());
-        stack.pushPose();
+        long t = tile.getBlockState().getSeed(tile.getBlockPos());
         net.minecraftforge.client.ForgeHooksClient.setRenderLayer(RenderType.cutout());
+        //Vector4f f = new Vector4f(0,0,0,1);
+        //f.transform(stack.last().pose());
+        for (Caches.LiquidCache liquidCache : tile.liquidCache.get()) {
+            stack.pushPose();
+            //stack.translate(-f.x(), -f.y() - 0.5f, -f.z());
+            stack.scale(1.0f, liquidCache.percentage, 1.0f);
+            //stack.translate(f.x(), f.y() + 0.5f, f.z());
+            Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModelSmooth(tile.getLevel(), liquidCache.model, tile.getBlockState(), tile.getBlockPos(), stack, builder, false, tile.getLevel().getRandom(), t, light, EmptyModelData.INSTANCE);
+            stack.popPose();
+        }
+
+    }
+
+    private static IBakedModel renderInner(BlockState state, Random rand, int light, IBakedModel inner, Fluid fluid) {
+        List<BakedQuad> quads = inner.getQuads(state, null, rand, EmptyModelData.INSTANCE);
+        List<BakedQuad> out = VertexTransformer.processMany(quads, fluid.getAttributes().getColor(), Minecraft.getInstance().getTextureAtlas(PlayerContainer.BLOCK_ATLAS).apply(fluid.getAttributes().getStillTexture()));
+        boolean hot = fluid.getAttributes().getTemperature() >= Fluids.LAVA.getAttributes().getTemperature();
+        for (BakedQuad bakedQuad : out) {
+            LightUtil.setLightData(bakedQuad, hot ? 1 << 7 : light);
+        }
+        return new ListBakedModel(out);
+    }
+
+    public static List<Caches.LiquidCache> buildLiquids(TileEntityMachine<?> tile) {
+        List<Caches.LiquidCache> ret = new ObjectArrayList<>();
+        MachineFluidHandler<?> handler = tile.fluidHandler.map(t -> t).orElse(null);
+        if (handler == null) return Collections.emptyList();
+        IBakedModel bakedModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(tile.getBlockState());
 
         if (bakedModel instanceof MachineBakedModel) {
             MachineBakedModel model = (MachineBakedModel) bakedModel;
@@ -87,8 +115,7 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
                                     FluidTank tank = fh.getOutputTanks().getTank(off);
                                     return tank == null ? FluidStack.EMPTY : tank.getFluid();
                                 }).orElse(FluidStack.EMPTY);
-                                IBakedModel temp = renderInner(tile.getBlockState(), tile.getLevel().getRandom(), light, customPart.getValue(), fluid.getFluid());
-                                long t = tile.getBlockState().getSeed(tile.getBlockPos());
+                                IBakedModel baked = renderInner(tile.getBlockState(), tile.getLevel().getRandom(), 16, customPart.getValue(), fluid.getFluid());
 
                                 float fill = tile.fluidHandler.map(fh -> {
                                     if (in) {
@@ -100,62 +127,14 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
                                     FluidTank tank = fh.getOutputTanks().getTank(off);
                                     return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
                                 }).orElse(0f);
-                                stack.pushPose();
-                                stack.scale(1.0f, fill, 1.0f);
-                                Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModelSmooth(tile.getLevel(), temp, tile.getBlockState(), tile.getBlockPos(), stack, builder, false, tile.getLevel().getRandom(), t, light, data);
-                                stack.popPose();
+
+                                ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked));
                             }
                         }
                     }
                 }
             }
         }
-        stack.popPose();
+        return ret;
     }
-
-    private IBakedModel renderInner(BlockState state, Random rand, int light, IBakedModel inner, Fluid fluid) {
-        List<BakedQuad> quads = inner.getQuads(state, null, rand, EmptyModelData.INSTANCE);
-        List<BakedQuad> out = VertexTransformer.processMany(quads, fluid.getAttributes().getColor(), Minecraft.getInstance().getTextureAtlas(PlayerContainer.BLOCK_ATLAS).apply(fluid.getAttributes().getFlowingTexture()));
-        boolean hot = fluid.getAttributes().getTemperature() >= Fluids.LAVA.getAttributes().getTemperature();
-        for (BakedQuad bakedQuad : out) {
-            LightUtil.setLightData(bakedQuad, hot ? 1 << 7 : light);
-        }
-        return new IBakedModel() {
-            @Override
-            public List<BakedQuad> getQuads(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_) {
-                return p_200117_2_ == null ? out : Collections.emptyList();
-            }
-
-            @Override
-            public boolean useAmbientOcclusion() {
-                return true;
-            }
-
-            @Override
-            public boolean isGui3d() {
-                return true;
-            }
-
-            @Override
-            public boolean usesBlockLight() {
-                return true;
-            }
-
-            @Override
-            public boolean isCustomRenderer() {
-                return true;
-            }
-
-            @Override
-            public TextureAtlasSprite getParticleIcon() {
-                return null;
-            }
-
-            @Override
-            public ItemOverrideList getOverrides() {
-                return ItemOverrideList.EMPTY;
-            }
-        };
-    }
-
 }

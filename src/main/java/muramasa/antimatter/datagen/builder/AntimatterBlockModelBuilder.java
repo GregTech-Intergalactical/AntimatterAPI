@@ -118,6 +118,9 @@ public class AntimatterBlockModelBuilder extends BlockModelBuilder {
         builders.forEach(b -> {
             JsonObject m = addModelObject(new JsonObject(), b.parent, b.textures);
             if (b.hasRots()) m.add("rotation", getRotationObject(b.rotations));
+            if (b.getLoader() != null) {
+                m.addProperty("loader", b.getLoader().toString());
+            }
             models.add(m);
         });
         return models;
