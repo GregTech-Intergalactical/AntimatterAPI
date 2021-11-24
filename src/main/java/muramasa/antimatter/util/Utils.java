@@ -659,8 +659,18 @@ public class Utils {
     }
 
     public static Direction coverRotateFacing(Direction toRotate, Direction rotateBy) {
-        RotationHelper.ModelRotation r = Utils.getModelRotationCover(rotateBy);
-        return r.getRotation().rotateFace(toRotate);
+        Quaternion rot = null;
+        switch (rotateBy.getAxis()) {
+            case Z:
+            case X:
+                rot = Vector3f.YP.rotationDegrees(-rotateBy.toYRot());
+                break;
+            case Y:
+                rot = Vector3f.XP.rotationDegrees(90f*rotateBy.getNormal().getY());
+                break;
+
+        }
+        return new RotationHelper.TransformationMatrix(rot).rotateFace(toRotate);
     }
 
     public static Direction getOffsetFacing(BlockPos center, BlockPos offset) {
@@ -772,7 +782,6 @@ public class Utils {
         return set;
     }
 
-    //So confusing, right? I barely even know anymore but so far it works. 90 and 270 are swapped.
     public static ModelRotation getModelRotation(Direction dir) {
         switch (dir) {
             case DOWN:
@@ -780,23 +789,15 @@ public class Utils {
             case UP:
                 return ModelRotation.by(-90, 0);
             case NORTH:
-                return ModelRotation.by(0, 0);
-            case SOUTH:
                 return ModelRotation.by(0, 180);
+            case SOUTH:
+                return ModelRotation.by(0, 0);
             case EAST:
                 return ModelRotation.by(0, 90);
             case WEST:
                 return ModelRotation.by(0, 270);
         }
         return null;
-    }
-
-    public static TransformationMatrix getRotation(Direction dir, Direction face) {
-        int[] vec = rotationVector(dir, face);
-        Quaternion quaternion = new Quaternion(new Vector3f(0.0F, 1.0F, 0.0F), (float) (-vec[1]), true);
-        quaternion.mul(new Quaternion(new Vector3f(1.0F, 0.0F, 0.0F), (float) (-vec[0]), true));
-        quaternion.mul(new Quaternion(new Vector3f(0.0F, 0.0F, 1.0F), (float) (-vec[2]), true));
-        return new TransformationMatrix(null, quaternion, null, null);
     }
 
     //All these getRotations, coverRotateFacings. Honestly look into them. I just made
@@ -809,9 +810,9 @@ public class Utils {
             case UP:
                 return RotationHelper.getModelRotation(-90, 0);
             case NORTH:
-                return RotationHelper.getModelRotation(0, 0);
-            case SOUTH:
                 return RotationHelper.getModelRotation(0, 180);
+            case SOUTH:
+                return RotationHelper.getModelRotation(0, 0);
             case EAST:
                 return RotationHelper.getModelRotation(0, 270);
             case WEST:
@@ -829,9 +830,9 @@ public class Utils {
             case UP:
                 return ModelRotation.by(-90, 0);
             case NORTH:
-                return ModelRotation.by(0, 0);
-            case SOUTH:
                 return ModelRotation.by(0, 180);
+            case SOUTH:
+                return ModelRotation.by(0, 0);
             case EAST:
                 return ModelRotation.by(0, 270);
             case WEST:
@@ -846,21 +847,21 @@ public class Utils {
     public static int[] rotationVector(Direction dir, Direction h) {
         switch (dir) {
             case NORTH:
-                return new int[]{0, 0, 0};
+                return new int[]{0, 180, 0};
             case WEST:
                 return new int[]{0, 90, 0};
             case SOUTH:
-                return new int[]{0, 180, 0};
+                return new int[]{0, 0, 0};
             case EAST:
                 return new int[]{0, 270, 0};
             case UP:
                 switch (h) {
                     case NORTH://
-                        return new int[]{90, 0, 0};
+                        return new int[]{90, 180, 0};
                     case WEST:
                         return new int[]{90, 0, 270};
                     case SOUTH://
-                        return new int[]{270, 180, 0};
+                        return new int[]{270, 0, 0};
                     case EAST:
                         return new int[]{90, 0, 90};
                 }
@@ -868,11 +869,11 @@ public class Utils {
             case DOWN:
                 switch (h) {
                     case NORTH:// DONE
-                        return new int[]{270, 0, 0};
+                        return new int[]{270, 180, 0};
                     case WEST:
                         return new int[]{270, 0, 90};
                     case SOUTH:// DONE!
-                        return new int[]{90, 180, 0};
+                        return new int[]{90, 0, 0};
                     case EAST:
                         return new int[]{270, 0, 270};
                 }

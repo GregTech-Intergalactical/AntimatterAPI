@@ -160,6 +160,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
+    protected void cacheInvalidate() {
+        if (this.liquidCache != null) liquidCache.invalidate();
+    }
+
     @Override
     public String getDomain() {
         return getMachineType().getDomain();
@@ -313,10 +317,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     public Direction getFacing() {
-        if (this.level == null) return Direction.NORTH;
+        if (this.level == null) return Direction.SOUTH;
         BlockState state = getBlockState();
         if (state == AIR.defaultBlockState()) {
-            return Direction.NORTH;
+            return Direction.SOUTH;
         }
         if (getMachineType().allowVerticalFacing()) {
             return state.getValue(BlockStateProperties.FACING);
@@ -457,6 +461,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                             this.onMachineStarted(handler.getActiveRecipe());
                         }
                     }
+                } else {
+                    cacheInvalidate();
                 }
             }
             setChanged();
@@ -577,7 +583,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) {
             fluidHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
             if (level != null && level.isClientSide) {
-                if (liquidCache != null) liquidCache.invalidate();
+                cacheInvalidate();
             }
 
         }if (tag.contains(Ref.KEY_MACHINE_RECIPE))

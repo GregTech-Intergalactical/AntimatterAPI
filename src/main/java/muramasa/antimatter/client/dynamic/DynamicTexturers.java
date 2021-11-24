@@ -46,7 +46,7 @@ public class DynamicTexturers {
                     }
                 }
                 IBakedModel b = t.sourceModel.bake(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
-                        new SimpleModelTransform(base), t.source.getModel(t.type, t.currentDir, Direction.NORTH));
+                        new SimpleModelTransform(base), t.source.getModel(t.type, t.currentDir, Direction.SOUTH));
                 return t.source.transformQuads(t.state, Stream.concat(b.getQuads(t.state, t.currentDir, t.rand, t.data).stream(), b.getQuads(t.state, null, t.rand, t.data).stream()).collect(Collectors.toList()));
             }, t -> {
         t.model.textureMap.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));

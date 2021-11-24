@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterProperties;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.VertexTransformer;
@@ -26,6 +27,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.container.PlayerContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.math.vector.Vector4f;
@@ -66,6 +68,10 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
         for (Caches.LiquidCache liquidCache : tile.liquidCache.get()) {
             stack.pushPose();
             stack.translate(0f, (1-liquidCache.percentage)*liquidCache.height, 0f);
+            stack.translate(0.5D, 0.5D, 0.5D);
+            stack.mulPose(Vector3f.YP.rotationDegrees(tile.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()));
+            stack.translate(-0.5D, -0.5D, -0.5D);
+
             stack.scale(1.0f, liquidCache.percentage, 1.0f);
             Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModelSmooth(tile.getLevel(), liquidCache.model, tile.getBlockState(), tile.getBlockPos(), stack, builder, false, tile.getLevel().getRandom(), t, light, EmptyModelData.INSTANCE);
             stack.popPose();
@@ -84,6 +90,9 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
     }
 
     public static List<Caches.LiquidCache> buildLiquids(TileEntityMachine<?> tile) {
+        if (tile.getMachineType().allowVerticalFacing()) {
+            throw new IllegalStateException("Cannot render tank on vertical facing!");
+        }
         List<Caches.LiquidCache> ret = new ObjectArrayList<>();
         MachineFluidHandler<?> handler = tile.fluidHandler.map(t -> t).orElse(null);
         if (handler == null) return Collections.emptyList();
@@ -91,9 +100,10 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
 
         if (bakedModel instanceof MachineBakedModel) {
             MachineBakedModel model = (MachineBakedModel) bakedModel;
-            IModelData data = model.getModelData(tile.getLevel(), tile.getBlockPos(), tile.getBlockState(), new ModelDataMap.Builder().build());
+            IModelData data = model.getModelData(tile.getLevel(), tile.getBlockPos(), tile.getBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH), new ModelDataMap.Builder().build());
             ModelConfig config = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
             if (config == null) throw new IllegalStateException("Missing dynamic config in MachineTESR!");
+            int j = 0;
             for (int i : config.getConfig()) {
                 IBakedModel[] arr = model.getConfigs().get(i);
                 if (arr != null) {
@@ -137,11 +147,12 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
                                     return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
                                 }).orElse(0f);
 
-                                ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked, height/16.0f));
+                                ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked, height/16.0f, Ref.DIRS[j]));
                             }
                         }
                     }
                 }
+                j++;
             }
         }
         return ret;
