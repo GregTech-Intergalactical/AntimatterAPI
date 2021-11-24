@@ -37,8 +37,8 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
 
     @Override
     public void addSlotListener(IContainerListener listener) {
-        super.addSlotListener(listener);
         this.listeners.add(listener);
+        super.addSlotListener(listener);
     }
 
     @Override

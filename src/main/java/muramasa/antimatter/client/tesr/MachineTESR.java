@@ -3,6 +3,7 @@ package muramasa.antimatter.client.tesr;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.client.RenderHelper;
@@ -62,13 +63,10 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
         IVertexBuilder builder = buffer.getBuffer(RenderType.cutout());
         long t = tile.getBlockState().getSeed(tile.getBlockPos());
         net.minecraftforge.client.ForgeHooksClient.setRenderLayer(RenderType.cutout());
-        //Vector4f f = new Vector4f(0,0,0,1);
-        //f.transform(stack.last().pose());
         for (Caches.LiquidCache liquidCache : tile.liquidCache.get()) {
             stack.pushPose();
-            //stack.translate(-f.x(), -f.y() - 0.5f, -f.z());
+            stack.translate(0f, (1-liquidCache.percentage)*liquidCache.height, 0f);
             stack.scale(1.0f, liquidCache.percentage, 1.0f);
-            //stack.translate(f.x(), f.y() + 0.5f, f.z());
             Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModelSmooth(tile.getLevel(), liquidCache.model, tile.getBlockState(), tile.getBlockPos(), stack, builder, false, tile.getLevel().getRandom(), t, light, EmptyModelData.INSTANCE);
             stack.popPose();
         }
@@ -103,8 +101,19 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
                         if (iBakedModel instanceof BakedMachineSide) {
                             BakedMachineSide toRender = (BakedMachineSide) iBakedModel;
                             for (Map.Entry<String, IBakedModel> customPart : toRender.customParts()) {
-                                boolean in = customPart.getKey().startsWith("in");
-                                int off = Character.getNumericValue(in ? customPart.getKey().charAt(2) : customPart.getKey().charAt(3));
+                                String[] parts = customPart.getKey().split(":");
+                                if (parts.length != 3) continue;
+                                boolean in = parts[0].equals("in");
+                                int off;
+                                int height;
+                                try {
+                                    off = Integer.parseInt(parts[1]);
+                                    height = Integer.parseInt(parts[2]);
+                                } catch (Exception ex) {
+                                    Antimatter.LOGGER.warn("Caught exception building model" + ex);
+                                    continue;
+                                }
+                                float h = (float) height;
                                 FluidStack fluid = tile.fluidHandler.map(fh -> {
                                     if (in) {
                                         if (fh.getInputTanks() == null) return FluidStack.EMPTY;
@@ -128,7 +137,7 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
                                     return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
                                 }).orElse(0f);
 
-                                ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked));
+                                ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked, height/16.0f));
                             }
                         }
                     }

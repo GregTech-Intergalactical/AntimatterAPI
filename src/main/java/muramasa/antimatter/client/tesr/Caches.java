@@ -8,11 +8,13 @@ public class Caches {
         public final float percentage;
         public final Fluid fluid;
         public final IBakedModel model;
+        public final float height;
 
-        public LiquidCache(float percentage, Fluid fluid, IBakedModel model) {
+        public LiquidCache(float percentage, Fluid fluid, IBakedModel model, float height) {
             this.percentage = percentage;
             this.fluid = fluid;
             this.model = model;
+            this.height = height;
         }
     }
 }
