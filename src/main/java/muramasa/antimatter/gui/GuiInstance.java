@@ -5,12 +5,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.core.RTree;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
-import muramasa.antimatter.mixin.IContainerListeners;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -251,7 +251,7 @@ public class GuiInstance implements ICanSyncData {
 
     private void write(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new GuiSyncPacket(data);
-        for (IContainerListener listener : ((IContainerListeners) container).getcontainerListeners()) {
+        for (IContainerListener listener : ((IAntimatterContainer)container).listeners()) {
             if (listener instanceof ServerPlayerEntity) {
                 Antimatter.NETWORK.sendTo(pkt, (ServerPlayerEntity) listener);
             }

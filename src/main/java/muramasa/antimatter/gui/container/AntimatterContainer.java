@@ -47,6 +47,11 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
         this.listeners.remove(listener);
     }
 
+    @Override
+    public Set<IContainerListener> listeners() {
+        return listeners;
+    }
+
     protected void addPlayerSlots() {
         if (playerInv == null) return;
         for (int i = 0; i < 3; ++i) { //Inventory Slots

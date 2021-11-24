@@ -15,7 +15,6 @@
     "GameDataMixin",
     "GrindstoneContainerMixin",
     "IceBlockMixin",
-    "IContainerListeners",
     "ItemStackMixin",
     "LeavesBlockMixin",
     "RecipeManagerMixin",
