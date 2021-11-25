@@ -100,59 +100,47 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
 
         if (bakedModel instanceof MachineBakedModel) {
             MachineBakedModel model = (MachineBakedModel) bakedModel;
-            IModelData data = model.getModelData(tile.getLevel(), tile.getBlockPos(), tile.getBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.NORTH), new ModelDataMap.Builder().build());
-            ModelConfig config = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
-            if (config == null) throw new IllegalStateException("Missing dynamic config in MachineTESR!");
-            int j = 0;
-            for (int i : config.getConfig()) {
-                IBakedModel[] arr = model.getConfigs().get(i);
-                if (arr != null) {
-                    for (IBakedModel iBakedModel : arr) {
-                        if (iBakedModel instanceof BakedMachineSide) {
-                            BakedMachineSide toRender = (BakedMachineSide) iBakedModel;
-                            for (Map.Entry<String, IBakedModel> customPart : toRender.customParts()) {
-                                String[] parts = customPart.getKey().split(":");
-                                if (parts.length != 3) continue;
-                                boolean in = parts[0].equals("in");
-                                int off;
-                                int height;
-                                try {
-                                    off = Integer.parseInt(parts[1]);
-                                    height = Integer.parseInt(parts[2]);
-                                } catch (Exception ex) {
-                                    Antimatter.LOGGER.warn("Caught exception building model" + ex);
-                                    continue;
-                                }
-                                float h = (float) height;
-                                FluidStack fluid = tile.fluidHandler.map(fh -> {
-                                    if (in) {
-                                        if (fh.getInputTanks() == null) return FluidStack.EMPTY;
-                                        FluidTank tank = fh.getInputTanks().getTank(off);
-                                        return tank == null ? FluidStack.EMPTY : tank.getFluid();
-                                    }
-                                    if (fh.getOutputTanks() == null) return FluidStack.EMPTY;
-                                    FluidTank tank = fh.getOutputTanks().getTank(off);
-                                    return tank == null ? FluidStack.EMPTY : tank.getFluid();
-                                }).orElse(FluidStack.EMPTY);
-                                IBakedModel baked = renderInner(tile.getBlockState(), tile.getLevel().getRandom(), 16, customPart.getValue(), fluid.getFluid());
-
-                                float fill = tile.fluidHandler.map(fh -> {
-                                    if (in) {
-                                        if (fh.getInputTanks() == null) return 0f;
-                                        FluidTank tank = fh.getInputTanks().getTank(off);
-                                        return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
-                                    }
-                                    if (fh.getOutputTanks() == null) return 0f;
-                                    FluidTank tank = fh.getOutputTanks().getTank(off);
-                                    return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
-                                }).orElse(0f);
-
-                                ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked, height/16.0f, Ref.DIRS[j]));
-                            }
-                        }
+            for (Direction dir : Ref.DIRS) {
+                BakedMachineSide toRender = model.getModel(tile.getBlockState(), dir, tile.getMachineState());
+                for (Map.Entry<String, IBakedModel> customPart : toRender.customParts()) {
+                    String[] parts = customPart.getKey().split(":");
+                    if (parts.length != 3) continue;
+                    boolean in = parts[0].equals("in");
+                    int off;
+                    int height;
+                    try {
+                        off = Integer.parseInt(parts[1]);
+                        height = Integer.parseInt(parts[2]);
+                    } catch (Exception ex) {
+                        Antimatter.LOGGER.warn("Caught exception building model" + ex);
+                        continue;
                     }
+                    float h = (float) height;
+                    FluidStack fluid = tile.fluidHandler.map(fh -> {
+                        if (in) {
+                            if (fh.getInputTanks() == null) return FluidStack.EMPTY;
+                            FluidTank tank = fh.getInputTanks().getTank(off);
+                            return tank == null ? FluidStack.EMPTY : tank.getFluid();
+                        }
+                        if (fh.getOutputTanks() == null) return FluidStack.EMPTY;
+                        FluidTank tank = fh.getOutputTanks().getTank(off);
+                        return tank == null ? FluidStack.EMPTY : tank.getFluid();
+                    }).orElse(FluidStack.EMPTY);
+                    IBakedModel baked = renderInner(tile.getBlockState(), tile.getLevel().getRandom(), 16, customPart.getValue(), fluid.getFluid());
+
+                    float fill = tile.fluidHandler.map(fh -> {
+                        if (in) {
+                            if (fh.getInputTanks() == null) return 0f;
+                            FluidTank tank = fh.getInputTanks().getTank(off);
+                            return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
+                        }
+                        if (fh.getOutputTanks() == null) return 0f;
+                        FluidTank tank = fh.getOutputTanks().getTank(off);
+                        return tank == null ? 0f : (float)tank.getFluidAmount() / (float)tank.getCapacity();
+                    }).orElse(0f);
+
+                    ret.add(new Caches.LiquidCache(fill, fluid.getFluid(), baked, height/16.0f, dir));
                 }
-                j++;
             }
         }
         return ret;

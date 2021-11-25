@@ -26,12 +26,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.DrawHighlightEvent;
@@ -382,6 +384,27 @@ public class RenderHelper {
         }
         matrix.popPose();
         return ActionResultType.SUCCESS;
+    }
+
+    public static TransformationMatrix faceRotation(Direction horiz, Direction vert) {
+        if (vert == null) {
+            Quaternion quat = Vector3f.YP.rotationDegrees(-horiz.toYRot());
+            return new TransformationMatrix(null, quat, null, null);
+        } else {
+            if (vert.getAxis() != Axis.Y) {
+                Quaternion quat = Vector3f.YP.rotationDegrees(-horiz.toYRot());
+                return new TransformationMatrix(null, quat, null, null);
+            }
+            //vert = vert.getOpposite();
+            Quaternion quat = Vector3f.XP.rotationDegrees(-vert.getNormal().getY()*90f);
+            Quaternion rot = Vector3f.YP.rotationDegrees(-horiz.toYRot());
+            TransformationMatrix mat = new TransformationMatrix(null, rot, null, null);
+            return mat.compose(new TransformationMatrix(null, quat, null, null));
+        }
+    }
+
+    public static TransformationMatrix faceRotation(Direction horiz) {
+        return faceRotation(horiz, null);  
     }
 
     private static void drawX(IVertexBuilder builder, Matrix4f matrix, float x1, float y1, float x2, float y2) {

@@ -1,5 +1,6 @@
 package muramasa.antimatter.machine;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.Locale;
@@ -30,6 +31,7 @@ public enum MachineState implements IAntimatterObject {
         this.recipeCheck = recipeCheck;
         this.loopTick = loopTick;
         this.renderUpdate = renderUpdate;
+        AntimatterAPI.register(MachineState.class, this);
     }
 
     public int getOverlayId() {

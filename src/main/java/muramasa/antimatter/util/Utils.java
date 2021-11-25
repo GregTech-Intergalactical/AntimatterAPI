@@ -17,6 +17,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.RotationHelper.Matrix4f;
 import net.minecraft.advancements.criterion.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -48,6 +49,8 @@ import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.util.math.vector.Vector4f;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -670,7 +673,10 @@ public class Utils {
                 break;
 
         }
-        return new RotationHelper.TransformationMatrix(rot).rotateFace(toRotate);
+        Vector3i vector3i = toRotate.getNormal();
+        Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
+        vector4f.transform(new net.minecraft.util.math.vector.Matrix4f(rot));
+        return Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
     }
 
     public static Direction getOffsetFacing(BlockPos center, BlockPos offset) {

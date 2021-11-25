@@ -2,6 +2,7 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
@@ -56,6 +57,10 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -63,7 +68,7 @@ import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static net.minecraft.util.Direction.*;
 
-public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
+public class BlockMachine extends BlockBasic implements IItemBlockProvider {
 
     public static final DirectionProperty HORIZONTAL_FACING = DirectionProperty.create("horizontal_facing", Direction.Plane.HORIZONTAL);
 
@@ -344,59 +349,6 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         return which;
     }
 
-    @Override
-    public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
-        Direction facing = type.allowVerticalFacing() ? state.getValue(BlockStateProperties.FACING) : state.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        TileEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof TileEntityMachine) {
-            MachineState machineState = ((TileEntityMachine<?>) tile).getMachineState();
-            if (((TileEntityMachine<?>) tile).coverHandler.isPresent()) {
-                CoverHandler<?> h = ((TileEntityMachine<?>) tile).coverHandler.orElse(null);
-                if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y) {
-                    Direction horizontalFacing = state.getValue(HORIZONTAL_FACING);
-                    return config.set(new int[]{
-                            h.get(DOWN).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, DOWN, facing), facing), machineState) : 0,
-                            h.get(UP).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, UP, facing), facing), machineState) : 0,
-                            h.get(NORTH).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, NORTH, facing), facing), machineState) : 0,
-                            h.get(SOUTH).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, SOUTH, facing), facing), machineState) : 0,
-                            h.get(WEST).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, WEST, facing), facing), machineState) : 0,
-                            h.get(EAST).isEmpty() ? getModelId(facing, horizontalFacing, Utils.coverRotateFacing(getDir(horizontalFacing, EAST, facing), facing), machineState) : 0
-                    });
-                }
-                return config.set(new int[]{
-                        h.get(DOWN).isEmpty() ? getModelId(facing, DOWN, machineState) : 0,
-                        h.get(UP).isEmpty() ? getModelId(facing, UP, machineState) : 0,
-                        h.get(NORTH).isEmpty() ? getModelId(facing, Utils.coverRotateFacing(NORTH, facing), machineState) : 0,
-                        h.get(SOUTH).isEmpty() ? getModelId(facing, Utils.coverRotateFacing(SOUTH, facing), machineState) : 0,
-                        h.get(WEST).isEmpty() ? getModelId(facing, Utils.coverRotateFacing(WEST, facing), machineState) : 0,
-                        h.get(EAST).isEmpty() ? getModelId(facing, Utils.coverRotateFacing(EAST, facing), machineState) : 0
-                });
-            } else {
-                if (type.allowVerticalFacing() && facing.getAxis() == Axis.Y) {
-                    Direction horizontalFacing = state.getValue(HORIZONTAL_FACING);
-                    int[] configInts = new int[]{
-                            getModelId(facing, horizontalFacing, DOWN, machineState),
-                            getModelId(facing, horizontalFacing, UP, machineState),
-                            getModelId(facing, horizontalFacing, NORTH, machineState),
-                            getModelId(facing, horizontalFacing, SOUTH, machineState),
-                            getModelId(facing, horizontalFacing, WEST, machineState),
-                            getModelId(facing, horizontalFacing, EAST, machineState)
-                    };
-                    return config.set(configInts);
-                }
-                return config.set(new int[]{
-                        getModelId(facing, DOWN, machineState),
-                        getModelId(facing, UP, machineState),
-                        getModelId(facing, NORTH, machineState),
-                        getModelId(facing, SOUTH, machineState),
-                        getModelId(facing, WEST, machineState),
-                        getModelId(facing, EAST, machineState)
-                });
-            }
-        }
-        return config.set(new int[]{0});
-    }
-
     protected int getModelId(Direction facing, Direction horizontalFacing, Direction overlay, MachineState state) {
         state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
         return ((state.ordinal() + 1) * 10000) + ((facing.get3DDataValue() + 1) * 1000) + ((horizontalFacing.get3DDataValue() + 1) * 100) + (overlay.get3DDataValue() + 1);
@@ -413,12 +365,12 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
         Texture[] base = type.getBaseTexture(tier);
         if (base.length >= 6) {
             for (int s = 0; s < 6; s++) {
-                b.texture("base" + Ref.DIRS[s].getSerializedName(), base[s]);
+                b.texture("base" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName(), base[s]);
             }
         }
         Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE, tier);
         for (int s = 0; s < 6; s++) {
-            b.texture("overlay" + Ref.DIRS[s].getSerializedName(), overlays[s]);
+            b.texture("overlay" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName(), overlays[s]);
         }
     }
 
@@ -434,20 +386,15 @@ public class BlockMachine extends BlockDynamic implements IItemBlockProvider {
 
     void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
         Texture[] overlays = type.getOverlayTextures(state, tier);
-        for (Direction f : Plane.HORIZONTAL) {
-            for (Direction o : Ref.DIRS) {
-                builder.config(getModelId(f, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.get3DDataValue()])).rot(f)));
-            }
+        JsonArray arr = new JsonArray();
+
+        for (Direction dir : Ref.DIRS) {
+            JsonObject obj = builder.addModelObject(new JsonObject(), this.getType().getOverlayModel(dir).toString(), of("base", getType().getBaseTexture(tier, dir).toString(), "overlay", overlays[dir.get3DDataValue()].toString()));
+            obj.addProperty("loader", AntimatterModelManager.LOADER_MACHINE_SIDE.getLoc().toString());
+            arr.add(obj);
         }
-        if (type.allowVerticalFacing()) {
-            for (Direction f : Plane.VERTICAL) {
-                for (Direction h : Plane.HORIZONTAL) {
-                    for (Direction o : Ref.DIRS) {
-                        builder.config(getModelId(f, h, o, state), (b, l) -> l.add(b.of(type.getOverlayModel(o)).tex(of("base", type.getBaseTexture(tier, o), "overlay", overlays[o.get3DDataValue()])).rot(f, h)));
-                    }
-                }
-            }
-        }
+
+        builder.property(state.getDisplayName(), arr);
     }
 
     @Override

@@ -10,6 +10,7 @@ import muramasa.antimatter.client.baked.BakedMachineSide;
 import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterGroupedModel;
+import muramasa.antimatter.client.model.MachineModelLoader;
 import muramasa.antimatter.client.model.ProxyModel;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -53,17 +54,7 @@ public class AntimatterModelManager {
 
 
     public static final DynamicModelLoader LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
-    public static final DynamicModelLoader LOADER_MACHINE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "machine")) {
-        @Override
-        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
-            return new DynamicModel(super.read(context, json)) {
-                @Override
-                public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-                    return new MachineBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
-                }
-            };
-        }
-    };
+    public static final MachineModelLoader LOADER_MACHINE = new MachineModelLoader(new ResourceLocation(Ref.ID, "machine"));
     public static final DynamicModelLoader LOADER_PIPE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "pipe")) {
         @Override
         public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
