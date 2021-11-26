@@ -13,8 +13,10 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3f;
@@ -35,8 +37,8 @@ public class DynamicTexturers {
     public static final ResourceLocation PIPE_COVER_MODEL = new ResourceLocation(Ref.ID, "block/cover/cover_pipe");
     public static final DynamicTextureProvider<ICover, ICover.DynamicKey> COVER_DYNAMIC_TEXTURER = new DynamicTextureProvider<ICover, ICover.DynamicKey>(
             t -> {
-                if (t.currentDir == t.key.facing) {
-                    TransformationMatrix base = RenderHelper.faceRotation(t.key.facing);
+                if (t.currentDir == t.source.side()) {
+                    TransformationMatrix base = RenderHelper.faceRotation(t.source.side(), t.key.hFacing != null ? t.key.hFacing : (t.source.side().getAxis() == Axis.Y ? (t.state.hasProperty(BlockStateProperties.HORIZONTAL_FACING) ? t.state.getValue(BlockStateProperties.HORIZONTAL_FACING) : null) : null));
                     IBakedModel b = t.sourceModel.bake(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
                             new SimpleModelTransform(base), t.source.getModel(t.type, t.currentDir, Direction.SOUTH));
 
@@ -49,7 +51,11 @@ public class DynamicTexturers {
                 }
                 return Collections.emptyList();
             }, t -> {
-        t.model.textureMap.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
+                if (t.data.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)) {
+                    t.model.textureMap.put("base", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY).apply(t.dir))));
+                } else {
+                    t.model.textureMap.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
+                }
         t.source.setTextures(
                 (name, texture) -> t.model.textureMap.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
     });
@@ -70,7 +76,7 @@ public class DynamicTexturers {
                 ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY).apply(t.dir))));
         t.model.textureMap.put("overlay",
                 Either
-                        .left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_TYPE).getOverlayTextures(
+                        .left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_PROPERTY).type.getOverlayTextures(
                                 t.data.getData(AntimatterProperties.MACHINE_PROPERTY).state, t.source.getMachineTier())[Direction
                                 .rotate(Utils.getModelRotation(Utils.dirFromState(t.source.getBlockState())).getRotation()
                                         .inverse().getMatrix(), t.dir)

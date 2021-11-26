@@ -59,9 +59,13 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         Texture tex = extra.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)
                 ? extra.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY).apply(side)
                 : data.machTexture.apply(side);
-        return data.coverTexturer.apply(side).getQuads("cover", new ObjectArrayList<>(), state, cover,
-                new ICover.DynamicKey(Utils.dirFromState(state), tex, cover.getId()), side.get3DDataValue(),
-                extra);
+        List<BakedQuad> list = new ObjectArrayList<>();
+        for (Direction s : Ref.DIRS) {
+            list = data.coverTexturer.apply(side).getQuads("cover", list, state, cover,
+            new ICover.DynamicKey(state, tex, cover.getId()), s.get3DDataValue(),
+            extra);
+        }
+        return list;
     }
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data) {
@@ -71,7 +75,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         List<BakedQuad> quads = new ObjectArrayList<>(20);
         AntimatterProperties.MachineProperties props = data.getData(AntimatterProperties.MACHINE_PROPERTY);
         List<BakedQuad> coverQuads = getCoverQuads(state, side, rand, props, data);
-        if (true) return coverQuads;
+        if (!coverQuads.isEmpty()) return coverQuads;
 
         if (data.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)) {
             Function<Direction, Texture> ft = data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY);

@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 public class RenderHelper {
 
     /*private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(128).order(ByteOrder.nativeOrder()).asDoubleBuffer();
@@ -390,30 +392,30 @@ public class RenderHelper {
 
     public static TransformationMatrix faceRotation(BlockState state) {
         if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
-            return faceRotation(state.getValue(BlockMachine.HORIZONTAL_FACING), state.getValue(BlockStateProperties.HORIZONTAL_FACING));
+            return faceRotation(state.getValue(BlockStateProperties.FACING), state.getValue(BlockMachine.HORIZONTAL_FACING));
         } 
         return faceRotation(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
     }
 
-    public static TransformationMatrix faceRotation(Direction horiz, Direction vert) {
-        if (vert == null) {
-            Quaternion quat = Vector3f.YP.rotationDegrees(-horiz.toYRot());
+    public static TransformationMatrix faceRotation(Direction facing, @Nullable Direction horiz) {
+        if (horiz == null) {
+            Quaternion quat = facing.getAxis() != Axis.Y ? Vector3f.YP.rotationDegrees(-facing.toYRot()) : Vector3f.XP.rotationDegrees(-facing.getNormal().getY()*90f);
             return new TransformationMatrix(null, quat, null, null);
         } else {
-            if (vert.getAxis() != Axis.Y) {
-                Quaternion quat = Vector3f.YP.rotationDegrees(-horiz.toYRot());
+            if (facing.getAxis() != Axis.Y) {
+                Quaternion quat = Vector3f.YP.rotationDegrees(-facing.toYRot());
                 return new TransformationMatrix(null, quat, null, null);
             }
             //vert = vert.getOpposite();
-            Quaternion quat = Vector3f.XP.rotationDegrees(-vert.getNormal().getY()*90f);
+            Quaternion quat = Vector3f.XP.rotationDegrees(-facing.getNormal().getY()*90f);
             Quaternion rot = Vector3f.YP.rotationDegrees(-horiz.toYRot());
             TransformationMatrix mat = new TransformationMatrix(null, rot, null, null);
             return mat.compose(new TransformationMatrix(null, quat, null, null));
         }
     }
 
-    public static TransformationMatrix faceRotation(Direction horiz) {
-        return faceRotation(horiz, null);  
+    public static TransformationMatrix faceRotation(Direction side) {
+        return faceRotation(side, null);  
     }
 
     private static void drawX(IVertexBuilder builder, Matrix4f matrix, float x1, float y1, float x2, float y2) {

@@ -6,6 +6,7 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.event.IGuiEvent;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
@@ -23,6 +24,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -35,6 +37,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedContainerProvider, IGuiHandler {
@@ -275,25 +278,40 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
      */
     class DynamicKey {
         public final Direction facing;
+        @Nullable
+        public final Direction hFacing;
         public final Texture machineTexture;
         public final String coverId;
 
-        public DynamicKey(Direction facing, Texture tex, String cover) {
+        public DynamicKey(Direction facing, Direction hFacing, Texture tex, String cover) {
             this.facing = facing;
+            this.hFacing = hFacing;
+            this.machineTexture = tex;
+            this.coverId = cover;
+        }
+
+        public DynamicKey(BlockState state, Texture tex, String cover) {
+            if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
+                this.hFacing = state.getValue(BlockMachine.HORIZONTAL_FACING);
+                this.facing = state.getValue(BlockStateProperties.FACING);
+            } else {
+                this.hFacing = null;
+                this.facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            }
             this.machineTexture = tex;
             this.coverId = cover;
         }
 
         @Override
         public int hashCode() {
-            return facing.hashCode() + machineTexture.hashCode() + coverId.hashCode();
+            return Objects.hash(this.facing, this.hFacing, machineTexture, coverId);
         }
 
         @Override
         public boolean equals(Object o) {
             if (o instanceof DynamicKey) {
                 BaseCover.DynamicKey k = (DynamicKey) o;
-                return k.facing == this.facing && k.machineTexture.equals(this.machineTexture) && coverId.equals(k.coverId);
+                return k.hFacing == this.hFacing && k.facing == this.facing && k.machineTexture.equals(this.machineTexture) && coverId.equals(k.coverId);
             } else {
                 return false;
             }
