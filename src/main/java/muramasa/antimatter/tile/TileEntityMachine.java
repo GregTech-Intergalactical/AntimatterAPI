@@ -483,7 +483,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         ModelDataMap.Builder builder = new ModelDataMap.Builder();
         TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
         if (mTile != null) {
-            builder.withInitial(AntimatterProperties.MULTI_MACHINE_TEXTURE, a -> {
+            builder.withInitial(AntimatterProperties.MULTI_TEXTURE_PROPERTY, a -> {
                 Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
                 if (tex.length == 1) return tex[0];
                 return tex[a.get3DDataValue()];

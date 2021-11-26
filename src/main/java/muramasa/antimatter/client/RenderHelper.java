@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBattery;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tool.armor.MaterialArmor;
 import net.minecraft.block.Block;
@@ -22,6 +23,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.PlayerContainer;
 import net.minecraft.item.ItemModelsProperties;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -384,6 +386,13 @@ public class RenderHelper {
         }
         matrix.popPose();
         return ActionResultType.SUCCESS;
+    }
+
+    public static TransformationMatrix faceRotation(BlockState state) {
+        if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
+            return faceRotation(state.getValue(BlockMachine.HORIZONTAL_FACING), state.getValue(BlockStateProperties.HORIZONTAL_FACING));
+        } 
+        return faceRotation(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
     }
 
     public static TransformationMatrix faceRotation(Direction horiz, Direction vert) {

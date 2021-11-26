@@ -70,7 +70,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
-    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory};
+    protected CoverFactory[] DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, COVEROUTPUT, ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory};
 
     /**
      * Recipe Members
@@ -226,7 +226,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         }
         if (covers.length == 1) {
             setOutputCover(covers[0]);
-            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory, covers[0], ICover.emptyFactory, ICover.emptyFactory};
+            this.DEFAULT_COVERS = new CoverFactory[]{ICover.emptyFactory, ICover.emptyFactory,covers[0], ICover.emptyFactory, ICover.emptyFactory, ICover.emptyFactory};
         } else {
             this.DEFAULT_COVERS = covers;
         }

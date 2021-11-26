@@ -1,13 +1,17 @@
 package muramasa.antimatter.client.dynamic;
 
 import com.mojang.datafixers.util.Either;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.ModelUtils;
+import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -17,6 +21,8 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.SimpleModelTransform;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,25 +35,19 @@ public class DynamicTexturers {
     public static final ResourceLocation PIPE_COVER_MODEL = new ResourceLocation(Ref.ID, "block/cover/cover_pipe");
     public static final DynamicTextureProvider<ICover, ICover.DynamicKey> COVER_DYNAMIC_TEXTURER = new DynamicTextureProvider<ICover, ICover.DynamicKey>(
             t -> {
-                TransformationMatrix base = Utils.getModelRotation(t.currentDir).getRotation();
-                if (t.state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
-                    switch (t.state.getValue(BlockMachine.HORIZONTAL_FACING)) {
-                        case NORTH:
-                            break;
-                        case SOUTH:
-                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0, 0, 1), 180f, true), null, null));
-                            break;
-                        case WEST:
-                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0, 0, 1), -90f, true), null, null));
-                            break;
-                        case EAST:
-                            base = base.compose(new TransformationMatrix(null, new Quaternion(new Vector3f(0, 0, 1), 90f, true), null, null));
-                            break;
+                if (t.currentDir == t.key.facing) {
+                    TransformationMatrix base = RenderHelper.faceRotation(t.key.facing);
+                    IBakedModel b = t.sourceModel.bake(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
+                            new SimpleModelTransform(base), t.source.getModel(t.type, t.currentDir, Direction.SOUTH));
+
+                    List<BakedQuad> ret = new ObjectArrayList<>();
+                    for (Direction dir : Ref.DIRS) {
+                        ret.addAll(b.getQuads(t.state, dir, t.rand, t.data));
                     }
+                    ret.addAll(b.getQuads(t.state, null, t.rand, t.data));
+                    return t.source.transformQuads(t.state, ret);
                 }
-                IBakedModel b = t.sourceModel.bake(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
-                        new SimpleModelTransform(base), t.source.getModel(t.type, t.currentDir, Direction.SOUTH));
-                return t.source.transformQuads(t.state, Stream.concat(b.getQuads(t.state, t.currentDir, t.rand, t.data).stream(), b.getQuads(t.state, null, t.rand, t.data).stream()).collect(Collectors.toList()));
+                return Collections.emptyList();
             }, t -> {
         t.model.textureMap.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
         t.source.setTextures(
@@ -57,17 +57,21 @@ public class DynamicTexturers {
     public static final DynamicTextureProvider<TileEntityMachine<?>, TileEntityMachine.DynamicKey> TILE_DYNAMIC_TEXTURER = new DynamicTextureProvider<TileEntityMachine<?>, TileEntityMachine.DynamicKey>(
             t -> {
                 IBakedModel b = t.sourceModel.bake(ModelLoader.instance(), ModelLoader.defaultTextureGetter(),
-                        new SimpleModelTransform(
-                                Utils.getModelRotationCoverClient(Utils.dirFromState(t.state)).getRotation().inverse()),
+                        new SimpleModelTransform(RenderHelper.faceRotation(t.state)),
                         new ResourceLocation(t.source.getId()));
-                return b.getQuads(t.state, null, t.rand, t.data);
+                List<BakedQuad> list = new ObjectArrayList<>(10);
+                for (Direction dir : Ref.DIRS) {
+                    list.addAll(b.getQuads(t.state, dir, t.rand, t.data));
+                }
+                list.addAll(b.getQuads(t.state, null, t.rand, t.data));
+                return list;
             }, t -> {
         t.model.textureMap.put("base", Either.left(
-                ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE).apply(t.dir))));
+                ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY).apply(t.dir))));
         t.model.textureMap.put("overlay",
                 Either
                         .left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MACHINE_TYPE).getOverlayTextures(
-                                t.data.getData(AntimatterProperties.MACHINE_STATE), t.source.getMachineTier())[Direction
+                                t.data.getData(AntimatterProperties.MACHINE_PROPERTY).state, t.source.getMachineTier())[Direction
                                 .rotate(Utils.getModelRotation(Utils.dirFromState(t.source.getBlockState())).getRotation()
                                         .inverse().getMatrix(), t.dir)
                                 .get3DDataValue()])));

@@ -187,7 +187,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
     }
 
     default boolean isEmpty() {
-        return true;
+        return this == empty;
     }
 
 

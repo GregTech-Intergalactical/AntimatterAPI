@@ -666,10 +666,10 @@ public class Utils {
         switch (rotateBy.getAxis()) {
             case Z:
             case X:
-                rot = Vector3f.YP.rotationDegrees(-rotateBy.toYRot());
+                rot = Vector3f.YP.rotationDegrees(rotateBy.toYRot());
                 break;
             case Y:
-                rot = Vector3f.XP.rotationDegrees(90f*rotateBy.getNormal().getY());
+                rot = Vector3f.XP.rotationDegrees(-90f*rotateBy.getNormal().getY());
                 break;
 
         }

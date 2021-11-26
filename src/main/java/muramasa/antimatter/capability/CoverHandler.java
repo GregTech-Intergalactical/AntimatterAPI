@@ -121,7 +121,11 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     public ICover[] getAll() {
-        return covers.values().toArray(new ICover[0]);
+        ICover[] ret = new ICover[6];
+        for (Direction dir : Ref.DIRS) {
+            ret[dir.get3DDataValue()] = get(dir);
+        }
+        return ret;
     }
 
     @Override

@@ -69,7 +69,11 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
             stack.pushPose();
             stack.translate(0f, (1-liquidCache.percentage)*liquidCache.height, 0f);
             stack.translate(0.5D, 0.5D, 0.5D);
-            stack.mulPose(Vector3f.YP.rotationDegrees(tile.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()));
+            if (tile.getMachineType().allowVerticalFacing()) {
+                stack.last().pose().multiply(RenderHelper.faceRotation(tile.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING), tile.getBlockState().getValue(BlockStateProperties.FACING)).getMatrix());
+            } else {
+                stack.last().pose().multiply(RenderHelper.faceRotation(tile.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING)).getMatrix());
+            }
             stack.translate(-0.5D, -0.5D, -0.5D);
 
             stack.scale(1.0f, liquidCache.percentage, 1.0f);
@@ -101,7 +105,9 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
         if (bakedModel instanceof MachineBakedModel) {
             MachineBakedModel model = (MachineBakedModel) bakedModel;
             for (Direction dir : Ref.DIRS) {
-                BakedMachineSide toRender = model.getModel(tile.getBlockState(), dir, tile.getMachineState());
+                IBakedModel ibm = model.getModel(tile.getBlockState(), dir, tile.getMachineState());
+                if (!(ibm instanceof BakedMachineSide)) continue;
+                BakedMachineSide toRender = (BakedMachineSide) ibm;
                 for (Map.Entry<String, IBakedModel> customPart : toRender.customParts()) {
                     String[] parts = customPart.getKey().split(":");
                     if (parts.length != 3) continue;

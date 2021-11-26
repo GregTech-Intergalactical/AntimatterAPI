@@ -6,10 +6,12 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.client.RenderHelper;
+import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -37,24 +39,46 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
 public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
-    private final ImmutableMap<MachineState, BakedMachineSide[]> sides;
-    public MachineBakedModel(TextureAtlasSprite particle, ImmutableMap<MachineState, BakedMachineSide[]> sides) {
+    private final ImmutableMap<MachineState, IBakedModel[]> sides;
+    public MachineBakedModel(TextureAtlasSprite particle, ImmutableMap<MachineState, IBakedModel[]> sides) {
         super(particle);
         this.sides = sides;
     }    
 
+
+    protected List<BakedQuad> getCoverQuads(BlockState state, Direction side, Random rand, AntimatterProperties.MachineProperties data, IModelData extra) {
+   
+        ICover cover = data.covers[side.get3DDataValue()];
+        if (cover.isEmpty()) return Collections.emptyList();
+        Texture tex = extra.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)
+                ? extra.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY).apply(side)
+                : data.machTexture.apply(side);
+        return data.coverTexturer.apply(side).getQuads("cover", new ObjectArrayList<>(), state, cover,
+                new ICover.DynamicKey(Utils.dirFromState(state), tex, cover.getId()), side.get3DDataValue(),
+                extra);
+    }
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data) {
         if (side == null) {
             return Collections.emptyList();
         }
         List<BakedQuad> quads = new ObjectArrayList<>(20);
-        IBakedModel model = getModel(state, side, data.getData(AntimatterProperties.MACHINE_STATE));
+        AntimatterProperties.MachineProperties props = data.getData(AntimatterProperties.MACHINE_PROPERTY);
+        List<BakedQuad> coverQuads = getCoverQuads(state, side, rand, props, data);
+        if (true) return coverQuads;
+
+        if (data.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)) {
+            Function<Direction, Texture> ft = data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY);
+            return props.machineTexturer.getQuads("machine", new ObjectArrayList<>(), state, props.getTile(), new TileEntityMachine.DynamicKey(new ResourceLocation(props.type.getId()), ft.apply(side), Utils.dirFromState(state), props.state), side.get3DDataValue(), data);
+        }
+
+        IBakedModel model = getModel(state, side, props.state);
         for (Direction dir : Ref.DIRS) {
             quads.addAll(model.getQuads(state, dir, rand, data));
         }
@@ -74,12 +98,13 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         return transformer.processMany(quads);
     }
 
-    public BakedMachineSide getModel(BlockState state, Direction dir, MachineState m) {
+    public IBakedModel getModel(BlockState state, Direction dir, MachineState m) {
         return sides.get(m)[Utils.coverRotateFacing(dir, Utils.dirFromState(state)).get3DDataValue()];
     }
-
+/*
     public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         BlockMachine bm = (BlockMachine) state.getBlock();
+    
         if (data.hasProperty(AntimatterProperties.MACHINE_TEXTURE)) {
             Function<Direction, Texture> fn = data.getData(AntimatterProperties.MULTI_MACHINE_TEXTURE);
             if (fn != null) {
@@ -98,19 +123,23 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         }
         return quads;
     }
-
+*/
 
     @Override
-    public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData data) {
-        data = super.getModelData(world, pos, state, data);
+    public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData d) {
+        final IModelData data = super.getModelData(world, pos, state, d);
         TileEntityMachine<?> machine = (TileEntityMachine<?>) world.getBlockEntity(pos);
-        data.setData(AntimatterProperties.MACHINE_TYPE, machine.getMachineType());
-        data.setData(AntimatterProperties.MACHINE_TEXTURE, a -> {
+        ICover[] covers = machine.coverHandler.map(t -> t.getAll()).orElse(new ICover[]{ICover.empty,ICover.empty,ICover.empty,ICover.empty,ICover.empty,ICover.empty});
+        Machine<?> m = machine.getMachineType();
+        Function<Direction, Texture> mText = a -> {
             Texture[] tex = machine.getMachineType().getBaseTexture(machine.getMachineTier());
             if (tex.length == 1) return tex[0];
             return tex[a.get3DDataValue()];
-        });
-        data.setData(AntimatterProperties.MACHINE_STATE, machine.getMachineState());
+        };
+        MachineState st = machine.getMachineState();
+        Function<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> tx = a -> machine.coverHandler.map(t -> t.getTexturer(a)).orElse(null);
+        AntimatterProperties.MachineProperties mh = new AntimatterProperties.MachineProperties(machine,m, covers, st, mText, machine.multiTexturer.get(), tx);
+        data.setData(AntimatterProperties.MACHINE_PROPERTY, mh);
         return data;
     }
 

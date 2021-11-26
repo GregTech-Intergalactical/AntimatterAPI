@@ -31,9 +31,9 @@ public class CoveredBakedModel extends AttachableBakedModel {
     @Override
     protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand,
                                                  @Nonnull IModelData data) {
-        return attachCoverQuads(new ArrayList<>(), state, side, data);
+        return null;//attachCoverQuads(new ArrayList<>(), state, side, data);
     }
-
+/*
     protected final List<BakedQuad> attachCoverQuads(List<BakedQuad> quads, BlockState state, Direction side,
                                                      @Nonnull IModelData data) {
         TileEntityBase<?> tile = data.getData(AntimatterProperties.TILE_PROPERTY);
@@ -53,5 +53,5 @@ public class CoveredBakedModel extends AttachableBakedModel {
                 new BaseCover.DynamicKey(Utils.dirFromState(state), tex, c.getId()), side.get3DDataValue(),
                 data);
         return quads;
-    }
+    }*/
 }

@@ -390,7 +390,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider {
 
         for (Direction dir : Ref.DIRS) {
             JsonObject obj = builder.addModelObject(new JsonObject(), this.getType().getOverlayModel(dir).toString(), of("base", getType().getBaseTexture(tier, dir).toString(), "overlay", overlays[dir.get3DDataValue()].toString()));
-            obj.addProperty("loader", AntimatterModelManager.LOADER_MACHINE_SIDE.getLoc().toString());
+           // obj.addProperty("loader", AntimatterModelManager.LOADER_MACHINE_SIDE.getLoc().toString());
             arr.add(obj);
         }
 

@@ -44,16 +44,16 @@ public class MachineModel implements IAntimatterModel<MachineModel>{
     public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery,
             Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides,
             ResourceLocation loc) {
-                ImmutableMap.Builder<MachineState, BakedMachineSide[]> builder = ImmutableMap.builder();
+                ImmutableMap.Builder<MachineState, IBakedModel[]> builder = ImmutableMap.builder();
 
                 for (Map.Entry<MachineState, IUnbakedModel[]> pair : this.models.entrySet()) {
-                    BakedMachineSide[] mod = new BakedMachineSide[6];
+                    IBakedModel[] mod = new IBakedModel[6];
                     for (int i = 0; i < 6; i++) {
-                        mod[i] = (BakedMachineSide) pair.getValue()[i].bake(bakery, getter, transform, loc);
+                        mod[i] = pair.getValue()[i].bake(bakery, getter, transform, loc);
                     }
                     builder.put(pair.getKey(),mod);
                 }
-                return new MachineBakedModel(getter.apply(new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, particle)),( ImmutableMap<MachineState, BakedMachineSide[]>) builder.build());
+                return new MachineBakedModel(getter.apply(new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, particle)), builder.build());
             }
     }
 
