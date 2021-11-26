@@ -41,9 +41,9 @@ public class BlockStone extends BlockBasic implements ISharedAntimatterObject {
 
     @Override
     public Texture[] getTextures() {
-        if (type instanceof CobbleStoneType && !suffix.isEmpty()) {
+        /*if (type instanceof CobbleStoneType && !suffix.isEmpty()) {
             return new Texture[]{new Texture(type.getDomain(), ((CobbleStoneType) type).getBeginningPath() + type.getId() + "/" + suffix)};
-        }
+        }*/
         return new Texture[]{type.getTexture()};
     }
 }
