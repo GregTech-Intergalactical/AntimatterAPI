@@ -27,4 +27,11 @@ public class BakedMachineSide extends GroupedBakedModel{
     public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         return this.models.get("").getQuads(null, side, rand, data);
     }
+
+    @Override
+    public boolean usesBlockLight() {
+        return false;
+    }
+
+    
 }

@@ -159,7 +159,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
     @Override
     public boolean usesBlockLight() {
-        return true;
+        return false;
     }
 
     @Override
