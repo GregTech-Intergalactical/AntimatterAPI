@@ -78,13 +78,13 @@ public class DynamicConfigBuilder {
                 this.rotations = new int[]{0, 180, 0};
                 break;
             case WEST:
-                this.rotations = new int[]{0, 90, 0};
+                this.rotations = new int[]{0, 270, 0};
                 break;
             case SOUTH:
                 this.rotations = new int[]{0, 0, 0};
                 break;
             case EAST:
-                this.rotations = new int[]{0, 270, 0};
+                this.rotations = new int[]{0, 90, 0};
                 break;
         }
         return this;

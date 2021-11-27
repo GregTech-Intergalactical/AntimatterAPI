@@ -21,7 +21,7 @@ public abstract class AntimatterBakedModel<T> implements IDynamicBakedModel {
     protected boolean onlyGeneralQuads = false; //If the model only has "general quads", like pipes
 
     public AntimatterBakedModel(TextureAtlasSprite p) {
-        this.particle = Objects.requireNonNull(p, "Missing particle texture in AntimatterBakedModel");
+        this.particle = Objects.requireNonNull(p, "Missng particle texture in AntimatterBakedModel");
     }
 
 

@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
+import muramasa.antimatter.client.DirectionalQuadTransformer;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
@@ -93,13 +94,13 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         TransformationMatrix mat = new TransformationMatrix(f);
         mat = mat.blockCornerToCenter();
         if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
-            mat = mat.compose(RenderHelper.faceRotation(state.getValue(BlockMachine.HORIZONTAL_FACING), state.getValue(BlockStateProperties.FACING)));
+            mat = mat.compose(RenderHelper.faceRotation(state.getValue(BlockStateProperties.FACING), state.getValue(BlockMachine.HORIZONTAL_FACING)));
         } else {
             mat = mat.compose(RenderHelper.faceRotation(state.getValue(BlockStateProperties.HORIZONTAL_FACING), null));
         }
         mat = mat.blockCenterToCorner();
-        QuadTransformer transformer = new QuadTransformer(mat);
-        return transformer.processMany(quads);
+        DirectionalQuadTransformer transformer = new DirectionalQuadTransformer(mat);
+        return transformer.processMany(quads, side);
     }
 
     public IBakedModel getModel(BlockState state, Direction dir, MachineState m) {
@@ -149,7 +150,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
     @Override
     public boolean useAmbientOcclusion() {
-        return true;
+        return false;
     }
 
     @Override
@@ -159,7 +160,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
     @Override
     public boolean usesBlockLight() {
-        return false;
+        return true;
     }
 
     @Override

@@ -23,16 +23,4 @@ public class BlockMultiMachine extends BlockMachine {
         builder.property("particle", getType().getBaseTexture(tier)[0].toString());
         prov.state(block, builder);
     }
-
-    @Override
-    protected int getModelId(Direction facing, Direction horizontalFacing, Direction overlay, MachineState state) {
-        state = (state == MachineState.INVALID_STRUCTURE ? MachineState.INVALID_STRUCTURE : ((state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE));
-        return ((state.ordinal() + 1) * 10000) + ((facing.get3DDataValue() + 1) * 1000) + ((horizontalFacing.get3DDataValue() + 1) * 100) + (overlay.get3DDataValue() + 1);
-    }
-
-    @Override
-    protected int getModelId(Direction facing, Direction overlay, MachineState state) {
-        state = (state == MachineState.INVALID_STRUCTURE ? MachineState.INVALID_STRUCTURE : ((state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE));
-        return ((state.ordinal() + 1) * 10000) + ((facing.get3DDataValue() + 1) * 1000) + (overlay.get3DDataValue() + 1);
-    }
 }

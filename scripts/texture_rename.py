@@ -5,7 +5,7 @@ parser = argparse.ArgumentParser(description='Model renamer.')
 parser.add_argument('file')
 res = parser.parse_args()
 file = res.file
-paths = ["battery_buffer_four", "battery_buffer_one", "battery_buffer_nine"]
+#paths = ["battery_buffer_four", "battery_buffer_one", "battery_buffer_nine"]
 
 for folder in listdir(file):
     path = file + "/" + folder + "/"

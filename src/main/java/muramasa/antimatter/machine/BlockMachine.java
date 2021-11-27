@@ -310,55 +310,6 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider {
         }
     }
 
-    //This makes no sense because it is manually derived by testing, to make sure covers render properly.
-    //Probably needs a rewrite of the model logic to get rid of this mess.
-    private Direction getDir(Direction hFace, Direction which, Direction face) {
-        if (which.getAxis() == Axis.Y) return which.getOpposite();
-        switch (hFace) {
-            case NORTH:
-                if (which.getAxis() == Axis.Z) return which.getOpposite();
-                break;
-            case SOUTH:
-                if (which.getAxis() == Axis.X) return which.getOpposite();
-                break;
-            case EAST:
-                switch (which) {
-                    case SOUTH:
-                        return EAST;
-                    case EAST:
-                        return SOUTH;
-                    case NORTH:
-                        return WEST;
-                    case WEST:
-                        return NORTH;
-                }
-                break;
-            case WEST:
-                switch (which) {
-                    case SOUTH:
-                        return WEST;
-                    case WEST:
-                        return SOUTH;
-                    case NORTH:
-                        return EAST;
-                    case EAST:
-                        return NORTH;
-                }
-                break;
-        }
-        return which;
-    }
-
-    protected int getModelId(Direction facing, Direction horizontalFacing, Direction overlay, MachineState state) {
-        state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
-        return ((state.ordinal() + 1) * 10000) + ((facing.get3DDataValue() + 1) * 1000) + ((horizontalFacing.get3DDataValue() + 1) * 100) + (overlay.get3DDataValue() + 1);
-    }
-
-    protected int getModelId(Direction facing, Direction overlay, MachineState state) {
-        state = (state == MachineState.ACTIVE) ? MachineState.ACTIVE : MachineState.IDLE; //Map to only ACTIVE/IDLE.
-        return ((state.ordinal() + 1) * 10000) + ((facing.get3DDataValue() + 1) * 1000) + (overlay.get3DDataValue() + 1);
-    }
-
     @Override
     public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
         ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier)[0]);
