@@ -74,11 +74,12 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
     }
 
     public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, IModelData data) {
-        return MODEL_CACHE.compute(t.getId(), (k, v) -> {
-            if (v == null) v = new WeakHashMap<>();
-            v.computeIfAbsent(key, (k1) -> bakeQuads(type, state, t, key, data));
-            return v;
-        }).get(key);
+      //  return MODEL_CACHE.compute(t.getId(), (k, v) -> {
+     //       if (v == null) v = new WeakHashMap<>();
+    //        v.computeIfAbsent(key, (k1) -> bakeQuads(type, state, t, key, data));
+    //        return v;
+     //  }).get(key);
+     return bakeQuads(type, state, t, key, data);
     }
 
     private List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, IModelData data) {

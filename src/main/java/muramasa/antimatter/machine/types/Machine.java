@@ -137,8 +137,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             return new Texture[]{
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "top"),
-                    new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "back"),
+                    new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "front"),
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "side"),
             };

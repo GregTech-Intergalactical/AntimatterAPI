@@ -93,11 +93,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         f.setIdentity();
         TransformationMatrix mat = new TransformationMatrix(f);
         mat = mat.blockCornerToCenter();
-        if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
-            mat = mat.compose(RenderHelper.faceRotation(state.getValue(BlockStateProperties.FACING), state.getValue(BlockMachine.HORIZONTAL_FACING)));
-        } else {
-            mat = mat.compose(RenderHelper.faceRotation(state.getValue(BlockStateProperties.HORIZONTAL_FACING), null));
-        }
+        mat = mat.compose(RenderHelper.faceRotation(state));
         mat = mat.blockCenterToCorner();
         DirectionalQuadTransformer transformer = new DirectionalQuadTransformer(mat);
         return transformer.processMany(quads, side);
