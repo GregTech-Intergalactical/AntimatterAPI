@@ -67,4 +67,8 @@ public enum MachineState implements IAntimatterObject {
         }
         return IDLE;
     }
+
+    public static void init() {
+        
+    }
 }

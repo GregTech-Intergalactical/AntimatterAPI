@@ -1,5 +1,6 @@
 package muramasa.antimatter;
 
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
 import muramasa.antimatter.datagen.loaders.Pipes;
@@ -12,6 +13,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
+import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.material.SubTag;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -164,6 +166,8 @@ public class Antimatter extends AntimatterMod {
         if (event == RegistrationEvent.DATA_INIT) {
             SlotType.init();
             RecipeBuilders.init();
+            MachineState.init();
+            ICover.init();
             Data.init(side);
             SubTag.init();
             GuiEvents.init();

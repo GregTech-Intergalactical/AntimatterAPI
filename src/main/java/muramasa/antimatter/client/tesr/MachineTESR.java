@@ -90,9 +90,6 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
     }
 
     public static List<Caches.LiquidCache> buildLiquids(TileEntityMachine<?> tile) {
-        if (tile.getMachineType().allowVerticalFacing()) {
-            throw new IllegalStateException("Cannot render tank on vertical facing!");
-        }
         List<Caches.LiquidCache> ret = new ObjectArrayList<>();
         MachineFluidHandler<?> handler = tile.fluidHandler.map(t -> t).orElse(null);
         if (handler == null) return Collections.emptyList();
@@ -117,7 +114,6 @@ public class MachineTESR extends TileEntityRenderer<TileEntityMachine<?>> {
                         Antimatter.LOGGER.warn("Caught exception building model" + ex);
                         continue;
                     }
-                    float h = (float) height;
                     FluidStack fluid = tile.fluidHandler.map(fh -> {
                         if (in) {
                             if (fh.getInputTanks() == null) return FluidStack.EMPTY;

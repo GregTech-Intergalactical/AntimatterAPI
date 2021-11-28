@@ -666,10 +666,10 @@ public class Utils {
         switch (rotateBy.getAxis()) {
             case Z:
             case X:
-                rot = Vector3f.YP.rotationDegrees(rotateBy.toYRot());
+                rot = new Quaternion(Vector3f.YP, rotateBy.toYRot(), true);
                 break;
             case Y:
-                rot = Vector3f.XP.rotationDegrees(90f*rotateBy.getNormal().getY());
+                rot = new Quaternion(Vector3f.XP, 90f*rotateBy.getNormal().getY(), true);
                 break;
 
         }
