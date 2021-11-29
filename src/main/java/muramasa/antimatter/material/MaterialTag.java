@@ -35,6 +35,8 @@ public class MaterialTag implements IMaterialTag {
     public static MaterialTag METAL = new MaterialTag("metal");
     public static MaterialTag ELEMENTAL = new MaterialTag("elemental");
     public static MaterialTag FLINT = new MaterialTag("flint");
+    public static DoubleMaterialTag CHEMBATH_MERCURY = new DoubleMaterialTag("chembath_mercury");
+    public static DoubleMaterialTag CHEMBATH_PERSULFATE = new DoubleMaterialTag("chembath_persulfate");
 
     /**
      * ETC
