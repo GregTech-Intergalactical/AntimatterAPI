@@ -40,7 +40,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>();
 
     @Override
-    public ResourceLocation getModel(String type, Direction dir, Direction facing) {
+    public ResourceLocation getModel(String type, Direction dir) {
         if (type.equals("pipe"))
             return PIPE_COVER_MODEL;
         return new ResourceLocation(getDomain() + ":block/cover/" + getRenderId());

@@ -43,7 +43,7 @@ public class CoverPlate extends CoverMaterial {
     }
 
     @Override
-    public ResourceLocation getModel(String type, Direction dir, Direction facing) {
+    public ResourceLocation getModel(String type, Direction dir) {
         if (type.equals("pipe"))
             return new ResourceLocation(Ref.ID + ":block/cover/cover_pipe_notint");
         return new ResourceLocation(Ref.ID + ":block/cover/basic_notint");

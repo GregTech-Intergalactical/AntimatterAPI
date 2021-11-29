@@ -81,7 +81,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
         if (data.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)) {
             Function<Direction, Texture> ft = data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY);
-            return props.machineTexturer.getQuads("machine", new ObjectArrayList<>(), state, props.getTile(), new TileEntityMachine.DynamicKey(new ResourceLocation(props.type.getId()), ft.apply(side), Utils.dirFromState(state), props.state), side.get3DDataValue(), data);
+            return props.machineTexturer.getQuads("machine", new ObjectArrayList<>(), state, props.type, new TileEntityMachine.DynamicKey(new ResourceLocation(props.type.getId()), ft.apply(side), side, props.state), side.get3DDataValue(), data);
         }
 
         IBakedModel model = getModel(state, side, props.state);
@@ -104,7 +104,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         Vector3i vector3i = dir.getNormal();
         Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
         vector4f.transform(RenderHelper.faceRotation(state).inverse().getMatrix());
-        Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());        RenderHelper.faceRotation(state).inverse();
+        Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
         return sides.get(m)[side.get3DDataValue()];
     }
 /*
@@ -144,7 +144,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         };
         MachineState st = machine.getMachineState();
         Function<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> tx = a -> machine.coverHandler.map(t -> t.getTexturer(a)).orElse(null);
-        AntimatterProperties.MachineProperties mh = new AntimatterProperties.MachineProperties(machine,m, covers, st, mText, machine.multiTexturer.get(), tx);
+        AntimatterProperties.MachineProperties mh = new AntimatterProperties.MachineProperties(m, machine.getMachineTier(), covers, st, mText, machine.multiTexturer.get(), tx);
         data.setData(AntimatterProperties.MACHINE_PROPERTY, mh);
         return data;
     }

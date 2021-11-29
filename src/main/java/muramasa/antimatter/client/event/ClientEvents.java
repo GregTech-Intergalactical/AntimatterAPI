@@ -156,7 +156,6 @@ public class ClientEvents {
             e.getLeft().addAll(((TileEntityBase) tile).getInfo());
         }
         if (MC.player.isCrouching()) {
-            //TODO
             e.getLeft().add("");
             e.getLeft().add(TextFormatting.AQUA + "[Antimatter Debug Client]");
         }

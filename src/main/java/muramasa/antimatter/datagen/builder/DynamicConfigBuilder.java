@@ -90,11 +90,6 @@ public class DynamicConfigBuilder {
         return this;
     }
 
-    public DynamicConfigBuilder rot(Direction dir, Direction h) {
-        this.rotations = Utils.rotationVector(dir, h);
-        return this;
-    }
-
     public boolean hasRots() {
         return rotations != null && rotations.length > 0;
     }

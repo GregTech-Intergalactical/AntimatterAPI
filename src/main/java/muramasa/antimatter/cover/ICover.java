@@ -246,7 +246,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         }
 
         @Override
-        public ResourceLocation getModel(String type, Direction dir, Direction facing) {
+        public ResourceLocation getModel(String type, Direction dir) {
             return null;
         }
 

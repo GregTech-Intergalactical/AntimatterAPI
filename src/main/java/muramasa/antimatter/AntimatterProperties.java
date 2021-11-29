@@ -4,6 +4,7 @@ import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -69,9 +70,9 @@ public class AntimatterProperties {
         public final MachineState state;
         public final Function<Direction, Texture> machTexture;
         public final Machine<?> type;
+        public final Tier tier;
         //Not used, just used as index for the dynamic texturer, to get the model.
-        private final TileEntityMachine<?> machine;
-        public final DynamicTexturer<TileEntityMachine<?>, TileEntityMachine.DynamicKey> machineTexturer;
+        public final DynamicTexturer<Machine<?>, TileEntityMachine.DynamicKey> machineTexturer;
         @Nullable
         public final Function<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
         /**
@@ -82,20 +83,16 @@ public class AntimatterProperties {
          * @param machineTexturer
          * @param coverTexturer
          */
-        public MachineProperties(TileEntityMachine<?> machine, Machine<?> type, ICover[] covers, MachineState state, Function<Direction, Texture> machTexture,
-                DynamicTexturer<TileEntityMachine<?>, DynamicKey> machineTexturer,
+        public MachineProperties(Machine<?> type, Tier tier, ICover[] covers, MachineState state, Function<Direction, Texture> machTexture,
+                DynamicTexturer<Machine<?>, DynamicKey> machineTexturer,
                 Function<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer) {
             this.covers = covers;
             this.state = state;
             this.machTexture = machTexture;
+            this.tier = tier;
             this.machineTexturer = machineTexturer;
             this.coverTexturer = coverTexturer;
             this.type = type;
-            this.machine = machine;
-        }
-
-        public TileEntityMachine getTile() {
-            return machine;
         }
     }
 }

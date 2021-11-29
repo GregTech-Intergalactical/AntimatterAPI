@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.*;
@@ -61,7 +62,7 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
  *
  * @param <T> this class as a generic argument.
  */
-public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>>, IGuiHandler.IHaveWidgets {
+public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>>, IGuiHandler.IHaveWidgets, IDynamicModelProvider {
 
     
     /**
@@ -578,5 +579,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public Map<String, List<SlotData<?>>> getSlotLookup() {
         return slotLookup;
+    }
+
+    @Override
+    public ResourceLocation getModel(String type, Direction dir) {
+        return getOverlayModel(dir);
     }
 }

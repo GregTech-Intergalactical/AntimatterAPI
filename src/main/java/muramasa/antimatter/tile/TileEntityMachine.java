@@ -27,6 +27,7 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.network.packets.TileGuiEventPacket;
@@ -75,7 +76,7 @@ import static net.minecraft.block.Blocks.AIR;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
 import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
-public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements INamedContainerProvider, IMachineHandler, IGuiHandler, IDynamicModelProvider {
+public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements INamedContainerProvider, IMachineHandler, IGuiHandler {
 
     /**
      * Open container. Allows for better syncing
@@ -109,7 +110,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     /**
      * Client related fields.
      **/
-    public LazyValue<DynamicTexturer<TileEntityMachine<?>, DynamicKey>> multiTexturer;
+    public LazyValue<DynamicTexturer<Machine<?>, DynamicKey>> multiTexturer;
     public Cache<List<Caches.LiquidCache>> liquidCache;
 
     public TileEntityMachine(Machine<?> type) {
@@ -163,8 +164,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     protected void cacheInvalidate() {
         if (this.liquidCache != null) liquidCache.invalidate();
     }
-
-    @Override
     public String getDomain() {
         return getMachineType().getDomain();
     }
@@ -481,6 +480,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     @Override
     public IModelData getModelData() {
         ModelDataMap.Builder builder = new ModelDataMap.Builder();
+        if (this.getMachineType() instanceof BasicMultiMachine) return builder.build();
         TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
         if (mTile != null) {
             builder.withInitial(AntimatterProperties.MULTI_TEXTURE_PROPERTY, a -> {
@@ -653,12 +653,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return info;
     }
 
-    @Override
-    public ResourceLocation getModel(String type, Direction dir, Direction facing) {
-        return this.getMachineType().getOverlayModel(Utils.coverRotateFacing(dir, facing));
-    }
-
-    @Override
     public String getId() {
         return this.getMachineType().getId();
     }
