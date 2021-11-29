@@ -669,7 +669,7 @@ public class Utils {
                 rot = new Quaternion(Vector3f.YP, rotateBy.toYRot(), true);
                 break;
             case Y:
-                rot = new Quaternion(Vector3f.XP, 90f*rotateBy.getNormal().getY(), true);
+                rot = new Quaternion(Vector3f.XP, -90f*rotateBy.getNormal().getY(), true);
                 break;
 
         }

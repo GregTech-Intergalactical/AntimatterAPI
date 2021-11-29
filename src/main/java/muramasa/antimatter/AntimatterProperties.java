@@ -11,6 +11,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityMachine.DynamicKey;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.data.ModelProperty;
 
 import java.util.EnumMap;
@@ -35,12 +36,34 @@ public class AntimatterProperties {
     public static final ModelProperty<TileEntityBase<?>> TILE_PROPERTY = new ModelProperty<>();
     public static final ModelProperty<BlockState> STATE_MODEL_PROPERTY = new ModelProperty<>();
 
-    public static final ModelProperty<Texture> TEXTURE_MODEL_PROPERTY = new ModelProperty<>();
+    public static final ModelProperty<ProxyProperties> FAKE_MODEL_PROPERTY = new ModelProperty<>();
 
     public static final ModelProperty<MachineProperties> MACHINE_PROPERTY = new ModelProperty<>();
     public static final ModelProperty<Function<Direction, Texture>> MULTI_TEXTURE_PROPERTY = new ModelProperty<>();
 
-
+    public static class ProxyProperties {
+        public final BlockState state;
+        public final BlockState controllerState;
+        public final Texture texture;
+        public final Function<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> texturer;
+        public final ICover[] covers;
+        public final Direction facing;
+        /**
+         * @param state
+         * @param controllerState
+         * @param texture
+         */
+        public ProxyProperties(BlockState state, BlockState controllerState, ResourceLocation texture, Function<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> texturer, ICover[] covers, Direction facing) {
+            this.state = state;
+            this.controllerState = controllerState;
+            this.texture = new Texture(texture.toString());
+            this.texturer = texturer;
+            this.covers = covers;
+            this.facing = facing;
+        }
+    
+        
+    }
     public static class MachineProperties {
         public final ICover[] covers;
         public final MachineState state;

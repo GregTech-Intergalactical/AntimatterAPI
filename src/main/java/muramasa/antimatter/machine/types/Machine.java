@@ -23,6 +23,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureBuilder;
+import muramasa.antimatter.texture.IOverlayModeler;
 import muramasa.antimatter.texture.IOverlayTexturer;
 import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
@@ -62,6 +63,7 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
  */
 public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegistryEntryProvider, ISlotProvider<Machine<T>>, IGuiHandler.IHaveWidgets {
 
+    
     /**
      * Basic Members
      **/
@@ -88,6 +90,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      **/
     protected ITextureHandler baseTexture;
     protected IOverlayTexturer overlayTextures;
+    protected IOverlayModeler overlayModels;
+
 
     /**
      * Multi Members
@@ -132,7 +136,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         this.id = id;
         //Default implementation.
         overlayTextures = (type, state, tier) -> {
-            if (state != MachineState.ACTIVE && state != MachineState.INVALID_STRUCTURE) state = MachineState.IDLE;
+            state = state.getTextureState();
             String stateDir = state == MachineState.IDLE ? "" : state.getId() + "/";
             return new Texture[]{
                     new Texture(domain, "block/machine/overlay/" + id + "/" + stateDir + "bottom"),
@@ -144,6 +148,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             };
         };
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
+        overlayModels = (a,d) -> {
+            return new ResourceLocation(Ref.ID, "block/machine/overlay/invalid/" + d.getName());
+        };
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
         //if (FMLEnvironment.dist.isClient()) {
@@ -383,6 +390,14 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return efficiency;
     }
 
+    public T custom() {
+        return custom(IOverlayModeler.defaultOverride);
+    }
+
+    public T custom(IOverlayModeler modeler) {
+        this.overlayModels = modeler;
+        return (T)this;
+    }
     public List<Texture> getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
         for (Tier tier : getTiers()) {
@@ -414,7 +429,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public ResourceLocation getOverlayModel(Direction side) {
-        return new ResourceLocation(domain, "block/machine/overlay/" + id + "/" + side.getSerializedName());
+        return overlayModels.getOverlayModel(this, side);
     }
 
     public RecipeMap<?> getRecipeMap() {

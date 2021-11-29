@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.math.vector.Vector4f;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.client.model.QuadTransformer;
@@ -100,7 +101,11 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
     }
 
     public IBakedModel getModel(BlockState state, Direction dir, MachineState m) {
-        return sides.get(m)[Utils.coverRotateFacing(dir, Utils.dirFromState(state)).get3DDataValue()];
+        Vector3i vector3i = dir.getNormal();
+        Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
+        vector4f.transform(RenderHelper.faceRotation(state).inverse().getMatrix());
+        Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());        RenderHelper.faceRotation(state).inverse();
+        return sides.get(m)[side.get3DDataValue()];
     }
 /*
     public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {

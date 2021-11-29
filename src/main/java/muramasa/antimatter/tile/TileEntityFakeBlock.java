@@ -19,6 +19,7 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.LongNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,13 +39,13 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
 
     private BlockState state;
 
-    private final Set<TileEntityBasicMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
+    public final Set<TileEntityBasicMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
     private Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
     public Direction facing;
 
     public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
-    private List<BlockPos> controllerPos;
+    private List<BlockPos> controllerPos; 
 
     public TileEntityFakeBlock(BlockProxy block) {
         super(block.TYPE);
@@ -55,6 +56,15 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         if (level != null)
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         controllers.add(controller);
+    }
+
+    public ICover[] covers() {
+        ICover[] ret = new ICover[6];
+        for (Direction dir : Ref.DIRS) {
+            ICover c = this.covers.get(dir);
+            ret[dir.get3DDataValue()] = c == null ? ICover.empty : c;
+        }
+        return ret;
     }
 
     public void removeController(TileEntityBasicMultiMachine<?> controller) {
@@ -68,9 +78,11 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         for (Map.Entry<Direction, CoverFactory> entry : covers.entrySet()) {
             Direction dir = entry.getKey();
             CoverFactory factory = entry.getValue();
-            ICover cover = factory.get().get(handler, null, dir, factory);
+            Direction rot = Utils.coverRotateFacing(dir, facing);
+            if (rot.getAxis() == Axis.X) rot = rot.getOpposite();
+            ICover cover = factory.get().get(handler, null, rot, factory);
             this.covers.put(
-                    Utils.coverRotateFacing(dir, facing.getAxis() == Direction.Axis.X ? facing.getOpposite() : facing),
+                rot,
                     cover);
         }
         setChanged();

@@ -6,6 +6,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import net.minecraft.block.Block;
@@ -14,6 +15,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootParameters;
+import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
@@ -40,6 +43,15 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
 
     public BlockProxy(String domain, String id) {
         super(domain, id);
+    }
+
+    
+
+    @Override
+    protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
+        super.createBlockStateDefinition(pBuilder);
+        pBuilder.add(BlockStateProperties.FACING);
+        pBuilder.add(BlockMachine.HORIZONTAL_FACING);
     }
 
     @Override

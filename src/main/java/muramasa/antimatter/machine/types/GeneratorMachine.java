@@ -12,6 +12,7 @@ public class GeneratorMachine extends Machine<GeneratorMachine> {
         setTile(() -> new TileEntityGenerator<>(this));
         setGUI(Data.BASIC_MENU_HANDLER);
         noCovers();
+        custom();
         setAllowVerticalFacing(true);
     }
 }
