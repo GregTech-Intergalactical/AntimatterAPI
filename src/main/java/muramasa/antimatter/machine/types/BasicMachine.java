@@ -26,8 +26,8 @@ public class BasicMachine extends Machine<BasicMachine> {
                 t.addWidget(ProgressWidget.build(BarDir.LEFT, true))
                         .addWidget(MachineStateWidget.build().setPos(84, 46).setWH(8, 8));
             }
-           // if ((has(ITEM) || has(FLUID)))
-             //   t.addWidget(IOWidget.build(9, 63, 16, 16).onlyIf(u -> u.handler.getClass() == TileEntityMachine.class));
+            if ((has(ITEM) || has(FLUID)))
+                t.addWidget(IOWidget.build(9, 63, 16, 16).onlyIf(u -> u.handler.getClass() == TileEntityMachine.class));
         });
     }
 }
