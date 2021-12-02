@@ -24,7 +24,7 @@ public class EnergyTileWrapper implements IEnergyHandler {
     @Override
     public boolean insert(GTTransaction transaction) {
         if (storage.getEnergyStored() >= transaction.voltageOut * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO) {
-            transaction.addData(1, 0, this::extractEnergy, null);
+            transaction.addData(1, 0, this::extractEnergy);
             return true;
         }
         return false;

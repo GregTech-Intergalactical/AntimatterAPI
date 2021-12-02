@@ -33,16 +33,14 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.api.GraphWrapper;
-import tesseract.api.IPipe;
-import tesseract.api.ITransactionModifier;
+import tesseract.api.IConnectable;
 import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, INamedContainerProvider, IGuiHandler, IPipe, ITransactionModifier {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, INamedContainerProvider, IGuiHandler, IConnectable {
 
     /**
      * Pipe Data
@@ -84,9 +82,16 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     @Override
     public void onLoad() {
         if (isServerSide()) {
-            getWrapper().registerConnector(getLevel(), getBlockPos().asLong(), this);
-            addSides();
+            if (this.isConnector()) {
+                register();
+            } else if (this.level != null) {
+                
+            }
         }
+    }
+
+    public boolean isConnector() {
+        return !(this instanceof ITickablePipe);
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
@@ -99,19 +104,14 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         this.type = getPipeType(state);
     }
 
-    protected abstract GraphWrapper getWrapper();
-
     @Override
     public void onRemove() {
         coverHandler.ifPresent(PipeCoverHandler::onRemove);
         if (isServerSide()) {
             dispatch.invalidate();
-            for (Direction side : Ref.DIRS) {
-                if (validate(side)) {
-                    removeNode(side);
-                }
+            if (isConnector()) {
+                deregisterTesseract();
             }
-            getWrapper().remove(getLevel(), getBlockPos().asLong());
         }
     }
 
@@ -122,12 +122,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         return type;
     }
 
-    @Override
-    public boolean canModify(Direction incoming, Direction towards) {
-        return coverHandler.map(t -> !t.get(incoming).isEmpty() || !t.get(towards).isEmpty()).orElse(false);
-    }
-
-    @Override
     public void modify(Direction incoming, Direction towards, Object object, boolean simulate) {
         this.coverHandler.ifPresent(t -> t.onTransfer(object, incoming, towards, simulate));
         /*if (object instanceof FluidStack && simulate) {
@@ -152,10 +146,29 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         return ((BlockPipe<?>) state.getBlock()).getSize();
     }
 
+    public TileEntityPipe<?> getPipe(Direction side) {
+        return getPipe(getBlockPos().relative(side));
+    }
+
+    public TileEntityPipe<?> getPipe(BlockPos side) {
+        TileEntity tile = getLevel().getBlockEntity(side);
+        if (!(tile instanceof TileEntityPipe)) return null;
+        TileEntityPipe<?> pipe = (TileEntityPipe<?>) tile;
+        return pipe.getCapability() == this.getCapability() ?  pipe : null;
+    }
+
+    public void toggleConnection(Direction side) {
+        if (connects(side)) {
+            clearConnection(side);
+        } else {
+            setConnection(side);
+        }
+    }
+
     public void setConnection(Direction side) {
         if (connects(side)) return;
         if (blocksSide(side)) return;
-        IPipe pipe = getValidPipe(side);
+        TileEntityPipe<?>  pipe = getPipe(side);
         //If it is a tile but invalid do not connect.
         connection = Connectivity.set(connection, side.get3DDataValue());
         boolean ok = validate(side);
@@ -165,38 +178,18 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         }
 
         refreshConnection();
-        if (ok) {
-            addNode(side);
-        } else {
-            if (pipe != null) {
-                pipe.setConnection(side.getOpposite());
-            }
+        if (pipe != null) {
+            pipe.setConnection(side.getOpposite());
         }
-    }
-
-    @Override
-    public void removeNode(Direction side) {
-        byte old = this.connection;
-        this.connection = Connectivity.clear(this.connection, side.get3DDataValue());
-        getWrapper().remove(getLevel(), getBlockPos().relative(side).asLong());//registerNode(getPos().offset(side), side, true);
-        this.connection = old;
-    }
-
-    @Override
-    public void refresh(Direction side) {
-        getWrapper().refreshNode(getLevel(), getBlockPos().relative(side).asLong());
     }
 
     public void clearConnection(Direction side) {
         //If we don't check for connection pipes can cause stackoverflow!
         if (!connects(side)) return;
-        if (validate(side)) {
-            removeNode(side);
-        }
         connection = Connectivity.clear(connection, side.get3DDataValue());
         dispatch.invalidate(side);
         refreshConnection();
-        IPipe pipe = getValidPipe(side);
+        TileEntityPipe<?>  pipe = getPipe(side);
         if (pipe != null) {
             pipe.clearConnection(side.getOpposite());
         }
@@ -212,14 +205,24 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     public void refreshConnection() {
         sidedSync(true);
 
-
-        if (isServerSide()) {
-            GraphWrapper wrapper = getWrapper();
-            if (wrapper.remove(getLevel(), getBlockPos().asLong())) {
-                wrapper.registerConnector(getLevel(), getBlockPos().asLong(), this);
+        if (isServerSide() && isConnector()) {
+            if (deregisterTesseract()) {
+                register();
             }
         }
     }
+
+    protected abstract void register();
+    protected abstract boolean deregister();
+
+    private final boolean deregisterTesseract() {
+        byte old = this.connection;
+        this.connection = 0;
+        boolean ok = deregister();
+        this.connection = old;
+        return ok;
+    }
+
 
     @Override
     public boolean connects(Direction direction) {
@@ -227,33 +230,13 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     @Override
-    public boolean needsPath() {
-        return this.coverHandler.map(t -> {
-            for (ICover coverStack : t.getAll()) {
-                if (coverStack.ticks()) return true;
-            }
-            return false;
-        }).orElse(false);
-    }
-
-    @Override
     public boolean validate(Direction dir) {
         if (!connects(dir)) return false;
         BlockState state = level.getBlockState(worldPosition.relative(dir));
-        if (state.getBlock() instanceof IPipeBlock) {
+        if (state.getBlock() instanceof BlockPipe && !state.getValue(BlockPipe.COVERED)) {
             return false;
         }
         return !blocksSide(dir);
-    }
-
-    @Override
-    @Nullable
-    public IPipe getValidPipe(Direction side) {
-        TileEntity tile = level.getBlockEntity(worldPosition.relative(side));
-        if (tile instanceof TileEntityPipe && ((TileEntityPipe) tile).getCapability() == this.getCapability()) {
-            return (IPipe) tile;
-        }
-        return null;
     }
 
     /**
@@ -277,6 +260,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
                 TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
                 if (pipe != this) {
                     pipe.load(pipe.getBlockState(), nbt);
+                    deregisterTesseract();
                 }
                 return true;
             }
@@ -343,7 +327,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
             Utils.markTileForRenderUpdate(this);
         }
         if (connection != newConnection && level != null) {
-            if (!level.isClientSide) getWrapper().registerConnector(getLevel(), worldPosition.asLong(), this);
             for (int i = 0; i < Ref.DIRS.length; i++) {
                 boolean firstHas = Connectivity.has(connection, i);
                 boolean secondHas = Connectivity.has(newConnection, i);

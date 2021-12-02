@@ -53,7 +53,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.network.NetworkHooks;
-import tesseract.api.IPipe;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -62,7 +61,7 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable, IPipe.IPipeBlock, ISharedAntimatterObject {
+public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable, ISharedAntimatterObject {
 
     protected T type;
     protected PipeSize size;
@@ -188,7 +187,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         TileEntityPipe<?> tile = getTilePipe(worldIn, pos);
         if (tile != null) {
             for (Direction side : Ref.DIRS) {
-                IPipe neighbour = tile.getValidPipe(side);
+                TileEntityPipe<?> neighbour = tile.getPipe(side);
                 if (neighbour != null && neighbour.connects(side.getOpposite())) {
                     tile.setConnection(side);
                 }
@@ -220,7 +219,12 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override // Used to clear connection for sides where neighbor was removed
     public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
-        this.sideChange(world, pos, neighbor);
+        if (!world.isClientSide()) {
+            TileEntityPipe<?> tile = (TileEntityPipe<?>) world.getBlockEntity(pos);
+            if (tile != null) {
+                tile.onBlockUpdate(neighbor);
+            }
+        }    
     }
 
     @Override

@@ -44,9 +44,38 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    protected GraphWrapper getWrapper() {
-        return Tesseract.FLUID;
+    public void onBlockUpdate(BlockPos neighbour) {
+        super.onBlockUpdate(neighbour);
+        if (this.isConnector()) Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), null);        
     }
+
+
+    @Override
+    protected void register() {
+        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, (pos, dir, cb) -> {
+            if (!this.validate(dir.getOpposite())) return null;
+
+            TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
+            if (tile == null) {
+                return null;
+            }
+            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir);
+            if (capability.isPresent()) {
+                FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
+                capability.addListener(o -> cb.run());
+                return node;
+            } else {
+                return null;
+            }
+        });        
+    }
+
+
+    @Override
+    protected boolean deregister() {
+        return Tesseract.FLUID.remove(getLevel(), getBlockPos().asLong());
+    }
+
 
     @Override
     public void load(BlockState state, CompoundNBT tag) {
@@ -60,24 +89,6 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         CompoundNBT nbt = super.save(tag);
         fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serializeNBT()));
         return nbt;
-    }
-
-    @Override
-    public void addNode(Direction side) {
-        Tesseract.FLUID.registerNode(getLevel(), worldPosition.relative(side).asLong(), side.getOpposite(), (pos, dir) -> {
-            TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
-            if (tile == null) {
-                return null;
-            }
-            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir);
-            if (capability.isPresent()) {
-                FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
-                capability.addListener(o -> this.onSideCapInvalidate(side));
-                return node;
-            } else {
-                return null;
-            }
-        });
     }
 
     @Override
@@ -139,7 +150,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
                 fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
             }
         } else {
-            return LazyOptional.of(() -> new TesseractFluidCapability(this, side));
+            return LazyOptional.of(() -> new TesseractFluidCapability(this, side, !isConnector()));
         }
         return fluidHandler;
     }
@@ -162,23 +173,6 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         return 16;
     }
 
-    public static class TileEntityCoveredFluidPipe<T extends FluidPipe<T>> extends TileEntityFluidPipe<T> implements ITickablePipe {
-
-        public TileEntityCoveredFluidPipe(T type) {
-            super(type, true);
-        }
-
-        @Override
-        public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
-            return this.coverHandler;
-        }
-    }
-
-    @Override
-    public IFluidNode getNode() {
-        return this.fluidHandler.orElse(null);
-    }
-
     @Override
     public List<String> getInfo() {
         List<String> list = super.getInfo();
@@ -193,5 +187,17 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         list.add("Max temperature: " + getPipeType().getTemperature());
         list.add(getPipeType().isGasProof() ? "Gas proof." : "Cannot handle gas.");
         return list;
+    }
+
+    public static class TileEntityCoveredFluidPipe<T extends FluidPipe<T>> extends TileEntityFluidPipe<T> implements ITickablePipe {
+
+        public TileEntityCoveredFluidPipe(T type) {
+            super(type, true);
+        }
+
+        @Override
+        public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
+            return this.coverHandler;
+        }
     }
 }

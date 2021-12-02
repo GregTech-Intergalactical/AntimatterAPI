@@ -22,6 +22,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -78,7 +79,9 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
 
     public Material getMaterialFromStack(ItemStack stack) {
         if (stack.getItem() instanceof MaterialItem) {
-            return ((MaterialItem) stack.getItem()).getMaterial();
+            MaterialItem item = (MaterialItem) stack.getItem();
+            if (item.getType() == this) return item.getMaterial();
+            return null;
         }
         return OVERRIDES.inverse().get(stack.getItem());
     }
