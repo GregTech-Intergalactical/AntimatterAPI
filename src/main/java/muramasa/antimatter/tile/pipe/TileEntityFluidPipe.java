@@ -28,6 +28,7 @@ import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.api.fluid.IFluidPipe;
+import tesseract.graph.Graph.INodeGetter;
 
 import java.util.List;
 
@@ -46,13 +47,19 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        if (this.isConnector()) Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), null);        
+        if (this.isConnector()) {
+            Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());        
+        }
     }
 
 
     @Override
     protected void register() {
-        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, (pos, dir, cb) -> {
+        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());        
+    }
+
+    private INodeGetter<IFluidNode> getter() {
+        return (pos, dir, cb) -> {
             if (!this.validate(dir.getOpposite())) return null;
 
             TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
@@ -67,7 +74,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
             } else {
                 return null;
             }
-        });        
+        };
     }
 
 
@@ -150,7 +157,8 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
                 fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
             }
         } else {
-            return LazyOptional.of(() -> new TesseractFluidCapability(this, side, !isConnector()));
+            return LazyOptional.of(() -> new TesseractFluidCapability(this, side, !isConnector(), (stack, in, out, simulate) -> 
+            this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
         }
         return fluidHandler;
     }

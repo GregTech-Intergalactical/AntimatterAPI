@@ -26,6 +26,7 @@ import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTCable;
 import tesseract.api.gt.IGTNode;
+import tesseract.graph.Graph.INodeGetter;
 
 public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 
@@ -36,7 +37,11 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     protected void register() {
-        Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, (pos, dir, cb) -> {
+        Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());
+    }
+
+    private INodeGetter<IGTNode> getter() {
+        return (pos, dir, cb) -> {
             if (!this.validate(dir)) return null;
 
             TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
@@ -53,7 +58,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
                 }
             }
             return null;
-        });
+        };
     }
 
     @Override
@@ -69,7 +74,9 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        if (this.isConnector()) Tesseract.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), null);
+        if (this.isConnector()) {
+            Tesseract.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());
+        }
     }
 
     @Override
@@ -102,7 +109,8 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     public LazyOptional<? extends IEnergyHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new TesseractGTCapability(this, side, !isConnector()));
+        return LazyOptional.of(() -> new TesseractGTCapability(this, side, !isConnector(), (stack,in,out,simulate) -> 
+        this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
     }
 
     @Override

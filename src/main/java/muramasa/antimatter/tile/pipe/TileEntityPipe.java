@@ -260,7 +260,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
                 TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
                 if (pipe != this) {
                     pipe.load(pipe.getBlockState(), nbt);
-                    deregisterTesseract();
                 }
                 return true;
             }

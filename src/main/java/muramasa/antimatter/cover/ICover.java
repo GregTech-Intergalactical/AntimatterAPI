@@ -56,7 +56,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         // NOOP
     }
 
-    default void onTransfer(Object object, boolean inputSide, boolean execute) {
+    default void onTransfer(Object object, boolean inputSide, boolean simulate) {
 
     }
 
