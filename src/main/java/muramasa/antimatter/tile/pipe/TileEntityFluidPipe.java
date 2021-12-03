@@ -10,7 +10,6 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.FluidPipe;
-import muramasa.antimatter.tesseract.FluidTileWrapper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.nbt.CompoundNBT;
@@ -23,9 +22,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
-import tesseract.api.GraphWrapper;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
+import tesseract.api.fluid.FluidHolder;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.graph.Graph.INodeGetter;
@@ -35,6 +34,7 @@ import java.util.List;
 public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<IFluidHandler>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
     protected LazyOptional<PipeFluidHandler> fluidHandler;
+    private FluidHolder holder;
 
     public TileEntityFluidPipe(T type, boolean covered) {
         super(type, covered);
@@ -42,6 +42,12 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
             fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0)) : LazyOptional.empty();
         }
         pipeCapHolder.set(() -> this);
+    }
+
+    @Override
+    public void onLoad() {
+        holder = new FluidHolder(this);
+        super.onLoad();
     }
 
     @Override
@@ -58,19 +64,17 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());        
     }
 
-    private INodeGetter<IFluidNode> getter() {
+    public INodeGetter<IFluidNode> getter() {
         return (pos, dir, cb) -> {
-            if (!this.validate(dir.getOpposite())) return null;
-
             TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
             if (tile == null) {
                 return null;
             }
             LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir);
             if (capability.isPresent()) {
-                FluidTileWrapper node = new FluidTileWrapper(tile, capability.orElse(null));
-                capability.addListener(o -> cb.run());
-                return node;
+                if (cb != null) capability.addListener(o -> cb.run());
+                IFluidHandler handler = capability.orElse(null);
+                return handler instanceof IFluidNode ? (IFluidNode) handler: new IFluidNode.FluidTileWrapper(tile, handler);
             } else {
                 return null;
             }
@@ -118,6 +122,11 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
+    public FluidHolder getHolder() {
+        return holder;
+    }
+
+    @Override
     public int getCapacity() {
         return getPipeType().getCapacity(getPipeSize());
     }
@@ -157,7 +166,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
                 fluidHandler = LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0));
             }
         } else {
-            return LazyOptional.of(() -> new TesseractFluidCapability(this, side, !isConnector(), (stack, in, out, simulate) -> 
+            return LazyOptional.of(() -> new TesseractFluidCapability<>(this, side, !isConnector(), (stack, in, out, simulate) -> 
             this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
         }
         return fluidHandler;
@@ -206,6 +215,12 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         @Override
         public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
             return this.coverHandler;
+        }
+
+        @Override
+        public void tick() {
+            ITickablePipe.super.tick();
+            this.getHolder().tick(getLevel().getGameTime());
         }
     }
 }

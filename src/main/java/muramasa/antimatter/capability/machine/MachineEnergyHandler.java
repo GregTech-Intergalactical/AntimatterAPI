@@ -156,10 +156,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     protected boolean insertIntoItems(GTTransaction transaction) {
+        int count = transaction.getData().size();
         for (IEnergyHandler cachedItem : this.cachedItems) {
             transaction.addAmps(cachedItem.availableAmpsInput());
         }
-        return transaction.availableAmps > 0;
+        return transaction.getData().size() > count;
     }
 
 

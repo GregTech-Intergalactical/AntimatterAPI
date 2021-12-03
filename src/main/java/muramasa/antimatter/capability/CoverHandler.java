@@ -37,10 +37,10 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     private final T tile;
     protected final Object2ObjectMap<Direction, ICover> covers = new Object2ObjectOpenHashMap<>(6);
     protected final Object2ObjectMap<CoverFactory, Set<Direction>> reverseLookup = new Object2ObjectOpenHashMap<>(6);
-    protected List<ResourceLocation> validCovers = new ObjectArrayList<>();
+    protected Set<ResourceLocation> validCovers = new ObjectOpenHashSet<>();
     public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
-    public CoverHandler(T tile, ICover... validCovers) {
+    public CoverHandler(T tile, CoverFactory... validCovers) {
         this.tile = tile;
         this.validCovers.add(new ResourceLocation(ICover.empty.getDomain(), ICover.empty.getId()));
         Arrays.stream(validCovers).forEach(c -> this.validCovers.add(new ResourceLocation(c.getDomain(), c.getId())));
@@ -56,6 +56,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
 
     @Override
     public boolean set(Direction side, @Nonnull ICover newCover, boolean sync) {
+        if (!validCovers.contains(newCover.getLoc())) return false;
         ICover old = covers.getOrDefault(side, ICover.empty);
         return set(side, old, newCover, sync);
     }

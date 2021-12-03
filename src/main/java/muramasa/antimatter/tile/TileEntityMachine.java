@@ -12,6 +12,7 @@ import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.client.tesr.Caches;
 import muramasa.antimatter.client.tesr.MachineTESR;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -468,8 +469,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
-    public ICover[] getValidCovers() { //TODO fix me
-        return AntimatterAPI.all(ICover.class).toArray(new ICover[0]);
+    public CoverFactory[] getValidCovers() { 
+        return AntimatterAPI.all(CoverFactory.class).toArray(new CoverFactory[0]);
     }
 
     public ICover getCover(Direction side) {

@@ -5,6 +5,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.*;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
+import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -276,8 +277,14 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         return false;
     }
 
-    public ICover[] getValidCovers() {
-        return AntimatterAPI.all(ICover.class).stream().filter(t -> !t.blocksCapability(getCapability(), null)).toArray(ICover[]::new);
+    public CoverFactory[] getValidCovers() {
+        return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> {
+            try {
+                return !t.get().get(ICoverHandler.empty(this), t.getValidTier(), Direction.SOUTH, t).blocksCapability(getCapability(), null);
+            } catch (Exception ex) {
+                return false;
+            }
+        }).toArray(CoverFactory[]::new);
     }
 
     public ICover[] getAllCovers() {

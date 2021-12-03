@@ -11,7 +11,6 @@ import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.tesseract.ItemTileWrapper;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -21,7 +20,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
 import tesseract.api.capability.TesseractItemCapability;
-import tesseract.api.gt.IGTNode;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.IItemPipe;
 import tesseract.graph.Graph.INodeGetter;
@@ -29,9 +27,12 @@ import tesseract.graph.Graph.INodeGetter;
 public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         implements IItemPipe, Dispatch.Sided<IItemHandler>, IInfoRenderer<InfoRenderWidget.TesseractItemWidget> {
 
+    private int holder;
+
     public TileEntityItemPipe(T type, boolean covered) {
         super(type, covered);
         pipeCapHolder.set(() -> this);
+        this.holder = 0;
     }
 
     @Override
@@ -39,7 +40,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         Tesseract.ITEM.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());
     }
 
-    protected INodeGetter<IItemNode> getter() {
+    public INodeGetter<IItemNode> getter() {
         return (pos, dir, cb) -> {
             TileEntity tile = getLevel().getBlockEntity(BlockPos.of(pos));
             if (tile == null) {
@@ -47,7 +48,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
             }
             LazyOptional<IItemHandler> h = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir);
             if (h.isPresent()) {
-                h.addListener(t -> cb.run());
+                if (cb != null) h.addListener(t -> cb.run());
                 return new ItemTileWrapper(tile, h.orElse(null));
             }
             return null;
@@ -94,7 +95,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     public LazyOptional<IItemHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new TesseractItemCapability(this, side, !isConnector(), (stack, in, out,
+        return LazyOptional.of(() -> new TesseractItemCapability<>(this, side, !isConnector(), (stack, in, out,
                 simulate) -> this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
     }
 
@@ -123,7 +124,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     }
 
     public static class TileEntityCoveredItemPipe<T extends ItemPipe<T>> extends TileEntityItemPipe<T>
-            implements ITickablePipe, IItemNode {
+            implements ITickablePipe {
 
         public TileEntityCoveredItemPipe(T type) {
             super(type, true);
@@ -135,64 +136,21 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         }
 
         @Override
-        public int getSlots() {
-            return 0;
+        public void tick() {
+            ITickablePipe.super.tick();
+            if (this.getLevel().getGameTime() % 20 == 0) this.setHolder(0);
         }
 
-        @Override
-        public ItemStack getStackInSlot(int slot) {
-            return ItemStack.EMPTY;
-        }
+        
+    }
 
-        @Override
-        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-            return null;
-        }
+    @Override
+    public int getHolder() {
+        return holder;
+    }
 
-        @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return null;
-        }
-
-        @Override
-        public int getSlotLimit(int slot) {
-            return 0;
-        }
-
-        @Override
-        public boolean isItemValid(int slot, ItemStack stack) {
-            return true;
-        }
-
-        @Override
-        public int getPriority(Direction direction) {
-            return 0;
-        }
-
-        @Override
-        public boolean isEmpty(int slot) {
-            return true;
-        }
-
-        @Override
-        public boolean canOutput() {
-            return true;
-        }
-
-        @Override
-        public boolean canInput() {
-            return true;
-        }
-
-        @Override
-        public boolean canInput(Direction direction) {
-            return true;
-        }
-
-        @Override
-        public boolean canOutput(Direction direction) {
-            return true;
-        }
-
+    @Override
+    public void setHolder(int holder) {
+        this.holder = holder;        
     }
 }

@@ -1,6 +1,7 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.pipe.types.FluidPipe;
+import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -50,10 +51,8 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     public void entityInside(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
         if (!(entityIn instanceof LivingEntity)) return;
-        ITickingController<?, ?, ?> controller = Tesseract.FLUID.getController(worldIn, pos.asLong());
-        if (!(controller instanceof FluidController)) return;
-        FluidController gt = (FluidController) controller;
-        FluidHolder holder = gt.getCableHolder(pos.asLong());
+        TileEntityFluidPipe pipe = (TileEntityFluidPipe) worldIn.getBlockEntity(pos);
+        FluidHolder holder = pipe.getHolder();
         if (holder == null) return;
         long max = 0;
         for (FluidHolder.SetHolder fluid : holder.getFluids()) {

@@ -5,6 +5,8 @@ import java.util.Optional;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
+import muramasa.antimatter.cover.CoverFactory;
+import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
@@ -21,8 +23,8 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.Tesseract;
-import tesseract.api.GraphWrapper;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.GTHolder;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTCable;
 import tesseract.api.gt.IGTNode;
@@ -30,9 +32,22 @@ import tesseract.graph.Graph.INodeGetter;
 
 public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 
+    private long holder;
+
     public TileEntityCable(T type, boolean covered) {
         super(type, covered);
         pipeCapHolder.set(() -> this);
+    }
+
+    @Override
+    public void onLoad() {
+        this.holder = GTHolder.create(this, 0);
+        super.onLoad();
+    }
+
+    @Override
+    public CoverFactory[] getValidCovers() {
+        return new CoverFactory[0];
     }
 
     @Override
@@ -40,14 +55,12 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());
     }
 
-    private INodeGetter<IGTNode> getter() {
+    public INodeGetter<IGTNode> getter() {
         return (pos, dir, cb) -> {
-            if (!this.validate(dir)) return null;
-
             TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
             LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir);
             if (capability.isPresent()) {
-                capability.addListener(t -> cb.run());
+                if (cb != null) capability.addListener(t -> cb.run());
                 return capability.resolve().get();
             } else {
                 LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, dir);
@@ -85,6 +98,16 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
+    public long getHolder() {
+        return holder;
+    }
+
+    @Override
+    public void setHolder(long holder) {
+        this.holder = holder;
+    }
+
+    @Override
     public int getLoss() {
         return ((Cable<?>) getPipeType()).getLoss();
     }
@@ -109,7 +132,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     public LazyOptional<? extends IEnergyHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new TesseractGTCapability(this, side, !isConnector(), (stack,in,out,simulate) -> 
+        return LazyOptional.of(() -> new TesseractGTCapability<>(this, side, !isConnector(), (stack,in,out,simulate) -> 
         this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
     }
 
@@ -132,7 +155,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public int drawInfo(InfoRenderWidget.TesseractGTWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
         renderer.draw(stack, "Amp average: " + instance.ampAverage, left, top, 16448255);
-        renderer.draw(stack, "Cable average: " + instance.cableAverage, left, top + 8, 16448255);
+       // renderer.draw(stack, "Cable average: " + instance.cableAverage, left, top + 8, 16448255);
         renderer.draw(stack, "Average extracted: " + ((double) instance.voltAverage) / 20, left, top + 16, 16448255);
         renderer.draw(stack, "Average inserted: " + ((double) (instance.voltAverage - instance.loss)) / 20, left, top + 24, 16448255);
         renderer.draw(stack, "Loss average: " + (double) instance.loss / 20, left, top + 32, 16448255);
@@ -149,6 +172,12 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         @Override
         public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
             return this.coverHandler;
+        }
+
+        @Override
+        public void tick() {
+            ITickablePipe.super.tick();
+            this.setHolder(GTHolder.create(this, 0));
         }
     }
 }
