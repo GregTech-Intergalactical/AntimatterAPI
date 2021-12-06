@@ -1,7 +1,7 @@
 package muramasa.antimatter.integration.kubejs;
 
-import dev.latvian.kubejs.event.EventJS;
-import dev.latvian.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.resources.ResourceLocation;
 

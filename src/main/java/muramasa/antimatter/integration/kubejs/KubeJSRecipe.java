@@ -4,11 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
-import dev.latvian.kubejs.item.ItemStackJS;
-import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.kubejs.recipe.RecipeJS;
-import dev.latvian.kubejs.util.ListJS;
-import dev.latvian.kubejs.util.MapJS;
+import dev.latvian.mods.kubejs.item.ItemStackJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.recipe.RecipeJS;
+import dev.latvian.mods.kubejs.util.ListJS;
+import dev.latvian.mods.kubejs.util.MapJS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
@@ -32,8 +32,7 @@ public class KubeJSRecipe extends RecipeJS {
     @Override
     public void create(ListJS listJS) {
         this.map = (String) listJS.get(0);
-        //TODO 1.18
-       /* if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
+        if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
             if (inputItem instanceof ItemStackJS) {
                 this.inputItems.add(RecipeIngredientJS.of(((ItemStackJS) inputItem).toResultJson()));
             } else if (inputItem instanceof MapJS) {
@@ -44,7 +43,7 @@ public class KubeJSRecipe extends RecipeJS {
             } else if (inputItem instanceof IngredientJS) {
                 this.inputItems.add(RecipeIngredientJS.of((IngredientJS) inputItem));
             }
-        }*/
+        }
         if (listJS.get(2) != null) for (Object outputItem : ListJS.orSelf(listJS.get(2))) {
             this.outputItems.add(ItemStackJS.of(outputItem));
         }

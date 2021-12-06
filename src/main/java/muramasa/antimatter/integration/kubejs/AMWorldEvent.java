@@ -1,6 +1,6 @@
 package muramasa.antimatter.integration.kubejs;
 
-import dev.latvian.kubejs.event.EventJS;
+import dev.latvian.mods.kubejs.event.EventJS;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;

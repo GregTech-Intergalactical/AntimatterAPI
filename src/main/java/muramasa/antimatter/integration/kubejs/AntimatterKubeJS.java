@@ -1,7 +1,7 @@
 package muramasa.antimatter.integration.kubejs;
 
-import dev.latvian.kubejs.script.BindingsEvent;
-import dev.latvian.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.script.BindingsEvent;
+import dev.latvian.mods.kubejs.script.ScriptType;
 import net.minecraftforge.common.MinecraftForge;
 
 public class AntimatterKubeJS {
