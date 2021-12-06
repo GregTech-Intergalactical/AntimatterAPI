@@ -18,7 +18,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
+import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import java.util.function.Function;
 
@@ -31,8 +33,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         Function<ResourceLocation, ItemModelBuilder> factoryOverride = loc -> new AntimatterItemModelBuilder(loc, exFileHelper);
-        //TODO 1.18
-        //ObfuscationReflectionHelper.setPrivateValue(ModelProvider.class, this, factoryOverride, "factory");
+        ObfuscationReflectionHelper.setPrivateValue(ModelProvider.class, this, factoryOverride, "factory");
     }
 
     public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator gen, String... domains) {
