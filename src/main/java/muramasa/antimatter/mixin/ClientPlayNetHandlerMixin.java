@@ -3,6 +3,7 @@ package muramasa.antimatter.mixin;
 import muramasa.antimatter.AntimatterDynamics;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundTagQueryPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,8 +19,8 @@ public class ClientPlayNetHandlerMixin {
     private Connection connection;
 
     //Because recipes are sent before tags we have to mixin.
-    @Inject(method = "handleUpdateTags(Lnet/minecraft/network/play/server/STagsListPacket;)V", at = @At("TAIL"))
-    private void clientRecipesInjection(ClientboundUpdateTagsPacket packetIn, CallbackInfo info) {
+    @Inject(method = "handleTagQueryPacket(Lnet/minecraft/network/protocol/game/ClientboundTagQueryPacket;)V", at = @At("TAIL"))
+    private void clientRecipesInjection(ClientboundTagQueryPacket p_105120_, CallbackInfo ci) {
         //Since recipe maps are static we don't have to double compile when playing a local server.
         if (!connection.isMemoryConnection()) {
             ClientPacketListener handler = ((ClientPacketListener) (Object) this);
