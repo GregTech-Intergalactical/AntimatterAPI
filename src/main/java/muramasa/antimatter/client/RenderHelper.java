@@ -1,55 +1,51 @@
 package muramasa.antimatter.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tool.armor.MaterialArmor;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.texture.AtlasTexture;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.item.ItemModelsProperties;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Direction.Axis;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.client.event.DrawHighlightEvent;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.graph.Connectivity;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-
-import javax.annotation.Nullable;
 
 public class RenderHelper {
 
@@ -73,26 +69,26 @@ public class RenderHelper {
 //    }*/
 
     public static float xFromQuad(BakedQuad quad, int index) {
-        int size = DefaultVertexFormats.BLOCK.getOffset(index);
+        int size = DefaultVertexFormat.BLOCK.getOffset(index);
 
         return Float.intBitsToFloat(quad.getVertices()[size]);
     }
 
     public static float yFromQuad(BakedQuad quad, int index) {
-        int size = DefaultVertexFormats.BLOCK.getOffset(index);
+        int size = DefaultVertexFormat.BLOCK.getOffset(index);
 
         return Float.intBitsToFloat(quad.getVertices()[size + 1]);
     }
 
     public static float zFromQuad(BakedQuad quad, int index) {
-        int size = DefaultVertexFormats.BLOCK.getOffset(index);
+        int size = DefaultVertexFormat.BLOCK.getOffset(index);
 
         return Float.intBitsToFloat(quad.getVertices()[size + 2]);
     }
 
     public static Vector3f normalFromQuad(BakedQuad quad, int index) {
-        int size = DefaultVertexFormats.BLOCK.getOffset(index);
-        int off = DefaultVertexFormats.ELEMENT_POSITION.getByteSize() + DefaultVertexFormats.ELEMENT_COLOR.getByteSize() + DefaultVertexFormats.ELEMENT_UV0.getByteSize() + DefaultVertexFormats.ELEMENT_UV2.getByteSize();
+        int size = DefaultVertexFormat.BLOCK.getOffset(index);
+        int off = DefaultVertexFormat.ELEMENT_POSITION.getByteSize() + DefaultVertexFormat.ELEMENT_COLOR.getByteSize() + DefaultVertexFormat.ELEMENT_UV0.getByteSize() + DefaultVertexFormat.ELEMENT_UV2.getByteSize();
         float first = Float.intBitsToFloat(quad.getVertices()[off]);
         float two = Float.intBitsToFloat(quad.getVertices()[off+1]);
         float three = Float.intBitsToFloat(quad.getVertices()[off+2]);
@@ -101,41 +97,42 @@ public class RenderHelper {
 
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
-        ItemModelsProperties.register(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living) -> {
+        ItemProperties.register(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living, some_int) -> {
             LazyOptional<IEnergyHandler> handler = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
             return handler.map(h -> ((float) h.getEnergy() / (float) h.getCapacity())).orElse(1.0F);
         });
     }
 
     public static void registerProbePropertyOverrides(MaterialArmor armor) {
-        ItemModelsProperties.register(armor, new ResourceLocation(Ref.ID, "probe"), (stack, world, living) -> {
-            CompoundNBT nbt = stack.getTag();
+        ItemProperties.register(armor, new ResourceLocation(Ref.ID, "probe"), (stack, world, living, some_int) -> {
+            CompoundTag nbt = stack.getTag();
             return nbt != null && nbt.contains("theoneprobe") && nbt.getBoolean("theoneprobe") ? 1.0F : 0.0F;
         });
     }
 
-    public static void drawFluid(MatrixStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
+    public static void drawFluid(PoseStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
         if (stack == null) return;
         Fluid fluid = stack.getFluid();
         if (fluid == null) return;
         RenderSystem.enableBlend();
-        RenderSystem.enableAlphaTest();
-        TextureAtlasSprite fluidStillSprite = mc.getModelManager().getAtlas(PlayerContainer.BLOCK_ATLAS).getSprite(fluid.getAttributes().getStillTexture());
+        //TODO 1.18
+        //RenderSystem.enableAlphaTest();
+        TextureAtlasSprite fluidStillSprite = mc.getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(fluid.getAttributes().getStillTexture());
         int fluidColor = fluid.getAttributes().getColor();
 
         //Draw the fluid texture
         drawTiledSprite(mstack, mc, posX, posY, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);
-        RenderSystem.disableAlphaTest();
+        //RenderSystem.disableAlphaTest();
         RenderSystem.disableBlend();
     }
 
-    public static void drawTiledSprite(MatrixStack stack, Minecraft mc, int posX, int posY, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
-        mc.textureManager.bind(AtlasTexture.LOCATION_BLOCKS);
+    public static void drawTiledSprite(PoseStack stack, Minecraft mc, int posX, int posY, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
+        mc.textureManager.bindForSetup(TextureAtlas.LOCATION_BLOCKS);
         float red = (color >> 16 & 0xFF) / 255.0F;
         float green = (color >> 8 & 0xFF) / 255.0F;
         float blue = (color & 0xFF) / 255.0F;
         float alpha = ((color >> 24) & 0xFF) / 255F;
-        RenderSystem.color4f(red, green, blue, alpha);
+        RenderSystem.clearColor(red, green, blue, alpha);
         Matrix4f matrix = stack.last().pose();
 
         int xTileCount = tiledWidth / texWidth;
@@ -170,10 +167,10 @@ public class RenderHelper {
         uMax = uMax - (maskRight / 16.0 * (uMax - uMin));
         vMax = vMax - (maskTop / 16.0 * (vMax - vMin));
 
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuilder();
 
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_TEX);
+        bufferBuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         bufferBuilder.vertex(stack, xCoord, yCoord + 16, zLevel).uv((float) uMin, (float) vMax).endVertex();
         bufferBuilder.vertex(stack, xCoord + 16 - maskRight, yCoord + 16, zLevel).uv((float) uMax, (float) vMax).endVertex();
         bufferBuilder.vertex(stack, xCoord + 16 - maskRight, yCoord + maskTop, zLevel).uv((float) uMax, (float) vMin).endVertex();
@@ -192,7 +189,7 @@ public class RenderHelper {
      * Colors a quad, defaults to using vertex format block.
      */
     public static void colorQuad(BakedQuad quad, int rgb) {
-        colorQuad(quad, DefaultVertexFormats.BLOCK.getIntegerSize(), DefaultVertexFormats.BLOCK.getOffset(1) / 4, rgb);
+        colorQuad(quad, DefaultVertexFormat.BLOCK.getIntegerSize(), DefaultVertexFormat.BLOCK.getOffset(1) / 4, rgb);
     }
 
     public static void colorQuad(BakedQuad quad, int size, int offset, int rgb) {
@@ -211,11 +208,11 @@ public class RenderHelper {
             if (quad.getDirection() != side) continue;
             int[] vertices = quad.getVertices();
             //if not two vertices then skip. (All sides of relevance have just two vertices.)
-            if (vertices.length != DefaultVertexFormats.BLOCK.getIntegerSize() * 4) continue;
+            if (vertices.length != DefaultVertexFormat.BLOCK.getIntegerSize() * 4) continue;
             float p1 = Float.intBitsToFloat(vertices[0]);
             float p2 = Float.intBitsToFloat(vertices[1]);
             float p3 = Float.intBitsToFloat(vertices[2]);
-            int boff = DefaultVertexFormats.BLOCK.getIntegerSize() * 2;
+            int boff = DefaultVertexFormat.BLOCK.getIntegerSize() * 2;
             float p4 = Float.intBitsToFloat(vertices[boff]);
             float p5 = Float.intBitsToFloat(vertices[1 + boff]);
             float p6 = Float.intBitsToFloat(vertices[2 + boff]);
@@ -247,19 +244,19 @@ public class RenderHelper {
 
 
     //This code is pretty complicated but it was written while I knew nothing about rendering. it works though
-    public static ActionResultType onDrawHighlight(PlayerEntity player, DrawHighlightEvent ev, Function<Block, Boolean> validator, BiFunction<Direction, TileEntity, Boolean> getter) {
-        Vector3d lookPos = player.getEyePosition(ev.getPartialTicks()), rotation = player.getViewVector(ev.getPartialTicks()), realLookPos = lookPos.add(rotation.x * INTERACT_DISTANCE, rotation.y * INTERACT_DISTANCE, rotation.z * INTERACT_DISTANCE);
-        BlockRayTraceResult result = player.getCommandSenderWorld().clip(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
+    public static InteractionResult onDrawHighlight(Player player, HighlightBlock ev, Function<Block, Boolean> validator, BiFunction<Direction, BlockEntity, Boolean> getter) {
+        Vec3 lookPos = player.getEyePosition(ev.getPartialTicks()), rotation = player.getViewVector(ev.getPartialTicks()), realLookPos = lookPos.add(rotation.x * INTERACT_DISTANCE, rotation.y * INTERACT_DISTANCE, rotation.z * INTERACT_DISTANCE);
+        BlockHitResult result = player.getCommandSenderWorld().clip(new ClipContext(lookPos, realLookPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
         BlockState state = player.getCommandSenderWorld().getBlockState(result.getBlockPos());
-        if (!validator.apply(state.getBlock())) return ActionResultType.PASS;
-        VoxelShape shape = player.getCommandSenderWorld().getBlockState(result.getBlockPos()).getShape(player.getCommandSenderWorld(), result.getBlockPos(), ISelectionContext.of(player));
+        if (!validator.apply(state.getBlock())) return InteractionResult.PASS;
+        VoxelShape shape = player.getCommandSenderWorld().getBlockState(result.getBlockPos()).getShape(player.getCommandSenderWorld(), result.getBlockPos(), CollisionContext.of(player));
 
         //Build up view & matrix.
-        Vector3d viewPosition = ev.getInfo().getPosition();
+        Vec3 viewPosition = ev.getCamera().getPosition();
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
-        IVertexBuilder builderLines = ev.getBuffers().getBuffer(RenderType.LINES);
+        VertexConsumer builderLines = ev.getMultiBufferSource().getBuffer(RenderType.LINES);
 
-        MatrixStack matrix = ev.getMatrix();
+        PoseStack matrix = ev.getPoseStack();
         double modX = result.getBlockPos().getX() - viewX, modY = result.getBlockPos().getY() - viewY, modZ = result.getBlockPos().getZ() - viewZ;
         matrix.pushPose();
         long time = player.getCommandSenderWorld().getGameTime();
@@ -329,7 +326,7 @@ public class RenderHelper {
 
         builderLines.vertex(matrix4f, X, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
         builderLines.vertex(matrix4f, (float) (0), Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
-        TileEntity tile = player.getCommandSenderWorld().getBlockEntity(result.getBlockPos());
+        BlockEntity tile = player.getCommandSenderWorld().getBlockEntity(result.getBlockPos());
         if (tile != null) {
             byte sides = 0;
             Direction dir = result.getDirection();
@@ -387,42 +384,42 @@ public class RenderHelper {
             }
         }
         matrix.popPose();
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
-    public static TransformationMatrix faceRotation(BlockState state) {
+    public static Transformation faceRotation(BlockState state) {
         if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
             return faceRotation(state.getValue(BlockStateProperties.FACING), state.getValue(BlockMachine.HORIZONTAL_FACING));
         } 
         return faceRotation(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
     }
 
-    public static TransformationMatrix faceRotation(Direction facing, @Nullable Direction horiz) {
+    public static Transformation faceRotation(Direction facing, @Nullable Direction horiz) {
         if (horiz == null) {
             Quaternion quat = facing.getAxis() != Axis.Y ? Vector3f.YP.rotationDegrees(-facing.toYRot()) : Vector3f.XP.rotationDegrees(-facing.getNormal().getY()*90f);
-            return new TransformationMatrix(null, quat, null, null);
+            return new Transformation(null, quat, null, null);
         } else {
             if (facing.getAxis() != Axis.Y) {
                 Quaternion quat = Vector3f.YP.rotationDegrees(-facing.toYRot());
-                return new TransformationMatrix(null, quat, null, null);
+                return new Transformation(null, quat, null, null);
             }
             //vert = vert.getOpposite();
             Quaternion quat = Vector3f.XP.rotationDegrees(-facing.getNormal().getY()*90f);
             Quaternion rot = Vector3f.YP.rotationDegrees(-horiz.toYRot());
-            TransformationMatrix mat = new TransformationMatrix(null, rot, null, null);
-            return mat.compose(new TransformationMatrix(null, quat, null, null));
+            Transformation mat = new Transformation(null, rot, null, null);
+            return mat.compose(new Transformation(null, quat, null, null));
         }
     }
 
-    public static TransformationMatrix faceRotation(Direction side) {
+    public static Transformation faceRotation(Direction side) {
         return faceRotation(side, null);  
     }
 
-    private static void drawX(IVertexBuilder builder, Matrix4f matrix, float x1, float y1, float x2, float y2) {
+    private static void drawX(VertexConsumer builder, Matrix4f matrix, float x1, float y1, float x2, float y2) {
         drawX(builder, matrix, x1, y1, x2, y2, 0, 0, 0);
     }
 
-    private static void drawX(IVertexBuilder builder, Matrix4f matrix, float x1, float y1, float x2, float y2, float r, float g, float b) {
+    private static void drawX(VertexConsumer builder, Matrix4f matrix, float x1, float y1, float x2, float y2, float r, float g, float b) {
         builder.vertex(matrix, x1, y1, 0).color(r, g, b, 0.4F).endVertex();
         builder.vertex(matrix, x2, y2, 0).color(r, g, b, 0.4F).endVertex();
 
@@ -430,7 +427,7 @@ public class RenderHelper {
         builder.vertex(matrix, x1, y2, 0).color(r, g, b, 0.4F).endVertex();
     }
 
-    public static void renderCubeFace(IVertexBuilder buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float r, float g, float b, float a) {
+    public static void renderCubeFace(VertexConsumer buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float r, float g, float b, float a) {
         buffer.vertex(minX, minY, minZ).color(r, g, b, a).endVertex();
         buffer.vertex(minX, minY, maxZ).color(r, g, b, a).endVertex();
         buffer.vertex(minX, maxY, maxZ).color(r, g, b, a).endVertex();

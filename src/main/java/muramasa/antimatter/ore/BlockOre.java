@@ -7,22 +7,23 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.FallingBlockEntity;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.BlockParticleData;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.ticks.ScheduledTick;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -54,13 +55,13 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     }
 
     @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         if (stoneType.getId().equals("stone")) items.add(new ItemStack(this)); //todo move stonetype to antimatter
     }
 
     //    @Override
 //    public net.minecraft.block.material.Material getMaterial(BlockState state) {
-//        ToolType tool = getHarvestTool(state);
+//        Tag<Block> tool = getHarvestTool(state);
 //        if (tool != null && tool.equals("shovel")) return net.minecraft.block.material.Material.SAND;
 //        return net.minecraft.block.material.Material.ROCK;
 //    }
@@ -73,11 +74,11 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 //
 //
 //    //TODO
-    @Override
+   /* @Override
     public int getHarvestLevel(BlockState state) {
         int stoneLvl = stoneType.getHarvestLevel();
         return Math.max(stoneLvl, material.getMiningLevel() > -1 ? material.getMiningLevel() : 0);
-    }
+    }*/
 //
 //    @Override
 //    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
@@ -131,9 +132,9 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
      * Falling block stuff
      **/
     @Override
-    public void onPlace(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+    public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
         if (this.stoneType.getGravity()) {
-            worldIn.getBlockTicks().scheduleTick(pos, this, this.getFallDelay());
+            worldIn.getBlockTicks().schedule(new ScheduledTick<>(this, pos, this.getFallDelay(), 0L));
         }
     }
 
@@ -144,15 +145,15 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
      * Note that this method should ideally consider only the specific face passed in.
      */
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (this.stoneType.getGravity()) {
-            worldIn.getBlockTicks().scheduleTick(currentPos, this, this.getFallDelay());
+            worldIn.getBlockTicks().schedule(new ScheduledTick<>(this, currentPos, this.getFallDelay(), 0L));
         }
         return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @Override
-    public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand) {
+    public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand) {
         if (this.stoneType.getGravity()) {
             if (worldIn.isEmptyBlock(pos.below()) || canFallThrough(worldIn.getBlockState(pos.below())) && pos.getY() >= 0) {
                 FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, worldIn.getBlockState(pos));
@@ -170,12 +171,12 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     }
 
     public static boolean canFallThrough(BlockState state) {
-        net.minecraft.block.material.Material material = state.getMaterial();
+        net.minecraft.world.level.material.Material material = state.getMaterial();
         return state.isAir() || state.is(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void animateTick(BlockState stateIn, World worldIn, BlockPos pos, Random rand) {
+    public void animateTick(BlockState stateIn, Level worldIn, BlockPos pos, Random rand) {
         if (this.stoneType.getGravity()) {
             if (rand.nextInt(16) == 0) {
                 BlockPos blockpos = pos.below();
@@ -183,14 +184,14 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
                     double d0 = (double) pos.getX() + rand.nextDouble();
                     double d1 = (double) pos.getY() - 0.05D;
                     double d2 = (double) pos.getZ() + rand.nextDouble();
-                    worldIn.addParticle(new BlockParticleData(ParticleTypes.FALLING_DUST, stateIn), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+                    worldIn.addParticle(new BlockParticleOption(ParticleTypes.FALLING_DUST, stateIn), d0, d1, d2, 0.0D, 0.0D, 0.0D);
                 }
             }
         }
     }
 
     @OnlyIn(Dist.CLIENT)
-    public int getDustColor(BlockState state, IBlockReader reader, BlockPos pos) {
+    public int getDustColor(BlockState state, BlockGetter reader, BlockPos pos) {
         return this.stoneType.getFallingDustColor();
     }
 
@@ -201,19 +202,19 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
 
     public static Block.Properties getOreProperties(Block.Properties properties, StoneType type) {
         if (AntimatterConfig.WORLD.ORE_VEIN_SPECTATOR_DEBUG) properties.noOcclusion().lightLevel(b -> 15);
-        properties.strength(type.getHardness() * 2, type.getResistence() / 2).harvestTool(type.getToolType()).sound(type.getSoundType());
+        properties.strength(type.getHardness() * 2, type.getResistence() / 2).sound(type.getSoundType());
         if (type.doesRequireTool()) properties.requiresCorrectToolForDrops();
         return properties;
     }
 
     @Override
-    public int getExpDrop(BlockState state, IWorldReader world, BlockPos pos, int fortune, int silktouch) {
+    public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silktouch) {
         if (silktouch == 0 && material.getExpRange() != null) {
-            List<ItemStack> self = getDrops(state, ((ServerWorld) world), pos, world.getBlockEntity(pos));
+            List<ItemStack> self = getDrops(state, ((ServerLevel) world), pos, world.getBlockEntity(pos));
             if (self.stream().anyMatch(i -> i.getItem() == this.asItem())) {
                 return 0;
             }
-            return material.getExpRange().randomValue(RANDOM);
+            return 1;
         }
         return 0;
     }

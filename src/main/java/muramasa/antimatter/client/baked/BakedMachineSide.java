@@ -1,10 +1,10 @@
 package muramasa.antimatter.client.baked;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Random;
 
 public class BakedMachineSide extends GroupedBakedModel{
-    public BakedMachineSide(TextureAtlasSprite p, Map<String, IBakedModel> models) {
+    public BakedMachineSide(TextureAtlasSprite p, Map<String, BakedModel> models) {
         super(p, models);
     }
 

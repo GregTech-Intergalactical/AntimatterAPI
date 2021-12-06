@@ -9,9 +9,9 @@ import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.ItemStack;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -23,8 +23,8 @@ import static muramasa.antimatter.recipe.RecipeBuilders.FLUID_PIPE_BUILDER;
 import static muramasa.antimatter.recipe.RecipeBuilders.ITEM_PIPE_BUILDER;
 
 public class Pipes {
-    public static void loadRecipes(Consumer<IFinishedRecipe> consumer, AntimatterRecipeProvider provider) {
-        final ICriterionInstance in = provider.hasSafeItem(WRENCH.getTag());
+    public static void loadRecipes(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {
+        final CriterionTriggerInstance in = provider.hasSafeItem(WRENCH.getTag());
         List<ItemStack> stacks = AntimatterAPI.all(ItemPipe.class).stream().filter(t -> t.getSizes().contains(PipeSize.TINY)).filter(t -> t.getMaterial().has(PLATE)).map(t -> new ItemStack(t.getBlock(PipeSize.TINY), 12)).collect(Collectors.toList());
         Material[] mats = stacks.stream().map(t -> ((PipeItemBlock) t.getItem()).getPipe().getType().getMaterial()).toArray(Material[]::new);
         if (stacks.size() > 0)

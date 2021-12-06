@@ -6,7 +6,7 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Arrays;

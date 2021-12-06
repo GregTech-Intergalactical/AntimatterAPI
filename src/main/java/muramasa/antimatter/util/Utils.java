@@ -2,6 +2,9 @@ package muramasa.antimatter.util;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -17,50 +20,36 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.util.RotationHelper.Matrix4f;
-import net.minecraft.advancements.criterion.*;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.renderer.model.ModelRotation;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.advancements.critereon.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.util.math.vector.Vector4f;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.DistExecutor;
@@ -81,7 +70,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import static net.minecraft.advancements.criterion.MinMaxBounds.IntBound.ANY;
+import static net.minecraft.advancements.critereon.MinMaxBounds.Ints.ANY;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.SIMULATE;
 
@@ -207,7 +196,7 @@ public class Utils {
 
     public static void damageStack(int durability, ItemStack stack, LivingEntity player) {
         stack.hurtAndBreak(durability, player, p -> {
-            p.broadcastBreakEvent(EquipmentSlotType.MAINHAND);
+            p.broadcastBreakEvent(EquipmentSlot.MAINHAND);
         });
     }
 
@@ -251,12 +240,12 @@ public class Utils {
     }
 
     public static ItemStack validateNBT(ItemStack stack) {
-        if (!stack.hasTag()) stack.setTag(new CompoundNBT());
+        if (!stack.hasTag()) stack.setTag(new CompoundTag());
         return stack;
     }
 
     public static FluidStack validateNBT(FluidStack stack) {
-        if (!stack.hasTag()) stack.setTag(new CompoundNBT());
+        if (!stack.hasTag()) stack.setTag(new CompoundTag());
         return stack;
     }
 
@@ -457,29 +446,29 @@ public class Utils {
     /**
      * Creates a new {@link EnterBlockTrigger} for use with recipe unlock criteria.
      */
-    public static EnterBlockTrigger.Instance enteredBlock(Block blockIn) {
-        return new EnterBlockTrigger.Instance(EntityPredicate.AndPredicate.ANY, blockIn, StatePropertiesPredicate.ANY);
+    public static EnterBlockTrigger.TriggerInstance enteredBlock(Block blockIn) {
+        return new EnterBlockTrigger.TriggerInstance(EntityPredicate.Composite.ANY, blockIn, StatePropertiesPredicate.ANY);
     }
 
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
      */
-    public static InventoryChangeTrigger.Instance hasItem(IItemProvider itemIn) {
+    public static InventoryChangeTrigger.TriggerInstance hasItem(ItemLike itemIn) {
         return hasItem(ItemPredicate.Builder.item().of(itemIn).build());
     }
 
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having an item within the given tag.
      */
-    public static InventoryChangeTrigger.Instance hasItem(ITag<Item> tagIn) {
+    public static InventoryChangeTrigger.TriggerInstance hasItem(Tag<Item> tagIn) {
         return hasItem(ItemPredicate.Builder.item().of(tagIn).build());
     }
 
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having a certain item.
      */
-    public static InventoryChangeTrigger.Instance hasItem(ItemPredicate... predicates) {
-        return new InventoryChangeTrigger.Instance(EntityPredicate.AndPredicate.ANY, ANY, ANY, ANY, predicates);
+    public static InventoryChangeTrigger.TriggerInstance hasItem(ItemPredicate... predicates) {
+        return new InventoryChangeTrigger.TriggerInstance(EntityPredicate.Composite.ANY, ANY, ANY, ANY, predicates);
     }
 
 //    @Nullable
@@ -564,7 +553,7 @@ public class Utils {
      * Safe version of world.getTileEntity
      **/
     @Nullable
-    public static TileEntity getTile(@Nullable IBlockReader reader, BlockPos pos) {
+    public static BlockEntity getTile(@Nullable BlockGetter reader, BlockPos pos) {
         if (reader == null) return null;
         return reader.getBlockEntity(pos);
         //TODO validate and redo
@@ -576,12 +565,12 @@ public class Utils {
 //        }
     }
 
-    public static boolean isForeignTile(@Nullable TileEntity target) {
+    public static boolean isForeignTile(@Nullable BlockEntity target) {
         return target != null && !(target instanceof TileEntityBase);
     }
 
     @Nullable
-    public static TileEntity getTileFromBuf(PacketBuffer buf) {
+    public static BlockEntity getTileFromBuf(FriendlyByteBuf buf) {
         return DistExecutor.runForDist(() -> () -> Antimatter.PROXY.getClientWorld().getBlockEntity(buf.readBlockPos()), () -> () -> {
             throw new RuntimeException("Shouldn't be called on server!");
         });
@@ -590,7 +579,7 @@ public class Utils {
     /**
      * Syncs NBT between Client & Server
      **/
-    public static void markTileForNBTSync(TileEntity tile) {
+    public static void markTileForNBTSync(BlockEntity tile) {
         BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
         tile.getLevel().sendBlockUpdated(tile.getBlockPos(), state, state, 3);
     }
@@ -598,10 +587,10 @@ public class Utils {
     /**
      * Sends block update to clients
      **/
-    public static void markTileForRenderUpdate(TileEntity tile) {
+    public static void markTileForRenderUpdate(BlockEntity tile) {
         BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
         if (tile.getLevel().isClientSide) {
-            tile.getLevel().sendBlockUpdated(tile.getBlockPos(), state, state, Constants.BlockFlags.RERENDER_MAIN_THREAD);
+            tile.getLevel().sendBlockUpdated(tile.getBlockPos(), state, state, 11);
             ModelDataManager.requestModelDataRefresh(tile);
         }
     }
@@ -673,9 +662,9 @@ public class Utils {
                 break;
 
         }
-        Vector3i vector3i = toRotate.getNormal();
+        Vec3i vector3i = toRotate.getNormal();
         Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
-        vector4f.transform(new net.minecraft.util.math.vector.Matrix4f(rot));
+        vector4f.transform(new com.mojang.math.Matrix4f(rot));
         return Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
     }
 
@@ -691,8 +680,8 @@ public class Utils {
 
     final static double INTERACTION_OFFSET = 0.25;
 
-    public static Direction getInteractSide(BlockRayTraceResult res) {
-        Vector3d vec = res.getLocation();
+    public static Direction getInteractSide(BlockHitResult res) {
+        Vec3 vec = res.getLocation();
         return getInteractSide(res.getDirection(), (float) vec.x - res.getBlockPos().getX(), (float) vec.y - res.getBlockPos().getY(), (float) vec.z - res.getBlockPos().getZ());
     }
 
@@ -748,7 +737,7 @@ public class Utils {
         return side;
     }
 
-    public static Set<BlockPos> getCubicPosArea(int3 area, Direction side, BlockPos origin, PlayerEntity player, boolean excludeAir) {
+    public static Set<BlockPos> getCubicPosArea(int3 area, Direction side, BlockPos origin, Player player, boolean excludeAir) {
         int xRadius, yRadius, zRadius;
         BlockPos center;
 
@@ -779,7 +768,7 @@ public class Utils {
                     if (harvestPos.equals(origin)) continue;
                     if (excludeAir) {
                         state = player.level.getBlockState(harvestPos);
-                        if (state.getBlock().isAir(state, player.level, harvestPos)) continue;
+                        if (state.isAir()) continue;
                     }
                     set.add(new BlockPos(x, y, z));
                 }
@@ -788,7 +777,7 @@ public class Utils {
         return set;
     }
    
-    public static void createExplosion(@Nullable World world, BlockPos pos, float explosionRadius, Explosion.Mode modeIn) {
+    public static void createExplosion(@Nullable Level world, BlockPos pos, float explosionRadius, Explosion.BlockInteraction modeIn) {
         if (world != null) {
             if (!world.isClientSide) {
                 world.explode(null, pos.getX(), pos.getY() + 0.0625D, pos.getZ(), explosionRadius, modeIn);
@@ -799,7 +788,7 @@ public class Utils {
         }
     }
 
-    public static void createFireAround(@Nullable World world, BlockPos pos) {
+    public static void createFireAround(@Nullable Level world, BlockPos pos) {
         if (world != null) {
             boolean fired = false;
             for (Direction side : Ref.DIRS) {
@@ -823,18 +812,18 @@ public class Utils {
      * @param damage Damage that should be taken for the ItemStack
      * @return true if block is successfully broken, false if not
      */
-    public static boolean breakBlock(World world, @Nullable PlayerEntity player, ItemStack stack, BlockPos pos, int damage) {
+    public static boolean breakBlock(Level world, @Nullable Player player, ItemStack stack, BlockPos pos, int damage) {
         if (world.isClientSide) return false;
         BlockState state = world.getBlockState(pos);
-        ServerPlayerEntity serverPlayer = ((ServerPlayerEntity) player);
+        ServerPlayer serverPlayer = ((ServerPlayer) player);
         int exp = ForgeHooks.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
 
         if (exp == -1) return false;
-        stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+        stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         boolean destroyed = world.removeBlock(pos, false);// world.destroyBlock(pos, !player.isCreative(), player);
         if (destroyed && state.canHarvestBlock(world, pos, player))
             state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
-        if (exp > 0) state.getBlock().popExperience((ServerWorld) world, pos, exp);
+        if (exp > 0) state.getBlock().popExperience((ServerLevel) world, pos, exp);
         return destroyed;
     }
 
@@ -846,7 +835,7 @@ public class Utils {
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
     public static boolean isToolEffective(IAntimatterTool tool, BlockState state) {
-        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) || tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial()) || tool.getToolTypes().stream().anyMatch(state::isToolEffective);
+        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) || tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial()) || tool.getActualTags().stream().anyMatch(t -> t.contains(state.getBlock()));
     }
 
     /**
@@ -856,8 +845,8 @@ public class Utils {
      * @param state BlockState that is being checked against
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
-    public static boolean isToolEffective(AntimatterToolType type, Set<ToolType> toolTypes, BlockState state) {
-        return type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial()) || toolTypes.stream().anyMatch(state::isToolEffective);
+    public static boolean isToolEffective(AntimatterToolType type, Set<Tag<Block>> types, BlockState state) {
+        return type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial()) || types.stream().anyMatch(t -> t.contains(state.getBlock()));
     }
 
     /**
@@ -869,16 +858,16 @@ public class Utils {
      * @param world  World instance
      * @return if tree logging was successful
      */
-    public static boolean treeLogging(@Nonnull IAntimatterTool tool, @Nonnull ItemStack stack, @Nonnull BlockPos start, @Nonnull PlayerEntity player, @Nonnull World world) {
+    public static boolean treeLogging(@Nonnull IAntimatterTool tool, @Nonnull ItemStack stack, @Nonnull BlockPos start, @Nonnull Player player, @Nonnull Level world) {
         if (!AntimatterConfig.GAMEPLAY.SMARTER_TREE_DETECTION) {
-            BlockPos.Mutable tempPos = new BlockPos.Mutable(start.getX(), start.getY(), start.getZ());
+            BlockPos.MutableBlockPos tempPos = new BlockPos.MutableBlockPos(start.getX(), start.getY(), start.getZ());
             for (int y = start.getY() + 1; y < start.getY() + AntimatterConfig.GAMEPLAY.AXE_TIMBER_MAX; y++) {
                 if (stack.getDamageValue() < 2) return false;
                 tempPos.move(Direction.UP);
                 BlockState state = world.getBlockState(tempPos);
-                if (state.isAir(world, tempPos) || !ForgeHooks.canHarvestBlock(state, player, world, tempPos))
+                if (state.isAir() || !ForgeHooks.isCorrectToolForDrops(state, player))
                     return false;
-                else if (state.getBlock().is(BlockTags.LOGS)) {
+                else if (BlockTags.LOGS.contains(state.getBlock())) {
                     breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability());
                 }
             }
@@ -894,7 +883,7 @@ public class Utils {
                     return false;
                 pos = blocks.remove();
                 if (!visited.add(pos)) continue;
-                if (!world.getBlockState(pos).getBlock().is(BlockTags.LOGS)) continue;
+                if (!world.getBlockState(pos).getBlock().getTags().contains(BlockTags.LOGS));
                 for (Direction side : dirs) {
                     BlockPos dirPos = pos.relative(side);
                     if (!visited.contains(dirPos)) blocks.add(dirPos);
@@ -924,7 +913,7 @@ public class Utils {
      * @param depth  depth amount of blocks
      * @return set of harvestable BlockPos in the specified range with specified player
      */
-    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull IAntimatterTool tool, int column, int row, int depth) {
+    public static ImmutableSet<BlockPos> getHarvestableBlocksToBreak(@Nonnull Level world, @Nonnull Player player, @Nonnull IAntimatterTool tool, int column, int row, int depth) {
         ImmutableSet<BlockPos> totalBlocks = getBlocksToBreak(world, player, column, row, depth);
         return totalBlocks.stream().filter(b -> isToolEffective(tool, world.getBlockState(b))).collect(ImmutableSet.toImmutableSet());
     }
@@ -939,9 +928,9 @@ public class Utils {
      * @param depth  = depth amount of blocks
      * @return set of BlockPos in the specified range
      */
-    public static ImmutableSet<BlockPos> getBlocksToBreak(@Nonnull World world, @Nonnull PlayerEntity player, int column, int row, int depth) {
-        Vector3d lookPos = player.getEyePosition(1), rotation = player.getViewVector(1), realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
-        BlockRayTraceResult result = world.clip(new RayTraceContext(lookPos, realLookPos, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, player));
+    public static ImmutableSet<BlockPos> getBlocksToBreak(@Nonnull Level world, @Nonnull Player player, int column, int row, int depth) {
+        Vec3 lookPos = player.getEyePosition(1), rotation = player.getViewVector(1), realLookPos = lookPos.add(rotation.x * 5, rotation.y * 5, rotation.z * 5);
+        BlockHitResult result = world.clip(new ClipContext(lookPos, realLookPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
         Direction playerDirection = player.getDirection();
         Direction.Axis playerAxis = playerDirection.getAxis(), faceAxis = result.getDirection().getAxis();
         Direction.AxisDirection faceAxisDir = result.getDirection().getAxisDirection();
@@ -982,7 +971,7 @@ public class Utils {
         Color colour = new Color(rgb);
         Double2ObjectMap<DyeColor> distances = new Double2ObjectOpenHashMap<>();
         for (DyeColor dyeColour : DyeColor.values()) {
-            Color enumColour = new Color(dyeColour.getColorValue());
+            Color enumColour = new Color(dyeColour.getMaterialColor().col);
             double distance = (colour.getRed() - enumColour.getRed()) * (colour.getRed() - enumColour.getRed())
                     + (colour.getGreen() - enumColour.getGreen()) * (colour.getGreen() - enumColour.getGreen())
                     + (colour.getBlue() - enumColour.getBlue()) * (colour.getBlue() - enumColour.getBlue());
@@ -1078,7 +1067,7 @@ public class Utils {
      * @param item the item to spawn, 1.
      * @param dir  the direction to spawn it in.
      */
-    public static void dropItemInWorldAtTile(TileEntity tile, Item item, Direction dir) {
+    public static void dropItemInWorldAtTile(BlockEntity tile, Item item, Direction dir) {
         ItemEntity entity = new ItemEntity(tile.getLevel(), tile.getBlockPos().getX() + dir.getStepX(), tile.getBlockPos().getY() + dir.getStepY(), tile.getBlockPos().getZ() + dir.getStepZ(), new ItemStack(item, 1));
         tile.getLevel().addFreshEntity(entity);
     }
@@ -1110,10 +1099,10 @@ public class Utils {
         return getLocalizedType(type);
     }
 
-    public static boolean doesStackHaveToolTypes(ItemStack stack, ToolType... toolTypes) {
+    public static boolean doesStackHaveToolTypes(ItemStack stack, Tag<Block>... types) {
         if (!stack.isEmpty()) {
-            for (ToolType toolType : toolTypes) {
-                if (stack.getToolTypes().contains(toolType)) {
+            for (Tag<Block> type : types) {
+                if (stack.getItem().getTags().contains(((Tag.Named<Block>)type).getName())) {
                     return true;
                 }
             }
@@ -1121,30 +1110,32 @@ public class Utils {
         return false;
     }
 
-    public static boolean doesStackHaveToolTypes(ItemStack stack, AntimatterToolType... antimatterToolTypes) {
-        List<ToolType> toolTypes = new ObjectArrayList<>();
-        for (AntimatterToolType antimatterToolType : antimatterToolTypes) {
-            toolTypes.addAll(antimatterToolType.getActualToolTypes());
+    public static boolean doesStackHaveToolTypes(ItemStack stack, AntimatterToolType... types) {
+        List<Tag<Block>> ret = new ObjectArrayList<>();
+        for (AntimatterToolType ty : types) {
+            ret.addAll(ty.getActualTags());
         }
-        return doesStackHaveToolTypes(stack, toolTypes.toArray(new ToolType[0]));
+        Tag<Block>[] t =  (Tag<Block>[]) ret.toArray(new Tag[0]);
+        return doesStackHaveToolTypes(stack,t);
     }
 
-    public static boolean isPlayerHolding(PlayerEntity player, Hand hand, ToolType... toolTypes) {
-        return doesStackHaveToolTypes(player.getItemInHand(hand), toolTypes);
+    public static boolean isPlayerHolding(Player player, InteractionHand hand, Tag<Block>... types) {
+        return doesStackHaveToolTypes(player.getItemInHand(hand), types);
     }
 
-    public static boolean isPlayerHolding(PlayerEntity player, Hand hand, AntimatterToolType... antimatterToolTypes) {
-        List<ToolType> toolTypes = new ObjectArrayList<>();
-        for (AntimatterToolType antimatterToolType : antimatterToolTypes) {
-            toolTypes.addAll(antimatterToolType.getActualToolTypes());
+    public static boolean isPlayerHolding(Player player, InteractionHand hand, AntimatterToolType... t) {
+        List<Tag<Block>> ret = new ObjectArrayList<>();
+        for (AntimatterToolType tt : t) {
+            ret.addAll(tt.getActualTags());
         }
-        return isPlayerHolding(player, hand, toolTypes.toArray(new ToolType[0]));
+        Tag<Block>[] tag = (Tag<Block>[]) ret.toArray(new Tag[0]);
+        return isPlayerHolding(player,hand, tag);
     }
 
     @Nullable
     //@Deprecated // Ready to use the methods above instead
     //Not deprecated so you don't have to call methods multiple times.
-    public static AntimatterToolType getToolType(PlayerEntity player) {
+    public static AntimatterToolType getToolType(Player player) {
         ItemStack stack = player.getMainHandItem();
         if (!stack.isEmpty()) {
             Item item = stack.getItem();

@@ -4,8 +4,7 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.machine.types.Machine;
-import net.minecraft.block.Block;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.Block;
 
 public class BlockMultiMachine extends BlockMachine {
 

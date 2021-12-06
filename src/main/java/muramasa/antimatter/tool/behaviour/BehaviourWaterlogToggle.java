@@ -3,12 +3,12 @@ package muramasa.antimatter.tool.behaviour;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public class BehaviourWaterlogToggle implements IItemUse<IAntimatterTool> {
 
@@ -20,16 +20,16 @@ public class BehaviourWaterlogToggle implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
+    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
         if (state.hasProperty(BlockStateProperties.WATERLOGGED)) {
             if (state.getValue(BlockStateProperties.WATERLOGGED)) {
                 c.getLevel().setBlock(c.getClickedPos(), state.setValue(BlockStateProperties.WATERLOGGED, false), 11);
-                c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 Utils.damageStack(c.getItemInHand(), c.getPlayer());
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 }

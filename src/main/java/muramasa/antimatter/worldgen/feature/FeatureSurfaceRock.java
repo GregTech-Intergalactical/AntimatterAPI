@@ -7,26 +7,25 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.WorldGenHelper;
-import net.minecraft.block.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 
 import java.util.List;
-import java.util.Random;
 
 
-public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
+public class FeatureSurfaceRock extends AntimatterFeature<NoneFeatureConfiguration> {
 
     public static final Object2ObjectOpenHashMap<ChunkPos, List<Tuple<BlockPos, Material>>> ROCKS = new Object2ObjectOpenHashMap<>();
 
     public FeatureSurfaceRock() {
-        super(NoFeatureConfig.CODEC, FeatureSurfaceRock.class);
+        super(NoneFeatureConfiguration.CODEC, FeatureSurfaceRock.class);
     }
 
     @Override
@@ -44,9 +43,10 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
         return "feature_surface_rocks";
     }
 
-
     @Override
-    public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> placer) {
+        WorldGenLevel world = placer.level();
+        BlockPos pos = placer.origin();
         List<Tuple<BlockPos, Material>> rocks = ROCKS.remove(world.getChunk(pos).getPos());
         if (rocks == null) return false;
         StoneType stoneType;
@@ -61,9 +61,8 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoFeatureConfig> {
         }
         return true;
     }
-
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.SURFACE_ROCK);
+        event.addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.SURFACE_ROCK);
     }
 }

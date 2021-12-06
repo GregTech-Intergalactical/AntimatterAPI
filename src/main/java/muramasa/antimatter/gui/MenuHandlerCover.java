@@ -4,10 +4,10 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.container.ContainerCover;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 
 public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHandler<T> {
@@ -17,8 +17,8 @@ public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHan
     }
 
     @Override
-    public T onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data) {
-        TileEntity tile = Utils.getTileFromBuf(data);
+    public T onContainerCreate(int windowId, Inventory inv, FriendlyByteBuf data) {
+        BlockEntity tile = Utils.getTileFromBuf(data);
         if (tile != null) {
             Direction dir = Direction.from3DDataValue(data.readInt());
             LazyOptional<ICoverHandler> coverHandler = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, dir);

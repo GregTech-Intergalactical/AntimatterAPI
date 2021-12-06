@@ -11,8 +11,8 @@ import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

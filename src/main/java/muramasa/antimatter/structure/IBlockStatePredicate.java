@@ -1,11 +1,11 @@
 package muramasa.antimatter.structure;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.state.BlockState;
 
 @FunctionalInterface
 public interface IBlockStatePredicate {
 
-    boolean evaluate(IWorldReader reader, BlockPos pos, BlockState state);
+    boolean evaluate(LevelReader reader, BlockPos pos, BlockState state);
 }

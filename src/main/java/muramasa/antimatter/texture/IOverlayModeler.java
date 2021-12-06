@@ -1,10 +1,8 @@
 package muramasa.antimatter.texture;
 
-import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 
 public interface IOverlayModeler {
     public ResourceLocation getOverlayModel(Machine<?> type, Direction side);

@@ -1,15 +1,11 @@
 package muramasa.antimatter.client;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector4f;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,11 +13,11 @@ import java.util.List;
 
 public class VertexTransformer {
 
-    private static final int UV = findUVOffset(DefaultVertexFormats.BLOCK);
-    private static final int COLOR = findColorOffset(DefaultVertexFormats.BLOCK);
+    private static final int UV = findUVOffset(DefaultVertexFormat.BLOCK);
+    private static final int COLOR = findColorOffset(DefaultVertexFormat.BLOCK);
     public static void processVertices(int[] inData, int[] outData, BakedQuad old, int color, TextureAtlasSprite sprite)
     {
-        int stride = DefaultVertexFormats.BLOCK.getVertexSize();
+        int stride = DefaultVertexFormat.BLOCK.getVertexSize();
         int count = (inData.length * 4) / stride;
         for (int i=0;i<count;i++)
         {

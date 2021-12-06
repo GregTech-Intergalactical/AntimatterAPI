@@ -2,21 +2,20 @@ package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
-import tesseract.api.fluid.FluidController;
 import tesseract.api.fluid.FluidHolder;
 
 import javax.annotation.Nullable;
@@ -29,7 +28,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         ITickingController<?, ?, ?> controller = Tesseract.FLUID.getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         info.add("Pressure: " + getType().getPressure(getSize()));
@@ -40,15 +39,15 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new StringTextComponent("Pressure: " + getType().getPressure(getSize())));
-        tooltip.add(new StringTextComponent("Capacity: " + getType().getCapacity(getSize())));
-        tooltip.add(new StringTextComponent("Max temperature: " + getType().getTemperature()));
+        tooltip.add(new TextComponent("Pressure: " + getType().getPressure(getSize())));
+        tooltip.add(new TextComponent("Capacity: " + getType().getCapacity(getSize())));
+        tooltip.add(new TextComponent("Max temperature: " + getType().getTemperature()));
     }
 
     @Override
-    public void entityInside(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+    public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
         if (!(entityIn instanceof LivingEntity)) return;
         TileEntityFluidPipe pipe = (TileEntityFluidPipe) worldIn.getBlockEntity(pos);
@@ -59,7 +58,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
             max = Math.max(max, fluid.fluid.getAttributes().getTemperature());
         }
         if (max >= (295 + 100)) {
-            entityIn.hurt(DamageSource.GENERIC, MathHelper.clamp(((max + 200) - (295 + 100)) / 100, 2, 20));
+            entityIn.hurt(DamageSource.GENERIC, Mth.clamp(((max + 200) - (295 + 100)) / 100, 2, 20));
         }
     }
 

@@ -31,19 +31,11 @@
  */
 package muramasa.antimatter.client.glu;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.ARBImaging.GL_TABLE_TOO_LARGE;
-import static org.lwjgl.opengl.GL11.GL_INVALID_ENUM;
-import static org.lwjgl.opengl.GL11.GL_INVALID_OPERATION;
-import static org.lwjgl.opengl.GL11.GL_INVALID_VALUE;
-import static org.lwjgl.opengl.GL11.GL_NO_ERROR;
-import static org.lwjgl.opengl.GL11.GL_OUT_OF_MEMORY;
-import static org.lwjgl.opengl.GL11.GL_STACK_OVERFLOW;
-import static org.lwjgl.opengl.GL11.GL_STACK_UNDERFLOW;
-import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.GL_INVALID_FRAMEBUFFER_OPERATION;
 
 /**

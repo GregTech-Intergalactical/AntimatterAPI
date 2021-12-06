@@ -5,15 +5,14 @@ import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -39,7 +38,7 @@ public class FakeTileElement extends StructureElement {
     public FakeTileElement(Block... pred) {
         this.preds = Arrays
                 .stream(pred).map(t -> (IBlockStatePredicate) (reader, pos,
-                                                               state) -> state.getBlock() == Data.PROXY_INSTANCE || state.getBlock().is(t))
+                                                               state) -> state.getBlock() == Data.PROXY_INSTANCE || state.is(t))
                 .toArray(IBlockStatePredicate[]::new);
     }
 
@@ -57,8 +56,8 @@ public class FakeTileElement extends StructureElement {
     @Override
     public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
         BlockState state = machine.getLevel().getBlockState(pos);
-        if (state.getBlock().is(Data.PROXY_INSTANCE)) {
-            TileEntity tile = machine.getLevel().getBlockEntity(pos);
+        if (state.is(Data.PROXY_INSTANCE)) {
+            BlockEntity tile = machine.getLevel().getBlockEntity(pos);
             if (tile instanceof TileEntityFakeBlock) {
                 BlockState st = ((TileEntityFakeBlock) tile).getState();
                 if (st == null) {
@@ -82,7 +81,7 @@ public class FakeTileElement extends StructureElement {
             result.withError("FakeTile sharing a block that is not of proxy type.");
             return false;
         }
-        if (state.hasTileEntity()) {
+        if (state.hasBlockEntity()) {
             result.withError("BlockProxy replacement should not have Tile.");
             return false;
         }
@@ -107,10 +106,10 @@ public class FakeTileElement extends StructureElement {
 
     @Override
     public void onBuild(TileEntityBasicMultiMachine machine, BlockPos pos, StructureResult result, int count) {
-        World world = machine.getLevel();
+        Level world = machine.getLevel();
         BlockState oldState = world.getBlockState(pos);
         // Already set.
-        if (count > 1 || oldState.getBlock().is(Data.PROXY_INSTANCE)) {
+        if (count > 1 || oldState.is(Data.PROXY_INSTANCE)) {
             ((TileEntityFakeBlock) world.getBlockEntity(pos)).addController(machine);
             return;
         }
@@ -122,15 +121,15 @@ public class FakeTileElement extends StructureElement {
     }
 
     @Override
-    public void onInfoTooltip(List<ITextComponent> text, long count, TileEntityBasicMultiMachine<?> machine) {
+    public void onInfoTooltip(List<Component> text, long count, TileEntityBasicMultiMachine<?> machine) {
         super.onInfoTooltip(text, count, machine);
-        text.add(new StringTextComponent("Element replaced with a TileEntity to allow input/output."));
+        text.add(new TextComponent("Element replaced with a TileEntity to allow input/output."));
     }
 
     @Override
     public void onRemove(TileEntityBasicMultiMachine machine, BlockPos pos, StructureResult result, int count) {
-        World world = machine.getLevel();
-        TileEntity tile = world.getBlockEntity(pos);
+        Level world = machine.getLevel();
+        BlockEntity tile = world.getBlockEntity(pos);
         if (!(tile instanceof TileEntityFakeBlock))
             return;
         if (count == 0) {

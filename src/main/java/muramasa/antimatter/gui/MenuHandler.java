@@ -1,33 +1,33 @@
 package muramasa.antimatter.gui;
 
-import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.registration.IAntimatterObject;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 
 
 //An arbitrary menu handler for e.g. guiclass.
-public abstract class MenuHandler<T extends Container & IAntimatterContainer> implements IAntimatterObject {
+public abstract class MenuHandler<T extends AbstractContainerMenu & IAntimatterContainer> implements IAntimatterObject {
 
     protected ResourceLocation loc;
-    private ContainerType<T> containerType;
+    private MenuType<T> containerType;
 
     public MenuHandler(String domain, String id) {
         loc = new ResourceLocation(domain, id);
         AntimatterAPI.register(MenuHandler.class, this);
-        ContainerType<?> type = getContainerType();
-        AntimatterAPI.register(ContainerType.class, type.getRegistryName().toString(), type.getRegistryName().getNamespace(), type);
+        MenuType<?> type = getContainerType();
+        AntimatterAPI.register(MenuType.class, type.getRegistryName().toString(), type.getRegistryName().getNamespace(), type);
     }
 
     @Override
@@ -40,11 +40,10 @@ public abstract class MenuHandler<T extends Container & IAntimatterContainer> im
         return loc.getPath();
     }
 
-    @MethodsReturnNonnullByDefault
-    protected abstract T getMenu(IGuiHandler source, PlayerInventory playerInv, int windowId);
+    protected abstract T getMenu(IGuiHandler source, Inventory playerInv, int windowId);
 
     @MethodsReturnNonnullByDefault
-    public final T menu(IGuiHandler source, PlayerInventory playerInv, int windowId) {
+    public final T menu(IGuiHandler source, Inventory playerInv, int windowId) {
         T t = getMenu(source, playerInv, windowId);
         //Gui Entrypoint for server.
         if (!source.isRemote()) t.source().init();
@@ -52,20 +51,20 @@ public abstract class MenuHandler<T extends Container & IAntimatterContainer> im
     }
 
     @MethodsReturnNonnullByDefault
-    public ContainerType<T> getContainerType() {
+    public MenuType<T> getContainerType() {
         if (containerType == null) {
-            containerType = IForgeContainerType.create(this::onContainerCreate);
+            containerType = IForgeMenuType.create(this::onContainerCreate);
             containerType.setRegistryName(loc);
         }
         return containerType;
     }
 
-    public abstract T onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data);
+    public abstract T onContainerCreate(int windowId, Inventory inv, FriendlyByteBuf data);
 
     //This has to be Object or else the runtime dist cleaner murders antimatter. It should actually return
     //the appropriate IScreenManager.IScreenFactory
     @OnlyIn(Dist.CLIENT)
     public Object screen() {
-        return (ScreenManager.IScreenFactory) (a, b, c) -> new AntimatterContainerScreen(a, b, c);
+        return (MenuScreens.ScreenConstructor) (a, b, c) -> new AntimatterContainerScreen(a, b, c);
     }
 }

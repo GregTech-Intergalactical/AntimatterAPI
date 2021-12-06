@@ -1,16 +1,17 @@
 package muramasa.antimatter.integration.kubejs;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import dev.latvian.kubejs.item.ItemStackJS;
 import dev.latvian.kubejs.item.ingredient.IngredientJS;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-
-import java.util.Set;
 
 public class RecipeIngredientJS implements IngredientJS {
 
-    private IngredientJS sourceIngredient;
+    @Override
+    public boolean test(ItemStackJS arg0) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /*private IngredientJS sourceIngredient;
     private int count;
     private boolean nonConsume;
     private boolean ignoreNbt;
@@ -68,6 +69,6 @@ public class RecipeIngredientJS implements IngredientJS {
     @Override
     public boolean test(ItemStackJS itemStackJS) {
         return sourceIngredient.test(itemStackJS);
-    }
+    }*/
 }
 

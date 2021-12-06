@@ -9,18 +9,17 @@ import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
-import muramasa.antimatter.recipe.serializer.RecipeSerializer;
+import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
-import net.minecraft.block.Block;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
@@ -78,14 +77,14 @@ public final class AntimatterRegistration {
                 ((IForgeRegistry) e.getRegistry()).register(i);
             });
             registerTools(domain, e.getRegistry());
-        } else if (e.getRegistry() == ForgeRegistries.TILE_ENTITIES) {
-            AntimatterAPI.all(TileEntityType.class, domain, t -> ((IForgeRegistry) e.getRegistry()).register(t));
+        } else if (e.getRegistry() == ForgeRegistries.BLOCK_ENTITIES) {
+            AntimatterAPI.all(BlockEntityType.class, domain, t -> ((IForgeRegistry) e.getRegistry()).register(t));
         } else if (e.getRegistry() == ForgeRegistries.FLUIDS) {
             AntimatterAPI.all(AntimatterFluid.class, domain, f -> {
                 ((IForgeRegistry) e.getRegistry()).registerAll(f.getFluid(), f.getFlowingFluid());
             });
         } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {
-            AntimatterAPI.all(ContainerType.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h));
+            AntimatterAPI.all(MenuType.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h));
         } else if (e.getRegistry() == ForgeRegistries.SOUND_EVENTS) {
             //TODO better solution for this
             if (domain.equals(Ref.ID)) ((IForgeRegistry) e.getRegistry()).registerAll(Ref.DRILL, Ref.WRENCH);
@@ -94,8 +93,8 @@ public final class AntimatterRegistration {
             if (domain.equals(Ref.ID)) {
                 CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "material"), PropertyIngredient.Serializer.INSTANCE);
-                ((IForgeRegistry<IRecipeSerializer<?>>) e.getRegistry()).register(RecipeSerializer.INSTANCE);
-                ((IForgeRegistry<IRecipeSerializer<?>>) e.getRegistry()).register(MaterialSerializer.INSTANCE);
+                ((IForgeRegistry) e.getRegistry()).register(AntimatterRecipeSerializer.INSTANCE);
+                ((IForgeRegistry) e.getRegistry()).register(MaterialSerializer.INSTANCE);
             }
         } else if (e.getRegistry() == ForgeRegistries.FEATURES) {
             AntimatterAPI.all(AntimatterFeature.class, domain, ForgeRegistries.FEATURES::register);

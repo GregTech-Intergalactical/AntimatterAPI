@@ -8,8 +8,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 import java.util.Map;

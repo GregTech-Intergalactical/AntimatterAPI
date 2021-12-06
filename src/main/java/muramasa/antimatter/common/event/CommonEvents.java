@@ -9,16 +9,16 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.ConstantRange;
-import net.minecraft.loot.ItemLootEntry;
-import net.minecraft.loot.LootPool;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -36,7 +36,7 @@ public class CommonEvents {
     @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent e) {
         if (!AntimatterConfig.GAMEPLAY.PLAY_CRAFTING_SOUNDS) return;
-        IInventory inv = e.getInventory();
+        Container inv = e.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             if (inv.getItem(i).getItem() instanceof IAntimatterTool) {
                 IAntimatterTool tool = (IAntimatterTool) inv.getItem(i).getItem();
@@ -78,7 +78,7 @@ public class CommonEvents {
                 Block block = ForgeRegistries.BLOCKS.getValue(blockId);
                 //Antimatter.LOGGER.info(blockId.toString());
                 if (block == Blocks.ICE || block == Blocks.PACKED_ICE || block == Blocks.BLUE_ICE) {
-                    event.getTable().addPool(LootPool.lootPool().setRolls(ConstantRange.exactly(1)).when(AntimatterBlockLootProvider.SAW).add(ItemLootEntry.lootTableItem(block)).build());
+                    event.getTable().addPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(AntimatterBlockLootProvider.SAW).add(LootItem.lootTableItem(block)).build());
                 }
             }
         }

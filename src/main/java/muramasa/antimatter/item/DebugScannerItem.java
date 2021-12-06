@@ -11,17 +11,17 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,35 +34,35 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        tooltip.add(new StringTextComponent(this.tooltip));
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(new TextComponent(this.tooltip));
         if (Screen.hasShiftDown()) {
-            tooltip.add(new StringTextComponent("Blocks: " + AntimatterAPI.all(Block.class).size()));
-            tooltip.add(new StringTextComponent("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
-            tooltip.add(new StringTextComponent("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
-            tooltip.add(new StringTextComponent("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
-            tooltip.add(new StringTextComponent("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
-            tooltip.add(new StringTextComponent("Stones: " + AntimatterAPI.all(BlockStone.class).size()));
-            tooltip.add(new StringTextComponent("Data:"));
-            tooltip.add(new StringTextComponent("Ore Materials: " + Data.ORE.all().size()));
-            tooltip.add(new StringTextComponent("Small Ore Materials: " + Data.ORE_SMALL.all().size()));
+            tooltip.add(new TextComponent("Blocks: " + AntimatterAPI.all(Block.class).size()));
+            tooltip.add(new TextComponent("Machines: " + Machine.getTypes(MachineFlag.BASIC, MachineFlag.MULTI, MachineFlag.HATCH).size()));
+            tooltip.add(new TextComponent("Pipes: " + AntimatterAPI.all(BlockPipe.class).size()));
+            tooltip.add(new TextComponent("Storage: " + AntimatterAPI.all(BlockStorage.class).size()));
+            tooltip.add(new TextComponent("Ores: " + AntimatterAPI.all(BlockOre.class).size()));
+            tooltip.add(new TextComponent("Stones: " + AntimatterAPI.all(BlockStone.class).size()));
+            tooltip.add(new TextComponent("Data:"));
+            tooltip.add(new TextComponent("Ore Materials: " + Data.ORE.all().size()));
+            tooltip.add(new TextComponent("Small Ore Materials: " + Data.ORE_SMALL.all().size()));
         }
     }
 
     @Nonnull
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         if (context.getLevel().isClientSide) return super.useOn(context);
         BlockState state = context.getLevel().getBlockState(context.getClickedPos());
-        TileEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
+        BlockEntity tile = context.getLevel().getBlockEntity(context.getClickedPos());
         if (tile instanceof TileEntityBase) {
-            ((TileEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new StringTextComponent(s), context.getPlayer().getUUID()));
+            ((TileEntityBase<?>) tile).getInfo().forEach(s -> context.getPlayer().sendMessage(new TextComponent(s), context.getPlayer().getUUID()));
         }
         if (state.getBlock() instanceof BlockDynamic && context.getPlayer() != null) {
             ((BlockDynamic) state.getBlock()).getInfo(new ObjectArrayList<>(), context.getLevel(), state, context.getClickedPos()).forEach(s -> {
-                context.getPlayer().sendMessage(new StringTextComponent(s), context.getPlayer().getUUID());
+                context.getPlayer().sendMessage(new TextComponent(s), context.getPlayer().getUUID());
             });
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         } else {
 
         }
@@ -70,7 +70,7 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
     }
 
     @Override
-    public ActionResultType onItemUseFirst(ItemStack stack, ItemUseContext context) {
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         return super.onItemUseFirst(stack, context);
     }
 

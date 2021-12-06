@@ -9,12 +9,12 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -24,9 +24,9 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<Recipe> {
+public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<Recipe> {
 
-    public static final RecipeSerializer INSTANCE = new RecipeSerializer();
+    public static final AntimatterRecipeSerializer INSTANCE = new AntimatterRecipeSerializer();
 
     static {
         INSTANCE.setRegistryName(new ResourceLocation(Ref.ID, "machine"));
@@ -48,11 +48,11 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
             }
             FluidStack[] fluidInputs = null;
             if (json.has("fluid_in")) {
-                fluidInputs = Streams.stream(json.getAsJsonArray("fluid_in")).map(RecipeSerializer::getStack).toArray(FluidStack[]::new);
+                fluidInputs = Streams.stream(json.getAsJsonArray("fluid_in")).map(AntimatterRecipeSerializer::getStack).toArray(FluidStack[]::new);
             }
             FluidStack[] fluidOutputs = null;
             if (json.has("fluid_out")) {
-                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(RecipeSerializer::getStack).toArray(FluidStack[]::new);
+                fluidOutputs = Streams.stream(json.getAsJsonArray("fluid_out")).map(AntimatterRecipeSerializer::getStack).toArray(FluidStack[]::new);
             }
             long eut = json.get("eu").getAsLong();
             int duration = json.get("duration").getAsInt();
@@ -88,7 +88,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
             FluidStack stack = new FluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsInt() : 1000);
 
             if (obj.has("tag")) {
-                stack.setTag(JsonToNBT.parseTag(obj.get("tag").getAsString()));
+                stack.setTag(TagParser.parseTag(obj.get("tag").getAsString()));
             }
             return stack;
         } catch (Exception ex) {
@@ -99,7 +99,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
 
     @Nullable
     @Override
-    public Recipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+    public Recipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         int size = buffer.readInt();
         List<RecipeIngredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
@@ -159,7 +159,7 @@ public class RecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> i
     }
 
     @Override
-    public void toNetwork(PacketBuffer buffer, Recipe recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, Recipe recipe) {
         buffer.writeInt(!recipe.hasInputItems() ? 0 : recipe.getInputItems().size());
         if (recipe.hasInputItems()) {
             recipe.getInputItems().forEach(t -> t.writeToBuffer(buffer));

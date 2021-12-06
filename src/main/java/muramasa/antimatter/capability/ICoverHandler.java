@@ -2,19 +2,19 @@ package muramasa.antimatter.capability;
 
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 
-public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializable<CompoundNBT> {
+public interface ICoverHandler<T extends BlockEntity> extends ICapabilitySerializable<CompoundTag> {
 
     /**
      * Getters/Setters
@@ -36,12 +36,12 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
 
     // If the player uses a cover in hand -> place cover if none exists.. Otherwises
     // interact with the cover, if present.
-    boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type);
+    boolean onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type);
 
     /**
      * Helpers
      **/
-    boolean placeCover(PlayerEntity player, Direction side, ItemStack stack, ICover cover);
+    boolean placeCover(Player player, Direction side, ItemStack stack, ICover cover);
 
     /**
      * Removes a cover.
@@ -50,26 +50,26 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
      * @param side   which side to remove.
      * @return
      */
-    boolean removeCover(PlayerEntity player, Direction side, boolean onlyRemove);
+    boolean removeCover(Player player, Direction side, boolean onlyRemove);
 
     boolean hasCover(Class<? extends ICover> clazz);
 
     boolean isValid(Direction side, ICover replacement);
 
-    boolean moveCover(PlayerEntity entity, Direction oldSide, Direction newSide);
+    boolean moveCover(Player entity, Direction oldSide, Direction newSide);
 
-    public static ICoverHandler<?> empty(TileEntity tile) {
+    public static ICoverHandler<?> empty(BlockEntity tile) {
         return new EmptyHandler(tile);
     }
 
-    static class EmptyHandler implements ICoverHandler<TileEntity> {
+    static class EmptyHandler implements ICoverHandler<BlockEntity> {
 
-        TileEntity tile;
+        BlockEntity tile;
 
         private final ICover[] COVERS = new ICover[]{ICover.empty, ICover.empty, ICover.empty, ICover.empty,
                 ICover.empty, ICover.empty};
 
-        EmptyHandler(TileEntity tile) {
+        EmptyHandler(BlockEntity tile) {
             this.tile = tile;
         }
 
@@ -79,12 +79,12 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
         }
 
         @Override
-        public CompoundNBT serializeNBT() {
-            return new CompoundNBT();
+        public CompoundTag serializeNBT() {
+            return new CompoundTag();
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT nbt) {
+        public void deserializeNBT(CompoundTag nbt) {
 
         }
 
@@ -104,7 +104,7 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
         }
 
         @Override
-        public TileEntity getTile() {
+        public BlockEntity getTile() {
             return tile;
         }
 
@@ -119,17 +119,17 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
         }
 
         @Override
-        public boolean onInteract(PlayerEntity player, Hand hand, Direction side, AntimatterToolType type) {
+        public boolean onInteract(Player player, InteractionHand hand, Direction side, AntimatterToolType type) {
             return false;
         }
 
         @Override
-        public boolean placeCover(PlayerEntity player, Direction side, ItemStack stack, ICover cover) {
+        public boolean placeCover(Player player, Direction side, ItemStack stack, ICover cover) {
             return false;
         }
 
         @Override
-        public boolean removeCover(PlayerEntity player, Direction side, boolean onlyRemove) {
+        public boolean removeCover(Player player, Direction side, boolean onlyRemove) {
             return false;
         }
 
@@ -144,7 +144,7 @@ public interface ICoverHandler<T extends TileEntity> extends ICapabilitySerializ
         }
 
         @Override
-        public boolean moveCover(PlayerEntity entity, Direction oldSide, Direction newSide) {
+        public boolean moveCover(Player entity, Direction oldSide, Direction newSide) {
             return false;
         }
     }

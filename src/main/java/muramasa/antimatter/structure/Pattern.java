@@ -1,12 +1,12 @@
 package muramasa.antimatter.structure;
 
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
 
 public class Pattern {
     private final BlockInfo[][][] blockInfos;
-    private final ITextComponent description;
+    private final Component description;
 
-    public Pattern(BlockInfo[][][] blockInfos, ITextComponent description) {
+    public Pattern(BlockInfo[][][] blockInfos, Component description) {
         this.blockInfos = blockInfos;
         this.description = description;
     }
@@ -15,7 +15,7 @@ public class Pattern {
         return blockInfos;
     }
 
-    public ITextComponent getDescription() {
+    public Component getDescription() {
         return description;
     }
 }

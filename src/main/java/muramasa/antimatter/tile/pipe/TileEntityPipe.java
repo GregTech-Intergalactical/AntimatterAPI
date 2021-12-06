@@ -20,18 +20,18 @@ import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.IConnectable;
@@ -41,7 +41,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, INamedContainerProvider, IGuiHandler, IConnectable {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
 
     /**
      * Pipe Data
@@ -64,9 +64,10 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     protected Holder pipeCapHolder;
 
-    public TileEntityPipe(T type, boolean covered) {
-        super(covered ? type.getCoveredType() : type.getTileType());
-        this.type = type;
+    public TileEntityPipe(T type, BlockPos pos, BlockState state, boolean covered) {
+        super(covered ? type.getCoveredType() : type.getTileType(), pos, state);
+        this.size = getPipeSize(state);
+        this.type = getPipeType(state);
         if (this.type.getMaterial() == Data.Wood) {
             this.coverHandler = LazyOptional.empty();
         } else {
@@ -152,7 +153,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     public TileEntityPipe<?> getPipe(BlockPos side) {
-        TileEntity tile = getLevel().getBlockEntity(side);
+        BlockEntity tile = getLevel().getBlockEntity(side);
         if (!(tile instanceof TileEntityPipe)) return null;
         TileEntityPipe<?> pipe = (TileEntityPipe<?>) tile;
         return pipe.getCapability() == this.getCapability() ?  pipe : null;
@@ -173,7 +174,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         //If it is a tile but invalid do not connect.
         connection = Connectivity.set(connection, side.get3DDataValue());
         boolean ok = validate(side);
-        if (!ok && pipe == null && level.getBlockState(worldPosition.relative(side)).hasTileEntity()) {
+        if (!ok && pipe == null && level.getBlockState(worldPosition.relative(side)).hasBlockEntity()) {
             connection = Connectivity.clear(connection, side.get3DDataValue());
             return;
         }
@@ -256,21 +257,21 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         }
         if (this instanceof ITickablePipe) {
             if (remove && !hasNonEmpty) {
-                CompoundNBT nbt = this.save(new CompoundNBT());
+                CompoundTag nbt = this.save(new CompoundTag());
                 level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.COVERED, false), 11);
                 TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
                 if (pipe != this) {
-                    pipe.load(pipe.getBlockState(), nbt);
+                    pipe.load(nbt);
                 }
                 return true;
             }
         } else if (!remove && hasNonEmpty) {
             //set this to be covered.
-            CompoundNBT nbt = this.save(new CompoundNBT());
+            CompoundTag nbt = this.save(new CompoundTag());
             level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.COVERED, true), 11);
             TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
             if (pipe != this) {
-                pipe.load(pipe.getBlockState(), nbt);
+                pipe.load(nbt);
             }
             return true;
         }
@@ -323,9 +324,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT tag) {
-        super.load(state, tag); //TODO get tile data tag
-        ofState(state);
+    public void load(CompoundTag tag) {
+        super.load(tag);
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER))
             coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         byte newConnection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
@@ -365,15 +365,14 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     @Nonnull
     @Override
-    public CompoundNBT save(CompoundNBT tag) {
-        super.save(tag);
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
         coverHandler.ifPresent(h -> tag.put(Ref.KEY_PIPE_TILE_COVER, h.serializeNBT()));
         tag.putByte(Ref.TAG_PIPE_TILE_CONNECTIVITY, connection);
-        return tag;
     }
 
-    public CompoundNBT getUpdateTag() {
-        CompoundNBT tag = super.getUpdateTag();
+    public CompoundTag getUpdateTag() {
+        CompoundTag tag = super.getUpdateTag();
         this.save(tag);
         return tag;
     }
@@ -402,13 +401,13 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     @Override
-    public ITextComponent getDisplayName() {
-        return new StringTextComponent(this.type.getTypeName());
+    public Component getDisplayName() {
+        return new TextComponent(this.type.getTypeName());
     }
 
     @Nullable
     @Override
-    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+    public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_, Player p_createMenu_3_) {
         return Data.PIPE_MENU_HANDLER.menu(this, p_createMenu_2_, p_createMenu_1_);
     }
 

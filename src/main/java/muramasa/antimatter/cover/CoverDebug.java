@@ -3,8 +3,7 @@ package muramasa.antimatter.cover;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;

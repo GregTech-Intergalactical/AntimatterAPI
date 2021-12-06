@@ -3,10 +3,8 @@ package muramasa.antimatter.datagen.builder;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.util.Dir;
-import muramasa.antimatter.util.Utils;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;

@@ -1,11 +1,10 @@
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
@@ -92,7 +91,7 @@ public class StructureElement {
 
     }
 
-    public void onInfoTooltip(List<ITextComponent> text, long count, TileEntityBasicMultiMachine<?> machine) {
+    public void onInfoTooltip(List<Component> text, long count, TileEntityBasicMultiMachine<?> machine) {
 
     }
 

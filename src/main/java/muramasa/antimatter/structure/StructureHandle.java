@@ -5,10 +5,10 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Dir;
 import muramasa.antimatter.util.int3;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -73,7 +73,7 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
         if (onRemoval != null) onRemoval.accept(obj);
     }
 
-    public void structureCacheAddition(TileEntity t) {
+    public void structureCacheAddition(BlockEntity t) {
         if (!clazz.isInstance(t)) return;
         if (debug) Antimatter.LOGGER.debug("added to structure handle");
         this.object = (T) t;

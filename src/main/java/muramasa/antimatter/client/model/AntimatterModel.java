@@ -1,16 +1,17 @@
 package muramasa.antimatter.client.model;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.client.IAntimatterModel;
 import muramasa.antimatter.client.ModelUtils;
-import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.resources.model.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.SimpleModelTransform;
+import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.common.model.TransformationHelper;
 
 import java.util.Collection;
@@ -20,24 +21,24 @@ import java.util.function.Function;
 
 public class AntimatterModel implements IAntimatterModel<AntimatterModel> {
 
-    protected IUnbakedModel model;
+    protected UnbakedModel model;
     protected int[] rotations = new int[0];
 
     public AntimatterModel() {
 
     }
 
-    public AntimatterModel(IUnbakedModel model, int... rotations) {
+    public AntimatterModel(UnbakedModel model, int... rotations) {
         this.model = model;
         this.rotations = rotations;
     }
 
-    public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+    public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
         return model != null ? model.bake(bakery, getter, getModelTransform(transform, rotations), loc) : ModelUtils.getMissingModel().bake(bakery, getter, transform, loc);
     }
 
     @Override
-    public final IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
+    public final BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
         try {
             return bakeModel(owner, bakery, getter, transform, overrides, loc);
         } catch (Exception e) {
@@ -48,12 +49,12 @@ public class AntimatterModel implements IAntimatterModel<AntimatterModel> {
     }
 
     @Override
-    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
+    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> getter, Set<Pair<String, String>> errors) {
         return model != null ? model.getMaterials(getter, errors) : Collections.emptyList();
     }
 
-    public IModelTransform getModelTransform(IModelTransform base, int[] rots) {
+    public ModelState getModelTransform(ModelState base, int[] rots) {
         if (rots == null || rots.length != 3 || (rots[0] == 0 && rots[1] == 0 && rots[2] == 0)) return base;
-        return new SimpleModelTransform(new TransformationMatrix(null, TransformationHelper.quatFromXYZ(new Vector3f(rots[0], rots[1], rots[2]), true), null, null));
+        return new SimpleModelState(new Transformation(null, TransformationHelper.quatFromXYZ(new Vector3f(rots[0], rots[1], rots[2]), true), null, null));
     }
 }

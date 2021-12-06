@@ -4,9 +4,9 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.ContainerPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class MenuHandlerPipe<T extends TileEntityPipe<?>> extends MenuHandler<ContainerPipe<?>> {
 
@@ -15,13 +15,13 @@ public class MenuHandlerPipe<T extends TileEntityPipe<?>> extends MenuHandler<Co
     }
 
     @Override
-    protected ContainerPipe<?> getMenu(IGuiHandler source, PlayerInventory playerInv, int windowId) {
+    protected ContainerPipe<?> getMenu(IGuiHandler source, Inventory playerInv, int windowId) {
         return source instanceof TileEntityPipe ? new ContainerPipe((TileEntityPipe<?>) source, playerInv, this, windowId) : null;
     }
 
     @Override
-    public ContainerPipe<?> onContainerCreate(int windowId, PlayerInventory inv, PacketBuffer data) {
-        TileEntity tile = Utils.getTileFromBuf(data);
+    public ContainerPipe<?> onContainerCreate(int windowId, Inventory inv, FriendlyByteBuf data) {
+        BlockEntity tile = Utils.getTileFromBuf(data);
         boolean isMachine = tile instanceof TileEntityPipe;
         if (isMachine) {
             TileEntityPipe<?> machine = (TileEntityPipe<?>) tile;

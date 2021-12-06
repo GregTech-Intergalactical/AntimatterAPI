@@ -8,10 +8,10 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -70,22 +70,22 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
-    public void deserialize(CompoundNBT nbt) {
+    public void deserialize(CompoundTag nbt) {
         super.deserialize(nbt);
         this.ejectItems = nbt.getBoolean("ei");
         this.ejectFluids = nbt.getBoolean("ef");
     }
 
     @Override
-    public CompoundNBT serialize() {
-        CompoundNBT nbt = super.serialize();
+    public CompoundTag serialize() {
+        CompoundTag nbt = super.serialize();
         nbt.putBoolean("ei", this.ejectItems);
         nbt.putBoolean("ef", this.ejectFluids);
         return nbt;
     }
 
     protected void processItemOutput() {
-        TileEntity adjTile = Utils.getTile(tile.getLevel(), tile.getBlockPos().relative(this.side));
+        BlockEntity adjTile = Utils.getTile(tile.getLevel(), tile.getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
         adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
@@ -95,7 +95,7 @@ public class CoverOutput extends CoverInput {
     }
 
     protected void processFluidOutput() {
-        TileEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
+        BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
         adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
@@ -105,7 +105,7 @@ public class CoverOutput extends CoverInput {
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, PlayerEntity player) {
+    public void onGuiEvent(IGuiEvent event, Player player) {
         if (event.getFactory() == GuiEvents.ITEM_EJECT) {
             ejectItems = !ejectItems;
             processItemOutput();

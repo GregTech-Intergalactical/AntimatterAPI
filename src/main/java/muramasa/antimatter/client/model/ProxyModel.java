@@ -3,11 +3,12 @@ package muramasa.antimatter.client.model;
 import com.mojang.datafixers.util.Pair;
 import muramasa.antimatter.client.IAntimatterModel;
 import muramasa.antimatter.client.baked.ProxyBakedModel;
-import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.model.IModelConfiguration;
 
 import java.util.Collection;
@@ -22,12 +23,12 @@ public class ProxyModel implements IAntimatterModel<ProxyModel> {
     }
 
     @Override
-    public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        return new ProxyBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, MissingTextureSprite.getLocation())));
+    public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+        return new ProxyBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation())));
     }
 
     @Override
-    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
+    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> getter, Set<Pair<String, String>> errors) {
         return Collections.emptyList();
     }
 }

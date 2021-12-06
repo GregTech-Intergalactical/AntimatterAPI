@@ -10,18 +10,15 @@ import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
-import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.Item;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 import java.util.function.Function;
 
@@ -34,7 +31,8 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         Function<ResourceLocation, ItemModelBuilder> factoryOverride = loc -> new AntimatterItemModelBuilder(loc, exFileHelper);
-        ObfuscationReflectionHelper.setPrivateValue(ModelProvider.class, this, factoryOverride, "factory");
+        //TODO 1.18
+        //ObfuscationReflectionHelper.setPrivateValue(ModelProvider.class, this, factoryOverride, "factory");
     }
 
     public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator gen, String... domains) {
@@ -68,15 +66,15 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         });
     }
 
-    public ItemModelBuilder getBuilder(IItemProvider item) {
+    public ItemModelBuilder getBuilder(ItemLike item) {
         return getBuilder(item.asItem().getRegistryName().getPath());
     }
 
-    public ItemModelBuilder tex(IItemProvider item, ResourceLocation... textures) {
+    public ItemModelBuilder tex(ItemLike item, ResourceLocation... textures) {
         return tex(item, "minecraft:item/generated", textures);
     }
 
-    public ItemModelBuilder tex(IItemProvider item, String parent, ResourceLocation... textures) {
+    public ItemModelBuilder tex(ItemLike item, String parent, ResourceLocation... textures) {
         ItemModelBuilder builder = getBuilder(item);
         builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation(parent)));
         for (int i = 0; i < textures.length; i++) {
@@ -89,7 +87,7 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         return blockItem(block.asItem());
     }
 
-    public ItemModelBuilder blockItem(IItemProvider item) {
+    public ItemModelBuilder blockItem(ItemLike item) {
         return withExistingParent(item.asItem().getRegistryName().getPath(), modLoc("block/" + item.asItem().getRegistryName().getPath()));
     }
 
@@ -97,15 +95,15 @@ public class AntimatterItemModelProvider extends ItemModelProvider implements IA
         return getExistingFile(new ResourceLocation(domain, path));
     }
 
-    public AntimatterItemModelBuilder getAntimatterBuilder(IItemProvider item) {
+    public AntimatterItemModelBuilder getAntimatterBuilder(ItemLike item) {
         return (AntimatterItemModelBuilder) getBuilder(item.asItem().getRegistryName().getPath());
     }
 
-    public AntimatterItemModelBuilder modelAndTexture(IItemProvider item, String namespace, String path) {
+    public AntimatterItemModelBuilder modelAndTexture(ItemLike item, String namespace, String path) {
         return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(namespace, path)));
     }
 
-    public AntimatterItemModelBuilder modelAndTexture(IItemProvider item, String resource) {
+    public AntimatterItemModelBuilder modelAndTexture(ItemLike item, String resource) {
         return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(resource)));
     }
 }

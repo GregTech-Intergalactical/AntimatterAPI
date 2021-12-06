@@ -2,11 +2,11 @@ package muramasa.antimatter.mixin;
 
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.GrindstoneContainer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.GrindstoneMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,16 +16,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
 
-@Mixin(GrindstoneContainer.class)
-public abstract class GrindstoneContainerMixin extends Container {
+@Mixin(GrindstoneMenu.class)
+public abstract class GrindstoneContainerMixin extends AbstractContainerMenu {
     @Final
     @Shadow
-    private IInventory repairSlots;
+    private Container repairSlots;
     @Final
     @Shadow
-    private IInventory resultSlots;
+    private Container resultSlots;
 
-    protected GrindstoneContainerMixin(@Nullable ContainerType<?> type, int id) {
+    protected GrindstoneContainerMixin(@Nullable MenuType<?> type, int id) {
         super(type, id);
     }
 

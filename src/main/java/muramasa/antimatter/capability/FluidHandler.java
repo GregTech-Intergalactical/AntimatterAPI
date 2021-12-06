@@ -1,16 +1,13 @@
 package muramasa.antimatter.capability;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityBase;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -18,9 +15,6 @@ import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
-
 import java.util.Arrays;
 import java.util.EnumMap;
 
@@ -281,16 +275,16 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         return builder.toString();
     }
 
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         tanks.forEach((k, v) -> {
             if (!nbt.contains(k.toString()))
                 return;
-            v.deserializeNBT(nbt.getList(k.toString(), Constants.NBT.TAG_COMPOUND));
+            v.deserializeNBT(nbt.getList(k.toString(), Tag.TAG_COMPOUND));
         });
     }
 
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
         tanks.forEach((k, v) -> {
             nbt.put(k.name(), v.serializeNBT());
         });

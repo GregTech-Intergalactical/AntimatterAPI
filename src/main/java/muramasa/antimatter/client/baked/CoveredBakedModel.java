@@ -1,30 +1,21 @@
 package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.CoverHandler;
-import muramasa.antimatter.cover.BaseCover;
-import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class CoveredBakedModel extends AttachableBakedModel {
 
-    public CoveredBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<IBakedModel[]> bakedTuple) {
+    public CoveredBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<BakedModel[]> bakedTuple) {
         super(particle, bakedTuple);
     }
 

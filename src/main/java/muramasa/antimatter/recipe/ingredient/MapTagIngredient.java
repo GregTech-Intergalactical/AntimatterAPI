@@ -1,9 +1,10 @@
 package muramasa.antimatter.recipe.ingredient;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITagCollectionSupplier;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagContainer;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -34,7 +35,7 @@ public class MapTagIngredient extends AbstractMapIngredient {
             return ((MapTagIngredient) o).loc.equals(loc);
         }
         if (o instanceof MapItemIngredient) {
-            return ((MapItemIngredient) o).stack.getItem().getTags().contains(loc);
+            return ((MapItemIngredient) o).stack.getTags().contains(loc);
         }
         if (o instanceof MapFluidIngredient) {
             return ((MapFluidIngredient) o).stack.getFluid().getTags().contains(loc);
@@ -44,15 +45,15 @@ public class MapTagIngredient extends AbstractMapIngredient {
 
     private static final boolean ENABLE_TAGS_LOOKUP = true;
 
-    public static Optional<ResourceLocation> findCommonTag(Ingredient ing, ITagCollectionSupplier tags) {
+    public static Optional<ResourceLocation> findCommonTag(Ingredient ing, TagContainer tags) {
         if (!ENABLE_TAGS_LOOKUP || ing.getItems().length < 2) return Optional.empty();
-        Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getItems()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(tags.getItems().getMatchingTags(t.getItem()))).reduce((s, b) -> {
+        Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getItems()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(tags.getOrEmpty(Registry.ITEM_REGISTRY).getMatchingTags(t.getItem()))).reduce((s, b) -> {
             s.retainAll(b);
             return s;
         });
         return l.map(t -> {
             for (ResourceLocation rl : l.get()) {
-                if (tags.getItems().getTagOrEmpty(rl).getValues().size() == ing.getItems().length) {
+                if (tags.getOrEmpty(Registry.ITEM_REGISTRY).getAllTags().size() == ing.getItems().length) {
                     return rl;
                 }
             }

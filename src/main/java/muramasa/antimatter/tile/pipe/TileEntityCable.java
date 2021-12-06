@@ -1,12 +1,9 @@
 package muramasa.antimatter.tile.pipe;
 
-import java.util.Optional;
-
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
@@ -14,10 +11,11 @@ import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tesseract.EnergyTileWrapper;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -34,8 +32,8 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     private long holder;
 
-    public TileEntityCable(T type, boolean covered) {
-        super(type, covered);
+    public TileEntityCable(T type,BlockPos pos, BlockState state, boolean covered) {
+        super(type, pos, state, covered);
         pipeCapHolder.set(() -> this);
     }
 
@@ -57,7 +55,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     public INodeGetter<IGTNode> getter() {
         return (pos, dir, cb) -> {
-            TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
+            BlockEntity tile = level.getBlockEntity(BlockPos.of(pos));
             LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir);
             if (capability.isPresent()) {
                 if (cb != null) capability.addListener(t -> cb.run());
@@ -125,7 +123,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public boolean validate(Direction dir) {
         if (!super.validate(dir)) return false;
-        TileEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
+        BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
         return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite()).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
     }
@@ -153,7 +151,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
-    public int drawInfo(InfoRenderWidget.TesseractGTWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+    public int drawInfo(InfoRenderWidget.TesseractGTWidget instance, PoseStack stack, Font renderer, int left, int top) {
         renderer.draw(stack, "Amp average: " + instance.ampAverage, left, top, 16448255);
        // renderer.draw(stack, "Cable average: " + instance.cableAverage, left, top + 8, 16448255);
         renderer.draw(stack, "Average extracted: " + ((double) instance.voltAverage) / 20, left, top + 16, 16448255);
@@ -165,8 +163,8 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     public static class TileEntityCoveredCable<T extends Cable<T>> extends TileEntityCable<T> implements ITickablePipe {
 
-        public TileEntityCoveredCable(T type) {
-            super(type, true);
+        public TileEntityCoveredCable(T type, BlockPos pos, BlockState state) {
+            super(type, pos, state,true);
         }
 
         @Override

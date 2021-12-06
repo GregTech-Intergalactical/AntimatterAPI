@@ -1,11 +1,11 @@
 package muramasa.antimatter.client.baked;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
@@ -17,11 +17,11 @@ import java.util.Random;
 
 public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
 
-    protected final Map<String, IBakedModel> models;
+    protected final Map<String, BakedModel> models;
     protected BakedQuad[][] CACHE = new BakedQuad[7][];
     protected BakedQuad[][] CACHE_ITEM = new BakedQuad[7][];
 
-    public GroupedBakedModel(TextureAtlasSprite p, Map<String, IBakedModel> models) {
+    public GroupedBakedModel(TextureAtlasSprite p, Map<String, BakedModel> models) {
         super(p);
         this.models = models;
     }
@@ -37,11 +37,11 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
         return Arrays.asList(arr);
     }
 
-    public IBakedModel getPart(String name) {
+    public BakedModel getPart(String name) {
         return models.get(name);
     }
 
-    public Iterable<Map.Entry<String, IBakedModel>> customParts() {
+    public Iterable<Map.Entry<String, BakedModel>> customParts() {
         return () -> this.models.entrySet().stream().filter(t -> !t.getKey().equals("")).iterator();
     }
 
@@ -77,7 +77,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.EMPTY;
+    public ItemOverrides getOverrides() {
+        return ItemOverrides.EMPTY;
     }
 }

@@ -8,11 +8,11 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 import java.util.function.BiConsumer;

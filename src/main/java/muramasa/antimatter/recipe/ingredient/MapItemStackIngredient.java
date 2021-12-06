@@ -2,15 +2,15 @@ package muramasa.antimatter.recipe.ingredient;
 
 import com.google.common.collect.ImmutableSet;
 import muramasa.antimatter.Ref;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Set;
 
 public class MapItemStackIngredient extends AbstractMapIngredient {
 
     public final ItemStack stack;
-    private final CompoundNBT tag;
+    private final CompoundTag tag;
 
     public MapItemStackIngredient(ItemStack stack, boolean insideMap) {
         super(insideMap);
@@ -34,7 +34,7 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
         return false;
     }
 
-    private static boolean compareStacks(ItemStack a, ItemStack b, CompoundNBT aTag, CompoundNBT bTag) {
+    private static boolean compareStacks(ItemStack a, ItemStack b, CompoundTag aTag, CompoundTag bTag) {
         if (a.getItem() != b.getItem()) return false;
         if (aTag.isEmpty() != bTag.isEmpty()) return false;
         if (!aTag.equals(bTag)) return false;
@@ -49,9 +49,9 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
      * @param nbt Compound to filter.
      * @return copied, filtered compound.
      */
-    protected static CompoundNBT filterTags(CompoundNBT nbt) {
-        if (nbt == null) return new CompoundNBT();
-        CompoundNBT newNbt = nbt.copy();
+    protected static CompoundTag filterTags(CompoundTag nbt) {
+        if (nbt == null) return new CompoundTag();
+        CompoundTag newNbt = nbt.copy();
         CUSTOM_TAGS.forEach(newNbt::remove);
         return newNbt;
     }
@@ -63,7 +63,7 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
 
         tempHash = 31 * tempHash + stack.getItem().getRegistryName().hashCode();
         if (nbt && stack.getTag() != null) {
-            CompoundNBT newNbt = filterTags(stack.getTag());
+            CompoundTag newNbt = filterTags(stack.getTag());
             if (!newNbt.isEmpty()) tempHash = 31 * tempHash + newNbt.hashCode();
         }
         return (int) (tempHash ^ (tempHash >>> 32));

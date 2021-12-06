@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -31,7 +31,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         renderer.drawInfo((T) this, matrixStack, Minecraft.getInstance().font, realX(), realY());
     }
 

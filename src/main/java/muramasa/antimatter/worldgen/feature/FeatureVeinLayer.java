@@ -5,22 +5,19 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.object.WorldGenVeinLayer;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
-import java.util.Random;
 
-public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
+public class FeatureVeinLayer extends AntimatterFeature<NoneFeatureConfiguration> {
 
     public FeatureVeinLayer() {
-        super(NoFeatureConfig.CODEC, WorldGenVeinLayer.class);
+        super(NoneFeatureConfiguration.CODEC, WorldGenVeinLayer.class);
     }
 
     @Override
@@ -41,11 +38,11 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
     }
 
     @Override
-    public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
-        int chunkX = pos.getX() >> 4;
-        int chunkZ = pos.getZ() >> 4;
+    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> placer) {
+        int chunkX = placer.origin().getX() >> 4;
+        int chunkZ = placer.origin().getZ() >> 4;
         for (Tuple<Integer, Integer> seed : getVeinSeeds(chunkX, chunkZ)) {
-            WorldGenVeinLayer.generate(world, chunkX, chunkZ, seed.getA(), seed.getB());
+            WorldGenVeinLayer.generate(placer.level(), chunkX, chunkZ, seed.getA(), seed.getB());
         }
         return true;
     }
@@ -70,6 +67,6 @@ public class FeatureVeinLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.VEIN_LAYER);
+        event.addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.VEIN_LAYER);
     }
 }

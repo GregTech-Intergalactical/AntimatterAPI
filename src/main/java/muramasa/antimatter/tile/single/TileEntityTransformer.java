@@ -5,15 +5,15 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import tesseract.api.capability.TesseractGTCapability;
 
 import java.util.List;
@@ -26,12 +26,12 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
     protected int voltage, amperage;
     protected IntToLongFunction capFunc;
 
-    public TileEntityTransformer(Machine<?> type, int amps) {
-        this(type, amps, (v) -> (512L + v * 2L));
+    public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps) {
+        this(type, pos, state, amps, (v) -> (512L + v * 2L));
     }
 
-    public TileEntityTransformer(Machine<?> type, int amps, IntToLongFunction capFunc) {
-        super(type);
+    public TileEntityTransformer(Machine<?> type, BlockPos pos, BlockState state, int amps, IntToLongFunction capFunc) {
+        super(type, pos, state);
         this.amperage = amps;
         this.capFunc = capFunc;
         energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, capFunc.applyAsLong(getMachineTier().getVoltage()), getMachineTier().getVoltage() * 4, getMachineTier().getVoltage(), amperage, amperage * 4) {
@@ -71,8 +71,8 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
     }
 
     @Override
-    public ActionResultType onInteract(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit, AntimatterToolType type) {
-        if (type == SOFT_HAMMER && hand == Hand.MAIN_HAND) {
+    public InteractionResult onInteract(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, AntimatterToolType type) {
+        if (type == SOFT_HAMMER && hand == InteractionHand.MAIN_HAND) {
             toggleMachine();
             energyHandler.ifPresent(h -> {
                 long temp = h.getOutputAmperage();
@@ -82,9 +82,9 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
                 h.setOutputVoltage(h.getInputVoltage());
                 h.setInputVoltage(temp);
                 this.refreshCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
-                player.sendMessage(new StringTextComponent((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"), player.getUUID());
+                player.sendMessage(new TextComponent((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"), player.getUUID());
             });
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         return super.onInteract(state, world, pos, player, hand, hit, type);
     }

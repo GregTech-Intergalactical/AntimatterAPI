@@ -5,7 +5,9 @@ import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.Machine;
-import net.minecraft.util.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 
@@ -13,8 +15,8 @@ import java.util.List;
 
 public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends TileEntityMachine<T> {
 
-    public TileEntityStorage(Machine<?> type) {
-        super(type);
+    public TileEntityStorage(Machine<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         itemHandler.set(() -> new MachineItemHandler<T>((T) this) {
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
@@ -62,15 +64,6 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
                 }
             });
         });
-    }
-
-    @Override
-    public void onServerUpdate() {
-        //  if (checkAmps) {
-        //      calculateAmperage();
-        //      checkAmps = false;
-        //  }
-        super.onServerUpdate();
     }
 
     @Override

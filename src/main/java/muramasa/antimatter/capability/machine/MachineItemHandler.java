@@ -14,9 +14,9 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.GUI;
 
-public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMachineHandler, INBTSerializable<CompoundNBT>, Dispatch.Sided<IItemHandler> {
+public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMachineHandler, INBTSerializable<CompoundTag>, Dispatch.Sided<IItemHandler> {
 
     protected final T tile;
     protected final Object2ObjectMap<SlotType<?>, TrackedItemHandler<T>> inventories = new Object2ObjectOpenHashMap<>(); // Use SlotType instead of MachineFlag?
@@ -66,14 +66,14 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
         this.inventories.forEach((f, i) -> nbt.put(f.getId(), i.serializeNBT()));
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         this.inventories.forEach((f, i) -> {
             if (!nbt.contains(f.getId())) return;
             i.deserializeNBT(nbt.getCompound(f.getId()));

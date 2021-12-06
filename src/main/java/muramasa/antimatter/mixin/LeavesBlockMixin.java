@@ -2,16 +2,16 @@ package muramasa.antimatter.mixin;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.tool.IAntimatterTool;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LeavesBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTables;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -27,15 +27,15 @@ public abstract class LeavesBlockMixin extends Block {
     @Override
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
         List<ItemStack> list = super.getDrops(state, builder);
-        ItemStack stack = builder.getOptionalParameter(LootParameters.TOOL);
+        ItemStack stack = builder.getOptionalParameter(LootContextParams.TOOL);
         if (stack != null && !stack.isEmpty() && stack.getItem() instanceof IAntimatterTool) {
             IAntimatterTool tool = (IAntimatterTool) stack.getItem();
             if (tool.getAntimatterToolType() == Data.BRANCH_CUTTER) {
                 ResourceLocation resourcelocation = this.getLootTable();
-                if (resourcelocation == LootTables.EMPTY) {
+                if (resourcelocation == BuiltInLootTables.EMPTY) {
                     return Collections.emptyList();
                 }
-                ServerWorld serverworld = builder.getLevel();
+                ServerLevel serverworld = builder.getLevel();
                 LootTable loottable = serverworld.getServer().getLootTables().get(resourcelocation);
                 ItemStack sapling = ItemStack.EMPTY;
                 if (ForgeRegistries.BLOCKS.containsKey(new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling")))) {

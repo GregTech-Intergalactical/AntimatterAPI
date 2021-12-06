@@ -1,6 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
@@ -13,8 +13,10 @@ import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
@@ -25,8 +27,8 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     protected long EUt;
 
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
-    public TileEntityMultiMachine(Machine<?> type) {
-        super(type);
+    public TileEntityMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         if (type.has(ITEM) || type.has(CELL)) {
             itemHandler.set(() -> new MultiMachineItemHandler<>((T) this));
         }
@@ -70,7 +72,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, PlayerEntity playerEntity) {
+    public void onGuiEvent(IGuiEvent event, Player playerEntity) {
         super.onGuiEvent(event, playerEntity);
         /*if (event == GuiEvent.MULTI_ACTIVATE) {
             checkStructure();
@@ -217,7 +219,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     }
 
     @Override
-    public int drawInfo(InfoRenderWidget.MultiRenderWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+    public int drawInfo(InfoRenderWidget.MultiRenderWidget instance, PoseStack stack, Font renderer, int left, int top) {
         renderer.draw(stack, this.getDisplayName().getString(), left, top, 16448255);
         if (getMachineState() != MachineState.ACTIVE) {
             renderer.draw(stack, "Inactive.", left, top + 8, 16448255);

@@ -13,16 +13,15 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 
@@ -34,27 +33,26 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class AntimatterToolType implements ISharedAntimatterObject {
 
     private final String domain, id;
-    private final ToolType TOOL_TYPE;
-    private final Set<String> TOOL_TYPES = new ObjectOpenHashSet<>();
+    private final Tag<Block> TOOL_TYPE;
+    private final Set<Tag<Block>> TOOL_TYPES = new ObjectOpenHashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
-    private final Set<net.minecraft.block.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
+    private final Set<net.minecraft.world.level.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
     private ImmutableMap<String, Function<ItemStack, ItemStack>> brokenItems = ImmutableMap.of();
-    private final List<ITextComponent> tooltip = new ObjectArrayList<>();
+    private final List<Component> tooltip = new ObjectArrayList<>();
     private boolean powered, repairable, blockBreakability, hasContainer;
     private long baseMaxEnergy;
     private int[] energyTiers;
     private final int useDurability, attackDurability, craftingDurability;
     private int baseQuality, overlayLayers;
     private final float baseAttackDamage, baseAttackSpeed;
-    private ItemGroup itemGroup;
-    private ITag.INamedTag<Item> tag, forgeTag; // Set?
-    private UseAction useAction;
+    private CreativeModeTab itemGroup;
+    private Tag.Named<Item> tag, forgeTag; // Set?
+    private UseAnim useAction;
     private Class<? extends IAntimatterTool> toolClass;
     @Nullable
     private SoundEvent useSound;
@@ -95,10 +93,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.itemGroup = Ref.TAB_TOOLS;
         this.tag = TagUtils.getItemTag(new ResourceLocation(Ref.ID, id));
         this.forgeTag = TagUtils.getForgeItemTag("tools/".concat(id));
-        this.useAction = UseAction.NONE;
+        this.useAction = UseAnim.NONE;
         this.toolClass = MaterialTool.class;
-        this.TOOL_TYPE = ToolType.get(id);
-        this.TOOL_TYPES.add(id);
+        this.TOOL_TYPE = TagUtils.itemToBlockTag(this.tag);
+        this.TOOL_TYPES.add(this.TOOL_TYPE);
         setBrokenItems(ImmutableMap.of(id, (i) -> ItemStack.EMPTY));
         AntimatterAPI.register(AntimatterToolType.class, this);
     }
@@ -174,13 +172,13 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         if (domain.isEmpty()) Utils.onInvalidData("An AntimatterToolType was instantiated with an empty domain name!");
         Item.Properties properties = new Item.Properties().tab(itemGroup);
         if (!repairable) properties.setNoRepair();
-        // if (!TOOL_TYPES.isEmpty()) TOOL_TYPES.forEach(t -> properties.addToolType(t, tier.getHarvestLevel()));
+        // if (!TOOL_TYPES.isEmpty()) TOOL_TYPES.forEach(t -> properties.addTag<Block>(t, tier.getHarvestLevel()));
         return properties;
     }
 
     /* SETTERS */
 
-    public AntimatterToolType setToolTip(ITextComponent... tooltip) {
+    public AntimatterToolType setToolTip(Component... tooltip) {
         this.tooltip.addAll(Arrays.asList(tooltip));
         return this;
     }
@@ -190,9 +188,9 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType setTag(AntimatterToolType toolType) {
-        this.tag = toolType.getTag();
-        this.forgeTag = toolType.getForgeTag();
+    public AntimatterToolType setTag(AntimatterToolType tag) {
+        this.tag = tag.getTag();
+        this.forgeTag = tag.getForgeTag();
         return this;
     }
 
@@ -214,10 +212,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType addToolTypes(String... types) {
+    public AntimatterToolType addTags(String... types) {
         if (types.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
-        this.TOOL_TYPES.addAll(Arrays.asList(types));
+        Arrays.stream(types).map(t -> TagUtils.getForgeBlockTag(t)).forEach(t -> this.TOOL_TYPES.add(t));
         return this;
     }
 
@@ -228,7 +226,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType addEffectiveMaterials(net.minecraft.block.material.Material... materials) {
+    public AntimatterToolType addEffectiveMaterials(net.minecraft.world.level.material.Material... materials) {
         if (materials.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no effective materials even when it was explicitly called!");
         this.EFFECTIVE_MATERIALS.addAll(Arrays.asList(materials));
@@ -292,12 +290,12 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
-    public AntimatterToolType setItemGroup(ItemGroup itemGroup) {
+    public AntimatterToolType setItemGroup(CreativeModeTab itemGroup) {
         this.itemGroup = itemGroup;
         return this;
     }
 
-    public AntimatterToolType setUseAction(UseAction useAction) {
+    public AntimatterToolType setUseAction(UseAnim useAction) {
         this.useAction = useAction;
         return this;
     }
@@ -329,20 +327,15 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return id;
     }
 
-    public ToolType getToolType() {
-        return TOOL_TYPE;
-    }
-
-    @Deprecated // Scheduled for deletion
-    public Set<String> getToolTypes() {
+    public Set<Tag<Block>> getActualTags() {
         return TOOL_TYPES;
     }
 
-    public Set<ToolType> getActualToolTypes() {
-        return TOOL_TYPES.stream().map(ToolType::get).collect(Collectors.toSet());
+    public Tag<Block> getToolType() {
+        return TOOL_TYPE;
     }
 
-    public List<ITextComponent> getTooltip() {
+    public List<Component> getTooltip() {
         return tooltip;
     }
 
@@ -398,19 +391,19 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return overlayLayers;
     }
 
-    public ItemGroup getItemGroup() {
+    public CreativeModeTab getItemGroup() {
         return itemGroup;
     }
 
-    public ITag.INamedTag<Item> getTag() {
+    public Tag.Named<Item> getTag() {
         return tag;
     }
 
-    public ITag.INamedTag<Item> getForgeTag() {
+    public Tag.Named<Item> getForgeTag() {
         return forgeTag;
     }
 
-    public UseAction getUseAction() {
+    public UseAnim getUseAction() {
         return useAction;
     }
 
@@ -433,7 +426,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return EFFECTIVE_BLOCKS;
     }
 
-    public Set<net.minecraft.block.material.Material> getEffectiveMaterials() {
+    public Set<net.minecraft.world.level.material.Material> getEffectiveMaterials() {
         return EFFECTIVE_MATERIALS;
     }
 

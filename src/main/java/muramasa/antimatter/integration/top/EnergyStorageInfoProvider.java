@@ -6,7 +6,7 @@
 //import muramasa.antimatter.capability.IEnergyHandler;
 //import muramasa.antimatter.tileentities.TileEntityRecipeMachine;
 //import muramasa.antimatter.util.Utils;
-//import net.minecraft.block.BlockState;
+//import net.minecraft.world.level.block.Blockstate;
 //import net.minecraft.entity.player.PlayerEntity;
 //import net.minecraft.tileentity.TileEntity;
 //import net.minecraft.world.World;

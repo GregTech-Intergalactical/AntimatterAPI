@@ -3,20 +3,22 @@ package muramasa.antimatter.tile;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEntity {
+public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockEntity {
 
     protected final Dispatch dispatch;
 
-    public TileEntityBase(TileEntityType<?> type) {
-        super(type);
+    public TileEntityBase(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         dispatch = new Dispatch();
     }
 
@@ -58,15 +60,33 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends TileEn
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.worldPosition, 3, this.getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        handleUpdateTag(getBlockState(), pkt.getTag());
+        handleUpdateTag(pkt.getTag());
         sidedSync(true);
+    }
+
+    public static class BlockEntityGetter<T extends BlockEntity, U> implements BlockEntityType.BlockEntitySupplier<T> {
+
+        private final U value;
+        private final BlockEntitySupplier<T, U> supplier;
+        public BlockEntityGetter(BlockEntitySupplier<T, U> supp, U value) {
+            this.value = value;
+            this.supplier = supp;
+        }
+        @Override
+        public T create(BlockPos p_155268_, BlockState p_155269_) {
+            return this.supplier.create(value, p_155268_, p_155269_);
+        }
+    }
+
+    public interface BlockEntitySupplier<T extends BlockEntity,U> {
+        T create(U obj, BlockPos pos, BlockState state);
     }
 
     //TODO: implications of this.

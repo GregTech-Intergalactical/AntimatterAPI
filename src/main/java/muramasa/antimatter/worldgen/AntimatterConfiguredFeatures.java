@@ -1,22 +1,25 @@
 package muramasa.antimatter.worldgen;
 
 import muramasa.antimatter.Ref;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.core.Registry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+
+import java.util.Collections;
 
 public class AntimatterConfiguredFeatures {
 
-    public static final ConfiguredFeature<?, ?> VEIN_LAYER = register("stone_layer", AntimatterWorldGenerator.VEIN_LAYER.configured(NoFeatureConfig.NONE));
-    public static final ConfiguredFeature<?, ?> ORE = register("stone_layer", AntimatterWorldGenerator.ORE.configured(NoFeatureConfig.NONE));
-    public static final ConfiguredFeature<?, ?> ORE_SMALL = register("stone_layer", AntimatterWorldGenerator.ORE_SMALL.configured(NoFeatureConfig.NONE));
-    public static final ConfiguredFeature<?, ?> STONE_LAYER = register("stone_layer", AntimatterWorldGenerator.STONE_LAYER.configured(NoFeatureConfig.NONE));
-    public static final ConfiguredFeature<?, ?> SURFACE_ROCK = register("stone_layer", AntimatterWorldGenerator.SURFACE_ROCK.configured(NoFeatureConfig.NONE));
+    public static final PlacedFeature VEIN_LAYER = register("stone_layer", AntimatterWorldGenerator.VEIN_LAYER.configured(NoneFeatureConfiguration.NONE));
+    public static final PlacedFeature ORE = register("stone_layer", AntimatterWorldGenerator.ORE.configured(NoneFeatureConfiguration.NONE));
+    public static final PlacedFeature ORE_SMALL = register("stone_layer", AntimatterWorldGenerator.ORE_SMALL.configured(NoneFeatureConfiguration.NONE));
+    public static final PlacedFeature STONE_LAYER = register("stone_layer", AntimatterWorldGenerator.STONE_LAYER.configured(NoneFeatureConfiguration.NONE));
+    public static final PlacedFeature SURFACE_ROCK = register("stone_layer", AntimatterWorldGenerator.SURFACE_ROCK.configured(NoneFeatureConfiguration.NONE));
 
-    public static ConfiguredFeature<?, ?> register(String id, ConfiguredFeature<?, ?> feature) {
-        return Registry.register(WorldGenRegistries.CONFIGURED_FEATURE, new ResourceLocation(Ref.ID, id), feature);
+    public static PlacedFeature register(String id, ConfiguredFeature<?, ?> feature) {
+        return Registry.register(BuiltinRegistries.PLACED_FEATURE, new ResourceLocation(Ref.ID, id), new PlacedFeature(() -> feature, Collections.emptyList()));
     }
 
     public static void init() {

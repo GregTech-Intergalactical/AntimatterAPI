@@ -1,7 +1,7 @@
 package muramasa.antimatter.mixin;
 
 import muramasa.antimatter.Ref;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.GameData;
 import org.spongepowered.asm.mixin.Mixin;

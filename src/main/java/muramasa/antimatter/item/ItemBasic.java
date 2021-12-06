@@ -10,8 +10,8 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.Set;

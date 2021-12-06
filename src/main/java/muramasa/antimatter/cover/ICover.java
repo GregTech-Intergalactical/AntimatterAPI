@@ -15,24 +15,24 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedContainerProvider, IGuiHandler {
+public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuProvider, IGuiHandler {
     ResourceLocation PIPE_COVER_MODEL = new ResourceLocation(Ref.ID, "block/cover/cover_pipe");
 
     default void onPlace() {
@@ -48,11 +48,11 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
     }
 
     @Nonnull
-    default ITextComponent getDisplayName() {
-        return new StringTextComponent(Utils.underscoreToUpperCamel(this.getId()));
+    default Component getDisplayName() {
+        return new TextComponent(Utils.underscoreToUpperCamel(this.getId()));
     }
 
-    default void onGuiEvent(IGuiEvent event, PlayerEntity player) {
+    default void onGuiEvent(IGuiEvent event, Player player) {
         // NOOP
     }
 
@@ -107,14 +107,14 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         return false;
     }
 
-    default boolean openGui(PlayerEntity player, Direction side) {
+    default boolean openGui(Player player, Direction side) {
         if (!hasGui())
             return false;
-        NetworkHooks.openGui((ServerPlayerEntity) player, this, packetBuffer -> {
+        NetworkHooks.openGui((ServerPlayer) player, this, packetBuffer -> {
             packetBuffer.writeBlockPos(this.source().getTile().getBlockPos());
             packetBuffer.writeInt(side.get3DDataValue());
         });
-        player.playNotifySound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 2.0f);
+        player.playNotifySound(Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 2.0f);
         return true;
     }
 
@@ -130,7 +130,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
      * Fires once per Side. Return defines whether or not to consume the
      * interaction.
      **/
-    default boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+    default boolean onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type) {
         // Do not consume behaviour per default.
         return false;
     }
@@ -139,9 +139,9 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         return true;
     }
 
-    void deserialize(CompoundNBT nbt);
+    void deserialize(CompoundTag nbt);
 
-    CompoundNBT serialize();
+    CompoundTag serialize();
 
     ItemStack getItem();
 
@@ -211,13 +211,13 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         }
 
         @Override
-        public void deserialize(CompoundNBT nbt) {
+        public void deserialize(CompoundTag nbt) {
 
         }
 
         @Override
-        public CompoundNBT serialize() {
-            return new CompoundNBT();
+        public CompoundTag serialize() {
+            return new CompoundTag();
         }
 
         @Override
@@ -267,7 +267,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
 
         @Nullable
         @Override
-        public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+        public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_, Player p_createMenu_3_) {
             return null;
         }
     };

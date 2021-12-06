@@ -1,34 +1,37 @@
 package muramasa.antimatter.client.scene;
 
+import com.mojang.math.Vector3f;
 import muramasa.antimatter.mixin.DimensionTypeAccessor;
 import muramasa.antimatter.structure.BlockInfo;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.tags.ITagCollectionSupplier;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.ITickList;
-import net.minecraft.world.LightType;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeRegistry;
-import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.worldgen.biome.Biomes;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.TagContainer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.ColorResolver;
-import net.minecraft.world.lighting.WorldLightManager;
-import net.minecraft.world.storage.MapData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkSource;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.entity.LevelEntityGetter;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.lighting.LevelLightEngine;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.ticks.LevelTickAccess;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -43,14 +46,14 @@ import java.util.function.Predicate;
  * @Date: 2021/08/25
  * @Description: TrackedDummyWorld. Used to build a Fake World.
  */
-public class TrackedDummyWorld extends World {
+public class TrackedDummyWorld extends Level {
     private static final DimensionType DIMENSION_TYPE;
     static {
         DIMENSION_TYPE = DimensionTypeAccessor.getDEFAULT_OVERWORLD();
     }
 
     private Predicate<BlockPos> renderFilter;
-    private final World proxyWorld;
+    private final Level proxyWorld;
     private final Map<BlockPos, BlockInfo> renderedBlocks = new HashMap<>();
 
     private final Vector3f minPos = new Vector3f(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
@@ -64,7 +67,7 @@ public class TrackedDummyWorld extends World {
         this(null);
     }
 
-    public TrackedDummyWorld(World world){
+    public TrackedDummyWorld(Level world){
         super(null, null, DIMENSION_TYPE, null,true, false, 0);
         proxyWorld = world;
     }
@@ -81,7 +84,7 @@ public class TrackedDummyWorld extends World {
         if (blockInfo.getBlockState().getBlock() == Blocks.AIR)
             return;
         if (blockInfo.getTileEntity() != null) {
-            blockInfo.getTileEntity().setLevelAndPosition(this, pos);
+            blockInfo.getTileEntity().setLevel(this);
         }
         this.renderedBlocks.put(pos, blockInfo);
         minPos.setX(Math.min(minPos.x(), pos.getX()));
@@ -93,10 +96,10 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public void setBlockEntity(@Nonnull BlockPos pos, TileEntity tileEntity) {
-        renderedBlocks.put(pos, new BlockInfo(renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getBlockState(), tileEntity));
-    }
+    public void setBlockEntity(BlockEntity entity) {
+        renderedBlocks.put(entity.getBlockPos(), new BlockInfo(renderedBlocks.getOrDefault(entity.getBlockPos(), BlockInfo.EMPTY).getBlockState(), entity));
 
+    }
     @Override
     public boolean setBlock(@Nonnull BlockPos pos, BlockState state, int a, int b) {
         renderedBlocks.put(pos, new BlockInfo(state, renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getTileEntity()));
@@ -104,7 +107,7 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public TileEntity getBlockEntity(@Nonnull BlockPos pos) {
+    public BlockEntity getBlockEntity(@Nonnull BlockPos pos) {
         if (renderFilter != null && !renderFilter.test(pos))
             return null;
         return proxyWorld != null ? proxyWorld.getBlockEntity(pos) : renderedBlocks.getOrDefault(pos, BlockInfo.EMPTY).getTileEntity();
@@ -157,18 +160,18 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public WorldLightManager getLightEngine() {
+    public LevelLightEngine getLightEngine() {
         return null;
     }
 
     @Override
     public int getBlockTint(@Nonnull BlockPos blockPos, @Nonnull ColorResolver colorResolver) {
-        return colorResolver.getColor(BiomeRegistry.PLAINS, blockPos.getX(), blockPos.getY());
+        return colorResolver.getColor(Biomes.PLAINS, blockPos.getX(), blockPos.getY());
     }
 
     @Override
-    public int getBrightness(@Nonnull LightType lightType, @Nonnull BlockPos pos) {
-        return lightType == LightType.SKY ? 15 : 0;
+    public int getBrightness(@Nonnull LightLayer lightType, @Nonnull BlockPos pos) {
+        return lightType == LightLayer.SKY ? 15 : 0;
     }
 
     @Override
@@ -198,12 +201,12 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public MapData getMapData(String mapName) {
+    public MapItemSavedData getMapData(String mapName) {
         return null;
     }
 
     @Override
-    public void setMapData(MapData mapDataIn) {
+    public void setMapData(String p_151533_, MapItemSavedData p_151534_) {
 
     }
 
@@ -229,47 +232,62 @@ public class TrackedDummyWorld extends World {
     }
 
     @Override
-    public ITagCollectionSupplier getTagManager() {
+    public TagContainer getTagManager() {
         return null;
     }
 
     @Override
-    public void playSound(PlayerEntity player, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch) {
-
-    }
-
-    @Override
-    public void playSound(PlayerEntity playerIn, Entity entityIn, SoundEvent eventIn, SoundCategory categoryIn, float volume, float pitch) {
-
-    }
-
-    @Override
-    public ITickList<Block> getBlockTicks() {
+    protected LevelEntityGetter<Entity> getEntities() {
         return null;
     }
 
     @Override
-    public ITickList<Fluid> getLiquidTicks() {
+    public void playSound(Player player, double x, double y, double z, SoundEvent soundIn, SoundSource category, float volume, float pitch) {
+
+    }
+
+    @Override
+    public void playSound(Player playerIn, Entity entityIn, SoundEvent eventIn, SoundSource categoryIn, float volume, float pitch) {
+
+    }
+
+    @Override
+    public String gatherChunkSourceStats() {
         return null;
     }
 
     @Override
-    public AbstractChunkProvider getChunkSource() {
+    public LevelTickAccess<Block> getBlockTicks() {
         return null;
     }
 
     @Override
-    public void levelEvent(PlayerEntity playerEntity, int i, BlockPos blockPos, int i1) {
-
-    }
-
-    @Override
-    public DynamicRegistries registryAccess() {
+    public LevelTickAccess<Fluid> getFluidTicks() {
         return null;
     }
 
     @Override
-    public List<? extends PlayerEntity> players() {
+    public ChunkSource getChunkSource() {
+        return null;
+    }
+
+    @Override
+    public void levelEvent(Player playerEntity, int i, BlockPos blockPos, int i1) {
+
+    }
+
+    @Override
+    public void gameEvent(@Nullable Entity p_151549_, GameEvent p_151550_, BlockPos p_151551_) {
+
+    }
+
+    @Override
+    public RegistryAccess registryAccess() {
+        return null;
+    }
+
+    @Override
+    public List<? extends Player> players() {
         return null;
     }
 }

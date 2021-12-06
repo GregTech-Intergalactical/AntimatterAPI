@@ -4,15 +4,15 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.client.baked.AntimatterBakedModel;
 import muramasa.antimatter.tile.TileEntityBase;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -25,11 +25,11 @@ import java.util.stream.Collectors;
 public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
 
     //protected IBakedModel bakedDefault;
-    protected Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs;
+    protected Int2ObjectOpenHashMap<BakedModel[]> bakedConfigs;
     protected boolean hasConfig;
-    protected BlockPos.Mutable mutablePos = new BlockPos.Mutable();
+    protected BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos();
 
-    public DynamicBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<IBakedModel[]> map) {
+    public DynamicBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<BakedModel[]> map) {
         super(particle);
         this.bakedConfigs = map;
         this.hasConfig = bakedConfigs.size() > 0;
@@ -37,14 +37,14 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
+    public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
         if (!hasConfig || !(state.getBlock() instanceof BlockDynamic)) return data;
         if (data instanceof EmptyModelData) {
             data = new ModelDataMap.Builder().build();
         }
         mutablePos.set(pos);
         data.setData(AntimatterProperties.DYNAMIC_CONFIG, ((BlockDynamic) state.getBlock()).getConfig(state, world, mutablePos, pos));
-        TileEntity tile = world.getBlockEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile instanceof TileEntityBase)
             data.setData(AntimatterProperties.TILE_PROPERTY, (TileEntityBase) tile);
         return data;
@@ -66,7 +66,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
 
     @Override
     public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        IBakedModel[] model = this.bakedConfigs.get(0);
+        BakedModel[] model = this.bakedConfigs.get(0);
         if (model != null) {
             return Arrays.stream(model).flatMap(t -> t.getQuads(null, side, rand, data).stream()).collect(Collectors.toList());
         }
@@ -94,7 +94,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.EMPTY;
+    public ItemOverrides getOverrides() {
+        return ItemOverrides.EMPTY;
     }
 }

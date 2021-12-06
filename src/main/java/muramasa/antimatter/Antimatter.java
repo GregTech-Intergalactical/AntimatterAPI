@@ -1,5 +1,6 @@
 package muramasa.antimatter;
 
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
@@ -67,6 +68,7 @@ public class Antimatter extends AntimatterMod {
 
         MinecraftForge.EVENT_BUS.addListener(this::addCraftingLoaders);
         MinecraftForge.EVENT_BUS.addListener(this::providers);
+        MinecraftForge.EVENT_BUS.addListener(AntimatterCaps::register);
 
         AntimatterDynamics.addProvider(Ref.ID,
                 g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));

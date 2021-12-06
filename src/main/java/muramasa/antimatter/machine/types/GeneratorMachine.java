@@ -9,7 +9,7 @@ public class GeneratorMachine extends Machine<GeneratorMachine> {
     public GeneratorMachine(String domain, String id) {
         super(domain, id);
         addFlags(BASIC, ENERGY, COVERABLE, GENERATOR);
-        setTile(() -> new TileEntityGenerator<>(this));
+        setTile(TileEntityGenerator::new);
         setGUI(Data.BASIC_MENU_HANDLER);
         noCovers();
         custom();

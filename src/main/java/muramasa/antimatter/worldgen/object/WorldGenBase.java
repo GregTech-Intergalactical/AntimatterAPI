@@ -3,10 +3,10 @@ package muramasa.antimatter.worldgen.object;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -24,9 +24,9 @@ public class WorldGenBase<T extends WorldGenBase<?>> {
 
     }
 
-    public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, RegistryKey<World>... dimensions) {
+    public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, ResourceKey<Level>... dimensions) {
         this.id = id;
-        this.dimensions = Arrays.stream(dimensions).map(RegistryKey::location).collect(Collectors.toCollection(ObjectOpenHashSet::new));
+        this.dimensions = Arrays.stream(dimensions).map(ResourceKey::location).collect(Collectors.toCollection(ObjectOpenHashSet::new));
         AntimatterWorldGenerator.register(c, this);
     }
 

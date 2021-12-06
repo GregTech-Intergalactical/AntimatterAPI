@@ -4,10 +4,10 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
-import net.minecraft.resources.IAsyncReloader;
-import net.minecraft.resources.IFutureReloadListener;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.resources.SimpleReloadableResourceManager;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ReloadInstance;
+import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.Unit;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,11 +28,11 @@ public class SimpleReloadableResourceManagerMixin {
 
     @Shadow
     @Final
-    private ResourcePackType type;
+    private PackType type;
 
     @Inject(method = "createReload(Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/List;Ljava/util/concurrent/CompletableFuture;)Lnet/minecraft/resources/IAsyncReloader;", at = @At("HEAD"))
-    private void callback(Executor backgroundExecutor, Executor gameExecutor, List<IFutureReloadListener> listeners, CompletableFuture<Unit> waitingFor, CallbackInfoReturnable<IAsyncReloader> cir) {
-        if (type == ResourcePackType.SERVER_DATA) {
+    private void callback(Executor backgroundExecutor, Executor gameExecutor, List<PreparableReloadListener> listeners, CompletableFuture<Unit> waitingFor, CallbackInfoReturnable<ReloadInstance> cir) {
+        if (type == PackType.SERVER_DATA) {
             AntimatterDynamics.onResourceReload(true);
         }
     }

@@ -1,20 +1,18 @@
 package muramasa.antimatter.client.baked;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.Direction;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class ListBakedModel implements IBakedModel {
+public class ListBakedModel implements BakedModel {
     private final List<BakedQuad> quads;
     public ListBakedModel(List<BakedQuad> quads) {
         this.quads = quads;
@@ -50,7 +48,7 @@ public class ListBakedModel implements IBakedModel {
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.EMPTY;
+    public ItemOverrides getOverrides() {
+        return ItemOverrides.EMPTY;
     }
 }

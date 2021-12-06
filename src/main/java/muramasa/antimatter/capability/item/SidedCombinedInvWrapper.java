@@ -1,8 +1,8 @@
 package muramasa.antimatter.capability.item;
 
 import muramasa.antimatter.capability.CoverHandler;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;

@@ -1,37 +1,37 @@
 package muramasa.antimatter.tool.armor;
 
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.crafting.Ingredient;
 
-public class MatArmorMaterial implements IArmorMaterial {
-    final AntimatterArmorType toolType;
+public class MatArmorMaterial implements ArmorMaterial {
+    final AntimatterArmorType type;
     private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
 
-    public MatArmorMaterial(AntimatterArmorType toolType) {
-        this.toolType = toolType;
+    public MatArmorMaterial(AntimatterArmorType type) {
+        this.type = type;
     }
 
     @Override
-    public int getDurabilityForSlot(EquipmentSlotType slotIn) {
-        return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * toolType.getDurabilityFactor();
+    public int getDurabilityForSlot(EquipmentSlot slotIn) {
+        return MAX_DAMAGE_ARRAY[slotIn.getIndex()] * type.getDurabilityFactor();
     }
 
     @Override
-    public int getDefenseForSlot(EquipmentSlotType slotIn) {
-        return toolType.getBaseArmor();
+    public int getDefenseForSlot(EquipmentSlot slotIn) {
+        return type.getBaseArmor();
     }
 
     @Override
     public int getEnchantmentValue() {
-        return ArmorMaterial.IRON.getEnchantmentValue();
+        return ArmorMaterials.IRON.getEnchantmentValue();
     }
 
     @Override
     public SoundEvent getEquipSound() {
-        return toolType.getEvent();
+        return type.getEvent();
     }
 
     @Override
@@ -46,11 +46,11 @@ public class MatArmorMaterial implements IArmorMaterial {
 
     @Override
     public float getToughness() {
-        return toolType.getBaseToughness();
+        return type.getBaseToughness();
     }
 
     @Override
     public float getKnockbackResistance() {
-        return toolType.getBaseKnockback();
+        return type.getBaseKnockback();
     }
 }

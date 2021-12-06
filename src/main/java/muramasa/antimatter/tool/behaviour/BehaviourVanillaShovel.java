@@ -3,16 +3,21 @@ package muramasa.antimatter.tool.behaviour;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.CampfireBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.ForgeEventFactory;
 
 public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
@@ -25,18 +30,18 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
-        if (c.getClickedFace() == Direction.DOWN) return ActionResultType.PASS;
+    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
+        if (c.getClickedFace() == Direction.DOWN) return InteractionResult.PASS;
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
         BlockState changedState = null;
         if (state.getBlock() == Blocks.GRASS_BLOCK && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
-            changedState = getToolModifiedState(state, Blocks.GRASS_PATH.defaultBlockState(), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolType.SHOVEL);
+            changedState = getToolModifiedState(state, Blocks.DIRT_PATH.defaultBlockState(), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolActions.SHOVEL_FLATTEN);
             if (changedState != null) {
                 SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.SHOVEL_FLATTEN : instance.getAntimatterToolType().getUseSound();
-                c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
         } else if (state.getBlock() instanceof CampfireBlock && state.getValue(CampfireBlock.LIT)) {
-            changedState = getToolModifiedState(state, state.setValue(CampfireBlock.LIT, false), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolType.SHOVEL);
+            changedState = getToolModifiedState(state, state.setValue(CampfireBlock.LIT, false), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolActions.SHOVEL_DIG);
             if (changedState != null) {
                 c.getLevel().levelEvent(c.getPlayer(), 1009, c.getClickedPos(), 0);
             }
@@ -44,12 +49,12 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
         if (changedState != null) {
             c.getLevel().setBlock(c.getClickedPos(), changedState, 11);
             Utils.damageStack(c.getItemInHand(), c.getPlayer());
-            return ActionResultType.SUCCESS;
-        } else return ActionResultType.PASS;
+            return InteractionResult.SUCCESS;
+        } else return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, BlockState changedState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
-        BlockState eventState = ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, toolType);
+    private BlockState getToolModifiedState(BlockState originalState, BlockState changedState, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction action) {
+        BlockState eventState = ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, action);
         return eventState != originalState ? eventState : changedState;
     }
 }

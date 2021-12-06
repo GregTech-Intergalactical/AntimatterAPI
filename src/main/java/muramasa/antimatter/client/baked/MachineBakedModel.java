@@ -1,54 +1,41 @@
 package muramasa.antimatter.client.baked;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import com.google.common.collect.ImmutableMap;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.client.DirectionalQuadTransformer;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.dynamic.DynamicBakedModel;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.util.math.vector.Vector4f;
-import net.minecraft.world.IBlockDisplayReader;
-import net.minecraftforge.client.model.QuadTransformer;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
 
 public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
-    private final ImmutableMap<MachineState, IBakedModel[]> sides;
-    public MachineBakedModel(TextureAtlasSprite particle, ImmutableMap<MachineState, IBakedModel[]> sides) {
+    private final ImmutableMap<MachineState, BakedModel[]> sides;
+    public MachineBakedModel(TextureAtlasSprite particle, ImmutableMap<MachineState, BakedModel[]> sides) {
         super(particle);
         this.sides = sides;
     }    
@@ -84,7 +71,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
             return props.machineTexturer.getQuads("machine", new ObjectArrayList<>(), state, props.type, new TileEntityMachine.DynamicKey(new ResourceLocation(props.type.getId()), ft.apply(side), side, props.state), side.get3DDataValue(), data);
         }
 
-        IBakedModel model = getModel(state, side, props.state);
+        BakedModel model = getModel(state, side, props.state);
         for (Direction dir : Ref.DIRS) {
             quads.addAll(model.getQuads(state, dir, rand, data));
         }
@@ -92,7 +79,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
         Matrix4f f = new Matrix4f();
         f.setIdentity();
-        TransformationMatrix mat = new TransformationMatrix(f);
+        Transformation mat = new Transformation(f);
         mat = mat.blockCornerToCenter();
         mat = mat.compose(RenderHelper.faceRotation(state));
         mat = mat.blockCenterToCorner();
@@ -100,8 +87,8 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         return transformer.processMany(quads, side);
     }
 
-    public IBakedModel getModel(BlockState state, Direction dir, MachineState m) {
-        Vector3i vector3i = dir.getNormal();
+    public BakedModel getModel(BlockState state, Direction dir, MachineState m) {
+        Vec3i vector3i = dir.getNormal();
         Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
         vector4f.transform(RenderHelper.faceRotation(state).inverse().getMatrix());
         Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
@@ -132,7 +119,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 */
 
     @Override
-    public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData d) {
+    public IModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, IModelData d) {
         final IModelData data = super.getModelData(world, pos, state, d);
         TileEntityMachine<?> machine = (TileEntityMachine<?>) world.getBlockEntity(pos);
         ICover[] covers = machine.coverHandler.map(t -> t.getAll()).orElse(new ICover[]{ICover.empty,ICover.empty,ICover.empty,ICover.empty,ICover.empty,ICover.empty});
@@ -170,8 +157,8 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.EMPTY;
+    public ItemOverrides getOverrides() {
+        return ItemOverrides.EMPTY;
     }
 
     @Override

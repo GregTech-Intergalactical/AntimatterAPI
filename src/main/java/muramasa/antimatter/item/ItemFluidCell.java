@@ -9,38 +9,49 @@ import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.block.*;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.cauldron.CauldronInteraction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.BaseComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceContext;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
@@ -100,25 +111,25 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new FluidHandlerItemCell(stack, capacity, maxTemp);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         if (worldIn == null) return;
         stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(x -> {
             FluidStack fluid = x.getFluidInTank(0);
             if (!fluid.isEmpty()) {
-                TextComponent fluidname = (TextComponent) fluid.getDisplayName();
-                fluidname.append(": ").append(new StringTextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").withStyle(TextFormatting.GRAY));
+                BaseComponent fluidname = (BaseComponent) fluid.getDisplayName();
+                fluidname.append(": ").append(new TextComponent(NumberFormat.getNumberInstance(Locale.US).format(fluid.getAmount()) + " mB").withStyle(ChatFormatting.GRAY));
                 tooltip.add(fluidname);
             }
-            tooltip.add(new StringTextComponent("Max Temp: " + ((ItemFluidCell) stack.getItem()).getMaxTemp() + "K"));
+            tooltip.add(new TextComponent("Max Temp: " + ((ItemFluidCell) stack.getItem()).getMaxTemp() + "K"));
         });
     }
 
-    public static ITag.INamedTag<Item> getTag() {
+    public static Tag.Named<Item> getTag() {
         return TagUtils.getItemTag(new ResourceLocation(Ref.ID, "cell"));
     }
 
@@ -168,7 +179,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext ctxt) {
+    public InteractionResult useOn(UseOnContext ctxt) {
         //TODO reenable
 //      if (world.isRemote) return EnumActionResult.PASS;
         /*TileEntity tile = Utils.getTile(ctxt.getWorld(), ctxt.getPos());
@@ -186,23 +197,23 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
             });
         }*/
 
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         FluidStack fluid = this.getFluid(stack);
-        BlockRayTraceResult trace = getPlayerPOVHitResult(world, player, fluid.isEmpty() ? RayTraceContext.FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
+        BlockHitResult trace = getPlayerPOVHitResult(world, player, fluid.isEmpty() ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
 
         // fire Forge event for bucket use
-        ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack, trace);
+        InteractionResultHolder<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack, trace);
         if (ret != null) {
             return ret;
         }
 
         // if we missed, do nothing
-        if (trace.getType() != RayTraceResult.Type.BLOCK) {
-            return ActionResult.pass(stack);
+        if (trace.getType() != HitResult.Type.BLOCK) {
+            return InteractionResultHolder.pass(stack);
         }
 
         // normal fluid logic
@@ -214,16 +225,11 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
         if (world.mayInteract(player, pos) && player.mayUseItemAt(offset, direction, stack)) {
             BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
-            if (block == Blocks.CAULDRON && !player.isCrouching()) {
-                ActionResult<ItemStack> result = interactWithCauldron(world, pos, state, player, stack, fluid);
-                if (result.getResult() != ActionResultType.PASS) {
-                    return result;
-                }
-            }
 
-            if ((fluid.isEmpty() || fluid.getAmount() + 1000 <= capacity) && block instanceof IBucketPickupHandler) {
-                Fluid newFluid = ((IBucketPickupHandler) block).takeLiquid(world, pos, state);
-                if (newFluid != Fluids.EMPTY) {
+            if ((fluid.isEmpty() || fluid.getAmount() + 1000 <= capacity) && block instanceof BucketPickup) {
+                ItemStack bucket = ((BucketPickup) block).pickupBlock(world, pos, state);
+                if (!bucket.isEmpty()) {
+                    Fluid newFluid = ((BucketItem)bucket.getItem()).getFluid();
                     player.awardStat(Stats.ITEM_USED.get(this));
 
                     // play sound effect
@@ -234,17 +240,17 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
                     player.playSound(sound, 1.0F, 1.0F);
                     ItemStack newStack = updateCell(stack, player, fill(newFluid, fluid.getAmount() + 1000));
                     if (!world.isClientSide()) {
-                        CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayerEntity) player, newStack.copy());
+                        CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer) player, newStack.copy());
                     }
 
-                    return ActionResult.success(newStack);
+                    return InteractionResultHolder.success(newStack);
                 }
             } else if (fluid.getAmount() >= 1000) {
-                BlockPos fluidPos = state.getBlock() instanceof ILiquidContainer && fluid.getFluid() == Fluids.WATER ? pos : offset;
+                BlockPos fluidPos = state.getBlock() instanceof LiquidBlockContainer && fluid.getFluid() == Fluids.WATER ? pos : offset;
                 if (this.tryPlaceContainedLiquid(player, world, fluidPos, stack, trace)) {
-                    onLiquidPlaced(fluid.getFluid(), world, stack, fluidPos);
-                    if (player instanceof ServerPlayerEntity) {
-                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity) player, fluidPos, stack);
+                    onLiquidPlaced(player, fluid.getFluid(), world, stack, fluidPos);
+                    if (player instanceof ServerPlayer) {
+                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) player, fluidPos, stack);
                     }
 
                     player.awardStat(Stats.ITEM_USED.get(this));
@@ -252,13 +258,13 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
                     if (stack.getCount() > 1) {
                         stack.shrink(1);
                         addItem(player, newStack);
-                        return ActionResult.success(stack);
+                        return InteractionResultHolder.success(stack);
                     }
-                    return ActionResult.success(newStack);
+                    return InteractionResultHolder.success(newStack);
                 }
             }
         }
-        return ActionResult.fail(stack);
+        return InteractionResultHolder.fail(stack);
 
     }
 
@@ -270,17 +276,17 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
      * @param stack Stack instance
      * @param pos   Position to place the world
      */
-    private static void onLiquidPlaced(Fluid fluid, World world, ItemStack stack, BlockPos pos) {
+    private static void onLiquidPlaced(Player player, Fluid fluid, Level world, ItemStack stack, BlockPos pos) {
         // TODO: is this bad?
         Item item = fluid.getBucket();
         if (item instanceof BucketItem) {
-            ((BucketItem) item).checkExtraContent(world, stack, pos);
+            ((BucketItem) item).checkExtraContent(player, world, stack, pos);
         }
     }
 
     // TODO: possibly migrate to the Forge method
     @SuppressWarnings("deprecation")
-    private boolean tryPlaceContainedLiquid(@Nullable PlayerEntity player, World world, BlockPos pos, ItemStack stack, @Nullable BlockRayTraceResult trace) {
+    private boolean tryPlaceContainedLiquid(@Nullable Player player, Level world, BlockPos pos, ItemStack stack, @Nullable BlockHitResult trace) {
         FluidStack fluidStack = this.getFluid(stack);
         Fluid fluid = fluidStack.getFluid();
         if (!(fluid instanceof FlowingFluid)) {
@@ -290,15 +296,15 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
         BlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
         boolean replaceable = state.canBeReplaced(fluid);
-        if (state.isAir(world, pos) || replaceable || block instanceof ILiquidContainer && ((ILiquidContainer) block).canPlaceLiquid(world, pos, state, fluid)) {
+        if (state.isAir() || replaceable || block instanceof LiquidBlockContainer && ((LiquidBlockContainer) block).canPlaceLiquid(world, pos, state, fluid)) {
             if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
-                world.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
+                world.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
 
                 for (int l = 0; l < 8; ++l) {
                     world.addParticle(ParticleTypes.LARGE_SMOKE, pos.getX() + Math.random(), pos.getY() + Math.random(), pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
                 }
-            } else if (block instanceof ILiquidContainer && fluid == Fluids.WATER) {
-                if (((ILiquidContainer) block).placeLiquid(world, pos, state, ((FlowingFluid) fluid).getSource(false))) {
+            } else if (block instanceof LiquidBlockContainer && fluid == Fluids.WATER) {
+                if (((LiquidBlockContainer) block).placeLiquid(world, pos, state, ((FlowingFluid) fluid).getSource(false))) {
                     this.playEmptySound(fluid, player, world, pos);
                 }
             } else {
@@ -326,12 +332,12 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
      * @param world  World instance
      * @param pos    Position of sound
      */
-    private void playEmptySound(Fluid fluid, @Nullable PlayerEntity player, IWorld world, BlockPos pos) {
+    private void playEmptySound(Fluid fluid, @Nullable Player player, LevelAccessor world, BlockPos pos) {
         SoundEvent sound = fluid.getAttributes().getEmptySound();
         if (sound == null) {
             sound = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
         }
-        world.playSound(player, pos, sound, SoundCategory.BLOCKS, 1.0F, 1.0F);
+        world.playSound(player, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     /**
@@ -342,55 +348,58 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
      * @param state  Cauldron state
      * @param player Interacting player
      * @param stack  Bucket stack
-     * @param fluid  Contained fluid
      * @return Action result from interaction, pass means failed to interact with a cauldron
      */
-    private ActionResult<ItemStack> interactWithCauldron(World world, BlockPos pos, BlockState state, PlayerEntity player, ItemStack stack, FluidStack fluid) {
+    //BlockState p_175711_, Level p_175712_, BlockPos p_175713_, Player p_175714_, InteractionHand p_175715_, ItemStack p_175716_
+    public static InteractionResult interactWithCauldron(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
         // if the bucket is empty, try filling from the cauldron
-        int level = state.getValue(CauldronBlock.LEVEL);
-        if (fluid.isEmpty()) {
+        ItemFluidCell cell = (ItemFluidCell) stack.getItem();
+        FluidStack fluid = cell.getFluid(stack);
+        int level = state.getValue(LayeredCauldronBlock.LEVEL);
+
+        if (state.getBlock() instanceof LayeredCauldronBlock cauldron) {
             // if empty, try emptying
-            if (level == 3) {
+            if (level < 3 && !cell.hasFluid(stack)) {
                 // empty cauldron logic
                 if (player != null) {
                     player.awardStat(Stats.USE_CAULDRON);
                 }
                 if (!world.isClientSide()) {
-                    ((CauldronBlock) Blocks.CAULDRON).setWaterLevel(world, pos, state, 0);
+                    LayeredCauldronBlock.lowerFillLevel(state, world, pos);
                 }
-                world.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                ItemStack newStack = fill(Fluids.WATER, 1000);
+                world.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                ItemStack newStack = cell.fill(Fluids.WATER, 1000).getContainerItem();
                 if (stack.getCount() > 1) {
                     stack.shrink(1);
                     addItem(player, newStack);
-                    return ActionResult.success(stack);
+                    return InteractionResult.SUCCESS;
                 }
-                return ActionResult.success(newStack);
+                return InteractionResult.SUCCESS;
+            } else if (fluid.getFluid().isSame(Fluids.WATER)) {
+                if (level < 3) {
+                    if (player != null) {
+                        player.awardStat(Stats.FILL_CAULDRON);
+                    }
+                    if (!world.isClientSide) {
+                        world.setBlockAndUpdate(pos, state.setValue(LayeredCauldronBlock.LEVEL, level+1));
+                    }
+                    world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    ItemStack newStack = cell.drain(Utils.ca(1, stack), new FluidStack(fluid.getFluid(), 1000));
+                    if (stack.getCount() > 1) {
+                        stack.shrink(1);
+                        addItem(player, newStack);
+                        return InteractionResult.SUCCESS;
+                    }
+                    return InteractionResult.SUCCESS;
+                }
+            } else {
+                // pass if not empty or water
+                return InteractionResult.PASS;
             }
-        } else if (fluid.getFluid() == Fluids.WATER && fluid.getAmount() >= 1000) {
-            // fill cauldron if not full
-            if (level < 3) {
-                if (player != null) {
-                    player.awardStat(Stats.FILL_CAULDRON);
-                }
-                if (!world.isClientSide) {
-                    ((CauldronBlock) Blocks.CAULDRON).setWaterLevel(world, pos, state, 3);
-                }
-                world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                ItemStack newStack = drain(Utils.ca(1, stack), new FluidStack(fluid.getFluid(), 1000));
-                if (stack.getCount() > 1) {
-                    stack.shrink(1);
-                    addItem(player, newStack);
-                    return ActionResult.success(stack);
-                }
-                return ActionResult.success(newStack);
-            }
-        } else {
-            // pass if not empty or water
-            return ActionResult.pass(stack);
+
         }
         // consume so we do not accidentally place water next to the cauldron, consistency with vanilla
-        return ActionResult.success(stack);
+        return InteractionResult.PASS;
     }
 
     /**
@@ -401,7 +410,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
      * @param newCell       Filled cell stack
      * @return Stack of buckets
      */
-    protected static ItemStack updateCell(ItemStack originalStack, PlayerEntity player, ItemStack newCell) {
+    protected static ItemStack updateCell(ItemStack originalStack, Player player, ItemStack newCell) {
         // shrink the stack
         if (player.isCreative()) {
             return originalStack;
@@ -421,14 +430,14 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
      * @param player Player instance
      * @param stack  Stack to add
      */
-    protected static void addItem(PlayerEntity player, ItemStack stack) {
-        if (!player.inventory.add(stack)) {
+    protected static void addItem(Player player, ItemStack stack) {
+        if (!player.getInventory().add(stack)) {
             player.drop(stack, false);
         }
     }
 
     @Override
-    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+    public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
         ((AntimatterItemModelBuilder) prov.getAntimatterBuilder(item).bucketProperties(stack, true, false).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"))).tex((map) -> {
             map.put("base", getDomain() + ":item/basic/" + getId());
             map.put("cover", getDomain() + ":item/other/" + getId() + "_cover");

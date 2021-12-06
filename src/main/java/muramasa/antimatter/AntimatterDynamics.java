@@ -17,14 +17,14 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.ModRegistrar;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.tags.ITagCollectionSupplier;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -85,7 +85,7 @@ public class AntimatterDynamics {
      *
      * @param rec consumer for IFinishedRecipe.
      */
-    public static void collectRecipes(Consumer<IFinishedRecipe> rec) {
+    public static void collectRecipes(Consumer<FinishedRecipe> rec) {
         Set<ResourceLocation> set = Sets.newHashSet();
         AntimatterRecipeProvider provider = new AntimatterRecipeProvider(Ref.ID, "provider", Ref.BACKGROUND_GEN);
         AntimatterCraftingEvent ev = new AntimatterCraftingEvent(Antimatter.INSTANCE);
@@ -99,7 +99,7 @@ public class AntimatterDynamics {
         }
     }
 
-    public static void onRecipeManagerBuild(Consumer<IFinishedRecipe> objectIn) {
+    public static void onRecipeManagerBuild(Consumer<FinishedRecipe> objectIn) {
         Antimatter.LOGGER.info("Antimatter recipe manager running..");
         collectRecipes(objectIn);
         AntimatterAPI.all(ModRegistrar.class, t -> {
@@ -112,7 +112,7 @@ public class AntimatterDynamics {
         Antimatter.LOGGER.info("Antimatter recipe manager done..");
     }
 
-    public static void onRecipeCompile(boolean server, RecipeManager manager, ITagCollectionSupplier tags) {
+    public static void onRecipeCompile(boolean server, RecipeManager manager, TagContainer tags) {
         TagUtils.setSupplier(tags);
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();

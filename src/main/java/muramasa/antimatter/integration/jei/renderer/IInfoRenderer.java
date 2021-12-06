@@ -1,8 +1,8 @@
 package muramasa.antimatter.integration.jei.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,5 +16,5 @@ public interface IInfoRenderer<T extends InfoRenderWidget<T>> {
      * @return offset that was rendered.
      */
     @OnlyIn(Dist.CLIENT)
-    int drawInfo(T instance, MatrixStack stack, FontRenderer renderer, int left, int top);
+    int drawInfo(T instance, PoseStack stack, Font renderer, int left, int top);
 }

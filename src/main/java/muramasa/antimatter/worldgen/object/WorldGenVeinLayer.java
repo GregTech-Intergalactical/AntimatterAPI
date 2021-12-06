@@ -11,13 +11,13 @@ import muramasa.antimatter.util.XSTR;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.VeinLayerResult;
 import muramasa.antimatter.worldgen.WorldGenHelper;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
     private static final WorldGenVeinLayer NO_ORES_IN_VEIN = new WorldGenVeinLayer("NoOresInVein", 0, 255, 0, 255, 16, null, null, null, null) {
         @Override
-        VeinLayerResult generateChunkified(ISeedReader world, XSTR rand, int posX, int posZ, int seedX, int seedZ) {
+        VeinLayerResult generateChunkified(WorldGenLevel world, XSTR rand, int posX, int posZ, int seedX, int seedZ) {
             return NO_ORES_VEIN;
         }
     };
@@ -48,7 +48,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     private final int size;
 
     @SafeVarargs
-    public WorldGenVeinLayer(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, RegistryKey<World>... dimensions) {
+    public WorldGenVeinLayer(String id, int minY, int maxY, int weight, int density, int size, Material primary, Material secondary, Material between, Material sporadic, ResourceKey<Level>... dimensions) {
         super(id, WorldGenVeinLayer.class, dimensions);
         this.minY = minY;
         this.maxY = maxY;
@@ -145,7 +145,7 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     // Actual spawn rates will vary based upon the average height of the stone layers
     // in the dimension. For example veins that range above and below the average height
     // will be less, and veins that are completely above the average height will be much less.
-    public static void generate(ISeedReader world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ) {
+    public static void generate(WorldGenLevel world, int chunkX, int chunkZ, int oreSeedX, int oreSeedZ) {
         List<WorldGenVeinLayer> veins = AntimatterWorldGenerator.all(WorldGenVeinLayer.class, world.getLevel().dimension());
         if (veins == null || veins.size() == 0)
             return;
@@ -237,11 +237,11 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
     }
 
-    public static long getOreVeinSeed(ISeedReader world, long oreSeedX, long oreSeedZ) {
+    public static long getOreVeinSeed(WorldGenLevel world, long oreSeedX, long oreSeedZ) {
         return world.getSeed() << 16 ^ ((world.getLevel().dimension().location().hashCode() & 0xffL) << 56 | (oreSeedX & 0x000000000fffffffL) << 28 | oreSeedZ & 0x000000000fffffffL);
     }
 
-    VeinLayerResult generateChunkified(ISeedReader world, XSTR rand, int posX, int posZ, int seedX, int seedZ) {
+    VeinLayerResult generateChunkified(WorldGenLevel world, XSTR rand, int posX, int posZ, int seedX, int seedZ) {
         int tMinY = minY + rand.nextInt(maxY - minY - 5);
 
         //If the selected tMinY is more than the max height if the current position, escape
@@ -299,8 +299,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
     }
 
     //Small ores are placed in the whole chunk in which the vein appears.
-    private void generateSmallOres(IWorld world, XSTR rand, int posX, int posZ, int nSmallOres) {
-        BlockPos.Mutable pos = new BlockPos.Mutable();
+    private void generateSmallOres(LevelAccessor world, XSTR rand, int posX, int posZ, int nSmallOres) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int nSmallOresCount = 0; nSmallOresCount < nSmallOres; nSmallOresCount++) {
             int tX = rand.nextInt(16) + posX;
             int tZ = rand.nextInt(16) + posZ;
@@ -328,8 +328,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
     }
 
-    private boolean generateSquare(IWorld world, XSTR rand, int posX, int posZ, int seedX, int seedZ, int tMinY, int wXVein, int eXVein, int nZVein, int sZVein, int wX, int eX, int nZ, int sZ) {
-        BlockPos.Mutable pos = new BlockPos.Mutable();
+    private boolean generateSquare(LevelAccessor world, XSTR rand, int posX, int posZ, int seedX, int seedZ, int tMinY, int wXVein, int eXVein, int nZVein, int sZVein, int wX, int eX, int nZ, int sZ) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         int[] placeCount = new int[4];
 
         // Adjust the density down the more chunks we are away from the oreseed.  The 5 chunks surrounding the seed should always be max density due to truncation of Math.sqrt().
@@ -340,9 +340,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         // Layer -1 Secondary and Sporadic
         int level = tMinY - 1; //Dunno why, but the first layer is actually played one below tMinY.  Go figure.
         for (int tX = wX; tX < eX; tX++) {
-            int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
+            int placeX = Math.max(1, Math.max(Mth.abs(wXVein - tX), Mth.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
-                int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
+                int placeZ = Math.max(1, Math.max(Mth.abs(sZVein - tZ), Mth.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], Data.ORE))
@@ -362,9 +362,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         // Layers 0 & 1 Secondary and Sporadic
         for (level = tMinY; level < tMinY + 2; level++) {
             for (int tX = wX; tX < eX; tX++) {
-                int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
+                int placeX = Math.max(1, Math.max(Mth.abs(wXVein - tX), Mth.abs(eXVein - tX)) / localDensity);
                 for (int tZ = nZ; tZ < sZ; tZ++) {
-                    int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
+                    int placeZ = Math.max(1, Math.max(Mth.abs(sZVein - tZ), Mth.abs(nZVein - tZ)) / localDensity);
                     if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                         pos.set(tX, level, tZ);
                         if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], Data.ORE))
@@ -379,9 +379,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         }
         // Layer 2 is Secondary, in-between, and sporadic
         for (int tX = wX; tX < eX; tX++) {
-            int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
+            int placeX = Math.max(1, Math.max(Mth.abs(wXVein - tX), Mth.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
-                int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
+                int placeZ = Math.max(1, Math.max(Mth.abs(sZVein - tZ), Mth.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
                     pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE))
@@ -400,9 +400,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         level++; // Increment level to next layer
         // Layer 3 is In-between, and sporadic
         for (int tX = wX; tX < eX; tX++) {
-            int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
+            int placeX = Math.max(1, Math.max(Mth.abs(wXVein - tX), Mth.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
-                int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
+                int placeZ = Math.max(1, Math.max(Mth.abs(sZVein - tZ), Mth.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
                     pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE))
@@ -417,9 +417,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         level++; // Increment level to next layer
         // Layer 4 is In-between, Primary and sporadic
         for (int tX = wX; tX < eX; tX++) {
-            int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
+            int placeX = Math.max(1, Math.max(Mth.abs(wXVein - tX), Mth.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
-                int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
+                int placeZ = Math.max(1, Math.max(Mth.abs(sZVein - tZ), Mth.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
                     pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE))
@@ -438,9 +438,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         level++; // Increment level to next layer
         // Layer 5 is In-between, Primary and sporadic
         for (int tX = wX; tX < eX; tX++) {
-            int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
+            int placeX = Math.max(1, Math.max(Mth.abs(wXVein - tX), Mth.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
-                int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
+                int placeZ = Math.max(1, Math.max(Mth.abs(sZVein - tZ), Mth.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(2) == 0 && (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0)) {  // Between are reduce by 1/2 to compensate
                     pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], Data.ORE))
@@ -459,9 +459,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         level++; // Increment level to next layer
         // Layer 6 is Primary and sporadic
         for (int tX = wX; tX < eX; tX++) {
-            int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
+            int placeX = Math.max(1, Math.max(Mth.abs(wXVein - tX), Mth.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
-                int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
+                int placeZ = Math.max(1, Math.max(Mth.abs(sZVein - tZ), Mth.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], Data.ORE))
@@ -476,9 +476,9 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         level++; // Increment level to next layer
         // Layer 7 is Primary and sporadic
         for (int tX = wX; tX < eX; tX++) {
-            int placeX = Math.max(1, Math.max(MathHelper.abs(wXVein - tX), MathHelper.abs(eXVein - tX)) / localDensity);
+            int placeX = Math.max(1, Math.max(Mth.abs(wXVein - tX), Mth.abs(eXVein - tX)) / localDensity);
             for (int tZ = nZ; tZ < sZ; tZ++) {
-                int placeZ = Math.max(1, Math.max(MathHelper.abs(sZVein - tZ), MathHelper.abs(nZVein - tZ)) / localDensity);
+                int placeZ = Math.max(1, Math.max(Mth.abs(sZVein - tZ), Mth.abs(nZVein - tZ)) / localDensity);
                 if (rand.nextInt(placeZ) == 0 || rand.nextInt(placeX) == 0) {
                     pos.set(tX, level, tZ);
                     if (WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], Data.ORE))
@@ -496,10 +496,10 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         return true;
     }
 
-    private boolean generateByFunction(IWorld world, XSTR rand,
+    private boolean generateByFunction(LevelAccessor world, XSTR rand,
                                        int tMinY, int wXVein, int eXVein, int nZVein, int sZVein, // vein
                                        int wX, int eX, int nZ, int sZ) { // vein & current chunk intersection
-        BlockPos.Mutable pos = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         int[] placeCount = new int[4];
         final int centerX = (wXVein + eXVein) / 2;
         final int centerY = tMinY + 4;

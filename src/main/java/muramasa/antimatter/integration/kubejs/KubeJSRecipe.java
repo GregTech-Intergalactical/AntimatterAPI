@@ -10,9 +10,9 @@ import dev.latvian.kubejs.recipe.RecipeJS;
 import dev.latvian.kubejs.util.ListJS;
 import dev.latvian.kubejs.util.MapJS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.recipe.serializer.RecipeSerializer;
-import net.minecraft.nbt.NBTDynamicOps;
-import net.minecraft.util.JSONUtils;
+import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
@@ -32,7 +32,8 @@ public class KubeJSRecipe extends RecipeJS {
     @Override
     public void create(ListJS listJS) {
         this.map = (String) listJS.get(0);
-        if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
+        //TODO 1.18
+       /* if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
             if (inputItem instanceof ItemStackJS) {
                 this.inputItems.add(RecipeIngredientJS.of(((ItemStackJS) inputItem).toResultJson()));
             } else if (inputItem instanceof MapJS) {
@@ -43,17 +44,17 @@ public class KubeJSRecipe extends RecipeJS {
             } else if (inputItem instanceof IngredientJS) {
                 this.inputItems.add(RecipeIngredientJS.of((IngredientJS) inputItem));
             }
-        }
+        }*/
         if (listJS.get(2) != null) for (Object outputItem : ListJS.orSelf(listJS.get(2))) {
             this.outputItems.add(ItemStackJS.of(outputItem));
         }
         if (listJS.get(3) != null) for (Object inputFluid : ListJS.orSelf(listJS.get(3))) {
             MapJS map = (MapJS) inputFluid;
-            this.fluidInput.add(RecipeSerializer.getStack(map.toJson()));
+            this.fluidInput.add(AntimatterRecipeSerializer.getStack(map.toJson()));
         }
         if (listJS.get(4) != null) for (Object outputFluid : ListJS.orSelf(listJS.get(4))) {
             MapJS map = (MapJS) outputFluid;
-            this.fluidOutput.add(RecipeSerializer.getStack(map.toJson()));
+            this.fluidOutput.add(AntimatterRecipeSerializer.getStack(map.toJson()));
         }
         duration = ((Number) listJS.get(5)).intValue();
         power = ((Number) listJS.get(6)).longValue();
@@ -77,25 +78,25 @@ public class KubeJSRecipe extends RecipeJS {
 
     @Override
     public void deserialize() {
-        for (JsonElement e : JSONUtils.getAsJsonArray(json, "item_in", new JsonArray())) {
-            this.inputItems.add(RecipeIngredientJS.of(e));
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_in", new JsonArray())) {
+          //  this.inputItems.add(RecipeIngredientJS.of(e));
         }
-        for (JsonElement e : JSONUtils.getAsJsonArray(json, "item_out", new JsonArray())) {
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_out", new JsonArray())) {
             this.outputItems.add(ItemStackJS.of(e));
         }
-        for (JsonElement e : JSONUtils.getAsJsonArray(json, "fluid_in", new JsonArray())) {
-            this.fluidInput.add(RecipeSerializer.getStack(e));
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "fluid_in", new JsonArray())) {
+            this.fluidInput.add(AntimatterRecipeSerializer.getStack(e));
         }
-        for (JsonElement e : JSONUtils.getAsJsonArray(json, "fluid_out", new JsonArray())) {
-            this.fluidOutput.add(RecipeSerializer.getStack(e));
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "fluid_out", new JsonArray())) {
+            this.fluidOutput.add(AntimatterRecipeSerializer.getStack(e));
         }
-        this.duration = JSONUtils.getAsInt(json, "duration");
-        this.special = JSONUtils.getAsInt(json, "special", 0);
-        this.power = JSONUtils.getAsInt(json, "eu");
-        this.amps = JSONUtils.getAsInt(json, "amps", 1);
-        this.map = JSONUtils.getAsString(json, "map");
+        this.duration = GsonHelper.getAsInt(json, "duration");
+        this.special = GsonHelper.getAsInt(json, "special", 0);
+        this.power = GsonHelper.getAsInt(json, "eu");
+        this.amps = GsonHelper.getAsInt(json, "amps", 1);
+        this.map = GsonHelper.getAsString(json, "map");
 
-        for (JsonElement e : JSONUtils.getAsJsonArray(json, "chances", new JsonArray())) {
+        for (JsonElement e : GsonHelper.getAsJsonArray(json, "chances", new JsonArray())) {
             this.chances.add(e.getAsInt());
         }
     }
@@ -105,7 +106,7 @@ public class KubeJSRecipe extends RecipeJS {
         obj.addProperty("fluid", stack.getFluid().getRegistryName().toString());
         obj.addProperty("amount", stack.getAmount());
         if (stack.hasTag()) {
-            obj.add("tag", NBTDynamicOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getTag()));
+            obj.add("tag", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getTag()));
         }
         return obj;
     }

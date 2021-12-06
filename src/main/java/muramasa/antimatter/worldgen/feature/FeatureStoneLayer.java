@@ -4,24 +4,25 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.worldgen.*;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 import java.util.Random;
 
-public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
+public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguration> {
 
     public FeatureStoneLayer() {
-        super(NoFeatureConfig.CODEC, WorldGenStoneLayer.class);
+        super(NoneFeatureConfiguration.CODEC, WorldGenStoneLayer.class);
     }
 
     @Override
@@ -43,11 +44,14 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.addFeature(GenerationStage.Decoration.UNDERGROUND_STRUCTURES, AntimatterConfiguredFeatures.STONE_LAYER);
+        event.addFeature(GenerationStep.Decoration.UNDERGROUND_STRUCTURES, AntimatterConfiguredFeatures.STONE_LAYER);
     }
 
     @Override
-    public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctxt) {
+        WorldGenLevel world = ctxt.level();
+        BlockPos pos = ctxt.origin();
+        Random rand = ctxt.random();
         List<WorldGenStoneLayer> stones = AntimatterWorldGenerator.all(WorldGenStoneLayer.class, world.getLevel().dimension());
         if (stones.size() == 0) return false;
         WorldGenStoneLayer[] layers = new WorldGenStoneLayer[7];
@@ -69,11 +73,11 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
                 layers[5] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 3, tZ) + 1) / 2) * stonesSize)));
                 layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 4, tZ) + 1) / 2) * stonesSize)));
 
-                maxHeight = world.getHeightmapPos(Heightmap.Type.OCEAN_FLOOR_WG, pos.offset(i, 0, j)).getY() + 1; //+1 for placing rocks on top of the max height
+                maxHeight = world.getHeightmapPos(Heightmap.Types.OCEAN_FLOOR_WG, pos.offset(i, 0, j)).getY() + 1; //+1 for placing rocks on top of the max height
                 for (int tY = 1; tY < maxHeight; tY++) {
                     lastMaterial = null;
                     existing = world.getBlockState(pos.offset(i, tY, j));
-                    isAir = existing.isAir(world, pos.offset(i, tY, j));
+                    isAir = existing.isAir();
 
                     //If we haven't placed an ore, and not trying to set the same state as existing
                     if (!isAir && /*lastMaterial == null &&*/ existing != layers[3].getStoneState()) {
@@ -102,7 +106,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoFeatureConfig> {
 
                     if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && lastMaterial != null) {
                         BlockState below = world.getBlockState(pos.offset(i, tY - 1, j));
-                        if (!below.isAir(world, pos.offset(i, tY - 1, j)) && below != WorldGenHelper.WATER_STATE) {
+                        if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
                             WorldGenHelper.addRockRaw(world, pos.offset(i, tY, j), lastMaterial, AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
                         }
                     }

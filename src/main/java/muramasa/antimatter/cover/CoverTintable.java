@@ -2,7 +2,7 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 import javax.annotation.Nullable;
 

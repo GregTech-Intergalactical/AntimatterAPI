@@ -2,33 +2,33 @@ package muramasa.antimatter.tool;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.DrawHighlightEvent;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.event.DrawSelectionEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.capability.TesseractGTCapability;
@@ -38,14 +38,13 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import static muramasa.antimatter.Data.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class MaterialTool extends ToolItem implements IAntimatterTool {
+public class MaterialTool extends DiggerItem implements IAntimatterTool {
 
     protected final String domain;
     protected final AntimatterToolType type;
@@ -54,7 +53,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     protected final long maxEnergy;
 
     public MaterialTool(String domain, AntimatterToolType type, Properties properties) {
-        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), AntimatterItemTier.NULL, type.getEffectiveBlocks(), properties);
+        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), AntimatterItemTier.NULL, type.getToolType(), properties);
         this.domain = domain;
         this.type = type;
         this.energyTier = -1;
@@ -63,7 +62,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     public MaterialTool(String domain, AntimatterToolType type, Properties properties, int energyTier) {
-        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), AntimatterItemTier.NULL, type.getEffectiveBlocks(), properties);
+        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), AntimatterItemTier.NULL, type.getToolType(), properties);
         this.domain = domain;
         this.type = type;
         this.energyTier = energyTier;
@@ -87,11 +86,12 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         return type;
     }
 
+    /*
     @Nonnull
     @Override
-    public Set<ToolType> getToolTypes(ItemStack stack) {
+    public Set<Tag<Block>> getToolTypes(ItemStack stack) {
         return getToolTypes();
-    }
+    }*/
 
     /**
      * Returns -1 if its not a powered tool
@@ -107,12 +107,12 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> list) {
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> list) {
         onGenericFillItemGroup(group, list, maxEnergy);
     }
 
     @Override
-    public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, PlayerEntity player) {
+    public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
         return Utils.doesStackHaveToolTypes(stack, WRENCH, ELECTRIC_WRENCH, SCREWDRIVER, ELECTRIC_SCREWDRIVER, CROWBAR, WIRE_CUTTER); // ???
     }
 
@@ -124,7 +124,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
      */
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         onGenericAddInformation(stack, tooltip, flag);
         super.appendHoverText(stack, world, tooltip, flag);
     }
@@ -135,24 +135,26 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
+    public UseAnim getUseAnimation(ItemStack stack) {
         return type.getUseAction();
     }
 
     @Override
     public int getUseDuration(ItemStack stack) {
-        return type.getUseAction() == UseAction.NONE ? super.getUseDuration(stack) : 72000;
+        return type.getUseAction() == UseAnim.NONE ? super.getUseDuration(stack) : 72000;
     }
 
+    /*
     @Override
     public boolean canHarvestBlock(ItemStack stack, BlockState state) {
         return Utils.isToolEffective(this, state) && getTier(stack).getLevel() >= state.getHarvestLevel();
-    }
+    }*/
 
+    /*
     @Override
-    public int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
+    public int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable Player player, @Nullable BlockState blockState) {
         return getToolTypes().contains(tool) ? getTier(stack).getLevel() : -1;
-    }
+    }*/
 
     @Override
     public int getMaxDamage(ItemStack stack) {
@@ -173,33 +175,33 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     @Override
-    public boolean mineBlock(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
+    public boolean mineBlock(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
         return onGenericBlockDestroyed(stack, world, state, pos, entity);
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext ctx) {
+    public InteractionResult useOn(UseOnContext ctx) {
         return onGenericItemUse(ctx);
     }
 
-    public void handleRenderHighlight(PlayerEntity entity, DrawHighlightEvent ev) {
+    public void handleRenderHighlight(Player entity, DrawSelectionEvent.HighlightBlock ev) {
         onGenericHighlight(entity, ev);
     }
 
     @Override
-    public boolean canAttackBlock(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+    public boolean canAttackBlock(BlockState state, Level world, BlockPos pos, Player player) {
         return type.getBlockBreakability();
     }
 
     @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return type.getActualToolTypes().contains(ToolType.AXE);
+        return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType, ItemStack stack) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
-        if (slotType == EquipmentSlotType.MAINHAND) {
+        if (slotType == EquipmentSlot.MAINHAND) {
             modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", type.getBaseAttackDamage() + getTier(stack).getAttackDamageBonus(), AttributeModifier.Operation.ADDITION));
             modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
         }
@@ -244,7 +246,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         if (!type.isPowered()) {
             return super.damageItem(stack, amount, entity, onBroken);
         }
-        if (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()) {
+        if (entity instanceof Player && ((Player) entity).isCreative()) {
             return 0;
         }
         return damage(stack, amount);
@@ -267,7 +269,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (type.getActualToolTypes().contains(ToolType.AXE) && enchantment.category == EnchantmentType.WEAPON) {
+        if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE) && enchantment.category == EnchantmentCategory.WEAPON) {
             return true;
         }
         return type.isPowered() ? enchantment != Enchantments.UNBREAKING : super.canApplyAtEnchantingTable(stack, enchantment);
@@ -283,33 +285,34 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
         return getGenericContainerItem(oldStack);
     }
 
+
     @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack) {
+    public int getBarColor(ItemStack stack) {
         // return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
-        if (type.isPowered()) return getCurrentEnergy(stack) > 0 ? 0x00BFFF : super.getRGBDurabilityForDisplay(stack);
-        return super.getRGBDurabilityForDisplay(stack);
+        if (type.isPowered()) return getCurrentEnergy(stack) > 0 ? 0x00BFFF : super.getBarColor(stack);
+        return super.getBarColor(stack);
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
-        if (!type.isPowered()) return super.getDurabilityForDisplay(stack);
+    public int getBarWidth(ItemStack stack) {
+        if (!type.isPowered()) return super.getBarWidth(stack);
         long currentEnergy = getCurrentEnergy(stack);
         if (currentEnergy > 0) {
             double maxAmount = getMaxEnergy(stack), difference = maxAmount - currentEnergy;
-            return difference / maxAmount;
+            return (int) (difference / maxAmount);
         }
-        return super.getDurabilityForDisplay(stack);
+        return super.getBarWidth(stack);
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public boolean isBarVisible(ItemStack stack) {
         if (type.isPowered()) return true;
-        return super.showDurabilityBar(stack);
+        return super.isBarVisible(stack);
     }
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         if (type.isPowered()) {
             //TODO: not lv
             return new ItemEnergyHandler.Provider(() -> new ToolEnergyHandler(stack, maxEnergy, 8 * (int) Math.pow(4, this.energyTier), 8 * (int) Math.pow(4, this.energyTier), 1, 1));
@@ -323,11 +326,11 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
 
     @Nullable
     @Override
-    public CompoundNBT getShareTag(ItemStack stack) {
-        CompoundNBT nbt = super.getShareTag(stack);
-        CompoundNBT inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
+    public CompoundTag getShareTag(ItemStack stack) {
+        CompoundTag nbt = super.getShareTag(stack);
+        CompoundTag inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
         if (inner != null) {
-            if (nbt == null) nbt = new CompoundNBT();
+            if (nbt == null) nbt = new CompoundTag();
             if (nbt.contains(Ref.TAG_TOOL_DATA)) {
                 nbt.getCompound(Ref.TAG_TOOL_DATA).merge(inner);
             } else {
@@ -338,7 +341,7 @@ public class MaterialTool extends ToolItem implements IAntimatterTool {
     }
 
     @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
+    public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
         super.readShareTag(stack, nbt);
         if (nbt != null) {
             getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound(Ref.TAG_TOOL_DATA)));

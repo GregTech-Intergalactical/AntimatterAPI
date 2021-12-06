@@ -5,19 +5,20 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.RotatedPillarBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.event.ForgeEventFactory;
 
 public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
@@ -40,23 +41,23 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
+    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
-        BlockState stripped = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolType.AXE);
+        BlockState stripped = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolActions.AXE_STRIP);
         if (stripped != null) {
             if (state.hasProperty(RotatedPillarBlock.AXIS) && stripped.hasProperty(RotatedPillarBlock.AXIS)) {
                 stripped = stripped.setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
             }
-            c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), SoundEvents.AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), SoundEvents.AXE_STRIP, SoundSource.BLOCKS, 1.0F, 1.0F);
             c.getLevel().setBlockAndUpdate(c.getClickedPos(), stripped);
             Utils.damageStack(c.getItemInHand(), c.getPlayer());
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
-        BlockState eventState = ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, toolType);
+    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction action) {
+        BlockState eventState = ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, action);
         return eventState != originalState ? eventState : STRIPPING_MAP.get(originalState);
     }
 

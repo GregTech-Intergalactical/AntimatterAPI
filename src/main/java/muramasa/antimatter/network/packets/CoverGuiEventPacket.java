@@ -4,12 +4,12 @@ import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -21,21 +21,21 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
         this.facing = facing;
     }
 
-    public static void encode(CoverGuiEventPacket msg, PacketBuffer buf) {
+    public static void encode(CoverGuiEventPacket msg, FriendlyByteBuf buf) {
         msg.event.getFactory().write(msg.event, buf);
         buf.writeBlockPos(msg.pos);
         buf.writeEnum(msg.facing);
     }
 
-    public static CoverGuiEventPacket decode(PacketBuffer buf) {
+    public static CoverGuiEventPacket decode(FriendlyByteBuf buf) {
         return new CoverGuiEventPacket(IGuiEvent.IGuiEventFactory.read(buf), buf.readBlockPos(), buf.readEnum(Direction.class));
     }
 
     public static void handle(final CoverGuiEventPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity sender = ctx.get().getSender();
+            ServerPlayer sender = ctx.get().getSender();
             if (sender != null) {
-                TileEntity tile = Utils.getTile(sender.getLevel(), msg.pos);
+                BlockEntity tile = Utils.getTile(sender.getLevel(), msg.pos);
                 if (tile instanceof TileEntityMachine) {
                     if (msg.event.forward()) {
                         ((TileEntityMachine<?>) tile).coverHandler.ifPresent(ch -> ch.get(msg.facing).onGuiEvent(msg.event, sender));

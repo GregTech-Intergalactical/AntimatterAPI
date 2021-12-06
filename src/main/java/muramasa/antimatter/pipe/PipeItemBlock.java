@@ -1,8 +1,8 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.block.AntimatterItemBlock;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.context.BlockPlaceContext;
 
 import javax.annotation.Nonnull;
 
@@ -21,12 +21,12 @@ public class PipeItemBlock extends AntimatterItemBlock {
 
     @Nonnull
     @Override
-    public ActionResultType place(BlockItemUseContext context) {
-        ActionResultType action = super.place(context);
+    public InteractionResult place(BlockPlaceContext context) {
+        InteractionResult action = super.place(context);
         if (action.consumesAction()) {
             if (context.replacingClickedOnBlock()) return action;
             if (pipe.onBlockPlacedTo(context.getLevel(), context.getClickedPos(), context.getClickedFace())) {
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
         return action;

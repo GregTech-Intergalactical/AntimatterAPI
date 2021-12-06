@@ -2,8 +2,8 @@ package muramasa.antimatter.tool;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 public class ToolEnergyHandler extends ItemEnergyHandler {
     long maxEnergy;
@@ -20,15 +20,15 @@ public class ToolEnergyHandler extends ItemEnergyHandler {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
         nbt.putLong(Ref.KEY_TOOL_DATA_ENERGY, this.energy);
         nbt.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, this.discharge);
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         this.energy = nbt.getLong(Ref.KEY_TOOL_DATA_ENERGY);
         this.discharge = nbt.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
@@ -36,7 +36,7 @@ public class ToolEnergyHandler extends ItemEnergyHandler {
     @Override
     public long getCapacity() {
         if (stack.getTag() != null) {
-            CompoundNBT nbt = stack.getTag();
+            CompoundTag nbt = stack.getTag();
             if (nbt.contains(Ref.TAG_TOOL_DATA) && nbt.getCompound(Ref.TAG_TOOL_DATA).contains(Ref.KEY_TOOL_DATA_MAX_ENERGY)) {
                 return nbt.getCompound(Ref.TAG_TOOL_DATA).getLong(Ref.KEY_TOOL_DATA_MAX_ENERGY);
             }

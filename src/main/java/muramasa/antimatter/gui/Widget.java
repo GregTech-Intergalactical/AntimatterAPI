@@ -1,30 +1,29 @@
 package muramasa.antimatter.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Matrix4f;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.client.gui.GuiUtils;
+import net.minecraftforge.client.gui.GuiUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -32,7 +31,7 @@ public abstract class Widget implements IGuiElement {
     public final GuiInstance gui;
     public final boolean isRemote;
     protected IGuiElement parent;
-    private ITextComponent message = StringTextComponent.EMPTY;
+    private Component message = TextComponent.EMPTY;
     public final int id;
 
     protected boolean enabled = true;
@@ -51,11 +50,11 @@ public abstract class Widget implements IGuiElement {
         updateSize();
     }
 
-    public void setMessage(ITextComponent message) {
+    public void setMessage(Component message) {
         this.message = message;
     }
 
-    public ITextComponent getMessage() {
+    public Component getMessage() {
         return message;
     }
 
@@ -121,8 +120,8 @@ public abstract class Widget implements IGuiElement {
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected void renderTooltip(MatrixStack matrixStack, ITextComponent text, double mouseX, double mouseY) {
-        net.minecraftforge.fml.client.gui.GuiUtils.drawHoveringText(matrixStack, Arrays.asList(text), (int) mouseX, (int) mouseY, parent.getW(), parent.getH(), -1, Minecraft.getInstance().font);
+    protected void renderTooltip(PoseStack matrixStack, Component text, double mouseX, double mouseY) {
+        this.gui.screen.renderComponentTooltip(matrixStack, Collections.singletonList(text), (int)mouseX,(int) mouseY);
     }
 
     @Override
@@ -157,7 +156,7 @@ public abstract class Widget implements IGuiElement {
 
 
     @OnlyIn(Dist.CLIENT)
-    public abstract void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks);
+    public abstract void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks);
 
     public boolean isEnabled() {
         return enabled;
@@ -187,13 +186,13 @@ public abstract class Widget implements IGuiElement {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
+    public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
 
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void clickSound(SoundHandler handler) {
-        handler.play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+    public void clickSound(SoundManager handler) {
+        handler.play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -255,40 +254,38 @@ public abstract class Widget implements IGuiElement {
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected void fillGradient(MatrixStack matrixStack, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
+    protected void fillGradient(PoseStack matrixStack, int x1, int y1, int x2, int y2, int colorFrom, int colorTo) {
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
-        RenderSystem.disableAlphaTest();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.shadeModel(7425);
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuilder();
-        bufferbuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        fillGradient(matrixStack.last().pose(), bufferbuilder, x1, y1, x2, y2, 0, colorFrom, colorTo);
-        tessellator.end();
-        RenderSystem.shadeModel(7424);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder bufferbuilder = tesselator.getBuilder();
+        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        fillGradient(matrixStack.last().pose(), bufferbuilder, x1, y1, x2,y2, 0, colorFrom, colorTo);
+        tesselator.end();
         RenderSystem.disableBlend();
-        RenderSystem.enableAlphaTest();
         RenderSystem.enableTexture();
     }
 
+
     @OnlyIn(Dist.CLIENT)
-    protected void drawHoverText(List<? extends ITextProperties> textLines, int x, int y, FontRenderer font, MatrixStack matrixStack) {
-        Minecraft minecraft = Minecraft.getInstance();
-        GuiUtils.drawHoveringText(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight(), -1, font);
+    protected void drawHoverText(List<? extends FormattedText> textLines, int x, int y, Font font, PoseStack matrixStack) {
+        this.gui.screen.renderComponentTooltip(matrixStack, textLines, x, y, ItemStack.EMPTY);
+       // renderTooltip(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight(), -1, font);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public int drawText(MatrixStack matrixStack, ITextComponent text, float x, float y, int color) {
+    public int drawText(PoseStack matrixStack, Component text, float x, float y, int color) {
         return Minecraft.getInstance().font.draw(matrixStack, text, x, y, color);
     }
 
     @OnlyIn(Dist.CLIENT)
-    protected void drawTexture(MatrixStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
-        RenderSystem.color4f(1, 1, 1, 1);
-        Minecraft.getInstance().textureManager.bind(loc);
+    protected void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
+        RenderSystem.clearColor(1, 1, 1, 1);
+        Minecraft.getInstance().textureManager.bindForSetup(loc);
         //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
-        AbstractGui.blit(stack, left, top, 0, x, y, sizeX, sizeY, 256, 256);
+        GuiComponent.blit(stack, left, top, 0, x, y, sizeX, sizeY, 256, 256);
     }
 
     public static WidgetSupplier builder(BiFunction<GuiInstance, IGuiElement, Widget> source) {

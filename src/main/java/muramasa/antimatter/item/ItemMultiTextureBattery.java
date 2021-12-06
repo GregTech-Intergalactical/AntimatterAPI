@@ -5,8 +5,8 @@ import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -20,7 +20,7 @@ public class ItemMultiTextureBattery extends ItemBattery {
     }
 
     @Override
-    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+    public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
         String id = this.getId();
         ItemModelBuilder[] builders = new ItemModelBuilder[8];
         for (int i = 0; i < 8; i++) {

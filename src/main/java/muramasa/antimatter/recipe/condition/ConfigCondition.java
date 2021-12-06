@@ -3,8 +3,8 @@ package muramasa.antimatter.recipe.condition;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
@@ -52,7 +52,7 @@ public class ConfigCondition implements ICondition {
 
         @Override
         public ConfigCondition read(JsonObject json) {
-            return new ConfigCondition(JSONUtils.getAsString(json, "config"));
+            return new ConfigCondition(GsonHelper.getAsString(json, "config"));
         }
 
         @Override

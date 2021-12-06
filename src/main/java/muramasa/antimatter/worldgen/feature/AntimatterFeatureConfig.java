@@ -1,6 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
-import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
-public class AntimatterFeatureConfig implements IFeatureConfig {
+public class AntimatterFeatureConfig implements FeatureConfiguration {
 }

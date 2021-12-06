@@ -10,16 +10,14 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityMachine.DynamicKey;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelProperty;
 
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.function.Function;
-
 import javax.annotation.Nullable;
+import java.util.EnumMap;
+import java.util.function.Function;
 
 public class AntimatterProperties {
 

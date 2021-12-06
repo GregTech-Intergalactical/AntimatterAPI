@@ -8,14 +8,18 @@ import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.data.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 
 import java.util.Collections;
@@ -26,7 +30,6 @@ import java.util.function.Function;
 
 import static muramasa.antimatter.util.TagUtils.nc;
 
-//Only extending RecipeProvider for static purposes.
 public class AntimatterRecipeProvider extends RecipeProvider {
 
     protected final String providerDomain, providerName;
@@ -38,12 +41,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     @Override
-    public void run(DirectoryCache cache) {
-
-    }
-
-    @Override
-    public void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+    public void run(HashCache cache) {
 
     }
 
@@ -139,20 +137,20 @@ public class AntimatterRecipeProvider extends RecipeProvider {
             }
         });*/
 
-    public void addConditionalRecipe(Consumer<IFinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName) {
+    public void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName) {
         ConditionalRecipe.builder().addCondition(new ConfigCondition(configClass, configFieldName))
                 .addRecipe(builtRecipe::build).build(consumer, recipeDomain, recipeName);
     }
 
-    public AntimatterShapedRecipeBuilder getItemRecipe(String groupName, String criterionName, ICriterionInstance criterion, IItemProvider output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public AntimatterShapedRecipeBuilder getItemRecipe(String groupName, String criterionName, CriterionTriggerInstance criterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         return getStackRecipe(groupName, criterionName, criterion, new ItemStack(output), inputs, inputPattern);
     }
 
-    public AntimatterShapedRecipeBuilder getStackRecipe(String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public AntimatterShapedRecipeBuilder getStackRecipe(String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         return getStackRecipe(groupName, criterionName, criterion, Collections.singletonList(output), inputs, inputPattern);
     }
 
-    public AntimatterShapedRecipeBuilder getStackRecipe(String groupName, String criterionName, ICriterionInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public AntimatterShapedRecipeBuilder getStackRecipe(String groupName, String criterionName, CriterionTriggerInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         if (inputs.isEmpty()) Utils.onInvalidData("Inputs should not be empty!");
         if (inputPattern.length < 1 || inputPattern.length > 3)
             Utils.onInvalidData("Input pattern must have between 1 and 3 rows!");
@@ -167,18 +165,18 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         return recipeBuilder;
     }
 
-    public void shapeless(Consumer<IFinishedRecipe> consumer, String recipeID, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, Object... inputs) {
+    public void shapeless(Consumer<FinishedRecipe> consumer, String recipeID, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, Object... inputs) {
         ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(output.getItem(), output.getCount()).unlockedBy(criterionName, criterion)
                 .group(groupName);
         for (Object input : inputs) {
             try {
-                if (input instanceof IItemProvider) {
-                    builder.requires(((IItemProvider) input));
-                } else if (input instanceof ITag) {
-                    if (input instanceof ITag.INamedTag) {
-                        builder.requires(nc(TagUtils.getItemTag(((ITag.INamedTag) input).getName())));
+                if (input instanceof ItemLike) {
+                    builder.requires(((ItemLike) input));
+                } else if (input instanceof Tag) {
+                    if (input instanceof Tag.Named) {
+                        builder.requires(nc(TagUtils.getItemTag(((Tag.Named) input).getName())));
                     } else {
-                        builder.requires((ITag<Item>) input);
+                        builder.requires((Tag<Item>) input);
                     }
                 } else if (input instanceof Ingredient) {
                     builder.requires((Ingredient) input);
@@ -190,19 +188,19 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         builder.save(consumer, new ResourceLocation(Ref.ID, output.getItem().toString() + "_" + recipeID));
     }
 
-    public void addItemRecipe(Consumer<IFinishedRecipe> consumer, String groupName, String criterionName, ICriterionInstance criterion, IItemProvider output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public void addItemRecipe(Consumer<FinishedRecipe> consumer, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         addStackRecipe(consumer, "", "", groupName, criterionName, criterion, new ItemStack(output), inputs, inputPattern);
     }
 
-    public void addItemRecipe(Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, IItemProvider output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public void addItemRecipe(Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         addStackRecipe(consumer, recipeDomain, recipeName, groupName, criterionName, criterion, new ItemStack(output), inputs, inputPattern);
     }
 
-    public void addStackRecipe(Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, Function<ImmutableMap.Builder<Character, Object>, ImmutableMap.Builder<Character, Object>> inputs, String... inputPattern) {
+    public void addStackRecipe(Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, Function<ImmutableMap.Builder<Character, Object>, ImmutableMap.Builder<Character, Object>> inputs, String... inputPattern) {
         addStackRecipe(consumer, recipeDomain, recipeName, groupName, criterionName, criterion, output, inputs.apply(new ImmutableMap.Builder<>()).build(), inputPattern);
     }
 
-    public void addStackRecipe(Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public void addStackRecipe(Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         AntimatterShapedRecipeBuilder recipeBuilder = getStackRecipe(groupName, criterionName, criterion, output, inputs, inputPattern);
         if (recipeName.isEmpty()) recipeBuilder.build(consumer);
         else {
@@ -211,19 +209,19 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         }
     }
 
-    public void addToolRecipe(String builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, List<ItemStack> output, Function<ImmutableMap.Builder<Character, Object>, ImmutableMap.Builder<Character, Object>> inputs, String... inputPattern) {
+    public void addToolRecipe(String builder, Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, List<ItemStack> output, Function<ImmutableMap.Builder<Character, Object>, ImmutableMap.Builder<Character, Object>> inputs, String... inputPattern) {
         addToolRecipe(builder, consumer, recipeDomain, recipeName, groupName, criterionName, criterion, output, inputs.apply(new ImmutableMap.Builder<>()).build(), inputPattern);
     }
 
-    public void addToolRecipe(String builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, Function<ImmutableMap.Builder<Character, Object>, ImmutableMap.Builder<Character, Object>> inputs, String... inputPattern) {
+    public void addToolRecipe(String builder, Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, Function<ImmutableMap.Builder<Character, Object>, ImmutableMap.Builder<Character, Object>> inputs, String... inputPattern) {
         addToolRecipe(builder, consumer, recipeDomain, recipeName, groupName, criterionName, criterion, Collections.singletonList(output), inputs.apply(new ImmutableMap.Builder<>()).build(), inputPattern);
     }
 
-    public void addToolRecipe(String builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public void addToolRecipe(String builder, Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         addToolRecipe(builder, consumer, recipeDomain, recipeName, groupName, criterionName, criterion, Collections.singletonList(output), inputs, inputPattern);
     }
 
-    public void addToolRecipe(String builder, Consumer<IFinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, ICriterionInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
+    public void addToolRecipe(String builder, Consumer<FinishedRecipe> consumer, String recipeDomain, String recipeName, String groupName, String criterionName, CriterionTriggerInstance criterion, List<ItemStack> output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
         if (output.isEmpty()) {
             Antimatter.LOGGER.warn("Material recipe " + recipeDomain + ":" + recipeName + "has an empty output.");
             return;
@@ -239,16 +237,16 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     @SuppressWarnings("unchecked")
     protected AntimatterShapedRecipeBuilder resolveKeys(AntimatterShapedRecipeBuilder incompleteBuilder, ImmutableMap<Character, Object> inputs) {
         for (Map.Entry<Character, Object> entry : inputs.entrySet()) {
-            if (entry.getValue() instanceof IItemProvider) {
-                incompleteBuilder = incompleteBuilder.key(entry.getKey(), (IItemProvider) entry.getValue());
-            } else if (entry.getValue() instanceof ITag) {
+            if (entry.getValue() instanceof ItemLike) {
+                incompleteBuilder = incompleteBuilder.key(entry.getKey(), (ItemLike) entry.getValue());
+            } else if (entry.getValue() instanceof Tag) {
                 try {
                     //Wrap the tag using tag manager.
-                    if (entry.getValue() instanceof ITag.INamedTag) {
-                        ITag.INamedTag<Item> tag = (ITag.INamedTag<Item>) entry.getValue();
+                    if (entry.getValue() instanceof Tag.Named) {
+                        Tag.Named<Item> tag = (Tag.Named<Item>) entry.getValue();
                         incompleteBuilder = incompleteBuilder.key(entry.getKey(), nc(tag));
                     } else {
-                        incompleteBuilder = incompleteBuilder.key(entry.getKey(), (ITag<Item>) entry.getValue());
+                        incompleteBuilder = incompleteBuilder.key(entry.getKey(), (Tag<Item>) entry.getValue());
                     }
                 } catch (ClassCastException e) {
                     Utils.onInvalidData("Tag inputs only allow Item Tags!");
@@ -271,11 +269,11 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         return providerName;
     }
 
-    public ICriterionInstance hasSafeItem(ITag<Item> tag) {
+    public CriterionTriggerInstance hasSafeItem(Tag<Item> tag) {
         return RecipeProvider.has(tag);
     }
 
-    public ICriterionInstance hasSafeItem(IItemProvider stack) {
+    public CriterionTriggerInstance hasSafeItem(ItemLike stack) {
         return RecipeProvider.has(stack);
     }
 }

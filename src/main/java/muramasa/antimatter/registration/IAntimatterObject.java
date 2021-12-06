@@ -1,7 +1,7 @@
 package muramasa.antimatter.registration;
 
 import muramasa.antimatter.Ref;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public interface IAntimatterObject {
 

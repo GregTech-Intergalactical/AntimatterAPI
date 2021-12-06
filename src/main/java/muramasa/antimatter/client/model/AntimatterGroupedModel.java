@@ -6,11 +6,12 @@ import muramasa.antimatter.client.IAntimatterModel;
 import muramasa.antimatter.client.baked.BakedMachineSide;
 import muramasa.antimatter.client.baked.CoverBakedModel;
 import muramasa.antimatter.client.baked.GroupedBakedModel;
-import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 
@@ -30,13 +31,13 @@ public class AntimatterGroupedModel implements IAntimatterModel<AntimatterGroupe
     }
 
     @Override
-    public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        ImmutableMap.Builder<String, IBakedModel> builder = buildParts(owner, bakery, getter, transform, overrides, loc, this.models.entrySet());
-        return new GroupedBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, MissingTextureSprite.getLocation())), builder.build());
+    public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+        ImmutableMap.Builder<String, BakedModel> builder = buildParts(owner, bakery, getter, transform, overrides, loc, this.models.entrySet());
+        return new GroupedBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation())), builder.build());
     }
 
-    protected static ImmutableMap.Builder<String, IBakedModel> buildParts(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc, Set<Map.Entry<String, IModelGeometry<?>>> entries) {
-        ImmutableMap.Builder<String, IBakedModel> builder = ImmutableMap.builder();
+    protected static ImmutableMap.Builder<String, BakedModel> buildParts(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc, Set<Map.Entry<String, IModelGeometry<?>>> entries) {
+        ImmutableMap.Builder<String, BakedModel> builder = ImmutableMap.builder();
         for (Map.Entry<String, IModelGeometry<?>> entry : entries) {
             builder.put(entry.getKey(), entry.getValue().bake(owner, bakery, getter, transform, overrides, loc));
         }
@@ -44,7 +45,7 @@ public class AntimatterGroupedModel implements IAntimatterModel<AntimatterGroupe
     }
 
     @Override
-    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         return models.values().stream().flatMap(t -> t.getTextures(owner, modelGetter, missingTextureErrors).stream()).collect(Collectors.toList());
     }
 
@@ -55,9 +56,9 @@ public class AntimatterGroupedModel implements IAntimatterModel<AntimatterGroupe
         }
 
         @Override
-        public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-            ImmutableMap.Builder<String, IBakedModel> builder = buildParts(owner, bakery, getter, transform, overrides, loc, this.models.entrySet());
-            return new CoverBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, MissingTextureSprite.getLocation())), builder.build());
+        public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+            ImmutableMap.Builder<String, BakedModel> builder = buildParts(owner, bakery, getter, transform, overrides, loc, this.models.entrySet());
+            return new CoverBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation())), builder.build());
         }
     }
 
@@ -68,9 +69,9 @@ public class AntimatterGroupedModel implements IAntimatterModel<AntimatterGroupe
         }
 
         @Override
-        public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-            ImmutableMap.Builder<String, IBakedModel> builder = buildParts(owner, bakery, getter, transform, overrides, loc, this.models.entrySet());
-            return new BakedMachineSide(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, MissingTextureSprite.getLocation())), builder.build());
+        public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+            ImmutableMap.Builder<String, BakedModel> builder = buildParts(owner, bakery, getter, transform, overrides, loc, this.models.entrySet());
+            return new BakedMachineSide(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation())), builder.build());
         }
     }
 }

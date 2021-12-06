@@ -11,9 +11,10 @@ import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.material.Material;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.tags.FluidTagsProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 
 import java.util.HashMap;
@@ -21,7 +22,7 @@ import java.util.Map;
 
 import static muramasa.antimatter.util.TagUtils.getForgeFluidTag;
 
-public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implements IAntimatterProvider {
+public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAntimatterProvider {
 
     private final String providerDomain, providerName;
     private final boolean replace;
@@ -29,7 +30,7 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, ExistingFileHelperOverride fh) {
-        super(gen, fh);
+        super(gen,providerDomain,fh);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
@@ -37,7 +38,7 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
 
     @Override
     public void run() {
-        Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.builders);
+        Map<ResourceLocation, Tag.Builder> b = new HashMap<>(this.builders);
         this.builders.clear();
         addTags();
         //TagUtils.getTags(Fluid.class).forEach((k,v)-> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
@@ -46,7 +47,7 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
     }
 
     @Override
-    public void run(DirectoryCache cache) {
+    public void run(HashCache cache) {
 
     }
 
@@ -86,7 +87,7 @@ public class AntimatterFluidTagProvider extends ForgeFluidTagsProvider implement
 
     // Must append 's' in the identifier
     // Appends data to the tag.
-    public void addTag(ResourceLocation loc, ITag.Builder obj) {
+    public void addTag(ResourceLocation loc, Tag.Builder obj) {
         JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
         if (json == null) {

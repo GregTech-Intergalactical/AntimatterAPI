@@ -6,17 +6,18 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICustomCraftingCategoryExtension;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
     @Override
     public void setRecipe(IRecipeLayout recipeLayout, IIngredients ingredients) {
         IGuiItemStackGroup guiItemStacks = recipeLayout.getItemStacks();
-        IFocus<?> focus = recipeLayout.getFocus();
+        IFocus<?> focus = recipeLayout.getFocus(VanillaTypes.ITEM);
 
         List<List<ItemStack>> inputs = ingredients.getInputs(VanillaTypes.ITEM);
         List<List<ItemStack>> newInputs = new ObjectArrayList<>(inputs);
@@ -137,8 +138,8 @@ public class JEIMaterialRecipeExtension implements ICustomCraftingCategoryExtens
         guiItemStacks.addTooltipCallback((a, b, c, d) -> {
             if (!b) {
                 Map<String, Object> o = recipe.builder.getFromResult(c);
-                d.add(new StringTextComponent("Properties:").withStyle(TextFormatting.GOLD));
-                o.forEach((k, v) -> d.add(new StringTextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new StringTextComponent(" - " + v.toString()))));
+                d.add(new TextComponent("Properties:").withStyle(ChatFormatting.GOLD));
+                o.forEach((k, v) -> d.add(new TextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new TextComponent(" - " + v.toString()))));
             }
         });
         helper.setInputs(guiItemStacks, shouldReplace ? newInputs : inputs, recipe.getWidth(), recipe.getHeight());

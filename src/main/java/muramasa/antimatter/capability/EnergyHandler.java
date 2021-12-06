@@ -2,8 +2,8 @@ package muramasa.antimatter.capability;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.gt.GTConsumer;
 import tesseract.api.gt.GTTransaction;
@@ -189,8 +189,8 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tag = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
         tag.putLong(Ref.TAG_MACHINE_ENERGY, this.energy);
         tag.putLong(Ref.TAG_MACHINE_VOLTAGE_IN, this.voltageIn);
         tag.putLong(Ref.TAG_MACHINE_VOLTAGE_OUT, this.voltageOut);
@@ -200,7 +200,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         this.energy = nbt.getLong(Ref.TAG_MACHINE_ENERGY);
         this.voltageIn = nbt.getLong(Ref.TAG_MACHINE_VOLTAGE_IN);
         this.voltageOut = nbt.getLong(Ref.TAG_MACHINE_VOLTAGE_OUT);

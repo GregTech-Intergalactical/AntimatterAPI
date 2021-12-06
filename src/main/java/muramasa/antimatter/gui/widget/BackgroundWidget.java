@@ -1,13 +1,13 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -42,16 +42,16 @@ public class BackgroundWidget extends Widget {
 
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         drawTexture(matrixStack, loc, realX(), realY(), 0, 0, xSize, ySize);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    protected void drawTexture(MatrixStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
-        RenderSystem.color4f(1, 1, 1, 1);
-        Minecraft.getInstance().textureManager.bind(loc);
+    protected void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
+        RenderSystem.clearColor(1, 1, 1, 1);
+        Minecraft.getInstance().textureManager.bindForSetup(loc);
         //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
-        AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY, this.guiXSize, this.guiYSize);
+        GuiComponent.blit(stack, left, top, x, y, sizeX, sizeY, this.guiXSize, this.guiYSize);
     }
 }

@@ -2,8 +2,8 @@ package muramasa.antimatter.cover;
 
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 

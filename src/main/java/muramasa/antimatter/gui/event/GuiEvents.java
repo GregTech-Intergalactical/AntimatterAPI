@@ -1,7 +1,7 @@
 package muramasa.antimatter.gui.event;
 
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 
 import java.util.function.BiFunction;
 
@@ -13,9 +13,9 @@ public enum GuiEvents implements IGuiEvent.IGuiEventFactory {
     EXTRA_SWITCH("es", GuiEvent::new); // When button which added thought addSwitch() toggled
 
     private final String id;
-    private final BiFunction<IGuiEvent.IGuiEventFactory, PacketBuffer, IGuiEvent> supplier;
+    private final BiFunction<IGuiEvent.IGuiEventFactory, FriendlyByteBuf, IGuiEvent> supplier;
 
-    GuiEvents(String id, BiFunction<IGuiEvent.IGuiEventFactory, PacketBuffer, IGuiEvent> supplier) {
+    GuiEvents(String id, BiFunction<IGuiEvent.IGuiEventFactory, FriendlyByteBuf, IGuiEvent> supplier) {
         this.id = id;
         this.supplier = supplier;
         register();
@@ -31,7 +31,7 @@ public enum GuiEvents implements IGuiEvent.IGuiEventFactory {
     }
 
     @Override
-    public BiFunction<IGuiEvent.IGuiEventFactory, PacketBuffer, IGuiEvent> factory() {
+    public BiFunction<IGuiEvent.IGuiEventFactory, FriendlyByteBuf, IGuiEvent> factory() {
         return supplier;
     }
 
@@ -39,7 +39,7 @@ public enum GuiEvents implements IGuiEvent.IGuiEventFactory {
         public final int[] data;
         public final IGuiEventFactory factory;
 
-        GuiEvent(IGuiEventFactory factory, PacketBuffer buffer) {
+        GuiEvent(IGuiEventFactory factory, FriendlyByteBuf buffer) {
             this.data = buffer.readVarIntArray();
             this.factory = factory;
         }
@@ -50,7 +50,7 @@ public enum GuiEvents implements IGuiEvent.IGuiEventFactory {
         }
 
         @Override
-        public void write(PacketBuffer buffer) {
+        public void write(FriendlyByteBuf buffer) {
             buffer.writeVarIntArray(data);
         }
 

@@ -1,20 +1,22 @@
 package muramasa.antimatter.tile;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.machine.types.TankMachine;
-import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nullable;
 
 public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMachine<T> implements IInfoRenderer<TankMachine.TankRenderWidget> {
 
-    public TileEntityTank(Machine<?> type) {
-        super(type);
+    public TileEntityTank(Machine<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         fluidHandler.set(() -> new MachineFluidHandler<T>((T) this) {
             @Nullable
             @Override
@@ -35,7 +37,7 @@ public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMa
     }
 
     @Override
-    public int drawInfo(TankMachine.TankRenderWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+    public int drawInfo(TankMachine.TankRenderWidget instance, PoseStack stack, Font renderer, int left, int top) {
         left = left + 55;
         top = top + 24;
         renderer.draw(stack, instance.stack.getDisplayName().getString(), left, top, 16448255);

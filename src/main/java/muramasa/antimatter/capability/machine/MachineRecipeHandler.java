@@ -13,10 +13,10 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -563,15 +563,15 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
      * NBT STUFF
      **/
 
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
-        ListNBT item = new ListNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
+        ListTag item = new ListTag();
         if (itemInputs.size() > 0) {
             itemInputs.forEach(t -> item.add(t.serializeNBT()));
         }
-        ListNBT fluid = new ListNBT();
+        ListTag fluid = new ListTag();
         if (fluidInputs.size() > 0) {
-            fluidInputs.forEach(t -> fluid.add(t.writeToNBT(new CompoundNBT())));
+            fluidInputs.forEach(t -> fluid.add(t.writeToNBT(new CompoundTag())));
         }
         nbt.put("I", item);
         nbt.put("F", fluid);
@@ -579,11 +579,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return nbt;
     }
 
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         itemInputs = new ObjectArrayList<>();
         fluidInputs = new ObjectArrayList<>();
-        nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundNBT) t)));
-        nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundNBT) t)));
+        nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundTag) t)));
+        nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundTag) t)));
         this.currentProgress = nbt.getInt("P");
     }
 

@@ -2,7 +2,6 @@ package muramasa.antimatter.material;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 
 import java.util.Arrays;

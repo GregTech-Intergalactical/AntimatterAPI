@@ -6,28 +6,28 @@ import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.slot.IClickableSlot;
 import muramasa.antimatter.gui.slot.SlotFake;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.crash.ReportedException;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.*;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.CrashReport;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportedException;
+import net.minecraft.core.Registry;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import java.util.Set;
 
-public abstract class AntimatterContainer extends Container implements IAntimatterContainer {
+public abstract class AntimatterContainer extends AbstractContainerMenu implements IAntimatterContainer {
 
-    protected PlayerInventory playerInv;
+    protected Inventory playerInv;
     protected int invSize;
     public final GuiInstance handler;
-    public final Set<IContainerListener> listeners = new ObjectOpenHashSet<>();
-    private final ContainerType<?> containerType;
+    public final Set<ContainerListener> listeners = new ObjectOpenHashSet<>();
+    private final MenuType<?> containerType;
 
-    public AntimatterContainer(IGuiHandler handler, ContainerType<?> containerType, int windowId, PlayerInventory playerInv, int invSize) {
+    public AntimatterContainer(IGuiHandler handler, MenuType<?> containerType, int windowId, Inventory playerInv, int invSize) {
         super(containerType, windowId);
         this.playerInv = playerInv;
         this.invSize = invSize;
@@ -36,19 +36,19 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
     }
 
     @Override
-    public void addSlotListener(IContainerListener listener) {
+    public void addSlotListener(ContainerListener listener) {
         this.listeners.add(listener);
         super.addSlotListener(listener);
     }
 
     @Override
-    public void removeSlotListener(IContainerListener listener) {
+    public void removeSlotListener(ContainerListener listener) {
         super.removeSlotListener(listener);
         this.listeners.remove(listener);
     }
 
     @Override
-    public Set<IContainerListener> listeners() {
+    public Set<ContainerListener> listeners() {
         return listeners;
     }
 
@@ -70,10 +70,11 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
         source().update();
     }
 
-    public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    @Override
+    public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player) {
         if (slotId >= 0 && this.getSlot(slotId) instanceof IClickableSlot) {
             try {
-                return ((IClickableSlot) this.getSlot(slotId)).clickSlot(dragType, clickTypeIn, player, this);
+                ((IClickableSlot) this.getSlot(slotId)).clickSlot(dragType, clickTypeIn, player, this);
             } catch (Exception exception) {
                 CrashReport crashreport = CrashReport.forThrowable(exception, "Container click");
                 CrashReportCategory crashreportcategory = crashreport.addCategory("Click info");
@@ -90,11 +91,11 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                 throw new ReportedException(crashreport);
             }
         }
-        return super.clicked(slotId, dragType, clickTypeIn, player);
+        super.clicked(slotId, dragType, clickTypeIn, player);
     }
 
     @Override
-    public ItemStack quickMoveStack(PlayerEntity player, int index) {
+    public ItemStack quickMoveStack(Player player, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.slots.get(index);
 
@@ -145,7 +146,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
                     continueLoop = true;
                 }
                 ItemStack itemstack = slot.getItem();
-                if (!continueLoop && !itemstack.isEmpty() && consideredTheSameItem(stack, itemstack)) {
+                if (!continueLoop && !itemstack.isEmpty() && itemstack.sameItem(stack)) {
                     int j = itemstack.getCount() + stack.getCount();
                     int maxSize = Math.min(slot.getMaxStackSize(), stack.getMaxStackSize());
                     if (j <= maxSize) {
@@ -221,7 +222,7 @@ public abstract class AntimatterContainer extends Container implements IAntimatt
         return flag;
     }
 
-    public PlayerInventory getPlayerInv() {
+    public Inventory getPlayerInv() {
         return playerInv;
     }
 

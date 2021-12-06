@@ -9,15 +9,12 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.Block;
-import net.minecraft.block.WallBlock;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
-
-import static net.minecraft.block.WallHeight.LOW;
-import static net.minecraft.block.WallHeight.TALL;
 
 public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject, ITextureProvider, IModelProvider {
     protected String domain, id, suffix;
@@ -33,7 +30,7 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
     }
 
     private static Properties getProps(StoneType type) {
-        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).strength(type.getHardness(), type.getResistence());
+        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).strength(type.getHardness(), type.getResistence());
         if (type.doesRequireTool()) {
             props.requiresCorrectToolForDrops();
         }
@@ -51,7 +48,7 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
     }
 
     @Override
-    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+    public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
         prov.getBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation("minecraft", "block/wall_inventory"))).texture("wall", getTextures()[0]);
     }
 
@@ -60,7 +57,7 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
         BlockModelBuilder post = prov.models().getBuilder(getId() + "_post").parent(prov.existing("minecraft", "block/template_wall_post")).texture("wall", getTextures()[0]);
         BlockModelBuilder side = prov.models().getBuilder(getId() + "_side").parent(prov.existing("minecraft", "block/template_wall_side")).texture("wall", getTextures()[0]);
         BlockModelBuilder side_tall = prov.models().getBuilder(getId() + "_side_tall").parent(prov.existing("minecraft", "block/template_wall_side_tall")).texture("wall", getTextures()[0]);
-        prov.getMultipartBuilder(block)
+        /*prov.getMultipartBuilder(block)
                 .part().modelFile(post).addModel().condition(UP, true).end()
                 .part().modelFile(side).uvLock(true).addModel().condition(NORTH_WALL, LOW).end()
                 .part().modelFile(side).rotationY(90).uvLock(true).addModel().condition(EAST_WALL, LOW).end()
@@ -69,7 +66,7 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
                 .part().modelFile(side_tall).uvLock(true).addModel().condition(NORTH_WALL, TALL).end()
                 .part().modelFile(side_tall).rotationY(90).uvLock(true).addModel().condition(EAST_WALL, TALL).end()
                 .part().modelFile(side_tall).rotationY(180).uvLock(true).addModel().condition(SOUTH_WALL, TALL).end()
-                .part().modelFile(side_tall).rotationY(270).uvLock(true).addModel().condition(WEST_WALL, TALL).end();
+                .part().modelFile(side_tall).rotationY(270).uvLock(true).addModel().condition(WEST_WALL, TALL).end();*/
 
     }
 }

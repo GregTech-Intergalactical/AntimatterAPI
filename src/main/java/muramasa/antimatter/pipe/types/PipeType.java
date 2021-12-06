@@ -9,10 +9,12 @@ import muramasa.antimatter.pipe.PipeItemBlock;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -29,15 +31,15 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     public final String domain;
     protected Material material;
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
-    protected TileEntityType<?> tileType;
-    protected TileEntityType<?> coveredType;
+    protected BlockEntityType<?> tileType;
+    protected BlockEntityType<?> coveredType;
     protected Map<PipeSize, Block> registeredBlocks;
 
-    private final Function<T, TileEntityPipe<T>> tileFunc;
-    private final Function<T, TileEntityPipe<T>> coveredFunc;
+    private final TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> tileFunc;
+    private final TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> coveredFunc;
 
-    public PipeType(String domain, Material material, Function<T, TileEntityPipe<T>> func,
-                    Function<T, TileEntityPipe<T>> covered) {
+    public PipeType(String domain, Material material, TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> func,
+                    TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> covered) {
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);
@@ -53,13 +55,13 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         if (registry != ForgeRegistries.BLOCKS)
             return;
         Set<Block> blocks = getBlocks();
-        registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(), t.getBlock()))
+        registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(),t))
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-        tileType = new TileEntityType<>(() -> tileFunc.apply((T) this), blocks, null).setRegistryName(getDomain(), getId());
-        coveredType = new TileEntityType<>(() -> coveredFunc.apply((T) this), blocks, null).setRegistryName(getDomain(),
+        tileType = new BlockEntityType<>((pos,state) -> tileFunc.create((T) this, pos, state), blocks, null).setRegistryName(getDomain(), getId());
+        coveredType = new BlockEntityType<>((pos,state) -> coveredFunc.create((T) this, pos, state), blocks, null).setRegistryName(getDomain(),
                 getId() + "_covered");
-        AntimatterAPI.register(TileEntityType.class, getId(), getDomain(), getTileType());
-        AntimatterAPI.register(TileEntityType.class, getId() + "_covered", getDomain(), getCoveredType());
+        AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), getTileType());
+        AntimatterAPI.register(BlockEntityType.class, getId() + "_covered", getDomain(), getCoveredType());
     }
 
     public Block getBlock(PipeSize size) {
@@ -93,11 +95,11 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         return sizes;
     }
 
-    public TileEntityType<?> getTileType() {
+    public BlockEntityType<?> getTileType() {
         return tileType;
     }
 
-    public TileEntityType<?> getCoveredType() {
+    public BlockEntityType<?> getCoveredType() {
         return coveredType;
     }
 

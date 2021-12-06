@@ -3,7 +3,7 @@ package muramasa.antimatter.cover;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import tesseract.api.capability.TesseractGTCapability;
 
 import javax.annotation.Nullable;

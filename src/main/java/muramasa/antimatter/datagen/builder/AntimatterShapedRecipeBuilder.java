@@ -10,19 +10,19 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.IRequirementsStrategy;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -53,7 +53,7 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Creates a new builder for a shaped recipe.
      */
-    public static AntimatterShapedRecipeBuilder shapedRecipe(IItemProvider result) {
+    public static AntimatterShapedRecipeBuilder shapedRecipe(ItemLike result) {
         return new AntimatterShapedRecipeBuilder(new ItemStack(result, 1));
     }
 
@@ -64,7 +64,7 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Creates a new builder for a shaped recipe.
      */
-    public static AntimatterShapedRecipeBuilder shapedRecipe(IItemProvider result, int count) {
+    public static AntimatterShapedRecipeBuilder shapedRecipe(ItemLike result, int count) {
         return new AntimatterShapedRecipeBuilder(new ItemStack(result, count));
     }
 
@@ -78,14 +78,14 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Adds a key to the recipe pattern.
      */
-    public AntimatterShapedRecipeBuilder key(Character symbol, ITag<Item> tag) {
+    public AntimatterShapedRecipeBuilder key(Character symbol, Tag<Item> tag) {
         return this.key(symbol, Ingredient.of(tag));
     }
 
     /**
      * Adds a key to the recipe pattern.
      */
-    public AntimatterShapedRecipeBuilder key(Character symbol, IItemProvider item) {
+    public AntimatterShapedRecipeBuilder key(Character symbol, ItemLike item) {
         return this.key(symbol, Ingredient.of(item));
     }
 
@@ -118,7 +118,7 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Adds a criterion needed to unlock the recipe.
      */
-    public AntimatterShapedRecipeBuilder addCriterion(String name, ICriterionInstance criterion) {
+    public AntimatterShapedRecipeBuilder addCriterion(String name, CriterionTriggerInstance criterion) {
         this.advBuilder.addCriterion(name, criterion);
         return this;
     }
@@ -131,7 +131,7 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
-    public void build(Consumer<IFinishedRecipe> consumer) {
+    public void build(Consumer<FinishedRecipe> consumer) {
         this.build(consumer, ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem()));
     }
 
@@ -139,7 +139,7 @@ public class AntimatterShapedRecipeBuilder {
      * Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for
      * the result.
      */
-    public void build(Consumer<IFinishedRecipe> consumer, String save) {
+    public void build(Consumer<FinishedRecipe> consumer, String save) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem());
         if (new ResourceLocation(save).equals(resourcelocation)) {
             throw new IllegalStateException("Shaped Recipe " + save + " should remove its 'save' argument");
@@ -151,27 +151,27 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
-    public void build(Consumer<IFinishedRecipe> consumer, ResourceLocation id) {
+    public void build(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
         this.validate(id);
-        this.advBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        this.advBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.TriggerInstance(EntityPredicate.Composite.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
         consumer.accept(new Result(id, this.result.get(0), this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.get(0).getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
-    public void buildTool(Consumer<IFinishedRecipe> consumer, String builder, String id) {
+    public void buildTool(Consumer<FinishedRecipe> consumer, String builder, String id) {
         buildTool(consumer, builder, new ResourceLocation(id));
     }
 
     /**
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
-    public void buildTool(Consumer<IFinishedRecipe> consumer, String builder, ResourceLocation id) {
+    public void buildTool(Consumer<FinishedRecipe> consumer, String builder, ResourceLocation id) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem());
         if (id.equals(resourcelocation)) {
             throw new IllegalStateException("Shaped Recipe " + id + " should remove its 'save' argument");
         }
         this.validate(id);
-        this.advBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.Instance(EntityPredicate.AndPredicate.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
-        ItemGroup group = this.result.get(0).getItem().getItemCategory();
+        this.advBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.TriggerInstance(EntityPredicate.Composite.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
+        CreativeModeTab group = this.result.get(0).getItem().getItemCategory();
         String groupId = group != null ? group.getRecipeFolderName() : "";
         consumer.accept(new ToolResult(builder, id, this.result, this.group == null ? "" : this.group, this.pattern, this.key, this.advBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + groupId + "/" + id.getPath())));
     }
@@ -206,7 +206,7 @@ public class AntimatterShapedRecipeBuilder {
         }
     }
 
-    public static class Result implements IFinishedRecipe {
+    public static class Result implements FinishedRecipe {
 
         private final ResourceLocation id;
         private final ItemStack result;
@@ -258,8 +258,8 @@ public class AntimatterShapedRecipeBuilder {
         }
 
         @Override
-        public IRecipeSerializer<?> getType() {
-            return IRecipeSerializer.SHAPED_RECIPE;
+        public RecipeSerializer<?> getType() {
+            return RecipeSerializer.SHAPED_RECIPE;
         }
 
         @Nullable
@@ -304,7 +304,7 @@ public class AntimatterShapedRecipeBuilder {
         }
 
         @Override
-        public IRecipeSerializer<?> getType() {
+        public RecipeSerializer<?> getType() {
             return MaterialSerializer.INSTANCE;
         }
     }

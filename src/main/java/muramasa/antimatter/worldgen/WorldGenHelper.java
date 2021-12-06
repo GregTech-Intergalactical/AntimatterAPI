@@ -12,13 +12,13 @@ import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.feature.FeatureOre;
 import muramasa.antimatter.worldgen.feature.FeatureSurfaceRock;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.Heightmap;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 
 import java.util.function.Predicate;
@@ -66,7 +66,7 @@ public class WorldGenHelper {
     /**
      * Efficiently sets a BlockState, without causing block updates or notifying the client
      **/
-    public static boolean setState(IWorld world, BlockPos pos, BlockState state) {
+    public static boolean setState(LevelAccessor world, BlockPos pos, BlockState state) {
         if (state == null) {
             Antimatter.LOGGER.error("WorldGenHelper: tried to place null state at " + pos.toString());
             return false;
@@ -74,7 +74,7 @@ public class WorldGenHelper {
         return world.setBlock(pos, state, 0);
     }
 
-    public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, Material material, MaterialType<?> type) {
+    public static boolean setOre(LevelAccessor world, BlockPos pos, BlockState existing, Material material, MaterialType<?> type) {
         StoneType stone = STONE_MAP.get(existing);
         if (stone == null) return false;
         BlockState oreState = type == Data.ORE ? Data.ORE.get().get(material, stone).asState() : Data.ORE_SMALL.get().get(material, stone).asState();
@@ -84,12 +84,12 @@ public class WorldGenHelper {
     /**
      * Raw version of setOre, will only place the passed state if the existing state is a registered stone
      **/
-    public static boolean setOre(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
+    public static boolean setOre(LevelAccessor world, BlockPos pos, BlockState existing, BlockState replacement) {
         if (!ORE_PREDICATE.test(existing)) return false;
         return setState(world, pos, replacement);
     }
 
-    public static boolean addOre(IWorld world, BlockPos pos, Material material, boolean normalOre) {
+    public static boolean addOre(LevelAccessor world, BlockPos pos, Material material, boolean normalOre) {
         FeatureOre.ORES.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ObjectArrayList<>()).add(new ImmutableTriple<>(pos, material, normalOre));
         return true;
     }
@@ -97,25 +97,25 @@ public class WorldGenHelper {
     /**
      * Adds a rock to the global map for placing in a later generation stage
      **/
-    public static boolean addRock(IWorld world, BlockPos pos, Material material, int chance) {
-        int y = Math.min(world.getHeight(Heightmap.Type.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
+    public static boolean addRock(LevelAccessor world, BlockPos pos, Material material, int chance) {
+        int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
         return addRockRaw(world, new BlockPos(pos.getX(), y, pos.getZ()), material, chance);
     }
 
-    public static boolean addRockRaw(IWorld world, BlockPos pos, Material material, int chance) {
+    public static boolean addRockRaw(LevelAccessor world, BlockPos pos, Material material, int chance) {
         if (world.getRandom().nextInt(chance) != 0) return false;
         FeatureSurfaceRock.ROCKS.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ObjectArrayList<>()).add(new Tuple<>(pos, material));
         return true;
     }
 
-    public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, WorldGenStoneLayer stoneLayer) {
+    public static boolean setStone(LevelAccessor world, BlockPos pos, BlockState existing, WorldGenStoneLayer stoneLayer) {
         return setStone(world, pos, existing, stoneLayer.getStoneState());
     }
 
     /**
      *
      **/
-    public static boolean setStone(IWorld world, BlockPos pos, BlockState existing, BlockState replacement) {
+    public static boolean setStone(LevelAccessor world, BlockPos pos, BlockState existing, BlockState replacement) {
         if (!STONE_PREDICATE.test(existing)) return false;
         return setState(world, pos, replacement);
     }

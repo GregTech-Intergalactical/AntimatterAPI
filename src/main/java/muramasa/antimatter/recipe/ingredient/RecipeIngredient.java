@@ -3,15 +3,16 @@ package muramasa.antimatter.recipe.ingredient;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ITagCollectionSupplier;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.LazyValue;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagContainer;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.crafting.CraftingHelper;
 
 import java.util.function.Supplier;
@@ -21,13 +22,13 @@ import java.util.stream.Stream;
  * Small wrapper, to avoid typing lazyvalue.
  */
 public class RecipeIngredient {
-    private final LazyValue<Ingredient> value;
+    private final LazyLoadedValue<Ingredient> value;
     public final int count;
     protected boolean nonConsume = false;
     protected boolean ignoreNbt = false;
     private boolean setStacks = false;
 
-    public RecipeIngredient(LazyValue<Ingredient> source, int count) {
+    public RecipeIngredient(LazyLoadedValue<Ingredient> source, int count) {
         this.value = source;
         this.count = count;
     }
@@ -39,17 +40,17 @@ public class RecipeIngredient {
     }
 
     public RecipeIngredient(Supplier<Ingredient> source, int count) {
-        this.value = new LazyValue<>(source);
+        this.value = new LazyLoadedValue<>(source);
         this.count = count;
     }
 
     public RecipeIngredient(Ingredient source, int count) {
-        this.value = new LazyValue<>(() -> source);
+        this.value = new LazyLoadedValue<>(() -> source);
         this.count = count;
     }
 
     public RecipeIngredient(JsonElement element) {
-        this.value = new LazyValue<>(() -> {
+        this.value = new LazyLoadedValue<>(() -> {
             if (element.isJsonObject()) {
                 JsonObject obj = element.getAsJsonObject();
                 if (obj.has("ingredient")) {
@@ -68,15 +69,15 @@ public class RecipeIngredient {
         }
     }
 
-    public RecipeIngredient(PacketBuffer buffer) {
+    public RecipeIngredient(FriendlyByteBuf buffer) {
         Ingredient i = Ingredient.fromNetwork(buffer);
-        this.value = new LazyValue<>(() -> i);
+        this.value = new LazyLoadedValue<>(() -> i);
         this.count = buffer.readInt();
         this.nonConsume = buffer.readBoolean();
         this.ignoreNbt = buffer.readBoolean();
     }
 
-    public void writeToBuffer(PacketBuffer buffer) {
+    public void writeToBuffer(FriendlyByteBuf buffer) {
         CraftingHelper.write(buffer, this.value.get());
         buffer.writeInt(count);
         buffer.writeBoolean(nonConsume);
@@ -125,36 +126,36 @@ public class RecipeIngredient {
         return new RecipeIngredient(custom, count);
     }
 
-    public static RecipeIngredient of(IItemProvider provider, int count) {
+    public static RecipeIngredient of(ItemLike provider, int count) {
         return of(count, new ItemStack(provider));
     }
 
-    public static RecipeIngredient of(LazyValue<ItemStack> provider, int count) {
+    public static RecipeIngredient of(LazyLoadedValue<ItemStack> provider, int count) {
         return new RecipeIngredient(() -> Ingredient.of(provider.get()), count);
     }
 
     public static RecipeIngredient of(ResourceLocation tagIn, int count) {
         ensureRegisteredTag(tagIn);
         return new RecipeIngredient(() -> {
-            ITag<Item> tag = collectTag(tagIn);
+            Tag<Item> tag = collectTag(tagIn);
             return tag != null ? Ingredient.of(tag) : Ingredient.fromValues(Stream.empty());
         }, count);
     }
 
-    public static RecipeIngredient of(ITag.INamedTag<Item> tagIn, int count) {
+    public static RecipeIngredient of(Tag.Named<Item> tagIn, int count) {
         ensureRegisteredTag(tagIn.getName());
         return new RecipeIngredient(() -> {
-            ITag<Item> tag = collectTag(tagIn.getName());
+            Tag<Item> tag = collectTag(tagIn.getName());
             return tag != null ? Ingredient.of(tag) : Ingredient.fromValues(Stream.empty());
         }, count);
     }
 
-    private static ITag<Item> collectTag(ResourceLocation loc) {
-        ITagCollectionSupplier getter = TagUtils.getSupplier();
+    private static Tag<Item> collectTag(ResourceLocation loc) {
+        TagContainer getter = TagUtils.getSupplier();
         if (getter == null) {
             return TagUtils.nc(loc);
         }
-        return getter.getItems().getTag(loc);
+        return getter.getOrEmpty(Registry.ITEM_REGISTRY).getTag(loc);
     }
 
     private static void ensureRegisteredTag(ResourceLocation loc) {

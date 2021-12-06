@@ -20,13 +20,17 @@ import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.Wire;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.block.Block;
-import net.minecraft.data.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.tags.ITag;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 
 import java.util.HashMap;
@@ -57,7 +61,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
 
     @Override
     public void run() {
-        Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.builders);
+        Map<ResourceLocation, Tag.Builder> b = new HashMap<>(this.builders);
         this.builders.clear();
         addTags();
         //TagUtils.getTags(Item.class).forEach((k,v) -> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
@@ -66,7 +70,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     @Override
-    public void run(DirectoryCache cache) {
+    public void run(HashCache cache) {
 
     }
 
@@ -86,7 +90,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     protected void processTags(String domain) {
-        ITag.INamedTag<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
+        Tag.Named<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
         this.copy(Tags.Blocks.ORES, Tags.Items.ORES);
         this.copy(Tags.Blocks.STONE, Tags.Items.STONE);
         this.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
@@ -121,8 +125,8 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
                 this.copy(getForgeBlockTag(name), getForgeItemTag(name));
             });
             AntimatterAPI.all(MaterialItem.class, item -> {
-                ITag.INamedTag<Item> type = item.getType().getTag();
-                TagsProvider.Builder<Item> provider = this.tag(type);
+                Tag.Named<Item> type = item.getType().getTag();
+                TagsProvider.TagAppender<Item> provider = this.tag(type);
                 provider.add(item).replace(replace);
                 this.tag(item.getTag()).add(item).replace(replace);
                 //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
@@ -166,7 +170,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
 
     // Must append 's' in the identifier
     // Appends data to the tag.
-    public void addTag(ResourceLocation loc, ITag.Builder obj) {
+    public void addTag(ResourceLocation loc, Tag.Builder obj) {
         JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
         if (json == null) {

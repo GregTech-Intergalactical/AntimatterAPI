@@ -8,9 +8,9 @@ import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,8 +28,8 @@ import java.util.function.LongConsumer;
 @Mod.EventBusSubscriber
 public class StructureCache {
 
-    private static final Object2ObjectMap<World, DimensionEntry> LOOKUP = new Object2ObjectOpenHashMap<>();
-    private static final Object2ObjectMap<World, Long2ObjectMap<Set<StructureHandle<?>>>> CALLBACKS = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<Level, DimensionEntry> LOOKUP = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<Level, Long2ObjectMap<Set<StructureHandle<?>>>> CALLBACKS = new Object2ObjectOpenHashMap<>();
 
     static {
         AntimatterAPI.registerBlockUpdateHandler((world, pos, oldState, newState, flags) -> {
@@ -60,7 +60,7 @@ public class StructureCache {
      * @param maxAmount maximum number of shares allowed (0 == none).
      * @return if it was successfully added.
      */
-    public static boolean validate(World world, BlockPos pos, LongList structure, int maxAmount) {
+    public static boolean validate(Level world, BlockPos pos, LongList structure, int maxAmount) {
         DimensionEntry e = LOOKUP.get(world);
         if (e != null) {
             if (!has(world, pos)) {
@@ -81,7 +81,7 @@ public class StructureCache {
      * @param pos   the position.
      * @return the amount of usage.
      */
-    public static int refCount(World world, BlockPos pos) {
+    public static int refCount(Level world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return 0;
 
@@ -96,7 +96,7 @@ public class StructureCache {
      * @param pos   Relevant position.
      * @return if it is active.
      */
-    public static boolean has(World world, BlockPos pos) {
+    public static boolean has(Level world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return false;
         long p = pos.asLong();
@@ -113,7 +113,7 @@ public class StructureCache {
      * @return a mapping of positions, where boolean is the validity state. (True = formed).
      */
     @Nullable
-    public static Object2BooleanMap<BlockPos> get(World world, BlockPos pos) {
+    public static Object2BooleanMap<BlockPos> get(Level world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         return entry != null ? entry.get(pos) : null;
     }
@@ -128,13 +128,13 @@ public class StructureCache {
      * @return a nullable Tile Entity.
      */
     @Nullable
-    public static <T extends TileEntityBasicMultiMachine> T getAnyMulti(World world, BlockPos pos, Class<T> clazz) {
+    public static <T extends TileEntityBasicMultiMachine> T getAnyMulti(Level world, BlockPos pos, Class<T> clazz) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return null;
         Object2BooleanMap<BlockPos> list = entry.get(pos);
         if (list == null || list.size() == 0) return null;
         for (Object2BooleanMap.Entry<BlockPos> e : list.object2BooleanEntrySet()) {
-            TileEntity tile = world.getBlockEntity(e.getKey());
+            BlockEntity tile = world.getBlockEntity(e.getKey());
             if (tile != null && clazz.isInstance(tile) && e.getBooleanValue()) return (T) tile;
         }
         return null;
@@ -147,7 +147,7 @@ public class StructureCache {
      * @param pos       controller position.
      * @param structure BlockPos-packed positions
      */
-    public static void add(World world, BlockPos pos, LongList structure) {
+    public static void add(Level world, BlockPos pos, LongList structure) {
         DimensionEntry entry = LOOKUP.computeIfAbsent(world, e -> new DimensionEntry());
         entry.add(pos, structure);
     }
@@ -158,7 +158,7 @@ public class StructureCache {
      * @param world the controller world.
      * @param pos   the controller position.
      */
-    public static void remove(World world, BlockPos pos) {
+    public static void remove(Level world, BlockPos pos) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry == null) return;
         entry.remove(pos);
@@ -171,7 +171,7 @@ public class StructureCache {
      * @param pos       controller position.
      * @param structure packed multi structure.
      */
-    public static void invalidate(World world, BlockPos pos, LongList structure) {
+    public static void invalidate(Level world, BlockPos pos, LongList structure) {
         DimensionEntry entry = LOOKUP.get(world);
         if (entry != null) {
             if (has(world, pos)) {
@@ -181,8 +181,8 @@ public class StructureCache {
         }
     }
 
-    private static void refreshController(World world, BlockPos controller, BlockPos at) {
-        TileEntity tile = world.getBlockEntity(controller);
+    private static void refreshController(Level world, BlockPos controller, BlockPos at) {
+        BlockEntity tile = world.getBlockEntity(controller);
         if (tile instanceof TileEntityBasicMultiMachine) ((TileEntityBasicMultiMachine) tile).onBlockUpdate(at);
     }
 
@@ -194,11 +194,11 @@ public class StructureCache {
      * @param world  the tile world.
      * @param pos    the position to listen at.
      */
-    public static void addListener(StructureHandle<?> handle, World world, BlockPos pos) {
+    public static void addListener(StructureHandle<?> handle, Level world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.computeIfAbsent(world, k -> new Long2ObjectOpenHashMap<>());
         Set<StructureHandle<?>> set = map.computeIfAbsent(pos.asLong(), k -> new ObjectOpenHashSet<>());
         set.add(handle);
-        TileEntity tile = world.getBlockEntity(pos);
+        BlockEntity tile = world.getBlockEntity(pos);
         if (tile != null) handle.structureCacheAddition(tile);
     }
 
@@ -209,7 +209,7 @@ public class StructureCache {
      * @param world  the relevant world.
      * @param pos    the blockpos.
      */
-    public static void removeListener(StructureHandle<?> handle, World world, BlockPos pos) {
+    public static void removeListener(StructureHandle<?> handle, Level world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
         if (map != null) {
             Set<StructureHandle<?>> set = map.get(pos.asLong());
@@ -219,15 +219,15 @@ public class StructureCache {
         }
     }
 
-    private static void notifyListenersAdd(World world, BlockPos pos) {
+    private static void notifyListenersAdd(Level world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
         if (map != null) {
-            TileEntity tile = world.getBlockEntity(pos);
+            BlockEntity tile = world.getBlockEntity(pos);
             map.getOrDefault(pos.asLong(), Collections.emptySet()).forEach(handle -> handle.structureCacheAddition(tile));
         }
     }
 
-    private static void notifyListenersRemove(World world, BlockPos pos) {
+    private static void notifyListenersRemove(Level world, BlockPos pos) {
         Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.get(world);
         if (map != null) {
             map.getOrDefault(pos.asLong(), Collections.emptySet()).forEach(StructureHandle::structureCacheRemoval);
@@ -236,8 +236,8 @@ public class StructureCache {
 
     @SubscribeEvent
     public static void onWorldUnload(WorldEvent.Unload e) {
-        LOOKUP.remove((World) e.getWorld());
-        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.remove((World) e.getWorld());
+        LOOKUP.remove((Level) e.getWorld());
+        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.remove((Level) e.getWorld());
         if (map != null)
             map.forEach((k, v) -> v.forEach(StructureHandle::structureCacheRemoval));
     }

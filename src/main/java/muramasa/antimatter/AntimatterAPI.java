@@ -12,25 +12,23 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.*;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 
@@ -403,7 +401,7 @@ public final class AntimatterAPI {
     public static Item getReplacement(MaterialType<?> type, Material material, String... namespaces) {
         if (type.getId().contains("liquid"))
             return null;
-        ITag.INamedTag<Item> tag = TagUtils
+        Tag.Named<Item> tag = TagUtils
                 .getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
         return getReplacement(null, tag, namespaces);
     }
@@ -422,7 +420,7 @@ public final class AntimatterAPI {
      * @return originalItem if there's nothing found, null if there is no
      * originalItem, or an replacement
      */
-    public static <T> T getReplacement(@Nullable T originalItem, ITag.INamedTag<T> tag, String... namespaces) {
+    public static <T> T getReplacement(@Nullable T originalItem, Tag.Named<T> tag, String... namespaces) {
         if (tag == null)
             throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
         if (REPLACEMENTS.containsKey(tag.getName()))
@@ -444,7 +442,7 @@ public final class AntimatterAPI {
         REPLACEMENTS.put(tag, obj);
     }
 
-    public static <T> void addReplacement(ITag.INamedTag<Item> tag, T obj) {
+    public static <T> void addReplacement(Tag.Named<Item> tag, T obj) {
         REPLACEMENTS.put(tag.getName(), obj);
     }
 
@@ -458,13 +456,13 @@ public final class AntimatterAPI {
      * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
      */
     @SuppressWarnings("unused")
-    public static void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState,
+    public static void onNotifyBlockUpdate(Level world, BlockPos pos, BlockState oldState, BlockState newState,
                                            int flags) {
         BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState, flags));
     }
 
     public interface IBlockUpdateEvent {
 
-        void onNotifyBlockUpdate(World world, BlockPos pos, BlockState oldState, BlockState newState, int flags);
+        void onNotifyBlockUpdate(Level world, BlockPos pos, BlockState oldState, BlockState newState, int flags);
     }
 }

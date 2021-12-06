@@ -10,27 +10,27 @@ import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CauldronBlock;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CauldronBlock;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -61,35 +61,36 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     }
 
     @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         if (allowdedIn(group) && getType().isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         if (!getMaterial().getChemicalFormula().isEmpty()) {
             if (Screen.hasShiftDown()) {
-                tooltip.add(new StringTextComponent(getMaterial().getChemicalFormula()).withStyle(TextFormatting.DARK_AQUA));
+                tooltip.add(new TextComponent(getMaterial().getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA));
             } else {
-                tooltip.add(new StringTextComponent("Hold Shift to show formula").withStyle(TextFormatting.AQUA).withStyle(TextFormatting.ITALIC));
+                tooltip.add(new TextComponent("Hold Shift to show formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
             }
         }
         if (type == Data.ROCK) {
-            tooltip.add(new TranslationTextComponent("antimatter.tooltip.occurrence").append(new StringTextComponent(material.getDisplayName().getString()).withStyle(TextFormatting.YELLOW)));
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.occurrence").append(new TextComponent(material.getDisplayName().getString()).withStyle(ChatFormatting.YELLOW)));
         }
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext context) {
-        if (context.getPlayer() == null) return ActionResultType.PASS;
-        World world = context.getLevel();
-        PlayerEntity player = context.getPlayer();
+    public InteractionResult useOn(UseOnContext context) {
+        if (context.getPlayer() == null) return InteractionResult.PASS;
+        //TODO 1.18
+       /* Level world = context.getLevel();
+        Player player = context.getPlayer();
         BlockPos pos = context.getClickedPos();
         ItemStack stack = player.getItemInHand(context.getHand());
         BlockState state = world.getBlockState(pos);
         if (type == Data.DUST_IMPURE && state.getBlock() instanceof CauldronBlock) {
-            int level = state.getValue(CauldronBlock.LEVEL);
-            if (level > 0) {
+            boolean level = ((CauldronBlock)state.getBlock()).isFull(state);
+            if (level) {
                 MaterialItem item = (MaterialItem) stack.getItem();
                 if (item.getMaterial().has(DUST)) {
                     stack.shrink(1);
@@ -97,15 +98,15 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                         player.drop(DUST.get(item.getMaterial(), 1), false);
                     }
                     world.setBlockAndUpdate(context.getClickedPos(), state.setValue(CauldronBlock.LEVEL, --level));
-                    world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    return ActionResultType.SUCCESS;
+                    world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                    return InteractionResult.SUCCESS;
                 }
             }
-        }
-        return ActionResultType.FAIL;
+        }*/
+        return InteractionResult.FAIL;
     }
 
-    public ITag.INamedTag<Item> getTag() {
+    public Tag.Named<Item> getTag() {
         return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(type), "/", material.getId()));
     }
 

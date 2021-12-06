@@ -1,6 +1,6 @@
 package muramasa.antimatter.tile.pipe;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.gui.GuiInstance;
@@ -9,11 +9,11 @@ import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.tesseract.ItemTileWrapper;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -29,8 +29,8 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     private int holder;
 
-    public TileEntityItemPipe(T type, boolean covered) {
-        super(type, covered);
+    public TileEntityItemPipe(T type, BlockPos pos, BlockState state, boolean covered) {
+        super(type, pos, state, covered);
         pipeCapHolder.set(() -> this);
         this.holder = 0;
     }
@@ -42,7 +42,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     public INodeGetter<IItemNode> getter() {
         return (pos, dir, cb) -> {
-            TileEntity tile = getLevel().getBlockEntity(BlockPos.of(pos));
+            BlockEntity tile = getLevel().getBlockEntity(BlockPos.of(pos));
             if (tile == null) {
                 return null;
             }
@@ -82,7 +82,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     public boolean validate(Direction dir) {
         if (!super.validate(dir))
             return false;
-        TileEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
+        BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null)
             return false;
         return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
@@ -116,7 +116,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
-    public int drawInfo(InfoRenderWidget.TesseractItemWidget instance, MatrixStack stack, FontRenderer renderer,
+    public int drawInfo(InfoRenderWidget.TesseractItemWidget instance, PoseStack stack, Font renderer,
             int left, int top) {
         renderer.draw(stack, "Total transferred in net: " + instance.transferred, left, top, 16448255);
         renderer.draw(stack, "Cable transfers (stacks): " + instance.cableTransferred, left, top + 8, 16448255);
@@ -126,8 +126,8 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     public static class TileEntityCoveredItemPipe<T extends ItemPipe<T>> extends TileEntityItemPipe<T>
             implements ITickablePipe {
 
-        public TileEntityCoveredItemPipe(T type) {
-            super(type, true);
+        public TileEntityCoveredItemPipe(T type, BlockPos pos, BlockState state) {
+            super(type, pos, state, true);
         }
 
         @Override

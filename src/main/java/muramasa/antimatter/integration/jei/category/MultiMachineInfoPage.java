@@ -1,7 +1,12 @@
 package muramasa.antimatter.integration.jei.category;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -17,24 +22,19 @@ import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector4f;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
@@ -63,7 +63,7 @@ public class MultiMachineInfoPage {
     private final Button buttonNextLayer;
 
     private final WorldSceneRenderer[] renderers;
-    private final ITextComponent[] descriptions;
+    private final Component[] descriptions;
     private final TileEntityBasicMultiMachine<?>[] controllers;
     private static MultiMachineInfoPage LAST_PAGE;
 
@@ -71,11 +71,11 @@ public class MultiMachineInfoPage {
         this.machine = machine;
         renderers = new WorldSceneRenderer[patterns.size()];
         this.controllers = new TileEntityBasicMultiMachine[patterns.size()];
-        descriptions = new ITextComponent[patterns.size()];
+        descriptions = new Component[patterns.size()];
 
-        this.buttonNextLayer = new Button(WIDTH - (20 + RIGHT_PADDING), 65, ICON_SIZE, ICON_SIZE, new StringTextComponent("A"), (b)->toggleNextLayer());
-        this.buttonPreviousPattern = new Button(WIDTH - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, new StringTextComponent("<"), (b) -> switchRenderPage(-1));
-        this.buttonNextPattern = new Button(WIDTH - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, new StringTextComponent(">"), (b) -> switchRenderPage(1));
+        this.buttonNextLayer = new Button(WIDTH - (20 + RIGHT_PADDING), 65, ICON_SIZE, ICON_SIZE, new TextComponent("A"), (b)->toggleNextLayer());
+        this.buttonPreviousPattern = new Button(WIDTH - ((2 * ICON_SIZE) + RIGHT_PADDING + 1), 90, ICON_SIZE, ICON_SIZE, new TextComponent("<"), (b) -> switchRenderPage(-1));
+        this.buttonNextPattern = new Button(WIDTH - (ICON_SIZE + RIGHT_PADDING), 90, ICON_SIZE, ICON_SIZE, new TextComponent(">"), (b) -> switchRenderPage(1));
 
         for (int i = 0; i < patterns.size(); i++) {
             descriptions[i] = patterns.get(i).getDescription();
@@ -103,7 +103,7 @@ public class MultiMachineInfoPage {
             worldSceneRenderer.setClearColor(0xC6C6C6);
             world.addBlocks(blockMap);
             if (controllers == null || !controllers.checkStructure()) {
-                descriptions[i] = new TranslationTextComponent("InValid Structure");
+                descriptions[i] = new TranslatableComponent("InValid Structure");
             }
             Vector3f size = world.getSize();
             Vector3f minPos = world.getMinPos();
@@ -124,7 +124,7 @@ public class MultiMachineInfoPage {
             this.currentRendererPage = 0;
             setNextLayer(-1);
         } else {
-            zoom = (float) MathHelper.clamp(zoom + (ClientEvents.lastDelta < 0 ? 0.5 : -0.5), 3, 999);
+            zoom = (float) Mth.clamp(zoom + (ClientEvents.lastDelta < 0 ? 0.5 : -0.5), 3, 999);
             setNextLayer(getLayerIndex());
         }
         if (getCurrentRenderer() != null) {
@@ -162,7 +162,7 @@ public class MultiMachineInfoPage {
 
     private void setNextLayer(int newLayer) {
         this.layerIndex = newLayer;
-        this.buttonNextLayer.setMessage(new StringTextComponent(layerIndex == -1 ? "A" : Integer.toString(layerIndex + 1)));
+        this.buttonNextLayer.setMessage(new TextComponent(layerIndex == -1 ? "A" : Integer.toString(layerIndex + 1)));
         WorldSceneRenderer renderer = getCurrentRenderer();
         if (renderer != null) {
             TrackedDummyWorld world = ((TrackedDummyWorld)renderer.world);
@@ -190,7 +190,7 @@ public class MultiMachineInfoPage {
         getCurrentRenderer().setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
     }
     
-    public void drawInfo(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY) {
+    public void drawInfo(@Nonnull PoseStack matrixStack, int mouseX, int mouseY) {
         WorldSceneRenderer renderer = getCurrentRenderer();
         Vector4f transform = new Vector4f(0, 0, 0, 1);
         transform.transform(matrixStack.last().pose());
@@ -200,17 +200,17 @@ public class MultiMachineInfoPage {
         buttonNextPattern.render(matrixStack, mouseX, mouseY, 0);
         buttonPreviousPattern.render(matrixStack, mouseX, mouseY, 0);
         buttonNextLayer.render(matrixStack, mouseX, mouseY, 0);
-        Widget.drawCenteredString(matrixStack, Minecraft.getInstance().font, descriptions[currentRendererPage], WIDTH / 2, 15, -1);
+        AbstractWidget.drawCenteredString(matrixStack, Minecraft.getInstance().font, descriptions[currentRendererPage], WIDTH / 2, 15, -1);
         boolean insideView = mouseX >= 0 && mouseY >= 0 && mouseX < WIDTH && mouseY < HEIGHT;
         if (insideView) {
             if (ClientEvents.leftDown) {
                 rotationPitch += mouseX - lastMouseX + 360;
                 rotationPitch = rotationPitch % 360;
-                rotationYaw = (float) MathHelper.clamp(rotationYaw + (mouseY - lastMouseY), -89.9, 89.9);
+                rotationYaw = (float) Mth.clamp(rotationYaw + (mouseY - lastMouseY), -89.9, 89.9);
             } else if (ClientEvents.rightDown) {
                 int mouseDeltaY = mouseY - lastMouseY;
                 if (Math.abs(mouseDeltaY) > 1) {
-                    this.zoom = (float) MathHelper.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, 999);
+                    this.zoom = (float) Mth.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, 999);
                 }
             }
             renderer.setCameraLookAt(center, zoom, Math.toRadians(rotationPitch), Math.toRadians(rotationYaw));
@@ -220,7 +220,7 @@ public class MultiMachineInfoPage {
         this.lastMouseY = mouseY;
     }
 
-    private void renderBlockOverLay(BlockRayTraceResult rayTraceResult) {
+    private void renderBlockOverLay(BlockHitResult rayTraceResult) {
         BlockPos pos = rayTraceResult.getBlockPos();
         doOverlay(pos, 1,1,1,0.7f);
         StructureResult res =this.controllers[currentRendererPage].getResult();
@@ -235,21 +235,21 @@ public class MultiMachineInfoPage {
     private void doOverlay(BlockPos pos, float r, float g, float b, float alpha) {
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        RenderSystem.translated((pos.getX() + 0.5), (pos.getY() + 0.5), (pos.getZ() + 0.5));
-        RenderSystem.scaled(1.01, 1.01, 1.01);
+       // RenderSystem.translated((pos.getX() + 0.5), (pos.getY() + 0.5), (pos.getZ() + 0.5));
+       // RenderSystem.scaled(1.01, 1.01, 1.01);
 
-        Tessellator tessellator = Tessellator.getInstance();
+        Tesselator tessellator = Tesselator.getInstance();
         RenderSystem.disableTexture();
         BufferBuilder buffer = tessellator.getBuilder();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+       // buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.POSITION_COLOR);
         RenderHelper.renderCubeFace(buffer, -0.5f, -0.5f, -0.5f, 0.5, 0.5, 0.5, r, g, b, alpha);
         tessellator.end();
-        RenderSystem.scaled(1 / 1.01, 1 / 1.01, 1 / 1.01);
-        RenderSystem.translated(-(pos.getX() + 0.5), -(pos.getY() + 0.5), -(pos.getZ() + 0.5));
+       // RenderSystem.scaled(1 / 1.01, 1 / 1.01, 1 / 1.01);
+       // RenderSystem.translated(-(pos.getX() + 0.5), -(pos.getY() + 0.5), -(pos.getZ() + 0.5));
         RenderSystem.enableTexture();
 
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.color4f(1, 1, 1, 1);
+        RenderSystem.clearColor(1, 1, 1, 1);
     }
 
     public boolean handleClick(double mouseX, double mouseY, int mouseButton) {
@@ -262,17 +262,17 @@ public class MultiMachineInfoPage {
         ingredients.setOutput(VanillaTypes.ITEM, machine.getItem(machine.getFirstTier()).getDefaultInstance());
     }
 
-    public List<ITextComponent> getTooltipStrings(double mouseX, double mouseY) {
+    public List<Component> getTooltipStrings(double mouseX, double mouseY) {
         if (getCurrentRenderer() != null && !ClientEvents.leftDown && !ClientEvents.rightDown && !ClientEvents.middleDown) {
             WorldSceneRenderer renderer = getCurrentRenderer();
-            BlockRayTraceResult rayTraceResult = renderer.getLastTraceResult();
+            BlockHitResult rayTraceResult = renderer.getLastTraceResult();
             if (rayTraceResult != null) {
                 Minecraft minecraft = Minecraft.getInstance();
                 BlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
-                ItemStack itemStack = blockState.getBlock().getPickBlock(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
+                ItemStack itemStack = blockState.getBlock().getCloneItemStack(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
                 if (itemStack != null && !itemStack.isEmpty()) {
-                    ITooltipFlag flag = minecraft.options.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL;
-                    List<ITextComponent> list = itemStack.getTooltipLines(minecraft.player, flag);
+                    TooltipFlag flag = minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
+                    List<Component> list = itemStack.getTooltipLines(minecraft.player, flag);
                     StructureResult res = this.controllers[currentRendererPage].getResult();
                     if (res != null) {
                         StructureElement el = res.get(rayTraceResult.getBlockPos());

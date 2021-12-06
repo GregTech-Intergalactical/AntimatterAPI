@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.impl.SimpleStructure;
 import muramasa.antimatter.util.int3;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
 import java.util.Collection;

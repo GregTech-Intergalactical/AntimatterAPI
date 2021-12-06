@@ -7,10 +7,10 @@ import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.data.IFinishedRecipe;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -22,11 +22,10 @@ import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.*;
 import static muramasa.antimatter.recipe.RecipeBuilders.*;
-import static muramasa.antimatter.recipe.RecipeBuilders.TOOL_BUILDER;
 
 public class Tools {
-    public static void init(Consumer<IFinishedRecipe> consumer, AntimatterRecipeProvider provider) {
-        final ICriterionInstance in = provider.hasSafeItem(WRENCH.getTag());
+    public static void init(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {
+        final CriterionTriggerInstance in = provider.hasSafeItem(WRENCH.getTag());
 
         if (AntimatterAPI.isModLoaded(Ref.MOD_TOP)) {
             provider.addToolRecipe(PROBE_BUILDER.get(HELMET.getId()), consumer, Ref.ID, "helmet_with_probe", "antimatter_armor",

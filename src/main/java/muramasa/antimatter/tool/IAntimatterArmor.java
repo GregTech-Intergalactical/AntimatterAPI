@@ -12,20 +12,21 @@ import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.block.Block;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.extensions.IForgeItem;
@@ -43,13 +44,18 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
 
     ItemStack asItemStack(Material primary);
 
-    default CompoundNBT getDataTag(ItemStack stack) {
-        CompoundNBT dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
+    default CompoundTag getDataTag(ItemStack stack) {
+        CompoundTag dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
         return dataTag != null ? dataTag : validateTag(stack, Data.NULL);
     }
 
+    default Item getItem() {
+        return (Item) this;
+    }
+
     default ItemStack resolveStack(Material primary) {
-        ItemStack stack = new ItemStack(getItem());
+        Item item = (Item) this;
+        ItemStack stack = new ItemStack(item);
         validateTag(stack, primary);
         Map<Enchantment, Integer> mainEnchants = primary.getArmorEnchantments();
         if (!mainEnchants.isEmpty()) {
@@ -59,19 +65,19 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
         return stack;
     }
 
-    default CompoundNBT validateTag(ItemStack stack, Material primary) {
-        CompoundNBT dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
+    default CompoundTag validateTag(ItemStack stack, Material primary) {
+        CompoundTag dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
         dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
         return dataTag;
     }
 
-    default void onGenericFillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
+    default void onGenericFillItemGroup(CreativeModeTab group, NonNullList<ItemStack> list) {
         if (group != Ref.TAB_TOOLS) return;
         list.add(asItemStack(Data.NULL));
     }
 
-    default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
-        tooltip.add(new StringTextComponent("Material: " + getMaterial(stack).getDisplayName().getString()));
+    default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
+        tooltip.add(new TextComponent("Material: " + getMaterial(stack).getDisplayName().getString()));
         if (getAntimatterArmorType().getTooltip().size() != 0) tooltip.addAll(getAntimatterArmorType().getTooltip());
     }
 
@@ -113,8 +119,8 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
     }
 
     @Override
-    default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
-        if (this.getAntimatterArmorType().getSlot() == EquipmentSlotType.HEAD) {
+    default void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
+        if (this.getAntimatterArmorType().getSlot() == EquipmentSlot.HEAD) {
             String id = this.getId();
             ItemModelBuilder builder = prov.getBuilder(id + "_probe");
             builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation("minecraft", "item/handheld")));

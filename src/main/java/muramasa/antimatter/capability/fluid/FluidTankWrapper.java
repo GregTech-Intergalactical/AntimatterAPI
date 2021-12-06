@@ -4,8 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -55,7 +55,7 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Nonnull
-    public CompoundNBT writeToNBT(int tank, CompoundNBT nbt) {
+    public CompoundTag writeToNBT(int tank, CompoundTag nbt) {
         tanks[tank].writeToNBT(nbt);
         return nbt;
     }

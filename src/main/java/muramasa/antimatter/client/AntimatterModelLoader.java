@@ -12,13 +12,12 @@ import muramasa.antimatter.client.model.AntimatterGroupedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
 import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.registration.IAntimatterObject;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.BlockModel;
-import net.minecraft.client.renderer.model.BlockPart;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
@@ -46,7 +45,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(ResourceManager resourceManager) {
 
     }
 
@@ -75,11 +74,11 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
         @Override
         public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
             try {
-                ResourceLocation particle = json.has("particle") ? new ResourceLocation(json.get("particle").getAsString()) : MissingTextureSprite.getLocation();
+                ResourceLocation particle = json.has("particle") ? new ResourceLocation(json.get("particle").getAsString()) : MissingTextureAtlasSprite.getLocation();
                 Map<Integer, String> offsets = new Object2ObjectOpenHashMap<>();
                 if (json.has("groups")) {
                     int index = 0;
-                    for (JsonElement jsonelement : JSONUtils.getAsJsonArray(json, "groups")) {
+                    for (JsonElement jsonelement : GsonHelper.getAsJsonArray(json, "groups")) {
                         if (jsonelement.isJsonObject()) {
                             JsonObject obj = jsonelement.getAsJsonObject();
                             String name = obj.get("name").getAsString();
@@ -90,12 +89,12 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
                         }
                     }
                 }
-                Map<String, List<BlockPart>> map = new Object2ObjectOpenHashMap<>();
+                Map<String, List<BlockElement>> map = new Object2ObjectOpenHashMap<>();
                 if (json.has("elements")) {
                     int index = 0;
-                    for (JsonElement jsonelement : JSONUtils.getAsJsonArray(json, "elements")) {
+                    for (JsonElement jsonelement : GsonHelper.getAsJsonArray(json, "elements")) {
                         String name = offsets.get(index++);
-                        map.computeIfAbsent(name == null ? "" : name, a -> new ObjectArrayList<>()).add(context.deserialize(jsonelement, BlockPart.class));
+                        map.computeIfAbsent(name == null ? "" : name, a -> new ObjectArrayList<>()).add(context.deserialize(jsonelement, BlockElement.class));
                     }
                 } 
                 return new AntimatterGroupedModel(particle, map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, k -> new ModelLoaderRegistry.VanillaProxy(k.getValue()))));
@@ -124,7 +123,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
                 String staticMapId = "";
                 if (json.has("staticMap") && json.get("staticMap").isJsonPrimitive())
                     staticMapId = json.get("staticMap").getAsString();
-                ResourceLocation particle = json.has("particle") ? new ResourceLocation(json.get("particle").getAsString()) : MissingTextureSprite.getLocation();
+                ResourceLocation particle = json.has("particle") ? new ResourceLocation(json.get("particle").getAsString()) : MissingTextureAtlasSprite.getLocation();
                 return new DynamicModel(particle, configs, staticMapId);
             } catch (Exception e) {
                 throw new RuntimeException("Caught error deserializing model : " + e);

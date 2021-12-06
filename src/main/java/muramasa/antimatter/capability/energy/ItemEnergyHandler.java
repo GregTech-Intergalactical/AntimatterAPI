@@ -2,8 +2,8 @@ package muramasa.antimatter.capability.energy;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.EnergyHandler;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -48,21 +48,21 @@ public class ItemEnergyHandler extends EnergyHandler {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = new CompoundTag();
         nbt.putLong(Ref.KEY_ITEM_ENERGY, this.energy);
         nbt.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, this.discharge);
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         this.energy = nbt.getLong(Ref.KEY_ITEM_ENERGY);
         this.discharge = nbt.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
 
 
-    public static class Provider implements ICapabilityProvider, INBTSerializable<CompoundNBT> {
+    public static class Provider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
         private final LazyOptional<IEnergyHandler> energy;
 
         public Provider(NonNullSupplier<IEnergyHandler> cap) {
@@ -75,12 +75,12 @@ public class ItemEnergyHandler extends EnergyHandler {
         }
 
         @Override
-        public CompoundNBT serializeNBT() {
-            return energy.map(INBTSerializable::serializeNBT).orElse(new CompoundNBT());
+        public CompoundTag serializeNBT() {
+            return energy.map(INBTSerializable::serializeNBT).orElse(new CompoundTag());
         }
 
         @Override
-        public void deserializeNBT(CompoundNBT nbt) {
+        public void deserializeNBT(CompoundTag nbt) {
             energy.ifPresent(t -> t.deserializeNBT(nbt));
         }
 

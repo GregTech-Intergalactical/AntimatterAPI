@@ -2,25 +2,27 @@ package muramasa.antimatter.client.baked;
 
 import com.google.common.collect.Sets;
 import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.AntimatterProperties.ProxyProperties;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.mixin.ChunkReaderAccessor;
 import muramasa.antimatter.structure.StructureCache;
-import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.block.BlockModelShaper;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -37,7 +39,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
+    public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
         if (tileData instanceof EmptyModelData) {
             tileData = new ModelDataMap.Builder().build();
         }
@@ -45,11 +47,11 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         if (fake.getState() == null) {
             return tileData;
         }
-        IBakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fake.getState());
-        IUnbakedModel m = ModelLoader.instance().getModel(BlockModelShapes.stateToModelLocation(fake.getState()));
+        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fake.getState());
+        UnbakedModel m = ForgeModelBakery.instance().getModel(BlockModelShaper.stateToModelLocation(fake.getState()));
 
-        Collection<RenderMaterial> mats = m.getMaterials(ModelLoader.defaultModelGetter(), Sets.newLinkedHashSet());
-        RenderMaterial first = mats.iterator().next();
+        Collection<Material> mats = m.getMaterials(ForgeModelBakery.defaultModelGetter(), Sets.newLinkedHashSet());
+        Material first = mats.iterator().next();
         tileData = model.getModelData(world, pos, state, tileData);
         BlockState cState = Blocks.AIR.defaultBlockState();
         TileEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(((ChunkReaderAccessor)world).getLevel(), fake.getBlockPos(), TileEntityBasicMultiMachine.class);
@@ -63,9 +65,9 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
 
     @Override
-    public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data) {
-        IBakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(data.getData(AntimatterProperties.STATE_MODEL_PROPERTY));
-        return model != null ? model.getParticleTexture(data) : getParticleIcon();
+    public TextureAtlasSprite getParticleIcon(@Nonnull IModelData data) {
+        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(data.getData(AntimatterProperties.STATE_MODEL_PROPERTY));
+        return model != null ? model.getParticleIcon(data) : getParticleIcon();
     }
 
     @Override
@@ -107,7 +109,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
     }
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.EMPTY;
+    public ItemOverrides getOverrides() {
+        return ItemOverrides.EMPTY;
     }
 }

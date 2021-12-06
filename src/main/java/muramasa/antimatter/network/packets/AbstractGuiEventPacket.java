@@ -1,7 +1,7 @@
 package muramasa.antimatter.network.packets;
 
 import muramasa.antimatter.gui.event.IGuiEvent;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public abstract class AbstractGuiEventPacket {
     protected final IGuiEvent event;

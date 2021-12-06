@@ -4,8 +4,8 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class MaterialTypeFluid<T> extends MaterialType<T> {
     }
 
     @Override
-    protected ITag.INamedTag<?> tagFromString(String name) {
+    protected Tag.Named<?> tagFromString(String name) {
         return TagUtils.getForgeFluidTag(name);
     }
 

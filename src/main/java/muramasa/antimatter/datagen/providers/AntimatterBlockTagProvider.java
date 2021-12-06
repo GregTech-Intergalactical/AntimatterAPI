@@ -13,12 +13,12 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -46,7 +46,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
 
     @Override
     public void run() {
-        Map<ResourceLocation, ITag.Builder> b = new HashMap<>(this.builders);
+        Map<ResourceLocation, Tag.Builder> b = new HashMap<>(this.builders);
         this.builders.clear();
         addTags();
         builders.forEach(this::addTag);
@@ -54,7 +54,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     }
 
     @Override
-    public void run(DirectoryCache cache) {
+    public void run(HashCache cache) {
 
     }
 
@@ -123,7 +123,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
 
     // Must append 's' in the identifier
     // Appends data to the tag.
-    public void addTag(ResourceLocation loc, ITag.Builder obj) {
+    public void addTag(ResourceLocation loc, Tag.Builder obj) {
         JsonObject json = TAGS.get(loc);
         //if no tag just put this one in.
         if (json == null) {

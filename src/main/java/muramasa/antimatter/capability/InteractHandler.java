@@ -1,15 +1,15 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class InteractHandler<T extends TileEntity> implements IInteractHandler<T> {
+public class InteractHandler<T extends BlockEntity> implements IInteractHandler<T> {
 
     private T tile;
 
@@ -18,7 +18,7 @@ public class InteractHandler<T extends TileEntity> implements IInteractHandler<T
     }
 
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type) {
         return false;
     }
 

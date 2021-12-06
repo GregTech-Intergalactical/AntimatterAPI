@@ -1,7 +1,7 @@
 package muramasa.antimatter.recipe.ingredient.test;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -11,7 +11,7 @@ public class NameIngredient extends Ingredient {
 
     private final String test;
 
-    protected NameIngredient(Stream<? extends IItemList> itemLists) {
+    protected NameIngredient(Stream<? extends Value> itemLists) {
         super(itemLists);
         this.test = null;
     }

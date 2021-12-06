@@ -3,7 +3,7 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;

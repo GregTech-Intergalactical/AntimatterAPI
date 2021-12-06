@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
@@ -8,7 +8,7 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int4;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.TextComponent;
 
 public class MachineStateWidget extends Widget {
     /* Location in most machine textures. */
@@ -30,7 +30,7 @@ public class MachineStateWidget extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         //Draw error.
         //No need to sync machine state.
         MachineState machineState = ((TileEntityMachine<?>) gui.handler).getMachineState();
@@ -42,11 +42,11 @@ public class MachineStateWidget extends Widget {
     }
 
     @Override
-    public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
+    public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
         super.mouseOver(stack, mouseX, mouseY, partialTicks);
         MachineState machineState = ((TileEntityMachine<?>) gui.handler).getMachineState();
         if (isRecipe) {
-            renderTooltip(stack, new StringTextComponent(machineState.getDisplayName()), mouseX, mouseY);
+            renderTooltip(stack, new TextComponent(machineState.getDisplayName()), mouseX, mouseY);
         }
     }
 

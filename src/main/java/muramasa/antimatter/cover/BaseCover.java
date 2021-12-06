@@ -12,13 +12,13 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -114,7 +114,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     }
 
     @Override
-    public void deserialize(CompoundNBT nbt) {
+    public void deserialize(CompoundTag nbt) {
 
     }
 
@@ -129,13 +129,13 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     }
 
     @Override
-    public CompoundNBT serialize() {
-        return new CompoundNBT();
+    public CompoundTag serialize() {
+        return new CompoundTag();
     }
 
     @Override
-    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-        return hasGui() ? getGui().getMenuHandler().menu(this, p_createMenu_3_.inventory, p_createMenu_1_) : null;
+    public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_, Player p_createMenu_3_) {
+        return hasGui() ? getGui().getMenuHandler().menu(this, p_createMenu_3_.getInventory(), p_createMenu_1_) : null;
     }
 
     @Override

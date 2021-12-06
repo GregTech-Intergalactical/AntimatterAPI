@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.cover.CoverOutput;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
@@ -8,7 +8,7 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.util.int4;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 
@@ -48,7 +48,7 @@ public class IOWidget extends AbstractSwitchWidget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         if (item != null && item.isEnabled()) item.render(matrixStack, mouseX, mouseY, partialTicks);
         if (fluid != null && fluid.isEnabled()) fluid.render(matrixStack, mouseX, mouseY, partialTicks);

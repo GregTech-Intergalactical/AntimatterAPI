@@ -1,11 +1,12 @@
 package muramasa.antimatter.util;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.Block;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.Item;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.Collections;
 import java.util.Map;
@@ -14,10 +15,10 @@ import java.util.function.Function;
 public class TagUtils {
 
     //Initialized in onResourceReload.
-    private static ITagCollectionSupplier TAG_GETTER;
+    private static TagContainer TAG_GETTER;
 
     //A list of all registered tags for all Antimatter mods.
-    private static final Map<Class, Map<ResourceLocation, ITag.INamedTag>> TAG_MAP = new Object2ObjectOpenHashMap<>();
+    private static final Map<Class, Map<ResourceLocation, Tag.Named>> TAG_MAP = new Object2ObjectOpenHashMap<>();
 
     /**
      * Redirects an ItemTag to a BlockTag
@@ -25,7 +26,7 @@ public class TagUtils {
      * @param tag a ItemTag, preferably already created
      * @return BlockTag variant of the ItemTag
      */
-    public static ITag.INamedTag<Block> itemToBlockTag(ITag.INamedTag<Item> tag) {
+    public static Tag.Named<Block> itemToBlockTag(Tag.Named<Item> tag) {
         return createTag(tag.getName(), Block.class, BlockTags::bind);
     }
 
@@ -37,7 +38,7 @@ public class TagUtils {
      *            call nc() to get content. (NamedToContent)
      * @return ItemTag variant of the BlockTag
      */
-    public static ITag.INamedTag<Item> blockToItemTag(ITag.INamedTag<Block> tag) {
+    public static Tag.Named<Item> blockToItemTag(Tag.Named<Block> tag) {
         return createTag(tag.getName(), Item.class, ItemTags::bind);
     }
 
@@ -45,11 +46,11 @@ public class TagUtils {
      * @param loc ResourceLocation of a BlockTag, can be new or old
      * @return BlockTag
      */
-    public static ITag.INamedTag<Block> getBlockTag(ResourceLocation loc) {
+    public static Tag.Named<Block> getBlockTag(ResourceLocation loc) {
         return createTag(loc, Block.class, BlockTags::bind);
     }
 
-    public static Map<ResourceLocation, ITag.INamedTag> getTags(Class clazz) {
+    public static Map<ResourceLocation, Tag.Named> getTags(Class clazz) {
         return TAG_MAP.getOrDefault(clazz, Collections.emptyMap());
     }
 
@@ -57,7 +58,7 @@ public class TagUtils {
      * @param name name of a BlockTag, can be new or old, has the namespace "forge" attached
      * @return BlockTag
      */
-    public static ITag.INamedTag<Block> getForgeBlockTag(String name) {
+    public static Tag.Named<Block> getForgeBlockTag(String name) {
         return getBlockTag(new ResourceLocation("forge", name));
     }
 
@@ -67,7 +68,7 @@ public class TagUtils {
      *            call nc() to get content. (NamedToContent)
      * @return ItemTag
      */
-    public static ITag.INamedTag<Item> getItemTag(ResourceLocation loc) {
+    public static Tag.Named<Item> getItemTag(ResourceLocation loc) {
         return createTag(loc, Item.class, ItemTags::bind);
     }
 
@@ -77,7 +78,7 @@ public class TagUtils {
      *             call nc() to get content. (NamedToContent)
      * @return ItemTag
      */
-    public static ITag.INamedTag<Item> getForgeItemTag(String name) {
+    public static Tag.Named<Item> getForgeItemTag(String name) {
         // TODO: Change "wood" -> "wooden", forge recognises "wooden"
         return getItemTag(new ResourceLocation("forge", name));
     }
@@ -86,7 +87,7 @@ public class TagUtils {
      * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
      * @return FluidTag
      */
-    public static ITag.INamedTag<Fluid> getForgeFluidTag(String name) {
+    public static Tag.Named<Fluid> getForgeFluidTag(String name) {
         return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::bind);
     }
 
@@ -98,7 +99,7 @@ public class TagUtils {
      * @param tag
      * @return
      */
-    public static ITag<Item> nc(ITag.INamedTag<Item> tag) {
+    public static Tag<Item> nc(Tag.Named<Item> tag) {
         return nc(tag.getName());
     }
 
@@ -110,11 +111,11 @@ public class TagUtils {
      * @param tag
      * @return
      */
-    public static ITag<Item> nc(ResourceLocation tag) {
-        return TagCollectionManager.getInstance().getItems().getTag(tag);
+    public static Tag<Item> nc(ResourceLocation tag) {
+        return SerializationTags.getInstance().getTagOrThrow(Registry.ITEM_REGISTRY, tag, tatg -> new RuntimeException("failed to get tag " + tatg));
     }
 
-    public static ITagCollectionSupplier getSupplier() {
+    public static TagContainer getSupplier() {
         return TAG_GETTER;
     }
 
@@ -122,12 +123,12 @@ public class TagUtils {
         TAG_GETTER = null;
     }
 
-    public static void setSupplier(ITagCollectionSupplier supplier) {
+    public static void setSupplier(TagContainer supplier) {
         TAG_GETTER = supplier;
     }
 
-    protected static <T> ITag.INamedTag<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, ITag.INamedTag<T>> fn) {
-        ITag.INamedTag<T>[] tag = new ITag.INamedTag[1];
+    protected static <T> Tag.Named<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, Tag.Named<T>> fn) {
+        Tag.Named<T>[] tag = new Tag.Named[1];
         synchronized (TAG_MAP) {
             TAG_MAP.compute(clazz, (k, v) -> {
                 if (v == null) v = new Object2ObjectOpenHashMap<>();

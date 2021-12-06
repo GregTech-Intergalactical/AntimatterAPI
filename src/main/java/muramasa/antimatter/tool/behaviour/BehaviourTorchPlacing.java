@@ -3,23 +3,27 @@ package muramasa.antimatter.tool.behaviour;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.advancements.CriteriaTriggers;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.Property;
-import net.minecraft.state.StateContainer;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.phys.shapes.CollisionContext;
 
 import javax.annotation.Nullable;
 
@@ -32,38 +36,38 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
     }
 
     @Override
-    public ActionResultType onItemUse(IAntimatterTool instance, ItemUseContext c) {
+    public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
         ItemStack stack = ItemStack.EMPTY;
-        if (c.getPlayer() == null) return ActionResultType.PASS;
-        for (ItemStack stack1 : c.getPlayer().inventory.items) {
+        if (c.getPlayer() == null) return InteractionResult.PASS;
+        for (ItemStack stack1 : c.getPlayer().getInventory().items) {
             if (stack1.getItem() == Items.TORCH || stack1.getItem() == Items.SOUL_TORCH) {
                 stack = stack1;
                 break;
             }
         }
         if (!stack.isEmpty() || c.getPlayer().isCreative()) {
-            ActionResultType resultType = tryPlace(new BlockItemUseContext(c), stack);
+            InteractionResult resultType = tryPlace(new BlockPlaceContext(c), stack);
             if (resultType.consumesAction()) {
                 if (!c.getPlayer().isCreative()) stack.shrink(1);
                 return resultType;
             }
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
-    public ActionResultType tryPlace(BlockItemUseContext context, ItemStack torch) {
+    public InteractionResult tryPlace(BlockPlaceContext context, ItemStack torch) {
         if (!context.canPlace()) {
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         } else {
             BlockState blockstate = this.getStateForPlacement(context, torch);
             if (blockstate == null) {
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
             } else if (!this.placeBlock(context, blockstate)) {
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
             } else {
                 BlockPos blockpos = context.getClickedPos();
-                World world = context.getLevel();
-                PlayerEntity playerentity = context.getPlayer();
+                Level world = context.getLevel();
+                Player playerentity = context.getPlayer();
                 ItemStack itemstack = context.getItemInHand();
                 BlockState blockstate1 = world.getBlockState(blockpos);
                 Block block = blockstate1.getBlock();
@@ -71,29 +75,29 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
                     blockstate1 = this.updateBlockStateFromTag(blockpos, world, itemstack, blockstate1);
                     this.onBlockPlaced(blockpos, world, playerentity, itemstack, blockstate1);
                     block.setPlacedBy(world, blockpos, blockstate1, playerentity, itemstack);
-                    if (playerentity instanceof ServerPlayerEntity) {
-                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayerEntity) playerentity, blockpos, itemstack);
+                    if (playerentity instanceof ServerPlayer) {
+                        CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) playerentity, blockpos, itemstack);
                     }
                 }
 
                 SoundType soundtype = blockstate1.getSoundType(world, blockpos, context.getPlayer());
-                world.playSound(playerentity, blockpos, Blocks.TORCH.getSoundType(blockstate1, world, blockpos, context.getPlayer()).getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                world.playSound(playerentity, blockpos, Blocks.TORCH.getSoundType(blockstate1, world, blockpos, context.getPlayer()).getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 
-                return ActionResultType.sidedSuccess(world.isClientSide);
+                return InteractionResult.sidedSuccess(world.isClientSide);
             }
         }
     }
 
-    protected boolean onBlockPlaced(BlockPos pos, World worldIn, @Nullable PlayerEntity player, ItemStack stack, BlockState state) {
+    protected boolean onBlockPlaced(BlockPos pos, Level worldIn, @Nullable Player player, ItemStack stack, BlockState state) {
         return BlockItem.updateCustomBlockEntityTag(worldIn, player, pos, stack);
     }
 
-    private BlockState updateBlockStateFromTag(BlockPos p_219985_1_, World p_219985_2_, ItemStack p_219985_3_, BlockState p_219985_4_) {
+    private BlockState updateBlockStateFromTag(BlockPos p_219985_1_, Level p_219985_2_, ItemStack p_219985_3_, BlockState p_219985_4_) {
         BlockState blockstate = p_219985_4_;
-        CompoundNBT compoundnbt = p_219985_3_.getTag();
+        CompoundTag compoundnbt = p_219985_3_.getTag();
         if (compoundnbt != null) {
-            CompoundNBT compoundnbt1 = compoundnbt.getCompound("BlockStateTag");
-            StateContainer<Block, BlockState> statecontainer = p_219985_4_.getBlock().getStateDefinition();
+            CompoundTag compoundnbt1 = compoundnbt.getCompound("BlockStateTag");
+            StateDefinition<Block, BlockState> statecontainer = p_219985_4_.getBlock().getStateDefinition();
 
             for (String s : compoundnbt1.getAllKeys()) {
                 Property<?> property = statecontainer.getProperty(s);
@@ -117,15 +121,15 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
         }).orElse(p_219988_0_);
     }
 
-    protected boolean placeBlock(BlockItemUseContext context, BlockState state) {
+    protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
         return context.getLevel().setBlock(context.getClickedPos(), state, 11);
     }
 
     @Nullable
-    protected BlockState getStateForPlacement(BlockItemUseContext context, ItemStack torch) {
+    protected BlockState getStateForPlacement(BlockPlaceContext context, ItemStack torch) {
         BlockState blockstate = torch.getItem() == Items.SOUL_TORCH ? Blocks.SOUL_WALL_TORCH.getStateForPlacement(context) : Blocks.WALL_TORCH.getStateForPlacement(context);
         BlockState blockstate1 = null;
-        IWorldReader iworldreader = context.getLevel();
+        LevelReader iworldreader = context.getLevel();
         BlockPos blockpos = context.getClickedPos();
 
         for (Direction direction : context.getNearestLookingDirections()) {
@@ -138,6 +142,6 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
             }
         }
 
-        return blockstate1 != null && iworldreader.isUnobstructed(blockstate1, blockpos, ISelectionContext.empty()) ? blockstate1 : null;
+        return blockstate1 != null && iworldreader.isUnobstructed(blockstate1, blockpos, CollisionContext.empty()) ? blockstate1 : null;
     }
 }

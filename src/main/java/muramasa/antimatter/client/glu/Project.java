@@ -36,9 +36,7 @@ import org.lwjgl.BufferUtils;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL11.glScalef;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glMultMatrixf;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Project.java

@@ -3,10 +3,10 @@
 //import muramasa.antimatter.capability.GTCapabilities;
 //import muramasa.antimatter.items.MaterialItem;
 //import muramasa.antimatter.items.GregTechItem;
-//import muramasa.antimatter.tools.GregTechToolType;
+//import muramasa.antimatter.tools.GregTechTag<Block>;
 //import muramasa.antimatter.util.Utils;
 //import muramasa.antimatter.client.RenderHelper;
-//import net.minecraft.block.BlockState;
+//import net.minecraft.world.level.block.Blockstate;
 //import net.minecraft.client.Minecraft;
 //import net.minecraft.client.renderer.BlockRendererDispatcher;
 //import net.minecraft.client.renderer.BufferBuilder;
@@ -14,7 +14,7 @@
 //import net.minecraft.client.renderer.Tessellator;
 //import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 //import net.minecraft.init.Blocks;
-//import net.minecraft.item.ItemStack;
+//import net.minecraft.world.item.ItemStack;
 //import net.minecraft.tileentity.TileEntity;
 //import net.minecraft.util.math.BlockPos;
 //import net.minecraft.util.math.MathHelper;
@@ -37,7 +37,7 @@
 //        if (tile.hasCapability(GTCapabilities.CONFIGURABLE, null) || tile.hasCapability(GTCapabilities.COVERABLE, null)) {
 //            ItemStack stack = event.getPlayer().getHeldItemMainhand();
 //            if (stack.isEmpty()) return;
-//            if (GregTechToolType.doesShowExtendedHighlight(stack) || GregTechItem.doesShowExtendedHighlight(stack) || MaterialItem.doesShowExtendedHighlight(stack)) {
+//            if (GregTechTag<Block>.doesShowExtendedHighlight(stack) || GregTechItem.doesShowExtendedHighlight(stack) || MaterialItem.doesShowExtendedHighlight(stack)) {
 //                drawGrid(event);
 //            }
 //        }

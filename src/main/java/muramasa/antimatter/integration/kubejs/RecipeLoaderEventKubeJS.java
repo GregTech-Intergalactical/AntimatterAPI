@@ -1,11 +1,11 @@
 package muramasa.antimatter.integration.kubejs;
 
-import java.util.Set;
-
 import dev.latvian.kubejs.event.EventJS;
 import dev.latvian.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+
+import java.util.Set;
 
 public class RecipeLoaderEventKubeJS extends EventJS {
 

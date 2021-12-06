@@ -3,9 +3,7 @@ package muramasa.antimatter.capability.item;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.function.BiPredicate;

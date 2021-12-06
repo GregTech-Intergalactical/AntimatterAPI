@@ -1,6 +1,6 @@
 package muramasa.antimatter.capability.fluid;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 

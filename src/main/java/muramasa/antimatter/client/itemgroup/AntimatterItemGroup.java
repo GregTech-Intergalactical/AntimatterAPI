@@ -1,11 +1,11 @@
 package muramasa.antimatter.client.itemgroup;
 
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Supplier;
 
-public class AntimatterItemGroup extends ItemGroup {
+public class AntimatterItemGroup extends CreativeModeTab {
 
     protected String domain, id;
     protected Supplier<ItemStack> iconSupplier;

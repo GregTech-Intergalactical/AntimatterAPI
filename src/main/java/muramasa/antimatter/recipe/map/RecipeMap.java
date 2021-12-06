@@ -19,17 +19,16 @@ import muramasa.antimatter.recipe.ingredient.*;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.tags.ITagCollectionSupplier;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagContainer;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.crafting.CompoundIngredient;
@@ -179,8 +178,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         return loc.getPath();
     }
 
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("jei.category." + loc.getPath());
+    public Component getDisplayName() {
+        return new TranslatableComponent("jei.category." + loc.getPath());
     }
 
     public B RB() {
@@ -214,7 +213,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      *
      * @param recipe the recipe to add.
      */
-    public void compileRecipe(Recipe recipe, ITagCollectionSupplier tags) {
+    public void compileRecipe(Recipe recipe, TagContainer tags) {
         if (recipe == null)
             return;
 
@@ -272,7 +271,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         }
     }
 
-    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, ITagCollectionSupplier tags, boolean insideMap) {
+    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, TagContainer tags, boolean insideMap) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(
                 (r.hasInputItems() ? r.getInputItems().size() : 0)
                         + (r.hasInputFluids() ? r.getInputFluids().length : 0));
@@ -286,7 +285,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     }
 
     protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<RecipeIngredient> ingredients,
-            ITagCollectionSupplier tags, boolean insideMap) {
+            TagContainer tags, boolean insideMap) {
         for (RecipeIngredient r : ingredients) {
             Ingredient t = r.get();
             if (!isIngredientSpecial(t)) {
@@ -529,7 +528,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         this.ROOT_SPECIAL.clear();
     }
 
-    public void compile(RecipeManager reg, ITagCollectionSupplier tags) {
+    public void compile(RecipeManager reg, TagContainer tags) {
         resetCompiled();
         if (RECIPES_TO_COMPILE.size() > 0) {
             // Recipes with special ingredients have to be compiled first as you cannot
@@ -547,7 +546,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
             regular.forEach(t -> compileRecipe(t, tags));
         }
         if (PROXY != null) {
-            List<IRecipe<?>> recipes = (List<IRecipe<?>>) reg.getAllRecipesFor(PROXY.loc);
+            List<net.minecraft.world.item.crafting.Recipe<?>> recipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) reg.getAllRecipesFor(PROXY.loc);
             recipes.forEach(recipe -> {
                 Recipe r = PROXY.handler.apply(recipe, RB());
                 if (r != null)
@@ -614,10 +613,10 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      **/
 
     public static class Proxy {
-        public final IRecipeType loc;
-        public final BiFunction<IRecipe<?>, RecipeBuilder, Recipe> handler;
+        public final RecipeType loc;
+        public final BiFunction<net.minecraft.world.item.crafting.Recipe<?>, RecipeBuilder, Recipe> handler;
 
-        public Proxy(IRecipeType<?> loc, BiFunction<IRecipe<?>, RecipeBuilder, Recipe> handler) {
+        public Proxy(RecipeType<?> loc, BiFunction<net.minecraft.world.item.crafting.Recipe<?>, RecipeBuilder, Recipe> handler) {
             this.loc = loc;
             this.handler = handler;
         }

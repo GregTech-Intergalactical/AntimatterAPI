@@ -1,7 +1,7 @@
 package muramasa.antimatter.integration.jei.category;
 
 import com.google.common.collect.Sets;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -9,9 +9,10 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IRecipeRegistration;
 import muramasa.antimatter.Data;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -47,7 +48,7 @@ public class MultiMachineInfoCategory implements IRecipeCategory<MultiMachineInf
     }
 
     @Override
-    public void draw(@Nonnull MultiMachineInfoPage recipe, @Nonnull MatrixStack matrixStack, double mouseX, double mouseY) {
+    public void draw(@Nonnull MultiMachineInfoPage recipe, @Nonnull PoseStack matrixStack, double mouseX, double mouseY) {
         recipe.drawInfo(matrixStack, (int)mouseX, (int)mouseY);
     }
 
@@ -65,8 +66,8 @@ public class MultiMachineInfoCategory implements IRecipeCategory<MultiMachineInf
 
     @Nonnull
     @Override
-    public String getTitle() {
-        return "Multi Machines Title";
+    public Component getTitle() {
+        return new TextComponent( "Multi Machines Title");
     }
 
     @Nonnull
@@ -88,7 +89,7 @@ public class MultiMachineInfoCategory implements IRecipeCategory<MultiMachineInf
     
     @Nonnull
     @Override
-    public List<ITextComponent> getTooltipStrings(@Nonnull MultiMachineInfoPage recipe, double mouseX, double mouseY) {
+    public List<Component> getTooltipStrings(@Nonnull MultiMachineInfoPage recipe, double mouseX, double mouseY) {
         return recipe.getTooltipStrings(mouseX, mouseY);
     }
 

@@ -20,22 +20,22 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.registration.IColorHandler;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -81,25 +81,25 @@ public class ClientHandler implements IProxyHandler {
             AntimatterAPI.all(MenuHandler.class, h -> {
                 if (!registered.contains(h.getContainerType().getRegistryName())) {
                     registered.add(h.getContainerType().getRegistryName());
-                    ScreenManager.register(h.getContainerType(), (ScreenManager.IScreenFactory) h.screen());
+                    MenuScreens.register(h.getContainerType(), (MenuScreens.ScreenConstructor) h.screen());
                 }
             });
         });
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
-            RenderTypeLookup.setRenderLayer(Data.PROXY_INSTANCE, RenderType.cutout());
-            AntimatterAPI.all(BlockMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockMultiMachine.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockOre.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockPipe.class, b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+            ItemBlockRenderTypes.setRenderLayer(Data.PROXY_INSTANCE, RenderType.cutout());
+            AntimatterAPI.all(BlockMachine.class, b -> ItemBlockRenderTypes.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockMultiMachine.class, b -> ItemBlockRenderTypes.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockOre.class, b -> ItemBlockRenderTypes.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockPipe.class, b -> ItemBlockRenderTypes.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME)
-                    .forEach(b -> RenderTypeLookup.setRenderLayer(b, RenderType.cutout()));
+                    .forEach(b -> ItemBlockRenderTypes.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
-                RenderTypeLookup.setRenderLayer(f.getFluid(), RenderType.translucent());
-                RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(f.getFluid(), RenderType.translucent());
+                ItemBlockRenderTypes.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
             });
         });
-        AntimatterAPI.all(Machine.class).stream().filter(Machine::renderAsTesr).map(Machine::getTileType).distinct().forEach(i -> ClientRegistry.bindTileEntityRenderer(i, MachineTESR::new));
+        AntimatterAPI.all(Machine.class).stream().filter(Machine::renderAsTesr).map(Machine::getTileType).distinct().forEach(i -> BlockEntityRenderers.register(i, MachineTESR::new));
     }
 
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {
@@ -128,12 +128,12 @@ public class ClientHandler implements IProxyHandler {
     }
 
     @Override
-    public World getClientWorld() {
+    public Level getClientWorld() {
         return Minecraft.getInstance().level;
     }
 
     @Override
-    public PlayerEntity getClientPlayer() {
+    public Player getClientPlayer() {
         return Minecraft.getInstance().player;
     }
 }

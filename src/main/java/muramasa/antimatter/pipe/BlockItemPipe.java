@@ -1,9 +1,9 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.pipe.types.ItemPipe;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 
@@ -16,7 +16,7 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         ITickingController<?, ?, ?> controller = Tesseract.ITEM.getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         info.add("Capacity: " + getType().getCapacity(getSize()));

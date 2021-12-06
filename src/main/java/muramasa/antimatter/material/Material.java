@@ -12,17 +12,16 @@ import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.RangedInteger;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -45,7 +44,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
      **/
     private final String domain;
     private final String id;
-    private ITextComponent displayName;
+    private Component displayName;
     private final int rgb;
     private final TextureSet set;
 
@@ -88,7 +87,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     /**
      * Ore members
      **/
-    private RangedInteger expRange = null;
+    private IntRange expRange = null;
 
     private final boolean enabled;
 
@@ -196,7 +195,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     }
 
     public Material asOre(int minXp, int maxXp, boolean small, IMaterialTag... tags) {
-        this.expRange = new RangedInteger(minXp, maxXp);
+        this.expRange = IntRange.range(minXp, maxXp);
         return asOre(small, tags);
     }
 
@@ -300,7 +299,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         this.miningLevel = toolQuality - 1;
         this.toolEnchantment = toolEnchantment;
         if (toolTypes.length > 0) {
-            this.toolTypes = Arrays.asList(toolTypes);
+            this.toolTypes= Arrays.asList(toolTypes);
         } else {
             this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
         }
@@ -319,7 +318,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality);
     }
 
-    public Material setAllowedToolTypes(AntimatterToolType... toolTypes) {
+    public Material setAllowedTypes(AntimatterToolType... toolTypes) {
         if (toolTypes.length > 0) {
             this.toolTypes = Arrays.asList(toolTypes);
         } else {
@@ -387,13 +386,13 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return this;
     }
 
-    public Material setExpRange(RangedInteger expRange) {
+    public Material setExpRange(IntRange expRange) {
         this.expRange = expRange;
         return this;
     }
 
     public Material setExpRange(int min, int max) {
-        this.expRange = new RangedInteger(min, max);
+        this.expRange = IntRange.range(min, max);
         return this;
     }
 
@@ -428,8 +427,8 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     /**
      * Basic Getters
      **/
-    public ITextComponent getDisplayName() {
-        return displayName == null ? displayName = new TranslationTextComponent("material." + getId()) : displayName;
+    public Component getDisplayName() {
+        return displayName == null ? displayName = new TranslatableComponent("material." + getId()) : displayName;
     }
 
     public int getRGB() {
@@ -577,7 +576,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
         return handleSpeed;
     }
 
-    public RangedInteger getExpRange() {
+    public IntRange getExpRange() {
         return expRange;
     }
 

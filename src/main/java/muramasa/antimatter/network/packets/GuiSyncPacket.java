@@ -6,10 +6,10 @@ import muramasa.antimatter.gui.ICanSyncData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraftforge.network.NetworkDirection;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -27,7 +27,7 @@ public class GuiSyncPacket {
 
     }
 
-    public static void encode(GuiSyncPacket msg, PacketBuffer buf) {
+    public static void encode(GuiSyncPacket msg, FriendlyByteBuf buf) {
         buf.writeVarInt(msg.data.length);
         for (GuiInstance.SyncHolder data : msg.data) {
             buf.writeVarInt(data.index);
@@ -35,14 +35,14 @@ public class GuiSyncPacket {
         }
     }
 
-    public static GuiSyncPacket decode(PacketBuffer buf) {
+    public static GuiSyncPacket decode(FriendlyByteBuf buf) {
         return new GuiSyncPacket(buf.copy());
     }
 
     public static void handle(final GuiSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
         if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
             ctx.get().enqueueWork(() -> {
-                Container c = Minecraft.getInstance().player.containerMenu;
+                AbstractContainerMenu c = Minecraft.getInstance().player.containerMenu;
                 if (c instanceof IAntimatterContainer) {
                     ((AntimatterContainer) c).handler.receivePacket(msg, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
                 }

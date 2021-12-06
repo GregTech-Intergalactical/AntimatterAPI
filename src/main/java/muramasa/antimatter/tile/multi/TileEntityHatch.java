@@ -14,9 +14,11 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.Explosion;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.gt.GTTransaction;
@@ -31,10 +33,10 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
     private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional
-            .of(() -> new HatchComponentHandler(this));
+            .of(() -> new HatchComponentHandler<>((T)this));
 
-    public TileEntityHatch(Machine<?> type) {
-        super(type);
+    public TileEntityHatch(Machine<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         if (type.has(ENERGY)) {
             energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0, getMachineTier().getVoltage() * 66L,
                     type.getOutputCover() == COVERENERGY ? tier.getVoltage() : 0,
@@ -57,7 +59,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                         flag = data.getVoltage() <= getInputVoltage();
                     }
                     if (!flag) {
-                        Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.Mode.BREAK);
+                        Utils.createExplosion(tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.BREAK);
                     }
                     return flag;
                 }

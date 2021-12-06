@@ -1,6 +1,6 @@
 package muramasa.antimatter.tile.single;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.GuiEvents;
@@ -11,20 +11,22 @@ import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 import tesseract.api.capability.TesseractGTCapability;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 
 public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer<T>> extends TileEntityTransformer<T> implements IInfoRenderer<TileEntityDigitalTransformer.DigitalTransformerWidget> {
 
-    public TileEntityDigitalTransformer(Machine<?> type) {
-        super(type, 0, (v) -> (8192L + v * 64L));
+    public TileEntityDigitalTransformer(Machine<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state, 0, (v) -> (8192L + v * 64L));
     }
 
     @Override
-    public void onGuiEvent(IGuiEvent event, PlayerEntity playerEntity) {
+    public void onGuiEvent(IGuiEvent event, Player playerEntity) {
         if (event.getFactory() == GuiEvents.EXTRA_BUTTON) {
             energyHandler.ifPresent(h -> {
                 GuiEvents.GuiEvent ev = (GuiEvents.GuiEvent) event;
@@ -102,7 +104,7 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
     }
 
     @Override
-    public int drawInfo(DigitalTransformerWidget widget, MatrixStack stack, FontRenderer renderer, int left, int top) {
+    public int drawInfo(DigitalTransformerWidget widget, PoseStack stack, Font renderer, int left, int top) {
         renderer.draw(stack, "Control Panel", left + 43, top + 21, 16448255);
         renderer.draw(stack, "VOLT: " + widget.voltage, left + 43, top + 40, 16448255);
         renderer.draw(stack, "TIER: " + Tier.getTier(widget.voltage < 0 ? -widget.voltage : widget.voltage).getId().toUpperCase(), left + 43, top + 48, 16448255);

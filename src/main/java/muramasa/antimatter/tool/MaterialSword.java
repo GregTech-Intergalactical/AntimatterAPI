@@ -2,38 +2,36 @@ package muramasa.antimatter.tool;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import mcp.MethodsReturnNonnullByDefault;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -78,13 +76,6 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
     public AntimatterToolType getAntimatterToolType() {
         return type;
     }
-
-    @Nonnull
-    @Override
-    public Set<ToolType> getToolTypes(ItemStack stack) {
-        return type.getToolTypes().stream().map(ToolType::get).collect(Collectors.toSet());
-    }
-
     /**
      * Returns -1 if its not a powered tool
      **/
@@ -99,12 +90,12 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
     }
 
     @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> list) {
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> list) {
         onGenericFillItemGroup(group, list, maxEnergy);
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         onGenericAddInformation(stack, tooltip, flag);
         super.appendHoverText(stack, world, tooltip, flag);
     }
@@ -115,24 +106,25 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
     }
 
     @Override
-    public UseAction getUseAnimation(ItemStack stack) {
+    public UseAnim getUseAnimation(ItemStack stack) {
         return type.getUseAction();
     }
 
     @Override
     public int getUseDuration(ItemStack stack) {
-        return type.getUseAction() == UseAction.NONE ? super.getUseDuration(stack) : 72000;
+        return type.getUseAction() == UseAnim.NONE ? super.getUseDuration(stack) : 72000;
     }
 
-    @Override
+    /*@Override
     public boolean canHarvestBlock(ItemStack stack, BlockState state) {
         return Utils.isToolEffective(this, state) && getTier(stack).getLevel() >= state.getHarvestLevel();
-    }
+    }*/
 
+    /*
     @Override
-    public int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState blockState) {
+    public int getHarvestLevel(ItemStack stack, Tag<Block> tool, @Nullable Player player, @Nullable BlockState blockState) {
         return getToolTypes().contains(tool) ? getTier(stack).getLevel() : -1;
-    }
+    }*/
 
     @Override
     public int getMaxDamage(ItemStack stack) {
@@ -146,34 +138,34 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        if (type.getToolTypes().contains("sword") && state.getBlock() == Blocks.COBWEB) return 15.0F;
+        if (state.getBlock() == Blocks.COBWEB) return 15.0F;
         return Utils.isToolEffective(this, state) ? getTier(stack).getSpeed() : 1.0F;
     }
 
     @Override
-    public boolean mineBlock(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
+    public boolean mineBlock(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
         return onGenericBlockDestroyed(stack, world, state, pos, entity);
     }
 
     @Override
-    public ActionResultType useOn(ItemUseContext ctx) {
+    public InteractionResult useOn(UseOnContext ctx) {
         return onGenericItemUse(ctx);
     }
 
     @Override
-    public boolean canAttackBlock(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+    public boolean canAttackBlock(BlockState state, Level world, BlockPos pos, Player player) {
         return type.getBlockBreakability();
     }
 
     @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
-        return type.getToolTypes().contains("axe");
+        return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
     @Override
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slotType, ItemStack stack) {
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
-        if (slotType == EquipmentSlotType.MAINHAND) {
+        if (slotType == EquipmentSlot.MAINHAND) {
             modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", type.getBaseAttackDamage() + getTier(stack).getAttackDamageBonus(), AttributeModifier.Operation.ADDITION));
             modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
         }
@@ -182,7 +174,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool {
 
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
-        return (entity instanceof PlayerEntity && ((PlayerEntity) entity).isCreative()) ? 0 : damage(stack, amount);
+        return (entity instanceof Player && ((Player) entity).isCreative()) ? 0 : damage(stack, amount);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class TankMachine extends Machine<TankMachine> {
 
     public TankMachine(String domain, String name) {
         super(domain, name);
-        setTile(() -> new TileEntityTank(this));
+        setTile(TileEntityTank::new);
         addFlags(ITEM, FLUID, COVERABLE);
         setGUI(Data.BASIC_MENU_HANDLER);
         frontCovers();

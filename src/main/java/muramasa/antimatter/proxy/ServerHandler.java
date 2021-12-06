@@ -1,7 +1,7 @@
 package muramasa.antimatter.proxy;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 
 public class ServerHandler implements IProxyHandler {
@@ -15,12 +15,12 @@ public class ServerHandler implements IProxyHandler {
     }
 
     @Override
-    public World getClientWorld() {
+    public Level getClientWorld() {
         throw new IllegalStateException("Cannot call on server!");
     }
 
     @Override
-    public PlayerEntity getClientPlayer() {
+    public Player getClientPlayer() {
         throw new IllegalStateException("Cannot call on server!");
     }
 

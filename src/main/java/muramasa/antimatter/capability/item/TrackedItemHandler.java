@@ -3,8 +3,8 @@ package muramasa.antimatter.capability.item;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -79,8 +79,8 @@ public class TrackedItemHandler<T extends TileEntityMachine<T>> extends ItemStac
     }
     //Size is defined by GUI and not the NBT data.
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = super.serializeNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = super.serializeNBT();
         nbt.remove("Size");
         return nbt;
     }

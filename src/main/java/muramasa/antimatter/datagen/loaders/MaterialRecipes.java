@@ -10,12 +10,11 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.ShapelessRecipeBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -23,15 +22,14 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.GRINDABLE;
-import static muramasa.antimatter.recipe.RecipeBuilders.*;
-import static muramasa.antimatter.util.TagUtils.getForgeItemTag;
-import static muramasa.antimatter.util.TagUtils.nc;
+import static muramasa.antimatter.recipe.RecipeBuilders.DUST_BUILDER;
+import static muramasa.antimatter.recipe.RecipeBuilders.DUST_TWO_BUILDER;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
 public class MaterialRecipes {
-    public static void init(Consumer<IFinishedRecipe> consumer, AntimatterRecipeProvider provider) {
-        final ICriterionInstance in = provider.hasSafeItem(WRENCH.getTag());
+    public static void init(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {
+        final CriterionTriggerInstance in = provider.hasSafeItem(WRENCH.getTag());
         provider.addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "dust_small", "antimatter_dusts",
                 "has_wrench", in, DUST.all().stream().filter(t -> t.has(DUST_SMALL)).map(t -> DUST.get(t, 1)).collect(Collectors.toList()), of('D', PropertyIngredient.builder("primary").types(DUST_SMALL).tags(DUST).build()), "DD", "DD");
         provider.addToolRecipe(DUST_BUILDER.get(DUST.getId()), consumer, Ref.ID, "dust_tiny", "antimatter_dusts",
@@ -87,8 +85,8 @@ public class MaterialRecipes {
             if (!o.getMaterial().getSmeltInto().has(INGOT)) return;
             if (o.getMaterial().needsBlastFurnace()) return;
             Item ingot = INGOT.get(o.getMaterial().getSmeltInto());
-            ITag.INamedTag<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
-            ITag.INamedTag<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(o.getMaterial().getSmeltInto().getId()));
+            Tag.Named<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
+            Tag.Named<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(o.getMaterial().getSmeltInto().getId()));
             AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(oreTag, 1).get(), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 100)
                     .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
                     .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot")));

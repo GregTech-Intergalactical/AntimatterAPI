@@ -1,7 +1,7 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.AbstractGui;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiComponent;
 
 public class ScreenWidget {
 
@@ -21,7 +21,7 @@ public class ScreenWidget {
      * @param totalTextureFileWidth  The total texture file size
      * @param totalTextureFileHeight The total texture file size
      */
-    public static void blit(MatrixStack stack, int renderX, int renderY, int renderWidth, int renderHeight, int textureX, int textureY, int textureWidth, int textureHeight, int totalTextureFileWidth, int totalTextureFileHeight) {
-        AbstractGui.blit(stack, renderX, renderY, renderWidth, renderHeight, textureX, textureY, textureWidth, textureHeight, totalTextureFileWidth, totalTextureFileHeight);
+    public static void blit(PoseStack stack, int renderX, int renderY, int renderWidth, int renderHeight, int textureX, int textureY, int textureWidth, int textureHeight, int totalTextureFileWidth, int totalTextureFileHeight) {
+        GuiComponent.blit(stack, renderX, renderY, renderWidth, renderHeight, textureX, textureY, textureWidth, textureHeight, totalTextureFileWidth, totalTextureFileHeight);
     }
 }

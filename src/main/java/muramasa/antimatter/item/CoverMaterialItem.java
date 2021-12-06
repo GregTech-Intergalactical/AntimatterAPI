@@ -1,12 +1,15 @@
-package muramasa.antimatter.material;
+package muramasa.antimatter.item;
 
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.IHaveCover;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialItem;
+import muramasa.antimatter.material.MaterialType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -31,8 +34,8 @@ public class CoverMaterialItem extends MaterialItem implements IHaveCover {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         super.appendHoverText(stack, world, tooltip, flag);
-        tooltip.add(new StringTextComponent("Has cover."));
+        tooltip.add(new TextComponent("Has cover."));
     }
 }

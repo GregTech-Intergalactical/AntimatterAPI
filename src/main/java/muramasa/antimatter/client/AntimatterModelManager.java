@@ -6,8 +6,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader.DynamicModelLoader;
-import muramasa.antimatter.client.baked.BakedMachineSide;
-import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterGroupedModel;
 import muramasa.antimatter.client.model.MachineModelLoader;
@@ -17,13 +15,17 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.registration.IModelProvider;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.item.Item;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.IModelConfiguration;
 
 import java.util.function.Function;
@@ -31,7 +33,7 @@ import java.util.function.Supplier;
 
 public class AntimatterModelManager {
 
-    private static final Object2ObjectOpenHashMap<String, Supplier<Int2ObjectOpenHashMap<IBakedModel[]>>> STATIC_CONFIG_MAPS = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<String, Supplier<Int2ObjectOpenHashMap<BakedModel[]>>> STATIC_CONFIG_MAPS = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<ResourceLocation, IItemProviderOverride> ITEM_OVERRIDES = new Object2ObjectOpenHashMap<>();
     private static final Object2ObjectOpenHashMap<ResourceLocation, IBlockProviderOverride> BLOCK_OVERRIDES = new Object2ObjectOpenHashMap<>();
 
@@ -60,8 +62,8 @@ public class AntimatterModelManager {
         public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
             return new DynamicModel(super.read(context, json)) {
                 @Override
-                public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-                    return new PipeBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+                    return new PipeBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
                 }
             };
         }
@@ -78,11 +80,11 @@ public class AntimatterModelManager {
         AntimatterModelManager.registerStaticConfigMap("pipe", () -> PipeBakedModel.CONFIGS);
     }
 
-    public static void registerStaticConfigMap(String staticMapId, Supplier<Int2ObjectOpenHashMap<IBakedModel[]>> configMapSupplier) {
+    public static void registerStaticConfigMap(String staticMapId, Supplier<Int2ObjectOpenHashMap<BakedModel[]>> configMapSupplier) {
         STATIC_CONFIG_MAPS.put(staticMapId, configMapSupplier);
     }
 
-    public static Int2ObjectOpenHashMap<IBakedModel[]> getStaticConfigMap(String staticMapId) {
+    public static Int2ObjectOpenHashMap<BakedModel[]> getStaticConfigMap(String staticMapId) {
         return STATIC_CONFIG_MAPS.getOrDefault(staticMapId, Int2ObjectOpenHashMap::new).get();
     }
 
@@ -94,7 +96,7 @@ public class AntimatterModelManager {
         BLOCK_OVERRIDES.put(block.getRegistryName(), override);
     }
 
-    public static void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+    public static void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
         IItemProviderOverride override = ITEM_OVERRIDES.get(item.asItem().getRegistryName());
         if (override != null) override.apply(item.asItem(), prov);
         else if (item instanceof IModelProvider) ((IModelProvider) item).onItemModelBuild(item, prov);
@@ -107,7 +109,7 @@ public class AntimatterModelManager {
     }
 
     public interface IItemProviderOverride {
-        void apply(IItemProvider item, AntimatterItemModelProvider prov);
+        void apply(ItemLike item, AntimatterItemModelProvider prov);
     }
 
     public interface IBlockProviderOverride {

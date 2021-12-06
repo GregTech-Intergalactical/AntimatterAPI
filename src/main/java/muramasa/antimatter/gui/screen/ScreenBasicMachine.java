@@ -1,32 +1,32 @@
 package muramasa.antimatter.gui.screen;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.container.ContainerBasicMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
 public class ScreenBasicMachine<T extends TileEntityMachine<T>, U extends ContainerBasicMachine<T>> extends ScreenMachine<T, U> {
 
     private final static ButtonOverlay FLUID = new ButtonOverlay("fluid_eject", 177, 19, 16, 16);
     private final static ButtonOverlay ITEM = new ButtonOverlay("item_eject", 177, 37, 16, 16);
-    private Widget item, fluid;
+    private AbstractWidget item, fluid;
 
-    public ScreenBasicMachine(U container, PlayerInventory inv, ITextComponent name) {
+    public ScreenBasicMachine(U container, Inventory inv, Component name) {
         super(container, inv, name);
     }
 
     @Override
-    protected void renderLabels(MatrixStack stack, int mouseX, int mouseY) {
+    protected void renderLabels(PoseStack stack, int mouseX, int mouseY) {
         super.renderLabels(stack, mouseX, mouseY);
         //if (container.getTile().has(MachineFlag.RECIPE))
         //    drawTooltipInArea(stack, container.getTile().getMachineState().getDisplayName(), mouseX, mouseY, (xSize / 2) - 5, 45, 10, 8);
     }
 
     @Override
-    protected void renderBg(MatrixStack stack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
         super.renderBg(stack, partialTicks, mouseX, mouseY);
     }
 

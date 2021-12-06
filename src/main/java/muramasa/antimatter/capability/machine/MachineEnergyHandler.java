@@ -11,9 +11,9 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tesseract.EnergyTileWrapper;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.world.Explosion;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -53,7 +53,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     protected boolean checkVoltage(GTTransaction.TransferData data) {
         if (data.getVoltage() > this.tile.getMachineTier().getVoltage()) {
-            Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.Mode.BREAK);
+            Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.BREAK);
         }
         return true;
     }
@@ -114,7 +114,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         cachedItems.forEach(t -> t.getState().onTick());
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
-                TileEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
+                BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
                 if (tile == null) continue;
                 LazyOptional<IEnergyHandler> handle = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
                 if (!handle.isPresent()) {

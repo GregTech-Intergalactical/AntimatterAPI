@@ -3,7 +3,7 @@ package muramasa.antimatter.datagen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.IDataProvider;
+import net.minecraft.data.DataProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.Collections;
  */
 public class BackgroundDataGenerator extends DataGenerator {
 
-    private final ObjectList<IDataProvider> PROVIDERS = new ObjectArrayList<>();
+    private final ObjectList<DataProvider> PROVIDERS = new ObjectArrayList<>();
 
     public BackgroundDataGenerator() {
         super(new File("").toPath(), Collections.emptySet());
@@ -24,12 +24,12 @@ public class BackgroundDataGenerator extends DataGenerator {
     @Override
     @SuppressWarnings("all")
     public void run() throws IOException {
-        for (IDataProvider provider : PROVIDERS) {
+        for (DataProvider provider : PROVIDERS) {
             provider.run(null);
         }
     }
 
-    public void addProviders(IDataProvider... providers) {
+    public void addProviders(DataProvider... providers) {
         PROVIDERS.addAll(Arrays.asList(providers));
     }
 }

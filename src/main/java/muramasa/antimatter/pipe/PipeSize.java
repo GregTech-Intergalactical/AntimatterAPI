@@ -1,9 +1,9 @@
 package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.registration.IAntimatterObject;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.phys.AABB;
 
 import java.util.Locale;
 
@@ -23,12 +23,12 @@ public enum PipeSize implements IAntimatterObject {
     }
 
     private final int cableThickness;
-    private final AxisAlignedBB AABB;
+    private final AABB AABB;
 
     PipeSize(int cableThickness) {
         this.cableThickness = cableThickness;
         float offset = 0.0625f * ordinal();
-        AABB = new AxisAlignedBB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset);
+        AABB = new AABB(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset);
     }
 
     @Override
@@ -36,15 +36,15 @@ public enum PipeSize implements IAntimatterObject {
         return name().toLowerCase(Locale.ENGLISH);
     }
 
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("pipe." + getId());
+    public Component getDisplayName() {
+        return new TranslatableComponent("pipe." + getId());
     }
 
     public int getCableThickness() {
         return cableThickness;
     }
 
-    public AxisAlignedBB getAABB() {
+    public AABB getAABB() {
         return AABB;
     }
 }

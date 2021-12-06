@@ -1,10 +1,10 @@
 package muramasa.antimatter.behaviour;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public interface IBlockDestroyed<T> extends IBehaviour<T> {
 
@@ -13,5 +13,5 @@ public interface IBlockDestroyed<T> extends IBehaviour<T> {
         return "block_destroyed";
     }
 
-    boolean onBlockDestroyed(T instance, ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity);
+    boolean onBlockDestroyed(T instance, ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity);
 }

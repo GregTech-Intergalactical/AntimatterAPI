@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.GuiInstance;
@@ -10,7 +10,7 @@ import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int4;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.TextComponent;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 
@@ -47,7 +47,7 @@ public class ProgressWidget extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         int progressTime;
         int x = this.realX(), y = this.realY(), xLocation = uv.x, yLocation = uv.y, length = uv.z, width = uv.w;
         switch (direction) {
@@ -92,10 +92,10 @@ public class ProgressWidget extends Widget {
     }
 
     @Override
-    public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
+    public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
         super.mouseOver(stack, mouseX, mouseY, partialTicks);
         if (isInside(mouseX, mouseY)) {
-            renderTooltip(stack, new StringTextComponent("Show Recipes"), mouseX, mouseY);
+            renderTooltip(stack, new TextComponent("Show Recipes"), mouseX, mouseY);
         }
     }
 

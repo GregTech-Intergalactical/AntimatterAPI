@@ -9,11 +9,11 @@ import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -103,19 +103,19 @@ public class CoverFactory implements IAntimatterObject {
         return id;
     }
 
-    public static CompoundNBT writeCover(CompoundNBT nbt, ICover cover) {
+    public static CompoundTag writeCover(CompoundTag nbt, ICover cover) {
         CoverFactory factory = cover.getFactory();
         nbt.putString(cover.side().get3DDataValue() + "d", factory.getDomain());
         nbt.putString(cover.side().get3DDataValue() + "i", factory.getId());
         if (cover.getTier() != null)
             nbt.putString(cover.side().get3DDataValue() + "t", cover.getTier().getId());
-        CompoundNBT inner = cover.serialize();
+        CompoundTag inner = cover.serialize();
         if (!inner.isEmpty())
             nbt.put(cover.side().get3DDataValue() + "c", inner);
         return nbt;
     }
 
-    public static ICover readCover(ICoverHandler<?> source, Direction dir, CompoundNBT nbt) {
+    public static ICover readCover(ICoverHandler<?> source, Direction dir, CompoundTag nbt) {
         if (!nbt.contains(dir.get3DDataValue() + "d"))
             return null;
         String domain = nbt.getString(dir.get3DDataValue() + "d");
@@ -129,7 +129,7 @@ public class CoverFactory implements IAntimatterObject {
                 : null;
         ICover cover = factory.supplier.get(source, tier, dir, factory);
         if (nbt.contains(dir.get3DDataValue() + "c"))
-            cover.deserialize((CompoundNBT) nbt.get(dir.get3DDataValue() + "c"));
+            cover.deserialize((CompoundTag) nbt.get(dir.get3DDataValue() + "c"));
         return cover;
     }
 

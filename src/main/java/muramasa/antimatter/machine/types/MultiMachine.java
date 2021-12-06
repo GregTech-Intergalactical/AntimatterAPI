@@ -9,7 +9,7 @@ public class MultiMachine extends BasicMultiMachine<MultiMachine> {
 
     public MultiMachine(String domain, String name) {
         super(domain, name);
-        setTile(() -> new TileEntityMultiMachine<>(this));
+        setTile(TileEntityMultiMachine::new);
         setGUI(Data.MULTI_MENU_HANDLER);
         covers((CoverFactory[]) null);
     }

@@ -3,12 +3,12 @@ package muramasa.antimatter.datagen.resources;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
-import net.minecraft.resources.IPackFinder;
-import net.minecraft.resources.IPackNameDecorator;
-import net.minecraft.resources.ResourcePackInfo;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.repository.RepositorySource;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
 @Mod.EventBusSubscriber(modid = Ref.ID)
-public class DynamicDataPackFinder implements IPackFinder {
+public class DynamicDataPackFinder implements RepositorySource {
 
     protected final String id, name;
 
@@ -35,17 +35,17 @@ public class DynamicDataPackFinder implements IPackFinder {
 
 
     @SubscribeEvent
-    public static void addPackFinder(FMLServerAboutToStartEvent e) {
+    public static void addPackFinder(ServerStartingEvent e) {
         //Antimatter.LOGGER.info("Adding Antimatter's Dynamic Datapack to the server...");
         //e.getServer().getResourcePacks().addPackFinder(Ref.SERVER_PACK_FINDER);
         //e.getServer().getResourcePacks().getEnabledPacks().forEach(p -> Antimatter.LOGGER.info(p.getName() + " is being loaded into the server..."));
     }
 
     @Override
-    public void loadPacks(Consumer<ResourcePackInfo> infoConsumer, ResourcePackInfo.IFactory infoFactory) {
+    public void loadPacks(Consumer<Pack> infoConsumer, Pack.PackConstructor infoFactory) {
         DynamicResourcePack dynamicPack = new DynamicResourcePack(name, AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet()));
         //TODO: not sure here
-        ResourcePackInfo genericPackInfo = ResourcePackInfo.create(id, true, () -> dynamicPack, infoFactory, ResourcePackInfo.Priority.TOP, IPackNameDecorator.BUILT_IN);
+        Pack genericPackInfo = Pack.create(id, true, () -> dynamicPack, infoFactory, Pack.Position.TOP, PackSource.BUILT_IN);
         infoConsumer.accept(genericPackInfo);
 
     }

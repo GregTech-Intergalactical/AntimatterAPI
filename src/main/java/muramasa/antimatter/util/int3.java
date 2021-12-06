@@ -1,8 +1,8 @@
 package muramasa.antimatter.util;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 
 import javax.annotation.Nonnull;
 
@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  * Created By Muramasa -  https://github.com/Muramasa-
  * Allows easily stepping in directions given a Direction
  */
-public class int3 extends BlockPos.Mutable {
+public class int3 extends BlockPos.MutableBlockPos {
 
     public Direction side = Direction.NORTH; //Used for moving in a direction
     public Direction horizSide = null;

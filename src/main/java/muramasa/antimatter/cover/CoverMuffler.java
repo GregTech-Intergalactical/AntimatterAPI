@@ -5,11 +5,11 @@ import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -35,7 +35,7 @@ public class CoverMuffler extends BaseCover {
     @Override
     public void onUpdate() {
         BlockPos pos = handler.getTile().getBlockPos();
-        World world = this.handler.getTile().getLevel();
+        Level world = this.handler.getTile().getLevel();
         if (world.isClientSide) {
             TileEntityMultiMachine<?> tile = StructureCache.getAnyMulti(world, pos, TileEntityMultiMachine.class);
             if (tile == null || tile.getMachineState() != MachineState.ACTIVE) return;

@@ -1,8 +1,8 @@
 package muramasa.antimatter.recipe;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 
 public class Unifier {
 

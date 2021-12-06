@@ -1,16 +1,16 @@
 package muramasa.antimatter.capability;
 
 import muramasa.antimatter.tool.AntimatterToolType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import javax.annotation.Nullable;
 
-public interface IInteractHandler<T extends TileEntity> {
+public interface IInteractHandler<T extends BlockEntity> {
 
-    boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type);
+    boolean onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type);
 
     T getTile();
 }

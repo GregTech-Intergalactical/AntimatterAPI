@@ -10,31 +10,31 @@ import muramasa.antimatter.dynamic.ModelConfigRandom;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.block.SoundType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, ISharedAntimatterObject {
+public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedBlock, ISharedAntimatterObject  {
 
     protected static final int SURFACE_ROCK_MODEL_COUNT = 7;
     protected static final int[] CONFIG_ARRAY = new int[SURFACE_ROCK_MODEL_COUNT];
@@ -47,7 +47,7 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, IS
     protected StoneType stoneType;
 
     public BlockSurfaceRock(String domain, Material material, StoneType stoneType) {
-        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Block.Properties.of(net.minecraft.block.material.Material.STONE).strength(1.0f, 10.0f).sound(SoundType.STONE).noCollission().noOcclusion());
+        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Block.Properties.of(net.minecraft.world.level.material.Material.STONE).strength(1.0f, 10.0f).sound(SoundType.STONE).noCollission().noOcclusion());
         this.material = material;
         this.stoneType = stoneType;
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false));
@@ -65,12 +65,12 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, IS
     }
 
     @Override
-    public void fillItemCategory(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         if (Data.ROCK.isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED);
     }
 
@@ -80,7 +80,7 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, IS
     }
 
     @Override
-    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
+    public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
         if (neighbor.above().equals(pos) && !world.getBlockState(neighbor).canOcclude()) {
             //world.destroyBlock(pos, true);
         }
@@ -100,23 +100,24 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, IS
 //    }
 
     @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult traceResult) {
-        if (player.isCrouching()) return ActionResultType.FAIL;
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult traceResult) {
+        if (player.isCrouching()) return InteractionResult.FAIL;
         playerDestroy(world, player, pos, state, world.getBlockEntity(pos), player.getItemInHand(hand));
-        if (super.removedByPlayer(state, world, pos, player, true, null)) {
-            player.addItem(Data.ROCK.get(material, 1));
-            return ActionResultType.SUCCESS;
-        }
-        return ActionResultType.FAIL;
+        dropResources(state, world, pos, null,player, ItemStack.EMPTY);
+       // if (dropResources(state, world, pos, null,player, true, null)) {
+        player.addItem(Data.ROCK.get(material, 1));
+        return InteractionResult.SUCCESS;
+  //      }
+        //return InteractionResult.FAIL;
     }
 
     @Override
-    public float getShadeBrightness(BlockState state, IBlockReader world, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
         return 0f;
     }
 
     @Override
-    public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
+    public ModelConfig getConfig(BlockState state, BlockGetter world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         return config;
     }
 
@@ -130,7 +131,7 @@ public class BlockSurfaceRock extends BlockDynamic implements IWaterLoggable, IS
     }
 
     @Override
-    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         super.getInfo(info, world, state, pos);
         info.add("Material: " + material.getId());
         info.add("StoneType: " + stoneType.getId());

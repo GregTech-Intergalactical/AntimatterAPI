@@ -1,9 +1,8 @@
 package muramasa.antimatter.datagen;
 
-import net.minecraft.data.IDataProvider;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.data.DataProvider;
 
-public interface IAntimatterProvider extends IDataProvider {
+public interface IAntimatterProvider extends DataProvider {
 
     // Only runs when dynamically generating assets/data
     void run();

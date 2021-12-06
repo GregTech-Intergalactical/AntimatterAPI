@@ -3,9 +3,9 @@ package muramasa.antimatter.material;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.LazyValue;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
 
@@ -54,6 +54,6 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     public RecipeIngredient getIngredient(Material material, int count) {
         if (count < 1)
             Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
-        return RecipeIngredient.of(new LazyValue<>(() -> new ItemStack(get(material), count)), count);
+        return RecipeIngredient.of(new LazyLoadedValue<>(() -> new ItemStack(get(material), count)), count);
     }
 }

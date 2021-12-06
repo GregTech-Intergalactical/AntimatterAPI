@@ -5,10 +5,10 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.StoneLayerOre;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -28,7 +28,7 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
     private int minY, maxY;
 
     @SafeVarargs
-    protected WorldGenStoneLayer(BlockState state, int minY, int maxY, RegistryKey<World>... dims) {
+    protected WorldGenStoneLayer(BlockState state, int minY, int maxY, ResourceKey<Level>... dims) {
         super("world_gen_stone_layer", WorldGenStoneLayer.class, dims);
         if (state == null || state.isAir())
             throw new IllegalStateException("WorldGenStoneLayer has been passed a null stone block state!");
@@ -38,43 +38,43 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
     }
 
     @SafeVarargs
-    protected WorldGenStoneLayer(Block block, int minY, int maxY, RegistryKey<World>... dims) {
+    protected WorldGenStoneLayer(Block block, int minY, int maxY, ResourceKey<Level>... dims) {
         this(block.defaultBlockState(), minY, maxY, dims);
     }
 
     @SafeVarargs
-    protected WorldGenStoneLayer(StoneType stoneType, int minY, int maxY, RegistryKey<World>... dims) {
+    protected WorldGenStoneLayer(StoneType stoneType, int minY, int maxY, ResourceKey<Level>... dims) {
         this(stoneType.getState(), minY, maxY, dims);
         this.stoneType = stoneType;
     }
 
     @SafeVarargs
-    public static List<WorldGenStoneLayer> add(Block block, int weight, RegistryKey<World>... dims) {
+    public static List<WorldGenStoneLayer> add(Block block, int weight, ResourceKey<Level>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.defaultBlockState(), 0, 256, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs
-    public static List<WorldGenStoneLayer> add(BlockState state, int weight, RegistryKey<World>... dims) {
+    public static List<WorldGenStoneLayer> add(BlockState state, int weight, ResourceKey<Level>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(state, 0, 256, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs
-    public static List<WorldGenStoneLayer> add(StoneType stoneType, int weight, RegistryKey<World>... dims) {
+    public static List<WorldGenStoneLayer> add(StoneType stoneType, int weight, ResourceKey<Level>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(stoneType, 0, 256, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs
-    public static List<WorldGenStoneLayer> add(Block block, int weight, int minY, int maxY, RegistryKey<World>... dims) {
+    public static List<WorldGenStoneLayer> add(Block block, int weight, int minY, int maxY, ResourceKey<Level>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(block.defaultBlockState(), minY, maxY, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs
-    public static List<WorldGenStoneLayer> add(BlockState state, int weight, int minY, int maxY, RegistryKey<World>... dims) {
+    public static List<WorldGenStoneLayer> add(BlockState state, int weight, int minY, int maxY, ResourceKey<Level>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(state, minY, maxY, dims)).collect(Collectors.toList());
     }
 
     @SafeVarargs
-    public static List<WorldGenStoneLayer> add(StoneType stoneType, int weight, int minY, int maxY, RegistryKey<World>... dims) {
+    public static List<WorldGenStoneLayer> add(StoneType stoneType, int weight, int minY, int maxY, ResourceKey<Level>... dims) {
         return IntStream.of(weight).mapToObj(i -> new WorldGenStoneLayer(stoneType, minY, maxY, dims)).collect(Collectors.toList());
     }
 

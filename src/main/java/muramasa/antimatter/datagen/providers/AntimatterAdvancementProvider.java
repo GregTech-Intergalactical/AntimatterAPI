@@ -7,11 +7,11 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class AntimatterAdvancementProvider implements IDataProvider, IAntimatterProvider {
+public class AntimatterAdvancementProvider implements DataProvider, IAntimatterProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private final DataGenerator gen;
@@ -55,7 +55,7 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
     }
 
     @Override
-    public void run(@Nonnull DirectoryCache cache) {
+    public void run(@Nonnull HashCache cache) {
         /*Path folder = this.gen.getOutputFolder();
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {
@@ -82,12 +82,12 @@ public class AntimatterAdvancementProvider implements IDataProvider, IAntimatter
         return providerName;
     }
 
-    public static Advancement.Builder buildRootAdvancement(IItemProvider provider, ResourceLocation backgroundPath, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.advancement().display(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), backgroundPath, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
+    public static Advancement.Builder buildRootAdvancement(ItemLike provider, ResourceLocation backgroundPath, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
+        return Advancement.Builder.advancement().display(provider, new TranslatableComponent(title), new TranslatableComponent(desc), backgroundPath, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
     }
 
-    public static Advancement.Builder buildAdvancement(Advancement parent, IItemProvider provider, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
-        return Advancement.Builder.advancement().parent(parent).display(provider, new TranslationTextComponent(title), new TranslationTextComponent(desc), null, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
+    public static Advancement.Builder buildAdvancement(Advancement parent, ItemLike provider, String title, String desc, FrameType type, boolean toast, boolean announce, boolean hide) {
+        return Advancement.Builder.advancement().parent(parent).display(provider, new TranslatableComponent(title), new TranslatableComponent(desc), null, type, toast, announce, hide).rewards(AdvancementRewards.Builder.experience(10));
     }
 
     public static String getLoc(String domain, String id) {

@@ -3,8 +3,8 @@ package muramasa.antimatter.fluid;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
-import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidAttributes;
 
 /**

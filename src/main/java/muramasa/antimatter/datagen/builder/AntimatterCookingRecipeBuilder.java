@@ -3,17 +3,17 @@ package muramasa.antimatter.datagen.builder;
 import com.google.gson.JsonObject;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.IRequirementsStrategy;
-import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.AbstractCookingRecipe;
-import net.minecraft.item.crafting.CookingRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.Registry;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.AbstractCookingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCookingSerializer;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -25,9 +25,9 @@ public class AntimatterCookingRecipeBuilder {
     private final int cookingTime;
     private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
     private String group;
-    private final CookingRecipeSerializer<?> recipeSerializer;
+    private final SimpleCookingSerializer<?> recipeSerializer;
 
-    private AntimatterCookingRecipeBuilder(ItemStack resultIn, Ingredient ingredientIn, float experienceIn, int cookingTimeIn, CookingRecipeSerializer<?> serializer) {
+    private AntimatterCookingRecipeBuilder(ItemStack resultIn, Ingredient ingredientIn, float experienceIn, int cookingTimeIn, SimpleCookingSerializer<?> serializer) {
         this.result = resultIn;
         this.ingredient = ingredientIn;
         this.experience = experienceIn;
@@ -35,28 +35,28 @@ public class AntimatterCookingRecipeBuilder {
         this.recipeSerializer = serializer;
     }
 
-    public static AntimatterCookingRecipeBuilder cookingRecipe(Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookingTimeIn, CookingRecipeSerializer<?> serializer) {
+    public static AntimatterCookingRecipeBuilder cookingRecipe(Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookingTimeIn, SimpleCookingSerializer<?> serializer) {
         return new AntimatterCookingRecipeBuilder(resultIn, ingredientIn, experienceIn, cookingTimeIn, serializer);
     }
 
     public static AntimatterCookingRecipeBuilder blastingRecipe(Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookingTimeIn) {
-        return cookingRecipe(ingredientIn, resultIn, experienceIn, cookingTimeIn, IRecipeSerializer.BLASTING_RECIPE);
+        return cookingRecipe(ingredientIn, resultIn, experienceIn, cookingTimeIn, RecipeSerializer.BLASTING_RECIPE);
     }
 
     public static AntimatterCookingRecipeBuilder smeltingRecipe(Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookingTimeIn) {
-        return cookingRecipe(ingredientIn, resultIn, experienceIn, cookingTimeIn, IRecipeSerializer.SMELTING_RECIPE);
+        return cookingRecipe(ingredientIn, resultIn, experienceIn, cookingTimeIn, RecipeSerializer.SMELTING_RECIPE);
     }
 
-    public AntimatterCookingRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
+    public AntimatterCookingRecipeBuilder addCriterion(String name, CriterionTriggerInstance criterionIn) {
         this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn) {
+    public void build(Consumer<FinishedRecipe> consumerIn) {
         this.build(consumerIn, Registry.ITEM.getKey(this.result.getItem()));
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, String save) {
+    public void build(Consumer<FinishedRecipe> consumerIn, String save) {
         ResourceLocation resourcelocation = Registry.ITEM.getKey(this.result.getItem());
         ResourceLocation resourcelocation1 = new ResourceLocation(save);
         if (resourcelocation1.equals(resourcelocation)) {
@@ -66,9 +66,9 @@ public class AntimatterCookingRecipeBuilder {
         }
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
+    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
         this.validate(id);
-        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
         consumerIn.accept(new Result(id, this.group == null ? "" : this.group, this.ingredient, this.result, this.experience, this.cookingTime, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath()), this.recipeSerializer));
     }
 
@@ -81,7 +81,7 @@ public class AntimatterCookingRecipeBuilder {
         }
     }
 
-    public static class Result implements IFinishedRecipe {
+    public static class Result implements FinishedRecipe {
         private final ResourceLocation id;
         private final String group;
         private final Ingredient ingredient;
@@ -90,9 +90,9 @@ public class AntimatterCookingRecipeBuilder {
         private final int cookingTime;
         private final Advancement.Builder advancementBuilder;
         private final ResourceLocation advancementId;
-        private final IRecipeSerializer<? extends AbstractCookingRecipe> serializer;
+        private final RecipeSerializer<? extends AbstractCookingRecipe> serializer;
 
-        public Result(ResourceLocation idIn, String groupIn, Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookingTimeIn, Advancement.Builder advancementBuilderIn, ResourceLocation advancementIdIn, IRecipeSerializer<? extends AbstractCookingRecipe> serializerIn) {
+        public Result(ResourceLocation idIn, String groupIn, Ingredient ingredientIn, ItemStack resultIn, float experienceIn, int cookingTimeIn, Advancement.Builder advancementBuilderIn, ResourceLocation advancementIdIn, RecipeSerializer<? extends AbstractCookingRecipe> serializerIn) {
             this.id = idIn;
             this.group = groupIn;
             this.ingredient = ingredientIn;
@@ -123,7 +123,7 @@ public class AntimatterCookingRecipeBuilder {
             json.addProperty("cookingtime", this.cookingTime);
         }
 
-        public IRecipeSerializer<?> getType() {
+        public RecipeSerializer<?> getType() {
             return this.serializer;
         }
 

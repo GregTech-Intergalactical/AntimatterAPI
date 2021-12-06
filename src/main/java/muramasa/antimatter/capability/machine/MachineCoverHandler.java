@@ -10,9 +10,9 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
         return get(lookupSingle(getTile().getMachineType().getOutputCover()));
     }
 
-    public boolean setOutputFacing(PlayerEntity entity, Direction side) {
+    public boolean setOutputFacing(Player entity, Direction side) {
         Direction dir = getOutputFacing();
         if (dir == null) return false;
         if (side == dir) return false;
@@ -71,7 +71,7 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     }
 
     @Override
-    public boolean onInteract(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(@Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Direction side, @Nullable AntimatterToolType type) {
         return super.onInteract(player, hand, side, type);
     }
 

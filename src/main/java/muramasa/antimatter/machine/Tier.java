@@ -2,40 +2,39 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 
 public class Tier implements ISharedAntimatterObject {
 
     /**
      * Electricity Tiers
      **/
-    public static Tier ULV = new Tier(Ref.ID, "ulv", 8, TextFormatting.WHITE); //Tier 1
-    public static Tier LV = new Tier(Ref.ID, "lv", 32, TextFormatting.WHITE); //Tier 2
-    public static Tier MV = new Tier(Ref.ID, "mv", 128, TextFormatting.WHITE); //Tier 3
-    public static Tier HV = new Tier(Ref.ID, "hv", 512, TextFormatting.YELLOW); //Tier 4
-    public static Tier EV = new Tier(Ref.ID, "ev", 2048, TextFormatting.AQUA); //Tier 5
-    public static Tier IV = new Tier(Ref.ID, "iv", 8192, TextFormatting.LIGHT_PURPLE); //Tier 6
-    public static Tier LUV = new Tier(Ref.ID, "luv", 32768, TextFormatting.LIGHT_PURPLE); //Tier 7
-    public static Tier ZPM = new Tier(Ref.ID, "zpm", 131072, TextFormatting.LIGHT_PURPLE); //Tier 8
-    public static Tier UV = new Tier(Ref.ID, "uv", 524288, TextFormatting.LIGHT_PURPLE); //Tier 9
-    public static Tier MAX = new Tier(Ref.ID, "max", 2147483647, TextFormatting.LIGHT_PURPLE); //Tier 15
+    public static Tier ULV = new Tier(Ref.ID, "ulv", 8, ChatFormatting.WHITE); //Tier 1
+    public static Tier LV = new Tier(Ref.ID, "lv", 32, ChatFormatting.WHITE); //Tier 2
+    public static Tier MV = new Tier(Ref.ID, "mv", 128, ChatFormatting.WHITE); //Tier 3
+    public static Tier HV = new Tier(Ref.ID, "hv", 512, ChatFormatting.YELLOW); //Tier 4
+    public static Tier EV = new Tier(Ref.ID, "ev", 2048, ChatFormatting.AQUA); //Tier 5
+    public static Tier IV = new Tier(Ref.ID, "iv", 8192, ChatFormatting.LIGHT_PURPLE); //Tier 6
+    public static Tier LUV = new Tier(Ref.ID, "luv", 32768, ChatFormatting.LIGHT_PURPLE); //Tier 7
+    public static Tier ZPM = new Tier(Ref.ID, "zpm", 131072, ChatFormatting.LIGHT_PURPLE); //Tier 8
+    public static Tier UV = new Tier(Ref.ID, "uv", 524288, ChatFormatting.LIGHT_PURPLE); //Tier 9
+    public static Tier MAX = new Tier(Ref.ID, "max", 2147483647, ChatFormatting.LIGHT_PURPLE); //Tier 15
 
     /**
      * Special Tiers
      **/
     //TODO make these Tier 0 and 1?
-    public static Tier BRONZE = new Tier(Ref.ID, "bronze", 0, TextFormatting.WHITE);
-    public static Tier STEEL = new Tier(Ref.ID, "steel", 0, TextFormatting.WHITE);
+    public static Tier BRONZE = new Tier(Ref.ID, "bronze", 0, ChatFormatting.WHITE);
+    public static Tier STEEL = new Tier(Ref.ID, "steel", 0, ChatFormatting.WHITE);
 
     private final String domain, id;
     private final int voltage;
-    private final TextFormatting rarityColor;
+    private final ChatFormatting rarityColor;
     private final String baseTexture;
 
-    public Tier(String domain, String id, int voltage, TextFormatting rarityColor) {
+    public Tier(String domain, String id, int voltage, ChatFormatting rarityColor) {
         this.domain = domain;
         this.id = id;
         this.voltage = voltage;
@@ -72,7 +71,7 @@ public class Tier implements ISharedAntimatterObject {
         return voltage;
     }
 
-    public TextFormatting getRarityFormatting() {
+    public ChatFormatting getRarityFormatting() {
         return rarityColor;
     }
 

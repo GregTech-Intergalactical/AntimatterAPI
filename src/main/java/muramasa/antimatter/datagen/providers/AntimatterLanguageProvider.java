@@ -25,16 +25,16 @@ import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
@@ -49,7 +49,7 @@ import java.util.function.Supplier;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.util.Utils.*;
 
-public class AntimatterLanguageProvider implements IDataProvider, IAntimatterProvider {
+public class AntimatterLanguageProvider implements DataProvider, IAntimatterProvider {
 
     private final String providerDomain, providerName, locale;
     private final Object2ObjectMap<String, String> data = new Object2ObjectRBTreeMap<>();
@@ -73,7 +73,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
     }
 
     @Override
-    public void run(DirectoryCache cache) throws IOException {
+    public void run(HashCache cache) throws IOException {
         addTranslations();
         if (!data.isEmpty())
             save(cache, data, this.gen.getOutputFolder().resolve(String.join("", "assets/", providerDomain, "/lang/", locale, ".json")));
@@ -81,7 +81,7 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
 
     // Forge implementation
     @SuppressWarnings("all")
-    private void save(DirectoryCache cache, Object object, Path target) throws IOException {
+    private void save(HashCache cache, Object object, Path target) throws IOException {
         String data = Ref.GSON.toJson(object);
         data = JavaUnicodeEscaper.outsideOf(0, 0x7f).translate(data); // Escape unicode after the fact so that it's not double escaped by GSON
         String hash = SHA1.hashUnencodedChars(data).toString();
@@ -251,11 +251,11 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         add(key.getDescriptionId(), name);
     }
 
-    public void addEffect(Supplier<? extends Effect> key, String name) {
+    public void addEffect(Supplier<? extends MobEffect> key, String name) {
         add(key.get(), name);
     }
 
-    public void add(Effect key, String name) {
+    public void add(MobEffect key, String name) {
         add(key.getDescriptionId(), name);
     }
 
@@ -267,11 +267,11 @@ public class AntimatterLanguageProvider implements IDataProvider, IAntimatterPro
         add(key.getDescriptionId(), name);
     }
 
-    public void addItemGroup(Supplier<? extends ItemGroup> key, String name) {
+    public void addItemGroup(Supplier<? extends CreativeModeTab> key, String name) {
         add(key.get(), name);
     }
 
-    public void add(ItemGroup key, String name) {
+    public void add(CreativeModeTab key, String name) {
         add("itemGroup." + key.getRecipeFolderName(), name);
     }
 

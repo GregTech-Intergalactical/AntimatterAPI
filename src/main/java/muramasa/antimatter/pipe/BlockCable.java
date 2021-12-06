@@ -4,23 +4,23 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 import tesseract.api.gt.GTController;
@@ -48,23 +48,23 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+    public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
         return 300;
     }
 
     @Override
-    public boolean isFlammable(BlockState state, IBlockReader world, BlockPos pos, Direction face) {
+    public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
         return true;
     }
 
 
     @Override
-    public boolean isFireSource(BlockState state, IWorldReader world, BlockPos pos, Direction side) {
+    public boolean isFireSource(BlockState state, LevelReader world, BlockPos pos, Direction side) {
         return true;
     }
 
     @Override
-    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
+    public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
         if (!(state.getBlock() instanceof BlockCable) && world == null || pos == null) return -1;
         return insulated ? i == 1 ? getRGB() : -1 : i == 0 || i == 1 ? getRGB() : -1;
     }
@@ -75,7 +75,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public void entityInside(BlockState state, World worldIn, BlockPos pos, Entity entityIn) {
+    public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
         if (this.insulated) return;
         if (!(entityIn instanceof LivingEntity)) return;
@@ -88,27 +88,27 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
             entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
         }
     }
-
+/*
     @Nullable
     @Override
-    public ToolType getHarvestTool(BlockState state) {
-        return Data.WIRE_CUTTER.getToolType();
+    public Tag<Block> getHarvestTool(BlockState state) {
+        return Data.WIRE_CUTTER.getTag<Block>();
     }
-
+*/
     @Override
-    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         return info;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
 
-        tooltip.add(new TranslationTextComponent("generic.amp").append(": ").append(new StringTextComponent("" + this.type.getAmps(this.size)).withStyle(TextFormatting.GREEN)));
-        tooltip.add(new TranslationTextComponent("generic.voltage").append(": ").append(new StringTextComponent("" + this.type.getTier().getVoltage()).withStyle(TextFormatting.BLUE)));
-        tooltip.add(new TranslationTextComponent("generic.loss").append(": ").append(new StringTextComponent("" + this.type.getLoss()).withStyle(TextFormatting.BLUE)));
+        tooltip.add(new TranslatableComponent("generic.amp").append(": ").append(new TextComponent("" + this.type.getAmps(this.size)).withStyle(ChatFormatting.GREEN)));
+        tooltip.add(new TranslatableComponent("generic.voltage").append(": ").append(new TextComponent("" + this.type.getTier().getVoltage()).withStyle(ChatFormatting.BLUE)));
+        tooltip.add(new TranslatableComponent("generic.loss").append(": ").append(new TextComponent("" + this.type.getLoss()).withStyle(ChatFormatting.BLUE)));
     }
 
     //    @Override

@@ -6,11 +6,11 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import net.minecraft.client.resources.ReloadListener;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.world.World;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -25,32 +25,31 @@ public class CommonHandler implements IProxyHandler {
     public static void setup(FMLCommonSetupEvent e) {
         AntimatterConfiguredFeatures.init();
         AntimatterAPI.all(StoneType.class, StoneType::initSuppliedState);
-        AntimatterCaps.register();
         AntimatterWorldGenerator.setup();
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, CommonHandler::reload);
     }
 
     public static void reload(AddReloadListenerEvent ev) {
-        ev.addListener(new ReloadListener<Void>() {
+        ev.addListener(new SimplePreparableReloadListener<Void>() {
             @Override
-            protected Void prepare(IResourceManager resourceManagerIn, IProfiler profilerIn) {
+            protected Void prepare(ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
                 return null;
             }
 
             @Override
-            protected void apply(Void objectIn, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+            protected void apply(Void objectIn, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
                 AntimatterDynamics.onRecipeCompile(true, ev.getDataPackRegistries().getRecipeManager(), ev.getDataPackRegistries().getTags());
             }
         });
     }
 
     @Override
-    public World getClientWorld() {
+    public Level getClientWorld() {
         return null;
     }
 
     @Override
-    public PlayerEntity getClientPlayer() {
+    public Player getClientPlayer() {
         return null;
     }
 }

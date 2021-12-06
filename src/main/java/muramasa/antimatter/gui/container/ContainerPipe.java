@@ -2,15 +2,15 @@ package muramasa.antimatter.gui.container;
 
 import muramasa.antimatter.gui.MenuHandlerPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 
 public class ContainerPipe<T extends TileEntityPipe<?>> extends AntimatterContainer {
 
     protected T tile;
 
-    public ContainerPipe(T tile, PlayerInventory playerInv, MenuHandlerPipe<?> menuHandler, int windowId) {
+    public ContainerPipe(T tile, Inventory playerInv, MenuHandlerPipe<?> menuHandler, int windowId) {
         super(tile, menuHandler.getContainerType(), windowId, playerInv, 0);
         //super(menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getSlots(tile.getMachineTier()).size());
         //addSlots(tile);
@@ -24,7 +24,7 @@ public class ContainerPipe<T extends TileEntityPipe<?>> extends AntimatterContai
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
-        return stillValid(IWorldPosCallable.create(tile.getLevel(), tile.getBlockPos()), player, tile.getBlockState().getBlock());
+    public boolean stillValid(Player player) {
+        return stillValid(ContainerLevelAccess.create(tile.getLevel(), tile.getBlockPos()), player, tile.getBlockState().getBlock());
     }
 }

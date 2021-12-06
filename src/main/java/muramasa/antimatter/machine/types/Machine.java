@@ -28,19 +28,19 @@ import muramasa.antimatter.texture.IOverlayModeler;
 import muramasa.antimatter.texture.IOverlayTexturer;
 import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.state.Property;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -68,8 +68,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Basic Members
      **/
-    protected TileEntityType<?> tileType;
-    protected Function<T, Supplier<? extends TileEntityMachine<?>>> tileFunc = m -> () -> new TileEntityMachine<>(this);
+    protected BlockEntityType<?> tileType;
+    protected TileEntityBase.BlockEntitySupplier<TileEntityMachine<?>, T> tileFunc = TileEntityMachine::new;
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
@@ -84,7 +84,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * GUI Members
      **/
     protected GuiData guiData;
-    protected ItemGroup group = Ref.TAB_MACHINES;
+    protected CreativeModeTab group = Ref.TAB_MACHINES;
 
     /**
      * Texture Members
@@ -112,6 +112,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected boolean allowFrontCovers = false;
     protected boolean allowVerticalFacing = false;
     protected boolean frontIO = false;
+    protected boolean allowClientTicking = false;
 
     /**
      * Rendering
@@ -254,15 +255,15 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return amps;
     }
 
-    public Direction handlePlacementFacing(BlockItemUseContext ctxt, Property<?> which, Direction dir) {
+    public Direction handlePlacementFacing(BlockPlaceContext ctxt, Property<?> which, Direction dir) {
         return dir;
     }
 
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry != ForgeRegistries.BLOCKS) return;
-        tileType = new TileEntityType<>(tileFunc.apply((T) this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
-        AntimatterAPI.register(TileEntityType.class, getId(), getDomain(), getTileType());
+        tileType = new BlockEntityType<>(new TileEntityBase.BlockEntityGetter<>(tileFunc, (T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
+        AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), getTileType());
     }
 
     @Override
@@ -350,18 +351,13 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T itemGroup(ItemGroup group) {
+    public T itemGroup(CreativeModeTab group) {
         this.group = group;
         return (T) this;
     }
 
-    public T setTile(Function<T, Supplier<? extends TileEntityMachine<?>>> func) {
+    public T setTile(TileEntityBase.BlockEntitySupplier<TileEntityMachine<?>, T> func) {
         this.tileFunc = func;
-        return (T) this;
-    }
-
-    public T setTile(Supplier<? extends TileEntityMachine<?>> supplier) {
-        setTile(m -> supplier);
         return (T) this;
     }
 
@@ -379,12 +375,21 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return id;
     }
 
-    public ITextComponent getDisplayName(Tier tier) {
+    public Component getDisplayName(Tier tier) {
         if (has(BASIC)) {
-            return new TranslationTextComponent("machine." + id + "." + tier.getId());
+            return new TranslatableComponent("machine." + id + "." + tier.getId());
         } else {
-            return new TranslationTextComponent("machine." + id);
+            return new TranslatableComponent("machine." + id);
         }
+    }
+
+    public boolean canClientTick() {
+        return allowClientTicking;
+    }
+
+    public T setClientTick() {
+        this.allowClientTicking = true;
+        return (T) this;
     }
 
     public double getMachineEfficiency() {
@@ -526,7 +531,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Getters
      **/
-    public TileEntityType<?> getTileType() {
+    public BlockEntityType<?> getTileType() {
         return tileType;
     }
 
@@ -543,7 +548,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return guiData;
     }
 
-    public ItemGroup getGroup() {
+    public CreativeModeTab getGroup() {
         return group;
     }
 

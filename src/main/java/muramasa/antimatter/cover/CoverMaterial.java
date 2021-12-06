@@ -4,9 +4,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;

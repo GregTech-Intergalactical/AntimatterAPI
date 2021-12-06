@@ -15,9 +15,9 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.Arrays;
@@ -45,7 +45,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
 
     public BasicMultiMachine(String domain, String name) {
         super(domain, name);
-        setTile(() -> new TileEntityBasicMultiMachine<>(this));
+        setTile(TileEntityBasicMultiMachine::new);
         addFlags(MULTI, COVERABLE);
         custom();
         setGUI(Data.BASIC_MENU_HANDLER);

@@ -2,11 +2,11 @@ package muramasa.antimatter.structure;
 
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockStateElement extends StructureElement {
 
-    public static BlockStateElement AIR = new BlockStateElement("air", (r, p, s) -> s.isAir(r, p)); //Air check
+    public static BlockStateElement AIR = new BlockStateElement("air", (r, p, s) -> s.isAir()); //Air check
     protected IBlockStatePredicate predicate;
 
     public BlockStateElement(String elementId, IBlockStatePredicate predicate) {

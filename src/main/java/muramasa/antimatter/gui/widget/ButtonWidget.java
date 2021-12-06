@@ -1,19 +1,19 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -77,13 +77,13 @@ public class ButtonWidget extends Widget {
 
     @OnlyIn(Dist.CLIENT)
     protected void clientClick() {
-        Minecraft.getInstance().getSoundManager().play(SimpleSound.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+        Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bind(res);
+        minecraft.getTextureManager().bindForSetup(res);
         RenderSystem.disableDepthTest();
         if (body != null) {
             int xTex = body.getX();
@@ -97,19 +97,19 @@ public class ButtonWidget extends Widget {
         boolean isActive = activeHandler == null || activeHandler.apply(this);
         float color = isActive ? 1.0f : pressed ? 0.75f : 0.5f;
         if (color < 1f) {
-            RenderSystem.color4f(color, color, color, 1);
+            RenderSystem.clearColor(color, color, color, 1);
         }
         if (overlay != null) {
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), overlay.getX(), overlay.getY(), overlay.getW(), overlay.getH(), 256, 256);
         } else if (this.bodyLoc != null) {
-            minecraft.getTextureManager().bind(this.bodyLoc);
+            minecraft.getTextureManager().bindForSetup(this.bodyLoc);
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), resLoc.x, resLoc.y, resLoc.z, resLoc.w, 256, 256);
         }
         RenderSystem.enableDepthTest();
-        RenderSystem.color4f(1, 1, 1, 1);
-        ITextComponent message = getMessage();
+        RenderSystem.clearColor(1, 1, 1, 1);
+        Component message = getMessage();
         if (!message.getString().isEmpty()) {
-            AbstractGui.drawCenteredString(matrixStack, minecraft.font, message, realX() + getW() / 2, realY() + (getH() - 8) / 2, 16777215);
+            GuiComponent.drawCenteredString(matrixStack, minecraft.font, message, realX() + getW() / 2, realY() + (getH() - 8) / 2, 16777215);
         }
     }
 

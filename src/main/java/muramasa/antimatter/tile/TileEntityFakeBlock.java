@@ -13,14 +13,14 @@ import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.LongNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.LongTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -47,8 +47,8 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
 
     private List<BlockPos> controllerPos; 
 
-    public TileEntityFakeBlock(BlockProxy block) {
-        super(block.TYPE);
+    public TileEntityFakeBlock(BlockProxy proxy, BlockPos pos, BlockState state) {
+        super(proxy.TYPE, pos, state);
         coverTexturer = new Object2ObjectOpenHashMap<>();
     }
 
@@ -122,24 +122,24 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
-        super.load(state, nbt);
-        this.state = NBTUtil.readBlockState(nbt.getCompound("B"));
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
+        this.state = NbtUtils.readBlockState(nbt.getCompound("B"));
         this.facing = Direction.from3DDataValue(nbt.getInt("F"));
         if (level != null && level.isClientSide) {
             Utils.markTileForRenderUpdate(this);
         }
         this.covers = new EnumMap<>(Direction.class);
-        CompoundNBT c = nbt.getCompound("C");
+        CompoundTag c = nbt.getCompound("C");
         for (Direction dir : Ref.DIRS) {
             ICover cover = CoverFactory.readCover(ICoverHandler.empty(this), dir, c);
             if (cover != null)
                 covers.put(dir, cover);
         }
         if (nbt.contains("P")) {
-            ListNBT list = nbt.getList("P", 4);
+            ListTag list = nbt.getList("P", 4);
             this.controllerPos = new ObjectArrayList<>(list.size());
-            list.forEach(n -> controllerPos.add(BlockPos.of(((LongNBT) n).getAsLong())));
+            list.forEach(n -> controllerPos.add(BlockPos.of(((LongTag) n).getAsLong())));
         }
     }
 
@@ -152,26 +152,26 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return this.writeTag(new CompoundNBT(), true);
+    public CompoundTag getUpdateTag() {
+        return this.writeTag(new CompoundTag(), true);
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT compound) {
+    public CompoundTag save(CompoundTag compound) {
         return writeTag(compound, false);
     }
 
-    private CompoundNBT writeTag(CompoundNBT compound, boolean send) {
-        CompoundNBT nbt = super.save(compound);
-        nbt.put("B", NBTUtil.writeBlockState(state));
+    private CompoundTag writeTag(CompoundTag compound, boolean send) {
+        CompoundTag nbt = super.save(compound);
+        nbt.put("B", NbtUtils.writeBlockState(state));
         nbt.putInt("F", facing.ordinal());
-        CompoundNBT n = new CompoundNBT();
+        CompoundTag n = new CompoundTag();
         this.covers.forEach((k, v) -> CoverFactory.writeCover(n, v));
         compound.put("C", n);
         if (!send) {
-            ListNBT list = new ListNBT();
+            ListTag list = new ListTag();
             for (TileEntityBasicMultiMachine<?> controller : controllers) {
-                list.add(LongNBT.valueOf(controller.getBlockPos().asLong()));
+                list.add(LongTag.valueOf(controller.getBlockPos().asLong()));
             }
             compound.put("P", list);
         }

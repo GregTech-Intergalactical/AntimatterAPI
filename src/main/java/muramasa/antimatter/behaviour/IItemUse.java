@@ -1,7 +1,7 @@
 package muramasa.antimatter.behaviour;
 
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.context.UseOnContext;
 
 public interface IItemUse<T> extends IBehaviour<T> {
 
@@ -10,5 +10,5 @@ public interface IItemUse<T> extends IBehaviour<T> {
         return "item_use";
     }
 
-    ActionResultType onItemUse(T instance, ItemUseContext c);
+    InteractionResult onItemUse(T instance, UseOnContext c);
 }

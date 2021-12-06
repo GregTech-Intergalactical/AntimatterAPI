@@ -1,9 +1,9 @@
 package muramasa.antimatter.client.baked;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
@@ -48,7 +48,7 @@ public abstract class AntimatterBakedModel<T> implements IDynamicBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleIcon() {
-        return getParticleTexture(EmptyModelData.INSTANCE);
+        return getParticleIcon(EmptyModelData.INSTANCE);
     }
 
     /*@Override
@@ -63,7 +63,7 @@ public abstract class AntimatterBakedModel<T> implements IDynamicBakedModel {
 
 
     @Override
-    public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data) {
+    public TextureAtlasSprite getParticleIcon(@Nonnull IModelData data) {
         return particle;
     }
 }

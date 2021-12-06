@@ -1,13 +1,13 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public abstract class AbstractSwitchWidget extends ButtonWidget {
 
@@ -49,10 +49,10 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bind(res);
+        minecraft.getTextureManager().bindForSetup(res);
         RenderSystem.disableDepthTest();
         boolean mouseOver = isInside(mouseX, mouseY);
         if (body == null) {
@@ -68,7 +68,7 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
             int xTex = body.getX();
             int yTex = body.getY();
             float f = isSwitched() ? 1.0F : mouseOver ? 0.75F : 0.5F;
-            RenderSystem.color4f(f, f, f, 1.0F);
+            RenderSystem.clearColor(f, f, f, 1.0F);
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), xTex, yTex, body.getW(), body.getH(), 256, 256);
         }
         RenderSystem.enableDepthTest();

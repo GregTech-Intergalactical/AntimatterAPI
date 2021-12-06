@@ -3,15 +3,17 @@ package muramasa.antimatter.tile.single;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.util.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import tesseract.api.gt.GTTransaction;
 
 import java.util.List;
 
 public class TileEntityInfiniteStorage<T extends TileEntityInfiniteStorage<T>> extends TileEntityMachine<T> {
 
-    public TileEntityInfiniteStorage(Machine<?> type, int maxAmps) {
-        super(type);
+    public TileEntityInfiniteStorage(Machine<?> type, BlockPos pos, BlockState state, int maxAmps) {
+        super(type, pos, state);
         energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, Long.MAX_VALUE, Long.MAX_VALUE, 0, getMachineTier().getVoltage(), 0, 1) {
 
             @Override

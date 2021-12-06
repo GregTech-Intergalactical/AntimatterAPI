@@ -1,6 +1,6 @@
 package muramasa.antimatter.recipe.ingredient;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 public class MapItemIngredient extends AbstractMapIngredient {
 
@@ -23,7 +23,7 @@ public class MapItemIngredient extends AbstractMapIngredient {
             return stack.getTags().contains(((MapTagIngredient) o).loc);
         }
         if (o instanceof MapItemIngredient) {
-            return ((MapItemIngredient) o).stack.getItem().equals(stack);
+            return ((MapItemIngredient) o).stack.equals(stack);
         }
         return false;
     }

@@ -1,13 +1,13 @@
 package muramasa.antimatter.client.scene;
 
-import net.minecraft.client.MainWindow;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.world.level.BlockAndTintGetter;
 import org.lwjgl.opengl.GL11;
 
 public class ImmediateWorldSceneRenderer extends WorldSceneRenderer {
 
-    public ImmediateWorldSceneRenderer(IBlockDisplayReader world) {
+    public ImmediateWorldSceneRenderer(BlockAndTintGetter world) {
         super(world);
     }
 
@@ -15,7 +15,7 @@ public class ImmediateWorldSceneRenderer extends WorldSceneRenderer {
     protected int[] getPositionedRect(int x, int y, int width, int height) {
         Minecraft mc = Minecraft.getInstance();
 
-        MainWindow window = mc.getWindow();
+        Window window = mc.getWindow();
         //compute window size from scaled width & height
         int windowWidth = (int) (width / (window.getGuiScaledWidth() * 1.0) * window.getWidth());
         int windowHeight = (int) (height / (window.getGuiScaledHeight() * 1.0) * window.getHeight());

@@ -1,6 +1,6 @@
 package muramasa.antimatter.util;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 public enum Dir {
 

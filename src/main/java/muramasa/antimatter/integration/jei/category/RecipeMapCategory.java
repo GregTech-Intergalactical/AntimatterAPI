@@ -1,6 +1,6 @@
 package muramasa.antimatter.integration.jei.category;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
@@ -25,14 +25,15 @@ import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
-import net.minecraft.block.Block;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -67,8 +68,8 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             if (icon instanceof ItemStack) {
                 this.icon = guiHelper.createDrawableIngredient((ItemStack) icon);
             }
-            if (icon instanceof IItemProvider) {
-                this.icon = guiHelper.createDrawableIngredient(new ItemStack((IItemProvider) icon));
+            if (icon instanceof ItemLike) {
+                this.icon = guiHelper.createDrawableIngredient(new ItemStack((ItemLike) icon));
             }
             if (icon instanceof IDrawable) {
                 this.icon = (IDrawable) icon;
@@ -89,8 +90,8 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     }
 
     @Override
-    public String getTitle() {
-        return title;
+    public Component getTitle() {
+        return new TextComponent(title);
     }
 
     @Override
@@ -130,7 +131,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     }
 
     @Override
-    public void draw(Recipe recipe, MatrixStack stack, double mouseX, double mouseY) {
+    public void draw(Recipe recipe, PoseStack stack, double mouseX, double mouseY) {
         if (progressBar != null)
             progressBar.draw(stack, gui.dir.getPos().x + gui.getArea().x, gui.dir.getPos().y + gui.getArea().y);
         infoRenderer.render(stack, recipe, Minecraft.getInstance().font, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z / 2);
@@ -212,15 +213,15 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             if (input) {
                 if (recipe.hasInputItems()) {
                     if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreConsume()) {
-                        tooltip.add(new StringTextComponent("Does not get consumed in the process.").withStyle(TextFormatting.WHITE));
+                        tooltip.add(new TextComponent("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
                     }
                     if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreNbt()) {
-                        tooltip.add(new StringTextComponent("Ignores NBT.").withStyle(TextFormatting.WHITE));
+                        tooltip.add(new TextComponent("Ignores NBT.").withStyle(ChatFormatting.WHITE));
                     }
                     if (recipe.getInputItems().size() >= index) {
                         Ingredient i = recipe.getInputItems().get(index).get();
                         if (RecipeMap.isIngredientSpecial(i)) {
-                            tooltip.add(new StringTextComponent("Special ingredient. Class name: ").withStyle(TextFormatting.GRAY).append(new StringTextComponent(i.getClass().getSimpleName()).withStyle(TextFormatting.GOLD)));
+                            tooltip.add(new TextComponent("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(new TextComponent(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
                         }
                     }
                 }
@@ -228,13 +229,13 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             if (recipe.hasChances() && !input) {
                 int chanceIndex = index - finalInputItems;
                 if (recipe.getChances()[chanceIndex] < 100) {
-                    tooltip.add(new StringTextComponent("Chance: " + recipe.getChances()[chanceIndex] + "%").withStyle(TextFormatting.WHITE));
+                    tooltip.add(new TextComponent("Chance: " + recipe.getChances()[chanceIndex] + "%").withStyle(ChatFormatting.WHITE));
                 }
             }
         });
         fluidGroup.addTooltipCallback((index, input, stack, tooltip) -> {
             if (input && Utils.hasNoConsumeTag(stack))
-                tooltip.add(new StringTextComponent("Does not get consumed in the process").withStyle(TextFormatting.WHITE));
+                tooltip.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
             //TODO add fluid chances to recipe
 //            if (wrapper.recipe.hasChances() && !input) {
 //                int chanceIndex = index - finalInputFluids;

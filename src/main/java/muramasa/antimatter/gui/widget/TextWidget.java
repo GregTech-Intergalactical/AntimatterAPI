@@ -1,10 +1,10 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.TextComponent;
 
 import java.util.function.Function;
 
@@ -24,7 +24,7 @@ public class TextWidget extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-        this.drawText(matrixStack, new StringTextComponent(getter.apply(this)), realX(), realY(), color);
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+        this.drawText(matrixStack, new TextComponent(getter.apply(this)), realX(), realY(), color);
     }
 }

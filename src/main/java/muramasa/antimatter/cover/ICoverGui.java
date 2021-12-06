@@ -3,14 +3,14 @@ package muramasa.antimatter.cover;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.MenuProvider;
 
-public interface ICoverGui extends ICover, INamedContainerProvider, IGuiHandler {
+public interface ICoverGui extends ICover, MenuProvider, IGuiHandler {
 
-    default ITextComponent getDisplayName() {
-        return new StringTextComponent(Utils.underscoreToUpperCamel(this.getId()));
+    default Component getDisplayName() {
+        return new TextComponent(Utils.underscoreToUpperCamel(this.getId()));
     }
 
     default String getDomain() {

@@ -12,17 +12,16 @@ import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
     protected int unitValue, layers;
     protected boolean generating = true, blockType, visible, splitName;
     protected final Set<Material> materials = new ObjectLinkedOpenHashSet<>(); //Linked to preserve insertion order for JEI
-    protected final Map<MaterialType<?>, ITag.INamedTag<?>> tagMap = new Object2ObjectOpenHashMap<>();
+    protected final Map<MaterialType<?>, Tag.Named<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
     protected final BiMap<Material, Item> OVERRIDES = HashBiMap.create();
     protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
@@ -49,7 +48,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         register(MaterialType.class, getId());
     }
 
-    protected ITag.INamedTag<?> tagFromString(String name) {
+    protected Tag.Named<?> tagFromString(String name) {
         return TagUtils.getForgeItemTag(name);
     }
 
@@ -87,8 +86,8 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
     }
 
     @SuppressWarnings("unchecked")
-    public ITag.INamedTag<Item> getMaterialTag(Material m) {
-        return (ITag.INamedTag<Item>) tagFromString(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+    public Tag.Named<Item> getMaterialTag(Material m) {
+        return (Tag.Named<Item>) tagFromString(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
@@ -119,8 +118,8 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         return layers;
     }
 
-    public <T> ITag.INamedTag<T> getTag() {
-        return (ITag.INamedTag<T>) tagMap.get(this);
+    public <T> Tag.Named<T> getTag() {
+        return (Tag.Named<T>) tagMap.get(this);
     }
 
     public MaterialType<T> set(T getter) {
@@ -188,9 +187,9 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         Material mat = tooltipCache.get(ev.getItemStack().getItem());
         if (mat == null) return;
         if (!Screen.hasShiftDown()) {
-            ev.getToolTip().add(new StringTextComponent("Hold Shift to show formula").withStyle(TextFormatting.AQUA).withStyle(TextFormatting.ITALIC));
+            ev.getToolTip().add(new TextComponent("Hold Shift to show formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
         } else {
-            ev.getToolTip().add(new StringTextComponent(mat.getChemicalFormula()).withStyle(TextFormatting.DARK_AQUA));
+            ev.getToolTip().add(new TextComponent(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA));
         }
     }
 }

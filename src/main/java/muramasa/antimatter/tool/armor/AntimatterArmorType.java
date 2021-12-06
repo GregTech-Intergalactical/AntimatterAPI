@@ -8,13 +8,13 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
@@ -25,12 +25,12 @@ import java.util.function.Supplier;
 
 public class AntimatterArmorType implements ISharedAntimatterObject {
     private final String domain, id;
-    private final List<ITextComponent> tooltip = new ObjectArrayList<>();
+    private final List<Component> tooltip = new ObjectArrayList<>();
     private final boolean repairable;
     private final int durabilityFactor, baseArmor;
     private final float baseToughness, baseKnockback;
-    private final ItemGroup itemGroup;
-    private EquipmentSlotType slot;
+    private final CreativeModeTab itemGroup;
+    private EquipmentSlot slot;
     private SoundEvent event;
     int overlayLayers;
     @Nullable
@@ -48,7 +48,7 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
      * @param slot             armor slot the item goes in
      * @return a brand new AntimatterArmorType for enjoyment
      */
-    public AntimatterArmorType(String domain, String id, int durabilityFactor, int baseArmor, float baseToughness, float baseKnockback, EquipmentSlotType slot) {
+    public AntimatterArmorType(String domain, String id, int durabilityFactor, int baseArmor, float baseToughness, float baseKnockback, EquipmentSlot slot) {
         this.domain = domain;
         this.id = id;
         this.repairable = true;
@@ -75,7 +75,7 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
         if (domain.isEmpty()) Utils.onInvalidData("An AntimatterArmorType was instantiated with an empty domain name!");
         Item.Properties properties = new Item.Properties().tab(itemGroup);
         if (!repairable) properties.setNoRepair();
-        // if (!TOOL_TYPES.isEmpty()) TOOL_TYPES.forEach(t -> properties.addToolType(t, tier.getHarvestLevel()));
+        // if (!TOOL_TYPES.isEmpty()) TOOL_TYPES.forEach(t -> properties.addTag<Block>(t, tier.getHarvestLevel()));
         return properties;
     }
 
@@ -89,12 +89,12 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
         return this;
     }
 
-    public AntimatterArmorType setArmorSlot(EquipmentSlotType slot) {
+    public AntimatterArmorType setArmorSlot(EquipmentSlot slot) {
         this.slot = slot;
         return this;
     }
 
-    public AntimatterArmorType setToolTip(ITextComponent... tooltip) {
+    public AntimatterArmorType setToolTip(Component... tooltip) {
         this.tooltip.addAll(Arrays.asList(tooltip));
         return this;
     }
@@ -110,7 +110,7 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
         return Objects.requireNonNull(AntimatterAPI.get(IAntimatterArmor.class, id)).asItemStack(primary);
     }
 
-    public List<ITextComponent> getTooltip() {
+    public List<Component> getTooltip() {
         return tooltip;
     }
 
@@ -148,11 +148,11 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
         return baseKnockback;
     }
 
-    public ItemGroup getItemGroup() {
+    public CreativeModeTab getItemGroup() {
         return itemGroup;
     }
 
-    public EquipmentSlotType getSlot() {
+    public EquipmentSlot getSlot() {
         return slot;
     }
 

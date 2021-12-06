@@ -5,16 +5,16 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 import java.util.Optional;
 
-public class AntimatterItemTier implements IItemTier {
+public class AntimatterItemTier implements Tier {
 
     private final Material primary;
     private final Material secondary;

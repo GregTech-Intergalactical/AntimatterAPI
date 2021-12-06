@@ -8,9 +8,9 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.Block;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.state.properties.SlabType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -30,7 +30,7 @@ public class BlockStoneSlab extends SlabBlock implements ISharedAntimatterObject
     }
 
     private static Properties getProps(StoneType type) {
-        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).strength(type.getHardness(), type.getResistence());
+        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).strength(type.getHardness(), type.getResistence());
         if (type.doesRequireTool()) {
             props.requiresCorrectToolForDrops();
         }

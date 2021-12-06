@@ -4,8 +4,8 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.function.BiFunction;
 
@@ -38,7 +38,7 @@ public interface IGuiEvent extends IMachineEvent {
      * @param player   the player causing this Gui event.
      * @param instance the gui instance.
      */
-    default void handle(PlayerEntity player, GuiInstance instance) {
+    default void handle(Player player, GuiInstance instance) {
 
     }
 
@@ -46,7 +46,7 @@ public interface IGuiEvent extends IMachineEvent {
      * Write this gui event to the packet buffer.
      * @param buffer the buffer to write to.
      */
-    default void write(PacketBuffer buffer) {
+    default void write(FriendlyByteBuf buffer) {
 
     }
 
@@ -63,7 +63,7 @@ public interface IGuiEvent extends IMachineEvent {
          * @param event the gui instance.
          * @param buffer the buffer to write to.
          */
-        default void write(IGuiEvent event, PacketBuffer buffer) {
+        default void write(IGuiEvent event, FriendlyByteBuf buffer) {
             buffer.writeUtf(this.getId());
             event.write(buffer);
         }
@@ -72,14 +72,14 @@ public interface IGuiEvent extends IMachineEvent {
          * The supplier to handle server side instantiation.
          * @return
          */
-        BiFunction<IGuiEventFactory, PacketBuffer, IGuiEvent> factory();
+        BiFunction<IGuiEventFactory, FriendlyByteBuf, IGuiEvent> factory();
 
         /**
          * Reads an IGuiEvent from a packetbuffer.
          * @param buffer to consume.
          * @return an IGuiEvent instance.
          */
-        static IGuiEvent read(PacketBuffer buffer) {
+        static IGuiEvent read(FriendlyByteBuf buffer) {
             IGuiEventFactory ev = AntimatterAPI.get(IGuiEventFactory.class, buffer.readUtf(32767));
             return ev.factory().apply(ev, buffer);
         }

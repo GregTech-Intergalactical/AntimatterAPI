@@ -1,9 +1,9 @@
 package muramasa.antimatter.texture;
 
 import muramasa.antimatter.client.ModelUtils;
-import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.resources.ResourceLocation;
 
 public class Texture extends ResourceLocation {
 
@@ -15,7 +15,7 @@ public class Texture extends ResourceLocation {
         super(name);
     }
 
-    public RenderMaterial asMaterial() {
+    public Material asMaterial() {
         return ModelUtils.getBlockMaterial(this);
     }
 

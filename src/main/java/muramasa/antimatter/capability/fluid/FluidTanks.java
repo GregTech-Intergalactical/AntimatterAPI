@@ -4,9 +4,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.tile.TileEntityBase;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
@@ -147,17 +147,17 @@ public class FluidTanks implements IFluidHandler {
         return FluidStack.EMPTY;
     }
 
-    public ListNBT serializeNBT() {
-        ListNBT nbt = new ListNBT();
-        Arrays.stream(tanks).forEach(t -> nbt.add(t.getFluid().writeToNBT(new CompoundNBT())));
+    public ListTag serializeNBT() {
+        ListTag nbt = new ListTag();
+        Arrays.stream(tanks).forEach(t -> nbt.add(t.getFluid().writeToNBT(new CompoundTag())));
         return nbt;
     }
 
-    public void deserializeNBT(ListNBT nbt) {
+    public void deserializeNBT(ListTag nbt) {
         int i = 0;
-        for (INBT tank : nbt) {
-            if (tank instanceof CompoundNBT) {
-                CompoundNBT cnbt = (CompoundNBT) tank;
+        for (Tag tank : nbt) {
+            if (tank instanceof CompoundTag) {
+                CompoundTag cnbt = (CompoundTag) tank;
                 if (i > tanks.length - 1)
                     break;
                 tanks[i++].setFluid(FluidStack.loadFluidStackFromNBT(cnbt));

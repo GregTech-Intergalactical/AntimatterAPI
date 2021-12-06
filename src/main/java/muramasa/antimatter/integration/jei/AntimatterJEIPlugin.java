@@ -26,11 +26,11 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -163,10 +163,10 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return runtime;
     }
 
-    public static <T> void addModDescriptor(List<ITextComponent> tooltip, T t) {
+    public static <T> void addModDescriptor(List<Component> tooltip, T t) {
         if (t == null || helpers == null) return;
         String text = helpers.getModIdHelper().getFormattedModNameForModId(getRuntime().getIngredientManager().getIngredientHelper(t).getDisplayModId(t));
-        tooltip.add(new StringTextComponent(text));
+        tooltip.add(new TextComponent(text));
     }
 
     @Override

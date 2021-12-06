@@ -1,10 +1,9 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 public class BlockStone extends BlockBasic implements ISharedAntimatterObject {
 
@@ -24,7 +23,7 @@ public class BlockStone extends BlockBasic implements ISharedAntimatterObject {
     }
 
     private static Properties getProps(StoneType type) {
-        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).harvestLevel(type.getHarvestLevel()).harvestTool(type.getToolType()).strength(type.getHardness(), type.getResistence());
+        Properties props = Block.Properties.of(type.getBlockMaterial()).sound(type.getSoundType()).strength(type.getHardness(), type.getResistence());
         if (type.doesRequireTool()) {
             props.requiresCorrectToolForDrops();
         }

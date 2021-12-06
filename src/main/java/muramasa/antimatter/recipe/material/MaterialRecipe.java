@@ -6,14 +6,14 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,7 +46,7 @@ public class MaterialRecipe extends ShapedRecipe {
     }
 
     public interface ItemBuilder {
-        ItemStack build(CraftingInventory inv, Result mats);
+        ItemStack build(CraftingContainer inv, Result mats);
 
         Map<String, Object> getFromResult(@Nonnull ItemStack stack);
     }
@@ -78,11 +78,11 @@ public class MaterialRecipe extends ShapedRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World worldIn) {
+    public boolean matches(CraftingContainer inv, Level worldIn) {
         return build(inv, true) != null;
     }
 
-    private Result build(CraftingInventory inv, boolean regularTest) {
+    private Result build(CraftingContainer inv, boolean regularTest) {
         for (int i = 0; i <= inv.getWidth() - this.getWidth(); ++i) {
             for (int j = 0; j <= inv.getHeight() - this.getHeight(); ++j) {
                 //Result m = this.build(inv, i, j,regularTest, true);
@@ -94,7 +94,7 @@ public class MaterialRecipe extends ShapedRecipe {
         return null;
     }
 
-    private Result build(CraftingInventory inv, int width, int height, boolean regularTest, boolean mirrored) {
+    private Result build(CraftingContainer inv, int width, int height, boolean regularTest, boolean mirrored) {
         Int2ObjectMap<Object> result = new Int2ObjectOpenHashMap<>(size);
         Map<String, Object> ret = new Object2ObjectOpenHashMap<>(5, 0.25f);
         Map<Ingredient, ItemStack> whichStacks = new Object2ObjectOpenHashMap<>(5, 0.25f);
@@ -156,14 +156,14 @@ public class MaterialRecipe extends ShapedRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv) {
         Result m = build(inv, false);
 
         return this.builder.build(inv, m);
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return MaterialSerializer.INSTANCE;
     }
 

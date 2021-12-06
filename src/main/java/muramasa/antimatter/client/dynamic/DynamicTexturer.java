@@ -1,7 +1,7 @@
 package muramasa.antimatter.client.dynamic;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 
 import java.util.List;

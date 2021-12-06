@@ -1,10 +1,10 @@
 package muramasa.antimatter.behaviour;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraftforge.client.event.DrawHighlightEvent;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
 
 public interface IItemHighlight<T> extends IBehaviour<T> {
 
-    ActionResultType onDrawHighlight(PlayerEntity player, DrawHighlightEvent ev);
+    InteractionResult onDrawHighlight(Player player, HighlightBlock ev);
 }

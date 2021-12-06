@@ -13,11 +13,11 @@ import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.IContainerListener;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerListener;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -30,7 +30,7 @@ public class GuiInstance implements ICanSyncData {
 
     private int buttonCounter = 0;
     public final IGuiHandler handler;
-    public final Container container;
+    public final AbstractContainerMenu container;
     public final boolean isRemote;
     private final List<SyncHolder> syncData = new ObjectArrayList<>();
     private int indexCounter = 0;
@@ -46,7 +46,7 @@ public class GuiInstance implements ICanSyncData {
     //TODO:
     private IGuiElement focus;
 
-    public GuiInstance(IGuiHandler handler, Container container, boolean isRemote) {
+    public GuiInstance(IGuiHandler handler, AbstractContainerMenu container, boolean isRemote) {
         this.handler = handler;
         this.isRemote = isRemote;
         this.container = container;
@@ -226,9 +226,8 @@ public class GuiInstance implements ICanSyncData {
             write(toSync);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public ItemStack getHeldItem() {
-        return Minecraft.getInstance().player.inventory.getCarried();
+        return this.container.getCarried();
     }
 
     @Nullable
@@ -238,7 +237,7 @@ public class GuiInstance implements ICanSyncData {
 
     public void receivePacket(GuiSyncPacket packet, SyncDirection dir) {
         ByteBuf data = packet.clientData;
-        PacketBuffer buf = new PacketBuffer(data);
+        FriendlyByteBuf buf = new FriendlyByteBuf(data);
         int size = buf.readVarInt();
         for (int i = 0; i < size; i++) {
             int offset = buf.readVarInt();
@@ -251,9 +250,9 @@ public class GuiInstance implements ICanSyncData {
 
     private void write(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new GuiSyncPacket(data);
-        for (IContainerListener listener : ((IAntimatterContainer)container).listeners()) {
-            if (listener instanceof ServerPlayerEntity) {
-                Antimatter.NETWORK.sendTo(pkt, (ServerPlayerEntity) listener);
+        for (ContainerListener listener : ((IAntimatterContainer)container).listeners()) {
+            if (listener instanceof ServerPlayer) {
+                Antimatter.NETWORK.sendTo(pkt, (ServerPlayer) listener);
             }
         }
     }
@@ -264,7 +263,7 @@ public class GuiInstance implements ICanSyncData {
     }
 
     @Override
-    public <T> void bind(Supplier<T> supplier, Consumer<T> consumer, Function<PacketBuffer, T> reader, BiConsumer<PacketBuffer, T> writer, BiFunction<Object, Object, Boolean> equality, SyncDirection direction) {
+    public <T> void bind(Supplier<T> supplier, Consumer<T> consumer, Function<FriendlyByteBuf, T> reader, BiConsumer<FriendlyByteBuf, T> writer, BiFunction<Object, Object, Boolean> equality, SyncDirection direction) {
         syncData.add(new SyncHolder(supplier, consumer, reader, writer, indexCounter++, equality, direction));
     }
 
@@ -273,18 +272,18 @@ public class GuiInstance implements ICanSyncData {
         public final Supplier source;
         public final Consumer sink;
         public Object current;
-        public final Function<PacketBuffer, Object> reader;
-        public final BiConsumer<PacketBuffer, Object> writer;
+        public final Function<FriendlyByteBuf, Object> reader;
+        public final BiConsumer<FriendlyByteBuf, Object> writer;
         public final int index;
         public BiFunction<Object, Object, Boolean> equality;
         public final SyncDirection direction;
 
-        public SyncHolder(Supplier<?> source, Consumer<?> sink, Function<PacketBuffer, ?> reader, BiConsumer<PacketBuffer, ?> writer, int index, BiFunction<Object, Object, Boolean> equality, SyncDirection direction) {
+        public SyncHolder(Supplier<?> source, Consumer<?> sink, Function<FriendlyByteBuf, ?> reader, BiConsumer<FriendlyByteBuf, ?> writer, int index, BiFunction<Object, Object, Boolean> equality, SyncDirection direction) {
             this.source = source;
             this.index = index;
             this.sink = sink;
-            this.reader = (Function<PacketBuffer, Object>) reader;
-            this.writer = (BiConsumer<PacketBuffer, Object>) writer;
+            this.reader = (Function<FriendlyByteBuf, Object>) reader;
+            this.writer = (BiConsumer<FriendlyByteBuf, Object>) writer;
             this.equality = equality;
             this.direction = direction;
         }

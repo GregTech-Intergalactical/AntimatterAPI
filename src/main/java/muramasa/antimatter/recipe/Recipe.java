@@ -5,14 +5,12 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
-import muramasa.antimatter.recipe.serializer.RecipeSerializer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -21,7 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class Recipe implements IRecipe<IInventory> {
+public class Recipe implements net.minecraft.world.item.crafting.Recipe<Container> {
     private final ItemStack[] itemsOutput;
     @Nonnull
     private final List<RecipeIngredient> itemsInput;
@@ -40,7 +38,7 @@ public class Recipe implements IRecipe<IInventory> {
 
     private boolean valid;
 
-    public static final IRecipeType<Recipe> RECIPE_TYPE = IRecipeType.register("antimatter_machine");
+    public static final RecipeType<Recipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
 
     public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = stacksInput;
@@ -263,12 +261,12 @@ public class Recipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public boolean matches(IInventory inv, World worldIn) {
+    public boolean matches(Container inv, Level worldIn) {
         return false;
     }
 
     @Override
-    public ItemStack assemble(IInventory inv) {
+    public ItemStack assemble(Container inv) {
         return ItemStack.EMPTY;
     }
 
@@ -288,13 +286,13 @@ public class Recipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
-        return RecipeSerializer.INSTANCE;
+    public net.minecraft.world.item.crafting.RecipeSerializer<?> getSerializer() {
+        return AntimatterRecipeSerializer.INSTANCE;
     }
 
     @Nonnull
     @Override
-    public IRecipeType<?> getType() {
+    public RecipeType<?> getType() {
         return Recipe.RECIPE_TYPE;
     }
 

@@ -7,16 +7,16 @@ import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.util.IWorldPosCallable;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.Slot;
 
 public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
 
     protected final T tile;
 
-    public ContainerMachine(T tile, PlayerInventory playerInv, MenuHandlerMachine<T, ContainerMachine<T>> menuHandler, int windowId) {
+    public ContainerMachine(T tile, Inventory playerInv, MenuHandlerMachine<T, ContainerMachine<T>> menuHandler, int windowId) {
         super(tile, menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getSlots(tile.getMachineTier()).size());
         this.tile = tile;
         addSlots(tile);
@@ -33,7 +33,7 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
     }
 
     @Override
-    public void removed(PlayerEntity playerIn) {
+    public void removed(Player playerIn) {
         super.removed(playerIn);
         tile.onContainerClose(this);
     }
@@ -57,7 +57,7 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
     }
 
     @Override
-    public boolean stillValid(PlayerEntity player) {
-        return stillValid(IWorldPosCallable.create(tile.getLevel(), tile.getBlockPos()), player, tile.getBlockState().getBlock());
+    public boolean stillValid(Player player) {
+        return stillValid(ContainerLevelAccess.create(tile.getLevel(), tile.getBlockPos()), player, tile.getBlockState().getBlock());
     }
 }

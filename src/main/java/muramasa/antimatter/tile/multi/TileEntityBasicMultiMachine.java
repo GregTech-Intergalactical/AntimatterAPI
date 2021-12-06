@@ -16,10 +16,11 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.*;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.capability.TesseractGTCapability;
@@ -56,8 +57,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional.of(() -> new ControllerComponentHandler(this));
 
-    public TileEntityBasicMultiMachine(Machine<?> type) {
-        super(type);
+    public TileEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     @Override
@@ -149,9 +150,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         return false;
     }
 
-    @Override
-    public void onServerUpdate() {
-        super.onServerUpdate();
+    public void serverTick(Level level, BlockPos pos, BlockState state) {
+        super.serverTick(level, pos, state);
         if (result != null) result.tick(this);
     }
 
@@ -185,6 +185,11 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
+    public void setBlockState(BlockState p_155251_) {
+        super.setBlockState(p_155251_);
+    }
+/* TODO 1.18
+    @Override
     public void clearCache() {
         BlockState old = this.getBlockState();
         super.clearCache();
@@ -196,7 +201,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             facingOverride = null;
         }
     }
-
+*/
     @Override
     public void onMachineStop() {
         super.onMachineStop();
@@ -300,8 +305,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT tag) {
-        super.load(state, tag);
+    public void load(CompoundTag tag) {
+        super.load(tag);
         if (getMachineState() == MachineState.INVALID_STRUCTURE) {
             shouldCheckFirstTick = false;
         }

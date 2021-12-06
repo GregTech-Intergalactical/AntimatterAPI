@@ -3,9 +3,9 @@ package muramasa.antimatter.structure;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.BiFunction;
 
@@ -43,7 +43,7 @@ public class ChangingStateElement extends StructureElement {
     public void onBuild(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
         super.onBuild(machine, pos, result, count);
         if (count > 1) return;
-        World world = machine.getLevel();
+        Level world = machine.getLevel();
         //No need to test here because we know it already matches.
         world.setBlock(pos, builder.apply(MachineState.IDLE, world.getBlockState(pos)), 2 | 8);
     }
@@ -52,7 +52,7 @@ public class ChangingStateElement extends StructureElement {
     public void onRemove(TileEntityBasicMultiMachine<?> machine, BlockPos pos, StructureResult result, int count) {
         super.onRemove(machine, pos, result, count);
         if (count == 0) {
-            World world = machine.getLevel();
+            Level world = machine.getLevel();
             BlockState state = world.getBlockState(pos);
             //Make sure that the old blockstate actually matches, since e.g. if this block is removed it will be air
             //and setting it again will cause it to loop.
@@ -65,7 +65,7 @@ public class ChangingStateElement extends StructureElement {
     @Override
     public void onStateChange(TileEntityBasicMultiMachine<?> machine, MachineState newState, BlockPos pos, StructureResult result, int count) {
         super.onStateChange(machine, newState, pos, result, count);
-        World world = machine.getLevel();
+        Level world = machine.getLevel();
         BlockState bs = builder.apply(newState, world.getBlockState(pos));
         if (!bs.equals(world.getBlockState(pos))) {
             world.setBlock(pos, bs, 2 | 8);

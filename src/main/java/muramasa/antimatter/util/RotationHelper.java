@@ -1,11 +1,11 @@
 package muramasa.antimatter.util;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.util.math.vector.Vector4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -59,7 +59,7 @@ public class RotationHelper {
         }
 
         public static ModelRotation getModelRotation(int x, int y) {
-            return MAP_ROTATIONS.get(combineXY(MathHelper.positiveModulo(x, 360), MathHelper.positiveModulo(y, 360)));
+            return MAP_ROTATIONS.get(combineXY(Mth.positiveModulo(x, 360), Mth.positiveModulo(y, 360)));
         }
     }
 
@@ -82,9 +82,9 @@ public class RotationHelper {
 
 
         public Direction rotateFace(Direction facing) {
-            Vector3i vector3i = facing.getNormal();
+            Vec3i vector3i = facing.getNormal();
             Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
-            vector4f.transform(new net.minecraft.util.math.vector.Matrix4f(matrix.values()));
+            vector4f.transform(new com.mojang.math.Matrix4f(matrix.values()));
             return Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
         }
     }

@@ -4,8 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.Arrays;
@@ -29,7 +29,7 @@ public class ExistingFileHelperOverride extends ExistingFileHelper {
     Set<String> excludedDomains = new ObjectOpenHashSet<>();
 
     public ExistingFileHelperOverride() {
-        super(Collections.emptyList(), true);
+        super(Collections.emptyList(), Collections.emptySet(), true, null, null);
     }
 
     public ExistingFileHelperOverride(String... domains) {
@@ -47,12 +47,12 @@ public class ExistingFileHelperOverride extends ExistingFileHelper {
     }
 
     @Override
-    public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) {
+    public boolean exists(ResourceLocation loc, PackType type, String pathSuffix, String pathPrefix) {
         return loc.getNamespace().equals(Ref.ID) || excludedDomains.contains(loc.getNamespace()) || GLOBAL_EXCLUDED_DOMAINS.contains(loc.getNamespace()) || super.exists(loc, type, pathSuffix, pathPrefix);
     }
 
     @Override
-    public boolean exists(ResourceLocation loc, ResourcePackType packType) {
+    public boolean exists(ResourceLocation loc, PackType packType) {
         return loc.getNamespace().equals(Ref.ID) || excludedDomains.contains(loc.getNamespace()) || GLOBAL_EXCLUDED_DOMAINS.contains(loc.getNamespace()) || super.exists(loc, packType);
     }
 

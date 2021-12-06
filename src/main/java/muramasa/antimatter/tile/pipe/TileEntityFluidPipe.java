@@ -1,6 +1,6 @@
 package muramasa.antimatter.tile.pipe;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
@@ -10,12 +10,12 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.FluidPipe;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.client.gui.Font;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -36,8 +36,8 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     protected LazyOptional<PipeFluidHandler> fluidHandler;
     private FluidHolder holder;
 
-    public TileEntityFluidPipe(T type, boolean covered) {
-        super(type, covered);
+    public TileEntityFluidPipe(T type, BlockPos pos, BlockState state, boolean covered) {
+        super(type, pos, state, covered);
         if (fluidHandler == null) {
             fluidHandler = FluidController.SLOOSH ? LazyOptional.of(() -> new PipeFluidHandler(this, 1000 * (getPipeSize().ordinal() + 1), 1000, 1, 0)) : LazyOptional.empty();
         }
@@ -66,7 +66,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     public INodeGetter<IFluidNode> getter() {
         return (pos, dir, cb) -> {
-            TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
+            BlockEntity tile = level.getBlockEntity(BlockPos.of(pos));
             if (tile == null) {
                 return null;
             }
@@ -89,15 +89,15 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
 
     @Override
-    public void load(BlockState state, CompoundNBT tag) {
-        super.load(state, tag);
+    public void load(CompoundTag tag) {
+        super.load(tag);
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS))
             fluidHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_FLUIDS)));
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT tag) {
-        CompoundNBT nbt = super.save(tag);
+    public CompoundTag save(CompoundTag tag) {
+        CompoundTag nbt = super.save(tag);
         fluidHandler.ifPresent(t -> tag.put(Ref.KEY_MACHINE_FLUIDS, t.serializeNBT()));
         return nbt;
     }
@@ -149,7 +149,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public boolean validate(Direction dir) {
         if (!super.validate(dir)) return false;
-        TileEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
+        BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
         return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
     }
@@ -183,7 +183,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, MatrixStack stack, FontRenderer renderer, int left, int top) {
+    public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, PoseStack stack, Font renderer, int left, int top) {
         renderer.draw(stack, "Pressure: " + instance.holderPressure, left, top, 16448255);
         renderer.draw(stack, "Fluid: " + instance.stack.getFluid().getRegistryName().toString(), left, top, 16448255);
         renderer.draw(stack, "Amount: " + instance.stack.getAmount(), left, top, 16448255);
@@ -208,8 +208,8 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     public static class TileEntityCoveredFluidPipe<T extends FluidPipe<T>> extends TileEntityFluidPipe<T> implements ITickablePipe {
 
-        public TileEntityCoveredFluidPipe(T type) {
-            super(type, true);
+        public TileEntityCoveredFluidPipe(T type, BlockPos pos, BlockState state) {
+            super(type, pos, state,true);
         }
 
         @Override

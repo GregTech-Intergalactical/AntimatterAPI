@@ -3,8 +3,8 @@ package muramasa.antimatter.datagen.builder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
 

@@ -13,7 +13,7 @@ public class BasicMachine extends Machine<BasicMachine> {
     public BasicMachine(String domain, String id) {
         super(domain, id);
         addFlags(BASIC, ENERGY, COVERABLE);
-        setTile(() -> new TileEntityMachine<>(this));
+        setTile(TileEntityMachine::new);
         setGUI(Data.BASIC_MENU_HANDLER);
     }
 

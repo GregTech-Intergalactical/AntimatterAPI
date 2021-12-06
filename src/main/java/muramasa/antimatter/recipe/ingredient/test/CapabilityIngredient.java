@@ -1,8 +1,8 @@
 package muramasa.antimatter.recipe.ingredient.test;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.LazyValue;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
@@ -11,16 +11,16 @@ import java.util.stream.Stream;
 
 public class CapabilityIngredient extends Ingredient {
 
-    private final LazyValue<Capability<?>> cap;
+    private final LazyLoadedValue<Capability<?>> cap;
 
-    protected CapabilityIngredient(Stream<? extends IItemList> itemLists) {
+    protected CapabilityIngredient(Stream<? extends Value> itemLists) {
         super(itemLists);
         cap = null;
     }
 
     public CapabilityIngredient(Supplier<Capability<?>> cap) {
         super(Stream.empty());
-        this.cap = new LazyValue<>(cap);
+        this.cap = new LazyLoadedValue<>(cap);
     }
 
     @Override

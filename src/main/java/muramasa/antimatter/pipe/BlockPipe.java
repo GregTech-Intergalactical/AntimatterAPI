@@ -22,46 +22,43 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static net.minecraft.state.properties.BlockStateProperties.WATERLOGGED;
+import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, IWaterLoggable, ISharedAntimatterObject {
+public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, SimpleWaterloggedBlock, ISharedAntimatterObject {
 
     protected T type;
     protected PipeSize size;
@@ -76,7 +73,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         this(prefix, type, size, modelId, Block.Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
     }
 
-    public BlockPipe(String prefix, T type, PipeSize size, int modelId, AbstractBlock.Properties properties) {
+    public BlockPipe(String prefix, T type, PipeSize size, int modelId, BlockBehaviour.Properties properties) {
         super(type.domain, prefix + "_" + size.getId(), properties);
         this.type = type;
         this.size = size;
@@ -90,20 +87,20 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     private void buildShapes() {
         recursiveShapeBuild(0, (byte) 0);
-        shapes.put(getPipeID(0, 0), VoxelShapes.create(size.getAABB()));
+        shapes.put(getPipeID(0, 0), Shapes.create(size.getAABB()));
     }
 
     @Override
-    public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         //If we are replacing with the same block, remove tile since we are replacing with a covered/uncovered tile.
         //Also make sure it is the covered data that actually changes.
-        if (state.hasTileEntity() && state.getBlock().is(newState.getBlock()) && (state.equals(newState.setValue(COVERED, !newState.getValue(COVERED))))) {
+        if (state.hasBlockEntity() && state.is(newState.getBlock()) && (state.equals(newState.setValue(COVERED, !newState.getValue(COVERED))))) {
             worldIn.removeBlockEntity(pos);
-        } else if (!state.getBlock().is(newState.getBlock())) {
-            TileEntity tile = worldIn.getBlockEntity(pos);
+        } else if (!state.is(newState.getBlock())) {
+            BlockEntity tile = worldIn.getBlockEntity(pos);
             if (tile == null) return;
             TileEntityPipe<T> pipe = (TileEntityPipe<T>) tile;
-            pipe.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> InventoryHelper.dropItemStack(worldIn, pipe.getBlockPos().getX(), pipe.getBlockPos().getY(), pipe.getBlockPos().getZ(), stack)));
+            pipe.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> Containers.dropItemStack(worldIn, pipe.getBlockPos().getX(), pipe.getBlockPos().getY(), pipe.getBlockPos().getZ(), stack)));
             super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
@@ -119,19 +116,19 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     private VoxelShape makeShapes(byte which) {
         float offset = 0.0625f * size.ordinal();
-        VoxelShape shape = VoxelShapes.create(size.getAABB());
+        VoxelShape shape = Shapes.create(size.getAABB());
         if ((which & (1 << 0)) > 0)
-            shape = VoxelShapes.or(shape, VoxelShapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
         if ((which & (1 << 1)) > 0)
-            shape = VoxelShapes.or(shape, VoxelShapes.box(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
         if ((which & (1 << 2)) > 0)
-            shape = VoxelShapes.or(shape, VoxelShapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
         if ((which & (1 << 3)) > 0)
-            shape = VoxelShapes.or(shape, VoxelShapes.box(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
         if ((which & (1 << 4)) > 0)
-            shape = VoxelShapes.or(shape, VoxelShapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
         if ((which & (1 << 5)) > 0)
-            shape = VoxelShapes.or(shape, VoxelShapes.box(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.box(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
         return shape;
     }
 
@@ -163,27 +160,26 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public AntimatterItemBlock getItemBlock() {
         return new PipeItemBlock(this);
     }
-
+/*
     @Override
-    public boolean hasTileEntity(BlockState state) {
+    public boolean hasBlockEntity() {
         return true;
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
         TileEntityPipe pipe = (TileEntityPipe) (state.getValue(COVERED) ? type.getCoveredType().create() : type.getTileType().create());
         pipe.ofState(state);
         return pipe;
     }
-
-    @Override
-    public ToolType getHarvestTool(BlockState state) {
+*/
+    public Tag<Block> getHarvestTool(BlockState state) {
         return Data.WRENCH.getToolType();
     }
 
     @Override // Used to set connection for sides where neighbor has pre-set connection
-    public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         TileEntityPipe<?> tile = getTilePipe(worldIn, pos);
         if (tile != null) {
             for (Direction side : Ref.DIRS) {
@@ -196,10 +192,10 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     // Used to set connection between pipes on which block was placed
-    public boolean onBlockPlacedTo(World world, BlockPos pos, Direction face) {
+    public boolean onBlockPlacedTo(Level world, BlockPos pos, Direction face) {
         TileEntityPipe<?> tile = getTilePipe(world, pos);
         if (tile != null) {
-            if (!world.getBlockState(pos.relative(face.getOpposite())).hasTileEntity()) return false;
+            if (!world.getBlockState(pos.relative(face.getOpposite())).hasBlockEntity()) return false;
             tile.setConnection(face.getOpposite());
             return true;
         }
@@ -207,7 +203,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
         if (!worldIn.isClientSide) {
             TileEntityPipe<?> tile = (TileEntityPipe<?>) worldIn.getBlockEntity(pos);
@@ -218,7 +214,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override // Used to clear connection for sides where neighbor was removed
-    public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor) {
+    public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
         if (!world.isClientSide()) {
             TileEntityPipe<?> tile = (TileEntityPipe<?>) world.getBlockEntity(pos);
             if (tile != null) {
@@ -228,81 +224,81 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         onNeighborChange(stateIn, worldIn, currentPos, facingPos);
         return stateIn;
     }
 
     @Nonnull
     @Override
-    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         TileEntityPipe<T> tile = (TileEntityPipe) world.getBlockEntity(pos);
         if (tile == null) {
-            return ActionResultType.PASS;
+            return InteractionResult.PASS;
         }
-        if (!world.isClientSide && hand == Hand.MAIN_HAND) {
+        if (!world.isClientSide && hand == InteractionHand.MAIN_HAND) {
             ItemStack stack = player.getItemInHand(hand);
             if (stack.getItem() instanceof IHaveCover) {
                 CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
                 Direction dir = Utils.getInteractSide(hit);
                 boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
                 if (ok) {
-                    return ActionResultType.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
             }
             AntimatterToolType type = Utils.getToolType(player);
             if (type == null) {
-                return ActionResultType.PASS;
+                return InteractionResult.PASS;
             }
             if (type == Data.CROWBAR) {
                 if (!player.isCrouching()) {
                     if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                         Utils.damageStack(stack, player);
-                        return ActionResultType.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
-                    return ActionResultType.PASS;
+                    return InteractionResult.PASS;
                 } else {
                     if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getDirection()).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
                         Utils.damageStack(stack, player);
-                        return ActionResultType.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
-                    return ActionResultType.PASS;
+                    return InteractionResult.PASS;
                 }
             } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
                 if (player.isCrouching()) {
-                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, extra -> {
+                    NetworkHooks.openGui((ServerPlayer) player, tile, extra -> {
                         extra.writeBlockPos(pos);
                     });
-                    return ActionResultType.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 }
                 ICover instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getDirection()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                 if (!player.isCrouching()) {
                     if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {
                         Utils.damageStack(stack, player);
-                        return ActionResultType.SUCCESS;
+                        return InteractionResult.SUCCESS;
                     }
-                    return ActionResultType.PASS;
+                    return InteractionResult.PASS;
                 }
             }
-            if (getHarvestTool(state) == type.getToolType()) {
+            if (getHarvestTool(state).equals(type.getToolType())) {
                 Direction side = Utils.getInteractSide(hit);
-                if (tile.blocksSide(side)) return ActionResultType.CONSUME;
+                if (tile.blocksSide(side)) return InteractionResult.CONSUME;
                 tile.toggleConnection(side);
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
         }
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-        if (context.getEntity() instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) context.getEntity();
-            if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType(), Data.SCREWDRIVER.getToolType())) {
-                return VoxelShapes.block();
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        if (context instanceof EntityCollisionContext cont) {
+            Player player = (Player) cont.getEntity();
+            if (Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType(), Data.SCREWDRIVER.getToolType())) {
+                return Shapes.block();
             }
             if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
-                return VoxelShapes.block();
+                return Shapes.block();
             }
             BlockPipe<?> pipe = null;
             if (player.getMainHandItem().getItem() instanceof PipeItemBlock) {
@@ -312,12 +308,12 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 pipe = ((PipeItemBlock) player.getOffhandItem().getItem()).getPipe();
             }
             if (pipe != null && getClass().isInstance(pipe)) {
-                return VoxelShapes.block();
+                return Shapes.block();
             }
         }
-        int config = getConfig(state, world, new BlockPos.Mutable(pos.getX(), pos.getY(), pos.getZ()), pos).getConfig()[0];
+        int config = getConfig(state, world, new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ()), pos).getConfig()[0];
         VoxelShape shape = this.shapes.get(config);
-        return shape != null ? shape : VoxelShapes.block();
+        return shape != null ? shape : Shapes.block();
     }
 
     public int getPipeID(int config, int cull) {
@@ -325,13 +321,13 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Nullable
-    private static TileEntityPipe<?> getTilePipe(IBlockReader world, BlockPos pos) {
-        TileEntity tile = world.getBlockEntity(pos);
+    private static TileEntityPipe<?> getTilePipe(BlockGetter world, BlockPos pos) {
+        BlockEntity tile = world.getBlockEntity(pos);
         return tile instanceof TileEntityPipe ? (TileEntityPipe<?>) tile : null;
     }
 
     @Override
-    public ModelConfig getConfig(BlockState state, IBlockReader world, BlockPos.Mutable mut, BlockPos pos) {
+    public ModelConfig getConfig(BlockState state, BlockGetter world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         int ct = 0;
         TileEntityPipe tile = getTilePipe(world, pos);
         if (tile != null) {
@@ -345,7 +341,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
-    public int getBlockColor(BlockState state, @Nullable IBlockReader world, @Nullable BlockPos pos, int i) {
+    public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
         return getRGB();
     }
 
@@ -355,7 +351,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
-    public void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+    public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
         prov.getBuilder(item).parent(prov.existing("antimatter", "block/pipe/" + getSize().getId() + "/line_inv")).texture("all", getSide()).texture("overlay", getFace());
     }
 
@@ -465,7 +461,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
-    public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+    public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         super.getInfo(info, world, state, pos);
         info.add("Pipe Type: " + getType().getId());
         info.add("Pipe Material: " + getType().getMaterial().getId());
@@ -474,7 +470,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     @Override
-    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED);
         builder.add(COVERED);
     }
@@ -484,7 +480,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState fluidstate = context.getLevel().getFluidState(context.getClickedPos());
         return super.defaultBlockState().setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
     }

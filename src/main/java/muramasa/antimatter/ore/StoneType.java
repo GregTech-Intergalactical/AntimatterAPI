@@ -7,10 +7,11 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
@@ -31,8 +32,8 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     private Supplier<BlockState> stateSupplier;
     private int harvestLevel, fallingDustColor;
     private float hardness, resistence;
-    private ToolType toolType;
-    private net.minecraft.block.material.Material blockMaterial;
+    private Tag<Block> toolType;
+    private net.minecraft.world.level.material.Material blockMaterial;
 
     public StoneType(String domain, String id, Material material, Texture texture, SoundType soundType, boolean generateBlock) {
         this.domain = domain;
@@ -46,9 +47,9 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         this.requiresTool = true;
         this.hardness = 1.5F;
         this.resistence = 6.0F;
-        this.toolType = ToolType.PICKAXE;
+        this.toolType = BlockTags.MINEABLE_WITH_PICKAXE;
         this.fallingDustColor = -16777216;
-        this.blockMaterial = net.minecraft.block.material.Material.STONE;
+        this.blockMaterial = net.minecraft.world.level.material.Material.STONE;
     }
 
     public StoneType setHarvestLevel(int harvestLevel) {
@@ -83,17 +84,12 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         return this;
     }
 
-    public StoneType setToolType(ToolType toolType) {
-        this.toolType = toolType;
+    public StoneType setType(Tag<Block> type) {
+        this.toolType = type;
         return this;
     }
 
-    public StoneType setToolType(String toolType) {
-        this.toolType = ToolType.get(toolType);
-        return this;
-    }
-
-    public StoneType setBlockMaterial(net.minecraft.block.material.Material material) {
+    public StoneType setBlockMaterial(net.minecraft.world.level.material.Material material) {
         this.blockMaterial = material;
         return this;
     }
@@ -128,7 +124,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         return soundType;
     }
 
-    public ToolType getToolType() {
+    public Tag<Block> getToolType() {
         return toolType;
     }
 
@@ -136,7 +132,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         return fallingDustColor;
     }
 
-    public net.minecraft.block.material.Material getBlockMaterial() {
+    public net.minecraft.world.level.material.Material getBlockMaterial() {
         return blockMaterial;
     }
 

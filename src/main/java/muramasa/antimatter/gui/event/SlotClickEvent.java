@@ -7,10 +7,10 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 import java.util.function.BiFunction;
 
@@ -26,7 +26,7 @@ public class SlotClickEvent implements IGuiEvent {
 
     public static final IGuiEventFactory SLOT_CLICKED = AntimatterAPI.register(IGuiEventFactory.class, new IGuiEventFactory() {
         @Override
-        public BiFunction<IGuiEventFactory, PacketBuffer, IGuiEvent> factory() {
+        public BiFunction<IGuiEventFactory, FriendlyByteBuf, IGuiEvent> factory() {
             return SlotClickEvent::new;
         }
 
@@ -39,7 +39,7 @@ public class SlotClickEvent implements IGuiEvent {
     public final SlotType<?> type;
     public final int index;
 
-    public SlotClickEvent(IGuiEventFactory factory, PacketBuffer buffer) {
+    public SlotClickEvent(IGuiEventFactory factory, FriendlyByteBuf buffer) {
         this.index = buffer.readVarInt();
         ResourceLocation loc = buffer.readResourceLocation();
         this.type = AntimatterAPI.get(SlotType.class, loc.getPath(), loc.getNamespace());
@@ -67,10 +67,10 @@ public class SlotClickEvent implements IGuiEvent {
     }
 
     @Override
-    public void handle(PlayerEntity player, GuiInstance instance) {
+    public void handle(Player player, GuiInstance instance) {
         IFluidHandler sink = tryGetCap(instance.handler);
         if (sink == null) return;
-        ItemStack stack = player.inventory.getCarried();
+        ItemStack stack = player.containerMenu.getCarried();
         if (type == SlotType.FL_IN || type == SlotType.FL_OUT) {
             int max;
             if (stack.getItem() instanceof ItemFluidCell) {
@@ -82,12 +82,12 @@ public class SlotClickEvent implements IGuiEvent {
             boolean hasFluid = iHandler.map(t -> t.getTanks() > 0 && !t.getFluidInTank(0).isEmpty()).orElse(false);
             FluidActionResult res;
             if (hasFluid && type == SlotType.FL_IN) {
-                res = FluidUtil.tryEmptyContainerAndStow(stack, sink, new ItemStackHandler(player.inventory.items), max, player, true);
+                res = FluidUtil.tryEmptyContainerAndStow(stack, sink, new InvWrapper(player.getInventory()), max, player, true);
             } else {
-                res = FluidUtil.tryFillContainerAndStow(stack, sink, new ItemStackHandler(player.inventory.items), max, player, true);
+                res = FluidUtil.tryFillContainerAndStow(stack, sink, new InvWrapper(player.getInventory()), max, player, true);
             }
             if (res.isSuccess() && !player.isCreative()) {
-                player.inventory.setCarried(res.getResult());
+                player.containerMenu.setCarried(res.getResult());
             }
         }
     }
@@ -98,7 +98,7 @@ public class SlotClickEvent implements IGuiEvent {
     }
 
     @Override
-    public void write(PacketBuffer buffer) {
+    public void write(FriendlyByteBuf buffer) {
         buffer.writeVarInt(this.index);
         buffer.writeResourceLocation(new ResourceLocation(type.getDomain(), type.getId()));
     }

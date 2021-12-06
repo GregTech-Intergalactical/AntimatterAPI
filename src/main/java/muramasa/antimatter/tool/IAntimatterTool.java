@@ -15,30 +15,27 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.enchantment.UnbreakingEnchantment;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.IItemTier;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.DrawHighlightEvent;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.item.enchantment.DigDurabilityEnchantment;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
 import net.minecraftforge.common.extensions.IForgeItem;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
@@ -64,12 +61,16 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default Material[] getMaterials(ItemStack stack) {
-        CompoundNBT tag = getDataTag(stack);
+        CompoundTag tag = getDataTag(stack);
         return new Material[]{Material.get(tag.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL)), Material.get(tag.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL))};
     }
 
-    default Set<ToolType> getToolTypes() {
-        return getAntimatterToolType().getActualToolTypes();
+    default Item getItem() {
+        return (Item) this;
+    }
+
+    default Set<Tag<Block>> getActualTags() {
+        return getAntimatterToolType().getActualTags();
     }
 
     default int getSubColour(ItemStack stack) {
@@ -86,19 +87,20 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     ItemStack asItemStack(Material primary, Material secondary);
 
-    default CompoundNBT getDataTag(ItemStack stack) {
-        CompoundNBT dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
+    default CompoundTag getDataTag(ItemStack stack) {
+        CompoundTag dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
         return dataTag != null ? dataTag : validateTag(stack, NULL, NULL, 0, 10000);
     }
 
-    default IItemTier getTier(ItemStack stack) {
-        CompoundNBT dataTag = getDataTag(stack);
+    default Tier getTier(ItemStack stack) {
+        CompoundTag dataTag = getDataTag(stack);
         Optional<AntimatterItemTier> tier = AntimatterItemTier.get(dataTag.getInt(Ref.KEY_TOOL_DATA_TIER));
         return tier.orElseGet(() -> resolveTierTag(dataTag));
     }
 
     default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
-        ItemStack stack = new ItemStack(getItem());
+        Item item = (Item) this;
+        ItemStack stack = new ItemStack(item);
         validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
         Map<Enchantment, Integer> mainEnchants = primary.getToolEnchantments(), handleEnchants = secondary.getHandleEnchantments();
         if (!mainEnchants.isEmpty()) {
@@ -110,8 +112,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return stack;
     }
 
-    default CompoundNBT validateTag(ItemStack stack, Material primary, Material secondary, long startingEnergy, long maxEnergy) {
-        CompoundNBT dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
+    default CompoundTag validateTag(ItemStack stack, Material primary, Material secondary, long startingEnergy, long maxEnergy) {
+        CompoundTag dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
         dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
         dataTag.putString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL, secondary.getId());
         if (!getAntimatterToolType().isPowered()) return dataTag;
@@ -125,13 +127,13 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return dataTag;
     }
 
-    default AntimatterItemTier resolveTierTag(CompoundNBT dataTag) {
+    default AntimatterItemTier resolveTierTag(CompoundTag dataTag) {
         AntimatterItemTier tier = AntimatterItemTier.getOrCreate(dataTag.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL), dataTag.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
         dataTag.putInt(Ref.KEY_TOOL_DATA_TIER, tier.hashCode());
         return tier;
     }
 
-    default void onGenericFillItemGroup(ItemGroup group, NonNullList<ItemStack> list, long maxEnergy) {
+    default void onGenericFillItemGroup(CreativeModeTab group, NonNullList<ItemStack> list, long maxEnergy) {
         if (group != Ref.TAB_TOOLS) return;
         if (getAntimatterToolType().isPowered()) {
             ItemStack stack = asItemStack(NULL, NULL);
@@ -140,31 +142,31 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         } else list.add(asItemStack(NULL, NULL));
     }
 
-    default void onGenericAddInformation(ItemStack stack, List<ITextComponent> tooltip, ITooltipFlag flag) {
+    default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
-        tooltip.add(new StringTextComponent("Primary Material: " + primary.getDisplayName().getString()));
+        tooltip.add(new TextComponent("Primary Material: " + primary.getDisplayName().getString()));
         if (secondary != NULL)
-            tooltip.add(new StringTextComponent("Secondary Material: " + secondary.getDisplayName().getString()));
+            tooltip.add(new TextComponent("Secondary Material: " + secondary.getDisplayName().getString()));
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
-            tooltip.add(new StringTextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
+            tooltip.add(new TextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
     }
 
     default boolean onGenericHitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker, float volume, float pitch) {
         if (getAntimatterToolType().getUseSound() != null)
-            target.getCommandSenderWorld().playSound(null, target.getX(), target.getY(), target.getZ(), getAntimatterToolType().getUseSound(), SoundCategory.HOSTILE, volume, pitch);
+            target.getCommandSenderWorld().playSound(null, target.getX(), target.getY(), target.getZ(), getAntimatterToolType().getUseSound(), SoundSource.HOSTILE, volume, pitch);
         Utils.damageStack(getAntimatterToolType().getAttackDurability(), stack, attacker);
         return true;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    default boolean onGenericBlockDestroyed(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+    default boolean onGenericBlockDestroyed(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
             if (getAntimatterToolType().getUseSound() != null)
-                player.playNotifySound(getAntimatterToolType().getUseSound(), SoundCategory.BLOCKS, 0.84F, 0.75F);
-            boolean isToolEffective = Utils.isToolEffective(getAntimatterToolType(), getToolTypes(), state);
+                player.playNotifySound(getAntimatterToolType().getUseSound(), SoundSource.BLOCKS, 0.84F, 0.75F);
+            boolean isToolEffective = Utils.isToolEffective(getAntimatterToolType(), getActualTags(), state);
             if (state.getDestroySpeed(world, pos) != 0.0F) {
                 Utils.damageStack(isToolEffective ? getAntimatterToolType().getUseDurability() : getAntimatterToolType().getUseDurability() + 1, stack, entity);
             }
@@ -179,25 +181,25 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    default ActionResultType onGenericItemUse(ItemUseContext ctx) {
-        ActionResultType result = ActionResultType.PASS;
+    default InteractionResult onGenericItemUse(UseOnContext ctx) {
+        InteractionResult result = InteractionResult.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemUse)) continue;
-            ActionResultType r = ((IItemUse) b).onItemUse(this, ctx);
-            if (result != ActionResultType.SUCCESS) result = r;
+            InteractionResult r = ((IItemUse) b).onItemUse(this, ctx);
+            if (result != InteractionResult.SUCCESS) result = r;
         }
         return result;
     }
 
     @SuppressWarnings("rawtypes")
-    default ActionResultType onGenericHighlight(PlayerEntity player, DrawHighlightEvent ev) {
-        ActionResultType result = ActionResultType.PASS;
+    default InteractionResult onGenericHighlight(Player player, HighlightBlock ev) {
+        InteractionResult result = InteractionResult.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemHighlight)) continue;
-            ActionResultType type = ((IItemHighlight) b).onDrawHighlight(player, ev);
-            if (type != ActionResultType.SUCCESS) {
+            InteractionResult type = ((IItemHighlight) b).onDrawHighlight(player, ev);
+            if (type != InteractionResult.SUCCESS) {
                 result = type;
             } else {
                 ev.setCanceled(true);
@@ -212,7 +214,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (!getAntimatterToolType().isPowered()) { // Powered items can't enchant with Unbreaking
             int level = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.UNBREAKING, stack), j = 0;
             for (int k = 0; level > 0 && k < amount; k++) {
-                if (UnbreakingEnchantment.shouldIgnoreDurabilityDrop(stack, level, Ref.RNG)) j++;
+                if (DigDurabilityEnchantment.shouldIgnoreDurabilityDrop(stack, level, Ref.RNG)) j++;
             }
             amount -= j;
         }
@@ -258,7 +260,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return stack.getDamageValue() >= damage;
     }
 
-    default void onItemBreak(ItemStack stack, PlayerEntity entity) {
+    default void onItemBreak(ItemStack stack, Player entity) {
         String name = this.getId();
         AntimatterToolType type = getAntimatterToolType();
         if (!type.getBrokenItems().containsKey(name)) {
@@ -291,7 +293,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     @Override
-    default void onItemModelBuild(IItemProvider item, AntimatterItemModelProvider prov) {
+    default void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
         prov.tex(item, "minecraft:item/handheld", getTextures());
     }
 

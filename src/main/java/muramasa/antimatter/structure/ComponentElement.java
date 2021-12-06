@@ -4,10 +4,10 @@ import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
-import net.minecraft.block.BlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class ComponentElement extends StructureElement {
 
     @Override
     public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
-        TileEntity tile = machine.getLevel().getBlockEntity(pos);
+        BlockEntity tile = machine.getLevel().getBlockEntity(pos);
         if (tile instanceof IComponent) {
             if (((IComponent) tile).getComponentHandler().isPresent()) {
                 IComponentHandler component = ((IComponent) tile).getComponentHandler().orElse(null);
@@ -63,8 +63,8 @@ public class ComponentElement extends StructureElement {
     }
 
     @Override
-    public void onInfoTooltip(List<ITextComponent> text, long count, TileEntityBasicMultiMachine<?> machine) {
+    public void onInfoTooltip(List<Component> text, long count, TileEntityBasicMultiMachine<?> machine) {
         super.onInfoTooltip(text, count, machine);
-        if (count > 0) text.add(new StringTextComponent("Can be in multiple positions."));
+        if (count > 0) text.add(new TextComponent("Can be in multiple positions."));
     }
 }

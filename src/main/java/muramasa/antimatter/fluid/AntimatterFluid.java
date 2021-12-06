@@ -4,14 +4,14 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import net.minecraft.block.Block;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.material.Material;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.ForgeFlowingFluid.Flowing;
 import net.minecraftforge.fluids.ForgeFlowingFluid.Properties;
@@ -47,7 +47,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     protected Flowing flowing;
     protected Block.Properties blockProperties;
     protected FluidAttributes attributes;
-    protected FlowingFluidBlock fluidBlock;
+    protected LiquidBlock fluidBlock;
     protected Item containerItem = Items.AIR;
 
     public AntimatterFluid(String domain, String id, FluidAttributes.Builder builder, Block.Properties blockProperties) {
@@ -77,9 +77,9 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.ITEMS) {
-            AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this::getFluid, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(ItemGroup.TAB_MISC)).setRegistryName(getDomain(), getId() + "_bucket"));
+            AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this::getFluid, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(CreativeModeTab.TAB_MISC)).setRegistryName(getDomain(), getId() + "_bucket"));
         } else if (registry == ForgeRegistries.BLOCKS) {
-            this.fluidBlock = new FlowingFluidBlock(this::getFluid, blockProperties);
+            this.fluidBlock = new LiquidBlock(this::getFluid, blockProperties);
             this.fluidBlock.setRegistryName(getDomain(), "block_fluid_".concat(getId()));
             AntimatterAPI.register(Block.class, "block_fluid_".concat(getId()), getDomain(), fluidBlock);
         } else if (registry == ForgeRegistries.FLUIDS) {
@@ -100,7 +100,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
         return this;
     }
 
-    public AntimatterFluid flowingBlock(FlowingFluidBlock fluidBlock) {
+    public AntimatterFluid flowingBlock(LiquidBlock fluidBlock) {
         this.fluidBlock = fluidBlock;
         return this;
     }
@@ -135,7 +135,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
         return flowing;
     }
 
-    public FlowingFluidBlock getFluidBlock() {
+    public LiquidBlock getFluidBlock() {
         return fluidBlock;
     }
 

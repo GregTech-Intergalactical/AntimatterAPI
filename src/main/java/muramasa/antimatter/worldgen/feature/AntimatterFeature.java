@@ -5,17 +5,16 @@ import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 
 import java.util.List;
 
-public abstract class AntimatterFeature<F extends IFeatureConfig> extends Feature<F> implements ISharedAntimatterObject {
+public abstract class AntimatterFeature<F extends FeatureConfiguration> extends Feature<F> implements ISharedAntimatterObject {
 
     Object2ObjectMap<ResourceLocation, List<WorldGenBase<?>>> REGISTRY = new Object2ObjectOpenHashMap<>();
 

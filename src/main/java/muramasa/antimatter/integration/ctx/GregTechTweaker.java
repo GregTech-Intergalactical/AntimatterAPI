@@ -17,7 +17,7 @@
 //import muramasa.antimatter.ore.StoneType;
 //import muramasa.antimatter.registration.IGregTechRegistrar;
 //import muramasa.antimatter.registration.RegistrationEvent;
-//import net.minecraft.item.ItemStack;
+//import net.minecraft.world.item.ItemStack;
 //import net.minecraftforge.fluids.FluidStack;
 //import stanhebben.zenscript.annotations.ZenClass;
 //import stanhebben.zenscript.annotations.ZenMethod;

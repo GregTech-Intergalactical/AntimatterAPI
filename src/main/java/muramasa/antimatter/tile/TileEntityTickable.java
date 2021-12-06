@@ -1,29 +1,48 @@
 package muramasa.antimatter.tile;
 
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEntityBase<T> implements ITickableTileEntity {
+import javax.annotation.Nullable;
+
+public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEntityBase<T> {
 
     private boolean hadFirstTick;
 
-    public TileEntityTickable(TileEntityType<?> type) {
-        super(type);
+    public TileEntityTickable(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
-    @Override
-    public void tick() {
+    protected void serverTick(Level level, BlockPos pos, BlockState state) {
+
+    }
+    protected void clientTick(Level level, BlockPos pos, BlockState state) {
+
+    }
+
+    private void tick(Level level, BlockPos pos, BlockState state) {
         level.getProfiler().push("AntimatterTileTick");
         if (!hadFirstTick) {
             onFirstTick();
             hadFirstTick = true;
-        } else if (isServerSide()) {
-            onServerUpdate();
+        }
+        if (level.isClientSide()) {
+            clientTick(level, pos, state);
         } else {
-            onClientUpdate();
+            serverTick(level, pos, state);
         }
         level.getProfiler().pop();
-        //requestModelDataUpdate();
+    }
+
+    public static <T extends BlockEntity> void commonTick(Level level, BlockPos pos, BlockState state, T tile) {
+        if (tile instanceof TileEntityTickable tick) {
+            tick.tick(level, pos, state);
+        }
     }
 
     public boolean hadFirstTick() {
@@ -34,14 +53,6 @@ public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEnt
      * Override this to do any initialization that requires the World and/or BlockState reference.
      */
     public void onFirstTick() {
-        //NOOP
-    }
-
-    public void onClientUpdate() {
-        //NOOP
-    }
-
-    public void onServerUpdate() {
         //NOOP
     }
 }

@@ -1,6 +1,6 @@
 package muramasa.antimatter.gui;
 
-import net.minecraft.inventory.container.Slot;
+import net.minecraft.world.inventory.Slot;
 
 public class SlotData<T extends Slot> {
 

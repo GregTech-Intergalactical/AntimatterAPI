@@ -7,7 +7,7 @@ import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -39,7 +39,7 @@ public class AntimatterConfig {
     }
 
     @SubscribeEvent
-    public static void onModConfigEvent(final ModConfig.ModConfigEvent e) {
+    public static void onModConfigEvent(final ModConfigEvent e) {
 
         if (e.getConfig().getSpec() == CLIENT_SPEC) bakeClientConfig();
         else if (e.getConfig().getSpec() == COMMON_SPEC) bakeCommonConfig();

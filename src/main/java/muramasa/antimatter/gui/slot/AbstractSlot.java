@@ -4,9 +4,9 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.SlotType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -48,7 +48,7 @@ public class AbstractSlot<T extends Slot> extends SlotItemHandler {
     }
 
     @Override
-    public boolean mayPickup(PlayerEntity playerIn) {
+    public boolean mayPickup(Player playerIn) {
         return !MachineItemHandler.extractFromInput(this.getItemHandler(), index, 1, true).isEmpty();
     }
 

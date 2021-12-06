@@ -3,8 +3,8 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.ingredient.impl.Ingredients;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks;
 
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
             return !stack.isEmpty();
         }
         if (!(stack = tile.itemHandler.map(t -> t.consumeInputs(BURNABLE.get(), false)).orElse(Collections.emptyList())).isEmpty()) {
-            burnDuration += ForgeHooks.getBurnTime(stack.get(0)) / 10;
+            burnDuration += ForgeHooks.getBurnTime(stack.get(0), null)/ 10;
             return true;
         }
         return false;
@@ -74,8 +74,8 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = super.serializeNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag nbt = super.serializeNBT();
         nbt.putInt("burn", burnDuration);
         return nbt;
     }
@@ -92,7 +92,7 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         super.deserializeNBT(nbt);
         this.burnDuration = nbt.getInt("burn");
     }

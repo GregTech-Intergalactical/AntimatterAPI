@@ -6,21 +6,22 @@ import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
 import muramasa.antimatter.worldgen.object.WorldGenOreSmall;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.feature.NoFeatureConfig;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 
 import java.util.List;
 import java.util.Random;
 
-public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
+public class FeatureOreSmall extends AntimatterFeature<NoneFeatureConfiguration> {
 
     public FeatureOreSmall() {
-        super(NoFeatureConfig.CODEC, WorldGenOreSmall.class);
+        super(NoneFeatureConfiguration.CODEC, WorldGenOreSmall.class);
     }
 
     @Override
@@ -40,13 +41,17 @@ public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
 
     @Override
     public void build(BiomeGenerationSettingsBuilder event) {
-        event.addFeature(GenerationStage.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.ORE_SMALL);
+        event.addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.ORE_SMALL);
     }
 
+
     @Override
-    public boolean place(ISeedReader world, ChunkGenerator generator, Random rand, BlockPos pos, NoFeatureConfig config) {
+    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctxt) {
+        WorldGenLevel world = ctxt.level();
+        BlockPos pos = ctxt.origin();
+        Random rand = ctxt.random();
         List<WorldGenOreSmall> ores = AntimatterWorldGenerator.all(WorldGenOreSmall.class, world.getLevel().dimension());
-        BlockPos.Mutable mut = new BlockPos.Mutable();
+        BlockPos.MutableBlockPos mut = new BlockPos.MutableBlockPos();
         int amount;
         BlockState existing;
         for (WorldGenOreSmall ore : ores) {
@@ -57,6 +62,5 @@ public class FeatureOreSmall extends AntimatterFeature<NoFeatureConfig> {
                 WorldGenHelper.setOre(world, mut, existing, ore.getMaterial(), Data.ORE_SMALL);
             }
         }
-        return true;
-    }
+        return true;    }
 }

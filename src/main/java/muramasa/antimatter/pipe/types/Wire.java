@@ -4,7 +4,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.pipe.BlockCable;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 
 import java.util.Set;
 import java.util.stream.Collectors;

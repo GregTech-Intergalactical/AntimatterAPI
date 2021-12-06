@@ -1,7 +1,8 @@
 package muramasa.antimatter.gui.widget;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -10,11 +11,10 @@ import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.event.SlotClickEvent;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -57,19 +57,19 @@ public class FluidSlotWidget extends Widget {
     }
 
     @Override
-    public void render(MatrixStack matrixStack, double mouseX, double mouseY, float partialTicks) {
+    public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         renderFluid(matrixStack, this.stack, realX(), realY());
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void renderFluid(MatrixStack stack, FluidStack fluid, int x, int y) {
+    public void renderFluid(PoseStack stack, FluidStack fluid, int x, int y) {
         if (fluid.isEmpty())
             return;
         RenderHelper.drawFluid(stack, Minecraft.getInstance(), x, y, getW(), getH(), 16, fluid);
     }
 
     @Override
-    public void mouseOver(MatrixStack stack, double mouseX, double mouseY, float partialTicks) {
+    public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
         super.mouseOver(stack, mouseX, mouseY, partialTicks);
         if (this.stack.isEmpty())
             return;
@@ -81,11 +81,11 @@ public class FluidSlotWidget extends Widget {
         this.fillGradient(stack, x, y, x + 16, y + 16, slotColor, slotColor);
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.enableDepthTest();
-        List<ITextComponent> str = new ArrayList<>();
-        str.add(new StringTextComponent(this.stack.getDisplayName().getString()));
-        str.add(new StringTextComponent(
+        List<Component> str = new ArrayList<>();
+        str.add(new TextComponent(this.stack.getDisplayName().getString()));
+        str.add(new TextComponent(
                 NumberFormat.getNumberInstance(Locale.US).format(this.stack.getAmount()) + " mB")
-                .withStyle(TextFormatting.GRAY));
+                .withStyle(ChatFormatting.GRAY));
         AntimatterJEIPlugin.addModDescriptor(str, this.stack);
         drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().font, stack);
     }
@@ -94,7 +94,7 @@ public class FluidSlotWidget extends Widget {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers, double mouseX, double mouseY) {
         if (!isInside(mouseX, mouseY))
             return super.keyPressed(keyCode, scanCode, modifiers, mouseX, mouseY);
-        InputMappings.Input input = InputMappings.getKey(keyCode, scanCode);
+        InputConstants.Key input = InputConstants.getKey(keyCode, scanCode);
         if (!(input.getName().equals("key.keyboard.u") || input.getName().equals("key.keyboard.r")))
             return false;
         AntimatterJEIPlugin.uses(stack, input.getName().equals("key.keyboard.u"));

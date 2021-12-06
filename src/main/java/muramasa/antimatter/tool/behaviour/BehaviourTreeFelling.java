@@ -4,13 +4,13 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
 
@@ -22,12 +22,12 @@ public class BehaviourTreeFelling implements IBlockDestroyed<IAntimatterTool> {
     }
 
     @Override
-    public boolean onBlockDestroyed(IAntimatterTool instance, ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity entity) {
+    public boolean onBlockDestroyed(IAntimatterTool instance, ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity entity) {
         if (!AntimatterConfig.GAMEPLAY.AXE_TIMBER) return true;
-        if (entity instanceof PlayerEntity) {
-            PlayerEntity player = (PlayerEntity) entity;
+        if (entity instanceof Player) {
+            Player player = (Player) entity;
             if (Utils.isToolEffective(instance, state) && !player.isCrouching()) { // Only when player isn't shifting/crouching this ability activates
-                if (state.getBlock().is(BlockTags.LOGS)) {
+                if (state.is(BlockTags.LOGS)) {
                     Utils.treeLogging(instance, stack, pos, player, world);
                 }
             }

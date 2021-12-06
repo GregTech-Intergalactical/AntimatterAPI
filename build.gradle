@@ -54,10 +54,12 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'java'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
 version = "${minecraft_version}-${mod_version}"
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'AntimatterAPI'
-java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 //Print out JVM information so that we know what version is running. Extreamly useful for people to know when helping you.
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
@@ -107,7 +109,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'parchment', version: '2021.10.17-1.16.5'    
+    mappings channel: "${mappings_version}", version: "${minecraft_version}"    
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -206,10 +208,10 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
 
     /** KUBEJS STUFF **/
-    implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
+    /*implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
     implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
     implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
-    implementation fg.deobf("curse.maven:top-245211:${top_file}")
+    implementation fg.deobf("curse.maven:top-245211:${top_file}")*/g
 
     //compile 'de.speiger:Primitive-Collections:0.4.0'
     //shadowCommon 'de.speiger:Primitive-Collections:0.4.0'

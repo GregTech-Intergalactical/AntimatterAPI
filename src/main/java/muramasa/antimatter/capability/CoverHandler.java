@@ -2,7 +2,6 @@ package muramasa.antimatter.capability;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
@@ -11,12 +10,16 @@ import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -30,7 +33,7 @@ import java.util.stream.Collectors;
 import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
 import static muramasa.antimatter.Data.WRENCH;
 
-public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
+public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
 
     private final LazyOptional<ICoverHandler<T>> handler = LazyOptional.of(() -> this);
 
@@ -73,7 +76,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     protected void sync() {
-        World world = tile.getLevel();
+        Level world = tile.getLevel();
         if (world == null)
             return;
         if (!world.isClientSide) {
@@ -81,7 +84,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
             Utils.markTileForNBTSync(tile);
         } else {
             Utils.markTileForRenderUpdate(tile);
-            tile.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.METAL_PLACE, SoundCategory.BLOCKS, 1.0f,
+            tile.getLevel().playSound(null, tile.getBlockPos(), SoundEvents.METAL_PLACE, SoundSource.BLOCKS, 1.0f,
                     1.0f);
         }
     }
@@ -151,12 +154,12 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public boolean onInteract(PlayerEntity player, Hand hand, Direction side, @Nullable AntimatterToolType type) {
+    public boolean onInteract(Player player, InteractionHand hand, Direction side, @Nullable AntimatterToolType type) {
         return covers.get(side).onInteract(player, hand, side, type);
     }
 
     @Override
-    public boolean placeCover(PlayerEntity player, Direction side, ItemStack stack, ICover cover) {
+    public boolean placeCover(Player player, Direction side, ItemStack stack, ICover cover) {
         if (!get(side).isEmpty() || !set(side, cover, true))
             return false;
         if (!player.isCreative())
@@ -165,7 +168,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public boolean removeCover(PlayerEntity player, Direction side, boolean onlyRemove) {
+    public boolean removeCover(Player player, Direction side, boolean onlyRemove) {
         ICover oldCover = get(side);
         if (!onlyRemove && !canRemoveCover(oldCover))
             return false;
@@ -174,9 +177,9 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
         if (!onlyRemove && !player.isCreative())
             player.drop(oldCover.getDroppedStack(), false);
         if (Utils.getToolType(player) != WRENCH && Utils.getToolType(player) != ELECTRIC_WRENCH) {
-            player.playNotifySound(SoundEvents.ITEM_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            player.playNotifySound(SoundEvents.ITEM_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
         } else {
-            player.playNotifySound(Ref.WRENCH, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            player.playNotifySound(Ref.WRENCH, SoundSource.BLOCKS, 1.0f, 1.0f);
         }
         return true;
     }
@@ -196,8 +199,8 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT tag = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
         byte[] sides = new byte[1];
         covers.forEach((s, c) -> {
             if (!c.isEmpty()) { // Don't store EMPTY covers unnecessarily
@@ -210,7 +213,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         byte sides = nbt.getByte(Ref.TAG_MACHINE_COVER_SIDE);
         for (int i = 0; i < Ref.DIRS.length; i++) {
             if ((sides & (1 << i)) > 0) {
@@ -222,7 +225,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
                 covers.put(Ref.DIRS[i], ICover.empty);
             }
         }
-        World w = tile.getLevel();
+        Level w = tile.getLevel();
         if (w != null && w.isClientSide) {
             Utils.markTileForRenderUpdate(this.tile);
         }
@@ -235,7 +238,7 @@ public class CoverHandler<T extends TileEntity> implements ICoverHandler<T> {
     }
 
     @Override
-    public boolean moveCover(PlayerEntity entity, Direction oldSide, Direction newSide) {
+    public boolean moveCover(Player entity, Direction oldSide, Direction newSide) {
         // Have to move the entire stack, due to possible tag data.
         ICover newStack = get(newSide);
         ICover oldStack = get(oldSide);

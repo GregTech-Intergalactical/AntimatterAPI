@@ -3,17 +3,17 @@ package muramasa.antimatter.recipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeBuilder;
 import muramasa.antimatter.recipe.map.RecipeMap;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
 public class RecipeProxies {
 
-    private static final BiFunction<IRecipe<?>, RecipeBuilder, Recipe> getDefault(int power, int duration) {
+    private static final BiFunction<Recipe<?>, RecipeBuilder, muramasa.antimatter.recipe.Recipe> getDefault(int power, int duration) {
         return (t, b) -> {
             List<Ingredient> ingredients = t.getIngredients();
             Ingredient input = ingredients.get(0);
@@ -49,8 +49,8 @@ public class RecipeProxies {
                 .io(t.getRecipeOutput()).build(60, 8,0, 1);
     };
 */
-    public static BiFunction<Integer, Integer, RecipeMap.Proxy> FURNACE_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.SMELTING, getDefault(power, duration));
-    public static BiFunction<Integer, Integer, RecipeMap.Proxy> BLASTING_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.BLASTING, getDefault(power, duration));
-    public static BiFunction<Integer, Integer, RecipeMap.Proxy> SMOKING_PROXY = (power, duration) -> new RecipeMap.Proxy(IRecipeType.SMOKING, getDefault(power, duration));
+    public static BiFunction<Integer, Integer, RecipeMap.Proxy> FURNACE_PROXY = (power, duration) -> new RecipeMap.Proxy(RecipeType.SMELTING, getDefault(power, duration));
+    public static BiFunction<Integer, Integer, RecipeMap.Proxy> BLASTING_PROXY = (power, duration) -> new RecipeMap.Proxy(RecipeType.BLASTING, getDefault(power, duration));
+    public static BiFunction<Integer, Integer, RecipeMap.Proxy> SMOKING_PROXY = (power, duration) -> new RecipeMap.Proxy(RecipeType.SMOKING, getDefault(power, duration));
     //public static RecipeMap.Proxy CRAFTING_PROXY = new RecipeMap.Proxy(IRecipeType.CRAFTING, CRAFTING);
 }

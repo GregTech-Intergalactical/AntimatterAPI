@@ -4,14 +4,16 @@ import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.minecraft.util.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 
 import static muramasa.antimatter.machine.MachineFlag.GENERATOR;
 
 public class TileEntityGenerator<T extends TileEntityGenerator<T>> extends TileEntityMachine<T> {
 
-    public TileEntityGenerator(Machine<?> type) {
-        super(type);
+    public TileEntityGenerator(Machine<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, type.amps(), type.has(GENERATOR)) {
             @Override
             public boolean canInput(Direction direction) {

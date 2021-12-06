@@ -4,9 +4,9 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.Property;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.state.properties.Property;
 
 import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.HATCH;
@@ -15,7 +15,7 @@ public class HatchMachine extends Machine<HatchMachine> {
 
     public HatchMachine(String domain, String id, CoverFactory cover) {
         super(domain, id);
-        setTile(() -> new TileEntityHatch<>(this));
+        setTile(TileEntityHatch::new);
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, COVERABLE);
         setGUI(Data.HATCH_MENU_HANDLER);
@@ -27,7 +27,7 @@ public class HatchMachine extends Machine<HatchMachine> {
     }
 
     @Override
-    public Direction handlePlacementFacing(BlockItemUseContext ctxt, Property<?> which, Direction dir) {
+    public Direction handlePlacementFacing(BlockPlaceContext ctxt, Property<?> which, Direction dir) {
         return dir.getOpposite();
     }
 }

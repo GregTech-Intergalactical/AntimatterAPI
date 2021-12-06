@@ -10,8 +10,8 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.TextureSet;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.SoundType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Objects;

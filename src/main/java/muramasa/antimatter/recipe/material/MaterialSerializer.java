@@ -10,21 +10,21 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 
 
-public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<MaterialRecipe> {
+public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<MaterialRecipe> {
 
     public static final MaterialSerializer INSTANCE = new MaterialSerializer();
 
@@ -37,22 +37,22 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
 
     @Override
     public MaterialRecipe fromJson(ResourceLocation recipeId, JsonObject json) {
-        String s = JSONUtils.getAsString(json, "group", "");
-        Map<String, Ingredient> map = deserializeKey(JSONUtils.getAsJsonObject(json, "key"));
-        String[] astring = shrink(patternFromJson(JSONUtils.getAsJsonArray(json, "pattern")));
+        String s = GsonHelper.getAsString(json, "group", "");
+        Map<String, Ingredient> map = deserializeKey(GsonHelper.getAsJsonObject(json, "key"));
+        String[] astring = shrink(patternFromJson(GsonHelper.getAsJsonArray(json, "pattern")));
         int i = astring[0].length();
         int j = astring.length;
         NonNullList<Ingredient> nonnulllist = deserializeIngredients(astring, map, i, j);
         NonNullList<ItemStack> out = NonNullList.create();
-        for (JsonElement output : JSONUtils.getAsJsonArray(json, "output")) {
-            out.add(ShapedRecipe.itemFromJson(output.getAsJsonObject()));
+        for (JsonElement output : GsonHelper.getAsJsonArray(json, "output")) {
+            out.add(ShapedRecipe.itemFromJson(output.getAsJsonObject()).getDefaultInstance());
         }
         return new MaterialRecipe(recipeId, s, i, j, nonnulllist, out, json.get("builder").getAsString(), buildMaterialInput(nonnulllist));
     }
 
     @Nullable
     @Override
-    public MaterialRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+    public MaterialRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         int i = buffer.readVarInt();
         int j = buffer.readVarInt();
         String s = buffer.readUtf(32767);
@@ -70,7 +70,7 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
     }
 
     @Override
-    public void toNetwork(PacketBuffer buffer, MaterialRecipe recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, MaterialRecipe recipe) {
         buffer.writeVarInt(recipe.getRecipeWidth());
         buffer.writeVarInt(recipe.getRecipeHeight());
         buffer.writeUtf(recipe.getGroup());
@@ -156,7 +156,7 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
             throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
         } else {
             for (int i = 0; i < astring.length; ++i) {
-                String s = JSONUtils.convertToString(jsonArr.get(i), "pattern[" + i + "]");
+                String s = GsonHelper.convertToString(jsonArr.get(i), "pattern[" + i + "]");
                 if (s.length() > MAX_WIDTH) {
                     throw new JsonSyntaxException("Invalid pattern: too many columns, " + MAX_WIDTH + " is maximum");
                 }

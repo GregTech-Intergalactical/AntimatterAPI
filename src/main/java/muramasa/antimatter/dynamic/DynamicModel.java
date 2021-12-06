@@ -5,10 +5,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.IAntimatterModel;
-import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.*;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 
@@ -36,14 +37,14 @@ public class DynamicModel implements IAntimatterModel<DynamicModel> {
     }
 
     @Override
-    public IBakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        return new DynamicBakedModel(getter.apply(new RenderMaterial(PlayerContainer.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+    public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+        return new DynamicBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
     }
 
-    public Int2ObjectOpenHashMap<IBakedModel[]> getBakedConfigs(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> getter, IModelTransform transform, ItemOverrideList overrides, ResourceLocation loc) {
-        Int2ObjectOpenHashMap<IBakedModel[]> bakedConfigs = AntimatterModelManager.getStaticConfigMap(staticMapId);
+    public Int2ObjectOpenHashMap<BakedModel[]> getBakedConfigs(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+        Int2ObjectOpenHashMap<BakedModel[]> bakedConfigs = AntimatterModelManager.getStaticConfigMap(staticMapId);
         modelConfigs.forEach((k, v) -> {
-            IBakedModel[] baked = new IBakedModel[v.length];
+            BakedModel[] baked = new BakedModel[v.length];
             for (int i = 0; i < baked.length; i++) {
                 baked[i] = v[i].bake(owner, bakery, getter, transform, overrides, loc);
             }
@@ -53,8 +54,8 @@ public class DynamicModel implements IAntimatterModel<DynamicModel> {
     }
 
     @Override
-    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> getter, Set<Pair<String, String>> errors) {
-        Set<RenderMaterial> textures = new ObjectOpenHashSet<>();
+    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> getter, Set<Pair<String, String>> errors) {
+        Set<Material> textures = new ObjectOpenHashSet<>();
         modelConfigs.values().forEach(v -> Arrays.stream(v).forEach(m -> textures.addAll(m.getTextures(owner, getter, errors))));
         return textures;
     }

@@ -12,13 +12,13 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 
 import java.util.LinkedList;
@@ -27,15 +27,15 @@ import java.util.Random;
 
 public class PipeBakedModel extends DynamicBakedModel {
 
-    public static final Int2ObjectOpenHashMap<IBakedModel[]> CONFIGS = new Int2ObjectOpenHashMap<>();
+    public static final Int2ObjectOpenHashMap<BakedModel[]> CONFIGS = new Int2ObjectOpenHashMap<>();
 
-    public PipeBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<IBakedModel[]> map) {
+    public PipeBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<BakedModel[]> map) {
         super(particle, map);
         onlyGeneralQuads();
     }
 
     @Override
-    public IModelData getModelData(IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData data) {
+    public IModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, IModelData data) {
         data = super.getModelData(world, pos, state, data);
         data.setData(AntimatterProperties.TILE_PROPERTY, ((TileEntityPipe) world.getBlockEntity(pos)));
         return data;

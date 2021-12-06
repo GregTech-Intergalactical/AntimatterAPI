@@ -5,10 +5,10 @@ import com.google.gson.GsonBuilder;
 import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.datagen.BackgroundDataGenerator;
 import muramasa.antimatter.util.XSTR;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.ItemStack;
 
 public class Ref {
 
