@@ -116,6 +116,10 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return Utils.doesStackHaveToolTypes(stack, WRENCH, ELECTRIC_WRENCH, SCREWDRIVER, ELECTRIC_SCREWDRIVER, CROWBAR, WIRE_CUTTER); // ???
     }
 
+    @Override
+    public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
+        return state.is(getAntimatterToolType().getToolType()) && net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(getTier(stack), state);
+    }
     /*
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
