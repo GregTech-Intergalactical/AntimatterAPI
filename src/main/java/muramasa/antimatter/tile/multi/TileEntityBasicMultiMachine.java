@@ -96,7 +96,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             super.onFirstTick();
             return;
         }
-        StructureCache.add(level, worldPosition, getMachineType().getStructure(getMachineTier()).allPositions(this));
         if (!isStructureValid() && shouldCheckFirstTick) {
             checkStructure();
         }
@@ -266,6 +265,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public void onLoad() {
         super.onLoad();
+        StructureCache.add(level, worldPosition, getMachineType().getStructure(getMachineTier()).allPositions(this));
     }
 
     /**
