@@ -12,6 +12,7 @@ import muramasa.antimatter.tesseract.ItemTileWrapper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -29,8 +30,8 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     private int holder;
 
-    public TileEntityItemPipe(T type, BlockPos pos, BlockState state, boolean covered) {
-        super(type, pos, state, covered);
+    public TileEntityItemPipe(T type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
         pipeCapHolder.set(() -> this);
         this.holder = 0;
     }
@@ -110,6 +111,12 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
+    protected void serverTick(Level level, BlockPos pos, BlockState state) {
+        super.serverTick(level, pos, state);
+        if (this.getLevel().getGameTime() % 20 == 0) this.setHolder(0);
+    }
+
+    @Override
     public void addWidgets(GuiInstance instance, IGuiElement parent) {
         super.addWidgets(instance, parent);
         instance.addWidget(InfoRenderWidget.TesseractItemWidget.build().setPos(10, 10));
@@ -121,27 +128,6 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         renderer.draw(stack, "Total transferred in net: " + instance.transferred, left, top, 16448255);
         renderer.draw(stack, "Cable transfers (stacks): " + instance.cableTransferred, left, top + 8, 16448255);
         return 16;
-    }
-
-    public static class TileEntityCoveredItemPipe<T extends ItemPipe<T>> extends TileEntityItemPipe<T>
-            implements ITickablePipe {
-
-        public TileEntityCoveredItemPipe(T type, BlockPos pos, BlockState state) {
-            super(type, pos, state, true);
-        }
-
-        @Override
-        public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
-            return this.coverHandler;
-        }
-
-        @Override
-        public void tick() {
-            ITickablePipe.super.tick();
-            if (this.getLevel().getGameTime() % 20 == 0) this.setHolder(0);
-        }
-
-        
     }
 
     @Override

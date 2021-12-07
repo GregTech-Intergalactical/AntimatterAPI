@@ -31,8 +31,8 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
 
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
-    public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, ExistingFileHelperOverride fh) {
-        super(gen,providerDomain,fh);
+    public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
+        super(gen,providerDomain,null);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;

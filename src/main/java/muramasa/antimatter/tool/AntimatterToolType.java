@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 public class AntimatterToolType implements ISharedAntimatterObject {
 
     private final String domain, id;
-    private final Tag<Block> TOOL_TYPE;
+    private final Tag.Named<Block> TOOL_TYPE;
     private final Set<Tag<Block>> TOOL_TYPES = new ObjectOpenHashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
     private final Set<net.minecraft.world.level.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
@@ -95,7 +95,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.forgeTag = TagUtils.getForgeItemTag("tools/".concat(id));
         this.useAction = UseAnim.NONE;
         this.toolClass = MaterialTool.class;
-        this.TOOL_TYPE = TagUtils.itemToBlockTag(this.tag);
+        this.TOOL_TYPE = TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "mineable/".concat(id)));
         this.TOOL_TYPES.add(this.TOOL_TYPE);
         setBrokenItems(ImmutableMap.of(id, (i) -> ItemStack.EMPTY));
         AntimatterAPI.register(AntimatterToolType.class, this);
@@ -331,7 +331,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return TOOL_TYPES;
     }
 
-    public Tag<Block> getToolType() {
+    public Tag.Named<Block> getToolType() {
         return TOOL_TYPE;
     }
 

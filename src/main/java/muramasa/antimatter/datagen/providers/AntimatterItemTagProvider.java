@@ -52,8 +52,8 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
 
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
-    public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, BlockTagsProvider p, ExistingFileHelperOverride fh) {
-        super(gen, p, providerDomain, fh);
+    public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, BlockTagsProvider p) {
+        super(gen, p, providerDomain, null);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;

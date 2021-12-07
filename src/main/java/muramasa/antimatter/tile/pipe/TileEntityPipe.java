@@ -19,6 +19,7 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityBase;
+import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,6 +31,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -41,7 +43,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
+public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTickable<TileEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
 
     /**
      * Pipe Data
@@ -64,8 +66,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     protected Holder pipeCapHolder;
 
-    public TileEntityPipe(T type, BlockPos pos, BlockState state, boolean covered) {
-        super(covered ? type.getCoveredType() : type.getTileType(), pos, state);
+    public TileEntityPipe(T type, BlockPos pos, BlockState state) {
+        super(type.getTileType(), pos, state);
         this.size = getPipeSize(state);
         this.type = getPipeType(state);
         if (this.type.getMaterial() == Data.Wood) {
@@ -93,7 +95,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     }
 
     public boolean isConnector() {
-        return !(this instanceof ITickablePipe);
+        return !this.getBlockState().getValue(BlockPipe.TICKING);
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
@@ -235,7 +237,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     public boolean validate(Direction dir) {
         if (!connects(dir)) return false;
         BlockState state = level.getBlockState(worldPosition.relative(dir));
-        if (state.getBlock() instanceof BlockPipe && !state.getValue(BlockPipe.COVERED)) {
+        if (state.getBlock() instanceof BlockPipe && !state.getValue(BlockPipe.TICKING)) {
             return false;
         }
         return !blocksSide(dir);
@@ -255,10 +257,10 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
         if (stack.blocksCapability(getCapability(), side)) {
             this.clearConnection(side);
         }
-        if (this instanceof ITickablePipe) {
+        if (!this.isConnector()) {
             if (remove && !hasNonEmpty) {
-                CompoundTag nbt = this.save(new CompoundTag());
-                level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.COVERED, false), 11);
+                CompoundTag nbt = this.saveWithFullMetadata();
+                level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.TICKING, false), 11);
                 TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
                 if (pipe != this) {
                     pipe.load(nbt);
@@ -267,15 +269,21 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
             }
         } else if (!remove && hasNonEmpty) {
             //set this to be covered.
-            CompoundTag nbt = this.save(new CompoundTag());
-            level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.COVERED, true), 11);
-            TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
+            CompoundTag nbt = this.saveWithFullMetadata();
+            level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.TICKING, true), 11);
+            TileEntityPipe<?> pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
             if (pipe != this) {
                 pipe.load(nbt);
             }
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void serverTick(Level level, BlockPos pos, BlockState state) {
+        super.serverTick(level, pos, state);
+        coverHandler.ifPresent(CoverHandler::onUpdate);
     }
 
     public CoverFactory[] getValidCovers() {

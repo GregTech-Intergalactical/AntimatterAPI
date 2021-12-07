@@ -32,21 +32,15 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     protected Material material;
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
     protected BlockEntityType<?> tileType;
-    protected BlockEntityType<?> coveredType;
     protected Map<PipeSize, Block> registeredBlocks;
 
     private final TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> tileFunc;
-    private final TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> coveredFunc;
 
-    public PipeType(String domain, Material material, TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> func,
-                    TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> covered) {
+    public PipeType(String domain, Material material, TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> func) {
         this.domain = domain;
         this.material = material;
         sizes(PipeSize.VALUES);
-        // AntimatterAPI.register(getClass(), getId() + "_" + material.getId(),
-        // getDomain(), this);
         this.tileFunc = func;
-        this.coveredFunc = covered;
     }
 
     @SuppressWarnings("unchecked")
@@ -58,10 +52,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(),t))
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
         tileType = new BlockEntityType<>((pos,state) -> tileFunc.create((T) this, pos, state), blocks, null).setRegistryName(getDomain(), getId());
-        coveredType = new BlockEntityType<>((pos,state) -> coveredFunc.create((T) this, pos, state), blocks, null).setRegistryName(getDomain(),
-                getId() + "_covered");
         AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), getTileType());
-        AntimatterAPI.register(BlockEntityType.class, getId() + "_covered", getDomain(), getCoveredType());
     }
 
     public Block getBlock(PipeSize size) {
@@ -97,10 +88,6 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
 
     public BlockEntityType<?> getTileType() {
         return tileType;
-    }
-
-    public BlockEntityType<?> getCoveredType() {
-        return coveredType;
     }
 
     public T sizes(PipeSize... sizes) {

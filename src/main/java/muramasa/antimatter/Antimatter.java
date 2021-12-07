@@ -102,14 +102,13 @@ public class Antimatter extends AntimatterMod {
         } else {
             final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
             ev.addProvider(Ref.ID, g -> {
-                p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g,
-                        null);
+                p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g);
                 return p[0];
             });
             ev.addProvider(Ref.SHARED_ID, g -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
-                    "Antimatter Shared Fluid Tags", false, g,null));
+                    "Antimatter Shared Fluid Tags", false, g));
             ev.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
-                    false, g, p[0], null));
+                    false, g, p[0]));
             ev.addProvider(Ref.ID,
                     g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
         }

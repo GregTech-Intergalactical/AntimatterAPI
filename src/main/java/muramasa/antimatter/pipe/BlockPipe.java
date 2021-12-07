@@ -26,7 +26,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.Tag;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -71,7 +70,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     protected Texture side;
     protected Texture[] faces;
 
-    public static final BooleanProperty COVERED = BooleanProperty.create("cover");
+    public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
         this(prefix, type, size, modelId, Block.Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
@@ -84,7 +83,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         side = new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_side");
         faces = new Texture[]{new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_vtiny"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_tiny"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_small"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_normal"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_large"), new Texture(type.getMaterial().getSet().getDomain(), type.getMaterial().getSet().getPath() + "/pipe/pipe_huge")};
         AntimatterAPI.register(BlockPipe.class, this);
-        registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false).setValue(COVERED, false));
+        registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false).setValue(TICKING, false));
         this.modelId = modelId;
         buildShapes();
     }
@@ -98,7 +97,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         //If we are replacing with the same block, remove tile since we are replacing with a covered/uncovered tile.
         //Also make sure it is the covered data that actually changes.
-        if (state.hasBlockEntity() && state.is(newState.getBlock()) && (state.equals(newState.setValue(COVERED, !newState.getValue(COVERED))))) {
+        if (state.hasBlockEntity() && state.is(newState.getBlock()) && (state.equals(newState.setValue(TICKING, !newState.getValue(TICKING))))) {
             worldIn.removeBlockEntity(pos);
         } else if (!state.is(newState.getBlock())) {
             BlockEntity tile = worldIn.getBlockEntity(pos);
@@ -122,17 +121,17 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         float offset = 0.0625f * size.ordinal();
         VoxelShape shape = Shapes.create(size.getAABB());
         if ((which & (1 << 0)) > 0)
-            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0, 0.4375 - offset,0.5625 + offset, 0.4375 - offset, 0.5625 + offset));
         if ((which & (1 << 1)) > 0)
-            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
         if ((which & (1 << 2)) > 0)
-            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset, 0.4375 - offset));
         if ((which & (1 << 3)) > 0)
-            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
+            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
         if ((which & (1 << 4)) > 0)
-            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.box(0, 0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset));
         if ((which & (1 << 5)) > 0)
-            shape = Shapes.or(shape, Shapes.create(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.box(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
         return shape;
     }
 
@@ -178,7 +177,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         return pipe;
     }
 */
-    public AntimatterToolType getToolType(BlockState state) {
+    public AntimatterToolType getToolType() {
         return Data.WRENCH;
     }
 
@@ -284,7 +283,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                     return InteractionResult.PASS;
                 }
             }
-            if (getToolType(state).equals(type)) {
+            if (getToolType().equals(type)) {
                 Direction side = Utils.getInteractSide(hit);
                 if (tile.blocksSide(side)) return InteractionResult.CONSUME;
                 tile.toggleConnection(side);
@@ -298,7 +297,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         if (context instanceof EntityCollisionContext cont) {
             Player player = (Player) cont.getEntity();
-            if (player != null && Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(state), Data.CROWBAR, Data.SCREWDRIVER)) {
+            if (player != null && Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(), Data.CROWBAR, Data.SCREWDRIVER)) {
                 return Shapes.block();
             }
             if (player != null && !player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
@@ -476,7 +475,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED);
-        builder.add(COVERED);
+        builder.add(TICKING);
     }
 
     @Override
@@ -492,18 +491,13 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        if (state.getValue(COVERED)) {
-            return type.getCoveredType().create(pos, state);
-        } else {
-            return type.getTileType().create(pos, state);
-
-        }
+        return type.getTileType().create(pos, state);
     }
 
     @Nullable
     @Override
     public <TILE extends BlockEntity> BlockEntityTicker<TILE> getTicker(Level level, BlockState state, BlockEntityType<TILE> type) {
-        if (state.getValue(COVERED)) {
+        if (state.getValue(TICKING) && !level.isClientSide()) {
             return TileEntityTickable::commonTick;
         }
         return null;

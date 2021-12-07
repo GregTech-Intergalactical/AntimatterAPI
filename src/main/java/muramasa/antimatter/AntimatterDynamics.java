@@ -54,8 +54,6 @@ public class AntimatterDynamics {
         PROVIDERS.computeIfAbsent(domain, k -> new ObjectArrayList<>()).add(providerFunc);
     }
 
-    // Can't run this in parallel since ItemTagsProviders need BlockTagsProviders to
-    // run first
     public static void runDataProvidersDynamically() {
         DynamicResourcePack.clearServer();
         AntimatterProvidersEvent ev = new AntimatterProvidersEvent(Ref.BACKGROUND_GEN, Dist.DEDICATED_SERVER, Antimatter.INSTANCE);
@@ -165,6 +163,10 @@ public class AntimatterDynamics {
         TagUtils.resetSupplier();
     }
 
+    /**
+     * Recipe event for local servers, builds recipes.
+     * @param ev forge event callback.
+     */
     public static void recipeEvent(RecipesUpdatedEvent ev) {
         if (ClientHandler.isLocal()) {
             AntimatterDynamics.onResourceReload(false);
@@ -172,14 +174,20 @@ public class AntimatterDynamics {
         }
     }
 
-
+    /**
+     * Recipe event for online server, builds recipes.
+     * @param ev forge event callback.
+     */
     public static void tagsEvent(TagsUpdatedEvent ev) {
         if (!ClientHandler.isLocal()) {
             AntimatterDynamics.onResourceReload(false);
             AntimatterDynamics.onRecipeCompile(false, Minecraft.getInstance().getConnection().getRecipeManager(), ev.getTagManager());
         }
     }
-
+    /**
+     * Reloads dynamic assets during resource reload.
+     * @param server if it is server resources.
+     */
     public static void onResourceReload(boolean server) {
         if (server)
             runDataProvidersDynamically();

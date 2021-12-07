@@ -59,7 +59,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     }
 
     @Override
-    public AntimatterToolType getToolType(BlockState state) {
+    public AntimatterToolType getToolType() {
         return Data.WIRE_CUTTER;
     }
 

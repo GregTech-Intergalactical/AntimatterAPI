@@ -43,8 +43,6 @@ public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEnt
     public static <T extends BlockEntity> void commonTick(Level level, BlockPos pos, BlockState state, T tile) {
         if (tile instanceof TileEntityTickable tick) {
             tick.tick(level, pos, state);
-        } else if (tile instanceof ITickablePipe pipe) {
-            pipe.tick();
         }
     }
 

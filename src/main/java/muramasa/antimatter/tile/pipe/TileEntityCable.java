@@ -14,6 +14,7 @@ import muramasa.antimatter.tesseract.EnergyTileWrapper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -32,8 +33,8 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     private long holder;
 
-    public TileEntityCable(T type,BlockPos pos, BlockState state, boolean covered) {
-        super(type, pos, state, covered);
+    public TileEntityCable(T type,BlockPos pos, BlockState state) {
+        super(type, pos, state);
         pipeCapHolder.set(() -> this);
     }
 
@@ -129,6 +130,12 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
+    protected void serverTick(Level level, BlockPos pos, BlockState state) {
+        super.serverTick(level, pos, state);
+        this.setHolder(GTHolder.create(this, 0));
+    }
+
+    @Override
     public LazyOptional<? extends IEnergyHandler> forSide(Direction side) {
         return LazyOptional.of(() -> new TesseractGTCapability<>(this, side, !isConnector(), (stack,in,out,simulate) -> 
         this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
@@ -158,24 +165,5 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         renderer.draw(stack, "Average inserted: " + ((double) (instance.voltAverage - instance.loss)) / 20, left, top + 24, 16448255);
         renderer.draw(stack, "Loss average: " + (double) instance.loss / 20, left, top + 32, 16448255);
         return 40;
-    }
-
-
-    public static class TileEntityCoveredCable<T extends Cable<T>> extends TileEntityCable<T> implements ITickablePipe {
-
-        public TileEntityCoveredCable(T type, BlockPos pos, BlockState state) {
-            super(type, pos, state,true);
-        }
-
-        @Override
-        public LazyOptional<PipeCoverHandler<?>> getCoverHandler() {
-            return this.coverHandler;
-        }
-
-        @Override
-        public void tick() {
-            ITickablePipe.super.tick();
-            this.setHolder(GTHolder.create(this, 0));
-        }
     }
 }

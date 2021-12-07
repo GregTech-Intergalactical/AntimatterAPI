@@ -9,9 +9,11 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.*;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.BlockItemPipe;
+import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
@@ -38,8 +40,8 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
 
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
-    public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, ExistingFileHelper helper) {
-        super(gen, providerDomain, helper);
+    public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
+        super(gen, providerDomain, null);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
@@ -79,6 +81,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
             AntimatterAPI.all(BlockOre.class, o -> {
                 this.tag(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 this.tag(getForgeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
+                this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(o).replace(replace);
                 if (o.getOreType() == Data.ORE) this.tag(Tags.Blocks.ORES).add(o);
             });
             AntimatterAPI.all(BlockStone.class, s -> {
@@ -89,30 +92,42 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
                 } else if (s.getSuffix().contains("bricks")) {
                     this.tag(BlockTags.STONE_BRICKS).add(s);
                 }
+                this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(s).replace(replace);
                 this.tag(getBlockTag(new ResourceLocation("antimatter", "blocks/".concat(s.getId())))).add(s).replace(replace);
             });
             AntimatterAPI.all(BlockStoneWall.class, b -> {
+                this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b).replace(replace);
                 this.tag(BlockTags.WALLS).add(b);
             });
             AntimatterAPI.all(BlockStoneSlab.class, b -> {
+                this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b).replace(replace);
                 this.tag(BlockTags.SLABS).add(b);
             });
             AntimatterAPI.all(BlockStoneStair.class, b -> {
+                this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(b).replace(replace);
                 this.tag(BlockTags.STAIRS).add(b);
             });
             AntimatterAPI.all(BlockOreStone.class, s -> {
                 // String id = getConventionalMaterialType(MaterialType.ORE_STONE);
+                this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(s).replace(replace);
                 this.tag(Tags.Blocks.ORES).add(s);
                 // this.getBuilder(getForgeBlockTag(id)).add(s);
             });
             AntimatterAPI.all(BlockStorage.class, block -> {
                 this.tag(block.getType().getTag()).add(block).replace(replace);
                 String name = String.join("", block.getType().getTag().getName().getPath(), "/", block.getMaterial().getId());
+                this.tag(Data.WRENCH.getToolType()).add(block).replace(replace);
                 this.tag(getForgeBlockTag(name)).add(block);
                 // if (block.getType() == FRAME) add climbable tag in 1.16
             });
             AntimatterAPI.all(BlockItemPipe.class, pipe -> {
                 this.tag(TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "item_pipe"))).add(pipe);
+            });
+            AntimatterAPI.all(BlockPipe.class, pipe -> {
+                this.tag(pipe.getToolType().getToolType()).add(pipe);
+            });
+            AntimatterAPI.all(BlockMachine.class, pipe -> {
+                this.tag(Data.WRENCH.getToolType()).add(pipe);
             });
         }
     }
