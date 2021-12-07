@@ -250,10 +250,8 @@ public class GuiInstance implements ICanSyncData {
 
     private void write(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new GuiSyncPacket(data);
-        for (ContainerListener listener : ((IAntimatterContainer)container).listeners()) {
-            if (listener instanceof ServerPlayer) {
-                Antimatter.NETWORK.sendTo(pkt, (ServerPlayer) listener);
-            }
+        for (ServerPlayer listener : ((IAntimatterContainer)container).listeners()) {
+            Antimatter.NETWORK.sendTo(pkt, listener);
         }
     }
 
@@ -266,6 +264,7 @@ public class GuiInstance implements ICanSyncData {
     public <T> void bind(Supplier<T> supplier, Consumer<T> consumer, Function<FriendlyByteBuf, T> reader, BiConsumer<FriendlyByteBuf, T> writer, BiFunction<Object, Object, Boolean> equality, SyncDirection direction) {
         syncData.add(new SyncHolder(supplier, consumer, reader, writer, indexCounter++, equality, direction));
     }
+
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static class SyncHolder {

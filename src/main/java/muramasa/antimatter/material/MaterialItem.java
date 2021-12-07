@@ -20,6 +20,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
@@ -28,8 +29,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CauldronBlock;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
@@ -79,31 +82,24 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         }
     }
 
-    @Override
-    public InteractionResult useOn(UseOnContext context) {
-        if (context.getPlayer() == null) return InteractionResult.PASS;
-        //TODO 1.18
-       /* Level world = context.getLevel();
-        Player player = context.getPlayer();
-        BlockPos pos = context.getClickedPos();
-        ItemStack stack = player.getItemInHand(context.getHand());
-        BlockState state = world.getBlockState(pos);
-        if (type == Data.DUST_IMPURE && state.getBlock() instanceof CauldronBlock) {
-            boolean level = ((CauldronBlock)state.getBlock()).isFull(state);
-            if (level) {
-                MaterialItem item = (MaterialItem) stack.getItem();
-                if (item.getMaterial().has(DUST)) {
-                    stack.shrink(1);
-                    if (!player.addItem(DUST.get(item.getMaterial(), 1))) {
-                        player.drop(DUST.get(item.getMaterial(), 1), false);
-                    }
-                    world.setBlockAndUpdate(context.getClickedPos(), state.setValue(CauldronBlock.LEVEL, --level));
-                    world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    return InteractionResult.SUCCESS;
+    public static InteractionResult interactWithCauldron(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
+        if (world.isClientSide()) return InteractionResult.PASS;
+        MaterialItem item = (MaterialItem) stack.getItem();
+        MaterialType<?> type = item.getType();
+        if (type == Data.DUST_IMPURE && state.getBlock() instanceof AbstractCauldronBlock) {
+            int level = state.getValue(LayeredCauldronBlock.LEVEL);
+            if (level > 0) {
+                stack.shrink(1);
+                if (!player.addItem(DUST.get(item.getMaterial(), 1))) {
+                    player.drop(DUST.get(item.getMaterial(), 1), false);
                 }
+                LayeredCauldronBlock.lowerFillLevel(state, world, pos);
+                world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                return InteractionResult.SUCCESS;
             }
-        }*/
-        return InteractionResult.FAIL;
+        }
+        return InteractionResult.SUCCESS;
+
     }
 
     public Tag.Named<Item> getTag() {

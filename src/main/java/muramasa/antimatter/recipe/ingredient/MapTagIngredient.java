@@ -47,7 +47,7 @@ public class MapTagIngredient extends AbstractMapIngredient {
 
     public static Optional<ResourceLocation> findCommonTag(Ingredient ing, TagContainer tags) {
         if (!ENABLE_TAGS_LOOKUP || ing.getItems().length < 2) return Optional.empty();
-        Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getItems()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(tags.getOrEmpty(Registry.ITEM_REGISTRY).getMatchingTags(t.getItem()))).reduce((s, b) -> {
+        Optional<Set<ResourceLocation>> l = Arrays.stream(ing.getItems()).map(t -> (Set<ResourceLocation>) new ObjectOpenHashSet<>(t.getItem().getTags())).reduce((s, b) -> {
             s.retainAll(b);
             return s;
         });

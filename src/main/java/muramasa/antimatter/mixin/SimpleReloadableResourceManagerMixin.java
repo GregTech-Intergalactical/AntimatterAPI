@@ -36,7 +36,7 @@ public class SimpleReloadableResourceManagerMixin {
         if (type == PackType.SERVER_DATA) {
             AntimatterDynamics.onResourceReload(true);
         }
-    }//net.minecraft.server.packs.resources
+    }
 
     @Inject(at = @At("RETURN"), method = "clear()V")
     private void clearNamespaceInject(CallbackInfo info) {

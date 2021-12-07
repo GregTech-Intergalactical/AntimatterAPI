@@ -3,16 +3,17 @@ package muramasa.antimatter.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
+import com.mojang.math.*;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.mixin.LevelRendererAccessor;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tool.armor.MaterialArmor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -22,10 +23,13 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,29 +48,14 @@ import tesseract.graph.Connectivity;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class RenderHelper {
+    //protected static final RenderStateShard.ShaderStateShard RENDERTYPE_LINES_SHADER = new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeLinesShader);
+    //public static final Object LINES = RenderType.create("lines", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.LINES, 256, RenderType.CompositeState.builder().setShaderState(RENDERTYPE_LINES_SHADER).setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty())).setLayeringState(VIEW_OFFSET_Z_LAYERING).setTransparencyState(TRANSLUCENT_TRANSPARENCY).setOutputState(ITEM_ENTITY_TARGET).setWriteMaskState(COLOR_DEPTH_WRITE).setCullState(NO_CULL).createCompositeState(false));
 
-    /*private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(128).order(ByteOrder.nativeOrder()).asDoubleBuffer();
-
-    public static float[][] sideToMatrixRotation = new float[][]{
-            new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-            new float[]{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-            new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-            new float[]{1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-            new float[]{0.0f, 1.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-            new float[]{0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-    };
-
-//    public static TextureAtlasSprite getSprite(ResourceLocation loc) {
-//        return Minecraft.getInstance().getTextureMap().getSprite(loc);
-//    }
-//
-//    public static TextureAtlasSprite getSprite(Fluid fluid) {
-//        return Minecraft.getInstance().getTextureMap().getSprite(fluid.getAttributes().getStillTexture());
-//    }*/
 
     public static float xFromQuad(BakedQuad quad, int index) {
         int size = DefaultVertexFormat.BLOCK.getOffset(index);
@@ -127,12 +116,13 @@ public class RenderHelper {
     }
 
     public static void drawTiledSprite(PoseStack stack, Minecraft mc, int posX, int posY, int tiledWidth, int tiledHeight, int texWidth, int texHeight, int color, int scaledAmount, TextureAtlasSprite sprite) {
-        mc.textureManager.bindForSetup(TextureAtlas.LOCATION_BLOCKS);
-        float red = (color >> 16 & 0xFF) / 255.0F;
-        float green = (color >> 8 & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-        float alpha = ((color >> 24) & 0xFF) / 255F;
-        RenderSystem.clearColor(red, green, blue, alpha);
+        float red = FastColor.ARGB32.red(color);
+        float green = FastColor.ARGB32.green(color);
+        float blue = FastColor.ARGB32.blue(color);
+        float alpha = FastColor.ARGB32.alpha(color);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, sprite.atlas().location());
+        RenderSystem.setShaderColor(red/255,green/255, blue/255, alpha/255);
         Matrix4f matrix = stack.last().pose();
 
         int xTileCount = tiledWidth / texWidth;
@@ -152,14 +142,14 @@ public class RenderHelper {
                     int maskTop = texHeight - height;
                     int maskRight = texWidth - width;
 
-                    drawTextureWithMasking(matrix, x, y, sprite, maskTop, maskRight, 100);
+                    drawTextureWithMasking(matrix, x, y, sprite, maskTop, maskRight, 100, color);
                 }
             }
         }
     }
 
     //Credit: JEI. Some alterations.
-    public static void drawTextureWithMasking(Matrix4f stack, float xCoord, float yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, float zLevel) {
+    public static void drawTextureWithMasking(Matrix4f stack, float xCoord, float yCoord, TextureAtlasSprite textureSprite, int maskTop, int maskRight, float zLevel, int color) {
         double uMin = textureSprite.getU0();
         double uMax = textureSprite.getU1();
         double vMin = textureSprite.getV0();
@@ -266,12 +256,9 @@ public class RenderHelper {
         float X = 1;
         float Y = 1;
 
-        Matrix4f m = matrix.last().pose();
         matrix.pushPose();
-        shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
-            builderLines.vertex(m, (float) (minX + modX), (float) (minY + modY), (float) (minZ + modZ)).color(r, g, b, 0.4F).endVertex();
-            builderLines.vertex(m, (float) (maxX + modX), (float) (maxY + modY), (float) (maxZ + modZ)).color(r, g, b, 0.4F).endVertex();
-        });
+        LevelRendererAccessor.renderShape(matrix, builderLines, shape, modX, modY, modZ, 0,0,0,0.4f);
+
         matrix.popPose();
         switch (result.getDirection()) {
             case UP:
@@ -302,30 +289,30 @@ public class RenderHelper {
         Matrix4f matrix4f = matrix.last().pose();
 
         //TODO: Use SHAPE to get actual size of box.
+        Matrix3f mat = matrix.last().normal();
+        builderLines.vertex(matrix4f, INDENTATION_SIDE, (float) (0), (float) (0)).color(r, g, b, 0.4F).normal(mat,INDENTATION_SIDE, (float) (0), (float) (0)).endVertex();
+        builderLines.vertex(matrix4f, INDENTATION_SIDE, Y, (float) (0)).color(r, g, b, 0.4F).normal(mat, INDENTATION_SIDE, Y, (float) (0)).endVertex();
 
-        builderLines.vertex(matrix4f, INDENTATION_SIDE, (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
-        builderLines.vertex(matrix4f, INDENTATION_SIDE, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.vertex(matrix4f, (float) (0), 0 + INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).normal(mat,(float) (0), 0 + INDENTATION_SIDE, (float) (0)).endVertex();
+        builderLines.vertex(matrix4f, X, 0 + INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).normal(mat, X, 0 + INDENTATION_SIDE, (float) (0)).endVertex();
 
-        builderLines.vertex(matrix4f, (float) (0), 0 + INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).endVertex();
-        builderLines.vertex(matrix4f, X, 0 + INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.vertex(matrix4f, X - INDENTATION_SIDE, (float) (0), (float) (0)).color(r, g, b, 0.4F).normal(mat,X - INDENTATION_SIDE, (float) (0), (float) (0)).endVertex();
+        builderLines.vertex(matrix4f, X - INDENTATION_SIDE, Y, (float) (0)).color(r, g, b, 0.4F).normal(mat,X - INDENTATION_SIDE, Y, (float) (0)).endVertex();
 
-        builderLines.vertex(matrix4f, X - INDENTATION_SIDE, (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
-        builderLines.vertex(matrix4f, X - INDENTATION_SIDE, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.vertex(matrix4f, (float) (0), Y - INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).normal(mat,(float) (0), Y - INDENTATION_SIDE, (float) (0)).endVertex();
+        builderLines.vertex(matrix4f, X, Y - INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).normal(mat,X, Y - INDENTATION_SIDE, (float) (0)).endVertex();
 
-        builderLines.vertex(matrix4f, (float) (0), Y - INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).endVertex();
-        builderLines.vertex(matrix4f, X, Y - INDENTATION_SIDE, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.vertex(matrix4f, (float) (0), (float) (0), (float) (0)).color(r, g, b, 0.4F).normal(mat,(float) (0), (float) (0), (float) (0)).endVertex();
+        builderLines.vertex(matrix4f, (float) (0), Y, (float) (0)).color(r, g, b, 0.4F).normal(mat,(float) (0), Y, (float) (0)).endVertex();
 
-        builderLines.vertex(matrix4f, (float) (0), (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
-        builderLines.vertex(matrix4f, (float) (0), Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.vertex(matrix4f, (float) (0), (float) (0), (float) (0)).color(r, g, b, 0.4F).normal(mat,(float) (0), (float) (0), (float) (0)).endVertex();
+        builderLines.vertex(matrix4f, X, (float) (0), (float) (0)).color(r, g, b, 0.4F).normal(mat, X, (float) (0), (float) (0)).endVertex();
 
-        builderLines.vertex(matrix4f, (float) (0), (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
-        builderLines.vertex(matrix4f, X, (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.vertex(matrix4f, X, Y, (float) (0)).color(r, g, b, 0.4F).normal(mat,X, Y, (float) (0)).endVertex();
+        builderLines.vertex(matrix4f, X, (float) (0), (float) (0)).color(r, g, b, 0.4F).normal(mat,X, (float) (0), (float) (0)).endVertex();
 
-        builderLines.vertex(matrix4f, X, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
-        builderLines.vertex(matrix4f, X, (float) (0), (float) (0)).color(r, g, b, 0.4F).endVertex();
-
-        builderLines.vertex(matrix4f, X, Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
-        builderLines.vertex(matrix4f, (float) (0), Y, (float) (0)).color(r, g, b, 0.4F).endVertex();
+        builderLines.vertex(matrix4f, X, Y, (float) (0)).color(r, g, b, 0.4F).normal(mat, X, Y, (float) (0)).endVertex();
+        builderLines.vertex(matrix4f, (float) (0), Y, (float) (0)).color(r, g, b, 0.4F).normal(mat,(float) (0), Y, (float) (0)).endVertex();
         BlockEntity tile = player.getCommandSenderWorld().getBlockEntity(result.getBlockPos());
         if (tile != null) {
             byte sides = 0;
@@ -362,25 +349,25 @@ public class RenderHelper {
                 down = Connectivity.has(sides, 0);
             }
             if (back) {
-                drawX(builderLines, matrix4f, 0, 0, INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
-                drawX(builderLines, matrix4f, X, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
-                drawX(builderLines, matrix4f, X, Y, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
-                drawX(builderLines, matrix4f, 0, Y, INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, mat, 0, 0, INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, mat, X, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, mat, X, Y, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, mat, 0, Y, INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
             if (left) {
-                drawX(builderLines, matrix4f, X, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, mat, X, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
             if (right) {
-                drawX(builderLines, matrix4f, 0, INDENTATION_SIDE, INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, mat, 0, INDENTATION_SIDE, INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
             if (up) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, Y - INDENTATION_SIDE, X - INDENTATION_SIDE, Y, r, g, b);
+                drawX(builderLines, matrix4f, mat, INDENTATION_SIDE, Y - INDENTATION_SIDE, X - INDENTATION_SIDE, Y, r, g, b);
             }
             if (down) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, mat, INDENTATION_SIDE, 0, X - INDENTATION_SIDE, INDENTATION_SIDE, r, g, b);
             }
             if (front) {
-                drawX(builderLines, matrix4f, INDENTATION_SIDE, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
+                drawX(builderLines, matrix4f, mat, INDENTATION_SIDE, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
         }
         matrix.popPose();
@@ -415,16 +402,13 @@ public class RenderHelper {
         return faceRotation(side, null);  
     }
 
-    private static void drawX(VertexConsumer builder, Matrix4f matrix, float x1, float y1, float x2, float y2) {
-        drawX(builder, matrix, x1, y1, x2, y2, 0, 0, 0);
-    }
 
-    private static void drawX(VertexConsumer builder, Matrix4f matrix, float x1, float y1, float x2, float y2, float r, float g, float b) {
-        builder.vertex(matrix, x1, y1, 0).color(r, g, b, 0.4F).endVertex();
-        builder.vertex(matrix, x2, y2, 0).color(r, g, b, 0.4F).endVertex();
+    private static void drawX(VertexConsumer builder, Matrix4f matrix, Matrix3f normal, float x1, float y1, float x2, float y2, float r, float g, float b) {
+        builder.vertex(matrix, x1, y1, 0).color(r, g, b, 0.4F).normal(normal, x1,y1,0).endVertex();
+        builder.vertex(matrix, x2, y2, 0).color(r, g, b, 0.4F).normal(normal, x2,y2,0).endVertex();
 
-        builder.vertex(matrix, x2, y1, 0).color(r, g, b, 0.4F).endVertex();
-        builder.vertex(matrix, x1, y2, 0).color(r, g, b, 0.4F).endVertex();
+        builder.vertex(matrix, x2, y1, 0).color(r, g, b, 0.4F).normal(normal, x2,y1,0).endVertex();
+        builder.vertex(matrix, x1, y2, 0).color(r, g, b, 0.4F).normal(normal, x1,y2,0).endVertex();
     }
 
     public static void renderCubeFace(VertexConsumer buffer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float r, float g, float b, float a) {

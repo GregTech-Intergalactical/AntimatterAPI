@@ -4,6 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -57,6 +58,10 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         return true;
     }
 
+    @Override
+    public AntimatterToolType getToolType(BlockState state) {
+        return Data.WIRE_CUTTER;
+    }
 
     @Override
     public boolean isFireSource(BlockState state, LevelReader world, BlockPos pos, Direction side) {

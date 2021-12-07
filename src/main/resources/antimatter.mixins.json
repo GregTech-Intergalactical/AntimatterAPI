@@ -6,8 +6,8 @@
   "client": [
     "ChunkReaderAccessor",
     "ClientBlockUpdateMixin",
-    "ClientPlayNetHandlerMixin",
     "DimensionTypeAccessor",
+    "LevelRendererAccessor",
     "TESRMixin"
   ],
   "mixins": [

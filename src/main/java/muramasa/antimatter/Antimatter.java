@@ -14,6 +14,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
+import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.material.SubTag;
 import muramasa.antimatter.network.AntimatterNetwork;
@@ -24,6 +25,7 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.RecipeBuilders;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import net.minecraft.core.cauldron.CauldronInteraction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -101,13 +103,13 @@ public class Antimatter extends AntimatterMod {
             final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
             ev.addProvider(Ref.ID, g -> {
                 p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g,
-                        new ExistingFileHelperOverride());
+                        null);
                 return p[0];
             });
             ev.addProvider(Ref.SHARED_ID, g -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
-                    "Antimatter Shared Fluid Tags", false, g, new ExistingFileHelperOverride()));
+                    "Antimatter Shared Fluid Tags", false, g,null));
             ev.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
-                    false, g, p[0], new ExistingFileHelperOverride()));
+                    false, g, p[0], null));
             ev.addProvider(Ref.ID,
                     g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
         }
@@ -175,6 +177,8 @@ public class Antimatter extends AntimatterMod {
             GuiEvents.init();
         } else if (event == RegistrationEvent.WORLDGEN_INIT) {
             AntimatterWorldGenerator.init();
+        } else if (event == RegistrationEvent.DATA_READY) {
+            CauldronInteractions.init();
         }
     }
 

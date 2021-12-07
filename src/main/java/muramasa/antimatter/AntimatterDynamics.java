@@ -12,21 +12,26 @@ import muramasa.antimatter.event.AntimatterCraftingEvent;
 import muramasa.antimatter.event.AntimatterLoaderEvent;
 import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
+import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.ModRegistrar;
 import muramasa.antimatter.util.TagUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.SerializationTags;
 import net.minecraft.tags.TagContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TagsUpdatedEvent;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -158,6 +163,21 @@ public class AntimatterDynamics {
          */
         // Invalidate old tag getter.
         TagUtils.resetSupplier();
+    }
+
+    public static void recipeEvent(RecipesUpdatedEvent ev) {
+        if (ClientHandler.isLocal()) {
+            AntimatterDynamics.onResourceReload(false);
+            AntimatterDynamics.onRecipeCompile(false, ev.getRecipeManager(), SerializationTags.getInstance());
+        }
+    }
+
+
+    public static void tagsEvent(TagsUpdatedEvent ev) {
+        if (!ClientHandler.isLocal()) {
+            AntimatterDynamics.onResourceReload(false);
+            AntimatterDynamics.onRecipeCompile(false, Minecraft.getInstance().getConnection().getRecipeManager(), ev.getTagManager());
+        }
     }
 
     public static void onResourceReload(boolean server) {

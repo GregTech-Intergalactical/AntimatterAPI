@@ -60,6 +60,11 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     @Override
+    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<Item> p_126563_) {
+        return this.builders.computeIfAbsent(p_126563_.getName(), (p_176838_) -> new Tag.Builder());
+    }
+
+    @Override
     public void run() {
         Map<ResourceLocation, Tag.Builder> b = new HashMap<>(this.builders);
         this.builders.clear();

@@ -19,6 +19,7 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
@@ -45,12 +46,17 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     }
 
     @Override
+    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<Block> p_126563_) {
+        return this.builders.computeIfAbsent(p_126563_.getName(), (p_176838_) -> new Tag.Builder());
+    }
+
+    @Override
     public void run() {
         Map<ResourceLocation, Tag.Builder> b = new HashMap<>(this.builders);
         this.builders.clear();
         addTags();
         builders.forEach(this::addTag);
-        b.forEach(builders::put);
+        builders.putAll(b);
     }
 
     @Override

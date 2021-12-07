@@ -10,6 +10,7 @@ import muramasa.antimatter.util.int4;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -83,7 +84,8 @@ public class ButtonWidget extends Widget {
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bindForSetup(res);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, res);
         RenderSystem.disableDepthTest();
         if (body != null) {
             int xTex = body.getX();
@@ -97,16 +99,16 @@ public class ButtonWidget extends Widget {
         boolean isActive = activeHandler == null || activeHandler.apply(this);
         float color = isActive ? 1.0f : pressed ? 0.75f : 0.5f;
         if (color < 1f) {
-            RenderSystem.clearColor(color, color, color, 1);
+            RenderSystem.setShaderColor(color, color, color, 1);
         }
         if (overlay != null) {
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), overlay.getX(), overlay.getY(), overlay.getW(), overlay.getH(), 256, 256);
         } else if (this.bodyLoc != null) {
-            minecraft.getTextureManager().bindForSetup(this.bodyLoc);
+            RenderSystem.setShaderTexture(0, this.bodyLoc);
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), resLoc.x, resLoc.y, resLoc.z, resLoc.w, 256, 256);
         }
         RenderSystem.enableDepthTest();
-        RenderSystem.clearColor(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         Component message = getMessage();
         if (!message.getString().isEmpty()) {
             GuiComponent.drawCenteredString(matrixStack, minecraft.font, message, realX() + getW() / 2, realY() + (getH() - 8) / 2, 16777215);

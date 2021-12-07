@@ -289,7 +289,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         for (RecipeIngredient r : ingredients) {
             Ingredient t = r.get();
             if (!isIngredientSpecial(t)) {
-                Optional<ResourceLocation> rl = MapTagIngredient.findCommonTag(t, tags);
+                Optional<ResourceLocation> rl = Optional.empty();//MapTagIngredient.findCommonTag(t, tags);
                 if (rl.isPresent()) {
                     list.add(Collections.singletonList(new MapTagIngredient(rl.get(), insideMap)));
                 } else {
@@ -314,9 +314,9 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
             List<AbstractMapIngredient> ls = new ObjectArrayList<>(2 + t.getItem().getTags().size());
             ls.add(new MapItemIngredient(t.getItem(), false));
             ls.add(new MapItemStackIngredient(t, false));
-            for (ResourceLocation rl : t.getItem().getTags()) {
+            /*for (ResourceLocation rl : t.getItem().getTags()) {
                 ls.add(new MapTagIngredient(rl, false));
-            }
+            }*/
             list.add(ls);
         }
     }

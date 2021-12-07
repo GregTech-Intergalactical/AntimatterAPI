@@ -373,7 +373,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
 
     public CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
-        this.save(tag);
+        this.saveAdditional(tag);
         return tag;
     }
 

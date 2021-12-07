@@ -282,8 +282,9 @@ public abstract class Widget implements IGuiElement {
 
     @OnlyIn(Dist.CLIENT)
     protected void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
-        RenderSystem.clearColor(1, 1, 1, 1);
-        Minecraft.getInstance().textureManager.bindForSetup(loc);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, loc);
         //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
         GuiComponent.blit(stack, left, top, 0, x, y, sizeX, sizeY, 256, 256);
     }

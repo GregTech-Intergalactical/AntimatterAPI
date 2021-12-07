@@ -80,7 +80,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return (int)( 1D - stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap);
+        return (int)(13.0f* (stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap));
     }
 
     @Nonnull

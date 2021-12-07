@@ -10,6 +10,7 @@ import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
 import net.minecraft.core.Registry;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -24,7 +25,7 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
     protected Inventory playerInv;
     protected int invSize;
     public final GuiInstance handler;
-    public final Set<ContainerListener> listeners = new ObjectOpenHashSet<>();
+    public final Set<ServerPlayer> listeners = new ObjectOpenHashSet<>();
     private final MenuType<?> containerType;
 
     public AntimatterContainer(IGuiHandler handler, MenuType<?> containerType, int windowId, Inventory playerInv, int invSize) {
@@ -36,19 +37,7 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
     }
 
     @Override
-    public void addSlotListener(ContainerListener listener) {
-        this.listeners.add(listener);
-        super.addSlotListener(listener);
-    }
-
-    @Override
-    public void removeSlotListener(ContainerListener listener) {
-        super.removeSlotListener(listener);
-        this.listeners.remove(listener);
-    }
-
-    @Override
-    public Set<ContainerListener> listeners() {
+    public Set<ServerPlayer> listeners() {
         return listeners;
     }
 
@@ -67,6 +56,8 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
     @Override
     public void broadcastChanges() {
         super.broadcastChanges();
+        //NOTE: event to add player listener is fired after first sync, so check if the player exists.
+        if (listeners().size() == 0) return;
         source().update();
     }
 

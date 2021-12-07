@@ -77,7 +77,6 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     public ItemFluidCell(String domain, Material material, int capacity) {
         super(domain, "cell_".concat(material.getId()));
-        Data.EMPTY_CELLS.add(this);
         AntimatterTextureStitcher.addStitcher(t -> {
             t.accept(new ResourceLocation(domain, "item/other/" + getId() + "_cover"));
             t.accept(new ResourceLocation(domain, "item/other/" + getId() + "_fluid"));
@@ -353,11 +352,12 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
     //BlockState p_175711_, Level p_175712_, BlockPos p_175713_, Player p_175714_, InteractionHand p_175715_, ItemStack p_175716_
     public static InteractionResult interactWithCauldron(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, ItemStack stack) {
         // if the bucket is empty, try filling from the cauldron
+        if (world.isClientSide) return InteractionResult.PASS;
         ItemFluidCell cell = (ItemFluidCell) stack.getItem();
         FluidStack fluid = cell.getFluid(stack);
         int level = state.getValue(LayeredCauldronBlock.LEVEL);
 
-        if (state.getBlock() instanceof LayeredCauldronBlock cauldron) {
+        if (state.getBlock() instanceof AbstractCauldronBlock cauldron) {
             // if empty, try emptying
             if (level < 3 && !cell.hasFluid(stack)) {
                 // empty cauldron logic

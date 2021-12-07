@@ -15,6 +15,8 @@ import net.minecraft.data.HashCache;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 
 import java.util.HashMap;
@@ -34,6 +36,11 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
+    }
+
+    @Override
+    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<Fluid> p_126563_) {
+        return this.builders.computeIfAbsent(p_126563_.getName(), (p_176838_) -> new Tag.Builder());
     }
 
     @Override

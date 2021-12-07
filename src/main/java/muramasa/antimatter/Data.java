@@ -70,8 +70,6 @@ public class Data {
 
     public static final net.minecraft.world.level.material.Material WRENCH_MATERIAL = new net.minecraft.world.level.material.Material(MaterialColor.METAL, false, true, true, true, false, false, PushReaction.NORMAL);
 
-    //CELLS
-    public final static Set<ItemFluidCell> EMPTY_CELLS = new HashSet<>();
 
     //Item Types
     public static MaterialTypeItem<?> DUST = new MaterialTypeItem<>("dust", 2, true, Ref.U);

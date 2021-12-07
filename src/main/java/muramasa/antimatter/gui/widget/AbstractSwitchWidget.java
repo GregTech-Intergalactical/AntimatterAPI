@@ -7,6 +7,7 @@ import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public abstract class AbstractSwitchWidget extends ButtonWidget {
@@ -51,8 +52,8 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bindForSetup(res);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, res);
         RenderSystem.disableDepthTest();
         boolean mouseOver = isInside(mouseX, mouseY);
         if (body == null) {
@@ -68,7 +69,7 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
             int xTex = body.getX();
             int yTex = body.getY();
             float f = isSwitched() ? 1.0F : mouseOver ? 0.75F : 0.5F;
-            RenderSystem.clearColor(f, f, f, 1.0F);
+            RenderSystem.setShaderColor(f, f, f, 1.0F);
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), xTex, yTex, body.getW(), body.getH(), 256, 256);
         }
         RenderSystem.enableDepthTest();

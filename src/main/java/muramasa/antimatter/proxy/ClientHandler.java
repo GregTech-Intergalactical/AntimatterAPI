@@ -22,6 +22,7 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.registration.IColorHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
@@ -63,6 +64,16 @@ public class ClientHandler implements IProxyHandler {
         IEventBus forge = MinecraftForge.EVENT_BUS;
 
         forge.register(MaterialType.class);
+        forge.addListener(AntimatterDynamics::recipeEvent);
+        forge.addListener(AntimatterDynamics::tagsEvent);
+    }
+
+    public static boolean isLocal() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) return true;
+        ClientPacketListener listener =  mc.getConnection();
+        if (listener == null) return true;
+        return listener.getConnection().isMemoryConnection();
     }
 
     // Called before resource registration is performed.

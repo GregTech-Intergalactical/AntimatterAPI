@@ -249,7 +249,7 @@ public class MultiMachineInfoPage {
         RenderSystem.enableTexture();
 
         RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        RenderSystem.clearColor(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
     }
 
     public boolean handleClick(double mouseX, double mouseY, int mouseButton) {

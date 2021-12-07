@@ -7,6 +7,7 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -49,8 +50,9 @@ public class BackgroundWidget extends Widget {
     @OnlyIn(Dist.CLIENT)
     @Override
     protected void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
-        RenderSystem.clearColor(1, 1, 1, 1);
-        Minecraft.getInstance().textureManager.bindForSetup(loc);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, loc);
         //AbstractGui.blit(stack, left, top, x, y, sizeX, sizeY);
         GuiComponent.blit(stack, left, top, x, y, sizeX, sizeY, this.guiXSize, this.guiYSize);
     }

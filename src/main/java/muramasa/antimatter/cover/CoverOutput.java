@@ -109,12 +109,12 @@ public class CoverOutput extends CoverInput {
         if (event.getFactory() == GuiEvents.ITEM_EJECT) {
             ejectItems = !ejectItems;
             processItemOutput();
-            Utils.markTileForNBTSync(tile);
+            tile.sidedSync(false);
         }
         if (event.getFactory() == GuiEvents.FLUID_EJECT) {
             ejectFluids = !ejectFluids;
             processFluidOutput();
-            Utils.markTileForNBTSync(tile);
+            tile.sidedSync(false);
         }
     }
 

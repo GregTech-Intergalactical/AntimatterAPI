@@ -19,6 +19,7 @@ import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
@@ -35,8 +36,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -58,7 +62,7 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, IColorHandler, SimpleWaterloggedBlock, ISharedAntimatterObject {
+public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic implements IItemBlockProvider, EntityBlock, IColorHandler, SimpleWaterloggedBlock, ISharedAntimatterObject {
 
     protected T type;
     protected PipeSize size;
@@ -118,17 +122,17 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         float offset = 0.0625f * size.ordinal();
         VoxelShape shape = Shapes.create(size.getAABB());
         if ((which & (1 << 0)) > 0)
-            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0, 0.5625 + offset));
         if ((which & (1 << 1)) > 0)
-            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.5625 + offset, 0.4375 - offset, 0.5625 + offset, 1, 0.5625 + offset));
         if ((which & (1 << 2)) > 0)
-            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
+            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0));
         if ((which & (1 << 3)) > 0)
-            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
+            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.4375 - offset, 0.5625 + offset, 0.5625 + offset, 0.5625 + offset, 1));
         if ((which & (1 << 4)) > 0)
-            shape = Shapes.or(shape, Shapes.box(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.create(0.4375 - offset, 0.4375 - offset, 0.4375 - offset, 0, 0.5625 + offset, 0.5625 + offset));
         if ((which & (1 << 5)) > 0)
-            shape = Shapes.or(shape, Shapes.box(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
+            shape = Shapes.or(shape, Shapes.create(0.5625 + offset, 0.4375 - offset, 0.4375 - offset, 1, 0.5625 + offset, 0.5625 + offset));
         return shape;
     }
 
@@ -174,8 +178,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         return pipe;
     }
 */
-    public Tag<Block> getHarvestTool(BlockState state) {
-        return Data.WRENCH.getToolType();
+    public AntimatterToolType getToolType(BlockState state) {
+        return Data.WRENCH;
     }
 
     @Override // Used to set connection for sides where neighbor has pre-set connection
@@ -280,7 +284,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                     return InteractionResult.PASS;
                 }
             }
-            if (getHarvestTool(state).equals(type.getToolType())) {
+            if (getToolType(state).equals(type)) {
                 Direction side = Utils.getInteractSide(hit);
                 if (tile.blocksSide(side)) return InteractionResult.CONSUME;
                 tile.toggleConnection(side);
@@ -294,20 +298,20 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         if (context instanceof EntityCollisionContext cont) {
             Player player = (Player) cont.getEntity();
-            if (Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType(), Data.SCREWDRIVER.getToolType())) {
+            if (player != null && Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(state), Data.CROWBAR, Data.SCREWDRIVER)) {
                 return Shapes.block();
             }
-            if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
+            if (player != null && !player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
                 return Shapes.block();
             }
             BlockPipe<?> pipe = null;
-            if (player.getMainHandItem().getItem() instanceof PipeItemBlock) {
+            if (player != null && player.getMainHandItem().getItem() instanceof PipeItemBlock) {
                 pipe = ((PipeItemBlock) player.getMainHandItem().getItem()).getPipe();
             }
-            if (player.getOffhandItem().getItem() instanceof PipeItemBlock) {
+            if (player != null && player.getOffhandItem().getItem() instanceof PipeItemBlock) {
                 pipe = ((PipeItemBlock) player.getOffhandItem().getItem()).getPipe();
             }
-            if (pipe != null && getClass().isInstance(pipe)) {
+            if (getClass().isInstance(pipe)) {
                 return Shapes.block();
             }
         }
@@ -483,5 +487,25 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState fluidstate = context.getLevel().getFluidState(context.getClickedPos());
         return super.defaultBlockState().setValue(WATERLOGGED, fluidstate.getType() == Fluids.WATER);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        if (state.getValue(COVERED)) {
+            return type.getCoveredType().create(pos, state);
+        } else {
+            return type.getTileType().create(pos, state);
+
+        }
+    }
+
+    @Nullable
+    @Override
+    public <TILE extends BlockEntity> BlockEntityTicker<TILE> getTicker(Level level, BlockState state, BlockEntityType<TILE> type) {
+        if (state.getValue(COVERED)) {
+            return TileEntityTickable::commonTick;
+        }
+        return null;
     }
 }

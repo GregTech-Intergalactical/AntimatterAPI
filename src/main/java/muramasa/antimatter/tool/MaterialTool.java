@@ -299,7 +299,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         long currentEnergy = getCurrentEnergy(stack);
         if (currentEnergy > 0) {
             double maxAmount = getMaxEnergy(stack), difference = maxAmount - currentEnergy;
-            return (int) (difference / maxAmount);
+            return (int)( 13*(difference / maxAmount));
         }
         return super.getBarWidth(stack);
     }

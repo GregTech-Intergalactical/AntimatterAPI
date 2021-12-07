@@ -11,7 +11,7 @@ public class RenderStateHelper {
         int i = (colorValue & 16711680) >> 16;
         int j = (colorValue & 65280) >> 8;
         int k = (colorValue & 255);
-        RenderSystem.clearColor(i / 255.0f, j / 255.0f, k / 255.0f, opacity / 255.0f);
+        RenderSystem.setShaderColor(i / 255.0f, j / 255.0f, k / 255.0f, opacity / 255.0f);
     }
 
     public static void disableLightmap() {

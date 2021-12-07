@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile;
 
+import muramasa.antimatter.tile.pipe.ITickablePipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -42,6 +43,8 @@ public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEnt
     public static <T extends BlockEntity> void commonTick(Level level, BlockPos pos, BlockState state, T tile) {
         if (tile instanceof TileEntityTickable tick) {
             tick.tick(level, pos, state);
+        } else if (tile instanceof ITickablePipe pipe) {
+            pipe.tick();
         }
     }
 

@@ -1,17 +1,21 @@
 package muramasa.antimatter.common.event;
 
+import dev.latvian.mods.kubejs.player.InventoryListener;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
+import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -22,6 +26,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -34,12 +39,20 @@ import static muramasa.antimatter.Data.NULL;
 public class CommonEvents {
 
     @SubscribeEvent
+    public static void onContainerOpen(PlayerContainerEvent.Open ev) {
+        if (ev.getPlayer() instanceof ServerPlayer player) {
+            if (ev.getContainer() instanceof IAntimatterContainer container) {
+                container.listeners().add(player);
+            }
+        }
+    }
+
+    @SubscribeEvent
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent e) {
         if (!AntimatterConfig.GAMEPLAY.PLAY_CRAFTING_SOUNDS) return;
         Container inv = e.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
-            if (inv.getItem(i).getItem() instanceof IAntimatterTool) {
-                IAntimatterTool tool = (IAntimatterTool) inv.getItem(i).getItem();
+            if (inv.getItem(i).getItem() instanceof IAntimatterTool tool) {
                 SoundEvent type = tool.getAntimatterToolType().getUseSound();
                 if (type != null) {
                     e.getPlayer().playSound(type, 0.75F, 0.75F);
@@ -53,9 +66,7 @@ public class CommonEvents {
         ItemStack left = event.getLeft();
         ItemStack right = event.getRight();
         if (left.getItem() == right.getItem()) {
-            if (left.getItem() instanceof IAntimatterTool && right.getItem() instanceof IAntimatterTool) {
-                IAntimatterTool leftTool = (IAntimatterTool) left.getItem();
-                IAntimatterTool rightTool = (IAntimatterTool) right.getItem();
+            if (left.getItem() instanceof IAntimatterTool leftTool && right.getItem() instanceof IAntimatterTool rightTool) {
                 if (leftTool.getPrimaryMaterial(left) != rightTool.getPrimaryMaterial(right) || leftTool.getSecondaryMaterial(left) != rightTool.getSecondaryMaterial(right)) {
                     event.setCanceled(true);
                 }

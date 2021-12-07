@@ -2,10 +2,7 @@ package muramasa.antimatter.client.scene;
 
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Vector3f;
 import muramasa.antimatter.client.RenderStateHelper;
 import muramasa.antimatter.client.glu.GLU;
@@ -264,7 +261,7 @@ public abstract class WorldSceneRenderer {
                         setDefaultRenderLayerState(layer);
                     }
                     BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-     //               buffer.begin(GL11.GL_QUADS, DefaultVertexFormat.BLOCK);
+                    buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLOCK);
                     BlockRenderDispatcher blockrendererdispatcher = mc.getBlockRenderer();
 
                     for (BlockPos pos : renderedBlocks) {
@@ -279,7 +276,7 @@ public abstract class WorldSceneRenderer {
                         if (state.getRenderShape() != RenderShape.INVISIBLE && ItemBlockRenderTypes.canRenderInLayer(state, layer)) {
                             matrixstack.pushPose();
                             matrixstack.translate(pos.getX(), pos.getY(), pos.getZ());
-      //                      blockrendererdispatcher.renderModel(state, pos, world, matrixstack, buffer, false, random, modelData);
+                            blockrendererdispatcher.renderBatched(state, pos, world, matrixstack, buffer, false, random, modelData);
                             matrixstack.popPose();
                         }
                     }
@@ -304,7 +301,7 @@ public abstract class WorldSceneRenderer {
     }
 
     public static void setDefaultRenderLayerState(RenderType layer) {
-        RenderSystem.clearColor(1, 1, 1, 1);
+        RenderSystem.setShaderColor(1, 1, 1, 1);
         if (layer == RenderType.translucent()) { // SOLID
             RenderSystem.enableBlend();
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
