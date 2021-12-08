@@ -198,7 +198,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     //GT
-    implementation fg.deobf("com.github.GregTech-Intergalactical:TesseractAPI:${tesseract_version}")
+    //implementation fg.deobf("com.github.GregTech-Intergalactical:TesseractAPI:${tesseract_version}")
+    implementation project(path: ':TesseractAPI')
 
     //JEI
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
