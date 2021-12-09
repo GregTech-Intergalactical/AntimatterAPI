@@ -9,11 +9,13 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,10 +26,12 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Set;
 
-public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
+public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, EntityBlock {
 
     public BlockEntityType<?> TYPE;
 
@@ -66,8 +70,8 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
     @SuppressWarnings("unchecked")
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.BLOCK_ENTITIES) {
-            // ((IForgeRegistry<Block>)registry).register(this);
-            TYPE = BlockEntityType.Builder.of((a,b) -> new TileEntityFakeBlock(this, a, b), Data.PROXY_INSTANCE).build(null);
+            TYPE = new BlockEntityType<>((a,b) -> new TileEntityFakeBlock(this,a,b), Set.of(this), null).setRegistryName(new ResourceLocation(getDomain(), getId()));
+            ((IForgeRegistry<BlockEntityType<?>>)registry).register(TYPE);
             AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), TYPE);
         }
     }
@@ -88,5 +92,11 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider {
             return fake.getState().getDrops(builder);
         }
         return super.getDrops(state, builder);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new TileEntityFakeBlock(this, pos, state);
     }
 }

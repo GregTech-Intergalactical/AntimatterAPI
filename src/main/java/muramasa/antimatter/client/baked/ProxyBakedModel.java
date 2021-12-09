@@ -44,7 +44,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
             tileData = new ModelDataMap.Builder().build();
         }
         TileEntityFakeBlock fake = (TileEntityFakeBlock) world.getBlockEntity(pos);
-        if (fake.getState() == null) {
+        if (fake == null || fake.getState() == null) {
             return tileData;
         }
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fake.getState());
