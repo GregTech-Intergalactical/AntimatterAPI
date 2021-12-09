@@ -74,6 +74,11 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
     }
 
     @Override
+    protected void recipeFailure() {
+        
+    }
+
+    @Override
     public CompoundTag serializeNBT() {
         CompoundTag nbt = super.serializeNBT();
         nbt.putInt("burn", burnDuration);
