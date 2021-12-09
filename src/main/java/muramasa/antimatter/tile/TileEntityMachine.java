@@ -340,7 +340,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                 state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, side);
             }
             getLevel().setBlockAndUpdate(getBlockPos(), state);
-            refreshCaps();
+            invalidateCaps();
 
             return true;
         }
@@ -512,18 +512,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return true;
     }
 
-    public void refreshCaps() {
-        if (isServerSide()) {
-            dispatch.refresh();
-        }
-    }
-
-    public void refreshCap(Capability<?> cap) {
-        if (isServerSide()) {
-            dispatch.refresh(cap);
-        }
-    }
-
     public void invalidateCaps() {
         if (isServerSide()) {
             dispatch.invalidate();
@@ -614,6 +602,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
         return tag;
     }
+
 
     @Override
     public List<String> getInfo() {

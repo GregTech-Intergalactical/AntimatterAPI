@@ -47,6 +47,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         super(domain, name);
         setTile(TileEntityBasicMultiMachine::new);
         addFlags(MULTI, COVERABLE);
+        setClientTick();
         custom();
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((CoverFactory[]) null);

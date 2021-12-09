@@ -97,8 +97,6 @@ public class TileEntityDigitalTransformer<T extends TileEntityDigitalTransformer
                     h.setInputAmperage(1);
                     h.setOutputVoltage(amperage);
                 }
-
-                this.refreshCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
             });
         }
     }

@@ -240,11 +240,6 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         return LazyOptional.of(() -> new FluidHandlerSidedWrapper(this, tile.coverHandler.map(c -> c).orElse(null), side));
     }
 
-    @Override
-    public void refresh() {
-        Tesseract.FLUID.refreshNode(tile.getLevel(), tile.getBlockPos().asLong());
-    }
-
     public IFluidHandler getGuiHandler() {
         return new IFluidHandler() {
 

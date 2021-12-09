@@ -34,9 +34,6 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 super.onMachineEvent(event, data);
-                if (event == ContentEvent.ENERGY_SLOT_CHANGED) {
-                    this.tile.refreshCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
-                }
             }
         });
     }
@@ -54,14 +51,9 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
                 // Check all items that match the given voltage, and allow either input/output.
                 long out = h.getChargeableItems().stream().filter(item -> (item.getOutputVoltage() == 0 || item.getOutputVoltage() == e.getOutputVoltage())).mapToLong(IEnergyHandler::getOutputAmperage).sum();
                 long in = h.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == e.getInputVoltage())).mapToLong(IEnergyHandler::getInputAmperage).sum();
-                long oldOut = e.getOutputAmperage();
-                long oldIn = e.getInputAmperage();
                 // 2 amps per battery input.
                 e.setInputAmperage(in);
                 e.setOutputAmperage(out);
-                if (oldOut != out || oldIn != in) {
-                    this.refreshCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
-                }
             });
         });
     }

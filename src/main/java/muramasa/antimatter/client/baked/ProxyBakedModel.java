@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
@@ -20,6 +21,8 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.ForgeModelBakery;
@@ -54,7 +57,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         Material first = mats.iterator().next();
         tileData = model.getModelData(world, pos, state, tileData);
         BlockState cState = Blocks.AIR.defaultBlockState();
-        TileEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(((ChunkReaderAccessor)world).getLevel(), fake.getBlockPos(), TileEntityBasicMultiMachine.class);
+        TileEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(getWorld(world), fake.getBlockPos(), TileEntityBasicMultiMachine.class);
         if (machine != null) {
             cState = machine.getBlockState();
         }
@@ -63,6 +66,15 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         return tileData;
     }
 
+    protected Level getWorld(BlockAndTintGetter reader) {
+        if (reader instanceof Level l) {
+            return l;
+        }
+        if (reader instanceof RenderChunkRegion region) {
+            return ((ChunkReaderAccessor)region).getLevel();
+        };
+        return null;
+    }
 
     @Override
     public TextureAtlasSprite getParticleIcon(@Nonnull IModelData data) {

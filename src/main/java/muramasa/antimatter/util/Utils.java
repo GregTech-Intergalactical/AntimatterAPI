@@ -1099,10 +1099,10 @@ public class Utils {
         return getLocalizedType(type);
     }
 
-    public static boolean doesStackHaveToolTypes(ItemStack stack, Tag<Block>... types) {
+    public static boolean doesStackHaveToolTypes(ItemStack stack, Tag<Item>... types) {
         if (!stack.isEmpty()) {
-            for (Tag<Block> type : types) {
-                if (stack.getItem().getTags().contains(((Tag.Named<Block>)type).getName())) {
+            for (Tag<Item> type : types) {
+                if (stack.getItem().getTags().contains(((Tag.Named<Item>)type).getName())) {
                     return true;
                 }
             }
@@ -1111,25 +1111,17 @@ public class Utils {
     }
 
     public static boolean doesStackHaveToolTypes(ItemStack stack, AntimatterToolType... types) {
-        List<Tag<Block>> ret = new ObjectArrayList<>();
+        List<Tag<Item>> ret = new ObjectArrayList<>();
         for (AntimatterToolType ty : types) {
-            ret.addAll(ty.getActualTags());
+            ret.add(ty.getForgeTag());
         }
-        Tag<Block>[] t =  (Tag<Block>[]) ret.toArray(new Tag[0]);
+        Tag<Item>[] t =  (Tag<Item>[]) ret.toArray(new Tag[0]);
         return doesStackHaveToolTypes(stack,t);
     }
 
-    public static boolean isPlayerHolding(Player player, InteractionHand hand, Tag<Block>... types) {
-        return doesStackHaveToolTypes(player.getItemInHand(hand), types);
-    }
 
     public static boolean isPlayerHolding(Player player, InteractionHand hand, AntimatterToolType... t) {
-        List<Tag<Block>> ret = new ObjectArrayList<>();
-        for (AntimatterToolType tt : t) {
-            ret.addAll(tt.getActualTags());
-        }
-        Tag<Block>[] tag = (Tag<Block>[]) ret.toArray(new Tag[0]);
-        return isPlayerHolding(player,hand, tag);
+        return doesStackHaveToolTypes(player.getItemInHand(hand), t);
     }
 
     @Nullable

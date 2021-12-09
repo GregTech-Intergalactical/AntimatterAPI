@@ -29,7 +29,7 @@ import tesseract.api.gt.IGTCable;
 import tesseract.api.gt.IGTNode;
 import tesseract.graph.Graph.INodeGetter;
 
-public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
+public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IGTNode>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 
     private long holder;
 
@@ -51,7 +51,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     protected void register() {
-        Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());
+        Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, getter(), isConnector());
     }
 
     public INodeGetter<IGTNode> getter() {
@@ -86,9 +86,8 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        if (this.isConnector()) {
-            Tesseract.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());
-        }
+        Tesseract.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());
+
     }
 
     @Override
@@ -136,19 +135,14 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
-    public LazyOptional<? extends IEnergyHandler> forSide(Direction side) {
+    public LazyOptional<? extends IGTNode> forSide(Direction side) {
         return LazyOptional.of(() -> new TesseractGTCapability<>(this, side, !isConnector(), (stack,in,out,simulate) -> 
         this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
     }
 
     @Override
-    public LazyOptional<? extends IEnergyHandler> forNullSide() {
+    public LazyOptional<? extends IGTNode> forNullSide() {
         return forSide(null);
-    }
-
-    @Override
-    public void refresh() {
-
     }
 
     @Override

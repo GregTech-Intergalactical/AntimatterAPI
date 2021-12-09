@@ -54,15 +54,13 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        if (this.isConnector()) {
-            Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());        
-        }
+        Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());
     }
 
 
     @Override
     protected void register() {
-        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());        
+        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, getter(), isConnector());
     }
 
     public INodeGetter<IFluidNode> getter() {
@@ -182,11 +180,6 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public LazyOptional<? extends IFluidHandler> forNullSide() {
         return forSide(null);
-    }
-
-    @Override
-    public void refresh() {
-
     }
 
     @Override

@@ -86,11 +86,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     @Override
     public void onLoad() {
         if (isServerSide()) {
-            if (this.isConnector()) {
-                register();
-            } else if (this.level != null) {
-                
-            }
+            register();
         }
     }
 
@@ -113,9 +109,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         coverHandler.ifPresent(PipeCoverHandler::onRemove);
         if (isServerSide()) {
             dispatch.invalidate();
-            if (isConnector()) {
-                deregisterTesseract();
-            }
+            deregisterTesseract();
         }
     }
 
@@ -209,8 +203,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     public void refreshConnection() {
         sidedSync(true);
 
-        if (isServerSide() && isConnector()) {
-            if (deregisterTesseract()) {
+        if (isServerSide()) {
+            if (deregisterTesseract() || !isConnector()) {
                 register();
             }
         }
@@ -237,7 +231,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     public boolean validate(Direction dir) {
         if (!connects(dir)) return false;
         BlockState state = level.getBlockState(worldPosition.relative(dir));
-        if (state.getBlock() instanceof BlockPipe && !state.getValue(BlockPipe.TICKING)) {
+        if (state.getBlock() instanceof BlockPipe /*&& !state.getValue(BlockPipe.TICKING)*/) {
             return false;
         }
         return !blocksSide(dir);

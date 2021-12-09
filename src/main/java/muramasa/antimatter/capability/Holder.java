@@ -68,12 +68,6 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         }
     }
 
-    public void refresh() {
-        if (!isPresent()) return;
-        if (resolved == null) get();
-        resolved.refresh();
-    }
-
     @Nullable
     public T get() {
         if (flag) {

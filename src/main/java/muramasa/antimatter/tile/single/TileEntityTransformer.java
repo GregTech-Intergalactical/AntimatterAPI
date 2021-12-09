@@ -81,7 +81,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
                 temp = h.getOutputVoltage();
                 h.setOutputVoltage(h.getInputVoltage());
                 h.setInputVoltage(temp);
-                this.refreshCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
+                this.invalidateCap(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY);
                 player.sendMessage(new TextComponent((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"), player.getUUID());
             });
             return InteractionResult.SUCCESS;
