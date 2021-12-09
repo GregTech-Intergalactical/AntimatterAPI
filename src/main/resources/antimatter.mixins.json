@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "muramasa.antimatter.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "antimatter.refmap.json",
   "client": [
     "ChunkReaderAccessor",

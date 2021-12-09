@@ -157,8 +157,8 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     }
 
     @Override
-    public CompoundTag save(CompoundTag compound) {
-        return writeTag(compound, false);
+    protected void saveAdditional(CompoundTag nbt) {
+        writeTag(nbt, false);
     }
 
     private CompoundTag writeTag(CompoundTag compound, boolean send) {
