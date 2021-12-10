@@ -265,7 +265,10 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public void onLoad() {
         super.onLoad();
-        StructureCache.add(level, worldPosition, getMachineType().getStructure(getMachineTier()).allPositions(this));
+        Structure struc = getMachineType().getStructure(getMachineTier());
+        if (struc != null) {
+            StructureCache.add(level, worldPosition, getMachineType().getStructure(getMachineTier()).allPositions(this));
+        }
     }
 
     /**

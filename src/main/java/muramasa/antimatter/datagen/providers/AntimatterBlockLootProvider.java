@@ -77,10 +77,10 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             AntimatterAPI.all(BlockPipe.class, this::add);
             AntimatterAPI.all(BlockStorage.class, this::add);
             AntimatterAPI.all(BlockStone.class, b -> {
-                if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
+                /*if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
                     tables.put(b, b2 -> createSingleItemTableWithSilkTouch(b, ((CobbleStoneType) b.getType()).getBlock("cobble")));
                     return;
-                }
+                }*/
                 this.add(b);
             });
             AntimatterAPI.all(BlockStoneSlab.class, b -> tables.put(b, BlockLoot::createSlabItemTable));
@@ -105,10 +105,6 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             Path path = getPath(generator.getOutputFolder(), e.getKey().getRegistryName());
             IDataProvider.save(GSON, cache, LootTableManager.toJson(e.getValue().apply(e.getKey()).setParameterSet(LootParameterSets.BLOCK).build()), path);
         }*/
-    }
-
-    private static Path getPath(Path root, ResourceLocation id) {
-        return root.resolve("data/" + id.getNamespace() + "/loot_tables/blocks/" + id.getPath() + ".json");
     }
 
     protected void addToFortune(BlockOre block) {

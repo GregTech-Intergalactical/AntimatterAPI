@@ -54,7 +54,6 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'java'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 version = "${minecraft_version}-${mod_version}"
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -63,38 +62,26 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 //Print out JVM information so that we know what version is running. Extreamly useful for people to know when helping you.
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-        resources {
-            include '**/**'
-            srcDirs += 'src/generated/resources'
-            exclude '.cache'
-        }
-    }
-}
-def shouldCheckEnv() {
-    return findProject(':TesseractAPI') != null
-}
-def isVSTask() {
-    return gradle.startParameter.taskNames[0].equals("genVSCodeRuns")
+
+boolean hasTesseract = findProject(':TesseractAPI') != null
+
+if (hasTesseract) {
+    println('TesseractAPI in local workspace')
 }
 
-def getEnv() {
-    boolean vscode = isVSTask()
+String getenv() {
+    boolean vscode = gradle.startParameter.taskNames[0].equals("genVSCodeRuns")  || gradle.startParameter.taskNames[0].equals(":genVSCodeRuns")
+    boolean hasTesseract = findProject(':TesseractAPI') != null
+
     String resourcePath = vscode ? 'bin/main' : 'build/resources/main'
     String codePath = vscode ? 'bin/main' : 'build/classes/java/main'
     String s = "antimatter%%${project.file(resourcePath)}" + getPathSeparator() + "antimatter%%${project.file(codePath)}"
-    if (findProject(':TesseractAPI') != null) {
+    if (hasTesseract) {
         s += getPathSeparator() + "tesseract%%${project(':TesseractAPI').file(resourcePath)}" + getPathSeparator() + "tesseract%%${project(':TesseractAPI').file(codePath)}"
     }
     return s
 }
 import org.apache.tools.ant.taskdefs.condition.Os
-import org.gradle.api.JavaVersion
-import org.gradle.api.tasks.compile.JavaCompile
 
 def getPathSeparator() {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -103,6 +90,12 @@ def getPathSeparator() {
     return ":"
 }
 
+
+apply plugin: 'org.spongepowered.mixin'
+
+mixin {
+    add sourceSets.main, 'antimatter.refmap.json'
+}
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -126,15 +119,19 @@ minecraft {
             arg "-mixin.config=antimatter.mixins.json"
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
+            if (isWorkspace) {
+                environment('MOD_CLASSES', this.getenv())
+            }
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-            if (shouldCheckEnv()) {
-                 environment 'MOD_CLASSES', getEnv()
-            }
             mods {
                 antimatter {
                     source sourceSets.main
+                }
+                if (hasTesseract) {
+                    tesseract {
+                        source project(':TesseractAPI').sourceSets.main
+                    }
                 }
             }
         }
@@ -149,20 +146,24 @@ minecraft {
 
             // Disable GUI by default, the IDE console can be used to enter commands
             arg '-nogui'
-
+            if (isWorkspace) {
+                environment('MOD_CLASSES', this.getenv())
+            }
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
             arg "-mixin.config=antimatter.mixins.json"
-            if (shouldCheckEnv()) {
-                 environment 'MOD_CLASSES', getEnv()
-            }
             mods {
                 antimatter {
                     source sourceSets.main
                 }
+                if (hasTesseract) {
+                    tesseract {
+                        source project(':TesseractAPI').sourceSets.main
+                    }
+                }
             }
         }
-
+/*
         data {
             workingDirectory project.file('run')
 
@@ -176,20 +177,21 @@ minecraft {
             property 'fml.earlyprogresswindow', 'false'
 
             arg "-mixin.config=antimatter.mixins.json"
-            if (shouldCheckEnv()) {
-                 environment 'MOD_CLASSES', getEnv()
-            }
             args '--mod', 'antimatter', '--all', '--output', project.file('src/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
 
             mods {
                 antimatter {
                     source sourceSets.main
                 }
+                if (hasTesseract) {
+                    tesseract {
+                        source project(':TesseractAPI').sourceSets.main
+                    }
+                }
             }
-        }
+        }*/
     }
 }
-
 
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
@@ -198,24 +200,27 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     //GT
-    //implementation fg.deobf("com.github.GregTech-Intergalactical:TesseractAPI:${tesseract_version}")
-    implementation project(path: ':TesseractAPI')
+    if (hasTesseract) {
+       implementation project(path: ':TesseractAPI')
+    } else {
+        implementation fg.deobf("com.github.GregTech-Intergalactical:TesseractAPI:${tesseract_version}")
+    }
 
     //JEI
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
     //MIXIN
-    annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
+    if (System.getProperty('idea.sync.active') != 'true') {
+        annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
+    }
+
 
     /** KUBEJS STUFF **/
     implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
     implementation fg.deobf("curse.maven:architectury-forge-419699:${architectury_file}")
     implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
 //    implementation fg.deobf("curse.maven:top-245211:${top_file}")
-
-    //compile 'de.speiger:Primitive-Collections:0.4.0'
-    //shadowCommon 'de.speiger:Primitive-Collections:0.4.0'
 }
 
 // Example configuration to allow publishing using the maven-publish task
@@ -223,12 +228,11 @@ dependencies {
 //jar.finalizedBy('reobfJar')
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 
-afterEvaluate { project ->
-    project.tasks.publishToMavenLocal {
-        onlyIf {
-            return rootProject.name == "${modid}"
-        }
-    }
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    archiveBaseName.set(project.archivesBaseName)
+    archiveVersion.set("${project.version}")
+    archiveClassifier.set('sources')
 }
 jar {
     zip64 true
@@ -240,34 +244,32 @@ jar {
                 "Implementation-Title": project.name,
                 "Implementation-Version": project.version,
                 "Implementation-Vendor": "GregTech Intergalactical",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs': 'antimatter.mixins.json'
+            ])
     }
 }
-publish {
-    dependsOn 'reobfJar', 'build'
-}
+//jar.finalizedBy('reobfJar')
 
+artifacts {
+    archives jar, sourcesJar
+}
 publishing {
+    tasks.publish.dependsOn 'build'
     publications {
-        forge(MavenPublication) {
-            //artifactId = archivesBaseName
+        mavenJava(MavenPublication) {
             artifact jar
+            artifact sourcesJar
         }
     }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
-//MIXIN
-apply plugin: 'org.spongepowered.mixin'
 
-mixin {
-    add sourceSets.main, "antimatter.refmap.json"
-    config 'antimatter.mixins.json'
+    repositories {
+        if (project.hasProperty('mavendir')) {
+            maven { url mavendir }
+        }
+    }
 }
+
 
 //jar.finalizedBy('reobfJar')
 /*configurations.compile {

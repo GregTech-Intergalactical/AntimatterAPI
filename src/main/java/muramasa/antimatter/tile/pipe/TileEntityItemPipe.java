@@ -38,25 +38,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     protected void register() {
-        Tesseract.ITEM.registerConnector(getLevel(), getBlockPos().asLong(), this, getter(), isConnector());
-    }
-
-    public INodeGetter<IItemNode> getter() {
-        return (pos, dir, cb) -> {
-            BlockEntity tile = getLevel().getBlockEntity(BlockPos.of(pos));
-            if (tile == null) {
-                return null;
-            }
-            LazyOptional<IItemHandler> h = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir);
-            if (h.isPresent()) {
-                if (cb != null) h.addListener(t -> cb.run());
-                if (h.map(t -> t instanceof IItemNode).orElse(false)) {
-                    return (IItemNode) h.resolve().get();
-                }
-                return new ItemTileWrapper(tile, h.orElse(null));
-            }
-            return null;
-        };
+        Tesseract.ITEM.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
@@ -67,7 +49,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        Tesseract.ITEM.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());
+        Tesseract.ITEM.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override
