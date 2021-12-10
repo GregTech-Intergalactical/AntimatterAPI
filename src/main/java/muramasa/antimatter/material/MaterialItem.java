@@ -74,7 +74,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
             if (Screen.hasShiftDown()) {
                 tooltip.add(new TextComponent(getMaterial().getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA));
             } else {
-                tooltip.add(new TextComponent("Hold Shift to show formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
+                tooltip.add(new TranslatableComponent("antimatter.tooltip.formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
             }
         }
         if (type == Data.ROCK) {

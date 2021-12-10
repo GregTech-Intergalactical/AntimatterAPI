@@ -53,6 +53,8 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 version = "${minecraft_version}-${mod_version}"
@@ -68,7 +70,7 @@ boolean hasTesseract = findProject(':TesseractAPI') != null
 if (hasTesseract) {
     println('TesseractAPI in local workspace')
 }
-
+boolean isWorkspace = hasTesseract
 String getenv() {
     boolean vscode = gradle.startParameter.taskNames[0].equals("genVSCodeRuns")  || gradle.startParameter.taskNames[0].equals(":genVSCodeRuns")
     boolean hasTesseract = findProject(':TesseractAPI') != null
@@ -90,12 +92,6 @@ def getPathSeparator() {
     return ":"
 }
 
-
-apply plugin: 'org.spongepowered.mixin'
-
-mixin {
-    add sourceSets.main, 'antimatter.refmap.json'
-}
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -193,6 +189,7 @@ minecraft {
     }
 }
 
+
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And       it's patches will be applied.
@@ -228,12 +225,16 @@ dependencies {
 //jar.finalizedBy('reobfJar')
 // However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
 
+mixin {
+    add sourceSets.main, 'antimatter.refmap.json'
+}
+/*
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
     archiveBaseName.set(project.archivesBaseName)
     archiveVersion.set("${project.version}")
     archiveClassifier.set('sources')
-}
+}*/
 jar {
     zip64 true
     manifest {
@@ -251,22 +252,21 @@ jar {
 }
 //jar.finalizedBy('reobfJar')
 
+
 artifacts {
-    archives jar, sourcesJar
+    archives jar//, sourcesJar
 }
 publishing {
     tasks.publish.dependsOn 'build'
     publications {
         mavenJava(MavenPublication) {
             artifact jar
-            artifact sourcesJar
+          //  artifact sourcesJar
         }
     }
 
     repositories {
-        if (project.hasProperty('mavendir')) {
-            maven { url mavendir }
-        }
+        maven { url "file:///${project.projectDir}/mcmodsrepo" }
     }
 }
 

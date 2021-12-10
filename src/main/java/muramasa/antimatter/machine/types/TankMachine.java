@@ -26,7 +26,7 @@ public class TankMachine extends Machine<TankMachine> {
     @Override
     protected void setupGui() {
         super.setupGui();
-        addGuiCallback(t -> t.addWidget(TankRenderWidget.build()));
+        addGuiCallback(t -> t.addWidget(TankRenderWidget.build().onlyIf(h -> h.handler instanceof TileEntityTank)));
     }
 
     public static class TankRenderWidget extends InfoRenderWidget<TankRenderWidget> {

@@ -196,6 +196,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("machine.voltage.in", "Voltage in");
         add("machine.power.capacity", "Capacity");
         add("generic.amp", "Amperage");
+        add("antimatter.tooltip.formula", "Hold Shift to show formula.");
         add("generic.tier", "Tier");
         add("generic.voltage", "Voltage");
         //Is this loss?

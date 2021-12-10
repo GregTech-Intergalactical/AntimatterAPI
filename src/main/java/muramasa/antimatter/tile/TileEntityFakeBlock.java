@@ -20,6 +20,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -37,7 +38,7 @@ import java.util.Set;
 
 public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
 
-    private BlockState state;
+    private BlockState state = Blocks.AIR.defaultBlockState();
 
     public final Set<TileEntityBasicMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
     private Map<Direction, ICover> covers = new EnumMap<>(Direction.class);

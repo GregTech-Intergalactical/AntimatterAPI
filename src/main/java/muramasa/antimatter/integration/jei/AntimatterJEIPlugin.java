@@ -76,6 +76,8 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
         if (REGISTRY.containsKey(new ResourceLocation(map.getDomain(), map.getId())) && !override) {
             //    Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
+            RegistryValue value = REGISTRY.get(map.getLoc());
+            if (value.model == null) value.model = model;
             return;
         }
         REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map, map.getGui() == null ? gui : map.getGui(), tier, model));//new Tuple<>(map, new Tuple<>(gui, tier)));
@@ -171,18 +173,14 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
-        REGISTRY.forEach((id, tuple) -> {
-            if (tuple.model == null) return;
-            Optional<Machine<?>> machine = Machine.get(tuple.model.getPath(), tuple.model.getNamespace());
-            machine.ifPresent(mach -> {
-                mach.getTiers().forEach(t -> {
-                    ItemStack stack = new ItemStack(mach.getItem(t));
-                    if (!stack.isEmpty()) {
-                        registration.addRecipeCatalyst(stack, id);
-                    } else {
-                        Antimatter.LOGGER.error("machine " + tuple.model + " has an empty item. Did you do the machine correctly?");
-                    }
-                });
+        AntimatterAPI.all(Machine.class, machine -> {
+           RecipeMap<?> map = machine.getRecipeMap();
+           if (map == null) return;
+            machine.getTiers().forEach(t -> {
+                ItemStack stack = new ItemStack(machine.getItem((Tier)t));
+                if (!stack.isEmpty()) {
+                    registration.addRecipeCatalyst(stack, map.getLoc());
+                }
             });
         });
     }

@@ -15,6 +15,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -187,7 +188,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         Material mat = tooltipCache.get(ev.getItemStack().getItem());
         if (mat == null) return;
         if (!Screen.hasShiftDown()) {
-            ev.getToolTip().add(new TextComponent("Hold Shift to show formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
+            ev.getToolTip().add(new TranslatableComponent("antimatter.tooltip.formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
         } else {
             ev.getToolTip().add(new TextComponent(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA));
         }
