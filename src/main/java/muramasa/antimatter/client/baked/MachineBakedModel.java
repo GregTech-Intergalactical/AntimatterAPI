@@ -122,6 +122,9 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
     public IModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, IModelData d) {
         final IModelData data = super.getModelData(world, pos, state, d);
         TileEntityMachine<?> machine = (TileEntityMachine<?>) world.getBlockEntity(pos);
+        if (machine == null) {
+            throw new RuntimeException("Machine Block Entity Missing? Corrupted world state!");
+        }
         ICover[] covers = machine.coverHandler.map(t -> t.getAll()).orElse(new ICover[]{ICover.empty,ICover.empty,ICover.empty,ICover.empty,ICover.empty,ICover.empty});
         Machine<?> m = machine.getMachineType();
         Function<Direction, Texture> mText = a -> {

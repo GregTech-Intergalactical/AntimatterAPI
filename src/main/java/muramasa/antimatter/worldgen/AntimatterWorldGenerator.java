@@ -6,6 +6,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
+import muramasa.antimatter.mixin.PlacedFeatureAccessor;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.*;
@@ -18,7 +19,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.OreFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -115,7 +118,7 @@ public class AntimatterWorldGenerator {
         // AntimatterAPI.runLaterCommon(() -> {
         //  for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
         for (BlockState state : states) {
-            builder.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(null, featureToRemove, state));
+            builder.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(((PlacedFeatureAccessor)f.get()).getFeature().get(), featureToRemove, state));
         }
         //  }
         // });
@@ -142,6 +145,9 @@ public class AntimatterWorldGenerator {
      * Check with BlockState in a feature if it is disabled
      */
     public static boolean isDecoratedFeatureDisabled(@Nonnull ConfiguredFeature<?, ?> configuredFeature, @Nonnull Feature<?> featureToRemove, @Nonnull BlockState state) {
+        if (configuredFeature.config instanceof OreConfiguration config) {
+            return config.targetStates.stream().anyMatch(t -> t.state == state);
+        }
         /*if (configuredFeature.config instanceof Feat) {
             FeatureConfiguration config = configuredFeature.config;
             Feature<?> feature = null;

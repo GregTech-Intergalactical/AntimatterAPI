@@ -20,7 +20,7 @@ public abstract class AntimatterFeature<F extends FeatureConfiguration> extends 
 
     public AntimatterFeature(Codec<F> codec, Class<?> c) {
         super(codec);
-        AntimatterAPI.register(AntimatterFeature.class, c.getName(), getDomain(), this);
+        AntimatterAPI.register(AntimatterFeature.class, getId(), getDomain(), this);
         this.setRegistryName(new ResourceLocation(getDomain(), getId()));
     }
 
