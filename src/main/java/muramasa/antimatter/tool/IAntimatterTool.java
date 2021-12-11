@@ -150,7 +150,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (secondary != NULL)
             tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary").append(":").append(secondary.getDisplayName().getString()));
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
-            tooltip.add(new TextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
     }
 

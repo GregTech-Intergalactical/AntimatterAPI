@@ -211,7 +211,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.pressure", "Pressure");
         add("antimatter.tooltip.capacity", "Capacity");
         add("antimatter.tooltip.max_temperature", "Max Temperature");
-
+        add("antimatter.tooltip.energy", "Energy");
     }
 
     private void processAntimatterTranslations() {
