@@ -205,6 +205,13 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("message.discharge.off", "Discharge disabled");
         add("item.charge", "Energy");
         add("item.reusable", "Reusable");
+        add("antimatter.tooltip.material_primary", "Primary Material");
+        add("antimatter.tooltip.material_secondary", "Secondary Material");
+        add("antimatter.gui.show_recipes", "Show Recipes");
+        add("antimatter.tooltip.pressure", "Pressure");
+        add("antimatter.tooltip.capacity", "Capacity");
+        add("antimatter.tooltip.max_temperature", "Max Temperature");
+
     }
 
     private void processAntimatterTranslations() {

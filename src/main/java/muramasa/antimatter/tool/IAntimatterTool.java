@@ -20,6 +20,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionResult;
@@ -145,9 +146,9 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
-        tooltip.add(new TextComponent("Primary Material: " + primary.getDisplayName().getString()));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary").append(":").append(primary.getDisplayName().getString()));
         if (secondary != NULL)
-            tooltip.add(new TextComponent("Secondary Material: " + secondary.getDisplayName().getString()));
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary").append(":").append(secondary.getDisplayName().getString()));
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(new TextComponent("Energy: " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());

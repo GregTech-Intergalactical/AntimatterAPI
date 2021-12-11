@@ -11,6 +11,7 @@ import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int4;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import static muramasa.antimatter.gui.ICanSyncData.SyncDirection.SERVER_TO_CLIENT;
 
@@ -95,7 +96,7 @@ public class ProgressWidget extends Widget {
     public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
         super.mouseOver(stack, mouseX, mouseY, partialTicks);
         if (isInside(mouseX, mouseY)) {
-            renderTooltip(stack, new TextComponent("Show Recipes"), mouseX, mouseY);
+            renderTooltip(stack, new TranslatableComponent("antimatter.gui.show_recipes"), mouseX, mouseY);
         }
     }
 

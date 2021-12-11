@@ -5,6 +5,7 @@ import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -41,9 +42,9 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TextComponent("Pressure: " + getType().getPressure(getSize())));
-        tooltip.add(new TextComponent("Capacity: " + getType().getCapacity(getSize())));
-        tooltip.add(new TextComponent("Max temperature: " + getType().getTemperature()));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.pressure").append(": " +getType().getPressure(getSize())));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.capacity").append(": "+ getType().getCapacity(getSize())));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.max_temperature").append(": " +getType().getTemperature()));
     }
 
     @Override
