@@ -178,26 +178,25 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
                             // same minimum heights would fail as well.  This prevents that, giving each orevein a unique height each pass through here.
                             VeinLayerResult placementResult = vein.generateChunkified(world, new XSTR(oreVeinSeed ^ vein.primary.hashCode()), chunkX * 16, chunkZ * 16, oreSeedX * 16, oreSeedZ * 16);
                             switch (placementResult) {
-                                case ORE_PLACED:
+                                case ORE_PLACED -> {
                                     if (Ref.debugOreVein)
                                         Antimatter.LOGGER.info("Added near oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getLevel().dimension().location());
                                     VALID_VEINS.put(oreVeinSeed, vein);
                                     oreVeinFound = true;
-                                    break;
-                                case NO_ORE_IN_BOTTOM_LAYER:
-                                    placementAttempts++;
-                                    break; // Should do retry in this case until out of chances
-                                case NO_OVERLAP:
+                                }
+                                case NO_ORE_IN_BOTTOM_LAYER -> placementAttempts++;
+                                // Should do retry in this case until out of chances
+                                case NO_OVERLAP -> {
                                     if (Ref.debugOreVein)
                                         Antimatter.LOGGER.info("Added far oreVeinSeed=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getLevel().dimension().location());
                                     VALID_VEINS.put(oreVeinSeed, vein);
                                     oreVeinFound = true;
-                                    break;
-                                case NO_OVERLAP_AIR_BLOCK:
+                                }
+                                case NO_OVERLAP_AIR_BLOCK -> {
                                     if (Ref.debugOreVein)
                                         Antimatter.LOGGER.info("No overlap and air block in test spot=" + oreVeinSeed + " " + vein.getId() + " tries at oremix=" + i + " placementAttempts=" + placementAttempts + " dimension=" + world.getLevel().dimension().location());
                                     placementAttempts++;
-                                    break; // Should do retry in this case until out of chances
+                                } // Should do retry in this case until out of chances
                             }
                             break; // Try the next orevein
                         }

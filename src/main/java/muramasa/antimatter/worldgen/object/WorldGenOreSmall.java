@@ -8,9 +8,12 @@ import net.minecraft.world.level.Level;
 
 public class WorldGenOreSmall extends WorldGenBase<WorldGenOreSmall> {
 
-    private int minY, maxY, amount;
-    private Material material;
+    private final int minY;
+    private final int maxY;
+    private final int amount;
+    private final Material material;
 
+    @SafeVarargs
     public WorldGenOreSmall(String id, int minY, int maxY, int amount, Material material, ResourceKey<Level>... dims) {
         super(id, WorldGenOreSmall.class, dims);
         this.minY = minY;
@@ -19,6 +22,7 @@ public class WorldGenOreSmall extends WorldGenBase<WorldGenOreSmall> {
         this.material = material;
     }
 
+    @SafeVarargs
     public WorldGenOreSmall(int minY, int maxY, int amount, Material material, ResourceKey<Level>... dims) {
         this(material.getId(), minY, maxY, amount, material, dims);
     }

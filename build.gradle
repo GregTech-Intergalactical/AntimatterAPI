@@ -257,7 +257,7 @@ artifacts {
     archives jar//, sourcesJar
 }
 publishing {
-    tasks.publish.dependsOn 'build'
+    tasks.publish.dependsOn 'build', 'reobfJar'
     publications {
         mavenJava(MavenPublication) {
             artifact jar

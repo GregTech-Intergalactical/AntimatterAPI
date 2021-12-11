@@ -11,10 +11,12 @@ import java.util.Random;
 
 public class StoneLayerOre {
 
-    private Material material;
+    private final Material material;
     private StoneType stoneType;
     private BlockState oreState, oreSmallState;
-    private int chance, minY, maxY;
+    private final int chance;
+    private final int minY;
+    private final int maxY;
 
     public StoneLayerOre(Material material, int chance, int minY, int maxY) {
         this.material = material;
