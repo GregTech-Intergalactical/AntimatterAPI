@@ -69,9 +69,9 @@ public class AntimatterToolType implements ISharedAntimatterObject {
      * @param craftingDurability durability that is lost on 'getContainerItem' (when item is crafted as well as this tool is in the crafting matrix)
      * @param baseAttackDamage   base attack damage that would be applied to the item's attributes
      * @param baseAttackSpeed    base attack speed that would be applied to the item's attributes
-     * @return a brand new AntimatterToolType for enjoyment
+     * @param vanillaType          if the mining type uses vanilla resource location for tool tag.
      */
-    public AntimatterToolType(String domain, String id, int useDurability, int attackDurability, int craftingDurability, float baseAttackDamage, float baseAttackSpeed) {
+    public AntimatterToolType(String domain, String id, int useDurability, int attackDurability, int craftingDurability, float baseAttackDamage, float baseAttackSpeed, boolean vanillaType) {
         if (domain.isEmpty()) Utils.onInvalidData("AntimatterToolType registered with no domain name!");
         this.domain = domain;
         if (id.isEmpty()) Utils.onInvalidData("AntimatterToolType registered with an empty ID!");
@@ -95,14 +95,18 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.forgeTag = TagUtils.getForgeItemTag("tools/".concat(id));
         this.useAction = UseAnim.NONE;
         this.toolClass = MaterialTool.class;
-        this.TOOL_TYPE = TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "mineable/".concat(id)));
+        if (vanillaType) {
+            this.TOOL_TYPE = TagUtils.getBlockTag(new ResourceLocation("minecraft","mineable/".concat(id)));
+        } else {
+            this.TOOL_TYPE = TagUtils.getBlockTag(new ResourceLocation(Ref.ID, "mineable/".concat(id)));
+        }
         this.TOOL_TYPES.add(this.TOOL_TYPE);
         setBrokenItems(ImmutableMap.of(id, (i) -> ItemStack.EMPTY));
         AntimatterAPI.register(AntimatterToolType.class, this);
     }
 
     public AntimatterToolType(String domain, String id, AntimatterToolType inheritType) {
-        this(domain, id, inheritType.useDurability, inheritType.attackDurability, inheritType.craftingDurability, inheritType.baseAttackDamage, inheritType.baseAttackSpeed);
+        this(domain, id, inheritType.useDurability, inheritType.attackDurability, inheritType.craftingDurability, inheritType.baseAttackDamage, inheritType.baseAttackSpeed, false);
     }
 
     /* IAntimatterTool Instantiations */
