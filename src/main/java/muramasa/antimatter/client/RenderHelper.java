@@ -146,6 +146,8 @@ public class RenderHelper {
                 }
             }
         }
+        RenderSystem.setShaderColor(1,1,1,1);
+
     }
 
     //Credit: JEI. Some alterations.
