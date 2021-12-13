@@ -4,6 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.pipe.TileEntityCable;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 import tesseract.api.gt.GTController;
+import tesseract.api.gt.GTHolder;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -82,15 +84,15 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     @Override
     public void entityInside(BlockState state, Level worldIn, BlockPos pos, Entity entityIn) {
         super.entityInside(state, worldIn, pos, entityIn);
+        if (worldIn.isClientSide) return;
         if (this.insulated) return;
-        if (!(entityIn instanceof LivingEntity)) return;
-        LivingEntity entity = (LivingEntity) entityIn;
-        ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(worldIn, pos.asLong());
-        if (!(controller instanceof GTController)) return;
-        GTController gt = (GTController) controller;
-        long amps = gt.cableFrameAverage(pos.asLong());
-        if (amps > 0) {
-            entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
+        if (entityIn instanceof LivingEntity entity) {
+            if (worldIn.getBlockEntity(pos) instanceof TileEntityCable cable) {
+                long amps = GTHolder.getAmperage(cable.getHolder());
+                if (amps > 0) {
+                    entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
+                }
+            }
         }
     }
 /*
