@@ -86,8 +86,7 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
         if (handler == null) return Collections.emptyList();
         BakedModel bakedModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(tile.getBlockState());
 
-        if (bakedModel instanceof MachineBakedModel) {
-            MachineBakedModel model = (MachineBakedModel) bakedModel;
+        if (bakedModel instanceof MachineBakedModel model) {
             for (Direction dir : Ref.DIRS) {
                 BakedModel ibm = model.getModel(tile.getBlockState(), dir, tile.getMachineState());
                 if (!(ibm instanceof BakedMachineSide)) continue;
