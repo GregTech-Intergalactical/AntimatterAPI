@@ -47,6 +47,7 @@ repositories {
         }
     }
 }
+def isCI = System.getenv("GITHUB_ACTION")
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -256,17 +257,31 @@ jar {
 artifacts {
     archives jar//, sourcesJar
 }
+
+if (isCI) {
+    println("In CI mode")
+}
 publishing {
     tasks.publish.dependsOn 'build', 'reobfJar'
     publications {
         mavenJava(MavenPublication) {
             artifact jar
-          //  artifact sourcesJar
         }
     }
 
     repositories {
-        maven { url "file:///${project.projectDir}/mcmodsrepo" }
+        if (isCI) {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/GregTech-Intergalactical/AntimatterAPI"
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        } else {
+            maven { url "file:///${project.projectDir}/mcmodsrepo"}
+        }
     }
 }
 
