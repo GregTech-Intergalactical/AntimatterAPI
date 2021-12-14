@@ -13,6 +13,7 @@ import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.mixin.LevelRendererAccessor;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -22,6 +23,7 @@ import muramasa.antimatter.tool.behaviour.BehaviourExtendedHighlight;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
@@ -49,6 +51,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import java.util.Collection;
 import java.util.List;
@@ -96,20 +99,16 @@ public class ClientEvents {
         for (BlockPos nextPos : positions) {
             double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
             VoxelShape shape = world.getBlockState(nextPos).getShape(world, nextPos, CollisionContext.of(entity));
-            Matrix4f matrix4f = matrix.last().pose();
             matrix.pushPose();
-            shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
-                builderLines.vertex(matrix4f, (float) (minX + modX), (float) (minY + modY), (float) (minZ + modZ)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-                builderLines.vertex(matrix4f, (float) (maxX + modX), (float) (maxY + modY), (float) (maxZ + modZ)).color(0.0F, 0.0F, 0.0F, 0.4F).endVertex();
-            });
+            LevelRendererAccessor.renderShape(matrix, builderLines, shape, modX, modY, modZ, 0,0,0,0.4f);
             matrix.popPose();
         }
         if (MC.gameMode.isDestroying()) {
             for (BlockPos nextPos : positions) {
                 double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
                 //TODO 1.18
-                int partialDamage = 1;
-                //int partialDamage = (int) (ObfuscationReflectionHelper.findField(MultiPlayerGameMode.class, "destroyProgress").getFloat(MC.gameMode) * 10) - 1; // destroyProgress = curBlockDamageMP
+                //int partialDamage = 1;
+                int partialDamage = (int) (ObfuscationReflectionHelper.findField(MultiPlayerGameMode.class, "destroyProgress").getFloat(MC.gameMode) * 10) - 1; // destroyProgress = curBlockDamageMP
                 matrix.pushPose();
                 matrix.translate(modX, modY, modZ);
                 if (partialDamage == -1)

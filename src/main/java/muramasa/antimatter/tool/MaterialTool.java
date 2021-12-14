@@ -118,8 +118,23 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
 
     @Override
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
+        AntimatterToolType type = this.getAntimatterToolType();
+        if (type.getEffectiveMaterials().contains(state.getMaterial())) {
+            return true;
+        }
+        if (type.getEffectiveBlocks().contains(state.getBlock())) {
+            return true;
+        }
         return state.is(getAntimatterToolType().getToolType()) && net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(getTier(stack), state);
     }
+
+    @Override
+    public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
+        super.onUseTick(p_41428_, p_41429_, p_41430_, p_41431_);
+    }
+
+
+
     /*
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
@@ -175,7 +190,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        return Utils.isToolEffective(this, state) ? getTier(stack).getSpeed() : 1.0F;
+        return isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() : 1.0F;
     }
 
     @Override

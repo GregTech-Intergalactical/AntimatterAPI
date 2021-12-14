@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 public class AntimatterToolType implements ISharedAntimatterObject {
 
     private final String domain, id;
-    private final Tag.Named<Block> TOOL_TYPE;
+    private Tag.Named<Block> TOOL_TYPE;
     private final Set<Tag<Block>> TOOL_TYPES = new ObjectOpenHashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
     private final Set<net.minecraft.world.level.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
@@ -198,6 +198,12 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
+    public AntimatterToolType setType(AntimatterToolType tag) {
+        this.TOOL_TYPES.remove(this.TOOL_TYPE);
+        this.TOOL_TYPE = tag.getToolType();
+        this.TOOL_TYPES.add(this.TOOL_TYPE);
+        return this;
+    }
     public AntimatterToolType setTag(ResourceLocation loc) {
         this.tag = TagUtils.getItemTag(loc);
         this.forgeTag = TagUtils.getForgeItemTag("tools/" + loc.getPath());

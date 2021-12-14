@@ -835,7 +835,7 @@ public class Utils {
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
     public static boolean isToolEffective(IAntimatterTool tool, BlockState state) {
-        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) || tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial()) || tool.getActualTags().stream().anyMatch(t -> t.contains(state.getBlock()));
+        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) || tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial());
     }
 
     /**
