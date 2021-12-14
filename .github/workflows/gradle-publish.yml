@@ -5,12 +5,14 @@
 # This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
 
-name: AntimatterAPI
-
+name: AntimatterAPI Nightly
 on:
-  release:
-    types: [created]
-
+  push:
+    branches:
+    - 1.18
+  pull_request:
+    branches:
+    - 1.18
 jobs:
   build:
 
@@ -33,13 +35,18 @@ jobs:
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
         arguments: build
+      env:
+        HASH: ${GITHUB_SHA::8}
 
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
-    - name: Publish to GitHub Packages
-      uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
       with:
-        arguments: publish
+        name: Antimatter JAR
+        path: build/libs
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        HASH: ${GITHUB_SHA::8}
+
