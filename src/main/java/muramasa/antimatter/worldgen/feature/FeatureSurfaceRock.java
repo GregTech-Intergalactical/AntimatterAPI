@@ -53,7 +53,7 @@ public class FeatureSurfaceRock extends AntimatterFeature<NoneFeatureConfigurati
         for (Tuple<BlockPos, Material> r : rocks) {
             stoneType = WorldGenHelper.STONE_MAP.get(world.getBlockState(r.getA().below()));
             if (stoneType == null)
-                stoneType = StoneType.get("stone"); //TODO change to direct ref when vanilla types are in AM
+                stoneType = Data.STONE;
             BlockState rockState = Data.ROCK.get().get(r.getB(), stoneType).asState();
             if (world.getBlockState(r.getA()) == WorldGenHelper.WATER_STATE)
                 rockState = WorldGenHelper.waterLogState(rockState);

@@ -2,6 +2,8 @@ package muramasa.antimatter.pipe;
 
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -46,6 +48,14 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         tooltip.add(new TranslatableComponent("antimatter.tooltip.pressure").append(": " +getType().getPressure(getSize())));
         tooltip.add(new TranslatableComponent("antimatter.tooltip.capacity").append(": "+ getType().getCapacity(getSize())));
         tooltip.add(new TranslatableComponent("antimatter.tooltip.max_temperature").append(": " +getType().getTemperature()));
+
+        if (!Screen.hasShiftDown()) {
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
+        } else {
+            tooltip.add(new TextComponent("----------"));
+            tooltip.add(new TranslatableComponent("antimatter.pipe.fluid.info").withStyle(ChatFormatting.DARK_AQUA));
+            tooltip.add(new TextComponent("----------"));
+        }
     }
 
     @Override

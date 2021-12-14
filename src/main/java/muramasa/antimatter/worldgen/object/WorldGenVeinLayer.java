@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
+import static muramasa.antimatter.Data.ROCK;
 import static muramasa.antimatter.worldgen.VeinLayerResult.*;
 
 /**
@@ -291,14 +292,14 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         //Place small ores for the vein
         if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) {
             int nSmallOres = (eX - wX) * (sZ - nZ) * this.density / 20 * AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
-            generateSmallOres(world, rand, posX, posZ, nSmallOres);
+            generateMarkers(world, rand, posX, posZ, nSmallOres, 7);
         }
         // Something (at least the bottom layer must have 1 block) must have been placed, return true
         return ORE_PLACED;
     }
 
-    //Small ores are placed in the whole chunk in which the vein appears.
-    private void generateSmallOres(LevelAccessor world, XSTR rand, int posX, int posZ, int nSmallOres) {
+    //Small ores are placed in the whole chunk in which the vein appears. Rocks are placed randomly on top.
+    private void generateMarkers(LevelAccessor world, XSTR rand, int posX, int posZ, int nSmallOres, int nRocks) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int nSmallOresCount = 0; nSmallOresCount < nSmallOres; nSmallOresCount++) {
             int tX = rand.nextInt(16) + posX;
@@ -324,6 +325,20 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
             tY = rand.nextInt(190) + 10; // Y height can vary from 10 to 200 for small ores.
             pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], Data.ORE_SMALL);
+        }
+        for (int rockCount = 0; rockCount < nRocks; rockCount++) {
+            int tX = rand.nextInt(16) + posX;
+            int tZ = rand.nextInt(16) + posZ;
+            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0], AntimatterConfig.WORLD.ORE_VEIN_ROCK_CHANCE);
+            tX = rand.nextInt(16) + posX;
+            tZ = rand.nextInt(16) + posZ;
+            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.WORLD.ORE_VEIN_ROCK_CHANCE*3/2);
+            tX = rand.nextInt(16) + posX;
+            tZ = rand.nextInt(16) + posZ;
+            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.WORLD.ORE_VEIN_ROCK_CHANCE*2);
+            tX = rand.nextInt(16) + posX;
+            tZ = rand.nextInt(16) + posZ;
+            WorldGenHelper.addRock(world, pos.set(tX, 0, tZ), materials[0],  AntimatterConfig.WORLD.ORE_VEIN_ROCK_CHANCE*5/2);
         }
     }
 

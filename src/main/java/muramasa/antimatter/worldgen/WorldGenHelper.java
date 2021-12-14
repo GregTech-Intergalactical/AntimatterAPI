@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -105,6 +106,9 @@ public class WorldGenHelper {
     public static boolean addRockRaw(LevelAccessor world, BlockPos pos, Material material, int chance) {
         if (world.getRandom().nextInt(chance) != 0) return false;
         FeatureSurfaceRock.ROCKS.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ObjectArrayList<>()).add(new Tuple<>(pos, material));
+        if (true) {
+            Antimatter.LOGGER.info("Adding rock at pos=" + pos + " with material " + material);
+        }
         return true;
     }
 

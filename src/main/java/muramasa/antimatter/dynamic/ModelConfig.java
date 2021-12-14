@@ -3,6 +3,7 @@ package muramasa.antimatter.dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
@@ -21,7 +22,7 @@ public class ModelConfig {
 
     }
 
-    public ModelConfig set(int[] config) {
+    public ModelConfig set(BlockPos pos, int[] config) {
         this.config = config;
         return this;
     }

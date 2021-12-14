@@ -7,6 +7,7 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -117,6 +118,14 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         tooltip.add(new TranslatableComponent("generic.amp").append(": ").append(new TextComponent("" + this.type.getAmps(this.size)).withStyle(ChatFormatting.GREEN)));
         tooltip.add(new TranslatableComponent("generic.voltage").append(": ").append(new TextComponent("" + this.type.getTier().getVoltage()).withStyle(ChatFormatting.BLUE)));
         tooltip.add(new TranslatableComponent("generic.loss").append(": ").append(new TextComponent("" + this.type.getLoss()).withStyle(ChatFormatting.BLUE)));
+
+        if (!Screen.hasShiftDown()) {
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.more").withStyle(ChatFormatting.DARK_AQUA));
+        } else {
+            tooltip.add(new TextComponent("----------"));
+            tooltip.add(new TranslatableComponent("antimatter.pipe.cable.info").withStyle(ChatFormatting.DARK_AQUA));
+            tooltip.add(new TextComponent("----------"));
+        }
     }
 
     //    @Override

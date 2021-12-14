@@ -9,9 +9,12 @@ import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.dynamic.ModelConfigRandom;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +24,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,13 +32,14 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED;
 
-public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedBlock, ISharedAntimatterObject  {
+public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedBlock, ISharedAntimatterObject, IColorHandler {
 
     protected static final int SURFACE_ROCK_MODEL_COUNT = 7;
     protected static final int[] CONFIG_ARRAY = new int[SURFACE_ROCK_MODEL_COUNT];
@@ -53,8 +58,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false));
 
         //BlockDynamic
-        config = new ModelConfigRandom().set(CONFIG_ARRAY);
-        //TODO allow AntimatterModelLoader to load this data from the dynamic model json
+        config = new ModelConfigRandom().set(new BlockPos(0,0,0),CONFIG_ARRAY);
         shapes.put(0, Block.box(5.0D, 0.0D, 5.0D, 11.0D, 2.0D, 11.0D));
         shapes.put(1, Block.box(6.0D, 0.0D, 6.0D, 10.0D, 3.0D, 10.0D));
         shapes.put(2, Block.box(4.0D, 0.0D, 4.0D, 10.0D, 1.0D, 10.0D));
@@ -82,11 +86,20 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     @Override
     public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
         if (neighbor.above().equals(pos) && !world.getBlockState(neighbor).canOcclude()) {
-            //world.destroyBlock(pos, true);
+            if (world instanceof Level level && !level.isClientSide) {
+                Utils.breakBlock(level, null, ItemStack.EMPTY, pos, 0);
+            }
         }
     }
 
-//    @Override
+
+
+    @Override
+    public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
+        return material.getRGB();
+    }
+
+    //    @Override
 //    public void getDrops(NonNullList<ItemStack> drops, IBlockReader world, BlockPos pos, BlockState state, int fortune) {
 //        TileEntity tile = Utils.getTile(world, pos);
 //        if (tile instanceof TileEntityMaterial) {
@@ -105,7 +118,10 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         playerDestroy(world, player, pos, state, world.getBlockEntity(pos), player.getItemInHand(hand));
         dropResources(state, world, pos, null,player, ItemStack.EMPTY);
        // if (dropResources(state, world, pos, null,player, true, null)) {
-        player.addItem(Data.ROCK.get(material, 1));
+        if (!player.addItem(Data.ROCK.get(material, 1))) {
+            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, Data.ROCK.get(material, 1)));
+        }
+        world.removeBlock(pos, true);
         return InteractionResult.SUCCESS;
   //      }
         //return InteractionResult.FAIL;
@@ -118,7 +134,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
 
     @Override
     public ModelConfig getConfig(BlockState state, BlockGetter world, BlockPos.MutableBlockPos mut, BlockPos pos) {
-        return config;
+        return config.set(pos, config.getConfig());
     }
 
     @Override

@@ -192,9 +192,9 @@ public class AntimatterConfig {
                     .worldRestart()
                     .defineInRange("ORE_VEIN_CHANCE", 100, 1, Integer.MAX_VALUE);
 
-            ORE_VEIN_ROCK_CHANCE = builder.comment("Chance of ore veins having surface rocks - Default: 128")
+            ORE_VEIN_ROCK_CHANCE = builder.comment("Chance of ore veins having surface rocks - Default: 256")
                     .translation(Ref.ID + ".config.ore_vein_rock_chance")
-                    .defineInRange("ORE_VEIN_ROCK_CHANCE", 128, 1, Integer.MAX_VALUE);
+                    .defineInRange("ORE_VEIN_ROCK_CHANCE", 256, 1, Integer.MAX_VALUE);
 
             ORE_VEIN_FIND_ATTEMPTS = builder.comment("Control number of attempts to find a valid ore vein,",
                     "Generally this maximum limit isn't hit, as selecting a vein is performant - Default : 64")

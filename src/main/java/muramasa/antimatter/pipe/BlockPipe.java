@@ -340,7 +340,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 }
             }
         }
-        return config.set(new int[]{getPipeID(ct, 0)});
+        return config.set(pos, new int[]{getPipeID(ct, 0)});
     }
 
     @Override

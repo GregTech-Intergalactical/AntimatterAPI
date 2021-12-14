@@ -48,35 +48,24 @@ public class BlockDynamic extends BlockBasic implements IInfoProvider {
                 ct[0] += 1 << side.get3DDataValue();
             }
         }
-        return config.set(ct[0] == 0 ? DEFAULT_CONFIG : ct);
+        return config.set(pos, ct[0] == 0 ? DEFAULT_CONFIG : ct);
     }
 
     public boolean canConnect(BlockGetter world, BlockState state, @Nullable BlockEntity tile, BlockPos pos) {
         return state.getBlock() == this;
     }
 
-    public VoxelShape getShapeByModelIndex(BlockPos pos) {
-//        if (config.hasModelIndex()) {
-//            VoxelShape shape = shapes.get(config.getModelIndex());
-//            if (shape != null) return shape;
-//        }
-//        return VoxelShapes.fullCube();
-
-        //TODO this is awful, but I'm too sick to figure out why modelIndex is different here vs ModelConfigRandom.getQuads
-        //TODO: I commented this because otherwise it wont load
-        //r.setSeed(getPositionRandom(null, pos));
-        int modelIndex = config.getModelIndex();
-        int index = 0;
-        if (shapes.size() > 0) {
-            index = r.nextInt(shapes.size());
+    public VoxelShape getShapeByModelIndex(ModelConfig config) {
+        if (config.hasModelIndex()) {
+            VoxelShape shape = shapes.get(config.getModelIndex());
+            if (shape != null) return shape;
         }
-
-        return shapes.containsKey(index) ? shapes.get(index) : Shapes.block();
+        return Shapes.block();
     }
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        return getShapeByModelIndex(pos);
+        return getShapeByModelIndex(getConfig(state, world, new BlockPos.MutableBlockPos(pos.getX(), pos.getY(), pos.getZ()), pos));
     }
 
     @Override

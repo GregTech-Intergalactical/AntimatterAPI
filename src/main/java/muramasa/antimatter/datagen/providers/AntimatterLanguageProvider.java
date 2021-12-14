@@ -190,6 +190,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.', '_'), 0));
         });
         customTranslations();
+        pipeTranslations();
     }
 
     protected void customTranslations() {
@@ -197,6 +198,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("machine.power.capacity", "Capacity");
         add("generic.amp", "Amperage");
         add("antimatter.tooltip.formula", "Hold Shift to show formula.");
+        add("antimatter.tooltip.more", "Hold Shift to show more information.");
+        add("antimatter.tooltip.stacks", "Stacks");
         add("generic.tier", "Tier");
         add("generic.voltage", "Voltage");
         //Is this loss?
@@ -212,6 +215,15 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.capacity", "Capacity");
         add("antimatter.tooltip.max_temperature", "Max Temperature");
         add("antimatter.tooltip.energy", "Energy");
+        add("antimatter.tooltip.heat_capacity", "Heat capacity");
+        add("antimatter.tooltip.heat_capacity_total", "Heat capacity (total)");
+    }
+
+    private final void pipeTranslations() {
+        add("antimatter.pipe.cable.info", "Transmits amperages between machines. \nFor each cable the cable loss is subtracted \nfrom the total energy.");
+        add("antimatter.pipe.item.info", "Transfers up to capacity item stacks per tick. \nThis capacity is per stack and not per item transferred.");
+        add("antimatter.pipe.fluid.info", "Transfers up to capacity per tick, with a buffer of 20 times the capacity. \nEvery tick the capacity of the pipe is replenished, up to 20 times. \nThis allows large transfers at once, but \n" +
+                "continuous transfers is limited by capacity");
     }
 
     private void processAntimatterTranslations() {
