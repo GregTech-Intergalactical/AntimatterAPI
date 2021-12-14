@@ -28,9 +28,6 @@ public class Ref {
     public static final String NAME = "AntimatterAPI";
     public static final String SHARED_ID = "antimatter_shared";
 
-    public static final String VERSION = "0.0.1";
-    public static final String DEPENDS = "";
-
     /**
      * Creative Tabs
      **/

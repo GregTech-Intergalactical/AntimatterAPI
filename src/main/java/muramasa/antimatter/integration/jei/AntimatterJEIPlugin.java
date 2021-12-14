@@ -64,7 +64,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     private static final Object2ObjectMap<ResourceLocation, RegistryValue> REGISTRY = new Object2ObjectLinkedOpenHashMap<>();
 
     public AntimatterJEIPlugin() {
-        Antimatter.LOGGER.debug("AntimatterJEIPlugin created");
+        Antimatter.LOGGER.info("Creating AntimatterAPI's JEI Plugin");
     }
 
     @Nonnull

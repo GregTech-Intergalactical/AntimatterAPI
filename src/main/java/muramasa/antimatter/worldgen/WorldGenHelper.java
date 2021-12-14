@@ -106,9 +106,7 @@ public class WorldGenHelper {
     public static boolean addRockRaw(LevelAccessor world, BlockPos pos, Material material, int chance) {
         if (world.getRandom().nextInt(chance) != 0) return false;
         FeatureSurfaceRock.ROCKS.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ObjectArrayList<>()).add(new Tuple<>(pos, material));
-        if (true) {
-            Antimatter.LOGGER.info("Adding rock at pos=" + pos + " with material " + material);
-        }
+        Antimatter.LOGGER.debug("Adding rock at pos=" + pos + " with material " + material);
         return true;
     }
 

@@ -22,7 +22,7 @@ public class MultiMachineInfoCategory implements IRecipeCategory<MultiMachineInf
     private static IGuiHelper guiHelper;
     private final IDrawable background;
     private final IDrawable icon;
-    private static final ResourceLocation UID = new ResourceLocation("gti:multi_machine_info");
+    private static final ResourceLocation UID = new ResourceLocation("gregtech", "multi_machine_info");
     private static final Set<MultiMachineInfoPage> MULTI_MACHINES_PAGES = Sets.newHashSet();
 
     public MultiMachineInfoCategory() {
