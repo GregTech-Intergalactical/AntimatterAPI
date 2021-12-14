@@ -47,9 +47,13 @@ repositories {
         }
     }
 }
-def isCI = System.getenv("GITHUB_ACTION")
+def isCI = true//System.getenv("GITHUB_ACTION")
 def isRELEASE = System.getenv("GITHUB_RELEASE")
-def gitHash = System.getenv("HASH")
+def gitHash() {
+    String hash = System.getenv("GITHUB_SHA")
+    if (hash != null) return hash.substring(0,8)
+    return ""
+}
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
@@ -62,10 +66,10 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 version = "${minecraft_version}-${mod_version}"
 if (isCI) {
-    version = version + "-" + gitHash
+    version = version + "-" + gitHash()
 }
 group = 'com.github.gregtech-intergalactical' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'AntimatterAPI'
+archivesBaseName = "${modid}"
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 //Print out JVM information so that we know what version is running. Extreamly useful for people to know when helping you.

@@ -35,9 +35,6 @@ jobs:
       uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
       with:
         arguments: build
-      env:
-        HASH: ${GITHUB_SHA::8}
-
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
     - name: Upload Artifact
@@ -48,5 +45,3 @@ jobs:
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        HASH: ${GITHUB_SHA::8}
-
