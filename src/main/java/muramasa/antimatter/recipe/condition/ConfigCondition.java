@@ -8,6 +8,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
+// TODO: simpler solution
 public class ConfigCondition implements ICondition {
 
     private static final ResourceLocation NAME = new ResourceLocation(Ref.ID, "config");
@@ -31,12 +32,7 @@ public class ConfigCondition implements ICondition {
         try {
             int lastIndex = this.configName.lastIndexOf('.');
             return Class.forName(this.configName.substring(0, lastIndex)).getField(this.configName.substring(lastIndex + 1)).getBoolean(null);
-        } catch (IllegalAccessException | ClassNotFoundException | NoSuchFieldException e) {
-            e.printStackTrace();
-            return true;
-        } catch (NullPointerException e) {  // Support instance fields?
-            Utils.onInvalidData("For Config Conditionals to work, the conditional field must be set to static!");
-            e.printStackTrace();
+        } catch (IllegalAccessException | ClassNotFoundException | NoSuchFieldException | NullPointerException e) {
             return true;
         }
     }
