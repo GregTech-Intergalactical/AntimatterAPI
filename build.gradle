@@ -47,7 +47,7 @@ repositories {
         }
     }
 }
-def isCI = true//System.getenv("GITHUB_ACTION")
+def isCI = System.getenv("GITHUB_ACTION")
 def isRELEASE = System.getenv("GITHUB_RELEASE")
 def gitHash() {
     String hash = System.getenv("GITHUB_SHA")
