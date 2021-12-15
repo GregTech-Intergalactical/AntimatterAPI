@@ -13,7 +13,7 @@ import net.minecraft.world.level.material.Material;
 
 public class BlockBasic extends Block implements IAntimatterObject, ITextureProvider, IModelProvider {
 
-    protected String domain, id;
+    protected final String domain, id;
 
     public BlockBasic(String domain, String id, Block.Properties properties) {
         super(properties);
@@ -39,7 +39,5 @@ public class BlockBasic extends Block implements IAntimatterObject, ITextureProv
     public Texture[] getTextures() {
         return new Texture[0];
     }
-
-
 
 }
