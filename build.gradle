@@ -55,6 +55,11 @@ def gitHash() {
     return ""
 }
 
+def isAntimatterCI() {
+    String val = System.getenv("GITHUB_WORKFLOW")
+    return val != null && val.toLowerCase().startsWith("antimatter")
+}
+
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
@@ -261,7 +266,7 @@ jar {
             ])
     }
 }
-if (isCI) {
+if (isAntimatterCI()) {
     jar.finalizedBy('reobfJar')
 }
 
@@ -270,7 +275,7 @@ artifacts {
     archives jar//, sourcesJar
 }
 
-if (isCI) {
+if (isAntimatterCI()) {
     println("In CI mode")
 }
 publishing {
