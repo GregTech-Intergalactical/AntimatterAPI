@@ -10,14 +10,22 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Arrays;
 
 public class MaterialTypeBlock<T> extends MaterialType<T> {
 
-    public MaterialTypeBlock(String id, int layers, boolean visible, int unitValue) {
+    public interface BlockSupplier {
+        void createBlocks(String domain, MaterialType<?> type, Material material);
+    }
+
+    private final BlockSupplier supplier;
+
+    public MaterialTypeBlock(String id, int layers, boolean visible, int unitValue, BlockSupplier supplier) {
         super(id, layers, visible, unitValue);
         AntimatterAPI.register(MaterialTypeBlock.class, this);
+        this.supplier = supplier;
     }
 
     public static Container getEmptyBlockAndLog(MaterialType<?> type, IAntimatterObject... objects) {
@@ -27,6 +35,17 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
         return RecipeIngredient.of(getMaterialTag(m), count);
+    }
+
+    @Override
+    public void onRegistryBuild(IForgeRegistry<?> registry) {
+        super.onRegistryBuild(registry);
+        if (doRegister()) {
+            for (Material material : this.materials) {
+                if (!material.enabled) continue;
+                supplier.createBlocks(material.materialDomain(), this, material);
+            }
+        }
     }
 
     public interface IBlockGetter {

@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class AntimatterRegistration {
-    public static Dist side;
 
     @SubscribeEvent
     public static void onRegister(final RegistryEvent.Register<?> e) {
@@ -53,7 +52,7 @@ public final class AntimatterRegistration {
                 if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
                     AntimatterKubeJS.loadStartupScripts();
                 }
-                Data.postInit(side);
+                Data.postInit();
             }
             AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));
             AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(e.getRegistry()));

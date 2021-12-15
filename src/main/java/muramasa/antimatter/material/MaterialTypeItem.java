@@ -6,11 +6,12 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.IForgeRegistry;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
 
     public interface ItemSupplier {
-        MaterialItem supply(String domain, MaterialType<?> type, Material material);
+        void createItems(String domain, MaterialType<?> type, Material material);
     }
 
     private final ItemSupplier itemSupplier;
@@ -18,7 +19,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     public MaterialTypeItem(String id, int layers, boolean visible, int unitValue) {
         super(id, layers, visible, unitValue);
         AntimatterAPI.register(MaterialTypeItem.class, this);
-        this.itemSupplier = MaterialItem::new;
+        this.itemSupplier = (domain, type, material) -> new MaterialItem(domain, type, material);
     }
 
     public MaterialTypeItem(String id, int layers, boolean visible, int unitValue, ItemSupplier itemSupplier) {
@@ -55,5 +56,16 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         if (count < 1)
             Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
         return RecipeIngredient.of(new LazyLoadedValue<>(() -> new ItemStack(get(material), count)), count);
+    }
+
+    @Override
+    public void onRegistryBuild(IForgeRegistry<?> registry) {
+        super.onRegistryBuild(registry);
+        if (doRegister()) {
+            for (Material material : this.materials) {
+                if (!material.enabled) continue;
+                getSupplier().createItems(material.materialDomain(), this, material);
+            }
+        }
     }
 }

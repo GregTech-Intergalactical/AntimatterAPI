@@ -37,7 +37,7 @@ import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTag.HANDLE;
 import static muramasa.antimatter.material.MaterialTag.METAL;
 
-public class Material implements ISharedAntimatterObject, IRegistryEntryProvider {
+public class Material implements ISharedAntimatterObject {
 
     /**
      * Basic Members
@@ -89,7 +89,7 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
      **/
     private IntRange expRange = null;
 
-    private final boolean enabled;
+    public final boolean enabled;
 
     /**
      * Processing Members
@@ -128,21 +128,6 @@ public class Material implements ISharedAntimatterObject, IRegistryEntryProvider
     public Material(String domain, String id, int rgb, TextureSet set, Element element, String... modIds) {
         this(domain, id, rgb, set, modIds);
         this.element = element;
-    }
-
-    @Override
-    public void onRegistryBuild(IForgeRegistry<?> registry) {
-        if (!enabled) return;
-        if (registry == ForgeRegistries.ITEMS) {
-            AntimatterAPI.all(MaterialTypeItem.class).stream().filter(t -> t.allowItemGen(this)).forEach(t -> t.getSupplier().supply(domain, t, this));
-        } else if (registry == ForgeRegistries.BLOCKS) {
-            if (has(BLOCK)) new BlockStorage(domain, this, BLOCK);
-            if (has(FRAME)) new BlockStorage(domain, this, FRAME);
-            if (has(ROCK)) AntimatterAPI.all(StoneType.class, s -> AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(s.getDomain(), this, s)));
-            if (has(ORE)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE));
-            if (has(ORE_SMALL)) AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, this, s, ORE_SMALL));
-            if (has(ORE_STONE)) new BlockOreStone(domain, this);
-        }
     }
 
     @Override

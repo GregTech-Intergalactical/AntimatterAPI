@@ -91,9 +91,8 @@ public final class AntimatterAPI {
         }
         if (o instanceof IAntimatterObject && !((IAntimatterObject) o).shouldRegister())
             return (T) o;
-        Class clazz = c;
-        if (o instanceof ISharedAntimatterObject && getInternal(clazz, id) != null) {
-            return (T) getInternal(clazz, id);
+        if (o instanceof ISharedAntimatterObject && getInternal((Class) c, id) != null) {
+            return (T) getInternal((Class) c, id);
         }
         registerInternal(c, id, o instanceof ISharedAntimatterObject ? null : domain, o);
         if (o instanceof Block && notRegistered(Block.class, id, domain))
@@ -453,7 +452,7 @@ public final class AntimatterAPI {
     /**
      * COREMOD METHOD INSERTION: Runs every time when this is called:
      *
-     * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
+   //  * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
      */
     @SuppressWarnings("unused")
     public static void onNotifyBlockUpdate(Level world, BlockPos pos, BlockState oldState, BlockState newState,

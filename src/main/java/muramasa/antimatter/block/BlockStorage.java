@@ -31,7 +31,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
 
     private static final VoxelShape FRAME_SHAPE = Shapes.box(0.05, 0.0, 0.05, 0.95, 1.0, 0.95);
 
-    public BlockStorage(String domain, Material material, MaterialType<?> type) {
+    public BlockStorage(String domain,  MaterialType<?> type, Material material) {
         super(domain, material, type, Block.Properties.of(net.minecraft.world.level.material.Material.METAL).strength(8.0f).sound(SoundType.METAL));
     }
 

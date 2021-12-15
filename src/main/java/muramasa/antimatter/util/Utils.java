@@ -816,7 +816,7 @@ public class Utils {
         if (world.isClientSide) return false;
         BlockState state = world.getBlockState(pos);
         ServerPlayer serverPlayer = ((ServerPlayer) player);
-        int exp = ForgeHooks.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
+        int exp = ForgeHooks.onBlockBreakEvent(world, player == null ? GameType.DEFAULT_MODE : serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
 
         if (exp == -1) return false;
         stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));

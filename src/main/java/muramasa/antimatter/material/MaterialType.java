@@ -9,6 +9,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
@@ -23,12 +24,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
+public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, IRegistryEntryProvider {
 
     protected final String id;
     protected int unitValue, layers;
@@ -38,7 +40,8 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
     protected T getter;
     protected final BiMap<Material, Item> OVERRIDES = HashBiMap.create();
     protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
-
+    //since we have two instances stored in antimatter.
+    protected boolean hasRegistered;
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {
         this.id = id;
@@ -192,5 +195,16 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject {
         } else {
             ev.getToolTip().add(new TextComponent(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA));
         }
+    }
+
+    @Override
+    public void onRegistryBuild(IForgeRegistry<?> registry) {
+
+    }
+
+    protected boolean doRegister() {
+        boolean old = hasRegistered;
+        hasRegistered = true;
+        return !old;
     }
 }
