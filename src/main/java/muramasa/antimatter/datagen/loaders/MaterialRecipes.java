@@ -62,9 +62,9 @@ public class MaterialRecipes {
                 " W ", "HPF");
 
         provider.addToolRecipe(DUST_BUILDER.get(PLATE.getId()), consumer, Ref.ID, "plate", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
-                PLATE.all().stream().filter(t -> t.has(INGOT)).map(t -> PLATE.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
+                PLATE.all().stream().filter(t -> t.has(INGOT, PLATE)).map(t -> PLATE.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
                         .put('H', HAMMER.getTag())
-                        .put('P', PropertyIngredient.builder("primary").types(PLATE).tags(INGOT).build())
+                        .put('P', PropertyIngredient.builder("primary").types(INGOT).tags(PLATE).build())
                         .build(),
                 "HP", "P ");
 
