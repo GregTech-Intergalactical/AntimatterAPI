@@ -99,7 +99,7 @@ public class ClientHandler implements IProxyHandler {
                 RenderTypeLookup.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
             });
         });
-        AntimatterAPI.all(Machine.class).stream().filter(Machine::renderAsTesr).map(Machine::getTileType).distinct().forEach(i -> ClientRegistry.bindTileEntityRenderer(i, MachineTESR::new));
+        AntimatterAPI.all(Machine.class).stream().filter(Machine::renderAsTesr).filter(Machine::renderContainerLiquids).map(Machine::getTileType).distinct().forEach(i -> ClientRegistry.bindTileEntityRenderer(i, MachineTESR::new));
     }
 
     public static void onItemColorHandler(ColorHandlerEvent.Item e) {
