@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.fluid.FluidHandlerNullSideWrapper;
 import muramasa.antimatter.capability.fluid.FluidHandlerSidedWrapper;
+import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
@@ -12,13 +13,13 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -172,6 +173,27 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 fillOutput(input, EXECUTE);
             }
         }
+    }
+
+    public int getTankForTag(ResourceLocation tag, int min) {
+        FluidStack[] inputs = this.getInputs();
+        for (int i = min; i < inputs.length; i++) {
+            FluidStack input = inputs[i];
+            if (input.getFluid().getTags().contains(tag)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Nonnull
+    public FluidStack consumeTaggedInput(ResourceLocation input, int amount, boolean simulate) {
+        FluidTanks inputs = getInputTanks();
+        if (inputs == null) {
+            return FluidStack.EMPTY;
+        }
+        int id = getTankForTag(input, 0);
+        return inputs.drain(new FluidStack(inputs.getFluidInTank(id).getFluid(), amount), simulate ? SIMULATE : EXECUTE);
     }
 
     @Nonnull

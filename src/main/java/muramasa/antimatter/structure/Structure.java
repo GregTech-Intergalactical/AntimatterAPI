@@ -2,11 +2,13 @@ package muramasa.antimatter.structure;
 
 import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -31,8 +33,35 @@ public abstract class Structure {
         return this;
     }
 
+    /**
+     * Requires at least i of all of the objects.
+     * @param i amount
+     * @param objects the array of objects to add as requirement.
+     * @return this
+     */
     public Structure min(int i, IAntimatterObject... objects) {
         Arrays.stream(objects).forEach(o -> addReq(o.getId(), r -> (r.components.containsKey(o.getId()) && r.components.get(o.getId()).size() >= i) || (r.states.containsKey(o.getId()) && r.states.get(o.getId()).size() >= i)));
+        return this;
+    }
+
+    /**
+     * Adds a requirement that the objects are together at least i in count.
+     * @param id requirement id.
+     * @param i how many components to have
+     * @param objects the list of valid components.
+     * @return this
+     */
+    public Structure combined(String id, int i, IAntimatterObject... objects) {
+        addReq(id, r -> {
+            int amount = 0;
+            for (IAntimatterObject object : objects) {
+                List<IComponentHandler> list = r.components.get(object.getId());
+                List<BlockState> states = r.states.get(object.getId());
+                amount += list != null ? list.size() : 0;
+                amount += states != null ? states.size() : 0;
+            }
+            return amount >= i;
+        });
         return this;
     }
 
