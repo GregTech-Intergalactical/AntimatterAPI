@@ -167,6 +167,16 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
         return !getFluid(container).isEmpty();
     }
 
+    @Override
+    public boolean hasContainerItem(ItemStack stack) {
+        return hasFluid(stack);
+    }
+
+    @Override
+    public ItemStack getContainerItem(ItemStack itemStack) {
+        return new ItemStack(this);
+    }
+
     /**
      * Gets the fluid from the given clay bucket container
      *
