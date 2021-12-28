@@ -193,6 +193,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             return FluidStack.EMPTY;
         }
         int id = getTankForTag(input, 0);
+        if (id == -1) return FluidStack.EMPTY;
         return inputs.drain(new FluidStack(inputs.getFluidInTank(id).getFluid(), amount), simulate ? SIMULATE : EXECUTE);
     }
 
