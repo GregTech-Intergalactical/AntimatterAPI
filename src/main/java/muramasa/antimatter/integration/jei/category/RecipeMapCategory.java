@@ -21,6 +21,7 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.Utils;
@@ -117,7 +118,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             ingredients.setOutputLists(VanillaTypes.ITEM, Arrays.stream(recipe.getOutputItems(false)).map(Collections::singletonList).collect(Collectors.toList()));
         }
         if (recipe.hasInputFluids()) {
-            ingredients.setInputs(VanillaTypes.FLUID, Arrays.asList(recipe.getInputFluids()));
+            ingredients.setInputLists(VanillaTypes.FLUID, recipe.getInputFluids().stream().map(t -> Arrays.asList(t.getStacks())).collect(Collectors.toList()));
         }
         if (recipe.hasOutputFluids()) {
             ingredients.setOutputs(VanillaTypes.FLUID, Arrays.asList(recipe.getOutputFluids()));
@@ -186,11 +187,11 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             slots = gui.getSlots().getSlots(SlotType.FL_IN, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
-                FluidStack[] fluids = recipe.getInputFluids();
-                slotCount = Math.min(slotCount, fluids.length);
+                List<FluidIngredient> fluids = recipe.getInputFluids();
+                slotCount = Math.min(slotCount, fluids.size());
                 for (int s = 0; s < slotCount; s++) {
-                    fluidGroup.init(groupIndex, true, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1), 16, 16, fluids[s].getAmount(), false, null);
-                    fluidGroup.set(groupIndex++, fluids[s]);
+                    fluidGroup.init(groupIndex, true, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1), 16, 16, fluids.get(s).getAmount(), false, null);
+                    fluidGroup.set(groupIndex++, Arrays.asList(fluids.get(s).getStacks()));
                     inputFluids++;
                 }
             }

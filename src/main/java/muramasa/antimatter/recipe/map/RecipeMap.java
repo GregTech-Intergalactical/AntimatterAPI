@@ -259,22 +259,28 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         }
     }
 
-    protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, FluidStack[] ingredients,
-            boolean insideMap) {
-        for (FluidStack t : ingredients) {
-            List<AbstractMapIngredient> inner = new ObjectArrayList<>(1 + t.getFluid().getTags().size());
-            inner.add(new MapFluidIngredient(t, insideMap));
-            for (ResourceLocation rl : t.getFluid().getTags()) {
-                inner.add(new MapTagIngredient(rl, insideMap));
+    protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, List<FluidIngredient> ingredients,
+                                   boolean insideMap) {
+        for (FluidIngredient t : ingredients) {
+            List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getStacks().length);
+            for (FluidStack stack : t.getStacks()) {
+                inner.add(new MapFluidIngredient(stack, insideMap));
             }
             builder.add(inner);
+        }
+    }
+
+    protected void buildFromFluidStacks(List<List<AbstractMapIngredient>> builder, List<FluidStack> ingredients,
+                                        boolean insideMap) {
+        for (FluidStack t : ingredients) {
+            builder.add(Collections.singletonList(new MapFluidIngredient(t, insideMap)));
         }
     }
 
     protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, TagContainer tags, boolean insideMap) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(
                 (r.hasInputItems() ? r.getInputItems().size() : 0)
-                        + (r.hasInputFluids() ? r.getInputFluids().length : 0));
+                        + (r.hasInputFluids() ? r.getInputFluids().size() : 0));
         if (r.hasInputItems()) {
             buildFromItems(list, r.getInputItems(), tags, insideMap);
         }
@@ -503,7 +509,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                     stack.add(f);
             }
             if (stack.size() > 0)
-                buildFromFluids(list, stack.toArray(EMPTY_FLUID), false);
+                buildFromFluidStacks(list, stack, false);
         }
         if (list.size() == 0)
             return null;

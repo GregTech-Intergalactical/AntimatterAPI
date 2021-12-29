@@ -7,6 +7,7 @@ import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.client.DirectionalQuadTransformer;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
@@ -61,8 +62,9 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         if (side == null) {
             return Collections.emptyList();
         }
-        List<BakedQuad> quads = new ObjectArrayList<>(20);
         AntimatterProperties.MachineProperties props = data.getData(AntimatterProperties.MACHINE_PROPERTY);
+        if (props == null) return Collections.emptyList();
+        List<BakedQuad> quads = new ObjectArrayList<>(20);
         List<BakedQuad> coverQuads = getCoverQuads(state, side, rand, props, data);
         if (!coverQuads.isEmpty()) return coverQuads;
 
@@ -123,9 +125,9 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         final IModelData data = super.getModelData(world, pos, state, d);
         TileEntityMachine<?> machine = (TileEntityMachine<?>) world.getBlockEntity(pos);
         if (machine == null) {
-            throw new RuntimeException("Machine Block Entity Missing? Corrupted world state!");
+            return d;
         }
-        ICover[] covers = machine.coverHandler.map(t -> t.getAll()).orElse(new ICover[]{ICover.empty,ICover.empty,ICover.empty,ICover.empty,ICover.empty,ICover.empty});
+        ICover[] covers = machine.coverHandler.map(CoverHandler::getAll).orElse(new ICover[]{ICover.empty, ICover.empty, ICover.empty, ICover.empty, ICover.empty, ICover.empty});
         Machine<?> m = machine.getMachineType();
         Function<Direction, Texture> mText = a -> {
             Texture[] tex = machine.getMachineType().getBaseTexture(machine.getMachineTier());

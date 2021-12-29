@@ -48,8 +48,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         this.validCovers.add(new ResourceLocation(ICover.empty.getDomain(), ICover.empty.getId()));
         Arrays.stream(validCovers).forEach(c -> this.validCovers.add(new ResourceLocation(c.getDomain(), c.getId())));
         Arrays.stream(Ref.DIRS).forEach(t -> this.set(t, ICover.empty, false));
-        coverTexturer = new HashMap<>(6);// LazyHolder.of(() -> new
-        // DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
+        coverTexturer = new EnumMap<>(Direction.class);
     }
 
     @OnlyIn(Dist.CLIENT)

@@ -92,6 +92,14 @@ public class TagUtils {
     }
 
     /**
+     * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
+     * @return FluidTag
+     */
+    public static Tag.Named<Fluid> getFluidTag(ResourceLocation name) {
+        return createTag(name, Fluid.class, FluidTags::bind);
+    }
+
+    /**
      * NamedToContent
      * In order to use a named tag in recipes outside antimatter(e.g. for furnace recipes)
      * you have to convert the tag into a safe one, this method returns a safe tag.

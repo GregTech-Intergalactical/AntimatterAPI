@@ -32,19 +32,24 @@ public class DynamicTexturers {
      * Dynamic texture implementations.
      **/
 
-    public static final ResourceLocation PIPE_COVER_MODEL = new ResourceLocation(Ref.ID, "block/cover/cover_pipe");
     public static final DynamicTextureProvider<ICover, ICover.DynamicKey> COVER_DYNAMIC_TEXTURER = new DynamicTextureProvider<ICover, ICover.DynamicKey>(
             t -> {
                 if (t.currentDir == t.source.side()) {
-                    UnbakedModel m = ForgeModelBakery.instance().getModel(t.source.getModel(t.type, Direction.SOUTH));
+                    UnbakedModel m;
+                    try {
+                        //for some reason first load can cause circular exception
+                        m = ForgeModelBakery.instance().getModel(t.source.getModel(t.type, Direction.SOUTH));
+                    } catch (Exception ex) {
+                        m = ForgeModelBakery.instance().getModel(t.source.getModel(t.type, Direction.SOUTH));
+                    }
                     BlockModel model = (BlockModel) m;
                     if (t.data.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)) {
                         model.textureMap.put("base", Either.left(ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY).apply(t.source.side()))));
                     } else {
                         model.textureMap.put("base", Either.left(ModelUtils.getBlockMaterial(t.key.machineTexture)));
                     }
-            t.source.setTextures(
-                    (name, texture) -> model.textureMap.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
+                    t.source.setTextures(
+                            (name, texture) -> model.textureMap.put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
                     Transformation base = RenderHelper.faceRotation(t.source.side(), t.key.hFacing != null ? t.key.hFacing : (t.source.side().getAxis() == Axis.Y ? (t.state.hasProperty(BlockStateProperties.HORIZONTAL_FACING) ? t.state.getValue(BlockStateProperties.HORIZONTAL_FACING) : null) : null));
                     BakedModel b = model.bake(ForgeModelBakery.instance(), model, ForgeModelBakery.defaultTextureGetter(),
                             new SimpleModelState(base), t.source.getModel(t.type, Direction.SOUTH), true);

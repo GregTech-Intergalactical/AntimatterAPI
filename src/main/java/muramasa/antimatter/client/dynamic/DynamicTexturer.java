@@ -6,7 +6,6 @@ import net.minecraftforge.client.model.data.IModelData;
 
 import java.util.List;
 
-//TODO: Clean this up should it not require the cache anymore.
 public class DynamicTexturer<T extends IDynamicModelProvider, U> {
     private List<BakedQuad>[] cache;
     private U previousKey;

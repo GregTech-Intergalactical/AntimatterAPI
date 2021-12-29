@@ -10,6 +10,7 @@ import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -19,11 +20,9 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -364,7 +363,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                     return;
                 }
                 calculateDurations();
-                if (!consumeResourceForRecipe(true) || !canRecipeContinue() || (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().length != 1))) {
+                if (!consumeResourceForRecipe(true) || !canRecipeContinue() || (generator && (!activeRecipe.hasInputFluids() || activeRecipe.getInputFluids().size() != 1))) {
                     activeRecipe = null;
                     tile.setMachineState(tile.getDefaultMachineState());
                     //wait half a second after trying again.
@@ -403,8 +402,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         }
         if (activeRecipe.hasInputFluids()) {
             flag &= tile.fluidHandler.map(h -> {
-                h.consumeAndReturnInputs(Arrays.asList(activeRecipe.getInputFluids()), false);
-                this.fluidInputs = Arrays.asList(activeRecipe.getInputFluids());
+                this.fluidInputs = h.consumeAndReturnInputs(activeRecipe.getInputFluids(), false);
                 return !this.fluidInputs.isEmpty();
             }).orElse(true);
         }
@@ -420,7 +418,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     protected boolean canRecipeContinue() {
-        return canOutput() && (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || Utils.doFluidsMatchAndSizeValid(activeRecipe.getInputFluids(), tile.fluidHandler.map(MachineFluidHandler::getInputs).orElse(new FluidStack[0])));
+        return canOutput() && (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || tile.fluidHandler.map(t -> t.consumeAndReturnInputs(activeRecipe.getInputFluids(), true).size() > 0).orElse(false));
     }
 
     /*
@@ -433,9 +431,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         long toConsume = calculateGeneratorConsumption(tile.getMachineTier().getVoltage(), activeRecipe);
         long inserted;
         if (toConsume == 0)
-            inserted = (long) ((double) activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
+            inserted = (long) ((double) activeRecipe.getPower() / activeRecipe.getInputFluids().get(0).getAmount() * tile.getMachineType().getMachineEfficiency());
         else
-            inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
+            inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids().get(0).getAmount() * tile.getMachineType().getMachineEfficiency());
 
         final long t = inserted;
         GTTransaction transaction = new GTTransaction(t, Utils.sink());
@@ -450,7 +448,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (actual < inserted && toConsume == 0) return false;
         while (actual < inserted && actual > 0) {
             toConsume--;
-            inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids()[0].getAmount() * tile.getMachineType().getMachineEfficiency());
+            inserted = (long) ((double) toConsume * activeRecipe.getPower() / activeRecipe.getInputFluids().get(0).getAmount() * tile.getMachineType().getMachineEfficiency());
             actual = Math.min(inserted, transaction.eu);
         }
         //If nothing to insert.
@@ -459,10 +457,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         final long actualConsume = toConsume;
         //make sure there are fluids avaialble
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
-            int amount = h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            FluidIngredient in = activeRecipe.getInputFluids().get(0);
+            int amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
             if (amount == actualConsume) {
                 if (!simulate)
-                    h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids()[0], (int) actualConsume), IFluidHandler.FluidAction.EXECUTE);
+                    in.drain(amount, h, true, false);
                 return true;
             }
             return false;
@@ -478,7 +477,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     protected long calculateGeneratorConsumption(int volt, Recipe r) {
         long power = r.getPower();
-        int amount = r.getInputFluids()[0].getAmount();
+        int amount = r.getInputFluids().get(0).getAmount();
         if (currentProgress > 0 && amount == 1) {
             return 0;
         }

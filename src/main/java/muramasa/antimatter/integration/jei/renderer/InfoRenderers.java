@@ -53,8 +53,8 @@ public class InfoRenderers {
     public static final IRecipeInfoRenderer FUEL_RENDERER = new IRecipeInfoRenderer() {
         @Override
         public void render(PoseStack stack, Recipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
-            String fuelPerMb = "Fuel content(mb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids())[0].getAmount());
-            String fuelPerB = "Fuel content(bb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids())[0].getAmount()) * 1000;
+            String fuelPerMb = "Fuel content(mb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids()).get(0).getAmount());
+            String fuelPerB = "Fuel content(bb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids()).get(0).getAmount()) * 1000;
             renderString(stack, fuelPerMb, fontRenderer, 5, 5, guiOffsetX, guiOffsetY);
             renderString(stack, fuelPerB, fontRenderer, 5, 15, guiOffsetX, guiOffsetY);
         }

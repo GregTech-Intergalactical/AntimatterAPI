@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,6 +23,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<Recipe> {
@@ -58,7 +60,7 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
             int duration = json.get("duration").getAsInt();
             int amps = json.has("amps") ? json.get("amps").getAsInt() : 1;
             int special = json.has("special") ? json.get("special").getAsInt() : 0;
-            Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, special, amps);
+            Recipe r = new Recipe(list, outputs, fluidInputs == null ? Collections.emptyList() : Arrays.stream(fluidInputs).map(FluidIngredient::of).toList(), fluidOutputs, duration, eut, special, amps);
             if (json.has("chances")) {
                 List<Integer> chances = new ObjectArrayList<>();
                 for (JsonElement el : json.getAsJsonArray("chances")) {
@@ -73,7 +75,6 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
         }
         return null;
     }
-
     public static FluidStack getStack(JsonElement element) {
         try {
             if (!(element.isJsonObject())) {
@@ -97,6 +98,35 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
         return FluidStack.EMPTY;
     }
 
+    public static FluidIngredient getFluidIngredient(JsonElement element) {
+        try {
+            if (!(element.isJsonObject())) {
+                return FluidIngredient.EMPTY;
+            }
+            JsonObject obj = (JsonObject) element;
+            if (obj.has("fluidTag")) {
+                ResourceLocation tagType = new ResourceLocation(obj.get("tag").getAsString());
+                int amount = obj.has("amount") ? obj.get("amount").getAsInt() : 1000;
+                FluidIngredient ing = FluidIngredient.of(tagType, amount);
+                return ing;
+            }
+            ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
+            Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);
+            if (fluid == null) {
+                return FluidIngredient.EMPTY;
+            }
+            FluidStack stack = new FluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsInt() : 1000);
+
+            if (obj.has("tag")) {
+                stack.setTag(TagParser.parseTag(obj.get("tag").getAsString()));
+            }
+            return FluidIngredient.of(stack);
+        } catch (Exception ex) {
+            Antimatter.LOGGER.error(ex);
+        }
+        return FluidIngredient.EMPTY;
+    }
+
     @Nullable
     @Override
     public Recipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
@@ -115,10 +145,10 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
             }
         }
         size = buffer.readInt();
-        FluidStack[] in = new FluidStack[size];
+        List<FluidIngredient> in = new ObjectArrayList<>(size);
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                in[i] = FluidStack.readFromPacket(buffer);
+                in.add(FluidIngredient.of(buffer));
             }
         }
         size = buffer.readInt();
@@ -145,7 +175,7 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
         Recipe r = new Recipe(
                 ings,
                 out.length == 0 ? null : out,
-                in.length == 0 ? null : in,
+                in,
                 outf.length == 0 ? null : outf,
                 dur,
                 power,
@@ -168,9 +198,9 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
         if (recipe.hasOutputItems()) {
             Arrays.stream(recipe.getOutputItems()).forEach(buffer::writeItem);
         }
-        buffer.writeInt(!recipe.hasInputFluids() ? 0 : recipe.getInputFluids().length);
+        buffer.writeInt(!recipe.hasInputFluids() ? 0 : recipe.getInputFluids().size());
         if (recipe.hasInputFluids()) {
-            Arrays.stream(recipe.getInputFluids()).forEach(buffer::writeFluidStack);
+            recipe.getInputFluids().stream().forEach(t -> t.write(buffer));
         }
         buffer.writeInt(!recipe.hasOutputFluids() ? 0 : recipe.getOutputFluids().length);
         if (recipe.hasOutputFluids()) {

@@ -10,6 +10,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
@@ -198,25 +199,23 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     }
 
     @Nonnull
-    public List<FluidStack> consumeAndReturnInputs(List<FluidStack> inputs, boolean simulate) {
+    public List<FluidStack> consumeAndReturnInputs(List<FluidIngredient> inputs, boolean simulate) {
         if (getInputTanks() == null) {
             return Collections.emptyList();
         }
-        List<FluidStack> notConsumed = new ObjectArrayList<>();
-        FluidStack result;
+        List<FluidStack> consumed = new ObjectArrayList<>();
+        boolean ret = true;
         if (inputs != null) {
-            for (FluidStack input : inputs) {
-                result = drainInput(input, simulate ? SIMULATE : EXECUTE);
-                if (result != FluidStack.EMPTY) {
-                    if (result.getAmount() != input.getAmount()) { //Fluid was partially consumed
-                        notConsumed.add(Utils.ca(input.getAmount() - result.getAmount(), input));
-                    }
+            for (FluidIngredient input : inputs) {
+                List<FluidStack> inner = input.drain(this, true, simulate);
+                if (inner.stream().mapToInt(FluidStack::getAmount).sum() != input.getAmount()) {
+                    ret = false;
                 } else {
-                    notConsumed.add(input); //Fluid not present in input tanks
+                    consumed.addAll(inner);
                 }
             }
         }
-        return notConsumed;
+        return consumed;
     }
 
     public FluidStack[] exportAndReturnOutputs(FluidStack... outputs) {

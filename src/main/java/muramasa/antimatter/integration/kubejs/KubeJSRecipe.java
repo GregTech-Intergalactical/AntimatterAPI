@@ -10,6 +10,7 @@ import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.GsonHelper;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class KubeJSRecipe extends RecipeJS {
 
-    public final List<FluidStack> fluidInput = new ObjectArrayList<>();
+    public final List<FluidIngredient> fluidInput = new ObjectArrayList<>();
     public final List<FluidStack> fluidOutput = new ObjectArrayList<>();
 
     private int duration;
@@ -49,7 +50,7 @@ public class KubeJSRecipe extends RecipeJS {
         }
         if (listJS.get(3) != null) for (Object inputFluid : ListJS.orSelf(listJS.get(3))) {
             MapJS map = (MapJS) inputFluid;
-            this.fluidInput.add(AntimatterRecipeSerializer.getStack(map.toJson()));
+            this.fluidInput.add(AntimatterRecipeSerializer.getFluidIngredient(map.toJson()));
         }
         if (listJS.get(4) != null) for (Object outputFluid : ListJS.orSelf(listJS.get(4))) {
             MapJS map = (MapJS) outputFluid;
@@ -84,7 +85,7 @@ public class KubeJSRecipe extends RecipeJS {
             this.outputItems.add(ItemStackJS.of(e));
         }
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "fluid_in", new JsonArray())) {
-            this.fluidInput.add(AntimatterRecipeSerializer.getStack(e));
+            this.fluidInput.add(AntimatterRecipeSerializer.getFluidIngredient(e));
         }
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "fluid_out", new JsonArray())) {
             this.fluidOutput.add(AntimatterRecipeSerializer.getStack(e));
@@ -110,6 +111,14 @@ public class KubeJSRecipe extends RecipeJS {
         return obj;
     }
 
+    public static JsonElement serializeFluid(FluidIngredient stack) {
+        JsonArray obj = new JsonArray();
+        for (FluidStack fluidStack : stack.getStacks()) {
+            obj.add(serializeStack(fluidStack));
+        }
+        return obj;
+    }
+
     @Override
     public void serialize() {
         if (inputItems.size() > 0) {
@@ -124,12 +133,12 @@ public class KubeJSRecipe extends RecipeJS {
         }
         if (fluidInput.size() > 0) {
             JsonArray arr = new JsonArray();
-            fluidInput.forEach(t -> arr.add(serializeStack(t)));
+            fluidInput.forEach(t -> arr.add(serializeFluid(t)));
             this.json.add("fluid_in", arr);
         }
         if (fluidOutput.size() > 0) {
             JsonArray arr = new JsonArray();
-            fluidInput.forEach(t -> arr.add(serializeStack(t)));
+            fluidOutput.forEach(t -> arr.add(serializeStack(t)));
             this.json.add("fluid_out", arr);
         }
         if (chances.size() > 0) {

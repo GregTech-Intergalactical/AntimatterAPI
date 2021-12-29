@@ -1,8 +1,10 @@
 package muramasa.antimatter.recipe;
 
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
@@ -23,8 +25,8 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
     private final ItemStack[] itemsOutput;
     @Nonnull
     private final List<RecipeIngredient> itemsInput;
-
-    private final FluidStack[] fluidsInput;
+    @Nonnull
+    private final List<FluidIngredient> fluidsInput;
     private final FluidStack[] fluidsOutput;
     private final int duration;
     private final int special;
@@ -40,13 +42,13 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
 
     public static final RecipeType<Recipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
 
-    public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, FluidStack[] fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
-        this.itemsInput = stacksInput;
+    public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
+        this.itemsInput = ImmutableList.copyOf(stacksInput);
         this.itemsOutput = stacksOutput;
         this.duration = duration;
         this.power = power;
         this.special = special;
-        this.fluidsInput = fluidsInput;
+        this.fluidsInput = ImmutableList.copyOf(fluidsInput);
         this.amps = amps;
         this.fluidsOutput = fluidsOutput;
         this.valid = true;
@@ -87,7 +89,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
     }
 
     public boolean hasInputFluids() {
-        return fluidsInput != null && fluidsInput.length > 0;
+        return fluidsInput.size() > 0;
     }
 
     public boolean hasOutputFluids() {
@@ -172,9 +174,9 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
         return false;
     }
 
-    @Nullable
-    public FluidStack[] getInputFluids() {
-        return hasInputFluids() ? fluidsInput.clone() : null;
+    @Nonnull
+    public List<FluidIngredient> getInputFluids() {
+        return fluidsInput;
     }
 
     @Nullable
@@ -234,10 +236,10 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
         }
         if (fluidsInput != null) {
             builder.append("Input Fluids: { ");
-            for (int i = 0; i < fluidsInput.length; i++) {
-                builder.append(fluidsInput[i].getFluid().getRegistryName()).append(": ").append(fluidsInput[i].getAmount()).append("mb");
-                if (i != fluidsInput.length - 1) builder.append(", ");
-            }
+            //for (int i = 0; i < fluidsInput.size(); i++) {
+            //    builder.append(fluidsInput.get(i).getFluid().getRegistryName()).append(": ").append(fluidsInput[i].getAmount()).append("mb");
+            //    if (i != fluidsInput.length - 1) builder.append(", ");
+            // }
             builder.append(" }\n");
         }
         if (fluidsOutput != null) {

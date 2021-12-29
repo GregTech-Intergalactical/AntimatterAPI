@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
+import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +20,8 @@ public class RecipeBuilder {
     private RecipeMap<? extends RecipeBuilder> recipeMap;
     protected List<ItemStack> itemsOutput = new ObjectArrayList<>();
     protected List<RecipeIngredient> ingredientInput = new ObjectArrayList<>();
-    protected List<FluidStack> fluidsInput, fluidsOutput = new ObjectArrayList<>();
+    protected List<FluidIngredient> fluidsInput = new ObjectArrayList<>();
+    protected List<FluidStack> fluidsOutput = new ObjectArrayList<>();
     protected int[] chances;
     protected int duration, special;
     protected long power;
@@ -47,10 +49,10 @@ public class RecipeBuilder {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
             return Utils.getEmptyRecipe();
         }
-        if (fluidsInput != null && fluidsInput.size() > 0 && !Utils.areFluidsValid(fluidsInput.toArray(new FluidStack[0]))) {
+        /*if (fluidsInput != null && fluidsInput.size() > 0) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - INPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
-        }
+        }*/
         if (fluidsOutput != null && fluidsOutput.size() > 0 && !Utils.areFluidsValid(fluidsOutput.toArray(new FluidStack[0]))) {
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
             return Utils.getEmptyRecipe();
@@ -67,7 +69,7 @@ public class RecipeBuilder {
         Recipe recipe = new Recipe(
                 ingredientInput,
                 itemsOutput != null ? itemsOutput.toArray(new ItemStack[0]) : null,
-                fluidsInput != null ? fluidsInput.toArray(new FluidStack[0]) : null,
+                fluidsInput != null ? fluidsInput : Collections.emptyList(),
                 fluidsOutput != null ? fluidsOutput.toArray(new FluidStack[0]) : null,
                 duration, power, special, amps
         );
@@ -119,12 +121,18 @@ public class RecipeBuilder {
     }
 
     public RecipeBuilder fi(FluidStack... stacks) {
+        fluidsInput.addAll(Arrays.stream(stacks).map(FluidIngredient::of).toList());
+        return this;
+    }
+
+    public RecipeBuilder fi(FluidIngredient... stacks) {
         fluidsInput.addAll(Arrays.asList(stacks));
         return this;
     }
 
+
     public RecipeBuilder fi(List<FluidStack> stacks) {
-        fluidsInput.addAll(stacks);
+        fluidsInput.addAll(stacks.stream().map(FluidIngredient::of).toList());
         return this;
     }
 
