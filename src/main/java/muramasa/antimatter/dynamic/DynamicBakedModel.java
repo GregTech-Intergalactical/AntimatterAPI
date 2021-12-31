@@ -52,7 +52,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
 
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        if (!hasConfig) return Collections.emptyList();//bakedDefault.getQuads(state, side, rand, data);
+        if (!hasConfig || data == null) return Collections.emptyList();//bakedDefault.getQuads(state, side, rand, data);
         List<BakedQuad> quads = new LinkedList<>();
         ModelConfig config = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
         if (config == null) return Collections.emptyList();
