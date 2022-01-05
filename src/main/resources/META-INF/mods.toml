@@ -19,7 +19,7 @@ description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
     ordering="AFTER"
     side="BOTH"
 [[dependencies.antimatter]]
-    modId="tesseract"
+    modId="tesseractapi"
     mandatory=true
     versionRange="[0.0.4,)"
     ordering="AFTER"
