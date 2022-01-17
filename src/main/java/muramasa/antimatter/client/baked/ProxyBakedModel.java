@@ -15,11 +15,13 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.chunk.ChunkRenderCache;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
@@ -52,13 +54,23 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         RenderMaterial first = mats.iterator().next();
         tileData = model.getModelData(world, pos, state, tileData);
         BlockState cState = Blocks.AIR.defaultBlockState();
-        TileEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(((ChunkReaderAccessor)world).getLevel(), fake.getBlockPos(), TileEntityBasicMultiMachine.class);
+        TileEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(getWorld(world), fake.getBlockPos(), TileEntityBasicMultiMachine.class);
         if (machine != null) {
             cState = machine.getBlockState();
         }
         ProxyProperties prop = new ProxyProperties(fake.getState(), cState, first.texture(), fake::getTexturer, fake.covers(), fake.facing);
         tileData.setData(AntimatterProperties.FAKE_MODEL_PROPERTY, prop);
         return tileData;
+    }
+
+    protected World getWorld(IBlockDisplayReader reader) {
+        if (reader instanceof World) {
+            return (World) reader;
+        }
+        if (reader instanceof ChunkRenderCache) {
+            return ((ChunkReaderAccessor)reader).getLevel();
+        }
+        return null;
     }
 
 

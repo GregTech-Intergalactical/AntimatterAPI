@@ -142,7 +142,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
             if (tex.length == 1) return tex[0];
             return tex[a.get3DDataValue()];
         };
-        MachineState st = machine.getMachineState();
+        MachineState st = machine.getMachineState().getTextureState();
         Function<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> tx = a -> machine.coverHandler.map(t -> t.getTexturer(a)).orElse(null);
         AntimatterProperties.MachineProperties mh = new AntimatterProperties.MachineProperties(m, machine.getMachineTier(), covers, st, mText, machine.multiTexturer.get(), tx);
         data.setData(AntimatterProperties.MACHINE_PROPERTY, mh);
