@@ -318,7 +318,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         }
     }
 
-    public static void init() {
-        
+    static void init() {
+
     }
 }

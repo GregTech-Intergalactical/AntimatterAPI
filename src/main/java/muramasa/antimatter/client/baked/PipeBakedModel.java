@@ -20,6 +20,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class PipeBakedModel extends DynamicBakedModel {
     }
 
     @Override
-    public IModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, IModelData data) {
+    public @NotNull IModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, @NotNull IModelData data) {
         data = super.getModelData(world, pos, state, data);
         data.setData(AntimatterProperties.TILE_PROPERTY, ((TileEntityPipe) world.getBlockEntity(pos)));
         return data;
@@ -64,7 +65,7 @@ public class PipeBakedModel extends DynamicBakedModel {
                         quads.remove(index);
                     }
                 }
-                coverQuads = covers.getTexturer(side).getQuads("pipe", coverQuads, state, c,
+                coverQuads = covers.getTexturer(dir).getQuads("pipe", coverQuads, state, c,
                         new BaseCover.DynamicKey(dir, null, tex, c.getId()), dir.get3DDataValue(), CoverBakedModel.addCoverModelData(dir, covers, data));
             }
         }
