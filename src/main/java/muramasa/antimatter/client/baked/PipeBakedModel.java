@@ -59,7 +59,7 @@ public class PipeBakedModel extends DynamicBakedModel {
                 if (c.isEmpty())
                     continue;
                 // Depth model only causes z fighting of sizes larger than tiny.
-                if (pipe.canConnect(dir.get3DDataValue()) && pipe.getPipeSize().compareTo(PipeSize.TINY) > 0) {
+                if (pipe.canConnect(dir.get3DDataValue())) { //&& pipe.getPipeSize().compareTo(PipeSize.TINY) > 0) {
                     int index = RenderHelper.findPipeFront(pipe.getPipeSize(), quads, dir);
                     if (index != -1) {
                         quads.remove(index);
