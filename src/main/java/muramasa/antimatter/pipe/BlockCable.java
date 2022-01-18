@@ -89,9 +89,10 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         if (this.insulated) return;
         if (entityIn instanceof LivingEntity entity) {
             if (worldIn.getBlockEntity(pos) instanceof TileEntityCable cable) {
-                long amps = GTHolder.getAmperage(cable.getHolder());
-                if (amps > 0) {
-                    entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
+                if (Tesseract.GT_ENERGY.getController(worldIn, pos.asLong()) instanceof GTController c) {
+                    if (c.cableIsActive.contains(pos.asLong())) {
+                        entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
+                    }
                 }
             }
         }

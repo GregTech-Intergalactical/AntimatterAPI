@@ -7,6 +7,7 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fluids.FluidStack;
@@ -165,24 +166,21 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
         @Override
         public void init() {
             super.init();
-            TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
+            TileEntityFluidPipe<?> pipe = (TileEntityFluidPipe<?>) gui.handler;
             final long pos = pipe.getBlockPos().asLong();
-            gui.syncInt(() -> {
+            /*gui.syncInt(() -> {
                 ITickingController controller = Tesseract.FLUID.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
-                if (controller == null) return 0;
-                FluidController gt = (FluidController) controller;
-                FluidHolder holder = gt.getCableHolder(pos);
-                return holder == null ? 0 : holder.getPressureAvailable();
-            }, a -> this.holderPressure = a, SERVER_TO_CLIENT);
+                if (controller instanceof FluidController c) {
+                    return c.sentPressure.get(pos);
+                }
+                return 0;
+            }, a -> this.holderPressure = a, SERVER_TO_CLIENT);*/
             gui.syncFluidStack(() -> {
-                ITickingController controller = Tesseract.FLUID.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
-                if (controller == null) return FluidStack.EMPTY;
-                FluidController gt = (FluidController) controller;
-                FluidHolder holder = gt.getCableHolder(pos);
+                FluidHolder holder = pipe.getHolder();
                 if (holder != null) {
                     Set<FluidHolder.SetHolder> fluids = holder.getFluids();
                     if (fluids != null && fluids.size() > 0) {
-                        return new FluidStack(fluids.iterator().next().fluid, holder.getPressureAvailable());
+                        return new FluidStack(fluids.iterator().next().fluid, holder.tickPressure*20 - holder.getPressureAvailable());
                     }
                 }
                 return FluidStack.EMPTY;
