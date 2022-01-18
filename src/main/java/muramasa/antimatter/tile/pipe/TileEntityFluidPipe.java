@@ -167,9 +167,10 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, PoseStack stack, Font renderer, int left, int top) {
         renderer.draw(stack, "Pressure: " + instance.holderPressure, left, top, 16448255);
-        renderer.draw(stack, "Fluid: " + instance.stack.getFluid().getRegistryName().toString(), left, top, 16448255);
-        renderer.draw(stack, "Amount: " + instance.stack.getAmount(), left, top, 16448255);
-        return 16;
+        renderer.draw(stack, "Pressure used: " + (this.getPressure() - instance.holderPressure), left, top + 8, 16448255);
+        renderer.draw(stack, "Fluid: " + instance.stack.getFluid().getRegistryName().toString(), left, top + 16, 16448255);
+        renderer.draw(stack, "Amount: " + instance.stack.getAmount(), left, top + 24, 16448255);
+        return 32;
     }
 
     @Override
