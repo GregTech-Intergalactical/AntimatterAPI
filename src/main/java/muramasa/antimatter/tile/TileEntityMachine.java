@@ -343,7 +343,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                 state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, side);
             }
             getLevel().setBlockAndUpdate(getBlockPos(), state);
-            refreshCaps();
+            invalidateCaps();
 
             return true;
         }
@@ -513,18 +513,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     public boolean canPlayerOpenGui(PlayerEntity playerEntity) {
         return true;
-    }
-
-    public void refreshCaps() {
-        if (isServerSide()) {
-            dispatch.refresh();
-        }
-    }
-
-    public void refreshCap(Capability<?> cap) {
-        if (isServerSide()) {
-            dispatch.refresh(cap);
-        }
     }
 
     public void invalidateCaps() {

@@ -596,9 +596,4 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     public LazyOptional<MachineRecipeHandler> forNullSide() {
         return LazyOptional.of(() -> this);
     }
-
-    @Override
-    public void refresh() {
-
-    }
 }

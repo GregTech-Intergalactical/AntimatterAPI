@@ -53,32 +53,13 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        if (this.isConnector()) {
-            Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());        
-        }
+        Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
 
     @Override
     protected void register() {
-        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());        
-    }
-
-    public INodeGetter<IFluidNode> getter() {
-        return (pos, dir, cb) -> {
-            TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
-            if (tile == null) {
-                return null;
-            }
-            LazyOptional<IFluidHandler> capability = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir);
-            if (capability.isPresent()) {
-                if (cb != null) capability.addListener(o -> cb.run());
-                IFluidHandler handler = capability.orElse(null);
-                return handler instanceof IFluidNode ? (IFluidNode) handler: new IFluidNode.FluidTileWrapper(tile, handler);
-            } else {
-                return null;
-            }
-        };
+        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
 
@@ -175,11 +156,6 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public LazyOptional<? extends IFluidHandler> forNullSide() {
         return forSide(null);
-    }
-
-    @Override
-    public void refresh() {
-
     }
 
     @Override

@@ -30,7 +30,7 @@ import tesseract.api.gt.IGTCable;
 import tesseract.api.gt.IGTNode;
 import tesseract.graph.Graph.INodeGetter;
 
-public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IEnergyHandler>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
+public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IGTNode>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 
     private long holder;
 
@@ -52,26 +52,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     protected void register() {
-        Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, getter());
-    }
-
-    public INodeGetter<IGTNode> getter() {
-        return (pos, dir, cb) -> {
-            TileEntity tile = level.getBlockEntity(BlockPos.of(pos));
-            LazyOptional<IEnergyHandler> capability = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir);
-            if (capability.isPresent()) {
-                if (cb != null) capability.addListener(t -> cb.run());
-                return capability.resolve().get();
-            } else {
-                LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, dir);
-                if (cap.isPresent()) {
-                    EnergyTileWrapper node = new EnergyTileWrapper(tile, cap.orElse(null));
-                    cap.addListener(o -> cb.run());
-                    return node;
-                }
-            }
-            return null;
-        };
+        Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
@@ -87,9 +68,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        if (this.isConnector()) {
-            Tesseract.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong(), getter());
-        }
+        Tesseract.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override
@@ -131,19 +110,14 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
-    public LazyOptional<? extends IEnergyHandler> forSide(Direction side) {
+    public LazyOptional<? extends IGTNode> forSide(Direction side) {
         return LazyOptional.of(() -> new TesseractGTCapability<>(this, side, !isConnector(), (stack,in,out,simulate) -> 
         this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));
     }
 
     @Override
-    public LazyOptional<? extends IEnergyHandler> forNullSide() {
+    public LazyOptional<? extends IGTNode> forNullSide() {
         return forSide(null);
-    }
-
-    @Override
-    public void refresh() {
-
     }
 
     @Override

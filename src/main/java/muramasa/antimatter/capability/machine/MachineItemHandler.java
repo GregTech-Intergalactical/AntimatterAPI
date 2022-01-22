@@ -376,9 +376,4 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     public LazyOptional<? extends IItemHandler> forNullSide() {
         return LazyOptional.of(() -> new ROCombinedInvWrapper(this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
     }
-
-    @Override
-    public void refresh() {
-        Tesseract.ITEM.refreshNode(this.tile.getLevel(), this.tile.getBlockPos().asLong());
-    }
 }

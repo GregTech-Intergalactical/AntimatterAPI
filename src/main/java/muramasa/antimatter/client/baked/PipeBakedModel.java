@@ -64,7 +64,7 @@ public class PipeBakedModel extends DynamicBakedModel {
                         quads.remove(index);
                     }
                 }
-                coverQuads = covers.getTexturer(side).getQuads("pipe", coverQuads, state, c,
+                coverQuads = covers.getTexturer(dir).getQuads("pipe", coverQuads, state, c,
                         new BaseCover.DynamicKey(dir, null, tex, c.getId()), dir.get3DDataValue(), CoverBakedModel.addCoverModelData(dir, covers, data));
             }
         }

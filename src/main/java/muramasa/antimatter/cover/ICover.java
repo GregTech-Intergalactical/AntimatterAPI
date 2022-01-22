@@ -318,7 +318,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, INamedC
         }
     }
 
-    public static void init() {
+    static void init() {
         
     }
 }

@@ -44,15 +44,6 @@ public class Dispatch {
         return this;
     }
 
-    public void refresh() {
-        capabilityHolderMap.forEach((k, v) -> v.refresh());
-    }
-
-    public void refresh(Capability<?> cap) {
-        Holder holder = capabilityHolderMap.get(cap);
-        if (holder != null) holder.refresh();
-    }
-
     public Holder<?, ?> getHolder(Capability<?> cap) {
         return capabilityHolderMap.get(cap);
     }
@@ -63,7 +54,5 @@ public class Dispatch {
         default LazyOptional<? extends U> forNullSide() {
             return LazyOptional.empty();
         }
-
-        void refresh();
     }
 }

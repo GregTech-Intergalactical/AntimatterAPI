@@ -39,6 +39,7 @@ import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBase<TileEntityPipe<T>> implements IMachineHandler, INamedContainerProvider, IGuiHandler, IConnectable {
@@ -320,6 +321,11 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
             return pipeCapHolder.side(null).cast();
         }
         return LazyOptional.empty();
+    }
+
+    @Override
+    public boolean path() {
+        return coverHandler.map(t -> Arrays.stream(t.getAll()).mapToInt(c -> c.ticks() ? 1 : 0).sum() > 0).orElse(false);
     }
 
     @Override
