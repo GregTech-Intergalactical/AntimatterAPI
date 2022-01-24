@@ -30,6 +30,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        if (world.isClientSide) return info;
         ITickingController<?, ?, ?> controller = Tesseract.FLUID.getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         info.add("Pressure: " + getType().getPressure(getSize()));

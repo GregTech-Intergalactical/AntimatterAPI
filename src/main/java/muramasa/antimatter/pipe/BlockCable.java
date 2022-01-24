@@ -97,6 +97,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        if (world.isClientSide) return info;
         ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         return info;

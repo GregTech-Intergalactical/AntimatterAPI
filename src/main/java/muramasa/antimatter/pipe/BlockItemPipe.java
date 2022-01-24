@@ -17,6 +17,7 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
 
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
+        if (world.isClientSide) return info;
         ITickingController<?, ?, ?> controller = Tesseract.ITEM.getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         info.add("Capacity: " + getType().getCapacity(getSize()));
