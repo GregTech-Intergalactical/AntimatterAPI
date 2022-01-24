@@ -68,11 +68,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityBa
     public TileEntityPipe(T type, boolean covered) {
         super(covered ? type.getCoveredType() : type.getTileType());
         this.type = type;
-        if (this.type.getMaterial() == Data.Wood) {
-            this.coverHandler = LazyOptional.empty();
-        } else {
-            this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
-        }
+        this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
         this.pipeCapHolder = new Holder<>(getCapability(), this.dispatch);
     }
 
