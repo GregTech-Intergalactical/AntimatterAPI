@@ -26,7 +26,11 @@ public class CoverOutput extends CoverInput {
 
     public CoverOutput(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
         super(source, tier, side, factory);
-        this.tile = (TileEntityMachine<?>) source.getTile();
+        if (source.getTile() instanceof TileEntityMachine<?>) {
+            this.tile = (TileEntityMachine<?>) source.getTile();
+        } else {
+            this.tile = null;
+        }
     }
 
     @Override
