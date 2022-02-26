@@ -26,6 +26,8 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -73,7 +75,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public static final BooleanProperty COVERED = BooleanProperty.create("cover");
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
-        this(prefix, type, size, modelId, Block.Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
+        this(prefix, type, size, modelId, type.getMaterial() == Data.Wood ? Block.Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(1.0f, 3.0f).noOcclusion() : Block.Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
     }
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId, AbstractBlock.Properties properties) {
@@ -179,6 +181,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override
     public ToolType getHarvestTool(BlockState state) {
+        if (type.getMaterial() == Data.Wood) return Data.AXE.getToolType();
         return Data.WRENCH.getToolType();
     }
 
