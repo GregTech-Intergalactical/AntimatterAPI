@@ -2,9 +2,12 @@ package muramasa.antimatter.tile;
 
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
+import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.util.Direction;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
@@ -22,7 +25,7 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
                     calculateAmperage();
             }
         });
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, 0/*getMachineTier().getVoltage() * 64L*/, getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, (long) getMachineTier().getVoltage() * itemHandler.map(m -> m.getChargeHandler().getSlots()).orElse(1), getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.getFacing();
@@ -32,6 +35,17 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
             @Override
             public void onMachineEvent(IMachineEvent event, Object... data) {
                 super.onMachineEvent(event, data);
+            }
+
+            @Override
+            public void onUpdate() {
+                super.onUpdate();
+                cachedItems.forEach(h ->{
+                    long toAdd = Math.min(this.energy, h.getCapacity() - h.getEnergy());
+                    if (toAdd > 0 && Utils.addEnergy(h, toAdd)){
+                        this.energy -= toAdd;
+                    }
+                });
             }
         });
     }
