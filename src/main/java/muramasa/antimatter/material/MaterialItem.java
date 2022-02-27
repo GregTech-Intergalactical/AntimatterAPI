@@ -35,7 +35,9 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static muramasa.antimatter.Data.CRUSHED_PURIFIED;
 import static muramasa.antimatter.Data.DUST;
+import static muramasa.antimatter.Data.DUST_TINY;
 
 public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
@@ -87,21 +89,41 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         BlockPos pos = context.getClickedPos();
         ItemStack stack = player.getItemInHand(context.getHand());
         BlockState state = world.getBlockState(pos);
-        if (type == Data.DUST_IMPURE && state.getBlock() instanceof CauldronBlock) {
+        if (state.getBlock() instanceof CauldronBlock){
             int level = state.getValue(CauldronBlock.LEVEL);
-            if (level > 0) {
-                MaterialItem item = (MaterialItem) stack.getItem();
-                if (item.getMaterial().has(DUST)) {
-                    stack.shrink(1);
-                    if (!player.addItem(DUST.get(item.getMaterial(), 1))) {
-                        player.drop(DUST.get(item.getMaterial(), 1), false);
+            if (level > 0){
+                Material material = ((MaterialItem) stack.getItem()).getMaterial();
+                if (type == Data.DUST_IMPURE) {
+                    if (material.has(DUST)) {
+                        stack.shrink(1);
+                        if (!player.addItem(DUST.get(material, 1))) {
+                            player.drop(DUST.get(material, 1), false);
+                        }
+                        world.setBlockAndUpdate(context.getClickedPos(), state.setValue(CauldronBlock.LEVEL, --level));
+                        world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        return ActionResultType.SUCCESS;
                     }
-                    world.setBlockAndUpdate(context.getClickedPos(), state.setValue(CauldronBlock.LEVEL, --level));
-                    world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                    return ActionResultType.SUCCESS;
+                } else if (type == Data.CRUSHED) {
+                    if (material.has(CRUSHED_PURIFIED)) {
+                        stack.shrink(1);
+                        if (!player.addItem(CRUSHED_PURIFIED.get(material, 1))) {
+                            player.drop(CRUSHED_PURIFIED.get(material, 1), false);
+                        }
+                        Material oreByProduct = material.getByProducts().size() >= 1 ? material.getByProducts().get(0) : material;
+                        if (oreByProduct.has(DUST)){
+                            if (!player.addItem(DUST_TINY.get(oreByProduct, 1))) {
+                                player.drop(DUST_TINY.get(oreByProduct, 1), false);
+                            }
+                        }
+                        world.setBlockAndUpdate(context.getClickedPos(), state.setValue(CauldronBlock.LEVEL, --level));
+                        world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        return ActionResultType.SUCCESS;
+                    }
                 }
             }
+
         }
+
         return ActionResultType.FAIL;
     }
 
