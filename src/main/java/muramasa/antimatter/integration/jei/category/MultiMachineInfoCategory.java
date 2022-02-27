@@ -9,6 +9,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IRecipeRegistration;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -21,7 +22,7 @@ public class MultiMachineInfoCategory implements IRecipeCategory<MultiMachineInf
     private static IGuiHelper guiHelper;
     private final IDrawable background;
     private final IDrawable icon;
-    private static final ResourceLocation UID = new ResourceLocation("gti:multi_machine_info");
+    private static final ResourceLocation UID = new ResourceLocation(Ref.SHARED_ID, "multi_machine_info");
     private static final Set<MultiMachineInfoPage> MULTI_MACHINES_PAGES = Sets.newHashSet();
 
     public MultiMachineInfoCategory() {
