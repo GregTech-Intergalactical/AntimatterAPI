@@ -390,6 +390,7 @@ public class Data {
         ROTOR.dependents(PLATE, SCREW, RING);
         SCREW.dependents(BOLT);
         BOLT.dependents(ROD);
+        CRUSHED.dependents(CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_PURE, DUST_IMPURE);
 
         if (side == Dist.CLIENT) {
             clientInit();
