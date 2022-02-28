@@ -74,9 +74,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 this.icon = (IDrawable) icon;
             }
         } else {
-            Block block = AntimatterAPI.get(BlockMachine.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
-            if (block == null)
-                block = AntimatterAPI.get(BlockMultiMachine.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
+            Block block = AntimatterAPI.get(Block.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
             this.icon = block == null ? guiHelper.createDrawableIngredient(new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(new ItemStack(block.asItem(), 1));
         }
         this.gui = gui;
