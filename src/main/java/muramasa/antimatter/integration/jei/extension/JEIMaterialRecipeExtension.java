@@ -11,45 +11,31 @@ import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
-import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static net.minecraft.ChatFormatting.GOLD;
 
-public class JEIMaterialRecipeExtension implements ICraftingCategoryExtension {
-
-    private static final int craftOutputSlot = 0;
-    private static final int craftInputSlot1 = 1;
-
-    public static final int width = 116;
-    public static final int height = 54;
-
-    protected final MaterialRecipe recipe;
-    protected final ICraftingGridHelper helper;
-
-    public JEIMaterialRecipeExtension(MaterialRecipe recipe) {
-        this.recipe = recipe;
-        this.helper = AntimatterJEIPlugin.helpers().getGuiHelper().createCraftingGridHelper(craftInputSlot1);
-    }
-
+public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraftingCategoryExtension {
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder recipeLayout, ICraftingGridHelper helper, IFocusGroup focuses) {
+    public void setRecipe(@NotNull IRecipeLayoutBuilder recipeLayout, @NotNull ICraftingGridHelper helper, IFocusGroup focuses) {
         if (focuses.isEmpty()) {
             helper.setInputs(recipeLayout, VanillaTypes.ITEM, recipe.getIngredients().stream().map(t -> Arrays.asList(t.getItems())).toList(), recipe.getWidth(), recipe.getHeight());
             helper.setOutputs(recipeLayout, VanillaTypes.ITEM, recipe.outputs);
             return;
         }
         focuses.getFocuses(VanillaTypes.ITEM).forEach(focus -> {
-            if (focus.getRole() == RecipeIngredientRole.CATALYST || focus.getRole() == RecipeIngredientRole.RENDER_ONLY) return;
+            if (focus.getRole() == RecipeIngredientRole.CATALYST || focus.getRole() == RecipeIngredientRole.RENDER_ONLY)
+                return;
             List<List<ItemStack>> inputs = recipe.getIngredients().stream().map(t -> Arrays.asList(t.getItems())).toList();
             List<ItemStack> outputs = recipe.outputs;
             List<List<ItemStack>> newInputs = new ObjectArrayList<>(inputs);
@@ -79,11 +65,11 @@ public class JEIMaterialRecipeExtension implements ICraftingCategoryExtension {
                 IRecipeSlotBuilder outputSlot = recipeLayout.addSlot(RecipeIngredientRole.OUTPUT, 95, 19);
                 outputSlot.addTooltipCallback((a, b) -> {
                     if (a.isEmpty()) return;
-                    a.getDisplayedIngredient().ifPresent(t -> t.getIngredient(VanillaTypes.ITEM).ifPresent(ing -> {
+                    a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM)).ifPresent(ing -> {
                         Map<String, Object> o = recipe.builder.getFromResult(ing);
                         b.add(new TextComponent("Properties:").withStyle(GOLD));
                         o.forEach((k, v) -> b.add(new TextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new TextComponent(" - " + v.toString()))));
-                    }));
+                    });
                 });
                 outputSlot.addIngredients(VanillaTypes.ITEM, Collections.singletonList(stack));
             } else if (focus.getRole() == RecipeIngredientRole.INPUT) {
@@ -124,7 +110,7 @@ public class JEIMaterialRecipeExtension implements ICraftingCategoryExtension {
                     if (a.isEmpty()) return;
                     a.getDisplayedIngredient().flatMap(t -> t.getIngredient(VanillaTypes.ITEM)).ifPresent(ing -> {
                         Map<String, Object> o = recipe.builder.getFromResult(ing);
-                        b.add(new TextComponent("Properties:").withStyle(GOLD));
+                        b.add(new TextComponent("Properties: ").withStyle(GOLD));
                         o.forEach((k, v) -> b.add(new TextComponent(k.substring(0, 1).toUpperCase() + k.substring(1)).append(new TextComponent(" - " + v.toString()))));
                     });
                 });
@@ -149,11 +135,9 @@ public class JEIMaterialRecipeExtension implements ICraftingCategoryExtension {
                     if (set.contains(i - 1)) {
                         final int j = i;
                         slot.addTooltipCallback((a, b) -> {
-                            a.getDisplayedIngredient().ifPresent(obj -> {
-                                obj.getIngredient(VanillaTypes.ITEM).ifPresent(o -> {
+                            //a.getDisplayedIngredient().flatMap(obj -> obj.getIngredient(VanillaTypes.ITEM)).ifPresent(o -> {
 
-                                });
-                            });
+                            //});
                             if (recipe.getIngredients().get(j - 1) instanceof PropertyIngredient p) {
                                 b.add(new TextComponent("Property: ").append(new TextComponent(p.getId().substring(0, 1).toUpperCase() + p.getId().substring(1)).withStyle(GOLD)));
                             }
