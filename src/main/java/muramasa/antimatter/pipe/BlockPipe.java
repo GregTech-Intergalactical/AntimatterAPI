@@ -269,9 +269,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 }
             } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
                 if (player.isCrouching()) {
-                    NetworkHooks.openGui((ServerPlayer) player, tile, extra -> {
-                        extra.writeBlockPos(pos);
-                    });
+                    NetworkHooks.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
+                    stack.hurtAndBreak(10, player, p -> p.broadcastBreakEvent(hand));
                     return InteractionResult.SUCCESS;
                 }
                 ICover instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getDirection()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
