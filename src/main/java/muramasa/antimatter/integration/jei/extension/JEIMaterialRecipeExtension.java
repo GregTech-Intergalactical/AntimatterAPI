@@ -41,27 +41,29 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
             List<List<ItemStack>> newInputs = new ObjectArrayList<>(inputs);
             boolean shouldReplace = true;
             ItemStack stack = focus.getTypedValue().getIngredient();
+
             if (focus.getRole() == RecipeIngredientRole.OUTPUT) {
                 Map<String, Object> m = recipe.builder.getFromResult(stack);
-                for (int i = 0; i < recipe.getIngredients().size(); i++) {
-                    Ingredient j = recipe.getIngredients().get(i);
-                    if (!(j instanceof PropertyIngredient inner)) continue;
-                    Object o = m.get(inner.getId());
-                    if (o == null) continue;
-                    List<ItemStack> st = Arrays.stream(inner.getItems()).filter(t -> Objects.equals(MaterialRecipe.getMat(inner, t), o)).collect(Collectors.toList());
+                int i = 0;
+
+                for (Ingredient ingredient : recipe.getIngredients()) {
+                    if (!(ingredient instanceof PropertyIngredient ing)) {
+                        i++;
+                        continue;
+                    }
+                    String id = ing.getId();
+                    Object mat = m.get(id);
+                    if (mat == null) {
+                        i++;
+                        continue;
+                    }
+                    List<ItemStack> st = Arrays.stream(ing.getItems()).filter(t -> Objects.equals(ing.getMat(t), mat)).collect(Collectors.toList());
                     if (st.size() > 0) {
                         newInputs.set(i, st);
-                        final Item item = stack.getItem();
-                        Optional<ItemStack> optionalStack = outputs.stream().filter(t -> t.getItem() == item).findAny();
-                        if (optionalStack.isPresent()) {
-                            stack = stack.copy();
-                            stack.setCount(optionalStack.get().getCount());
-                        }
-                    } else {
-                        shouldReplace = false;
-                        break;
                     }
+                    i++;
                 }
+
                 IRecipeSlotBuilder outputSlot = recipeLayout.addSlot(RecipeIngredientRole.OUTPUT, 95, 19);
                 outputSlot.addTooltipCallback((a, b) -> {
                     if (a.isEmpty()) return;
@@ -75,10 +77,9 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
             } else if (focus.getRole() == RecipeIngredientRole.INPUT) {
                 Map<String, Object> out = new Object2ObjectOpenHashMap<>();
 
-                ItemStack finalStack = stack;
-                recipe.getIngredients().stream().filter(t -> t.test(finalStack) && t instanceof PropertyIngredient).map(t -> ((PropertyIngredient) t)).findAny().ifPresent(ing -> {
+                recipe.getIngredients().stream().filter(t -> t.test(stack) && t instanceof PropertyIngredient).map(t -> ((PropertyIngredient) t)).findAny().ifPresent(ing -> {
                     String id = ing.getId();
-                    Object mat = ing.getMat(finalStack);
+                    Object mat = ing.getMat(stack);
                     int i = 0;
                     for (Ingredient innerIngredient : recipe.getIngredients()) {
                         if (!(innerIngredient instanceof PropertyIngredient inner)) {
