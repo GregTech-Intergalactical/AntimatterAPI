@@ -276,18 +276,20 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
         tile.onRecipePreTick();
         if (!consumeResourceForRecipe(false)) {
-            if ((currentProgress == 0 && tile.getMachineState() == tile.getDefaultMachineState()) || generator) {
+            if ((currentProgress == 0 && tile.getMachineState() == tile.getDefaultMachineState())) {
                 //Cannot start a recipe :(
-                if (!(generator && currentProgress > 0)) {
-                    resetRecipe();
-                }
                 return tile.getDefaultMachineState();
             } else {
                 //TODO: Hard-mode here?
                 recipeFailure();
             }
-            tickTimer += WAIT_TIME_POWER_LOSS;
-            return POWER_LOSS;
+            if (!generator){
+                tickTimer += WAIT_TIME_POWER_LOSS;
+                return POWER_LOSS;
+            } else {
+                tickTimer += 10;
+                return IDLE;
+            }
         }
         if (currentProgress == 0 && !consumedResources && shouldConsumeResources()) {
             if (!this.consumeInputs()) {
