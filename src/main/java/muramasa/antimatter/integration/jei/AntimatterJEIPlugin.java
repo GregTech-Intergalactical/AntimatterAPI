@@ -7,7 +7,10 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IJeiHelpers;
+import mezz.jei.api.ingredients.IIngredientType;
+import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.IFocus;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
@@ -147,10 +150,34 @@ public class AntimatterJEIPlugin implements IModPlugin {
         IFocus.Mode mode = !USE ? IFocus.Mode.OUTPUT : IFocus.Mode.INPUT;
         FluidStack v = val.copy();
         runtime.getRecipesGui().show(new IFocus<FluidStack>() {
-            @Nonnull
             @Override
-            public FluidStack getValue() {
-                return v;
+            public ITypedIngredient<FluidStack> getTypedValue() {
+                return new ITypedIngredient<FluidStack>() {
+                    @Override
+                    public IIngredientType<FluidStack> getType() {
+                        return VanillaTypes.FLUID;
+                    }
+
+                    @Override
+                    public FluidStack getIngredient() {
+                        return v;
+                    }
+
+                    @Override
+                    public <V> Optional<V> getIngredient(IIngredientType<V> ingredientType) {
+                        return Optional.empty();
+                    }
+                };
+            }
+
+            @Override
+            public RecipeIngredientRole getRole() {
+                return mode == Mode.INPUT ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
+            }
+
+            @Override
+            public <T> Optional<IFocus<T>> checkedCast(IIngredientType<T> ingredientType) {
+                return Optional.empty();
             }
 
             @Nonnull

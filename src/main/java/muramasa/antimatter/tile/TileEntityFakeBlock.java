@@ -154,7 +154,9 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
-        return this.writeTag(new CompoundTag(), true);
+        CompoundTag nbt = new CompoundTag();
+        writeTag(nbt, true);
+        return nbt;
     }
 
     @Override
@@ -162,10 +164,9 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         writeTag(nbt, false);
     }
 
-    private CompoundTag writeTag(CompoundTag compound, boolean send) {
-        CompoundTag nbt = super.save(compound);
-        nbt.put("B", NbtUtils.writeBlockState(state));
-        nbt.putInt("F", facing.ordinal());
+    private void writeTag(CompoundTag compound, boolean send) {
+        compound.put("B", NbtUtils.writeBlockState(state));
+        compound.putInt("F", facing.ordinal());
         CompoundTag n = new CompoundTag();
         this.covers.forEach((k, v) -> CoverFactory.writeCover(n, v));
         compound.put("C", n);
@@ -176,7 +177,6 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
             }
             compound.put("P", list);
         }
-        return nbt;
     }
 
     public BlockState getState() {

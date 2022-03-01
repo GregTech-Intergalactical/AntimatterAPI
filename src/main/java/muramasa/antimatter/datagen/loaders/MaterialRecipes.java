@@ -39,7 +39,7 @@ public class MaterialRecipes {
         provider.addToolRecipe(DUST_TWO_BUILDER.get(BOLT.getId()), consumer, Ref.ID, "bolt", "antimatter_material",
                 "has_wrench", in, BOLT.all().stream().map(t -> BOLT.get(t, 2)).collect(Collectors.toList()), of('F', SAW.getTag(), 'I', PropertyIngredient.builder("primary").types(ROD).tags(BOLT).build()), "F", "I");
         provider.addToolRecipe(DUST_TWO_BUILDER.get(SCREW.getId()), consumer, Ref.ID, "screw", "antimatter_material",
-                "has_wrench", in, SCREW.all().stream().map(t -> SCREW.get(t, 1)).collect(Collectors.toList()), of('F', FILE.getTag(), 'I', PropertyIngredient.builder("primary").types(BOLT).tags(SCREW).build()), "FI", "I ");
+                "has_wrench", in, SCREW.all().stream().filter(t -> t.has(BOLT)).map(t -> SCREW.get(t, 1)).collect(Collectors.toList()), of('F', FILE.getTag(), 'I', PropertyIngredient.builder("primary").types(BOLT).tags(SCREW).build()), "FI", "I ");
 
         provider.addToolRecipe(DUST_BUILDER.get(ROTOR.getId()), consumer, Ref.ID, "rotors", "antimatter_material", "has_screwdriver", provider.hasSafeItem(SCREWDRIVER.getTag()),
                 ROTOR.all().stream().map(t -> ROTOR.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
