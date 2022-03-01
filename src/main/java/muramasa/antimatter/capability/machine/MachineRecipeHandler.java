@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nullable;
@@ -27,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static muramasa.antimatter.machine.MachineState.*;
+import static muramasa.antimatter.machine.event.ContentEvent.ENERGY_SLOT_CHANGED;
 
 //TODO: This needs some look into, a bit of spaghetti code sadly.
 public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMachineHandler, Dispatch.Sided<MachineRecipeHandler> {
@@ -102,9 +105,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //First, a few timer related tasks that ensure the machine can recover from certain situations.
         if (tickingRecipe) return;
         if (tickTimer > 0) {
-            tickTimer--;
-            if (tickTimer > 0) {
-                return;
+            if (tile.getMachineState() == IDLE) {
+                tickTimer = 0;
+            } else {
+                tickTimer--;
+                if (tickTimer > 0) {
+                    return;
+                }
             }
         }
         if (tile.getMachineState() == POWER_LOSS && activeRecipe != null) {
@@ -315,18 +322,24 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 if (!generator) {
                     long power = getPower();
                     GTTransaction transaction = tile.energyHandler.map(eh -> eh.extract(GTTransaction.Mode.INTERNAL)).orElse(null);
-                    if (transaction != null) {
+                    if (transaction != null && transaction.isValid()) {
                         if (simulate) {
                             return transaction.eu >= power;
-                        } else {
+                        } else if (transaction.eu >= power) {
                             transaction.addData(power, Utils.sink());
                             transaction.commit();
                             return true;
+                        } else {
+                            return false;
                         }
+                    } else {
+                        return false;
                     }
                 } else {
                     return consumeGeneratorResources(simulate);
                 }
+            } else {
+                return false;
             }
         }
         return true;
@@ -527,6 +540,17 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (event instanceof ContentEvent) {
             if (tile.getMachineState() == ACTIVE)
                 return;
+            if (tile.getMachineState() == POWER_LOSS) {
+                return;
+            }
+            if (activeRecipe != null && !consumeResourceForRecipe(true)) {
+                return;
+            }
+            if (event == ENERGY_SLOT_CHANGED) {
+                if (tile.itemHandler.map(t -> t.inventories.get(SlotType.ENERGY).getStackInSlot((int) data[0]).isEmpty()).orElse(true)) {
+                    return;
+                }
+            }
             if ((event == ContentEvent.ITEM_OUTPUT_CHANGED || event == ContentEvent.FLUID_OUTPUT_CHANGED) && tile.getMachineState() == OUTPUT_FULL && tickTimer == 0 && canOutput()) {
                 tickingRecipe = true;
                 tile.setMachineState(recipeFinish());
@@ -577,6 +601,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             fluidInputs.forEach(t -> fluid.add(t.writeToNBT(new CompoundTag())));
         }
         nbt.put("I", item);
+        nbt.putInt("T", tickTimer);
         nbt.put("F", fluid);
         nbt.putInt("P", currentProgress);
         return nbt;
@@ -588,6 +613,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         nbt.getList("I", 10).forEach(t -> itemInputs.add(ItemStack.of((CompoundTag) t)));
         nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundTag) t)));
         this.currentProgress = nbt.getInt("P");
+        this.tickTimer = nbt.getInt("T");
     }
 
     @Override
