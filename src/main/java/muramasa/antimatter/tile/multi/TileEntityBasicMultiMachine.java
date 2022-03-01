@@ -185,13 +185,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     @Override
     public void setBlockState(BlockState p_155251_) {
-        super.setBlockState(p_155251_);
-    }
-/* TODO 1.18
-    @Override
-    public void clearCache() {
         BlockState old = this.getBlockState();
-        super.clearCache();
+        super.setBlockState(p_155251_);
         BlockState newState = this.getBlockState();
         if (!old.equals(newState)) {
             oldState = old;
@@ -200,7 +195,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             facingOverride = null;
         }
     }
-*/
+
+
+
     @Override
     public void onMachineStop() {
         super.onMachineStop();
