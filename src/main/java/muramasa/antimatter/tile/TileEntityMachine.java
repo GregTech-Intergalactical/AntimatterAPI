@@ -259,6 +259,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
+    protected void markDirty() {
+        this.getLevel().getChunkAt(this.getBlockPos()).setUnsaved(true);
+    }
+
     @Override
     public void onMachineEvent(IMachineEvent event, Object... data) {
         if (this.getLevel() != null && !this.getLevel().isClientSide) {
@@ -270,6 +274,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             if (event instanceof ContentEvent && openContainers.size() > 0) {
                 //openContainers.forEach(ContainerMachine::detectAndSendLiquidChanges);
             }
+            markDirty();
         }
     }
 
