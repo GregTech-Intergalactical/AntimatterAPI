@@ -27,6 +27,9 @@ import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.network.chat.Component;
@@ -96,7 +99,12 @@ public class AntimatterJEIPlugin implements IModPlugin {
         //Remove fluid "blocks".
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BY_BLOCK.get(t.getFluidBlock()))).collect(Collectors.toList()));
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Collections.singletonList(new ItemStack(Data.PROXY_INSTANCE)));
-        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Stream.concat(DUST_TINY.all().stream().map(t -> DUST_TINY.get(t, 1)), DUST_SMALL.all().stream().map(t -> DUST_SMALL.get(t, 1))).collect(Collectors.toList()));
+        AntimatterAPI.all(MaterialTypeItem.class, t -> {
+            if (!t.hidden()) return;
+            List<ItemStack> stacks = (List<ItemStack>) t.all().stream().map(obj -> t.get((Material)obj, 1)).collect(Collectors.toList());
+            if (stacks.isEmpty()) return;
+            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, stacks);
+        });
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));

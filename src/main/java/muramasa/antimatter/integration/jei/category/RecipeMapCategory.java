@@ -3,13 +3,14 @@ package muramasa.antimatter.integration.jei.category;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
-import mezz.jei.api.gui.ingredient.IGuiFluidStackGroup;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
@@ -22,22 +23,17 @@ import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
 
-import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -67,10 +63,10 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack) {
-                this.icon = guiHelper.createDrawableIngredient((ItemStack) icon);
+                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, (ItemStack) icon);
             }
             if (icon instanceof ItemLike) {
-                this.icon = guiHelper.createDrawableIngredient(new ItemStack((ItemLike) icon));
+                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack((ItemLike) icon));
             }
             if (icon instanceof IDrawable) {
                 this.icon = (IDrawable) icon;
@@ -79,7 +75,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             Block block = AntimatterAPI.get(BlockMachine.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
             if (block == null)
                 block = AntimatterAPI.get(BlockMultiMachine.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
-            this.icon = block == null ? guiHelper.createDrawableIngredient(new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(new ItemStack(block.asItem(), 1));
+            this.icon = block == null ? guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(block.asItem(), 1));
         }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();
@@ -105,43 +101,11 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         return icon;
     }
 
-    @Override
-    public void setIngredients(Recipe recipe, IIngredients ingredients) {
-        if (recipe.hasInputItems()) {
-            List<Ingredient> inputs = new ObjectArrayList<>(recipe.getInputItems().size());
-            for (RecipeIngredient ing : recipe.getInputItems()) {
-                inputs.add(ing.get());
-            }
-            ingredients.setInputLists(VanillaTypes.ITEM, inputs.stream().map(t -> Arrays.asList(t.getItems())).collect(Collectors.toList()));
-        }
-        if (recipe.hasOutputItems()) {
-            ingredients.setOutputLists(VanillaTypes.ITEM, Arrays.stream(recipe.getOutputItems(false)).map(Collections::singletonList).collect(Collectors.toList()));
-        }
-        if (recipe.hasInputFluids()) {
-            ingredients.setInputLists(VanillaTypes.FLUID, recipe.getInputFluids().stream().map(t -> Arrays.asList(t.getStacks())).collect(Collectors.toList()));
-        }
-        if (recipe.hasOutputFluids()) {
-            ingredients.setOutputs(VanillaTypes.FLUID, Arrays.asList(recipe.getOutputFluids()));
-        }
-    }
-
 
     @Override
-    public Class getRecipeClass() {
-        return Recipe.class;
-    }
-
-    @Override
-    public void draw(Recipe recipe, PoseStack stack, double mouseX, double mouseY) {
-        if (progressBar != null)
-            progressBar.draw(stack, gui.dir.getPos().x + gui.getArea().x, gui.dir.getPos().y + gui.getArea().y);
-        infoRenderer.render(stack, recipe, Minecraft.getInstance().font, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z / 2);
-    }
-
-    @Override
-    public void setRecipe(IRecipeLayout layout, Recipe recipe, @Nonnull IIngredients ingredients) {
-        IGuiItemStackGroup itemGroup = layout.getItemStacks();
-        IGuiFluidStackGroup fluidGroup = layout.getFluidStacks();
+    public void setRecipe(IRecipeLayoutBuilder builder, Recipe recipe, IFocusGroup focuses) {
+        List<List<ItemStack>> inputs = recipe.hasInputItems() ? recipe.getInputItems().stream().map(t -> Arrays.asList(t.get().getItems())).collect(Collectors.toList()) : Collections.emptyList();
+        List<ItemStack> outputs = recipe.hasOutputItems() ? Arrays.stream(recipe.getOutputItems()).toList() : Collections.emptyList();
         List<SlotData<?>> slots;
         int groupIndex = 0, slotCount;
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
@@ -151,18 +115,18 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             slotCount = slots.size();
             if (slotCount > 0) {
                 int s = 0;
-                List<List<ItemStack>> stacks = ingredients.getInputs(VanillaTypes.ITEM);
-                if (stacks.size() > 0) {
-                    slotCount = Math.min(slotCount, stacks.size());
+                if (inputs.size() > 0) {
+                    slotCount = Math.min(slotCount, inputs.size());
                     for (; s < slotCount; s++) {
-                        itemGroup.init(groupIndex, true, slots.get(s).getX() - offsetX, slots.get(s).getY() - offsetY);
-                        List<ItemStack> input = stacks.get(s);
+                        IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
+                        List<ItemStack> input = inputs.get(s);
                         if (input.size() == 0) {
                             List<ItemStack> st = new ObjectArrayList<>(1);
                             st.add(new ItemStack(Data.DEBUG_SCANNER, 1));
-                            itemGroup.set(groupIndex++, st);
+                            slot.addIngredients(VanillaTypes.ITEM, st);
                         } else {
-                            itemGroup.set(groupIndex++, input);
+                            slot.addIngredients(VanillaTypes.ITEM, input);
+//                            itemGroup.set(groupIndex++, input);
                             inputItems++;
                         }
                     }
@@ -173,11 +137,10 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
             slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
             slotCount = slots.size();
             if (slotCount > 0) {
-                List<List<ItemStack>> stacks = ingredients.getOutputs(VanillaTypes.ITEM);
-                slotCount = Math.min(slotCount, stacks.size());
+                slotCount = Math.min(slotCount, outputs.size());
                 for (int s = 0; s < slotCount; s++) {
-                    itemGroup.init(groupIndex, false, slots.get(s).getX() - offsetX, slots.get(s).getY() - offsetY);
-                    itemGroup.set(groupIndex++, stacks.get(s));
+                    IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
+                    slot.addIngredient(VanillaTypes.ITEM, outputs.get(s));
                 }
             }
         }
@@ -190,8 +153,9 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 List<FluidIngredient> fluids = recipe.getInputFluids();
                 slotCount = Math.min(slotCount, fluids.size());
                 for (int s = 0; s < slotCount; s++) {
-                    fluidGroup.init(groupIndex, true, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1), 16, 16, fluids.get(s).getAmount(), false, null);
-                    fluidGroup.set(groupIndex++, Arrays.asList(fluids.get(s).getStacks()));
+                    IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
+                    slot.addIngredients(VanillaTypes.FLUID, Arrays.asList(fluids.get(s).getStacks()));
+                    slot.setFluidRenderer(fluids.get(s).getAmount(), true, 16, 16);
                     inputFluids++;
                 }
             }
@@ -203,14 +167,15 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 FluidStack[] fluids = recipe.getOutputFluids();
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
-                    fluidGroup.init(groupIndex, false, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1), 16, 16, fluids[s].getAmount(), false, null);
-                    fluidGroup.set(groupIndex++, fluids[s]);
+                    IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
+                    slot.setFluidRenderer(fluids[s].getAmount(), true, 16, 16);
+                    slot.addIngredient(VanillaTypes.FLUID, fluids[s]);
                 }
             }
         }
 
         final int finalInputItems = inputItems;
-        itemGroup.addTooltipCallback((index, input, stack, tooltip) -> {
+       /* itemGroup.addTooltipCallback((index, input, stack, tooltip) -> {
             if (input) {
                 if (recipe.hasInputItems()) {
                     if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreConsume()) {
@@ -245,7 +210,49 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 //                }
 //            }
         });
+        */
     }
+    /*
+    private static IRecipeSlotTooltipCallback itemCallback(Recipe recipe, boolean input) {
+        return (a,b) ->
+            if (input) {
+                if (recipe.hasInputItems()) {
+                    a.getDisplayedIngredient().flatMap(ing -> {
+                        Ingredient i = ing.getIngredient();
+                    })
+                    if (recipe.getInputItems().get(index).ignoreConsume()) {
+                        tooltip.add(new TextComponent("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
+                    }
+                    if (recipe.getInputItems().size() >= index && recipe.getInputItems().get(index).ignoreNbt()) {
+                        tooltip.add(new TextComponent("Ignores NBT.").withStyle(ChatFormatting.WHITE));
+                    }
+                    if (recipe.getInputItems().size() >= index) {
+                        Ingredient i = recipe.getInputItems().get(index).get();
+                        if (RecipeMap.isIngredientSpecial(i)) {
+                            tooltip.add(new TextComponent("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(new TextComponent(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
+                        }
+                    }
+                }
+            }
+            if (recipe.hasChances() && !input) {
+                int chanceIndex = index - finalInputItems;
+                if (recipe.getChances()[chanceIndex] < 100) {
+                    tooltip.add(new TextComponent("Chance: " + recipe.getChances()[chanceIndex] + "%").withStyle(ChatFormatting.WHITE));
+                }
+            }
+        }
+    }*/
+
+    @Override
+    public Class getRecipeClass() {
+        return Recipe.class;
+    }
+
+    @Override
+    public void draw(Recipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack stack, double mouseX, double mouseY) {
+        if (progressBar != null)
+            progressBar.draw(stack, gui.dir.getPos().x + gui.getArea().x, gui.dir.getPos().y + gui.getArea().y);
+        infoRenderer.render(stack, recipe, Minecraft.getInstance().font, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z / 2);    }
 
     public static void setGuiHelper(IGuiHelper helper) {
         guiHelper = helper;

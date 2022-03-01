@@ -62,6 +62,14 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         }
     }
 
+    public static ItemStack getFilledBattery(ItemBasic<?> item) {
+        ItemStack stack = item.getDefaultInstance();
+        getCastedHandler(stack).ifPresent(t -> {
+            t.setEnergy(t.getCapacity());
+        });
+        return stack;
+    }
+
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag tag) {
@@ -95,7 +103,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         return InteractionResultHolder.pass(stack);
     }
 
-    private LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
+    private static LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
         return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).cast();
     }
 

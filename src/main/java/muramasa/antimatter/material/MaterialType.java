@@ -38,6 +38,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     protected final Set<Material> materials = new ObjectLinkedOpenHashSet<>(); //Linked to preserve insertion order for JEI
     protected final Map<MaterialType<?>, Tag.Named<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
+    private boolean hidden = false;
     protected final BiMap<Material, Item> OVERRIDES = HashBiMap.create();
     protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
     //since we have two instances stored in antimatter.
@@ -87,6 +88,15 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
             return null;
         }
         return OVERRIDES.inverse().get(stack.getItem());
+    }
+
+    public boolean hidden() {
+        return hidden;
+    }
+
+    public MaterialType<T> setHidden() {
+        this.hidden = true;
+        return this;
     }
 
     @SuppressWarnings("unchecked")

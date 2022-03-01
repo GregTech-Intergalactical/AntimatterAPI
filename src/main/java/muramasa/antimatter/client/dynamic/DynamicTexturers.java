@@ -35,12 +35,15 @@ public class DynamicTexturers {
     public static final DynamicTextureProvider<ICover, ICover.DynamicKey> COVER_DYNAMIC_TEXTURER = new DynamicTextureProvider<ICover, ICover.DynamicKey>(
             t -> {
                 if (t.currentDir == t.source.side()) {
-                    UnbakedModel m;
+                    UnbakedModel m = null;
                     try {
                         //for some reason first load can cause circular exception
                         m = ForgeModelBakery.instance().getModel(t.source.getModel(t.type, Direction.SOUTH));
-                    } catch (Exception ex) {
-                        m = ForgeModelBakery.instance().getModel(t.source.getModel(t.type, Direction.SOUTH));
+                    } catch (Exception ignored) {
+
+                    }
+                    if (m == null) {
+                        return Collections.emptyList();
                     }
                     BlockModel model = (BlockModel) m;
                     if (t.data.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)) {

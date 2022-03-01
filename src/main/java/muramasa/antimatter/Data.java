@@ -386,6 +386,13 @@ public class Data {
         SCREW.dependents(BOLT);
         BOLT.dependents(ROD);
 
+        DUST_TINY.setHidden();
+        DUST_SMALL.setHidden();
+        DRILLBIT.setHidden();
+        CHAINSAWBIT.setHidden();
+        WRENCHBIT.setHidden();
+        DRILLBIT.setHidden();
+
         if (side == Dist.CLIENT) {
             clientInit();
         }
