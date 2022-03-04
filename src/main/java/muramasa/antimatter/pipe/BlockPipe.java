@@ -37,6 +37,7 @@ import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -46,6 +47,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
@@ -178,11 +180,8 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 */
     public AntimatterToolType getToolType() {
+        if (type.getMaterial() == Data.Wood) return Data.AXE;
         return Data.WRENCH;
-    }
-
-    public ToolType getInteractTool(BlockState state){
-        return Data.WRENCH.getToolType();
     }
 
     @Override // Used to set connection for sides where neighbor has pre-set connection

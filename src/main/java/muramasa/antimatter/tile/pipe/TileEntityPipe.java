@@ -323,9 +323,13 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT tag) {
-        super.load(state, tag); //TODO get tile data tag
-        ofState(state);
+    public boolean path() {
+        return coverHandler.map(t -> Arrays.stream(t.getAll()).mapToInt(c -> c.ticks() ? 1 : 0).sum() > 0).orElse(false);
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER))
             coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         byte newConnection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);

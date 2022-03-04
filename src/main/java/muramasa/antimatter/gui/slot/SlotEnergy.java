@@ -2,7 +2,8 @@ package muramasa.antimatter.gui.slot;
 
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.SlotType;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;

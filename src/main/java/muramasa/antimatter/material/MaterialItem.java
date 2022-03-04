@@ -88,20 +88,41 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         if (world.isClientSide()) return InteractionResult.PASS;
         MaterialItem item = (MaterialItem) stack.getItem();
         MaterialType<?> type = item.getType();
-        if (type == Data.DUST_IMPURE && state.getBlock() instanceof AbstractCauldronBlock) {
+        if (state.getBlock() instanceof AbstractCauldronBlock){
             int level = state.getValue(LayeredCauldronBlock.LEVEL);
-            if (level > 0) {
-                stack.shrink(1);
-                if (!player.addItem(DUST.get(item.getMaterial(), 1))) {
-                    player.drop(DUST.get(item.getMaterial(), 1), false);
+            if (level > 0){
+                Material material = ((MaterialItem) stack.getItem()).getMaterial();
+                if (type == Data.DUST_IMPURE) {
+                    if (material.has(DUST)) {
+                        stack.shrink(1);
+                        if (!player.addItem(DUST.get(material, 1))) {
+                            player.drop(DUST.get(material, 1), false);
+                        }
+                        LayeredCauldronBlock.lowerFillLevel(state, world, pos);
+                        world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        return InteractionResult.SUCCESS;
+                    }
+                } else if (type == Data.CRUSHED) {
+                    if (material.has(CRUSHED_PURIFIED)) {
+                        stack.shrink(1);
+                        if (!player.addItem(CRUSHED_PURIFIED.get(material, 1))) {
+                            player.drop(CRUSHED_PURIFIED.get(material, 1), false);
+                        }
+                        Material oreByProduct = material.getByProducts().size() >= 1 ? material.getByProducts().get(0) : material;
+                        if (oreByProduct.has(DUST) && world.random.nextInt(100) < 50){
+                            if (!player.addItem(DUST_TINY.get(oreByProduct, 1))) {
+                                player.drop(DUST_TINY.get(oreByProduct, 1), false);
+                            }
+                        }
+                        LayeredCauldronBlock.lowerFillLevel(state, world, pos);
+                        world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        return InteractionResult.SUCCESS;
+                    }
                 }
-                LayeredCauldronBlock.lowerFillLevel(state, world, pos);
-                world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                return InteractionResult.SUCCESS;
             }
 
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.PASS;
 
     }
 

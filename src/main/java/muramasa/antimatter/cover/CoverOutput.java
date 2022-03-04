@@ -87,7 +87,7 @@ public class CoverOutput extends CoverInput {
     }
 
     protected void processItemOutput() {
-        BlockEntity adjTile = Utils.getTile(tile.getLevel(), tile.getBlockPos().relative(this.side));
+        BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
         adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
@@ -111,12 +111,12 @@ public class CoverOutput extends CoverInput {
         if (event.getFactory() == GuiEvents.ITEM_EJECT) {
             ejectItems = !ejectItems;
             processItemOutput();
-            tile.sidedSync(false);
+            Utils.markTileForNBTSync(handler.getTile());
         }
         if (event.getFactory() == GuiEvents.FLUID_EJECT) {
             ejectFluids = !ejectFluids;
             processFluidOutput();
-            tile.sidedSync(false);
+            Utils.markTileForNBTSync(handler.getTile());
         }
     }
 
