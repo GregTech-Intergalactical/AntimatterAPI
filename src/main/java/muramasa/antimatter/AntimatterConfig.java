@@ -163,10 +163,10 @@ public class AntimatterConfig {
                     .worldRestart()
                     .define("DISABLE_VANILLA_ORE_GEN", true);
 
-            VANILLA_STONE_GEN = builder.comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: false")
+            VANILLA_STONE_GEN = builder.comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: true")
                     .translation(Ref.ID + ".config.vanilla_stone_gen")
                     .worldRestart()
-                    .define("DISABLE_VANILLA_STONE_GEN", false);
+                    .define("DISABLE_VANILLA_STONE_GEN", true);
 
             SMALL_ORES = builder.comment("Enable small ores - Default: true")
                     .translation(Ref.ID + ".config.small_ores")
