@@ -6,6 +6,7 @@ import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
+import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,6 +26,9 @@ public class CoverOutput extends CoverInput {
 
     public CoverOutput(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
         super(source, tier, side, factory);
+        if (source.getTile() instanceof TileEntityFakeBlock){
+            setEjects(true, true);
+        }
     }
 
     @Override

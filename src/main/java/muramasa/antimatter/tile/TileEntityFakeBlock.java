@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
+public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock> {
 
     private BlockState state;
 
@@ -56,6 +56,15 @@ public class TileEntityFakeBlock extends TileEntityBase<TileEntityFakeBlock> {
         if (level != null)
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         controllers.add(controller);
+    }
+
+    @Override
+    public void onServerUpdate() {
+        covers.forEach((s, c) -> {
+            if (c.ticks()) {
+                c.onUpdate();
+            }
+        });
     }
 
     public ICover[] covers() {
