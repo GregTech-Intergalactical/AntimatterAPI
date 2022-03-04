@@ -125,6 +125,9 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
             });
             AntimatterAPI.all(BlockPipe.class, pipe -> {
                 this.tag(pipe.getToolType().getToolType()).add(pipe);
+                if (pipe.getType().getMaterial() == Data.Wood){
+                    this.tag(Data.WRENCH.getToolType()).add(pipe);
+                }
             });
             AntimatterAPI.all(BlockMachine.class, pipe -> {
                 this.tag(Data.WRENCH.getToolType()).add(pipe);
