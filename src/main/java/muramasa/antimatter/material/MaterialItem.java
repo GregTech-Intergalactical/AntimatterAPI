@@ -110,7 +110,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                             player.drop(CRUSHED_PURIFIED.get(material, 1), false);
                         }
                         Material oreByProduct = material.getByProducts().size() >= 1 ? material.getByProducts().get(0) : material;
-                        if (oreByProduct.has(DUST)){
+                        if (oreByProduct.has(DUST) && world.random.nextBoolean()){
                             if (!player.addItem(DUST_TINY.get(oreByProduct, 1))) {
                                 player.drop(DUST_TINY.get(oreByProduct, 1), false);
                             }
