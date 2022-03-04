@@ -36,11 +36,7 @@ import java.util.stream.Collectors;
 
 public class AntimatterWorldGenerator {
 
-    static final AntimatterFeature<NoneFeatureConfiguration> VEIN_LAYER = new FeatureVeinLayer();
-    static final AntimatterFeature<NoneFeatureConfiguration> ORE = new FeatureOre();
-    static final AntimatterFeature<NoneFeatureConfiguration> ORE_SMALL = new FeatureOreSmall();
-    static final AntimatterFeature<NoneFeatureConfiguration> STONE_LAYER = new FeatureStoneLayer();
-    static final AntimatterFeature<NoneFeatureConfiguration> SURFACE_ROCK = new FeatureSurfaceRock();
+    static final AntimatterFeature<NoneFeatureConfiguration> VEIN = new FeatureVein();
 
     protected record GenHandler(Consumer<BiomeLoadingEvent> consumer,
                                 Predicate<Biome.BiomeCategory> validator) {
@@ -93,12 +89,12 @@ public class AntimatterWorldGenerator {
     }
 
     private static void removeStoneFeatures(BiomeGenerationSettingsBuilder builder) {
-        removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.ANDESITE.defaultBlockState(), Blocks.GRANITE.defaultBlockState(), Blocks.DIORITE.defaultBlockState());
+        removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.ANDESITE.defaultBlockState(), Blocks.GRANITE.defaultBlockState(), Blocks.DIORITE.defaultBlockState(), Blocks.TUFF.defaultBlockState(), Blocks.DIRT.defaultBlockState(), Blocks.GRAVEL.defaultBlockState());
     }
 
     private static void removeOreFeatures(BiomeGenerationSettingsBuilder builder) {
         removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.COAL_ORE.defaultBlockState(), Blocks.IRON_ORE.defaultBlockState(), Blocks.GOLD_ORE.defaultBlockState(), Blocks.COPPER_ORE.defaultBlockState(), Blocks.EMERALD_ORE.defaultBlockState(), Blocks.REDSTONE_ORE.defaultBlockState(), Blocks.LAPIS_ORE.defaultBlockState(), Blocks.DIAMOND_ORE.defaultBlockState());
-        removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.DEEPSLATE_COAL_ORE.defaultBlockState(), Blocks.DEEPSLATE_GOLD_ORE.defaultBlockState(), Blocks.DEEPSLATE_COPPER_ORE.defaultBlockState(), Blocks.DEEPSLATE_EMERALD_ORE.defaultBlockState(), Blocks.DEEPSLATE_REDSTONE_ORE.defaultBlockState(), Blocks.DEEPSLATE_LAPIS_ORE.defaultBlockState(), Blocks.DEEPSLATE_DIAMOND_ORE.defaultBlockState());
+        removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.DEEPSLATE_COAL_ORE.defaultBlockState(), Blocks.DEEPSLATE_IRON_ORE.defaultBlockState(), Blocks.DEEPSLATE_GOLD_ORE.defaultBlockState(), Blocks.DEEPSLATE_COPPER_ORE.defaultBlockState(), Blocks.DEEPSLATE_EMERALD_ORE.defaultBlockState(), Blocks.DEEPSLATE_REDSTONE_ORE.defaultBlockState(), Blocks.DEEPSLATE_LAPIS_ORE.defaultBlockState(), Blocks.DEEPSLATE_DIAMOND_ORE.defaultBlockState());
     }
 
     /**

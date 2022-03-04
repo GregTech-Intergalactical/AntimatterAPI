@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -24,9 +25,16 @@ public class WorldGenBase<T extends WorldGenBase<?>> {
 
     }
 
+    @SafeVarargs
     public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, ResourceKey<Level>... dimensions) {
         this.id = id;
         this.dimensions = Arrays.stream(dimensions).map(ResourceKey::location).collect(Collectors.toCollection(ObjectOpenHashSet::new));
+        AntimatterWorldGenerator.register(c, this);
+    }
+
+    public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, List<ResourceKey<Level>> dimensions) {
+        this.id = id;
+        this.dimensions = dimensions.stream().map(ResourceKey::location).collect(Collectors.toCollection(ObjectOpenHashSet::new));
         AntimatterWorldGenerator.register(c, this);
     }
 
