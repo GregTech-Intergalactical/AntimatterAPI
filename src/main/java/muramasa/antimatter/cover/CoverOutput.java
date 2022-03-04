@@ -6,6 +6,7 @@ import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
+import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
@@ -22,18 +23,19 @@ public class CoverOutput extends CoverInput {
 
     private boolean ejectItems = false;
     private boolean ejectFluids = false;
-    private final TileEntityMachine<?> tile;
 
     public CoverOutput(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
         super(source, tier, side, factory);
-        this.tile = (TileEntityMachine<?>) source.getTile();
+        if (source.getTile() instanceof TileEntityFakeBlock){
+            setEjects(true, true);
+        }
     }
 
     @Override
     public void onUpdate() {
         super.onUpdate();
         if (handler.getTile().getLevel().isClientSide) return;
-        if (tile.getLevel().getGameTime() % 100 == 0) {
+        if (handler.getTile().getLevel().getGameTime() % 100 == 0) {
             if (shouldOutputFluids())
                 processFluidOutput();
             if (shouldOutputItems())
@@ -90,7 +92,7 @@ public class CoverOutput extends CoverInput {
             return;
         adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    tile.itemHandler.ifPresent(h -> Utils.transferItems(h.getOutputHandler(), adjHandler, false));
+                    handler.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
                 });
     }
 
@@ -100,7 +102,7 @@ public class CoverOutput extends CoverInput {
             return;
         adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    tile.fluidHandler.ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h.getOutputTanks(), 1000, true));
+                    handler.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side).ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h, 1000, true));
                 });
     }
 

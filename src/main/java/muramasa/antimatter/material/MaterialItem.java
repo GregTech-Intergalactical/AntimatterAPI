@@ -38,7 +38,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static muramasa.antimatter.Data.CRUSHED_PURIFIED;
 import static muramasa.antimatter.Data.DUST;
+import static muramasa.antimatter.Data.DUST_TINY;
 
 public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
@@ -97,6 +99,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                 world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 return InteractionResult.SUCCESS;
             }
+
         }
         return InteractionResult.SUCCESS;
 

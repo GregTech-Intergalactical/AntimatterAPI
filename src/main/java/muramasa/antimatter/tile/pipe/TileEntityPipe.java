@@ -71,11 +71,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         super(type.getTileType(), pos, state);
         this.size = getPipeSize(state);
         this.type = getPipeType(state);
-        if (this.type.getMaterial() == Data.Wood) {
-            this.coverHandler = LazyOptional.empty();
-        } else {
-            this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
-        }
+        this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
         this.pipeCapHolder = new Holder<>(getCapability(), this.dispatch);
     }
 
@@ -327,13 +323,9 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     }
 
     @Override
-    public boolean path() {
-        return coverHandler.map(t -> Arrays.stream(t.getAll()).mapToInt(c -> c.ticks() ? 1 : 0).sum() > 0).orElse(false);
-    }
-
-    @Override
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    public void load(BlockState state, CompoundNBT tag) {
+        super.load(state, tag); //TODO get tile data tag
+        ofState(state);
         if (tag.contains(Ref.KEY_PIPE_TILE_COVER))
             coverHandler.ifPresent(t -> t.deserializeNBT(tag.getCompound(Ref.KEY_PIPE_TILE_COVER)));
         byte newConnection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);

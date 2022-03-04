@@ -73,7 +73,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
-        this(prefix, type, size, modelId, Block.Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
+        this(prefix, type, size, modelId, type.getMaterial() == Data.Wood ? Block.Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(1.0f, 3.0f).noOcclusion() : Block.Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
     }
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId, BlockBehaviour.Properties properties) {
@@ -179,6 +179,10 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 */
     public AntimatterToolType getToolType() {
         return Data.WRENCH;
+    }
+
+    public ToolType getInteractTool(BlockState state){
+        return Data.WRENCH.getToolType();
     }
 
     @Override // Used to set connection for sides where neighbor has pre-set connection

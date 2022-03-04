@@ -76,6 +76,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         return null;
     }
 
+
     @Override
     public TextureAtlasSprite getParticleIcon(@Nonnull IModelData data) {
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(data.getData(AntimatterProperties.STATE_MODEL_PROPERTY));

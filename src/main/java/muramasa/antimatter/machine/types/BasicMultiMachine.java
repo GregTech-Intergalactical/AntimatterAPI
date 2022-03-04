@@ -13,6 +13,7 @@ import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.structure.Pattern;
+import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.world.item.BlockItem;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
@@ -66,6 +68,10 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         getTiers().forEach(t -> textures.addAll(Arrays.asList(getBaseTexture(t))));
         getTiers().forEach(t -> textures.addAll(Arrays.asList(getOverlayTextures(MachineState.INVALID_STRUCTURE, t))));
         return textures;
+    }
+
+    public final void setStructurePattern(Function<PatternBuilder, Pattern> patterns) {
+        setStructurePattern(patterns.apply(new PatternBuilder()));
     }
     
     public final void setStructurePattern(Pattern... patterns) {
