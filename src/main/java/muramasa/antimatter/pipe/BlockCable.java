@@ -95,6 +95,12 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         return Data.WIRE_CUTTER.getToolType();
     }
 
+    @Nullable
+    @Override
+    public ToolType getInteractTool(BlockState state) {
+        return Data.WIRE_CUTTER.getToolType();
+    }
+
     @Override
     public List<String> getInfo(List<String> info, World world, BlockState state, BlockPos pos) {
         if (world.isClientSide) return info;

@@ -185,6 +185,10 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         return Data.WRENCH.getToolType();
     }
 
+    public ToolType getInteractTool(BlockState state){
+        return Data.WRENCH.getToolType();
+    }
+
     @Override // Used to set connection for sides where neighbor has pre-set connection
     public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         TileEntityPipe<?> tile = getTilePipe(worldIn, pos);
@@ -287,7 +291,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                     return ActionResultType.PASS;
                 }
             }
-            if (getHarvestTool(state) == type.getToolType()) {
+            if (getInteractTool(state) == type.getToolType()) {
                 Direction side = Utils.getInteractSide(hit);
                 if (tile.blocksSide(side)) return ActionResultType.CONSUME;
                 tile.toggleConnection(side);
@@ -301,7 +305,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         if (context.getEntity() instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity) context.getEntity();
-            if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getHarvestTool(state), Data.CROWBAR.getToolType(), Data.SCREWDRIVER.getToolType())) {
+            if (Utils.isPlayerHolding(player, Hand.MAIN_HAND, getInteractTool(state), Data.CROWBAR.getToolType(), Data.SCREWDRIVER.getToolType())) {
                 return VoxelShapes.block();
             }
             if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
