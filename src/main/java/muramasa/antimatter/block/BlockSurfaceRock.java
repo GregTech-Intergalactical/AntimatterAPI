@@ -22,9 +22,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -84,15 +82,14 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     }
 
     @Override
-    public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
-        if (neighbor.above().equals(pos) && !world.getBlockState(neighbor).canOcclude()) {
-            if (world instanceof Level level && !level.isClientSide) {
-                Utils.breakBlock(level, null, ItemStack.EMPTY, pos, 0);
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean moving) {
+        super.neighborChanged(state, world, pos, block, fromPos, moving);
+        if (fromPos.above().equals(pos) && !world.getBlockState(fromPos).canOcclude()) {
+            if (!world.isClientSide) {
+                Utils.breakBlock(world, null, ItemStack.EMPTY, pos, 0);
             }
         }
     }
-
-
 
     @Override
     public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
