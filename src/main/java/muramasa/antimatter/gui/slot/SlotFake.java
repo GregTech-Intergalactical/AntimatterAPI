@@ -62,6 +62,23 @@ public class SlotFake extends AbstractSlot<SlotFake> implements IClickableSlot {
         super.set(stack);
     }
 
+    @Override
+    public ItemStack safeInsert(ItemStack p_150657_, int p_150658_) {
+        ItemStack st = p_150657_.copy();
+        p_150657_ = st.copy();
+        if (!p_150657_.isEmpty() && this.mayPlace(p_150657_)) {
+           ItemStack itemstack = this.getItem();
+           int i = Math.min(Math.min(p_150658_, p_150657_.getCount()), this.getMaxStackSize(p_150657_) - itemstack.getCount());
+           if (itemstack.isEmpty()) {
+              this.set(p_150657_.split(i));
+           }
+  
+           return st;
+        } else {
+           return st;
+        }
+     }
+
     public boolean isSettable() {
         return settable;
     }

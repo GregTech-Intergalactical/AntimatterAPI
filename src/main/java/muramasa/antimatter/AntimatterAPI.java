@@ -83,6 +83,10 @@ public final class AntimatterAPI {
         }
     }
 
+    public static RegistrationEvent getPhase() {
+        return PHASE;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T register(Class<?> c, String id, String domain, Object o) {
         // synchronized (OBJECTS) {
