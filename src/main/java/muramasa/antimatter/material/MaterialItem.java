@@ -85,6 +85,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     public ActionResultType useOn(ItemUseContext context) {
         if (context.getPlayer() == null) return ActionResultType.PASS;
         World world = context.getLevel();
+        if (world.isClientSide) return ActionResultType.PASS;
         PlayerEntity player = context.getPlayer();
         BlockPos pos = context.getClickedPos();
         ItemStack stack = player.getItemInHand(context.getHand());
@@ -110,7 +111,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                             player.drop(CRUSHED_PURIFIED.get(material, 1), false);
                         }
                         Material oreByProduct = material.getByProducts().size() >= 1 ? material.getByProducts().get(0) : material;
-                        if (oreByProduct.has(DUST) && world.random.nextBoolean()){
+                        if (oreByProduct.has(DUST) && world.random.nextInt(100) < 50){
                             if (!player.addItem(DUST_TINY.get(oreByProduct, 1))) {
                                 player.drop(DUST_TINY.get(oreByProduct, 1), false);
                             }
