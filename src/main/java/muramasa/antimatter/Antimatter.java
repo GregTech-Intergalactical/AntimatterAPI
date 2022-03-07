@@ -174,6 +174,7 @@ public class Antimatter extends AntimatterMod {
             ICover.init();
             Data.init(side);
             SubTag.init();
+            AntimatterWorldGenerator.preinit();
             GuiEvents.init();
         } else if (event == RegistrationEvent.WORLDGEN_INIT) {
             AntimatterWorldGenerator.init();

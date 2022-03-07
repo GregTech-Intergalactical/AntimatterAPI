@@ -1,6 +1,7 @@
 package muramasa.antimatter;
 
 import com.google.common.collect.Sets;
+import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -11,6 +12,8 @@ import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.event.AntimatterCraftingEvent;
 import muramasa.antimatter.event.AntimatterLoaderEvent;
 import muramasa.antimatter.event.AntimatterProvidersEvent;
+import muramasa.antimatter.event.AntimatterWorldGenEvent;
+import muramasa.antimatter.integration.kubejs.AMWorldEvent;
 import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.recipe.Recipe;
@@ -18,6 +21,8 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.ModRegistrar;
 import muramasa.antimatter.util.TagUtils;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -191,6 +196,7 @@ public class AntimatterDynamics {
     public static void onResourceReload(boolean server) {
         if (server)
             runDataProvidersDynamically();
+
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
@@ -207,7 +213,19 @@ public class AntimatterDynamics {
                 Antimatter.LOGGER.warn("Duplicate recipe loader: " + new ResourceLocation(a, b));
             }
         }));
-
+        List<WorldGenVein> veins = new ObjectArrayList<>();
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && server) {
+            AMWorldEvent ev = new AMWorldEvent();
+            ev.post(ScriptType.SERVER, "worldgen");
+            veins.addAll(ev.VEINS);
+        }
+        AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE);
+        MinecraftForge.EVENT_BUS.post(ev);
+        veins.addAll(ev.VEINS);
+        AntimatterWorldGenerator.clear();
+        for (WorldGenVein vein : veins) {
+            AntimatterWorldGenerator.register(vein.toRegister, vein);
+        }
         loaders.values().forEach(IRecipeRegistrate.IRecipeLoader::init);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
@@ -216,6 +234,7 @@ public class AntimatterDynamics {
             }
             // t.antimatterRecipes(AntimatterAPI.getRecipeRegistrate(Ref.ID));
         });
+
         Antimatter.LOGGER.info("Amount of Antimatter Recipe Loaders registered: " + loaders.size());
         if (server) {
             TagUtils.getTags(Item.class).forEach((k, v) -> {

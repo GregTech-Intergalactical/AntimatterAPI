@@ -1,8 +1,12 @@
 package muramasa.antimatter.worldgen.old;
 
 import muramasa.antimatter.worldgen.object.WorldGenBase;
+import net.minecraft.resources.ResourceKey;
 
 public class WorldGenAsteroid extends WorldGenBase {
+    public WorldGenAsteroid(String id, Class c, ResourceKey[] dimensions) {
+        super(id, c, dimensions);
+    }
 /*
     private static int mSize = 100;
 

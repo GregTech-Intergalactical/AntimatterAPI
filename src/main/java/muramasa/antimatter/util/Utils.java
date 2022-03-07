@@ -825,10 +825,16 @@ public class Utils {
     public static boolean breakBlock(Level world, @Nullable Player player, ItemStack stack, BlockPos pos, int damage) {
         if (world.isClientSide) return false;
         BlockState state = world.getBlockState(pos);
-        ServerPlayer serverPlayer = ((ServerPlayer) player);
-        int exp = ForgeHooks.onBlockBreakEvent(world, player == null ? GameType.DEFAULT_MODE : serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
+        ServerPlayer serverPlayer = player == null ? null : ((ServerPlayer) player);
+        int exp = player == null ? -1 : ForgeHooks.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
 
-        if (exp == -1) return false;
+        if (exp == -1) {
+            boolean destroyed = world.removeBlock(pos, false);
+            if (destroyed) {
+                Block.dropResources(state, world, pos);
+            }
+            return destroyed;
+        }
         stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         boolean destroyed = world.removeBlock(pos, false);// world.destroyBlock(pos, !player.isCreative(), player);
         if (destroyed && state.canHarvestBlock(world, pos, player))

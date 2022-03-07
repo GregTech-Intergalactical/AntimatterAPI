@@ -231,7 +231,7 @@ dependencies {
 
     /** KUBEJS STUFF **/
     implementation fg.deobf("curse.maven:rhino-416294:${rhino_file}")
-    implementation fg.deobf("curse.maven:architectury_forge-419699:${architectury_file}")
+    implementation fg.deobf("curse.maven:architecturyforge-419699:${architectury_file}")
     implementation fg.deobf("curse.maven:kubejs-238086:${kubejs_file}")
 //    implementation fg.deobf("curse.maven:top-245211:${top_file}")
 }

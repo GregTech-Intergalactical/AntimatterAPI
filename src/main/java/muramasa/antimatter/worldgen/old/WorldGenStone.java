@@ -1,8 +1,19 @@
 package muramasa.antimatter.worldgen.old;
 
 import muramasa.antimatter.worldgen.object.WorldGenBase;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+
+import java.util.List;
 
 public class WorldGenStone extends WorldGenBase<WorldGenStone> {
+    public WorldGenStone(String id, Class<? extends WorldGenBase<?>> c, ResourceKey<Level>... dimensions) {
+        super(id, c, dimensions);
+    }
+
+    public WorldGenStone(String id, Class<? extends WorldGenBase<?>> c, List<ResourceKey<Level>> dimensions) {
+        super(id, c, dimensions);
+    }
 /*
     private static final double SIZE_CONVERSION[] = {1, 1, 1.333333, 1.333333, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4}; // Bias the sizes towards skinnier boulders, ie more "shafts" than dikes or sills.
 

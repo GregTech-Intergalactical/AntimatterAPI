@@ -71,7 +71,7 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, En
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.BLOCK_ENTITIES) {
             TYPE = new BlockEntityType<>((a,b) -> new TileEntityFakeBlock(this,a,b), Set.of(this), null).setRegistryName(new ResourceLocation(getDomain(), getId()));
-            ((IForgeRegistry<BlockEntityType<?>>)registry).register(TYPE);
+            //((IForgeRegistry<BlockEntityType<?>>)registry).register(TYPE);
             AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), TYPE);
         }
     }

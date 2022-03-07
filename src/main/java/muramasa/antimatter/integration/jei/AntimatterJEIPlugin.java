@@ -156,12 +156,11 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     //To perform a JEI lookup for fluid. Use defines direction.
     public static void uses(FluidStack val, boolean USE) {
-        IFocus.Mode mode = !USE ? IFocus.Mode.OUTPUT : IFocus.Mode.INPUT;
         FluidStack v = val.copy();
         runtime.getRecipesGui().show(new IFocus<FluidStack>() {
             @Override
             public ITypedIngredient<FluidStack> getTypedValue() {
-                return new ITypedIngredient<FluidStack>() {
+                return new ITypedIngredient<>() {
                     @Override
                     public IIngredientType<FluidStack> getType() {
                         return VanillaTypes.FLUID;
@@ -174,6 +173,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
                     @Override
                     public <V> Optional<V> getIngredient(IIngredientType<V> ingredientType) {
+                        if (ingredientType == VanillaTypes.FLUID) return ((Optional<V>) Optional.of(v));
                         return Optional.empty();
                     }
                 };
@@ -181,7 +181,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
             @Override
             public RecipeIngredientRole getRole() {
-                return mode == Mode.INPUT ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
+                return USE ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
             }
 
             @Override
@@ -189,11 +189,11 @@ public class AntimatterJEIPlugin implements IModPlugin {
                 return Optional.empty();
             }
 
-            @Nonnull
             @Override
             public Mode getMode() {
-                return mode;
+                return null;
             }
+
         });
     }
 

@@ -16,26 +16,24 @@ import java.util.stream.Collectors;
 
 public class WorldGenBase<T extends WorldGenBase<?>> {
 
-    private String id;
+    private final String id;
     private boolean enabled = true;
-    private Set<ResourceLocation> dimensions;
+    private final Set<ResourceLocation> dimensions;
     private boolean custom;
-
-    public WorldGenBase() {
-
-    }
+    public final Class<? extends WorldGenBase<?>> toRegister;
 
     @SafeVarargs
     public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, ResourceKey<Level>... dimensions) {
         this.id = id;
         this.dimensions = Arrays.stream(dimensions).map(ResourceKey::location).collect(Collectors.toCollection(ObjectOpenHashSet::new));
-        AntimatterWorldGenerator.register(c, this);
+        this.toRegister = c;
     }
 
     public WorldGenBase(String id, Class<? extends WorldGenBase<?>> c, List<ResourceKey<Level>> dimensions) {
         this.id = id;
         this.dimensions = dimensions.stream().map(ResourceKey::location).collect(Collectors.toCollection(ObjectOpenHashSet::new));
-        AntimatterWorldGenerator.register(c, this);
+        this.toRegister = c;
+        //AntimatterWorldGenerator.register(c, this);
     }
 
     public String getId() {

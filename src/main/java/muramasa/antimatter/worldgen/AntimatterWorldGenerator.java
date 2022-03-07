@@ -42,6 +42,14 @@ public class AntimatterWorldGenerator {
                                 Predicate<Biome.BiomeCategory> validator) {
     }
 
+    public static void clear() {
+        AntimatterAPI.all(AntimatterFeature.class, t -> t.getRegistry().clear());
+    }
+
+    public static void preinit() {
+
+    }
+
     public static void init() {
         AntimatterAPI.runLaterCommon(() -> {
             WorldGenHelper.init();
