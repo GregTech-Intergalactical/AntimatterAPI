@@ -120,8 +120,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 return true;
             } else if (StructureCache.validate(level, worldPosition, result.positions, maxShares())) {
                 this.result = result;
+                result.build(this, result);
                 if (isServerSide()) {
-                    result.build(this, result);
                     if (onStructureFormed()) {
                         afterStructureFormed();
                         setMachineState(MachineState.IDLE);
