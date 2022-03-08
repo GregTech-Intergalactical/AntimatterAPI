@@ -27,6 +27,7 @@ import tesseract.api.gt.GTHolder;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTCable;
 import tesseract.api.gt.IGTNode;
+import tesseract.forge.TesseractImpl;
 import tesseract.graph.Graph.INodeGetter;
 
 public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IGTNode>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
@@ -51,12 +52,12 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     protected void register() {
-        Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        TesseractImpl.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return Tesseract.GT_ENERGY.remove(getLevel(), getBlockPos().asLong());
+        return TesseractImpl.GT_ENERGY.remove(getLevel(), getBlockPos().asLong());
     }
 
     @Override
@@ -67,7 +68,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        Tesseract.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        TesseractImpl.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override

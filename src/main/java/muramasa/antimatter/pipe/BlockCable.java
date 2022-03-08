@@ -23,11 +23,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-
-import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 import tesseract.api.gt.GTController;
-import tesseract.api.gt.GTHolder;
+import tesseract.forge.TesseractImpl;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -89,7 +87,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         if (this.insulated) return;
         if (entityIn instanceof LivingEntity entity) {
             if (worldIn.getBlockEntity(pos) instanceof TileEntityCable cable) {
-                if (Tesseract.GT_ENERGY.getController(worldIn, pos.asLong()) instanceof GTController c) {
+                if (TesseractImpl.GT_ENERGY.getController(worldIn, pos.asLong()) instanceof GTController c) {
                     if (c.cableIsActive.contains(pos.asLong())) {
                         entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
                     }
@@ -107,7 +105,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     @Override
     public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         if (world.isClientSide) return info;
-        ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(world, pos.asLong());
+        ITickingController<?, ?, ?> controller = TesseractImpl.GT_ENERGY.getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         return info;
     }

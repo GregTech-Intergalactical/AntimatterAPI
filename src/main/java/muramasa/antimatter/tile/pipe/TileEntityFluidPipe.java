@@ -28,6 +28,7 @@ import tesseract.api.fluid.FluidController;
 import tesseract.api.fluid.FluidHolder;
 import tesseract.api.fluid.IFluidNode;
 import tesseract.api.fluid.IFluidPipe;
+import tesseract.forge.TesseractImpl;
 import tesseract.graph.Graph.INodeGetter;
 
 import java.util.List;
@@ -54,18 +55,18 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        TesseractImpl.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
 
     @Override
     protected void register() {
-        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        TesseractImpl.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return Tesseract.FLUID.remove(getLevel(), getBlockPos().asLong());
+        return TesseractImpl.FLUID.remove(getLevel(), getBlockPos().asLong());
     }
 
 

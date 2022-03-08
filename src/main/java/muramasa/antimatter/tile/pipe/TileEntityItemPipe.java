@@ -23,6 +23,7 @@ import tesseract.Tesseract;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemNode;
 import tesseract.api.item.IItemPipe;
+import tesseract.forge.TesseractImpl;
 import tesseract.graph.Graph.INodeGetter;
 
 public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
@@ -38,18 +39,18 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     protected void register() {
-        Tesseract.ITEM.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        TesseractImpl.ITEM.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return Tesseract.ITEM.remove(getLevel(), getBlockPos().asLong());
+        return TesseractImpl.ITEM.remove(getLevel(), getBlockPos().asLong());
     }
 
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        Tesseract.ITEM.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        TesseractImpl.ITEM.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override
