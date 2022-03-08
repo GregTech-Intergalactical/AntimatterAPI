@@ -1,28 +1,31 @@
 package muramasa.antimatter.integration.kubejs;
 
+import dev.latvian.mods.kubejs.KubeJSPlugin;
+import dev.latvian.mods.kubejs.recipe.RegisterRecipeHandlersEvent;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
-import net.minecraftforge.common.MinecraftForge;
+import muramasa.antimatter.Ref;
+import net.minecraft.resources.ResourceLocation;
 
-public class AntimatterKubeJS {
-    public static void init() {
-        MinecraftForge.EVENT_BUS.addListener(AntimatterKubeJS::onBindings);
-        //MinecraftForge.EVENT_BUS.addListener(AntimatterKubeJS::registerRecipeHandlers);
-    }
+public class AntimatterKubeJS extends KubeJSPlugin {
 
-    public static void onBindings(BindingsEvent event) {
+
+    @Override
+    public void initStartup() {
+        super.initStartup();
+        new AMCreationEvent().post(ScriptType.STARTUP, "antimatter.creation");}
+
+    @Override
+    public void addBindings(BindingsEvent event) {
         event.add("antimatter", new KubeJSBindings());
     }
 
-    //public static void registerRecipeHandlers(RegisterRecipeHandlersEvent event) {
-    //    event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
-    //}
-
-    public static void loadStartupScripts() {
-        new AMCreationEvent().post(ScriptType.STARTUP, "antimatter.creation");
+    @Override
+    public void addRecipes(RegisterRecipeHandlersEvent event) {
+        event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
     }
 
     public static void loadWorldgenScripts() {
-        new AMWorldEvent().post(ScriptType.STARTUP, "antimatter.world");
+        //new AMWorldEvent().post(ScriptType.STARTUP, "antimatter.world");
     }
 }

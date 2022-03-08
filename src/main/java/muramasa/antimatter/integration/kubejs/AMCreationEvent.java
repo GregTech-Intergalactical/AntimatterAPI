@@ -4,10 +4,7 @@ import dev.latvian.mods.kubejs.event.EventJS;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.material.Element;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.material.TextureSet;
+import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.resources.ResourceLocation;
@@ -38,7 +35,8 @@ public class AMCreationEvent extends EventJS {
     public void addFlagsToMaterial(String materialId, String... flags) {
         if (Material.get(materialId) != Data.NULL) {
             for (String flag : flags) {
-                if (type(flag) != null) {
+                IMaterialTag tag = AntimatterAPI.get(IMaterialTag.class, flag);
+                if (tag != null) {
                     Material.get(materialId).flags(type(flag));
                 }
             }

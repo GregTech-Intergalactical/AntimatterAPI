@@ -142,9 +142,6 @@ public class Antimatter extends AntimatterMod {
                 }
             }
         }));
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-            AntimatterKubeJS.init();
-        }
     }
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {

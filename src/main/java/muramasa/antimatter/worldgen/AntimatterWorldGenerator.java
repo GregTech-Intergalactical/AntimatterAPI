@@ -76,9 +76,9 @@ public class AntimatterWorldGenerator {
     public static void setup() {
         Antimatter.LOGGER.info("AntimatterAPI WorldGen Initialization Stage...");
         AntimatterAPI.onRegistration(RegistrationEvent.WORLDGEN_INIT);
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-            AntimatterKubeJS.loadWorldgenScripts();
-        }
+        //if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+        //    AntimatterKubeJS.loadWorldgenScripts();
+        //}
     }
 
     public static void register(Class<?> c, WorldGenBase<?> base) {

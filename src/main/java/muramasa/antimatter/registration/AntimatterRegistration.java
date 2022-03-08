@@ -49,9 +49,6 @@ public final class AntimatterRegistration {
         if (domain.equals(Ref.ID)) {
             if (e.getRegistry() == ForgeRegistries.BLOCKS) {
                 AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
-                if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-                    AntimatterKubeJS.loadStartupScripts();
-                }
                 Data.postInit();
             }
             AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));

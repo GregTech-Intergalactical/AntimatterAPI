@@ -146,9 +146,15 @@ public class AntimatterDynamics {
 
         for (Map.Entry<String, List<Recipe>> entry : map.entrySet()) {
             String[] split = entry.getKey().split(":");
-            if (split.length != 2)
+            String name;
+            if (split.length == 2) {
+                name = split[1];
+            } else if (split.length == 1) {
+                name = split[0];
+            } else {
                 continue;
-            RecipeMap<?> rmap = AntimatterAPI.get(RecipeMap.class, split[1], split[0]);
+            }
+            RecipeMap<?> rmap = AntimatterAPI.get(RecipeMap.class, name);
             if (rmap != null)
                 entry.getValue().forEach(rec -> rmap.compileRecipe(rec, tags));
         }
@@ -214,14 +220,18 @@ public class AntimatterDynamics {
             }
         }));
         List<WorldGenVein> veins = new ObjectArrayList<>();
+        boolean runRegular = true;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && server) {
             AMWorldEvent ev = new AMWorldEvent();
-            ev.post(ScriptType.SERVER, "worldgen");
+            ev.post(ScriptType.SERVER, "antimatter.worldgen");
+            veins.addAll(ev.VEINS);
+            runRegular = !ev.disableBuiltin;
+        }
+        if (runRegular) {
+            AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE);
+            MinecraftForge.EVENT_BUS.post(ev);
             veins.addAll(ev.VEINS);
         }
-        AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE);
-        MinecraftForge.EVENT_BUS.post(ev);
-        veins.addAll(ev.VEINS);
         AntimatterWorldGenerator.clear();
         for (WorldGenVein vein : veins) {
             AntimatterWorldGenerator.register(vein.toRegister, vein);

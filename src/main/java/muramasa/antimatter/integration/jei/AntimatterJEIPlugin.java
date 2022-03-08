@@ -212,8 +212,8 @@ public class AntimatterJEIPlugin implements IModPlugin {
         AntimatterAPI.all(Machine.class, machine -> {
            RecipeMap<?> map = machine.getRecipeMap();
            if (map == null) return;
-            machine.getTiers().forEach(t -> {
-                ItemStack stack = new ItemStack(machine.getItem((Tier)t));
+            ((Machine<?>)machine).getTiers().forEach(t -> {
+                ItemStack stack = new ItemStack(machine.getItem(t));
                 if (!stack.isEmpty()) {
                     registration.addRecipeCatalyst(stack, map.getLoc());
                 }
