@@ -2,7 +2,6 @@ package muramasa.antimatter.worldgen.object;
 
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;

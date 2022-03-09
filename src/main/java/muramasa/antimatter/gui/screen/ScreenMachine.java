@@ -4,14 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
-
-import java.util.List;
 
 // TODO - recipe stuff only when tile.getMachineType().has(MachineFlag.RECIPE)
 public class ScreenMachine<T extends TileEntityMachine<T>, U extends ContainerMachine<T>> extends AntimatterContainerScreen<U> implements MenuAccess<U> {

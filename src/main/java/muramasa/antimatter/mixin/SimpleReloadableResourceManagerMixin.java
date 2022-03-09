@@ -6,7 +6,7 @@ import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.repository.ServerPacksSource;
 import net.minecraft.server.packs.resources.ReloadInstance;
 import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.Unit;
@@ -24,7 +24,7 @@ import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 
-@Mixin(SimpleReloadableResourceManager.class)
+//@Mixin(ServerPacksSource.class)
 public class SimpleReloadableResourceManagerMixin {
 
     @Shadow

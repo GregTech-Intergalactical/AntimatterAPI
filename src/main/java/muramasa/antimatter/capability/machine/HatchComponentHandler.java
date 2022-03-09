@@ -3,7 +3,6 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
-import muramasa.antimatter.util.Utils;
 
 import javax.annotation.Nonnull;
 

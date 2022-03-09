@@ -1,7 +1,6 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;

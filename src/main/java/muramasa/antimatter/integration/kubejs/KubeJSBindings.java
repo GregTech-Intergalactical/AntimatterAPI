@@ -1,10 +1,5 @@
 package muramasa.antimatter.integration.kubejs;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.Material;
@@ -15,6 +10,11 @@ import muramasa.antimatter.ore.StoneType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class KubeJSBindings {
 

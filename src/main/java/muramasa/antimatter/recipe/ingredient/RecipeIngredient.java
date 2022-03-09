@@ -3,11 +3,13 @@ package muramasa.antimatter.recipe.ingredient;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.util.TagUtils;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagContainer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -142,11 +144,11 @@ public class RecipeIngredient {
         }, count);
     }
 
-    public static RecipeIngredient of(Tag.Named<Item> tagIn, int count) {
-        ensureRegisteredTag(tagIn.getName());
+    public static RecipeIngredient of(TagKey<Item> tagIn, int count) {
+        ensureRegisteredTag(tagIn.location());
         return new RecipeIngredient(() -> {
-            Tag<Item> tag = collectTag(tagIn.getName());
-            return tag != null ? Ingredient.of(tag) : Ingredient.fromValues(Stream.empty());
+            Tag<Item> tag = collectTag(tagIn.location());
+            return tag != null ? Ingredient.of(tagIn) : Ingredient.fromValues(Stream.empty());
         }, count);
     }
 

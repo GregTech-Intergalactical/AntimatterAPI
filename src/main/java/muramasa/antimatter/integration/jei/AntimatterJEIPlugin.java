@@ -28,7 +28,6 @@ import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
@@ -40,12 +39,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static muramasa.antimatter.Data.DUST_SMALL;
-import static muramasa.antimatter.Data.DUST_TINY;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 @JeiPlugin

@@ -1,7 +1,6 @@
 package muramasa.antimatter.item.interaction;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.material.MaterialItem;
 import net.minecraft.core.cauldron.CauldronInteraction;

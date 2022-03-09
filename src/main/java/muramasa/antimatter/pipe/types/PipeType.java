@@ -10,7 +10,6 @@ import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -20,7 +19,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryProvider, ISharedAntimatterObject {

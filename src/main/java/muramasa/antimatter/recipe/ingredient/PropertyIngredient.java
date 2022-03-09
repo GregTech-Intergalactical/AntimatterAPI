@@ -19,7 +19,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +32,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,7 +50,7 @@ public class PropertyIngredient extends Ingredient {
     }
 
     private final Set<MaterialTypeItem<?>> type;
-    private final Set<Tag.Named<Item>> itemTags;
+    private final Set<TagKey<Item>> itemTags;
     private final Set<ItemLike> items;
     private final String id;
     private final IMaterialTag[] tags;
@@ -54,7 +58,7 @@ public class PropertyIngredient extends Ingredient {
     private final Set<Material> fixedMats;
     private final boolean inverse;
 
-    protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type, Set<Tag.Named<Item>> itemTags, Set<ItemLike> items, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
+    protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type, Set<TagKey<Item>> itemTags, Set<ItemLike> items, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
         Stream<Value> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new MultiItemValue(TagUtils.nc(t).getValues().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new MultiItemValue((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
             boolean ok = t.has(tags);
             boolean types = true;
@@ -72,7 +76,7 @@ public class PropertyIngredient extends Ingredient {
         return new PropertyIngredient(stream, type, itemTags, items, id, tags, fixedMats, inverse, tools);
     }
 
-    protected PropertyIngredient(Stream<Value> stream, Set<MaterialTypeItem<?>> type, Set<Tag.Named<Item>> itemTags, Set<ItemLike> items, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
+    protected PropertyIngredient(Stream<Value> stream, Set<MaterialTypeItem<?>> type, Set<TagKey<Item>> itemTags, Set<ItemLike> items, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
         super(stream);
         this.type = type;
         this.id = id;
@@ -105,7 +109,7 @@ public class PropertyIngredient extends Ingredient {
                 return stack;
             }
         }
-        for (Tag.Named<Item> itemTag : this.itemTags) {
+        for (TagKey<Item> itemTag : this.itemTags) {
             Getter getter = getters.get(itemTag.getName());
             if (getter != null) {
                 Object o = getter.get(stack);
@@ -119,7 +123,7 @@ public class PropertyIngredient extends Ingredient {
         getters.put(loc, get);
     }
 
-    public Set<Tag.Named<Item>> getTags() {
+    public Set<TagKey<Item>> getTags() {
         return itemTags;
     }
 
@@ -141,7 +145,7 @@ public class PropertyIngredient extends Ingredient {
         }
         obj.add("material_type", materialArr);
         materialArr = new JsonArray();
-        for (Tag.Named<Item> itemTag : this.itemTags) {
+        for (TagKey<Item> itemTag : this.itemTags) {
             materialArr.add(itemTag.getName().toString());
         }
         obj.add("item_tags", materialArr);
@@ -220,7 +224,7 @@ public class PropertyIngredient extends Ingredient {
                 items.add(AntimatterAPI.get(MaterialTypeItem.class, buffer.readUtf()));
             }
             size = buffer.readVarInt();
-            Set<Tag.Named<Item>> t = new ObjectArraySet<>(size);
+            Set<TagKey<Item>> t = new ObjectArraySet<>(size);
             for (int i = 0; i < size; i++) {
                 t.add(TagUtils.getItemTag(buffer.readResourceLocation()));
             }
@@ -260,7 +264,7 @@ public class PropertyIngredient extends Ingredient {
             Set<MaterialTypeItem<?>> items = new ObjectArraySet<>(arr.size());
             arr.forEach(el -> items.add(AntimatterAPI.get(MaterialTypeItem.class, el.getAsString())));
             arr = json.getAsJsonArray("item_tags");
-            Set<Tag.Named<Item>> itemTags = new ObjectArraySet<>(arr.size());
+            Set<TagKey<Item>> itemTags = new ObjectArraySet<>(arr.size());
             arr.forEach(el -> itemTags.add(TagUtils.getItemTag(new ResourceLocation(el.getAsString()))));
             arr = json.getAsJsonArray("items");
             Set<ItemLike> items2 = new ObjectArraySet<>(arr.size());
@@ -297,7 +301,7 @@ public class PropertyIngredient extends Ingredient {
                 buffer.writeUtf(materialTypeItem.getId());
             }
             buffer.writeVarInt(ingredient.itemTags.size());
-            for (Tag.Named<Item> itemTag : ingredient.itemTags) {
+            for (TagKey<Item> itemTag : ingredient.itemTags) {
                 buffer.writeResourceLocation(itemTag.getName());
             }
             buffer.writeBoolean(ingredient.inverse);
@@ -332,7 +336,7 @@ public class PropertyIngredient extends Ingredient {
 
     public static class Builder {
         private Set<MaterialTypeItem<?>> type;
-        private Set<Tag.Named<Item>> itemTags;
+        private Set<TagKey<Item>> itemTags;
         private Set<ItemLike> items;
         private Set<Material> fixedMats;
         private String id;
@@ -360,7 +364,7 @@ public class PropertyIngredient extends Ingredient {
         }
 
         @SafeVarargs
-        public final Builder itemTags(Tag.Named<Item>... tags) {
+        public final Builder itemTags(TagKey<Item>... tags) {
             this.itemTags = new ObjectArraySet<>(tags);
             return this;
         }

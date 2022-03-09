@@ -2,7 +2,6 @@ package muramasa.antimatter.tile.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.Dispatch;
-import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -10,7 +9,6 @@ import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
-import muramasa.antimatter.tesseract.EnergyTileWrapper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,15 +18,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
-import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTHolder;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTCable;
 import tesseract.api.gt.IGTNode;
 import tesseract.forge.TesseractImpl;
-import tesseract.graph.Graph.INodeGetter;
 
 public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IGTNode>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 

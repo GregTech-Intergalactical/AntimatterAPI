@@ -6,7 +6,11 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.*;
+import muramasa.antimatter.block.BlockStone;
+import muramasa.antimatter.block.BlockStoneSlab;
+import muramasa.antimatter.block.BlockStoneStair;
+import muramasa.antimatter.block.BlockStoneWall;
+import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
@@ -21,9 +25,9 @@ import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +52,8 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<Block> p_126563_) {
-        return this.builders.computeIfAbsent(p_126563_.getName(), (p_176838_) -> new Tag.Builder());
+    protected Tag.Builder getOrCreateRawBuilder(TagKey<Block> p_126563_) {
+        return this.builders.computeIfAbsent(p_126563_.location(), (p_176838_) -> new Tag.Builder());
     }
 
     @Override
@@ -115,7 +119,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
             });
             AntimatterAPI.all(BlockStorage.class, block -> {
                 this.tag(block.getType().getTag()).add(block).replace(replace);
-                String name = String.join("", block.getType().getTag().getName().getPath(), "/", block.getMaterial().getId());
+                String name = String.join("", block.getType().getTag().location().getPath(), "/", block.getMaterial().getId());
                 this.tag(Data.WRENCH.getToolType()).add(block).replace(replace);
                 this.tag(getForgeBlockTag(name)).add(block);
                 // if (block.getType() == FRAME) add climbable tag in 1.16

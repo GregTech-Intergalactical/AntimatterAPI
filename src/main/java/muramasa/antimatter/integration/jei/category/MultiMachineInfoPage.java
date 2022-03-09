@@ -2,7 +2,6 @@ package muramasa.antimatter.integration.jei.category;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.math.Vector3f;
@@ -38,7 +37,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MultiMachineInfoPage {

@@ -17,7 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -36,7 +36,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     protected int unitValue, layers;
     protected boolean generating = true, blockType, visible, splitName;
     protected final Set<Material> materials = new ObjectLinkedOpenHashSet<>(); //Linked to preserve insertion order for JEI
-    protected final Map<MaterialType<?>, Tag.Named<?>> tagMap = new Object2ObjectOpenHashMap<>();
+    protected final Map<MaterialType<?>, TagKey<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
     private boolean hidden = false;
     protected final BiMap<Material, Item> OVERRIDES = HashBiMap.create();
@@ -53,7 +53,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         register(MaterialType.class, getId());
     }
 
-    protected Tag.Named<?> tagFromString(String name) {
+    protected TagKey<?> tagFromString(String name) {
         return TagUtils.getForgeItemTag(name);
     }
 
@@ -100,8 +100,8 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     }
 
     @SuppressWarnings("unchecked")
-    public Tag.Named<Item> getMaterialTag(Material m) {
-        return (Tag.Named<Item>) tagFromString(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+    public TagKey<Item> getMaterialTag(Material m) {
+        return (TagKey<Item>) tagFromString(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {
@@ -132,8 +132,8 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         return layers;
     }
 
-    public <T> Tag.Named<T> getTag() {
-        return (Tag.Named<T>) tagMap.get(this);
+    public <T> TagKey<T> getTag() {
+        return (TagKey<T>) tagMap.get(this);
     }
 
     public MaterialType<T> set(T getter) {

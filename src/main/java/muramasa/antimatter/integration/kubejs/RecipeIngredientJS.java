@@ -1,13 +1,12 @@
 package muramasa.antimatter.integration.kubejs;
 
-import java.util.Set;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+
+import java.util.Set;
 
 public class RecipeIngredientJS implements IngredientJS {
 

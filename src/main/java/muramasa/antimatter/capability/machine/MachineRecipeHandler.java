@@ -21,7 +21,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nullable;

@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +38,7 @@ import java.util.function.Supplier;
 public class AntimatterToolType implements ISharedAntimatterObject {
 
     private final String domain, id;
-    private Tag.Named<Block> TOOL_TYPE;
+    private TagKey<Block> TOOL_TYPE;
     private final Set<Tag<Block>> TOOL_TYPES = new ObjectOpenHashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
     private final Set<net.minecraft.world.level.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
@@ -51,7 +52,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private int baseQuality, overlayLayers;
     private final float baseAttackDamage, baseAttackSpeed;
     private CreativeModeTab itemGroup;
-    private Tag.Named<Item> tag, forgeTag; // Set?
+    private TagKey<Item> tag, forgeTag; // Set?
     private UseAnim useAction;
     private Class<? extends IAntimatterTool> toolClass;
     @Nullable
@@ -341,7 +342,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return TOOL_TYPES;
     }
 
-    public Tag.Named<Block> getToolType() {
+    public TagKey<Block> getToolType() {
         return TOOL_TYPE;
     }
 
@@ -405,11 +406,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return itemGroup;
     }
 
-    public Tag.Named<Item> getTag() {
+    public TagKey<Item> getTag() {
         return tag;
     }
 
-    public Tag.Named<Item> getForgeTag() {
+    public TagKey<Item> getForgeTag() {
         return forgeTag;
     }
 

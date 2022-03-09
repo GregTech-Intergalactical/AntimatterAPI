@@ -3,7 +3,11 @@ package muramasa.antimatter.machine.types;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
-import muramasa.antimatter.gui.widget.*;
+import muramasa.antimatter.gui.widget.IOWidget;
+import muramasa.antimatter.gui.widget.MachineStateWidget;
+import muramasa.antimatter.gui.widget.ProgressWidget;
+import muramasa.antimatter.gui.widget.TextWidget;
+import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.tile.TileEntityMachine;
 
 import static muramasa.antimatter.machine.MachineFlag.*;

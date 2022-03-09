@@ -3,7 +3,6 @@ package muramasa.antimatter.tile.pipe;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
-import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -22,14 +21,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import tesseract.Tesseract;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
 import tesseract.api.fluid.FluidHolder;
-import tesseract.api.fluid.IFluidNode;
 import tesseract.api.fluid.IFluidPipe;
 import tesseract.forge.TesseractImpl;
-import tesseract.graph.Graph.INodeGetter;
 
 import java.util.List;
 

@@ -8,7 +8,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.SerializationTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -19,7 +19,7 @@ import java.util.Objects;
 
 public class FluidIngredient {
     private FluidStack[] stacks = new FluidStack[0];
-    private Tag.Named<Fluid> tag;
+    private TagKey<Fluid> tag;
     private int amount = 0;
     private boolean evaluated = false;
 

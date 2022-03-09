@@ -6,7 +6,6 @@ import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
-import muramasa.antimatter.tile.pipe.TileEntityItemPipe;
 import net.minecraft.world.level.block.Block;
 
 import java.util.Set;

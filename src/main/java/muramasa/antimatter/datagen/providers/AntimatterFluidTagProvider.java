@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
@@ -15,9 +14,8 @@ import net.minecraft.data.HashCache;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,8 +37,8 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<Fluid> p_126563_) {
-        return this.builders.computeIfAbsent(p_126563_.getName(), (p_176838_) -> new Tag.Builder());
+    protected Tag.Builder getOrCreateRawBuilder(TagKey<Fluid> p_126563_) {
+        return this.builders.computeIfAbsent(p_126563_.location(), (p_176838_) -> new Tag.Builder());
     }
 
     @Override

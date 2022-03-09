@@ -12,7 +12,7 @@ import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -85,8 +85,8 @@ public class MaterialRecipes {
             if (!o.getMaterial().getSmeltInto().has(INGOT)) return;
             if (o.getMaterial().needsBlastFurnace()) return;
             Item ingot = INGOT.get(o.getMaterial().getSmeltInto());
-            Tag.Named<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
-            Tag.Named<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(o.getMaterial().getSmeltInto().getId()));
+            TagKey<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
+            TagKey<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(o.getMaterial().getSmeltInto().getId()));
             AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(oreTag, 1).get(), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 100)
                     .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
                     .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot")));

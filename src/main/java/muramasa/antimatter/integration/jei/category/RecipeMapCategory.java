@@ -1,6 +1,5 @@
 package muramasa.antimatter.integration.jei.category;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -21,8 +20,6 @@ import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
-import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;

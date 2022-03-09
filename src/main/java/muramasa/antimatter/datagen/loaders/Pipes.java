@@ -18,7 +18,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.Data.HAMMER;
+import static muramasa.antimatter.Data.PLATE;
+import static muramasa.antimatter.Data.WRENCH;
 import static muramasa.antimatter.recipe.RecipeBuilders.FLUID_PIPE_BUILDER;
 import static muramasa.antimatter.recipe.RecipeBuilders.ITEM_PIPE_BUILDER;
 

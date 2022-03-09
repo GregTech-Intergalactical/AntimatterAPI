@@ -20,7 +20,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-import static muramasa.antimatter.machine.MachineFlag.*;
+import static muramasa.antimatter.machine.MachineFlag.CELL;
+import static muramasa.antimatter.machine.MachineFlag.ENERGY;
+import static muramasa.antimatter.machine.MachineFlag.FLUID;
+import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
 public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends TileEntityBasicMultiMachine<T> implements IInfoRenderer<InfoRenderWidget.MultiRenderWidget> {
 

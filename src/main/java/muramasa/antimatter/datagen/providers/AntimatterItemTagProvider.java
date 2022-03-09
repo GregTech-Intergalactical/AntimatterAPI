@@ -7,7 +7,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.item.ItemFluidCell;
@@ -28,6 +27,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -60,8 +60,8 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     @Override
-    protected Tag.Builder getOrCreateRawBuilder(Tag.Named<Item> p_126563_) {
-        return this.builders.computeIfAbsent(p_126563_.getName(), (p_176838_) -> new Tag.Builder());
+    protected Tag.Builder getOrCreateRawBuilder(TagKey<Item> p_126563_) {
+        return this.builders.computeIfAbsent(p_126563_.location(), (p_176838_) -> new Tag.Builder());
     }
 
     @Override
@@ -95,7 +95,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     protected void processTags(String domain) {
-        Tag.Named<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
+        TagKey<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
         this.copy(Tags.Blocks.ORES, Tags.Items.ORES);
         this.copy(Tags.Blocks.STONE, Tags.Items.STONE);
         this.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
@@ -130,7 +130,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
                 this.copy(getForgeBlockTag(name), getForgeItemTag(name));
             });
             AntimatterAPI.all(MaterialItem.class, item -> {
-                Tag.Named<Item> type = item.getType().getTag();
+                TagKey<Item> type = item.getType().getTag();
                 TagsProvider.TagAppender<Item> provider = this.tag(type);
                 provider.add(item).replace(replace);
                 this.tag(item.getTag()).add(item).replace(replace);

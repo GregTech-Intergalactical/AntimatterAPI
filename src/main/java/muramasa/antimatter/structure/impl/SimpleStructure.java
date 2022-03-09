@@ -20,7 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static muramasa.antimatter.util.Dir.*;
+import static muramasa.antimatter.util.Dir.FORWARD;
+import static muramasa.antimatter.util.Dir.RIGHT;
+import static muramasa.antimatter.util.Dir.UP;
 
 public class SimpleStructure extends Structure {
 

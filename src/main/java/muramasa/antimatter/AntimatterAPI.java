@@ -3,7 +3,11 @@ package muramasa.antimatter;
 import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
@@ -13,11 +17,16 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.map.RecipeMap;
-import muramasa.antimatter.registration.*;
+import muramasa.antimatter.registration.AntimatterRegistration;
+import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
+import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -34,7 +43,14 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -404,7 +420,7 @@ public final class AntimatterAPI {
     public static Item getReplacement(MaterialType<?> type, Material material, String... namespaces) {
         if (type.getId().contains("liquid"))
             return null;
-        Tag.Named<Item> tag = TagUtils
+        TagKey<Item> tag = TagUtils
                 .getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
         return getReplacement(null, tag, namespaces);
     }
@@ -423,7 +439,7 @@ public final class AntimatterAPI {
      * @return originalItem if there's nothing found, null if there is no
      * originalItem, or an replacement
      */
-    public static <T> T getReplacement(@Nullable T originalItem, Tag.Named<T> tag, String... namespaces) {
+    public static <T> T getReplacement(@Nullable T originalItem, TagKey<T> tag, String... namespaces) {
         if (tag == null)
             throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
         if (REPLACEMENTS.containsKey(tag.getName()))
@@ -445,7 +461,7 @@ public final class AntimatterAPI {
         REPLACEMENTS.put(tag, obj);
     }
 
-    public static <T> void addReplacement(Tag.Named<Item> tag, T obj) {
+    public static <T> void addReplacement(TagKey<Item> tag, T obj) {
         REPLACEMENTS.put(tag.getName(), obj);
     }
 

@@ -17,6 +17,7 @@ import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -78,7 +79,7 @@ public class AntimatterShapedRecipeBuilder {
     /**
      * Adds a key to the recipe pattern.
      */
-    public AntimatterShapedRecipeBuilder key(Character symbol, Tag<Item> tag) {
+    public AntimatterShapedRecipeBuilder key(Character symbol, TagKey<Item> tag) {
         return this.key(symbol, Ingredient.of(tag));
     }
 
@@ -129,14 +130,14 @@ public class AntimatterShapedRecipeBuilder {
     }
 
     /**
-     * Builds this recipe into an {@link IFinishedRecipe}.
+     * Builds this recipe into an {@link FinishedRecipe}.
      */
     public void build(Consumer<FinishedRecipe> consumer) {
         this.build(consumer, ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem()));
     }
 
     /**
-     * Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for
+     * Builds this recipe into an {@link FinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for
      * the result.
      */
     public void build(Consumer<FinishedRecipe> consumer, String save) {
@@ -149,7 +150,7 @@ public class AntimatterShapedRecipeBuilder {
     }
 
     /**
-     * Builds this recipe into an {@link IFinishedRecipe}.
+     * Builds this recipe into an {@link FinishedRecipe}.
      */
     public void build(Consumer<FinishedRecipe> consumer, ResourceLocation id) {
         this.validate(id);
@@ -162,7 +163,7 @@ public class AntimatterShapedRecipeBuilder {
     }
 
     /**
-     * Builds this recipe into an {@link IFinishedRecipe}.
+     * Builds this recipe into an {@link FinishedRecipe}.
      */
     public void buildTool(Consumer<FinishedRecipe> consumer, String builder, ResourceLocation id) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem());

@@ -2,7 +2,6 @@ package muramasa.antimatter.recipe.condition;
 
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;

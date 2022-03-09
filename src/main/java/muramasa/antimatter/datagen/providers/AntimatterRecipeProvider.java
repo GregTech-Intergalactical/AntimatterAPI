@@ -9,6 +9,7 @@ import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -16,6 +17,7 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -170,16 +172,12 @@ public class AntimatterRecipeProvider extends RecipeProvider {
                 .group(groupName);
         for (Object input : inputs) {
             try {
-                if (input instanceof ItemLike) {
-                    builder.requires(((ItemLike) input));
-                } else if (input instanceof Tag) {
-                    if (input instanceof Tag.Named) {
-                        builder.requires(nc(TagUtils.getItemTag(((Tag.Named) input).getName())));
-                    } else {
-                        builder.requires((Tag<Item>) input);
-                    }
-                } else if (input instanceof Ingredient) {
-                    builder.requires((Ingredient) input);
+                if (input instanceof ItemLike l) {
+                    builder.requires(l);
+                } else if (input instanceof TagKey tagKey) {
+                    builder.requires(nc(TagUtils.getItemTag(tagKey.location()).location()));
+                } else if (input instanceof Ingredient i) {
+                    builder.requires(i);
                 }
             } catch (ClassCastException ex) {
                 throw new RuntimeException("ERROR PARSING SHAPELESS RECIPE" + ex.getMessage());
@@ -237,24 +235,19 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     @SuppressWarnings("unchecked")
     protected AntimatterShapedRecipeBuilder resolveKeys(AntimatterShapedRecipeBuilder incompleteBuilder, ImmutableMap<Character, Object> inputs) {
         for (Map.Entry<Character, Object> entry : inputs.entrySet()) {
-            if (entry.getValue() instanceof ItemLike) {
-                incompleteBuilder = incompleteBuilder.key(entry.getKey(), (ItemLike) entry.getValue());
-            } else if (entry.getValue() instanceof Tag) {
+            if (entry.getValue() instanceof ItemLike l) {
+                incompleteBuilder = incompleteBuilder.key(entry.getKey(), l);
+            } else if (entry.getValue() instanceof TagKey tagKey) {
                 try {
                     //Wrap the tag using tag manager.
-                    if (entry.getValue() instanceof Tag.Named) {
-                        Tag.Named<Item> tag = (Tag.Named<Item>) entry.getValue();
-                        incompleteBuilder = incompleteBuilder.key(entry.getKey(), nc(tag));
-                    } else {
-                        incompleteBuilder = incompleteBuilder.key(entry.getKey(), (Tag<Item>) entry.getValue());
-                    }
+                    incompleteBuilder = incompleteBuilder.key(entry.getKey(), nc(tagKey.location()));
                 } catch (ClassCastException e) {
                     Utils.onInvalidData("Tag inputs only allow Item Tags!");
                 }
-            } else if (entry.getValue() instanceof PropertyIngredient) {
-                incompleteBuilder = incompleteBuilder.key(entry.getKey(), (PropertyIngredient) entry.getValue());
-            } else if (entry.getValue() instanceof Ingredient) {
-                incompleteBuilder = incompleteBuilder.key(entry.getKey(), (Ingredient) entry.getValue());
+            } else if (entry.getValue() instanceof PropertyIngredient pi) {
+                incompleteBuilder = incompleteBuilder.key(entry.getKey(), pi);
+            } else if (entry.getValue() instanceof Ingredient i) {
+                incompleteBuilder = incompleteBuilder.key(entry.getKey(), i);
             }
         }
         return incompleteBuilder;
@@ -269,8 +262,8 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         return providerName;
     }
 
-    public CriterionTriggerInstance hasSafeItem(Tag<Item> tag) {
-        return RecipeProvider.has(tag);
+    public CriterionTriggerInstance hasSafeItem(TagKey<Item> tag) {
+        return inventoryTrigger(ItemPredicate.Builder.item().of(tag).build());
     }
 
     public CriterionTriggerInstance hasSafeItem(ItemLike stack) {

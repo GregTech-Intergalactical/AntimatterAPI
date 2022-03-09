@@ -1,21 +1,5 @@
 package muramasa.antimatter.datagen.providers.dummy;
 
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.datagen.ExistingFileHelperOverride;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
-import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.data.tags.ItemTagsProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
-import net.minecraftforge.common.data.ForgeBlockTagsProvider;
-import net.minecraftforge.common.data.ForgeItemTagsProvider;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class DummyTagProviders {
 /*
     private static final BlockTagsProvider BLOCK = new ForgeBlockTagsProviderOverride();

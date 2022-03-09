@@ -12,18 +12,24 @@ import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerListener;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.*;
-import java.util.function.*;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class GuiInstance implements ICanSyncData {

@@ -11,7 +11,7 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.SetTag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -58,7 +58,7 @@ public class AntimatterShapelessRecipeBuilder {
     /**
      * Adds an ingredient that can be any item in the given tag.
      */
-    public AntimatterShapelessRecipeBuilder addIngredient(SetTag<Item> tagIn) {
+    public AntimatterShapelessRecipeBuilder addIngredient(TagKey<Item> tagIn) {
         return this.addIngredient(Ingredient.of(tagIn));
     }
 

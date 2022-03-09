@@ -2,7 +2,6 @@ package muramasa.antimatter.proxy;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterDynamics;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;

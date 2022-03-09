@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;

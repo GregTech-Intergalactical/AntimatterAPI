@@ -4,12 +4,10 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
-import muramasa.antimatter.mixin.PlacedFeatureAccessor;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
-import muramasa.antimatter.worldgen.feature.*;
+import muramasa.antimatter.worldgen.feature.AntimatterFeature;
+import muramasa.antimatter.worldgen.feature.FeatureVein;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -117,7 +115,7 @@ public class AntimatterWorldGenerator {
         Set<BlockState> set = Set.of(states);
         // AntimatterAPI.runLaterCommon(() -> {
         //  for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
-        builder.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(((PlacedFeatureAccessor) f.get()).getFeature().get(), featureToRemove, set));
+        builder.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f.value().feature().value(), featureToRemove, set));
 
     }
 
@@ -142,7 +140,7 @@ public class AntimatterWorldGenerator {
      * Check with BlockState in a feature if it is disabled
      */
     public static boolean isDecoratedFeatureDisabled(@Nonnull ConfiguredFeature<?, ?> configuredFeature, @Nonnull Feature<?> featureToRemove, @Nonnull Set<BlockState> state) {
-        if (configuredFeature.config instanceof OreConfiguration config) {
+        if (configuredFeature.config() instanceof OreConfiguration config) {
             return config.targetStates.stream().anyMatch(t -> state.contains(t.state));
         }
         /*if (configuredFeature.config instanceof Feat) {

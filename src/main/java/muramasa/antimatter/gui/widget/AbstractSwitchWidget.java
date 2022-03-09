@@ -6,7 +6,6 @@ import muramasa.antimatter.gui.ButtonBody;
 import muramasa.antimatter.gui.ButtonOverlay;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 

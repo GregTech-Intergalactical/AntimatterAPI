@@ -2,13 +2,11 @@ package muramasa.antimatter.tile.pipe;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.Dispatch;
-import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.ItemPipe;
-import muramasa.antimatter.tesseract.ItemTileWrapper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,12 +17,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import tesseract.Tesseract;
 import tesseract.api.capability.TesseractItemCapability;
-import tesseract.api.item.IItemNode;
 import tesseract.api.item.IItemPipe;
 import tesseract.forge.TesseractImpl;
-import tesseract.graph.Graph.INodeGetter;
 
 public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         implements IItemPipe, Dispatch.Sided<IItemHandler>, IInfoRenderer<InfoRenderWidget.TesseractItemWidget> {

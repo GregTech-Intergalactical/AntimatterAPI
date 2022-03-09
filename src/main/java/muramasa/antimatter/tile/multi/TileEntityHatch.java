@@ -28,7 +28,9 @@ import java.util.Collections;
 
 import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.Data.COVERENERGY;
-import static muramasa.antimatter.machine.MachineFlag.*;
+import static muramasa.antimatter.machine.MachineFlag.ENERGY;
+import static muramasa.antimatter.machine.MachineFlag.FLUID;
+import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 

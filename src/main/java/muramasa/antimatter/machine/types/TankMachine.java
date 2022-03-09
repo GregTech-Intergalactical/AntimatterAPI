@@ -10,7 +10,9 @@ import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.tile.TileEntityTank;
 import net.minecraftforge.fluids.FluidStack;
 
-import static muramasa.antimatter.machine.MachineFlag.*;
+import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
+import static muramasa.antimatter.machine.MachineFlag.FLUID;
+import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
 public class TankMachine extends Machine<TankMachine> {
 

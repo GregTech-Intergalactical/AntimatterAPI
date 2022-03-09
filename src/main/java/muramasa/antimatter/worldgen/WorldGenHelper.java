@@ -1,7 +1,6 @@
 package muramasa.antimatter.worldgen;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
@@ -10,13 +9,10 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.levelgen.Heightmap;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;

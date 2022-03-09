@@ -11,7 +11,11 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.*;
+import muramasa.antimatter.gui.GuiData;
+import muramasa.antimatter.gui.GuiInstance;
+import muramasa.antimatter.gui.MenuHandler;
+import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.machine.BlockMachine;
@@ -46,10 +50,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;

@@ -20,7 +20,9 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {

@@ -9,7 +9,6 @@ import muramasa.antimatter.cover.BaseCover;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.renderer.block.model.BakedQuad;

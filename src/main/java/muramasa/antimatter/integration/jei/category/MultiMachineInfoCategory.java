@@ -10,10 +10,10 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IRecipeRegistration;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
 import java.util.List;
