@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Mixin(MultiPackResourceManager.class)
 public class MultiPackManagerMixin {
 
-    @ModifyVariable(method = "<init>", at = @At("LOAD"))
-    public List<PackResources> modifyArg(List<PackResources> p_203798_) {
+    @ModifyVariable(method = "<init>", at = @At("LOAD"), argsOnly = true)
+    private List<PackResources> modifyArg(List<PackResources> p_203798_) {
         List<PackResources> ret = new java.util.ArrayList<>(p_203798_);
         ret.add(new DynamicResourcePack("Antimatter - Dynamic Data", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
         return ret;

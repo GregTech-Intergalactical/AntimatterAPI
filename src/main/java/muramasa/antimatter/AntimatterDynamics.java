@@ -57,7 +57,7 @@ public class AntimatterDynamics {
     /**
      * Providers and Dynamic Resource Pack Section
      **/
-    public static void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> providerFunc) {
+    public static void clientProvider(String domain, Function<DataGenerator, IAntimatterProvider> providerFunc) {
         PROVIDERS.computeIfAbsent(domain, k -> new ObjectArrayList<>()).add(providerFunc);
     }
 
@@ -67,7 +67,7 @@ public class AntimatterDynamics {
         MinecraftForge.EVENT_BUS.post(ev);
         Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
-        Stream<IAntimatterProvider> async = providers.stream().filter(t -> t.async()).parallel();
+        Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
@@ -77,8 +77,7 @@ public class AntimatterDynamics {
     public static void runAssetProvidersDynamically() {
         DynamicResourcePack.clearClient();
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
-                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN)))
-                .collect(Collectors.toList());
+                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN))).toList();
         //AntimatterProvidersEvent ev = new AntimatterProvidersEvent(Ref.BACKGROUND_GEN, Dist.CLIENT, Antimatter.INSTANCE);
         //MinecraftForge.EVENT_BUS.post(ev);
         //Collection<IAntimatterProvider> providers = ev.getProviders();
@@ -123,7 +122,6 @@ public class AntimatterDynamics {
     }
 
     public static void onRecipeCompile(boolean server, RecipeManager manager) {
-       // TagUtils.setSupplier(tags);
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
 
@@ -250,7 +248,7 @@ public class AntimatterDynamics {
         });
 
         Antimatter.LOGGER.info("Amount of Antimatter Recipe Loaders registered: " + loaders.size());
-        if (server) {
+        /*if (server) {
             TagUtils.getTags(Item.class).forEach((k, v) -> {
                 DynamicResourcePack.ensureTagAvailable("items", k); // builder.serialize(), false);
             });
@@ -260,7 +258,7 @@ public class AntimatterDynamics {
             TagUtils.getTags(Block.class).forEach((k, v) -> {
                 DynamicResourcePack.ensureTagAvailable("blocks", k); // builder.serialize(), false);
             });
-        }
+        }*/
     }
     /*
      * public static void runBackgroundProviders() {

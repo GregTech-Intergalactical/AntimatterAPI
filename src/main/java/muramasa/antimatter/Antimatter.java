@@ -77,17 +77,17 @@ public class Antimatter extends AntimatterMod {
         MinecraftForge.EVENT_BUS.addListener(this::providers);
         MinecraftForge.EVENT_BUS.addListener(AntimatterCaps::register);
 
-        AntimatterDynamics.addProvider(Ref.ID,
+        AntimatterDynamics.clientProvider(Ref.ID,
                 g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
-        AntimatterDynamics.addProvider(Ref.ID,
+        AntimatterDynamics.clientProvider(Ref.ID,
                 g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
-        AntimatterDynamics.addProvider(Ref.SHARED_ID,
+        AntimatterDynamics.clientProvider(Ref.SHARED_ID,
                 g -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates", g));
-        AntimatterDynamics.addProvider(Ref.SHARED_ID,
+        AntimatterDynamics.clientProvider(Ref.SHARED_ID,
                 g -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models", g));
-        AntimatterDynamics.addProvider(Ref.ID,
+        AntimatterDynamics.clientProvider(Ref.ID,
                 g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
-        AntimatterDynamics.addProvider(Ref.SHARED_ID,
+        AntimatterDynamics.clientProvider(Ref.SHARED_ID,
                 g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us", g));
         AntimatterAPI.init();
 

@@ -25,23 +25,6 @@ public class CommonHandler implements IProxyHandler {
         AntimatterConfiguredFeatures.init();
         AntimatterAPI.all(StoneType.class, StoneType::initSuppliedState);
         AntimatterWorldGenerator.setup();
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOWEST, CommonHandler::reload);
-    }
-
-    public static void reload(AddReloadListenerEvent ev) {
-        ev.addListener(new SimplePreparableReloadListener<Void>() {
-            @Override
-            protected Void prepare(ResourceManager p_10796_, ProfilerFiller p_10797_) {
-                AntimatterDynamics.onResourceReload(true);
-                return null;
-            }
-
-
-            @Override
-            protected void apply(Void objectIn, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
-              
-            }
-        });
     }
 
     @Override
