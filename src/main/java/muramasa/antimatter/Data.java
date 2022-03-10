@@ -447,10 +447,10 @@ public class Data {
     }
 
     private static void clientInit() {
-        WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && WRENCH.getToolType().contains(b)), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.builtInRegistryHolder().is(WRENCH.getToolType())), BehaviourExtendedHighlight.PIPE_FUNCTION));
         SCREWDRIVER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
-        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && WRENCH.getToolType().contains(b)), BehaviourExtendedHighlight.PIPE_FUNCTION));
-        WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && WIRE_CUTTER.getToolType().contains(b), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.builtInRegistryHolder().is(WRENCH.getToolType())), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && b.builtInRegistryHolder().is(WIRE_CUTTER.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
         CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
 
         MaterialType.buildTooltips();

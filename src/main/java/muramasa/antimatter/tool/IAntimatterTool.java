@@ -22,6 +22,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -73,7 +74,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         return (Item) this;
     }
 
-    default Set<Tag<Block>> getActualTags() {
+    default Set<TagKey<Block>> getActualTags() {
         return getAntimatterToolType().getActualTags();
     }
 

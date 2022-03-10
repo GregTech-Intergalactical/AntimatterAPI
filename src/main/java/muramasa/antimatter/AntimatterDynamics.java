@@ -1,7 +1,7 @@
 package muramasa.antimatter;
 
 import com.google.common.collect.Sets;
-import dev.latvian.mods.kubejs.script.ScriptType;
+//import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -13,8 +13,8 @@ import muramasa.antimatter.event.AntimatterCraftingEvent;
 import muramasa.antimatter.event.AntimatterLoaderEvent;
 import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.event.AntimatterWorldGenEvent;
-import muramasa.antimatter.integration.kubejs.AMWorldEvent;
-import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
+//import muramasa.antimatter.integration.kubejs.AMWorldEvent;
+//import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
@@ -27,8 +27,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.SerializationTags;
-import net.minecraft.tags.TagContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
@@ -124,16 +122,17 @@ public class AntimatterDynamics {
         Antimatter.LOGGER.info("Antimatter recipe manager done..");
     }
 
-    public static void onRecipeCompile(boolean server, RecipeManager manager, TagContainer tags) {
-        TagUtils.setSupplier(tags);
+    public static void onRecipeCompile(boolean server, RecipeManager manager) {
+       // TagUtils.setSupplier(tags);
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
 
         final Set<ResourceLocation> filter;
         // Fire KubeJS event to cancel possible maps.
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
-            filter = ev.forMachines;
+        //    RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
+         //   filter = ev.forMachines;
+         filter = null;
         } else {
             filter = Collections.emptySet();
         }
@@ -142,7 +141,7 @@ public class AntimatterDynamics {
                 rm.resetCompiled();
                 return;
             }
-            rm.compile(manager, tags);
+            rm.compile(manager);
         });
 
         List<Recipe> recipes = manager.getAllRecipesFor(Recipe.RECIPE_TYPE);
@@ -160,7 +159,7 @@ public class AntimatterDynamics {
             }
             RecipeMap<?> rmap = AntimatterAPI.get(RecipeMap.class, name);
             if (rmap != null)
-                entry.getValue().forEach(rec -> rmap.compileRecipe(rec, tags));
+                entry.getValue().forEach(rec -> rmap.compileRecipe(rec));
         }
         time = System.nanoTime() - time;
         int size = AntimatterAPI.all(RecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
@@ -175,7 +174,7 @@ public class AntimatterDynamics {
          * t.getRecipes(false).size() + " recipes."); });
          */
         // Invalidate old tag getter.
-        TagUtils.resetSupplier();
+       // TagUtils.resetSupplier();
     }
 
     /**
@@ -184,8 +183,8 @@ public class AntimatterDynamics {
      */
     public static void recipeEvent(RecipesUpdatedEvent ev) {
         if (ClientHandler.isLocal()) {
-            AntimatterDynamics.onResourceReload(false);
-            AntimatterDynamics.onRecipeCompile(false, ev.getRecipeManager(), SerializationTags.getInstance());
+            //AntimatterDynamics.onResourceReload(false);
+            AntimatterDynamics.onRecipeCompile(false, ev.getRecipeManager());
         }
     }
 
@@ -196,7 +195,7 @@ public class AntimatterDynamics {
     public static void tagsEvent(TagsUpdatedEvent ev) {
         if (!ClientHandler.isLocal()) {
             AntimatterDynamics.onResourceReload(false);
-            AntimatterDynamics.onRecipeCompile(false, Minecraft.getInstance().getConnection().getRecipeManager(), ev.getTagManager());
+            AntimatterDynamics.onRecipeCompile(true, Minecraft.getInstance().getConnection().getRecipeManager());
         }
     }
     /**
@@ -210,8 +209,9 @@ public class AntimatterDynamics {
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
-            filter = ev.forLoaders;
+          //  RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
+         //   filter = ev.forLoaders;
+         filter = null;
         } else {
             filter = Collections.emptySet();
         }
@@ -226,10 +226,10 @@ public class AntimatterDynamics {
         List<WorldGenVein> veins = new ObjectArrayList<>();
         boolean runRegular = true;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && server) {
-            AMWorldEvent ev = new AMWorldEvent();
-            ev.post(ScriptType.SERVER, "antimatter.worldgen");
-            veins.addAll(ev.VEINS);
-            runRegular = !ev.disableBuiltin;
+        //    AMWorldEvent ev = new AMWorldEvent();
+         //   ev.post(ScriptType.SERVER, "antimatter.worldgen");
+          //  veins.addAll(ev.VEINS);
+          //  runRegular = !ev.disableBuiltin;
         }
         if (runRegular) {
             AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE);

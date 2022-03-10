@@ -14,7 +14,9 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -180,7 +182,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         FluidStack[] inputs = this.getInputs();
         for (int i = min; i < inputs.length; i++) {
             FluidStack input = inputs[i];
-            if (input.getFluid().getTags().contains(tag)) {
+            if (input.getFluid().builtInRegistryHolder().is(new TagKey<>(Registry.FLUID_REGISTRY, tag))) {
                 return i;
             }
         }

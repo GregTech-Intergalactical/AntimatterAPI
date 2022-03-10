@@ -17,7 +17,7 @@ import muramasa.antimatter.event.AntimatterCraftingEvent;
 import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvents;
-import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
+//import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.material.SubTag;
@@ -26,6 +26,7 @@ import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeBuilders;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
@@ -90,8 +91,8 @@ public class Antimatter extends AntimatterMod {
                 g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us", g));
         AntimatterAPI.init();
 
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
-            new KubeJSRegistrar();
+        //if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
+            //new KubeJSRegistrar();
     }
 
     private void addCraftingLoaders(AntimatterCraftingEvent ev) {
@@ -168,6 +169,8 @@ public class Antimatter extends AntimatterMod {
     @Override
     public void onRegistrationEvent(RegistrationEvent event, Dist side) {
         if (event == RegistrationEvent.DATA_INIT) {
+            Recipe.init();
+
             SlotType.init();
             RecipeBuilders.init();
             MachineState.init();

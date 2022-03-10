@@ -483,7 +483,7 @@ public class Utils {
     /**
      * Creates a new {@link InventoryChangeTrigger} that checks for a player having an item within the given tag.
      */
-    public static InventoryChangeTrigger.TriggerInstance hasItem(Tag<Item> tagIn) {
+    public static InventoryChangeTrigger.TriggerInstance hasItem(TagKey<Item> tagIn) {
         return hasItem(ItemPredicate.Builder.item().of(tagIn).build());
     }
 
@@ -874,8 +874,8 @@ public class Utils {
      * @param state BlockState that is being checked against
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
-    public static boolean isToolEffective(AntimatterToolType type, Set<Tag<Block>> types, BlockState state) {
-        return type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial()) || types.stream().anyMatch(t -> t.contains(state.getBlock()));
+    public static boolean isToolEffective(AntimatterToolType type, Set<TagKey<Block>> types, BlockState state) {
+        return type.getEffectiveBlocks().contains(state.getBlock()) || type.getEffectiveMaterials().contains(state.getMaterial()) || types.stream().anyMatch(t -> state.is(t));
     }
 
     /**
@@ -896,7 +896,7 @@ public class Utils {
                 BlockState state = world.getBlockState(tempPos);
                 if (state.isAir() || !ForgeHooks.isCorrectToolForDrops(state, player))
                     return false;
-                else if (BlockTags.LOGS.contains(state.getBlock())) {
+                else if (state.is(BlockTags.LOGS)) {
                     breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability());
                 }
             }
@@ -912,7 +912,7 @@ public class Utils {
                     return false;
                 pos = blocks.remove();
                 if (!visited.add(pos)) continue;
-                if (!world.getBlockState(pos).getBlock().getTags().contains(BlockTags.LOGS));
+                if (!world.getBlockState(pos).is(BlockTags.LOGS));
                 for (Direction side : dirs) {
                     BlockPos dirPos = pos.relative(side);
                     if (!visited.contains(dirPos)) blocks.add(dirPos);
@@ -1128,10 +1128,10 @@ public class Utils {
         return getLocalizedType(type);
     }
 
-    public static boolean doesStackHaveToolTypes(ItemStack stack, Tag<Item>... types) {
+    public static boolean doesStackHaveToolTypes(ItemStack stack, TagKey<Item>... types) {
         if (!stack.isEmpty()) {
-            for (Tag<Item> type : types) {
-                if (stack.getItem().getTags().contains(((TagKey<Item>)type).getName())) {
+            for (TagKey<Item> type : types) {
+                if (stack.getItem().builtInRegistryHolder().is(type)) {
                     return true;
                 }
             }
@@ -1140,11 +1140,11 @@ public class Utils {
     }
 
     public static boolean doesStackHaveToolTypes(ItemStack stack, AntimatterToolType... types) {
-        List<Tag<Item>> ret = new ObjectArrayList<>();
+        List<TagKey<Item>> ret = new ObjectArrayList<>();
         for (AntimatterToolType ty : types) {
             ret.add(ty.getForgeTag());
         }
-        Tag<Item>[] t =  (Tag<Item>[]) ret.toArray(new Tag[0]);
+        TagKey<Item>[] t =  (TagKey<Item>[]) ret.toArray(new TagKey[0]);
         return doesStackHaveToolTypes(stack,t);
     }
 

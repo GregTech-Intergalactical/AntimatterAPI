@@ -5,11 +5,12 @@ import muramasa.antimatter.mixin.DimensionTypeAccessor;
 import muramasa.antimatter.structure.BlockInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.biome.Biomes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -68,7 +69,7 @@ public class TrackedDummyWorld extends Level {
     }
 
     public TrackedDummyWorld(Level world){
-        super(null, null, DIMENSION_TYPE, null,true, false, 0);
+        super(null, null, Holder.direct(DIMENSION_TYPE), null,true, false, 0);
         proxyWorld = world;
     }
 
@@ -166,7 +167,7 @@ public class TrackedDummyWorld extends Level {
 
     @Override
     public int getBlockTint(@Nonnull BlockPos blockPos, @Nonnull ColorResolver colorResolver) {
-        return colorResolver.getColor(Biomes.PLAINS, blockPos.getX(), blockPos.getY());
+        return colorResolver.getColor(BuiltinRegistries.BIOME.get(net.minecraft.world.level.biome.Biomes.PLAINS), blockPos.getX(), blockPos.getY());
     }
 
     @Override
@@ -190,7 +191,7 @@ public class TrackedDummyWorld extends Level {
     }
 
     @Override
-    public Biome getUncachedNoiseBiome(int x, int y, int z) {
+    public Holder<Biome> getUncachedNoiseBiome(int x, int y, int z) {
         return null;
     }
 
@@ -228,11 +229,6 @@ public class TrackedDummyWorld extends Level {
 
     @Override
     public RecipeManager getRecipeManager() {
-        return null;
-    }
-
-    @Override
-    public TagContainer getTagManager() {
         return null;
     }
 

@@ -77,9 +77,9 @@ public class AntimatterItemTier implements Tier {
             return Ingredient.of(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
         } else if (primary.has(Data.DUST)) {
             return Ingredient.of(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
-        } else if (ItemTags.getAllTags().getTag(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
-            return Ingredient.of(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
-        }
+        } //else if (ItemTags.getAllTags().getTag(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
+         //   return Ingredient.of(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
+     //   }
         return Ingredient.EMPTY;
         // return null;
     }

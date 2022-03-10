@@ -156,9 +156,9 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand) {
         if (this.stoneType.getGravity()) {
             if (worldIn.isEmptyBlock(pos.below()) || canFallThrough(worldIn.getBlockState(pos.below())) && pos.getY() >= 0) {
-                FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, worldIn.getBlockState(pos));
-                this.onStartFalling(fallingblockentity);
-                worldIn.addFreshEntity(fallingblockentity);
+                //FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, worldIn.getBlockState(pos));
+               // this.onStartFalling(fallingblockentity);
+              //  worldIn.addFreshEntity(fallingblockentity);
             }
         }
     }

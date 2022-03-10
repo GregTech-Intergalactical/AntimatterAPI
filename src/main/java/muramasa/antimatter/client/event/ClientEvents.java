@@ -53,6 +53,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
@@ -162,7 +163,7 @@ public class ClientEvents {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent e) {
         if (e.getFlags().isAdvanced() && Ref.SHOW_ITEM_TAGS) {
-            Collection<ResourceLocation> tags = ItemTags.getAllTags().getMatchingTags(e.getItemStack().getItem());
+            Collection<ResourceLocation> tags = Collections.emptyList(); //ItemTags.getAllTags().getMatchingTags(e.getItemStack().getItem());
             if (!tags.isEmpty()) {
                 List<Component> list = e.getToolTip();
                 list.add(new TextComponent("Tags:").withStyle(ChatFormatting.DARK_GRAY));

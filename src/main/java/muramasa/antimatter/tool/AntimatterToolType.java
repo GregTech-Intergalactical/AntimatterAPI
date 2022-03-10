@@ -39,7 +39,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     private final String domain, id;
     private TagKey<Block> TOOL_TYPE;
-    private final Set<Tag<Block>> TOOL_TYPES = new ObjectOpenHashSet<>();
+    private final Set<TagKey<Block>> TOOL_TYPES = new ObjectOpenHashSet<>();
     private final Set<Block> EFFECTIVE_BLOCKS = new ObjectOpenHashSet<>();
     private final Set<net.minecraft.world.level.material.Material> EFFECTIVE_MATERIALS = new ObjectOpenHashSet<>();
     private final Object2ObjectMap<String, IBehaviour<IAntimatterTool>> behaviours = new Object2ObjectOpenHashMap<>();
@@ -338,7 +338,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return id;
     }
 
-    public Set<Tag<Block>> getActualTags() {
+    public Set<TagKey<Block>> getActualTags() {
         return TOOL_TYPES;
     }
 

@@ -7,8 +7,8 @@ import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.SerializationTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.tags.TagManager;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -34,8 +34,9 @@ public class FluidIngredient {
         if (evaluated) return stacks;
         evaluated = true;
         if (tag != null) {
-            stacks = SerializationTags.getInstance().getTagOrThrow(Registry.FLUID_REGISTRY, tag.getName(), ta -> new RuntimeException("failed to get tag " + ta))
-                    .getValues().stream().map(t -> new FluidStack(t, amount)).toArray(FluidStack[]::new);
+            
+          //  stacks = SerializationTags.getInstance().getTagOrThrow(Registry.FLUID_REGISTRY, tag.getName(), ta -> new RuntimeException("failed to get tag " + ta))
+          //          .getValues().stream().map(t -> new FluidStack(t, amount)).toArray(FluidStack[]::new);
         }
         return stacks;
     }

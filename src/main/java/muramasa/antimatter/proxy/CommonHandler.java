@@ -31,13 +31,15 @@ public class CommonHandler implements IProxyHandler {
     public static void reload(AddReloadListenerEvent ev) {
         ev.addListener(new SimplePreparableReloadListener<Void>() {
             @Override
-            protected Void prepare(ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
+            protected Void prepare(ResourceManager p_10796_, ProfilerFiller p_10797_) {
+                AntimatterDynamics.onResourceReload(true);
                 return null;
             }
 
+
             @Override
             protected void apply(Void objectIn, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
-                AntimatterDynamics.onRecipeCompile(true, ev.getDataPackRegistries().getRecipeManager(), ev.getDataPackRegistries().getTags());
+              
             }
         });
     }

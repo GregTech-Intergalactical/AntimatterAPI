@@ -9,6 +9,7 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,7 +33,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     private Supplier<BlockState> stateSupplier;
     private int harvestLevel, fallingDustColor;
     private float hardness, resistence;
-    private Tag<Block> toolType;
+    private TagKey<Block> toolType;
     private net.minecraft.world.level.material.Material blockMaterial;
 
     public StoneType(String domain, String id, Material material, Texture texture, SoundType soundType, boolean generateBlock) {
@@ -84,7 +85,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         return this;
     }
 
-    public StoneType setType(Tag<Block> type) {
+    public StoneType setType(TagKey<Block> type) {
         this.toolType = type;
         return this;
     }
@@ -124,7 +125,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         return soundType;
     }
 
-    public Tag<Block> getToolType() {
+    public TagKey<Block> getToolType() {
         return toolType;
     }
 

@@ -1,6 +1,7 @@
 package muramasa.antimatter.util;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -8,18 +9,20 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
+import net.minecraft.tags.TagManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 public class TagUtils {
 
     //Initialized in onResourceReload.
-    private static TagContainer TAG_GETTER;
+    //private static TagContainer TAG_GETTER;
 
     //A list of all registered tags for all Antimatter mods.
     private static final Map<Class, Map<ResourceLocation, TagKey>> TAG_MAP = new Object2ObjectOpenHashMap<>();
@@ -31,7 +34,7 @@ public class TagUtils {
      * @return BlockTag variant of the ItemTag
      */
     public static TagKey<Block> itemToBlockTag(TagKey<Item> tag) {
-        return createTag(tag.getName(), Block.class, BlockTags::bind);
+        return createTag(tag.location(), Block.class, BlockTags::create);
     }
 
     /**
@@ -43,7 +46,7 @@ public class TagUtils {
      * @return ItemTag variant of the BlockTag
      */
     public static TagKey<Item> blockToItemTag(TagKey<Block> tag) {
-        return createTag(tag.getName(), Item.class, ItemTags::bind);
+        return createTag(tag.location(), Item.class, ItemTags::create);
     }
 
     /**
@@ -51,7 +54,7 @@ public class TagUtils {
      * @return BlockTag
      */
     public static TagKey<Block> getBlockTag(ResourceLocation loc) {
-        return createTag(loc, Block.class, BlockTags::bind);
+        return createTag(loc, Block.class, BlockTags::create);
     }
 
     public static Map<ResourceLocation, TagKey> getTags(Class clazz) {
@@ -73,7 +76,7 @@ public class TagUtils {
      * @return ItemTag
      */
     public static TagKey<Item> getItemTag(ResourceLocation loc) {
-        return createTag(loc, Item.class, ItemTags::bind);
+        return createTag(loc, Item.class, ItemTags::create);
     }
 
     /**
@@ -92,7 +95,7 @@ public class TagUtils {
      * @return FluidTag
      */
     public static TagKey<Fluid> getForgeFluidTag(String name) {
-        return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::bind);
+        return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::create);
     }
 
     /**
@@ -100,7 +103,7 @@ public class TagUtils {
      * @return FluidTag
      */
     public static TagKey<Fluid> getFluidTag(ResourceLocation name) {
-        return createTag(name, Fluid.class, FluidTags::bind);
+        return createTag(name, Fluid.class, FluidTags::create);
     }
 
     /**
@@ -111,8 +114,10 @@ public class TagUtils {
      * @param tag
      * @return
      */
-    public static TagKey<Item> nc(TagKey<Item> tag) {
-        return nc(tag.location());
+    public static Tag<Item> nc(TagKey<Item> tag) {
+        List<Item> list = new ObjectArrayList<>();
+         Registry.ITEM.getTagOrEmpty(tag).iterator().forEachRemaining(t ->list.add(t.value()));
+         return new Tag<Item>(list);
     }
 
     /**
@@ -124,27 +129,15 @@ public class TagUtils {
      * @return
      */
     public static TagKey<Item> nc(ResourceLocation tag) {
-        return SerializationTags.getInstance().getTagOrThrow(Registry.ITEM_REGISTRY, tag, tatg -> new RuntimeException("failed to get tag " + tatg));
+        return new TagKey<>(Registry.ITEM_REGISTRY, tag);
     }
 
-    public static TagContainer getSupplier() {
-        return TAG_GETTER;
-    }
-
-    public static void resetSupplier() {
-        TAG_GETTER = null;
-    }
-
-    public static void setSupplier(TagContainer supplier) {
-        TAG_GETTER = supplier;
-    }
-
-    protected static <T> TagKey<T> createTag(ResourceLocation loc, Class<T> clazz, Function<String, TagKey<T>> fn) {
+    protected static <T> TagKey<T> createTag(ResourceLocation loc, Class<T> clazz, Function<ResourceLocation, TagKey<T>> fn) {
         TagKey<T>[] tag = new TagKey[1];
         synchronized (TAG_MAP) {
             TAG_MAP.compute(clazz, (k, v) -> {
                 if (v == null) v = new Object2ObjectOpenHashMap<>();
-                tag[0] = v.computeIfAbsent(loc, a -> fn.apply(loc.toString()));
+                tag[0] = v.computeIfAbsent(loc, a -> fn.apply(loc));
                 return v;
             });
         }

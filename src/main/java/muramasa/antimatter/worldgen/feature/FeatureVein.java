@@ -9,6 +9,7 @@ import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinVariant;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinVariantMaterial;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,7 +50,7 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
 
   @Override
   public void build(BiomeGenerationSettingsBuilder event) {
-    event.addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.VEIN);
+    event.addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, Holder.direct(AntimatterConfiguredFeatures.VEIN));
   }
 
   @Override

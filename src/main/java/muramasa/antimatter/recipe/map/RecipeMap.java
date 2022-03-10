@@ -29,7 +29,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagContainer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -227,7 +226,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      *
      * @param recipe the recipe to add.
      */
-    public void compileRecipe(Recipe recipe, TagContainer tags) {
+    public void compileRecipe(Recipe recipe) {
         if (recipe == null)
             return;
 
@@ -256,7 +255,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         if (flag) {
             recipe.sortInputItems();
         }
-        List<List<AbstractMapIngredient>> items = fromRecipe(recipe, tags, true);
+        List<List<AbstractMapIngredient>> items = fromRecipe(recipe, true);
 
         // Recipe r = recurseItemTreeFind(items, map, rr -> true);
         // if (r != null) {
@@ -291,12 +290,12 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         }
     }
 
-    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, TagContainer tags, boolean insideMap) {
+    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, boolean insideMap) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(
                 (r.hasInputItems() ? r.getInputItems().size() : 0)
                         + (r.hasInputFluids() ? r.getInputFluids().size() : 0));
         if (r.hasInputItems()) {
-            buildFromItems(list, r.getInputItems(), tags, insideMap);
+            buildFromItems(list, r.getInputItems(), insideMap);
         }
         if (r.hasInputFluids()) {
             buildFromFluids(list, r.getInputFluids(), insideMap);
@@ -305,7 +304,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     }
 
     protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<RecipeIngredient> ingredients,
-            TagContainer tags, boolean insideMap) {
+             boolean insideMap) {
         for (RecipeIngredient r : ingredients) {
             Ingredient t = r.get();
             if (!isIngredientSpecial(t)) {
@@ -331,7 +330,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
 
     protected void buildFromItemStacks(List<List<AbstractMapIngredient>> list, ItemStack[] ingredients) {
         for (ItemStack t : ingredients) {
-            List<AbstractMapIngredient> ls = new ObjectArrayList<>(2 + t.getItem().getTags().size());
+            int c = (int) t.getItem().builtInRegistryHolder().tags().count();
+            List<AbstractMapIngredient> ls = new ObjectArrayList<>(2 + c);
             ls.add(new MapItemIngredient(t.getItem(), false));
             ls.add(new MapItemStackIngredient(t, false));
             /*for (ResourceLocation rl : t.getItem().getTags()) {
@@ -548,7 +548,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         this.ROOT_SPECIAL.clear();
     }
 
-    public void compile(RecipeManager reg, TagContainer tags) {
+    public void compile(RecipeManager reg) {
         resetCompiled();
         if (RECIPES_TO_COMPILE.size() > 0) {
             // Recipes with special ingredients have to be compiled first as you cannot
@@ -562,15 +562,15 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                     regular.add(recipe);
                 }
             }
-            special.forEach(t -> compileRecipe(t, tags));
-            regular.forEach(t -> compileRecipe(t, tags));
+            special.forEach(t -> compileRecipe(t));
+            regular.forEach(t -> compileRecipe(t));
         }
         if (PROXY != null) {
             List<net.minecraft.world.item.crafting.Recipe<?>> recipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) reg.getAllRecipesFor(PROXY.loc);
             recipes.forEach(recipe -> {
                 Recipe r = PROXY.handler.apply(recipe, RB());
                 if (r != null)
-                    compileRecipe(r, tags);
+                    compileRecipe(r);
             });
         }
 
@@ -585,16 +585,16 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         if (ROOT.contains(j))
             return true;
         MapTagIngredient tag = new MapTagIngredient(null, false);
-        for (ResourceLocation t : item.getItem().getTags()) {
-            tag.setTag(t);
-            if (ROOT.contains(tag))
+        return item.getItem().builtInRegistryHolder().tags().filter(t -> {
+            tag.setTag(t.location());
+            if (ROOT.contains(tag)) {
                 return true;
-        }
-        for (AbstractMapIngredient ing : ROOT_SPECIAL) {
-            if (ing.equals(i))
+            }
+            if (ROOT_SPECIAL.contains(tag)) {
                 return true;
-        }
-        return false;
+            }
+            return false;
+        }).count() > 0;
     }
 
     public boolean acceptsFluid(FluidStack fluid) {
@@ -602,12 +602,12 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         if (ROOT.contains(i))
             return true;
         MapTagIngredient tag = new MapTagIngredient(null, false);
-        for (ResourceLocation t : fluid.getFluid().getTags()) {
-            tag.setTag(t);
+        return fluid.getFluid().builtInRegistryHolder().tags().filter(t -> {
+            tag.setTag(t.location());
             if (ROOT.contains(tag))
                 return true;
-        }
-        return false;
+            return false;
+        }).count() > 0;
     }
 
     /**

@@ -20,7 +20,8 @@
     "RecipeManagerMixin",
     "RepairItemRecipeMixin",
     "ServerBlockUpdateMixin",
-    "ReloadableResourceManagerMixin"
+    "MultiPackManagerMixin",
+    "SimpleReloadInstanceMixin"
   ],
   "minVersion": "0.8"
 }

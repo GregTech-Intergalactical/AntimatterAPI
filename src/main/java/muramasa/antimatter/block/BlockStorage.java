@@ -45,9 +45,9 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
             public BlockPlaceContext updatePlacementContext(BlockPlaceContext ctx) {
                 if (ctx.getPlayer().isCrouching()) return ctx;
                 BlockPos actualPos = ctx.getClickedPos().relative(ctx.getClickedFace().getOpposite());
-                Block currentBlock = ctx.getLevel().getBlockState(actualPos).getBlock();
+                BlockState state = ctx.getLevel().getBlockState(actualPos);
                 // if (!(currentBlock instanceof BlockStorage) || ((BlockStorage) currentBlock).getType() != MaterialType.FRAME) return ctx; // Change to Block#isIn
-                if (!currentBlock.getTags().contains(Data.FRAME.getTag())) return ctx;
+                if (!state.is(Data.FRAME.getTag())) return ctx;
                 BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(actualPos.getX(), actualPos.getY(), actualPos.getZ());
                 while (ctx.getLevel().getMaxBuildHeight() > mutablePos.getY()) {
                     if (ctx.getLevel().getBlockState(mutablePos.move(Direction.UP)).canBeReplaced(ctx)) {

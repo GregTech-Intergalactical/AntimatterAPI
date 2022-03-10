@@ -209,6 +209,6 @@ public class RecipeBuilders {
     });
 
     static {
-        PropertyIngredient.addGetter(Tags.Items.DYES.getName(), DyeColor::getColor);
+        PropertyIngredient.addGetter(Tags.Items.DYES.location(), DyeColor::getColor);
     }
 }

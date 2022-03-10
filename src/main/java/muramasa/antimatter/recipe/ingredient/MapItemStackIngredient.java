@@ -21,8 +21,8 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
     @Override
     public boolean equals(Object o) {
         if (!super.equals(o)) return false;
-        if (o instanceof MapTagIngredient) {
-            return stack.getItem().getTags().contains(((MapTagIngredient) o).loc);
+        if (o instanceof MapTagIngredient m) {
+            return stack.getItem().builtInRegistryHolder().is(m.loc);
         }
         if (o instanceof MapItemIngredient) {
             return ((MapItemIngredient) o).stack.equals(this.stack.getItem());

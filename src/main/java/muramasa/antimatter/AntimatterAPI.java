@@ -442,8 +442,8 @@ public final class AntimatterAPI {
     public static <T> T getReplacement(@Nullable T originalItem, TagKey<T> tag, String... namespaces) {
         if (tag == null)
             throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
-        if (REPLACEMENTS.containsKey(tag.getName()))
-            return (T) REPLACEMENTS.get(tag.getName());// return
+        if (REPLACEMENTS.containsKey(tag.location()))
+            return (T) REPLACEMENTS.get(tag.location());// return
         // RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
         return originalItem;
         // if (replacementsFound) return originalItem;
@@ -462,7 +462,7 @@ public final class AntimatterAPI {
     }
 
     public static <T> void addReplacement(TagKey<Item> tag, T obj) {
-        REPLACEMENTS.put(tag.getName(), obj);
+        REPLACEMENTS.put(tag.location(), obj);
     }
 
     public static void registerBlockUpdateHandler(IBlockUpdateEvent handler) {

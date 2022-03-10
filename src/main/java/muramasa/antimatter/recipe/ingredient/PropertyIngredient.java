@@ -110,7 +110,7 @@ public class PropertyIngredient extends Ingredient {
             }
         }
         for (TagKey<Item> itemTag : this.itemTags) {
-            Getter getter = getters.get(itemTag.getName());
+            Getter getter = getters.get(itemTag.location());
             if (getter != null) {
                 Object o = getter.get(stack);
                 if (o != null) return o;
@@ -146,7 +146,7 @@ public class PropertyIngredient extends Ingredient {
         obj.add("material_type", materialArr);
         materialArr = new JsonArray();
         for (TagKey<Item> itemTag : this.itemTags) {
-            materialArr.add(itemTag.getName().toString());
+            materialArr.add(itemTag.location().toString());
         }
         obj.add("item_tags", materialArr);
         materialArr = new JsonArray();
@@ -302,7 +302,7 @@ public class PropertyIngredient extends Ingredient {
             }
             buffer.writeVarInt(ingredient.itemTags.size());
             for (TagKey<Item> itemTag : ingredient.itemTags) {
-                buffer.writeResourceLocation(itemTag.getName());
+                buffer.writeResourceLocation(itemTag.location());
             }
             buffer.writeBoolean(ingredient.inverse);
             buffer.writeVarInt(ingredient.tags.length);

@@ -40,6 +40,10 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
 
     private boolean valid;
 
+    public static void init() {
+        
+    }
+
     public static final RecipeType<Recipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
 
     public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {

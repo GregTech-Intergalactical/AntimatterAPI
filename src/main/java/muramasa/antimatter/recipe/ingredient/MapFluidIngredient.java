@@ -23,9 +23,8 @@ public class MapFluidIngredient extends AbstractMapIngredient {
             MapFluidIngredient fluid = (MapFluidIngredient) o;
             return this.hashCode() == fluid.hashCode() && stack.getFluid() == fluid.stack.getFluid(); //&& stack.isFluidEqual(fluid.stack);
         }
-        if (o instanceof MapTagIngredient) {
-            MapTagIngredient tag = (MapTagIngredient) o;
-            return stack.getFluid().getTags().contains(tag.loc);
+        if (o instanceof MapTagIngredient tag) {
+            return stack.getFluid().builtInRegistryHolder().is(tag.floc);
         }
         return false;
     }
