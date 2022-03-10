@@ -46,7 +46,7 @@ public class MaterialRecipe extends ShapedRecipe {
     }
 
     public interface ItemBuilder {
-        ItemStack build(CraftingContainer inv, Result mats);
+        ItemStack build(@Nullable CraftingContainer inv, Result mats);
 
         Map<String, Object> getFromResult(@Nonnull ItemStack stack);
     }

@@ -100,15 +100,27 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
                     }
                 });
 
-                List<ItemStack> result = outputs.stream().filter(t -> {
-                    Map<String, Object> o = recipe.builder.getFromResult(t);
-                    boolean ok = true;
-                    for (Map.Entry<String, Object> objectEntry : o.entrySet()) {
-                        Object inner = out.get(objectEntry.getKey());
-                        ok &= inner != null && inner.equals(objectEntry.getValue());
-                    }
-                    return ok;
-                }).collect(Collectors.toList());
+                List<ItemStack> result;
+                ItemStack build;
+                try {
+                    build = recipe.builder.build(null, new MaterialRecipe.Result(out, Collections.emptyMap()));
+                } catch (Exception ex) {
+                    build = ItemStack.EMPTY;
+                }
+                if (!build.isEmpty()) {
+                    result = Collections.singletonList(build);
+                } else {
+                    result = outputs.stream().filter(t -> {
+                        Map<String, Object> o = recipe.builder.getFromResult(t);
+                        boolean ok = true;
+                        for (Map.Entry<String, Object> objectEntry : o.entrySet()) {
+                            Object inner = out.get(objectEntry.getKey());
+                            ok &= inner != null && inner.equals(objectEntry.getValue());
+                        }
+                        return ok;
+                    }).collect(Collectors.toList());
+                }
+
                 IRecipeSlotBuilder outputSlot = recipeLayout.addSlot(RecipeIngredientRole.OUTPUT, 95, 19);
                 outputSlot.addTooltipCallback((a, b) -> {
                     if (a.isEmpty()) return;

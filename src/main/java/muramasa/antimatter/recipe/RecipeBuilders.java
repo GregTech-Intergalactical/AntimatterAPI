@@ -138,8 +138,7 @@ public class RecipeBuilders {
         public ItemStack build(CraftingContainer inv, MaterialRecipe.Result mats) {
             Material m = (Material) mats.mats.get("secondary");
             AntimatterToolType type = AntimatterAPI.get(AntimatterToolType.class, id);
-            ItemStack stack = type.getToolStack((Material) mats.mats.get("primary"), m == null ? NULL : m);
-            return stack;
+            return type.getToolStack((Material) mats.mats.get("primary"), m == null ? NULL : m);
         }
 
         @Override

@@ -67,20 +67,26 @@ public class DynamicResourcePack implements PackResources {
     }
 
     public static void addState(ResourceLocation loc, IGeneratedBlockstate state) {
+        ResourceLocation l = getStateLoc(loc);
+        String s = state.toJson().toString();
         synchronized (ASSETS) {
-            ASSETS.put(getStateLoc(loc), state.toJson().toString());
+            ASSETS.put(l, s);
         }
     }
 
     public static void addBlock(ResourceLocation loc, ModelBuilder<?> builder) {
+        ResourceLocation l = getModelLoc(loc);
+        String s = builder.toJson().toString();
         synchronized (ASSETS) {
-            ASSETS.put(getModelLoc(loc), builder.toJson().toString());
+            ASSETS.put(l, s);
         }
     }
 
     public static void addItem(ResourceLocation loc, ModelBuilder<?> builder) {
+        ResourceLocation l = getModelLoc(loc);
+        String s = builder.toJson().toString();
         synchronized (ASSETS) {
-            ASSETS.put(getModelLoc(loc), builder.toJson().toString());
+            ASSETS.put(l, s);
         }
     }
 
@@ -98,21 +104,24 @@ public class DynamicResourcePack implements PackResources {
 
     public static void addLootEntry(ResourceLocation loc, LootTable table) {
         JsonObject obj = (JsonObject) LootTables.serialize(table);
+        ResourceLocation l = getLootLoc(loc);
         synchronized (DATA) {
-            DATA.put(getLootLoc(loc), obj);
+            DATA.put(l, obj);
         }
     }
 
     public static void addAdvancement(ResourceLocation loc, JsonObject obj) {
+        ResourceLocation l = getAdvancementLoc(loc);
         synchronized (DATA) {
-            DATA.put(getAdvancementLoc(loc), obj);
+            DATA.put(l, obj);
         }
     }
 
 
     public static void addTag(String type, ResourceLocation loc, JsonObject obj) {
+        ResourceLocation l = getTagLoc(type, loc);
         synchronized (DATA) {
-            JsonObject object = DATA.putIfAbsent(getTagLoc(type, loc), obj);
+            JsonObject object = DATA.putIfAbsent(l, obj);
             if (object != null) {
                 object.getAsJsonArray("values").addAll(obj.getAsJsonArray("values"));
             }
