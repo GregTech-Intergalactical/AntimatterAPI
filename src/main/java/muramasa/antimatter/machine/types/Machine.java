@@ -22,6 +22,7 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeBuilder;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -85,7 +86,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Recipe Members
      **/
-    protected RecipeMap<?> recipeMap;
+    protected IRecipeMap recipeMap;
 
     /**
      * GUI Members
@@ -322,7 +323,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @param map the recipe map.
      * @return this.
      */
-    public T setMap(RecipeMap<?> map) {
+    public T setMap(IRecipeMap map) {
         this.recipeMap = map;
         addFlags(RECIPE);
         registerJei();
@@ -445,12 +446,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return overlayModels.getOverlayModel(this, side);
     }
 
-    public RecipeMap<?> getRecipeMap() {
+    public IRecipeMap getRecipeMap() {
         return recipeMap;
-    }
-
-    public RecipeBuilder getRecipeBuilder() {
-        return recipeMap.RB();
     }
 
     public T addFlags(MachineFlag... flags) {

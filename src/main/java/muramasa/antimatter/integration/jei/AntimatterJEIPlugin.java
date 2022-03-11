@@ -29,6 +29,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.network.chat.Component;
@@ -52,12 +53,12 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 public class AntimatterJEIPlugin implements IModPlugin {
 
     protected static class RegistryValue {
-        RecipeMap<?> map;
+        IRecipeMap map;
         GuiData gui;
         Tier tier;
         ResourceLocation model;
 
-        public RegistryValue(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model) {
+        public RegistryValue(IRecipeMap map, GuiData gui, Tier tier, ResourceLocation model) {
             this.map = map;
             this.gui = gui;
             this.tier = tier;
@@ -79,7 +80,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
         return new ResourceLocation(Ref.ID, "jei");
     }
 
-    public static void registerCategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
+    public static void registerCategory(IRecipeMap map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
         if (REGISTRY.containsKey(new ResourceLocation(map.getDomain(), map.getId())) && !override) {
             //    Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
             RegistryValue value = REGISTRY.get(map.getLoc());
@@ -210,7 +211,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
         AntimatterAPI.all(Machine.class, machine -> {
-           RecipeMap<?> map = machine.getRecipeMap();
+           IRecipeMap map = machine.getRecipeMap();
            if (map == null) return;
             ((Machine<?>)machine).getTiers().forEach(t -> {
                 ItemStack stack = new ItemStack(machine.getItem(t));

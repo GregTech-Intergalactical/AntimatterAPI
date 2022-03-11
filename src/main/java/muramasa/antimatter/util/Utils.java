@@ -208,6 +208,18 @@ public class Utils {
         damageStack(durability, stack, player);
     }
 
+
+    public static void damageStack(ItemStack stack, InteractionHand hand, LivingEntity player) {
+        int durability = 1;
+        if (stack.getItem() instanceof IAntimatterTool) {
+            durability = ((IAntimatterTool) stack.getItem()).getAntimatterToolType().getUseDurability();
+        }
+        stack.hurtAndBreak(durability, player, p -> {
+            p.broadcastBreakEvent(hand);
+        });
+    }
+
+
     public static void damageStack(int durability, ItemStack stack, LivingEntity player) {
         stack.hurtAndBreak(durability, player, p -> {
             p.broadcastBreakEvent(EquipmentSlot.MAINHAND);

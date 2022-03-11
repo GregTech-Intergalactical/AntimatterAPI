@@ -7,6 +7,7 @@ import muramasa.antimatter.capability.fluid.FluidHandlerNullSideWrapper;
 import muramasa.antimatter.capability.fluid.FluidHandlerSidedWrapper;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.recipe.Recipe;
@@ -112,7 +113,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     protected boolean checkValidFluid(FluidStack fluid) {
         if (tile.has(GENERATOR)) {
-            Recipe recipe = tile.getMachineType().getRecipeMap().find(new ItemStack[0], new FluidStack[]{fluid}, r -> true);
+            Recipe recipe = tile.getMachineType().getRecipeMap().find(new ItemStack[0], new FluidStack[]{fluid}, Tier.ULV, r -> true);
             if (recipe != null) {
                 return true;
             }

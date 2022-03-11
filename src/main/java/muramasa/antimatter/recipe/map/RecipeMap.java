@@ -59,7 +59,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObject {
+public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObject, IRecipeMap {
 
     private static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
     private static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
@@ -90,7 +90,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         this.loc = new ResourceLocation(domain, categoryId);
         this.builder = builder;
         this.builder.setMap(this);
-        //AntimatterAPI.register(RecipeMap.class, this);
+        AntimatterAPI.register(IRecipeMap.class, this);
     }
 
     // In the case of split stacks, merge the items, 2 aluminium dust in separate
@@ -191,10 +191,6 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         return loc.getPath();
     }
 
-    public Component getDisplayName() {
-        return new TranslatableComponent("jei.category." + loc.getPath());
-    }
-
     public B RB() {
         builder.clear();
         return builder;
@@ -215,7 +211,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    void add(Recipe recipe) {
+    @Override
+    public void add(Recipe recipe) {
         RECIPES_TO_COMPILE.add(recipe);
     }
 
@@ -493,14 +490,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     }
 
     @Nullable
-    public Recipe find(@Nonnull LazyOptional<MachineItemHandler<?>> itemHandler,
-            @Nonnull LazyOptional<MachineFluidHandler<?>> fluidHandler, Predicate<Recipe> validator) {
-        return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
-                fluidHandler.map(MachineFluidHandler::getInputs).orElse(EMPTY_FLUID), validator);
-    }
-
-    @Nullable
-    public Recipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, @Nonnull Predicate<Recipe> canHandle) {
+    @Override
+    public Recipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, Tier tier, @Nonnull Predicate<Recipe> canHandle) {
         // First, check if items and fluids are valid.
         if (items.length + fluids.length > Long.SIZE) {
             Utils.onInvalidData(
@@ -562,8 +553,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                     regular.add(recipe);
                 }
             }
-            special.forEach(t -> compileRecipe(t));
-            regular.forEach(t -> compileRecipe(t));
+            special.forEach(this::compileRecipe);
+            regular.forEach(this::compileRecipe);
         }
         if (PROXY != null) {
             List<net.minecraft.world.item.crafting.Recipe<?>> recipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) reg.getAllRecipesFor(PROXY.loc);
@@ -585,16 +576,13 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         if (ROOT.contains(j))
             return true;
         MapTagIngredient tag = new MapTagIngredient(null, false);
-        return item.getItem().builtInRegistryHolder().tags().filter(t -> {
+        return item.getItem().builtInRegistryHolder().tags().anyMatch(t -> {
             tag.setTag(t.location());
             if (ROOT.contains(tag)) {
                 return true;
             }
-            if (ROOT_SPECIAL.contains(tag)) {
-                return true;
-            }
-            return false;
-        }).count() > 0;
+            return ROOT_SPECIAL.contains(tag);
+        });
     }
 
     public boolean acceptsFluid(FluidStack fluid) {
@@ -602,12 +590,10 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         if (ROOT.contains(i))
             return true;
         MapTagIngredient tag = new MapTagIngredient(null, false);
-        return fluid.getFluid().builtInRegistryHolder().tags().filter(t -> {
+        return fluid.getFluid().builtInRegistryHolder().tags().anyMatch(t -> {
             tag.setTag(t.location());
-            if (ROOT.contains(tag))
-                return true;
-            return false;
-        }).count() > 0;
+            return ROOT.contains(tag);
+        });
     }
 
     /**
@@ -620,12 +606,6 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         Class<? extends Ingredient> clazz = i.getClass();
         return /* i.getMatchingStacks().length == 0 && */(clazz != Ingredient.class && clazz != CompoundIngredient.class
                 && clazz != NBTIngredient.class);
-    }
-
-    public <T extends TileEntityMachine<T>> Recipe find(Holder<IItemHandler, MachineItemHandler<T>> itemHandler,
-            Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler, Predicate<Recipe> validateRecipe) {
-        return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
-                fluidHandler.map(FluidHandler::getInputs).orElse(EMPTY_FLUID), validateRecipe);
     }
 
     /**

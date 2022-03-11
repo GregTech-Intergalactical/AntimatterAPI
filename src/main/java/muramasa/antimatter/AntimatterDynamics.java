@@ -18,6 +18,7 @@ import muramasa.antimatter.event.AntimatterWorldGenEvent;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.ModRegistrar;
 import muramasa.antimatter.util.TagUtils;
@@ -27,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
@@ -35,6 +37,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -134,7 +137,7 @@ public class AntimatterDynamics {
         } else {
             filter = Collections.emptySet();
         }
-        AntimatterAPI.all(RecipeMap.class, rm -> {
+        AntimatterAPI.all(IRecipeMap.class, rm -> {
             if (filter.contains(rm.getLoc())) {
                 rm.resetCompiled();
                 return;
@@ -155,12 +158,12 @@ public class AntimatterDynamics {
             } else {
                 continue;
             }
-            RecipeMap<?> rmap = AntimatterAPI.get(RecipeMap.class, name);
+            IRecipeMap rmap = AntimatterAPI.get(IRecipeMap.class, name);
             if (rmap != null)
-                entry.getValue().forEach(rec -> rmap.compileRecipe(rec));
+                entry.getValue().forEach(rmap::compileRecipe);
         }
         time = System.nanoTime() - time;
-        int size = AntimatterAPI.all(RecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
+        int size = AntimatterAPI.all(IRecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
 
         Antimatter.LOGGER.info("Time to compile GT recipes: (ms) " + (time) / (1000 * 1000));
         Antimatter.LOGGER.info("No. of GT recipes: " + size);

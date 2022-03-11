@@ -7,11 +7,13 @@ import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -154,8 +156,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             }
             activeRecipe = null;
         }
-        RecipeMap<?> map = tile.getMachineType().getRecipeMap();
-        return map != null ? map.find(tile.itemHandler, tile.fluidHandler, this::validateRecipe) : null;
+        IRecipeMap map = tile.getMachineType().getRecipeMap();
+        return map != null ? map.find(tile.itemHandler, tile.fluidHandler, tile.getMachineTier(), this::validateRecipe) : null;
     }
 
     protected Recipe cachedRecipe() {
@@ -362,7 +364,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //First lookup.
         if (!this.tile.hadFirstTick() && hasLoadedInput()) {
             if (!tile.getMachineState().allowRecipeCheck()) return;
-            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), r -> true);
+            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), Tier.ULV, r -> true);
             if (activeRecipe == null) return;
             calculateDurations();
             activateRecipe(false);
@@ -391,12 +393,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     public boolean accepts(ItemStack stack) {
-        RecipeMap<?> map = this.tile.getMachineType().getRecipeMap();
+        IRecipeMap map = this.tile.getMachineType().getRecipeMap();
         return map == null || map.acceptsItem(stack);
     }
 
     public boolean accepts(FluidStack stack) {
-        RecipeMap<?> map = this.tile.getMachineType().getRecipeMap();
+        IRecipeMap map = this.tile.getMachineType().getRecipeMap();
         return map == null || map.acceptsFluid(stack);
     }
 

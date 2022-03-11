@@ -18,6 +18,8 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.ToolUsage;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -169,6 +171,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     //Handle tool types.
                     if (type == WRENCH || type == ELECTRIC_WRENCH) {
                         if (tile.wrenchMachine(player, hit, player.isCrouching())) {
+                            Utils.damageStack(stack, hand, player);
                             return InteractionResult.SUCCESS;
                         }
                     } else if (type == SOFT_HAMMER) {
@@ -183,12 +186,12 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     } else if (type == CROWBAR) {
                         if (!player.isCrouching()) {
                             if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
-                                Utils.damageStack(stack, player);
+                                Utils.damageStack(stack,hand, player);
                                 return InteractionResult.SUCCESS;
                             }
                         } else {
                             if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
-                                Utils.damageStack(stack, player);
+                                Utils.damageStack(stack,hand, player);
                                 return InteractionResult.SUCCESS;
                             }
                         }
@@ -196,7 +199,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         ICover instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getDirection())).orElse(ICover.empty);
                         if (!player.isCrouching()) {
                             if (!instance.isEmpty() && instance.openGui(player, hit.getDirection())) {
-                                Utils.damageStack(stack, player);
+                                Utils.damageStack(stack,hand, player);
                                 return InteractionResult.SUCCESS;
                             }
                         }

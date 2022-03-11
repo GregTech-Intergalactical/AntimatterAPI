@@ -16,6 +16,7 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.AntimatterRegistration;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -398,21 +399,21 @@ public final class AntimatterAPI {
      * JEI Registry Section
      **/
 
-    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Tier tier, ResourceLocation model,
+    public static void registerJEICategory(IRecipeMap map, GuiData gui, Tier tier, ResourceLocation model,
                                            boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
             AntimatterJEIPlugin.registerCategory(map, gui, tier, model, override);
         }
     }
 
-    public static void registerJEICategory(RecipeMap<?> map, GuiData gui, Machine<?> machine, boolean override) {
+    public static void registerJEICategory(IRecipeMap map, GuiData gui, Machine<?> machine, boolean override) {
         if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
             AntimatterJEIPlugin.registerCategory(map, gui, machine.getFirstTier(),
                     new ResourceLocation(machine.getDomain(), machine.getId()), override);
         }
     }
 
-    public static void registerJEICategory(RecipeMap<?> map, GuiData gui) {
+    public static void registerJEICategory(IRecipeMap map, GuiData gui) {
         registerJEICategory(map, gui, Tier.LV, null, true);
     }
 

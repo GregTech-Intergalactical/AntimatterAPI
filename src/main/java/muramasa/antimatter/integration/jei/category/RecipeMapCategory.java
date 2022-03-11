@@ -23,6 +23,7 @@ import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
@@ -56,7 +57,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
     protected Tier guiTier;
     private final IRecipeInfoRenderer infoRenderer;
 
-    public RecipeMapCategory(RecipeMap<?> map, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
+    public RecipeMapCategory(IRecipeMap map, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
         loc = map.getLoc();
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getString();

@@ -42,7 +42,6 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
             List<List<ItemStack>> inputs = recipe.getIngredients().stream().map(t -> Arrays.asList(t.getItems())).toList();
             List<ItemStack> outputs = recipe.outputs;
             List<List<ItemStack>> newInputs = new ObjectArrayList<>(inputs);
-            boolean shouldReplace = true;
             ItemStack stack = focus.getTypedValue().getIngredient();
 
             if (focus.getRole() == RecipeIngredientRole.OUTPUT) {
@@ -136,24 +135,17 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
                     outputSlot.addIngredients(VanillaTypes.ITEM, outputs);
                 }
             }
-            //else {
-            //      guiItemStacks.set(craftOutputSlot, outputs.stream().flatMap(Collection::stream).collect(Collectors.toList()));
-            //  }
-
 
             int i = 0;
             for (int y = 0; y < recipe.getHeight(); ++y) {
                 for (int x = 0; x < recipe.getWidth(); ++x) {
                     IRecipeSlotBuilder slot = recipeLayout.addSlot(RecipeIngredientRole.INPUT, x * 18 + 1, y * 18 + 1);
-                    slot.addIngredients(VanillaTypes.ITEM, shouldReplace ? newInputs.get(i++) : inputs.get(i++));
+                    slot.addIngredients(VanillaTypes.ITEM, newInputs.get(i++));
                     IntSet set = new IntOpenHashSet();
                     recipe.materialSlots.values().forEach(set::addAll);
                     if (set.contains(i - 1)) {
                         final int j = i;
                         slot.addTooltipCallback((a, b) -> {
-                            //a.getDisplayedIngredient().flatMap(obj -> obj.getIngredient(VanillaTypes.ITEM)).ifPresent(o -> {
-
-                            //});
                             if (recipe.getIngredients().get(j - 1) instanceof PropertyIngredient p) {
                                 b.add(new TextComponent("Property: ").append(new TextComponent(p.getId().substring(0, 1).toUpperCase() + p.getId().substring(1)).withStyle(GOLD)));
                             }

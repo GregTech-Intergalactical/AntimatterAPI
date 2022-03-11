@@ -169,20 +169,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public AntimatterItemBlock getItemBlock() {
         return new PipeItemBlock(this);
     }
-/*
-    @Override
-    public boolean hasBlockEntity() {
-        return true;
-    }
 
-    @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        TileEntityPipe pipe = (TileEntityPipe) (state.getValue(COVERED) ? type.getCoveredType().create() : type.getTileType().create());
-        pipe.ofState(state);
-        return pipe;
-    }
-*/
     public AntimatterToolType getToolType() {
         if (type.getMaterial() == Data.Wood) return Data.AXE;
         return Data.WRENCH;
@@ -263,7 +250,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (type == Data.CROWBAR) {
                 if (!player.isCrouching()) {
                     if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
-                        Utils.damageStack(stack, player);
+                        Utils.damageStack(stack, hand, player);
                         return InteractionResult.SUCCESS;
                     }
                     return InteractionResult.PASS;
@@ -277,13 +264,13 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
                 if (player.isCrouching()) {
                     NetworkHooks.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
-                    stack.hurtAndBreak(10, player, p -> p.broadcastBreakEvent(hand));
+                    Utils.damageStack(stack, hand, player);
                     return InteractionResult.SUCCESS;
                 }
                 ICover instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getDirection()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                 if (!player.isCrouching()) {
                     if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {
-                        Utils.damageStack(stack, player);
+                        Utils.damageStack(stack, hand, player);
                         return InteractionResult.SUCCESS;
                     }
                     return InteractionResult.PASS;
@@ -293,6 +280,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 Direction side = Utils.getInteractSide(hit);
                 if (tile.blocksSide(side)) return InteractionResult.CONSUME;
                 tile.toggleConnection(side);
+                Utils.damageStack(stack, hand, player);
                 return InteractionResult.SUCCESS;
             }
         }

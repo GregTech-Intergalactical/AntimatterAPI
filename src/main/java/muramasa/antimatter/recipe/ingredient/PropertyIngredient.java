@@ -18,6 +18,8 @@ import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -339,9 +341,9 @@ public class PropertyIngredient extends Ingredient {
         private Set<TagKey<Item>> itemTags;
         private Set<ItemLike> items;
         private Set<Material> fixedMats;
-        private String id;
+        private final String id;
         private IMaterialTag[] tags = new IMaterialTag[0];
-        private Object2BooleanMap<AntimatterToolType> optionalTools = new Object2BooleanOpenHashMap<>();
+        private final Object2BooleanMap<AntimatterToolType> optionalTools = new Object2BooleanOpenHashMap<>();
         private boolean inverse = false;
 
         private Builder(String id) {
