@@ -18,8 +18,6 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.ToolUsage;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
