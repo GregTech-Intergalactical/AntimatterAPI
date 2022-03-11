@@ -23,8 +23,6 @@ import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.map.IRecipeMap;
-import muramasa.antimatter.recipe.map.RecipeBuilder;
-import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.structure.Structure;
@@ -39,6 +37,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -101,7 +100,9 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected IOverlayTexturer overlayTextures;
     protected IOverlayModeler overlayModels;
 
-
+    public SoundEvent machineNoise;
+    public long soundTime;
+    public float soundVolume;
     /**
      * Multi Members
      **/
@@ -192,6 +193,19 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         allowFrontCovers = true;
         return (T) this;
     }
+
+    public T setSound(SoundEvent loc, long time, float volume) {
+        time *= 20;
+        this.soundTime = time;
+        this.soundVolume = volume;
+        this.machineNoise = loc;
+        return (T) this;
+    }
+
+    public T setSound(SoundEvent loc, long time) {
+        return setSound(loc, time, 1.0f);
+    }
+
 
     /**
      * Sets the output cover fort his machine, which is per default placed on the opposite side of the machine

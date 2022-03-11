@@ -20,6 +20,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -212,11 +213,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         maxProgress = activeRecipe.getDuration();
         if (!generator) {
             overclock = getOverclock();
-            maxProgress = Math.max(1, maxProgress >>= overclock);
+            this.maxProgress = Math.max(1, maxProgress >> overclock);
         }
     }
 
-    //called when a new recipe is found, to process overclocking
     protected void activateRecipe(boolean reset) {
         //if (canOverclock)
         consumedResources = false;
@@ -293,6 +293,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             }
             if (!generator){
                 tickTimer += WAIT_TIME_POWER_LOSS;
+                if (tile.getMachineState() == ACTIVE) tile.getLevel().playSound(null, tile.getBlockPos(), Ref.INTERRUPT, SoundSource.BLOCKS, 1.0f, 1.0f);
                 return POWER_LOSS;
             } else {
                 tickTimer += 10;
@@ -364,11 +365,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //First lookup.
         if (!this.tile.hadFirstTick() && hasLoadedInput()) {
             if (!tile.getMachineState().allowRecipeCheck()) return;
-            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), Tier.ULV, r -> true);
+            activeRecipe = tile.getMachineType().getRecipeMap().find(itemInputs.toArray(new ItemStack[0]), fluidInputs.toArray(new FluidStack[0]), this.tile.getMachineTier(), this::validateRecipe);
             if (activeRecipe == null) return;
             calculateDurations();
-            activateRecipe(false);
-            if (canOutput()) tile.setMachineState(ACTIVE);
+            lastRecipe = activeRecipe;
             return;
         }
         if (tile.getMachineState().allowRecipeCheck()) {
@@ -605,6 +605,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         nbt.putInt("T", tickTimer);
         nbt.put("F", fluid);
         nbt.putInt("P", currentProgress);
+        nbt.putBoolean("C", consumedResources);
         return nbt;
     }
 
@@ -615,6 +616,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         nbt.getList("F", 10).forEach(t -> fluidInputs.add(FluidStack.loadFluidStackFromNBT((CompoundTag) t)));
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
+        this.consumedResources = nbt.getBoolean("C");
     }
 
     @Override

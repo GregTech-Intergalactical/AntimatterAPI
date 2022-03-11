@@ -13,6 +13,7 @@ import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.network.packets.SoundPacket;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -120,6 +121,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
             return this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()));
         }
     }
+
     //TODO 1.18
 /*
     @Nullable
@@ -145,6 +147,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
             }
         }
     }
+
 
     @Nonnull
     @Override
@@ -278,6 +281,12 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                 TileEntityMachine<?> machine = (TileEntityMachine<?>) tile;
                 machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> Containers.dropItemStack(worldIn, machine.getBlockPos().getX(), machine.getBlockPos().getY(), machine.getBlockPos().getZ(), stack)));
                 machine.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> Containers.dropItemStack(worldIn, machine.getBlockPos().getX(), machine.getBlockPos().getY(), machine.getBlockPos().getZ(), stack)));
+            } else {
+                BlockEntity tile = worldIn.getBlockEntity(pos);
+                if (tile == null) return;
+                TileEntityMachine<?> machine = (TileEntityMachine<?>) tile;
+                if (machine.playingSound != null) SoundPacket.clear(machine.playingSound);
+                machine.playingSound = null;
             }
         }
         super.onRemove(state, worldIn, pos, newState, isMoving);

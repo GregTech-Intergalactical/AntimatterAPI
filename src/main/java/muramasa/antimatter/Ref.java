@@ -40,8 +40,9 @@ public class Ref {
     /**
      * Sound Events
      **/
-    public static final SoundEvent DRILL = new SoundEvent(new ResourceLocation(ID, "drill")).setRegistryName(ID, "drill");
-    public static final SoundEvent WRENCH = new SoundEvent(new ResourceLocation(ID, "wrench")).setRegistryName(ID, "wrench");
+    public static final SoundEvent DRILL = AntimatterAPI.register(SoundEvent.class, ID, "drill",  new SoundEvent(new ResourceLocation(ID, "drill")));
+    public static final SoundEvent WRENCH = AntimatterAPI.register(SoundEvent.class, ID, "wrench",  new SoundEvent(new ResourceLocation(ID, "wrench")));
+    public static final SoundEvent INTERRUPT = AntimatterAPI.register(SoundEvent.class, ID, "interrupt",  new SoundEvent(new ResourceLocation(ID, "interrupt")));
 
     /**
      * Global Data

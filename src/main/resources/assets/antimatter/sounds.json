@@ -4,7 +4,10 @@
     "sounds": [ "antimatter:wrench" ]
   },
   "drill": {
-    "subtitle": "antimatter.subtitle.wrench",
+    "subtitle": "antimatter.subtitle.drill",
     "sounds": [ "antimatter:drill" ]
+  },
+  "interrupt": {
+    "sounds": [ "antimatter:interrupt" ]
   }
 }

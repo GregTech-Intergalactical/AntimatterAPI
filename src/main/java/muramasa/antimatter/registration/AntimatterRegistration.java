@@ -15,6 +15,7 @@ import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -53,6 +54,9 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(e.getRegistry()));
             List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
             list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(e.getRegistry())));
+            AntimatterAPI.all(SoundEvent.class, t -> {
+                if (t.getRegistryName() == null) t.setRegistryName(t.getLocation());
+            });
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, b -> {
@@ -80,8 +84,9 @@ public final class AntimatterRegistration {
         } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {
             AntimatterAPI.all(MenuType.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h));
         } else if (e.getRegistry() == ForgeRegistries.SOUND_EVENTS) {
-            //TODO better solution for this
-            if (domain.equals(Ref.ID)) ((IForgeRegistry) e.getRegistry()).registerAll(Ref.DRILL, Ref.WRENCH);
+            AntimatterAPI.all(SoundEvent.class, domain, t -> {
+                ((IForgeRegistry) e.getRegistry()).register(t);
+            });
         } else if (e.getRegistry() == ForgeRegistries.RECIPE_SERIALIZERS) {
             //TODO better solution for this
             if (domain.equals(Ref.ID)) {

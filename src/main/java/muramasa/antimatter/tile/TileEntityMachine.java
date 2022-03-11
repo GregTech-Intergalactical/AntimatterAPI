@@ -1,6 +1,7 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
@@ -37,6 +38,7 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.network.packets.SoundPacket;
 import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.structure.StructureCache;
@@ -45,11 +47,13 @@ import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Cache;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.InteractionHand;
@@ -63,7 +67,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
@@ -102,6 +109,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     protected MachineState machineState;
 
     protected MachineState disabledState;
+
+    protected long lastSoundTime;
+
+    @OnlyIn(Dist.CLIENT)
+    public SoundInstance playingSound;
 
     /**
      * Handlers
@@ -218,7 +230,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     //Called whenever a recipe is stopped.
     public void onMachineStop() {
-
+        lastSoundTime = 0;
     }
 
     //Called whenever a recipe is activated, might be the same as before (e.g. no new recipe).
@@ -245,6 +257,16 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             if (d > 0.97D && this.level.isRainingAt(new BlockPos(this.worldPosition.getX(), this.worldPosition.getY() + 1, this.worldPosition.getZ()))) {
                 if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false))
                     Utils.createExplosion(this.level, worldPosition, 6.0F, Explosion.BlockInteraction.DESTROY);
+            }
+        }
+
+        if (getMachineState() == MachineState.ACTIVE && this.getMachineType().machineNoise != null) {
+            long time = level.getGameTime();
+            if ((time - lastSoundTime) > this.getMachineType().soundTime) {
+                AABB b = new AABB(pos);
+                b = b.inflate(32);
+                Antimatter.NETWORK.sendToAllAround(new SoundPacket(this.getMachineType().machineNoise, pos, this.getMachineType().soundVolume, 1.0f, false), (ServerLevel) level, b);
+                this.lastSoundTime = level.getGameTime();
             }
         }
     }
@@ -569,6 +591,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public void load(CompoundTag tag) {
         super.load(tag);
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
+
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
         if (tag.contains(Ref.KEY_MACHINE_STATE_D)) {
             disabledState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE_D)];
@@ -585,8 +608,16 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                 cacheInvalidate();
             }
 
-        }if (tag.contains(Ref.KEY_MACHINE_RECIPE))
+        }
+        if (tag.contains(Ref.KEY_MACHINE_RECIPE))
             recipeHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
+
+        if (this.level != null && this.level.isClientSide) {
+            if (this.machineState != MachineState.ACTIVE && this.playingSound != null) {
+                SoundPacket.clear(this.playingSound);
+                this.playingSound = null;
+            }
+        }
     }
 
     @Override
