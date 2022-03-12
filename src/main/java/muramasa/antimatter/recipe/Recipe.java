@@ -11,6 +11,7 @@ import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
@@ -20,11 +21,12 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Recipe implements net.minecraft.world.item.crafting.Recipe<Container> {
     private final ItemStack[] itemsOutput;
     @Nonnull
-    private final List<RecipeIngredient> itemsInput;
+    private final List<Ingredient> itemsInput;
     @Nonnull
     private final List<FluidIngredient> fluidsInput;
     private final FluidStack[] fluidsOutput;
@@ -46,7 +48,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
 
     public static final RecipeType<Recipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
 
-    public Recipe(@Nonnull List<RecipeIngredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
+    public Recipe(@Nonnull List<Ingredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = ImmutableList.copyOf(stacksInput);
         this.itemsOutput = stacksOutput;
         this.duration = duration;
@@ -112,18 +114,24 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
 
     public void sortInputItems() {
         this.itemsInput.sort((a, b) -> {
-            boolean a1 = RecipeMap.isIngredientSpecial(a.get());
-            boolean a2 = RecipeMap.isIngredientSpecial(b.get());
+            boolean a1 = RecipeMap.isIngredientSpecial(a);
+            boolean a2 = RecipeMap.isIngredientSpecial(b);
             if (a1 == a2) return 0;
             if (a1) return 1;
             return -1;
         });
     }
 
-    @Nullable
-    public List<RecipeIngredient> getInputItems() {
+    @Nonnull
+    public List<Ingredient> getInputItems() {
         return hasInputItems() ? itemsInput : Collections.emptyList();
     }
+
+    @Nonnull
+    public List<RecipeIngredient> getCastedInputs() {
+        return hasInputItems() ? itemsInput.stream().filter(t -> t instanceof RecipeIngredient).map(t -> (RecipeIngredient)t).collect(Collectors.toList()) : Collections.emptyList();
+    }
+
 
     @Nullable
     public ItemStack[] getOutputItems() {
@@ -170,8 +178,8 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
 
     //Note: does call get().
     public boolean hasSpecialIngredients() {
-        for (RecipeIngredient ingredient : itemsInput) {
-            if (RecipeMap.isIngredientSpecial(ingredient.get())) {
+        for (Ingredient ingredient : itemsInput) {
+            if (RecipeMap.isIngredientSpecial(ingredient)) {
                 return true;
             }
         }
@@ -225,7 +233,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
             for (int i = 0; i < itemsInput.size(); i++) {
                 builder.append("\n Item ").append(i);
                 //builder.append(itemsInput.get(i).get().getMatchingStacks()[0].getDisplayName()).append(" x").append(itemsInput.get(i).get().getMatchingStacks()[0].getCount());
-                builder.append(itemsInput.get(i).get().toJson().toString());
+                builder.append(itemsInput.get(i).toJson());
                 if (i != itemsInput.size() - 1) builder.append(", ");
             }
             builder.append(" }\n");

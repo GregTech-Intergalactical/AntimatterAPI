@@ -8,6 +8,7 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Arrays;
@@ -19,7 +20,7 @@ public class RecipeBuilder {
 
     private RecipeMap<? extends RecipeBuilder> recipeMap;
     protected List<ItemStack> itemsOutput = new ObjectArrayList<>();
-    protected List<RecipeIngredient> ingredientInput = new ObjectArrayList<>();
+    protected List<Ingredient> ingredientInput = new ObjectArrayList<>();
     protected List<FluidIngredient> fluidsInput = new ObjectArrayList<>();
     protected List<FluidStack> fluidsOutput = new ObjectArrayList<>();
     protected int[] chances;
@@ -100,12 +101,12 @@ public class RecipeBuilder {
         return add(duration, 0, this.special);
     }
 
-    public RecipeBuilder ii(RecipeIngredient... stacks) {
+    public RecipeBuilder ii(Ingredient... stacks) {
         ingredientInput.addAll(Arrays.asList(stacks));
         return this;
     }
 
-    public RecipeBuilder ii(List<RecipeIngredient> stacks) {
+    public RecipeBuilder ii(List<Ingredient> stacks) {
         ingredientInput.addAll(stacks);
         return this;
     }

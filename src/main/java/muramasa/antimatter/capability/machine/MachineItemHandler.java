@@ -21,6 +21,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
@@ -222,7 +223,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
 
-    public List<ItemStack> consumeInputs(List<RecipeIngredient> items, boolean simulate) {
+    public List<ItemStack> consumeInputs(List<Ingredient> items, boolean simulate) {
         if (items == null) return Collections.emptyList();
         IntSet skipSlots = new IntOpenHashSet(getInputHandler().getSlots());
         List<ItemStack> consumedItems = new ObjectArrayList<>();
@@ -230,17 +231,17 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
         boolean success = items.stream().mapToInt(input -> {
             int failed = 0;
             ITrackedHandler wrap = getInputHandler();
-            int countToReach = input.count;
+            int countToReach = RecipeIngredient.count(input);
             for (int i = 0; i < wrap.getSlots(); i++) {
                 ItemStack item = wrap.getStackInSlot(i);
-                if (input.get().test(item) && !skipSlots.contains(i)) {
+                if (input.test(item) && !skipSlots.contains(i)) {
                     int toConsume = Math.min(item.getCount(), Math.max(countToReach - item.getCount(), countToReach));
                     countToReach -= toConsume;
                     skipSlots.add(i);
                     ItemStack copy = item.copy();
                     copy.setCount(toConsume);
                     consumedItems.add(copy);
-                    if (!input.ignoreConsume() && !simulate) wrap.extractFromInput(i, toConsume, simulate);
+                    if (!RecipeIngredient.ignoreConsume(input) && !simulate) wrap.extractFromInput(i, toConsume, simulate);
                     if (countToReach == 0) {
                         break;
                     }

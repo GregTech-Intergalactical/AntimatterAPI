@@ -1,6 +1,7 @@
 package muramasa.antimatter.recipe.ingredient;
 
 import com.google.common.base.Suppliers;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.util.TagUtils;
@@ -15,37 +16,34 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * Small wrapper, to avoid typing lazyvalue.
  */
-public class RecipeIngredient {
-    private final Supplier<Ingredient> value;
-    public final int count;
+public class RecipeIngredient extends Ingredient {
     protected boolean nonConsume = false;
     protected boolean ignoreNbt = false;
-    private boolean setStacks = false;
 
-    public RecipeIngredient(Supplier<Ingredient> source, int count) {
-        this.value = source;
-        this.count = count;
+    public RecipeIngredient(Ingredient.Value... value) {
+        super(Stream.of(value));
     }
 
-    private void setStacksCounts(Ingredient i) {
-        for (ItemStack matchingStack : i.getItems()) {
-            matchingStack.setCount(count);
+    public int count() {
+        if (getItems().length > 0) {
+            return getItems()[0].getCount();
         }
+        return 0;
     }
 
-    public RecipeIngredient(Ingredient source, int count) {
-        this.value = () -> source;
-        this.count = count;
-    }
-
-    public RecipeIngredient(JsonElement element) {
+    /*public RecipeIngredient(JsonElement element) {
         this.value = Suppliers.memoize(() -> {
             if (element.isJsonObject()) {
                 JsonObject obj = element.getAsJsonObject();
@@ -63,22 +61,15 @@ public class RecipeIngredient {
         } else {
             this.count = 1;
         }
-    }
+    }*/
 
-    public RecipeIngredient(FriendlyByteBuf buffer) {
+    /*public RecipeIngredient(FriendlyByteBuf buffer) {
         Ingredient i = Ingredient.fromNetwork(buffer);
         this.value = Suppliers.memoize(() -> i);
         this.count = buffer.readInt();
         this.nonConsume = buffer.readBoolean();
         this.ignoreNbt = buffer.readBoolean();
-    }
-
-    public void writeToBuffer(FriendlyByteBuf buffer) {
-        CraftingHelper.write(buffer, this.value.get());
-        buffer.writeInt(count);
-        buffer.writeBoolean(nonConsume);
-        buffer.writeBoolean(ignoreNbt);
-    }
+    }*/
 
     public RecipeIngredient setNoConsume() {
         nonConsume = true;
@@ -98,49 +89,156 @@ public class RecipeIngredient {
         return ignoreNbt;
     }
 
-    public Ingredient get() {
-        Ingredient v = value.get();
-        if (!setStacks) {
-            setStacksCounts(v);
-            setStacks = true;
-            for (ItemStack stack : v.getItems()) {
-                if (stack.isEmpty()) throw new RuntimeException("Empty item matched in RecipeIngredient");
-            }
+    public static int count(Ingredient ing) {
+        if (ing instanceof RecipeIngredient i) {
+            return i.count();
         }
-        return v;
+        if (ing.getItems().length > 0) {
+            return ing.getItems()[0].getCount();
+        }
+        return 1;
     }
+
+    public static boolean ignoreNbt(Ingredient ing) {
+        if (ing instanceof RecipeIngredient i) {
+            return i.ignoreNbt;
+        }
+        return false;
+    }
+
+    public static boolean ignoreConsume(Ingredient ing) {
+        if (ing instanceof RecipeIngredient i) {
+            return i.nonConsume;
+        }
+        return false;
+    }
+
 
     public static RecipeIngredient of(int count, ItemStack... provider) {
-        return new RecipeIngredient(Ingredient.of(provider), count);
+        if (provider.length == 1) {
+            return new RecipeIngredient(new Value(provider[0], count));
+        } else {
+            return new RecipeIngredient(new MultiValue(Arrays.stream(provider).map(t -> new Value(t, count))));
+        }
     }
+
+    public static RecipeIngredient of(ItemStack... provider) {
+        if (provider.length == 1) {
+            return new RecipeIngredient(new Value(provider[0]));
+        } else {
+            return new RecipeIngredient(new MultiValue(Arrays.stream(provider).map(Value::new)));
+        }
+    }
+
 
     public static RecipeIngredient of(ItemStack stack) {
-        return new RecipeIngredient(Ingredient.of(stack), stack.getCount());
-    }
-
-    public static RecipeIngredient of(Ingredient custom, int count) {
-        return new RecipeIngredient(custom, count);
+        return new RecipeIngredient(new Value(stack));
     }
 
     public static RecipeIngredient of(ItemLike provider, int count) {
         return of(count, new ItemStack(provider));
     }
 
-    public static RecipeIngredient of(Supplier<ItemStack> provider, int count) {
-        return new RecipeIngredient(() -> Ingredient.of(provider.get()), count);
-    }
-
     public static RecipeIngredient of(ResourceLocation tagIn, int count) {
         ensureRegisteredTag(tagIn);
-        return new RecipeIngredient(() -> Ingredient.of(new TagKey<>(Registry.ITEM_REGISTRY, tagIn)), count);
+        return new RecipeIngredient(new Value(new TagKey<>(Registry.ITEM_REGISTRY, tagIn), count));
     }
 
     public static RecipeIngredient of(TagKey<Item> tagIn, int count) {
         ensureRegisteredTag(tagIn.location());
-        return new RecipeIngredient(() -> Ingredient.of(tagIn), count);
+        return new RecipeIngredient(new Value(tagIn, count));
     }
 
     private static void ensureRegisteredTag(ResourceLocation loc) {
         TagUtils.getItemTag(loc);
+    }
+
+    private static class MultiValue implements Ingredient.Value {
+
+        private final Value[] values;
+
+        MultiValue(Value... vals) {
+            this.values = vals;
+        }
+
+        MultiValue(Stream<? extends Value> vals) {
+            this.values = vals.toArray(Value[]::new);
+        }
+
+        @Override
+        public Collection<ItemStack> getItems() {
+            return Arrays.stream(values).flatMap(t -> t.getItems().stream()).collect(Collectors.toList());
+        }
+
+        @Override
+        public JsonObject serialize() {
+            JsonArray arr = new JsonArray(values.length);
+            for (Value value : values) {
+                arr.add(value.serialize());
+            }
+            JsonObject obj = new JsonObject();
+            obj.add("values", obj);
+            return obj;
+        }
+    }
+
+    private static class Value implements Ingredient.Value {
+        private TagKey<Item> tag;
+        private ItemStack stack;
+        private final int count;
+
+        Value(TagKey<Item> tag, int count) {
+            this.tag = tag;
+            this.count = count;
+        }
+
+        Value(ItemLike tag, int count) {
+            this.stack = new ItemStack(tag);
+            this.count = count;
+        }
+
+        Value(ItemStack stack) {
+            this.stack = stack;
+            this.count = stack.getCount();
+        }
+
+        Value(ItemStack stack, int count) {
+            this.stack = stack;
+            stack.setCount(count);
+            this.count = count;
+        }
+
+        @Override
+        public Collection<ItemStack> getItems() {
+            if (tag != null) {
+                return TagUtils.nc(tag).getValues().stream().map(t -> new ItemStack(t, count)).toList();
+            }
+            return Collections.singletonList(stack);
+        }
+
+        @Override
+        public JsonObject serialize() {
+            if (this.tag != null) {
+                JsonObject obj = new JsonObject();
+                obj.addProperty("tag", this.tag.location().toString());
+                obj.addProperty("count", this.count);
+                return obj;
+            }
+            if (this.stack != null) {
+               return toJson(this.stack);
+            }
+            return new JsonObject();
+        }
+    }
+
+    private static JsonObject toJson(ItemStack stack)
+    {
+        JsonObject ret = new JsonObject();
+        ret.addProperty("item", stack.getItem().getRegistryName().toString());
+        if (stack.getCount() != 1)
+            ret.addProperty("count", stack.getCount());
+        if (stack.getTag() != null)
+            ret.addProperty("nbt", stack.getTag().toString());
+        return ret;
     }
 }

@@ -87,18 +87,18 @@ public class MaterialRecipes {
             Item ingot = INGOT.get(o.getMaterial().getSmeltInto());
             TagKey<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
             TagKey<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(o.getMaterial().getSmeltInto().getId()));
-            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(oreTag, 1).get(), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 100)
+            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(oreTag, 1), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 100)
                     .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
                     .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot")));
-            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(oreTag, 1).get(), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 200)
+            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(oreTag, 1), new ItemStack(ingot, o.getMaterial().getSmeltingMulti()), 2.0F, 200)
                     .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
                     .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot_smelting")));
         });
         AntimatterAPI.all(Material.class).stream().filter(m -> m.has(RAW_ORE) && m.getSmeltInto().has(INGOT) && !m.needsBlastFurnace()).forEach(m -> {
-            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1).get(), new ItemStack(INGOT.get(m.getSmeltInto()), m.getSmeltingMulti()), 2.0F, 100)
+            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1), new ItemStack(INGOT.get(m.getSmeltInto()), m.getSmeltingMulti()), 2.0F, 100)
                     .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(INGOT.getMaterialTag(m.getSmeltInto())))
                     .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot")));
-            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1).get(), new ItemStack(INGOT.get(m.getSmeltInto()), m.getSmeltingMulti()), 2.0F, 200)
+            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1), new ItemStack(INGOT.get(m.getSmeltInto()), m.getSmeltingMulti()), 2.0F, 200)
                     .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(INGOT.getMaterialTag(m.getSmeltInto())))
                     .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot_smelting")));
         });

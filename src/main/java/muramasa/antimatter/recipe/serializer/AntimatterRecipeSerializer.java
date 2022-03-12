@@ -14,6 +14,7 @@ import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -37,11 +38,11 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
     @Override
     public Recipe fromJson(ResourceLocation recipeId, JsonObject json) {
         try {
-            List<RecipeIngredient> list = new ObjectArrayList<>();
+            List<Ingredient> list = new ObjectArrayList<>();
             if (json.has("item_in")) {
                 JsonArray array = json.getAsJsonArray("item_in");
                 for (JsonElement element : array) {
-                    list.add(new RecipeIngredient(element));
+                    list.add(Ingredient.fromJson(element));
                 }
             }
             ItemStack[] outputs = null;
@@ -131,10 +132,10 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
     @Override
     public Recipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
         int size = buffer.readInt();
-        List<RecipeIngredient> ings = new ObjectArrayList<>(size);
+        List<Ingredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                ings.add(new RecipeIngredient(buffer));
+                ings.add(Ingredient.fromNetwork(buffer));
             }
         }
         size = buffer.readInt();
@@ -192,7 +193,7 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
     public void toNetwork(FriendlyByteBuf buffer, Recipe recipe) {
         buffer.writeInt(!recipe.hasInputItems() ? 0 : recipe.getInputItems().size());
         if (recipe.hasInputItems()) {
-            recipe.getInputItems().forEach(t -> t.writeToBuffer(buffer));
+            recipe.getInputItems().forEach(t -> CraftingHelper.write(buffer, t));
         }
         buffer.writeInt(!recipe.hasOutputItems() ? 0 : recipe.getOutputItems().length);
         if (recipe.hasOutputItems()) {

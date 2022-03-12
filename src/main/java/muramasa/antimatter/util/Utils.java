@@ -45,6 +45,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
@@ -328,12 +329,12 @@ public class Utils {
         return matchCount >= a.length;
     }
 
-    public static boolean doItemsMatchAndSizeValid(List<RecipeIngredient> a, ItemStack[] b) {
+    public static boolean doItemsMatchAndSizeValid(List<Ingredient> a, ItemStack[] b) {
         if (a == null || b == null) return false;
         int matchCount = 0;
-        for (RecipeIngredient stack : a) {
+        for (Ingredient stack : a) {
             for (ItemStack itemStack : b) {
-                if (stack.get().test(itemStack)) {
+                if (stack.test(itemStack)) {
                     matchCount++;
                     break;
                 }

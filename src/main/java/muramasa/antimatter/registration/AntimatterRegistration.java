@@ -6,6 +6,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
+import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
@@ -92,6 +93,7 @@ public final class AntimatterRegistration {
             if (domain.equals(Ref.ID)) {
                 CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "material"), PropertyIngredient.Serializer.INSTANCE);
+                CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), IngredientSerializer.INSTANCE);
                 ((IForgeRegistry) e.getRegistry()).register(AntimatterRecipeSerializer.INSTANCE);
                 ((IForgeRegistry) e.getRegistry()).register(MaterialSerializer.INSTANCE);
             }

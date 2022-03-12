@@ -55,7 +55,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     public RecipeIngredient getIngredient(Material material, int count) {
         if (count < 1)
             Utils.onInvalidData(String.join("", "GET ERROR - MAT STACK EMPTY: T(", id, ") M(", material.getId(), ")"));
-        return RecipeIngredient.of(() -> new ItemStack(get(material), count), count);
+        return RecipeIngredient.of(getMaterialTag(material), count);
     }
 
     @Override

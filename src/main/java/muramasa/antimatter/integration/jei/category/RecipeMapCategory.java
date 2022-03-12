@@ -23,6 +23,7 @@ import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.Utils;
@@ -106,7 +107,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Recipe recipe, IFocusGroup focuses) {
-        List<List<ItemStack>> inputs = recipe.hasInputItems() ? recipe.getInputItems().stream().map(t -> Arrays.asList(t.get().getItems())).collect(Collectors.toList()) : Collections.emptyList();
+        List<List<ItemStack>> inputs = recipe.hasInputItems() ? recipe.getInputItems().stream().map(t -> Arrays.asList(t.getItems())).toList() : Collections.emptyList();
         List<ItemStack> outputs = recipe.hasOutputItems() ? Arrays.stream(recipe.getOutputItems()).toList() : Collections.emptyList();
         List<SlotData<?>> slots;
         int groupIndex = 0, slotCount;
@@ -130,15 +131,17 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                             slot.addIngredients(VanillaTypes.ITEM, input);
                             final int ss = s;
                             slot.addTooltipCallback((ing, list) -> {
-                                if (recipe.getInputItems().get(ss).ignoreConsume()) {
-                                    list.add(new TextComponent("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
-                                }
-                                if (recipe.getInputItems().get(ss).ignoreNbt()) {
-                                    list.add(new TextComponent("Ignores NBT.").withStyle(ChatFormatting.WHITE));
-                                }
-                                Ingredient i = recipe.getInputItems().get(ss).get();
-                                if (RecipeMap.isIngredientSpecial(i)) {
-                                    list.add(new TextComponent("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(new TextComponent(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
+                                if (recipe.getInputItems().get(ss) instanceof RecipeIngredient ri) {
+                                    if (ri.ignoreConsume()) {
+                                        list.add(new TextComponent("Does not get consumed in the process.").withStyle(ChatFormatting.WHITE));
+                                    }
+                                    if (ri.ignoreNbt()) {
+                                        list.add(new TextComponent("Ignores NBT.").withStyle(ChatFormatting.WHITE));
+                                    }
+                                    Ingredient i = recipe.getInputItems().get(ss);
+                                    if (RecipeMap.isIngredientSpecial(i)) {
+                                        list.add(new TextComponent("Special ingredient. Class name: ").withStyle(ChatFormatting.GRAY).append(new TextComponent(i.getClass().getSimpleName()).withStyle(ChatFormatting.GOLD)));
+                                    }
                                 }
                             });
                             inputItems++;

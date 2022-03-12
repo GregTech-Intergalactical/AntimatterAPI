@@ -237,13 +237,13 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         }
         boolean flag = false;
         if (recipe.hasInputItems()) {
-            for (RecipeIngredient inputItem : recipe.getInputItems()) {
-                if (isIngredientSpecial(inputItem.get())) {
+            for (Ingredient inputItem : recipe.getInputItems()) {
+                if (isIngredientSpecial(inputItem)) {
                     flag = true;
                     continue;
                 }
-                if (inputItem.get().isEmpty() || (inputItem.get().getItems().length == 1
-                        && inputItem.get().getItems()[0].getItem() == Items.BARRIER)) {
+                if (inputItem.isEmpty() || (inputItem.getItems().length == 1
+                        && inputItem.getItems()[0].getItem() == Items.BARRIER)) {
                     Utils.onInvalidData("RECIPE WITH EMPTY INPUT (MAP): " + this.loc.getPath());
                     return;
                 }
@@ -300,10 +300,9 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         return list;
     }
 
-    protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<RecipeIngredient> ingredients,
+    protected void buildFromItems(List<List<AbstractMapIngredient>> list, List<Ingredient> ingredients,
              boolean insideMap) {
-        for (RecipeIngredient r : ingredients) {
-            Ingredient t = r.get();
+        for (Ingredient t : ingredients) {
             if (!isIngredientSpecial(t)) {
                 Optional<ResourceLocation> rl = Optional.empty();//MapTagIngredient.findCommonTag(t, tags);
                 if (rl.isPresent()) {
@@ -311,7 +310,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                 } else {
                     List<AbstractMapIngredient> inner = new ObjectArrayList<>(t.getItems().length);
                     for (ItemStack stack : t.getItems()) {
-                        if (r.ignoreNbt()) {
+                        if (t instanceof RecipeIngredient && ((RecipeIngredient)t).ignoreNbt()) {
                             inner.add(new MapItemIngredient(stack.getItem(), insideMap));
                         } else {
                             inner.add(new MapItemStackIngredient(stack, insideMap));
@@ -604,6 +603,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      */
     public static boolean isIngredientSpecial(Ingredient i) {
         Class<? extends Ingredient> clazz = i.getClass();
+        if (clazz == RecipeIngredient.class) return false;
         return /* i.getMatchingStacks().length == 0 && */(clazz != Ingredient.class && clazz != CompoundIngredient.class
                 && clazz != NBTIngredient.class);
     }
