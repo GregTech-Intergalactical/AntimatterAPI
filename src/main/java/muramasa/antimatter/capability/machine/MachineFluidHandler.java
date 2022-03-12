@@ -19,6 +19,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -179,11 +180,11 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         }
     }
 
-    public int getTankForTag(ResourceLocation tag, int min) {
+    public int getTankForTag(TagKey<Fluid> tag, int min) {
         FluidStack[] inputs = this.getInputs();
         for (int i = min; i < inputs.length; i++) {
             FluidStack input = inputs[i];
-            if (input.getFluid().builtInRegistryHolder().is(new TagKey<>(Registry.FLUID_REGISTRY, tag))) {
+            if (input.getFluid().builtInRegistryHolder().is(tag)) {
                 return i;
             }
         }
@@ -191,7 +192,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     }
 
     @Nonnull
-    public FluidStack consumeTaggedInput(ResourceLocation input, int amount, boolean simulate) {
+    public FluidStack consumeTaggedInput(TagKey<Fluid> input, int amount, boolean simulate) {
         FluidTanks inputs = getInputTanks();
         if (inputs == null) {
             return FluidStack.EMPTY;

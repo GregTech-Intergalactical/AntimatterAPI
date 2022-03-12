@@ -4,18 +4,23 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.TagUtils;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.tags.TagManager;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class FluidIngredient {
     private FluidStack[] stacks = new FluidStack[0];
@@ -34,9 +39,12 @@ public class FluidIngredient {
         if (evaluated) return stacks;
         evaluated = true;
         if (tag != null) {
-            
-          //  stacks = SerializationTags.getInstance().getTagOrThrow(Registry.FLUID_REGISTRY, tag.getName(), ta -> new RuntimeException("failed to get tag " + ta))
-          //          .getValues().stream().map(t -> new FluidStack(t, amount)).toArray(FluidStack[]::new);
+            List<FluidStack> list = new ObjectArrayList<>();
+            Registry.FLUID.getTagOrEmpty(tag).iterator().forEachRemaining(t -> {
+                FluidStack stack = new FluidStack(t.value(), this.getAmount());
+                list.add(stack);
+            });
+            return list.toArray(new FluidStack[0]);
         }
         return stacks;
     }

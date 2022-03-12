@@ -6,6 +6,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
@@ -13,7 +14,6 @@ import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.network.packets.SoundPacket;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -282,11 +282,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                 machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> Containers.dropItemStack(worldIn, machine.getBlockPos().getX(), machine.getBlockPos().getY(), machine.getBlockPos().getZ(), stack)));
                 machine.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> Containers.dropItemStack(worldIn, machine.getBlockPos().getX(), machine.getBlockPos().getY(), machine.getBlockPos().getZ(), stack)));
             } else {
-                BlockEntity tile = worldIn.getBlockEntity(pos);
-                if (tile == null) return;
-                TileEntityMachine<?> machine = (TileEntityMachine<?>) tile;
-                if (machine.playingSound != null) SoundPacket.clear(machine.playingSound);
-                machine.playingSound = null;
+                SoundHelper.clear(worldIn, pos);
             }
         }
         super.onRemove(state, worldIn, pos, newState, isMoving);

@@ -3,7 +3,6 @@ package muramasa.antimatter.network;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
-import muramasa.antimatter.network.packets.SoundPacket;
 import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -34,7 +33,6 @@ public class AntimatterNetwork {
     }
 
     public void register() {
-        handler.registerMessage(currMessageId++, SoundPacket.class, SoundPacket::encode, SoundPacket::decode, SoundPacket::handle);
         handler.registerMessage(currMessageId++, TileGuiEventPacket.class, TileGuiEventPacket::encode, TileGuiEventPacket::decode, TileGuiEventPacket::handle);
         handler.registerMessage(currMessageId++, CoverGuiEventPacket.class, CoverGuiEventPacket::encode, CoverGuiEventPacket::decode, CoverGuiEventPacket::handle);
         handler.registerMessage(currMessageId++, GuiSyncPacket.class, GuiSyncPacket::encode, GuiSyncPacket::decode, GuiSyncPacket::handle);

@@ -1,7 +1,6 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
@@ -15,6 +14,7 @@ import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
 import muramasa.antimatter.client.tesr.Caches;
@@ -38,7 +38,6 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
-import muramasa.antimatter.network.packets.SoundPacket;
 import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.structure.StructureCache;
@@ -53,7 +52,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.InteractionHand;
@@ -67,7 +65,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -257,16 +254,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             if (d > 0.97D && this.level.isRainingAt(new BlockPos(this.worldPosition.getX(), this.worldPosition.getY() + 1, this.worldPosition.getZ()))) {
                 if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false))
                     Utils.createExplosion(this.level, worldPosition, 6.0F, Explosion.BlockInteraction.DESTROY);
-            }
-        }
-
-        if (getMachineState() == MachineState.ACTIVE && this.getMachineType().machineNoise != null) {
-            long time = level.getGameTime();
-            if ((time - lastSoundTime) > this.getMachineType().soundTime) {
-                AABB b = new AABB(pos);
-                b = b.inflate(32);
-                Antimatter.NETWORK.sendToAllAround(new SoundPacket(this.getMachineType().machineNoise, pos, this.getMachineType().soundVolume, 1.0f, false), (ServerLevel) level, b);
-                this.lastSoundTime = level.getGameTime();
             }
         }
     }
@@ -498,6 +485,13 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                 }
             }
             setChanged();
+            if (this.level != null && this.level.isClientSide && this.getMachineType().machineNoise != null) {
+                if (newState == MachineState.ACTIVE) {
+                    SoundHelper.startLoop(this.type, level, this.getBlockPos());
+                } else if (old == MachineState.ACTIVE) {
+                    SoundHelper.clear(level, this.getBlockPos());
+                }
+            }
         }
     }
 
@@ -611,13 +605,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
         if (tag.contains(Ref.KEY_MACHINE_RECIPE))
             recipeHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_RECIPE)));
-
-        if (this.level != null && this.level.isClientSide) {
-            if (this.machineState != MachineState.ACTIVE && this.playingSound != null) {
-                SoundPacket.clear(this.playingSound);
-                this.playingSound = null;
-            }
-        }
     }
 
     @Override

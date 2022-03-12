@@ -101,7 +101,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected IOverlayModeler overlayModels;
 
     public SoundEvent machineNoise;
-    public long soundTime;
     public float soundVolume;
     /**
      * Multi Members
@@ -194,16 +193,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T setSound(SoundEvent loc, long time, float volume) {
-        time *= 20;
-        this.soundTime = time;
+    public T setSound(SoundEvent loc, float volume) {
         this.soundVolume = volume;
         this.machineNoise = loc;
         return (T) this;
-    }
-
-    public T setSound(SoundEvent loc, long time) {
-        return setSound(loc, time, 1.0f);
     }
 
 
