@@ -64,7 +64,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         if (doRegister()) {
             for (Material material : this.materials) {
                 if (!material.enabled) continue;
-                getSupplier().createItems(material.materialDomain(), this, material);
+                if (allowItemGen(material)) getSupplier().createItems(material.materialDomain(), this, material);
             }
         }
     }

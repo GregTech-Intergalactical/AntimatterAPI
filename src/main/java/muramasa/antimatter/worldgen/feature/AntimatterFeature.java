@@ -14,13 +14,14 @@ import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 
 import java.util.List;
 
-public abstract class AntimatterFeature<F extends FeatureConfiguration> extends Feature<F> implements ISharedAntimatterObject {
+public abstract class AntimatterFeature<F extends FeatureConfiguration> extends Feature<F> implements IAntimatterFeature {
 
     Object2ObjectMap<ResourceLocation, List<WorldGenBase<?>>> REGISTRY = new Object2ObjectOpenHashMap<>();
 
     public AntimatterFeature(Codec<F> codec, Class<?> c) {
         super(codec);
         AntimatterAPI.register(AntimatterFeature.class, c.getName(), getDomain(), this);
+        AntimatterAPI.register(IAntimatterFeature.class, c.getName(), getDomain(), this);
         this.setRegistryName(new ResourceLocation(getDomain(), getId()));
     }
 
@@ -37,5 +38,7 @@ public abstract class AntimatterFeature<F extends FeatureConfiguration> extends 
         return REGISTRY;
     }
 
-    public abstract void build(BiomeGenerationSettingsBuilder event);
+    public Feature<?> asFeature() {
+        return this;
+    }
 }

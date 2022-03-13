@@ -15,6 +15,7 @@ import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
+import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
@@ -98,7 +99,7 @@ public final class AntimatterRegistration {
                 ((IForgeRegistry) e.getRegistry()).register(MaterialSerializer.INSTANCE);
             }
         } else if (e.getRegistry() == ForgeRegistries.FEATURES) {
-            AntimatterAPI.all(AntimatterFeature.class, domain, ForgeRegistries.FEATURES::register);
+            AntimatterAPI.all(IAntimatterFeature.class, domain,t -> ((IForgeRegistry)e.getRegistry()).register(t.asFeature()));
         }
     }
 

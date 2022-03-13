@@ -7,6 +7,7 @@ import muramasa.antimatter.recipe.RecipeTag;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
@@ -113,6 +114,11 @@ public class RecipeBuilder {
 
     public RecipeBuilder io(ItemStack... stacks) {
         itemsOutput.addAll(Arrays.asList(stacks));
+        return this;
+    }
+
+    public RecipeBuilder io(Item... stacks) {
+        itemsOutput.addAll(Arrays.stream(stacks).map(Item::getDefaultInstance).toList());
         return this;
     }
 

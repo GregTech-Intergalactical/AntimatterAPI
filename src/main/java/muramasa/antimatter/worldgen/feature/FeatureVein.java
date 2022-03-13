@@ -19,6 +19,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -49,8 +50,8 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
   }
 
   @Override
-  public void build(BiomeGenerationSettingsBuilder event) {
-    event.addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, Holder.direct(AntimatterConfiguredFeatures.VEIN));
+  public void build(BiomeLoadingEvent event) {
+    event.getGeneration().addFeature(GenerationStep.Decoration.UNDERGROUND_ORES, AntimatterConfiguredFeatures.VEIN);
   }
 
   @Override

@@ -53,8 +53,10 @@ public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void onProviderInit(String domain, DataGenerator gen, Dist side) {
-        PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
-                .filter(p -> p instanceof AntimatterLanguageProvider).forEach(gen::addProvider);
+        if (side == Dist.CLIENT) {
+            PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
+                    .filter(p -> p instanceof AntimatterLanguageProvider).forEach(gen::addProvider);
+        }
     }
 
     /**

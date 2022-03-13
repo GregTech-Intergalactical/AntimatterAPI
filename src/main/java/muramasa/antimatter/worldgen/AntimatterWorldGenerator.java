@@ -8,6 +8,7 @@ import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import muramasa.antimatter.worldgen.feature.FeatureVein;
+import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -172,8 +173,8 @@ public class AntimatterWorldGenerator {
 
 
     public static void reloadEvent(BiomeLoadingEvent event) {
-        AntimatterAPI.all(AntimatterFeature.class, t -> {
-            t.build(event.getGeneration());
+        AntimatterAPI.all(IAntimatterFeature.class, t -> {
+            t.build(event);
         });
         AntimatterAPI.all(GenHandler.class, t -> {
             if (event.getName() == null) return;
