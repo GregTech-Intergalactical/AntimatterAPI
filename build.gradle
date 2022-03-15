@@ -10,7 +10,7 @@ repositories {
         url = "https://maven.speiger.com/repository/main"
     }*/
     //GT.
-    maven { url 'https://jitpack.io' }
+    //maven { url 'https://jitpack.io' }
 
     //Needed for intellij
     maven {
@@ -49,7 +49,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 
 
-boolean hasTesseract = findProject(':TesseractAPI') != null
+boolean hasTesseract = new File("TesseractAPI").exists()
 
 if (hasTesseract) {
     println('TesseractAPI in local workspace')
@@ -68,14 +68,13 @@ String getenv() {
     return s
 }
 import org.apache.tools.ant.taskdefs.condition.Os
-
+//println(project(":TesseractAPI").sourceSets.main.output.getDirs().getAsPath())
 def getPathSeparator() {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         return ";"
     }
     return ":"
 }
-
 loom{
     silentMojangMappingsLicense()
     forge {
@@ -84,6 +83,12 @@ loom{
         mixinConfigs = [
                 "antimatter.mixins.json"
         ]
+
+        localMods {
+            forge {
+             //   it.add(project(":TesseractAPI").sourceSets.main)
+            }
+        }
 
         // missing access transformers?
         // don't worry, you can still use them!
@@ -109,7 +114,13 @@ loom{
         }
     }
 }
-
+/*
+sourceSets {
+    clientComponent {
+        compileClasspath += project(":TesseractAPI").sourceSets.main.compileClasspath
+        runtimeClasspath += project(":TesseractAPI").sourceSets.main.runtimeClasspath
+    }
+}*/
 //minecraft {
     /*runs {
         client {
@@ -202,14 +213,17 @@ dependencies {
     mappings loom.officialMojangMappings()
 
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
-
+    //implementation project(path: ":TesseractAPI")
     //GT
-    if (hasTesseract) {
-       implementation project(path: ':TesseractAPI')
-    } else {
+  //  if (hasTesseract) {
+    //modApi project(':TesseractAPI')
+    //common project(path: ":TesseractAPI")
+   // modCompileOnly "com.github.GregTech-Intergalactical:TesseractAPI"
+    /*} else {
         modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-forge:${tesseract_version}")
-    }
-
+    }*/
+    compileOnly "com.github.GregTech-Intergalactical:TesseractAPI"
+    compileOnly "com.github.GregTech-Intergalactical:TesseractAPIC"
     //JEI
     modCompileOnly("mezz.jei:jei-${jei_version}:api")
     modRuntimeOnly("mezz.jei:jei-${jei_version}")

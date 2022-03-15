@@ -17,8 +17,12 @@ pluginManagement {
 }
 
 rootProject.name = "${modid}"
-def tesseractFolder = new File('TesseractAPI')
-if (tesseractFolder.exists()) {
-    include 'TesseractAPI'
-    project(':TesseractAPI').setProjectDir(new File("TesseractAPI/forge"))
+
+if (new File("TesseractAPI").exists()) {
+    includeBuild("TesseractAPI") {
+        dependencySubstitution {
+            substitute module('com.github.GregTech-Intergalactical:TesseractAPI') using project(':forge')
+            substitute module('com.github.GregTech-Intergalactical:TesseractAPIC') using project(':common')
+        }
+    }
 }
