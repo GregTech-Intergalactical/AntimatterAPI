@@ -24,6 +24,8 @@ public class CobbleStoneType extends StoneType {
         this.beginningPath = beginningPath;
     }
 
+
+
     @Override
     public void onRegistryBuild(IForgeRegistry<?> registry) {
         if (registry == ForgeRegistries.BLOCKS) {

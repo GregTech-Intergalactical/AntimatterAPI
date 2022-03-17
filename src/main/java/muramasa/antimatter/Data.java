@@ -21,6 +21,7 @@ import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.ore.VanillaStoneType;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.structure.BlockStateElement;
 import muramasa.antimatter.structure.StructureBuilder;
@@ -150,9 +151,9 @@ public class Data {
 
     public static StoneType STONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE));
 
-    public static StoneType GRANITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "granite", Granite, new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.GRANITE));
-    public static StoneType DIORITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DIORITE));
-    public static StoneType ANDESITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.ANDESITE));
+    public static StoneType GRANITE = AntimatterAPI.register(StoneType.class, new VanillaStoneType(Ref.ID, "granite", Granite, "block/stone/", new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.GRANITE));
+    public static StoneType DIORITE = AntimatterAPI.register(StoneType.class, new VanillaStoneType(Ref.ID, "diorite", Diorite, "block/stone/", new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DIORITE));
+    public static StoneType ANDESITE = AntimatterAPI.register(StoneType.class, new VanillaStoneType(Ref.ID, "andesite", Andesite, "block/stone/", new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.ANDESITE));
 
     public static StoneType GRAVEL = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "gravel", Gravel, new Texture("minecraft", "block/gravel"), SoundType.GRAVEL, false).setState(Blocks.GRAVEL).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.6F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
     public static StoneType SAND = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "sand", Sand, new Texture("minecraft", "block/sand"), SoundType.SAND, false).setState(Blocks.SAND).setGravity(true).setBlockMaterial(net.minecraft.block.material.Material.SAND).setHardnessAndResistance(0.5F).setRequiresTool(false).setToolType(ToolType.SHOVEL));
