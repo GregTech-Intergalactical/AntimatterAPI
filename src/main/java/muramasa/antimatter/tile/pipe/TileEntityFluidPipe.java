@@ -21,11 +21,11 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import tesseract.Tesseract;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
 import tesseract.api.fluid.FluidHolder;
 import tesseract.api.fluid.IFluidPipe;
-import tesseract.forge.TesseractImpl;
 
 import java.util.List;
 
@@ -51,18 +51,18 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        TesseractImpl.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
 
     @Override
     protected void register() {
-        TesseractImpl.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return TesseractImpl.FLUID.remove(getLevel(), getBlockPos().asLong());
+        return Tesseract.FLUID.remove(getLevel(), getBlockPos().asLong());
     }
 
 
@@ -81,7 +81,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public void onRemove() {
-        fluidHandler.ifPresent(t -> t.onRemove());
+        fluidHandler.ifPresent(FluidHandler::onRemove);
         fluidHandler.invalidate();
         super.onRemove();
     }

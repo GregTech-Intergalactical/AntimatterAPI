@@ -17,9 +17,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import tesseract.Tesseract;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
-import tesseract.forge.TesseractImpl;
 
 public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         implements IItemPipe, Dispatch.Sided<IItemHandler>, IInfoRenderer<InfoRenderWidget.TesseractItemWidget> {
@@ -34,18 +34,18 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     protected void register() {
-        TesseractImpl.ITEM.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        Tesseract.ITEM.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return TesseractImpl.ITEM.remove(getLevel(), getBlockPos().asLong());
+        return Tesseract.ITEM.remove(getLevel(), getBlockPos().asLong());
     }
 
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        TesseractImpl.ITEM.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        Tesseract.ITEM.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override
