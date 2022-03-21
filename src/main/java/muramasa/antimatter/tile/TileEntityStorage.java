@@ -2,14 +2,11 @@ package muramasa.antimatter.tile;
 
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
-import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
-import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.util.Direction;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.IEnergyHandler;
 
 import java.util.List;
@@ -40,8 +37,9 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
             @Override
             public void onUpdate() {
                 super.onUpdate();
+                long energyToInsert = (this.energy % cachedItems.size()) == 0 ? this.energy / cachedItems.size() : this.energy;
                 cachedItems.forEach(h ->{
-                    long toAdd = Math.min(this.energy, h.getCapacity() - h.getEnergy());
+                    long toAdd = Math.min(this.energy, Math.min(energyToInsert, h.getCapacity() - h.getEnergy()));
                     if (toAdd > 0 && Utils.addEnergy(h, toAdd)){
                         this.energy -= toAdd;
                     }
