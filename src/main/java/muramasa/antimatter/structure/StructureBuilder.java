@@ -4,14 +4,17 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.impl.SimpleStructure;
 import muramasa.antimatter.util.int3;
+import net.minecraft.core.Direction;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class StructureBuilder {
     public static void addGlobalElement(String key, StructureElement element) {
@@ -22,6 +25,7 @@ public class StructureBuilder {
 
     private final List<String[]> slices = new ObjectArrayList<>();
     private final Object2ObjectMap<String, StructureElement> elementLookup = new Object2ObjectOpenHashMap<>();
+    private Set<Direction> allowedFacings = Set.of(Ref.DIRS);
 
 
     public StructureBuilder of(String... slices) {
@@ -66,6 +70,11 @@ public class StructureBuilder {
         return this;
     }
 
+    public StructureBuilder facings(Direction... faces) {
+        allowedFacings = Set.of(faces);
+        return this;
+    }
+
     public SimpleStructure build() {
         ImmutableMap.Builder<int3, StructureElement> elements = ImmutableMap.builder();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
@@ -83,7 +92,7 @@ public class StructureBuilder {
                 }
             }
         }
-        return new SimpleStructure(size, elements.build());
+        return new SimpleStructure(size, elements.build(), allowedFacings);
     }
 
     /*public static IAntimatterObject[] getAntiObjects(Object... objects) {

@@ -2,6 +2,8 @@ package muramasa.antimatter.tile.multi;
 
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
+import muramasa.antimatter.capability.IHeatHandler;
+import muramasa.antimatter.capability.machine.DefaultHeatHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
@@ -24,13 +26,12 @@ import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nonnull;
+import java.util.Collection;
 import java.util.Collections;
 
 import static muramasa.antimatter.Data.COVERDYNAMO;
 import static muramasa.antimatter.Data.COVERENERGY;
-import static muramasa.antimatter.machine.MachineFlag.ENERGY;
-import static muramasa.antimatter.machine.MachineFlag.FLUID;
-import static muramasa.antimatter.machine.MachineFlag.ITEM;
+import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
@@ -105,12 +106,9 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
                     .forEach(controller -> {
                         switch ((MachineEvent) event) {
                             // Forward energy event to controller.
-                            case ENERGY_DRAINED:
-                            case ENERGY_INPUTTED:
-                                controller.onMachineEvent(event, data);
-                                break;
-                            default:
-                                break;
+                            case ENERGY_DRAINED, ENERGY_INPUTTED, HEAT_INPUTTED, HEAT_DRAINED -> controller.onMachineEvent(event, data);
+                            default -> {
+                            }
                         }
                     });
         }

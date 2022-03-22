@@ -1,6 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IHeatHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
 import muramasa.antimatter.datagen.loaders.Pipes;
@@ -29,6 +30,7 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeBuilders;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.tesseract.HeatController;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -72,6 +74,7 @@ public class Antimatter extends AntimatterMod {
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::serverSetup);
         eventBus.addListener(this::loadComplete);
+        eventBus.addListener(IHeatHandler::register);
 
         MinecraftForge.EVENT_BUS.addListener(this::addCraftingLoaders);
         MinecraftForge.EVENT_BUS.addListener(this::providers);
@@ -90,6 +93,7 @@ public class Antimatter extends AntimatterMod {
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
                 g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us", g));
         AntimatterAPI.init();
+        HeatController.init();
 
         //if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
             //new KubeJSRegistrar();

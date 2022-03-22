@@ -24,8 +24,8 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockE
 
     @Override
     public void setRemoved() {
-        onRemove();
         super.setRemoved();
+        onRemove();
     }
 
     public void onRemove() {
@@ -49,6 +49,7 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockE
     }
 
     public void sidedSync(boolean renderUpdate) {
+        if (this.remove) return;
         if (this.getLevel() == null) return;
         if (!this.getLevel().isClientSide) {
             this.setChanged();

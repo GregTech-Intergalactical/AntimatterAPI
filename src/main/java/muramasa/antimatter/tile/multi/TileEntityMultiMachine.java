@@ -3,6 +3,7 @@ package muramasa.antimatter.tile.multi;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.capability.IHeatHandler;
 import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
 import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
@@ -17,7 +18,9 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.util.LazyOptional;
 
+import java.util.Collections;
 import java.util.List;
 
 import static muramasa.antimatter.machine.MachineFlag.CELL;
@@ -28,6 +31,7 @@ import static muramasa.antimatter.machine.MachineFlag.ITEM;
 public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends TileEntityBasicMultiMachine<T> implements IInfoRenderer<InfoRenderWidget.MultiRenderWidget> {
 
     protected long EUt;
+    protected List<IHeatHandler> HEAT_HANDLERS;
 
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
@@ -63,8 +67,10 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         this.fluidHandler.ifPresent(handle -> {
             ((MultiMachineFluidHandler<T>) handle).onStructureBuild();
         });
+        this.HEAT_HANDLERS = this.result.components.get("components").stream().map(IComponentHandler::getHeatHandler).filter(LazyOptional::isPresent).map(t -> t.resolve().get()).toList();
     }
 
+    @Override
     public void onStructureInvalidated() {
         this.result.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureInvalidated(this);
@@ -72,6 +78,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler<T>) handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler<T>) handle).invalidate());
         this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler<T>) handle).invalidate());
+        this.HEAT_HANDLERS = Collections.emptyList();
     }
 
     @Override

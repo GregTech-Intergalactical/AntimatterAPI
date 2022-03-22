@@ -203,7 +203,9 @@ public class StructureCache {
         Set<StructureHandle<?>> set = map.computeIfAbsent(pos.asLong(), k -> new ObjectOpenHashSet<>());
         set.add(handle);
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile != null) handle.structureCacheAddition(tile);
+        if (tile != null && has(world, pos)) {
+            handle.structureCacheAddition(tile);
+        }
     }
 
     /**

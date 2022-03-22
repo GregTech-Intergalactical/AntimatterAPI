@@ -6,15 +6,7 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.ClientData;
-import muramasa.antimatter.cover.CoverDebug;
-import muramasa.antimatter.cover.CoverDynamo;
-import muramasa.antimatter.cover.CoverEnergy;
-import muramasa.antimatter.cover.CoverFactory;
-import muramasa.antimatter.cover.CoverInput;
-import muramasa.antimatter.cover.CoverMuffler;
-import muramasa.antimatter.cover.CoverOutput;
-import muramasa.antimatter.cover.CoverPlate;
-import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.cover.*;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.gui.MenuHandlerCover;
@@ -331,6 +323,7 @@ public class Data {
     public static Material Water = AntimatterAPI.register(Material.class, new Material(Ref.ID, "water", 0x0000ff, NONE)).asFluid();
 
     public static CoverFactory COVEROUTPUT = CoverFactory.builder(CoverOutput::new).addTextures(new Texture(Ref.ID, "block/cover/output")).build(Ref.ID, "output");
+    public static CoverFactory COVERHEAT = CoverFactory.builder(CoverHeat::new).addTextures(new Texture(Ref.ID, "block/cover/output")).build(Ref.ID, "heat");
     public static CoverFactory COVERDEBUG = CoverFactory.builder(CoverDebug::new).addTextures(new Texture(Ref.ID, "block/cover/debug")).build(Ref.ID, "debug_cover");
     public static ItemCover COVERDEBUG_ITEM = new ItemCover(Ref.ID, "debug_cover");
 

@@ -31,22 +31,15 @@ public enum Dir {
     }
 
     public Direction getRotatedFacing(Direction side, Direction hSide) {
-        switch (this) {
-            case UP:
-                return hSide.getOpposite();
-            case DOWN:
-                return hSide;
-            case LEFT:
-                return hSide.getCounterClockWise();
-            case RIGHT:
-                return hSide.getClockWise();
-            case FORWARD:
-                return side;
-            case BACK:
-                return side.getOpposite();
-            default:
-                return side;
-        }
+        return switch (this) {
+            case UP -> hSide.getOpposite();
+            case DOWN -> hSide;
+            case LEFT -> hSide.getCounterClockWise();
+            case RIGHT -> hSide.getClockWise();
+            case FORWARD -> side;
+            case BACK -> side.getOpposite();
+            default -> side;
+        };
     }
     /*
     //DOWN -> EAST -> UP -> WEST for CCW

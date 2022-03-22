@@ -569,7 +569,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             }
         } else if (event instanceof MachineEvent) {
             switch ((MachineEvent) event) {
-                case ENERGY_INPUTTED:
+                case ENERGY_INPUTTED, HEAT_INPUTTED:
+                    if (event == MachineEvent.HEAT_INPUTTED && !tile.has(MachineFlag.HEAT)) break;
                     if (tile.getMachineState() == tile.getDefaultMachineState() && activeRecipe != null) {
                         tile.setMachineState(NO_POWER);
                     }
@@ -577,7 +578,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                         checkRecipe();
                     }
                     break;
-                case ENERGY_DRAINED:
+                case ENERGY_DRAINED, HEAT_DRAINED:
+                    if (event == MachineEvent.HEAT_DRAINED && !tile.has(MachineFlag.HEAT)) break;
                     if (generator && tile.getMachineState() == tile.getDefaultMachineState()) {
                         if (activeRecipe != null) tile.setMachineState(NO_POWER);
                         else checkRecipe();
