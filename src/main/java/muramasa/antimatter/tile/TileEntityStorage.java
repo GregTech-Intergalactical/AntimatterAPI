@@ -37,7 +37,7 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
             @Override
             public void onUpdate() {
                 super.onUpdate();
-                long energyToInsert = (this.energy % cachedItems.size()) == 0 ? this.energy / cachedItems.size() : this.energy;
+                long energyToInsert = (cachedItems.size() > 0 && (this.energy % cachedItems.size()) == 0) ? this.energy / cachedItems.size() : this.energy;
                 cachedItems.forEach(h ->{
                     long toAdd = Math.min(this.energy, Math.min(energyToInsert, h.getCapacity() - h.getEnergy()));
                     if (toAdd > 0 && Utils.addEnergy(h, toAdd)){
