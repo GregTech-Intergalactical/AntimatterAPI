@@ -89,7 +89,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
     public List<ItemStack> getAllItems() {
-        return inventories.values().stream().flatMap(t -> {
+        return inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).flatMap(t -> {
             List<ItemStack> stacks = new ObjectArrayList<>(t.getSlots());
             for (int i = 0; i < t.getSlots(); i++) {
                 stacks.add(t.getStackInSlot(i).copy());
