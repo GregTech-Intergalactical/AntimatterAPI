@@ -411,22 +411,22 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public Texture[] getBaseTexture(Tier tier) {
-        return baseTexture.getBase(this, tier);
+        return getDatedBaseHandler().getBase(this, tier);
     }
 
     public Texture getBaseTexture(Tier tier, Direction dir) {
-        Texture[] texes = baseTexture.getBase(this, tier);
+        Texture[] texes = getDatedBaseHandler().getBase(this, tier);
         if (texes.length == 1) return texes[0];
         return texes[dir.get3DDataValue()];
     }
 
 
     public Texture[] getOverlayTextures(MachineState state, Tier tier) {
-        return overlayTextures.getOverlays(this, state, tier);
+        return getDatedOverlayHandler().getOverlays(this, state, tier);
     }
 
     public Texture[] getOverlayTextures(MachineState state) {
-        return overlayTextures.getOverlays(this, state, this.getFirstTier());
+        return getDatedOverlayHandler().getOverlays(this, state, this.getFirstTier());
     }
 
     public ResourceLocation getOverlayModel(Direction side) {
@@ -584,5 +584,45 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public ResourceLocation getModel(String type, Direction dir) {
         return getOverlayModel(dir);
+    }
+
+    public static final IOverlayTexturer TROLL_OVERLAY_HANDLER = (type, state, tier) -> new Texture[] {
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+    };
+
+    public static final ITextureHandler TROLL_BASE_HANDLER = (type, tier) -> new Texture[] {
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+            new Texture(Ref.ID, "block/machine/troll"),
+    };
+
+    private IOverlayTexturer getDatedOverlayHandler(){
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        if (calendar.get(Calendar.MONTH) == Calendar.APRIL && calendar.get(Calendar.DATE) == 1){
+            return TROLL_OVERLAY_HANDLER;
+        }
+        if (calendar.get(Calendar.MONTH) == Calendar.MARCH && calendar.get(Calendar.DATE) == 31){
+            return TROLL_OVERLAY_HANDLER;
+        }
+        return overlayTextures;
+    }
+
+    private ITextureHandler getDatedBaseHandler(){
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        if (calendar.get(Calendar.MONTH) == Calendar.APRIL && calendar.get(Calendar.DATE) == 1){
+            return TROLL_BASE_HANDLER;
+        }
+        if (calendar.get(Calendar.MONTH) == Calendar.MARCH && calendar.get(Calendar.DATE) == 31){
+            return TROLL_BASE_HANDLER;
+        }
+        return baseTexture;
     }
 }
