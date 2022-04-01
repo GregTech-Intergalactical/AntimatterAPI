@@ -74,14 +74,14 @@ public class HeatController extends Controller<IHeatHandler.HeatTransaction,IHea
                 transaction.commit();
                 continue;
             }
-            Connectivity.connectivityFor(value, dir -> {
+            /*Connectivity.connectivityFor(value, dir -> {
                 IHeatHandler.HeatTransaction transaction = value.extract();
                 if (!transaction.isValid()) return;
                 transaction.limitHeat(value.temperatureCoefficient() / counts);
                 transfer(pos, dir,transaction);
                 transaction.addData(transaction.available(), -1, a -> {});
                 transaction.commit();
-            });
+            });*/
 
             //Transfer q to both directions.
         }

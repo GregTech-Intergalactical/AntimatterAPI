@@ -114,7 +114,7 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: "${mappings_version}", version: "${minecraft_version}"    
+    mappings channel: "parchment", version: "${mappings_version}"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     //accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -216,7 +216,7 @@ dependencies {
     if (hasTesseract) {
        implementation project(path: ':TesseractAPI')
     } else {
-        implementation fg.deobf("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-forge:${tesseract_version}")
+        implementation fg.deobf("com.github.GregTech-Intergalactical:TesseractAPI:${tesseract_version}")
     }
 
     //JEI
