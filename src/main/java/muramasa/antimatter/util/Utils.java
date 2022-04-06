@@ -82,6 +82,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -473,6 +474,17 @@ public class Utils {
 
     public static boolean transferFluids(IFluidHandler from, IFluidHandler to, int cap) {
         return transferFluids(from, to, cap, fluidStack -> true);
+    }
+
+    public static void entitiesAround(Level level, BlockPos pos, BiConsumer<Direction, BlockEntity> cb) {
+        int3 mutPos = new int3();
+        for (Direction dir : Ref.DIRS) {
+            mutPos.set(pos);
+            mutPos = mutPos.offset(1,dir);
+            BlockEntity ent = level.getBlockEntity(mutPos);
+            if (ent == null) continue;
+            cb.accept(dir, ent);
+        }
     }
 
     public static boolean transferFluids(IFluidHandler from, IFluidHandler to) {

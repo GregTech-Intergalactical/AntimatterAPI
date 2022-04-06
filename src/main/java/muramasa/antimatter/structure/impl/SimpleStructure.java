@@ -19,6 +19,7 @@ import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static muramasa.antimatter.util.Dir.FORWARD;
 import static muramasa.antimatter.util.Dir.RIGHT;
@@ -29,10 +30,12 @@ public class SimpleStructure extends Structure {
     private final int3 size;
     private final int2 offset = new int2();
     private final ImmutableMap<int3, StructureElement> elements;
+    private final Set<Direction> allowedFacings;
 
-    public SimpleStructure(int3 size, ImmutableMap<int3, StructureElement> elements) {
+    public SimpleStructure(int3 size, ImmutableMap<int3, StructureElement> elements, Set<Direction> facings) {
         this.elements = elements;
         this.size = size;
+        this.allowedFacings = facings;
     }
 
     public SimpleStructure offset(int x, int y) {
@@ -59,6 +62,10 @@ public class SimpleStructure extends Structure {
     public StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile) {
         StructureResult result = new StructureResult(this);
         Direction h = null;
+        if (!allowedFacings.contains(tile.getFacing())) {
+            result.withError("Invalid facing in machine");
+            return result;
+        }
         if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Direction.Axis.Y) {
             h = tile.getBlockState().getValue(BlockMachine.HORIZONTAL_FACING);
         }
@@ -97,7 +104,7 @@ public class SimpleStructure extends Structure {
     }
 
     public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing, @Nullable Direction hFacing) {
-        return new Iterator<Point>() {
+        return new Iterator<>() {
             final int3 corner = hFacing == null ? new int3(source, facing).left(size().getX() / 2).back(offset().x).above(offset().y) : new int3(source, facing, hFacing).left(size().getX() / 2).back(offset().x).above(offset().y);
             final int3 working = new int3(facing, hFacing);
             final Point point = new Point();
@@ -110,7 +117,7 @@ public class SimpleStructure extends Structure {
 
             @Override
             public Point next() {
-                Map.Entry<int3, StructureElement> next = it.next();
+                    Map.Entry<int3, StructureElement> next = it.next();
                 working.set(corner).offset(next.getKey(), RIGHT, UP, FORWARD);
                 point.el = next.getValue();
                 point.pos = working;

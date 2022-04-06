@@ -25,6 +25,10 @@ public interface IComponentHandler {
 
     LazyOptional<MachineEnergyHandler<?>> getEnergyHandler();
 
+    default LazyOptional<IHeatHandler> getHeatHandler() {
+        return getTile().getCapability(IHeatHandler.HEAT_CAPABILITY);
+    }
+
     void onStructureFormed(TileEntityMultiMachine<?> tile);
 
     void onStructureInvalidated(TileEntityMultiMachine<?> tile);

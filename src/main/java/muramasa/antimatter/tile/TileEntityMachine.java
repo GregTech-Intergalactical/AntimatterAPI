@@ -4,16 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.EnergyHandler;
-import muramasa.antimatter.capability.Holder;
-import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.machine.MachineCoverHandler;
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.capability.machine.MachineFluidHandler;
-import muramasa.antimatter.capability.machine.MachineItemHandler;
-import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.capability.*;
+import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
@@ -571,6 +563,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (blocksCapability(cap, side)) return LazyOptional.empty();
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.side(side).cast();
         if (cap == RECIPE_HANDLER_CAPABILITY && recipeHandler.isPresent()) return recipeHandler.side(side).cast();
+
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.side(side).cast();
         else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent())
             return energyHandler.side(side).cast();

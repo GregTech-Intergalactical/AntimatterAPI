@@ -11,16 +11,17 @@
     "TESRMixin"
   ],
   "mixins": [
+    "BiomeAccessor",
     "BlockLootTablesAccessor",
     "GameDataMixin",
     "GrindstoneContainerMixin",
     "IceBlockMixin",
     "ItemStackMixin",
     "LeavesBlockMixin",
+    "MultiPackManagerMixin",
     "RecipeManagerMixin",
     "RepairItemRecipeMixin",
     "ServerBlockUpdateMixin",
-    "MultiPackManagerMixin",
     "SimpleReloadInstanceMixin"
   ],
   "minVersion": "0.8"

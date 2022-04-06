@@ -21,7 +21,7 @@ public class TileEntityTickable<T extends TileEntityTickable<T>> extends TileEnt
 
     }
 
-    private void tick(Level level, BlockPos pos, BlockState state) {
+    protected void tick(Level level, BlockPos pos, BlockState state) {
         level.getProfiler().push("AntimatterTileTick");
         if (!hadFirstTick) {
             onFirstTick();

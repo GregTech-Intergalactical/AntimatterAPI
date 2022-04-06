@@ -156,6 +156,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
     }
 
     public LazyOptional<? extends V> side(Direction side) {
+        if (side == null) return nullSide().cast();
         if (!isPresent()) {
             return LazyOptional.empty();
         }

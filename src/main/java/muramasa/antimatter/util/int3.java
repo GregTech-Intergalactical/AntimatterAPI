@@ -88,13 +88,13 @@ public class int3 extends BlockPos.MutableBlockPos {
     @Nonnull
     public int3 above(int n) {
         if (side.getAxis() != Axis.Y) return offset(n, Direction.UP);
-        return offset(n, horizSide);
+        return offset(n, horizSide.getOpposite());
     }
 
     @Nonnull
     public int3 below(int n) {
         if (side.getAxis() != Axis.Y) return offset(n, Direction.DOWN);
-        return offset(n, horizSide.getOpposite());
+        return offset(n, horizSide);
     }
 
     @Nonnull

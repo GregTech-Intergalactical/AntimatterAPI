@@ -3,6 +3,7 @@ package muramasa.antimatter.tile.pipe;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
+import muramasa.antimatter.capability.FluidHandler;
 import muramasa.antimatter.capability.pipe.PipeFluidHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
@@ -81,7 +82,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public void onRemove() {
-        fluidHandler.ifPresent(t -> t.onRemove());
+        fluidHandler.ifPresent(FluidHandler::onRemove);
         fluidHandler.invalidate();
         super.onRemove();
     }

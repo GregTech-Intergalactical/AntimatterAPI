@@ -6,5 +6,7 @@ public enum MachineEvent implements IMachineEvent {
     ITEMS_INPUTTED,
     FLUIDS_OUTPUTTED, // When all fluids for a recipe cycle has been deposited in the output slot
     ENERGY_DRAINED,
-    ENERGY_INPUTTED
+    ENERGY_INPUTTED,
+    HEAT_INPUTTED,
+    HEAT_DRAINED,
 }
