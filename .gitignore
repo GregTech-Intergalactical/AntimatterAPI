@@ -21,7 +21,7 @@ build
 eclipse
 run/
 *.db
-src/generated/
+forge/src/generated/
 
 TesseractAPI
 

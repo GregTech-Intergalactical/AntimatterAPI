@@ -18,11 +18,18 @@ pluginManagement {
 
 rootProject.name = "${modid}"
 
-if (new File("TesseractAPI").exists()) {
-    includeBuild("TesseractAPI") {
-        dependencySubstitution {
-            substitute module('com.github.GregTech-Intergalactical:TesseractAPI') using project(':forge')
-            substitute module('com.github.GregTech-Intergalactical:TesseractAPIC') using project(':common')
-        }
-    }
+def tesseractFolder = new File('TesseractAPI')
+if (tesseractFolder.exists()) {
+    include 'tesseract-forge'
+    project(':tesseract-forge').setProjectDir(new File("TesseractAPI/forge"))
+    include 'tesseract-common'
+    project(':tesseract-common').setProjectDir(new File("TesseractAPI/common"))
 }
+
+include("antimatter-common")
+include("antimatter-fabric")
+include("antimatter-forge")
+
+project(':antimatter-common').setProjectDir(new File("common"))
+project(':antimatter-forge').setProjectDir(new File("forge"))
+project(':antimatter-fabric').setProjectDir(new File("fabric"))
