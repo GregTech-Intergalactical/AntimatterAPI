@@ -9,6 +9,9 @@ architectury {
     minecraft = rootProject.minecraft_version
 }
 
+//Print out JVM information so that we know what version is running. Extreamly useful for people to know when helping you.
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
+
 def isCI = System.getenv("GITHUB_ACTION")
 def isRELEASE = System.getenv("GITHUB_RELEASE")
 def gitHash() {
@@ -70,5 +73,6 @@ allprojects {
 
     if (isCI) {
         version = version + "-" + gitHash()
+        println("In CI mode")
     }
 }

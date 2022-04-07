@@ -23,11 +23,6 @@ repositories {
 archivesBaseName = rootProject.antimatter_archive_base_name
 version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
 
-//Print out JVM information so that we know what version is running. Extreamly useful for people to know when helping you.
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-
-
-
 def isCI = System.getenv("GITHUB_ACTION")
 def isRELEASE = System.getenv("GITHUB_RELEASE")
 
@@ -57,6 +52,36 @@ def getPathSeparator() {
     }
     return ":"
 }
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            include '**/**'
+            srcDirs += 'src/generated/resources'
+            exclude '.cache'
+            exclude 'Thumbs.db'
+        }
+    }
+    if (hasTesseract) {
+        tesseractapi {
+            java {
+                srcDir 'TesseractAPI/common/src/main/java'
+                srcDir 'TesseractAPI/forge/src/main/java'
+            }
+            resources {
+                include '**/**'
+                srcDirs += 'TesseractAPI/common/build/resources'
+                srcDirs += 'TesseractAPI/forge/build/resources'
+                exclude '.cache'
+                exclude 'Thumbs.db'
+            }
+        }
+    }
+
+}
+
 loom{
     forge {
         // specify the mixin configs used in this mod
@@ -67,7 +92,7 @@ loom{
 
         localMods {
             forge {
-             //   it.add(project(":TesseractAPI").sourceSets.main)
+                if (hasTesseract) it.add(project(":antimatter-forge").sourceSets.tesseractapi)
             }
         }
 
@@ -240,10 +265,6 @@ jar {
                 'MixinConfigs': 'antimatter.mixins.json'
             ])
     }
-}
-
-if (rootProject.isAntimatterCI()) {
-    println("In CI mode")
 }
 publishing {
     tasks.publish.dependsOn 'build', 'reobfJar'

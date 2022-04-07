@@ -24,6 +24,8 @@ if (tesseractFolder.exists()) {
     project(':tesseract-forge').setProjectDir(new File("TesseractAPI/forge"))
     include 'tesseract-common'
     project(':tesseract-common').setProjectDir(new File("TesseractAPI/common"))
+    include 'tesseract-fabric'
+    project(':tesseract-fabric').setProjectDir(new File("TesseractAPI/fabric"))
 }
 
 include("antimatter-common")
