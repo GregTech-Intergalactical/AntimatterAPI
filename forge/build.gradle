@@ -64,21 +64,21 @@ sourceSets {
             exclude 'Thumbs.db'
         }
     }
-    if (hasTesseract) {
-        tesseractapi {
-            java {
-                srcDir 'TesseractAPI/common/src/main/java'
-                srcDir 'TesseractAPI/forge/src/main/java'
-            }
-            resources {
-                include '**/**'
-                srcDirs += 'TesseractAPI/common/build/resources'
-                srcDirs += 'TesseractAPI/forge/build/resources'
-                exclude '.cache'
-                exclude 'Thumbs.db'
-            }
-        }
-    }
+//    if (hasTesseract) {
+//        tesseractapi {
+//            java {
+//                srcDir 'TesseractAPI/common/src/main/java'
+//                srcDir 'TesseractAPI/forge/src/main/java'
+//            }
+//            resources {
+//                include '**/**'
+//                srcDirs += 'TesseractAPI/common/build/resources'
+//                srcDirs += 'TesseractAPI/forge/build/resources'
+//                exclude '.cache'
+//                exclude 'Thumbs.db'
+//            }
+//        }
+//    }
 
 }
 
@@ -92,7 +92,7 @@ loom{
 
         localMods {
             forge {
-                if (hasTesseract) it.add(project(":antimatter-forge").sourceSets.tesseractapi)
+                //if (hasTesseract) it.add(project(":antimatter-forge").sourceSets.tesseractapi)
             }
         }
 
@@ -227,6 +227,9 @@ dependencies {
     if (System.getProperty('idea.sync.active') != 'true') {
         annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
     }
+
+    modCompileOnly("mezz.jei:jei-${jei_version}:api")
+    modRuntimeOnly("mezz.jei:jei-${jei_version}")
 
 
     /** KUBEJS STUFF **/
