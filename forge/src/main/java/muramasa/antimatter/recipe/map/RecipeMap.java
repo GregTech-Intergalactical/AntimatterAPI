@@ -61,8 +61,8 @@ import java.util.stream.Stream;
 
 public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObject, IRecipeMap {
 
-    private static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
-    private static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
+    public static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
+    public static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
 
     private final ResourceLocation loc;
     private final B builder;

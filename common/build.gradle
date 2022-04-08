@@ -3,6 +3,9 @@ version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version
 
 dependencies{
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    compileOnly("com.blamejared.crafttweaker:CraftTweaker-common-1.18.2:${rootProject.crafttweaker_version}")
+    modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
+
 }
 
 architectury {

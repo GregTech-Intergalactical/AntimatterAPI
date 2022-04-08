@@ -48,7 +48,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
 
     public static final RecipeType<Recipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
 
-    public Recipe(@Nonnull List<Ingredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
+    public Recipe(@Nonnull List<? extends Ingredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = ImmutableList.copyOf(stacksInput);
         this.itemsOutput = stacksOutput;
         this.duration = duration;

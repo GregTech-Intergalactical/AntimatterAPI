@@ -230,6 +230,8 @@ dependencies {
 
     modCompileOnly("mezz.jei:jei-${jei_version}:api")
     modRuntimeOnly("mezz.jei:jei-${jei_version}")
+    modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${rootProject.crafttweaker_version}")
+    modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
 
 
     /** KUBEJS STUFF **/

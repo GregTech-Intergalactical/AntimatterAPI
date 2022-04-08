@@ -113,6 +113,10 @@ public class RecipeIngredient extends Ingredient {
         return false;
     }
 
+    public static RecipeIngredient of(Ingredient ingredient, int count){
+        return new RecipeIngredient(new MultiValue(Arrays.stream(ingredient.getItems()).map(t -> new Value(t, count))));
+    }
+
 
     public static RecipeIngredient of(int count, ItemStack... provider) {
         if (provider.length == 1) {
