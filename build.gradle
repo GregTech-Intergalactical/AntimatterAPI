@@ -49,17 +49,17 @@ repositories {
     maven {
         // Shedaniel's maven (Architectury API)
         url = "https://maven.architectury.dev"
-        content {
-            includeGroup "dev.architectury"
-        }
+        // content {
+        //     includeGroup "dev.architectury"
+        // }
     }
 
     maven {
         // saps.dev Maven (KubeJS and Rhino)
         url = "https://maven.saps.dev/minecraft"
-        content {
-            includeGroup "dev.latvian.mods"
-        }
+        // content {
+        //     includeGroup "dev.latvian.mods"
+        // }
     }
     maven {
         url = 'https://maven.blamejared.com'
@@ -159,11 +159,11 @@ minecraft {
                 antimatter {
                     source sourceSets.main
                 }
-                if (hasTesseract) {
+                /*if (hasTesseract) {
                     tesseract {
                         source project(':TesseractAPI').sourceSets.main
                     }
-                }
+                }*/
             }
         }
 
@@ -187,11 +187,11 @@ minecraft {
                 antimatter {
                     source sourceSets.main
                 }
-                if (hasTesseract) {
+                /*if (hasTesseract) {
                     tesseract {
                         source project(':TesseractAPI').sourceSets.main
                     }
-                }
+                }*/
             }
         }
 /*
@@ -247,8 +247,8 @@ dependencies {
         annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
     }
     implementation fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}")
-    implementation fg.deobf("dev.latvian.mods:rhino:${rhino_version}")
-    implementation fg.deobf("me.shedaniel:architectury-forge:${architectury_version}")
+    implementation fg.deobf("dev.latvian.mods:rhino-forge:${rhino_version}")
+    implementation fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
     compileOnly(fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${crafttweaker_version}"))
 
 

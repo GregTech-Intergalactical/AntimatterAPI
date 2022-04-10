@@ -148,7 +148,7 @@ public class Data {
     public static MaterialType<?> TOOLS = new MaterialType<>("tools", 1, false, -1).nonGen();
     public static MaterialType<?> ARMOR = new MaterialType<>("armor", 1, false, -1).nonGen();
 
-    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)).addHandleStat(0, 0.0F));
+    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F));
 
     //Vanilla Stone Materials
     public static Material Stone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F));
@@ -385,34 +385,37 @@ public class Data {
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
 
-        NUGGET.forceOverride(Iron, Items.IRON_NUGGET);
-        NUGGET.forceOverride(Gold, Items.GOLD_NUGGET);
-        INGOT.forceOverride(Iron, Items.IRON_INGOT);
-        INGOT.forceOverride(Gold, Items.GOLD_INGOT);
-        INGOT.forceOverride(Netherite, Items.NETHERITE_INGOT);
-        DUST.forceOverride(Redstone, Items.REDSTONE);
-        DUST.forceOverride(Glowstone, Items.GLOWSTONE_DUST);
-        DUST.forceOverride(Blaze, Items.BLAZE_POWDER);
-        DUST.forceOverride(Sugar, Items.SUGAR);
-        GEM.forceOverride(Flint, Items.FLINT);
-        GEM.forceOverride(Diamond, Items.DIAMOND);
-        GEM.forceOverride(Emerald, Items.EMERALD);
-        GEM.forceOverride(Lapis, Items.LAPIS_LAZULI);
-        GEM.forceOverride(Coal, Items.COAL);
-        GEM.forceOverride(Charcoal, Items.CHARCOAL);
-        GEM.forceOverride(EnderEye, Items.ENDER_EYE);
-        GEM.forceOverride(EnderPearl, Items.ENDER_PEARL);
+        NUGGET.replacement(Iron, Items.IRON_NUGGET);
+        NUGGET.replacement(Gold, Items.GOLD_NUGGET);
+        INGOT.replacement(Iron, Items.IRON_INGOT);
+        INGOT.replacement(Gold, Items.GOLD_INGOT);
+        INGOT.replacement(Netherite, Items.NETHERITE_INGOT);
+        INGOT.replacement(Copper, Items.COPPER_INGOT);
 
-        ROD.forceOverride(Blaze, Items.BLAZE_ROD);
-        ROD.forceOverride(Bone, Items.BONE);
-        ROD.forceOverride(Wood, Items.STICK);
 
-        BLOCK.forceOverride(Iron, Items.IRON_BLOCK);
-        BLOCK.forceOverride(Gold, Items.GOLD_BLOCK);
-        BLOCK.forceOverride(Diamond, Items.DIAMOND_BLOCK);
-        BLOCK.forceOverride(Emerald, Items.EMERALD_BLOCK);
-        BLOCK.forceOverride(Lapis, Items.LAPIS_BLOCK);
-        BLOCK.forceOverride(Netherite, Items.NETHERITE_BLOCK);
+        DUST.replacement(Redstone, Items.REDSTONE);
+        DUST.replacement(Glowstone, Items.GLOWSTONE_DUST);
+        DUST.replacement(Blaze, Items.BLAZE_POWDER);
+        DUST.replacement(Sugar, Items.SUGAR);
+        GEM.replacement(Flint, Items.FLINT);
+        GEM.replacement(Diamond, Items.DIAMOND);
+        GEM.replacement(Emerald, Items.EMERALD);
+        GEM.replacement(Lapis, Items.LAPIS_LAZULI);
+        GEM.replacement(Coal, Items.COAL);
+        GEM.replacement(Charcoal, Items.CHARCOAL);
+        GEM.replacement(EnderEye, Items.ENDER_EYE);
+        GEM.replacement(EnderPearl, Items.ENDER_PEARL);
+
+        ROD.replacement(Blaze, Items.BLAZE_ROD);
+        ROD.replacement(Bone, Items.BONE);
+        ROD.replacement(Wood, Items.STICK);
+
+        BLOCK.replacement(Iron, Items.IRON_BLOCK);
+        BLOCK.replacement(Gold, Items.GOLD_BLOCK);
+        BLOCK.replacement(Diamond, Items.DIAMOND_BLOCK);
+        BLOCK.replacement(Emerald, Items.EMERALD_BLOCK);
+        BLOCK.replacement(Lapis, Items.LAPIS_BLOCK);
+        BLOCK.replacement(Netherite, Items.NETHERITE_BLOCK);
 
         ROTOR.dependents(PLATE, SCREW, RING);
         SCREW.dependents(BOLT);

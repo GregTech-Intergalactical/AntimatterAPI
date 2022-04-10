@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
@@ -34,16 +35,16 @@ public class KubeJSRecipe extends RecipeJS {
     public void create(ListJS listJS) {
         this.map = (String) listJS.get(0);
         if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
-            if (inputItem instanceof ItemStackJS) {
-                this.inputItems.add(RecipeIngredientJS.of(((ItemStackJS) inputItem).toResultJson()));
-            } else if (inputItem instanceof MapJS) {
-                MapJS map = (MapJS) inputItem;
-                this.inputItems.add(RecipeIngredientJS.of(map.toJson()));
+            this.inputItems.add(IngredientJS.of(inputItem));
+            /*if (inputItem instanceof ItemStackJS i) {
+                this.inputItems.add(IngredientStackJS.stackOf(i));
+            } else if (inputItem instanceof MapJS map) {
+                this.inputItems.add(IngredientJS.of(map));
             } else if (inputItem instanceof JsonElement) {
                 this.inputItems.add(RecipeIngredientJS.of((JsonElement) inputItem));
             } else if (inputItem instanceof IngredientJS) {
                 this.inputItems.add(RecipeIngredientJS.of((IngredientJS) inputItem));
-            }
+            }*/
         }
         if (listJS.get(2) != null) for (Object outputItem : ListJS.orSelf(listJS.get(2))) {
             this.outputItems.add(ItemStackJS.of(outputItem));
@@ -79,7 +80,7 @@ public class KubeJSRecipe extends RecipeJS {
     @Override
     public void deserialize() {
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_in", new JsonArray())) {
-          //  this.inputItems.add(RecipeIngredientJS.of(e));
+            this.inputItems.add(IngredientJS.of(e));
         }
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_out", new JsonArray())) {
             this.outputItems.add(ItemStackJS.of(e));

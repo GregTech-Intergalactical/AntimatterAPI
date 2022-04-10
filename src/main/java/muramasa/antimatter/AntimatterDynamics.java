@@ -2,6 +2,7 @@ package muramasa.antimatter;
 
 import com.google.common.collect.Sets;
 //import dev.latvian.mods.kubejs.script.ScriptType;
+import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -15,6 +16,8 @@ import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.event.AntimatterWorldGenEvent;
 //import muramasa.antimatter.integration.kubejs.AMWorldEvent;
 //import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
+import muramasa.antimatter.integration.kubejs.AMWorldEvent;
+import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
@@ -133,9 +136,8 @@ public class AntimatterDynamics {
         final Set<ResourceLocation> filter;
         // Fire KubeJS event to cancel possible maps.
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-        //    RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
-         //   filter = ev.forMachines;
-         filter = null;
+            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
+            filter = ev.forMachines;
         } else {
             filter = Collections.emptySet();
         }
@@ -197,24 +199,22 @@ public class AntimatterDynamics {
      */
     public static void tagsEvent(TagsUpdatedEvent ev) {
         if (!ClientHandler.isLocal()) {
-            AntimatterDynamics.onResourceReload(false);
+            AntimatterDynamics.onResourceReload(false, false);
             AntimatterDynamics.onRecipeCompile(true, Minecraft.getInstance().getConnection().getRecipeManager());
         }
     }
     /**
      * Reloads dynamic assets during resource reload.
-     * @param server if it is server resources.
      */
-    public static void onResourceReload(boolean server) {
-        if (server)
+    public static void onResourceReload(boolean runProviders, boolean serverEvent) {
+        if (runProviders)
             runDataProvidersDynamically();
 
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-          //  RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
-         //   filter = ev.forLoaders;
-         filter = null;
+            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(serverEvent);
+            filter = ev.forLoaders;
         } else {
             filter = Collections.emptySet();
         }
@@ -228,11 +228,11 @@ public class AntimatterDynamics {
         }));
         List<WorldGenVein> veins = new ObjectArrayList<>();
         boolean runRegular = true;
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && server) {
-        //    AMWorldEvent ev = new AMWorldEvent();
-         //   ev.post(ScriptType.SERVER, "antimatter.worldgen");
-          //  veins.addAll(ev.VEINS);
-          //  runRegular = !ev.disableBuiltin;
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && serverEvent) {
+            AMWorldEvent ev = new AMWorldEvent();
+            ev.post(ScriptType.SERVER, "antimatter.worldgen");
+            veins.addAll(ev.VEINS);
+            runRegular = !ev.disableBuiltin;
         }
         if (runRegular) {
             AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE);

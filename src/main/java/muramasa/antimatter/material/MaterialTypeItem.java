@@ -3,7 +3,6 @@ package muramasa.antimatter.material;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -29,7 +28,7 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
     }
 
     public boolean allowItemGen(Material material) {
-        return !OVERRIDES.containsKey(material) && allowGen(material) && !blockType;
+        return !replacements.containsKey(material) && allowGen(material) && !blockType;
     }
 
     public Item get(Material material) {

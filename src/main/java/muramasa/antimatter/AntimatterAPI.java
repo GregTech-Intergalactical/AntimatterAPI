@@ -68,6 +68,7 @@ public final class AntimatterAPI {
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<ResourceLocation, Object> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
+    private static final Map<String, Map<String, Class<?>>> CLASS_LOOKUP = new Object2ObjectOpenHashMap<>();
 
     private static RegistrationEvent PHASE = null;
 
@@ -98,6 +99,8 @@ public final class AntimatterAPI {
                         " has already been registered by: ", present.toString()));
             }
         }
+        String name = c.getSimpleName();
+        CLASS_LOOKUP.computeIfAbsent(domain, k -> new Object2ObjectOpenHashMap<>()).putIfAbsent(name, c);
     }
 
     public static RegistrationEvent getPhase() {
@@ -153,16 +156,6 @@ public final class AntimatterAPI {
 
     @Nullable
     public static <T> T get(Class<T> c, String id, String domain) {
-        // if (!dataDone) {
-        // synchronized (OBJECTS) {
-        // T obj = getInternal(c, id, domain);
-        // if (obj == null) {
-        // Class clazz = c;
-        // Object o = getInternal(clazz, id);
-        // return o == null ? null : c.cast(o);
-        // }
-        // }
-        // }
         T obj = getInternal(c, id, domain);
         if (obj == null) {
             Class clazz = c;
@@ -239,6 +232,32 @@ public final class AntimatterAPI {
             return inner != null && inner.left().isPresent();
         }
         return false;
+    }
+
+    @Nullable
+    public static <T> T get(String className, String domain, String id) {
+        Map<String, Class<?>> map = CLASS_LOOKUP.get(domain);
+        if (map == null) return null;
+        Class<? extends T> clazz = (Class<? extends T>) map.get(className);
+        if (clazz == null) return null;
+        return get(clazz, id, domain);
+    }
+
+    public static <T> void all(String className, String domain, Consumer<T> consumer) {
+        Map<String, Class<?>> map = CLASS_LOOKUP.get(domain);
+        if (map == null) return;
+        Class<? extends T> clazz = (Class<? extends T>) map.get(className);
+        if (clazz == null) return;
+        if (domain == null) {
+            allInternal(clazz).forEach(consumer);
+        } else {
+            allInternal(clazz, domain).forEach(consumer);
+        }
+    }
+
+    @Nullable
+    public static <T> T get(String className, String id) {
+        return get(className, Ref.SHARED_ID, id);
     }
 
     public static <T> List<T> all(Class<T> c) {

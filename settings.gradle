@@ -2,5 +2,5 @@ rootProject.name = "${modid}"
 def tesseractFolder = new File('TesseractAPI')
 if (tesseractFolder.exists()) {
     include 'TesseractAPI'
-    project(':TesseractAPI').setProjectDir(new File("TesseractAPI/forge"))
+    project(':TesseractAPI').setProjectDir(new File("TesseractAPI"))
 }

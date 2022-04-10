@@ -39,7 +39,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     protected final Map<MaterialType<?>, TagKey<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
     private boolean hidden = false;
-    protected final BiMap<Material, Item> OVERRIDES = HashBiMap.create();
+    protected final BiMap<Material, Item> replacements = HashBiMap.create();
     protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
     //since we have two instances stored in antimatter.
     protected boolean hasRegistered;
@@ -75,8 +75,8 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     /**
      * Forces these tags to not generate, assuming they have a replacement.
      */
-    public void forceOverride(Material mat, Item replacement) {
-        OVERRIDES.put(mat, replacement);
+    public void replacement(Material mat, Item replacement) {
+        replacements.put(mat, replacement);
         this.add(mat);
         AntimatterAPI.addReplacement(getMaterialTag(mat), replacement);
     }
@@ -87,7 +87,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
             if (item.getType() == this) return item.getMaterial();
             return null;
         }
-        return OVERRIDES.inverse().get(stack.getItem());
+        return replacements.inverse().get(stack.getItem());
     }
 
     public boolean hidden() {
@@ -172,8 +172,8 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         return getId();
     }
 
-    public BiMap<Material, Item> getOVERRIDES() {
-        return OVERRIDES;
+    public BiMap<Material, Item> getReplacements() {
+        return replacements;
     }
 
     private static ImmutableMap<Item, Material> tooltipCache;
@@ -182,7 +182,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     public static void buildTooltips() {
         ImmutableMap.Builder<Item, Material> builder = ImmutableMap.builder();
         AntimatterAPI.all(MaterialType.class, t -> {
-            BiMap<Item, Material> map = t.getOVERRIDES().inverse();
+            BiMap<Item, Material> map = t.getReplacements().inverse();
             for (Map.Entry<Item, Material> entry : map.entrySet()) {
                 builder.put(entry.getKey(), entry.getValue());
             }

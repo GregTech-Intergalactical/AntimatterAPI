@@ -13,9 +13,11 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.fluids.FluidStack;
 import org.openzen.zencode.java.ZenCodeType;
@@ -37,7 +39,7 @@ public class RecipeManager implements IRecipeManager<Recipe>, IRecipeHandler<Rec
     @Override
     @SuppressWarnings("unchecked")
     public List<Recipe> getAllRecipes() {
-        return AntimatterAPI.all(RecipeMap.class).stream().flatMap(t -> t.getRecipes(false).stream()).toList();
+        return AntimatterAPI.all(IRecipeMap.class).stream().flatMap(t -> t.getRecipes(false).stream()).toList();
     }
 
     @Override
@@ -48,10 +50,10 @@ public class RecipeManager implements IRecipeManager<Recipe>, IRecipeHandler<Rec
     public void addRecipe(String name, String map, IIngredient[] in, IItemStack[] out, IFluidStack[] fIn, IFluidStack[] fOut, long eu, int duration, int amps, int special) {
         name = fixRecipeName(name);
         ResourceLocation resourceLocation = new ResourceLocation(Ref.ID, name);
-        List<RecipeIngredient> input = in == null ? Collections.emptyList() : Arrays.stream(in).map(inputs -> RecipeIngredient.of(inputs.asVanillaIngredient(), 1)).toList();
-        ItemStack[] itemOut = out == null ? RecipeMap.EMPTY_ITEM : Arrays.stream(out).map(IItemStack::getInternal).toArray(ItemStack[]::new);
+        List<Ingredient> input = in == null ? Collections.emptyList() : Arrays.stream(in).map(IIngredient::asVanillaIngredient).toList();
+        ItemStack[] itemOut = out == null ? IRecipeMap.EMPTY_ITEM : Arrays.stream(out).map(IItemStack::getInternal).toArray(ItemStack[]::new);
         List<FluidIngredient> fluidIn = fIn == null ? Collections.emptyList() : Arrays.stream(fIn).map(t -> FluidIngredient.of(t.getInternal())).toList();
-        FluidStack[] fluidOut = fOut == null ? RecipeMap.EMPTY_FLUID : Arrays.stream(fOut).map(IFluidStack::getInternal).toArray(FluidStack[]::new);
+        FluidStack[] fluidOut = fOut == null ? IRecipeMap.EMPTY_FLUID : Arrays.stream(fOut).map(IFluidStack::getInternal).toArray(FluidStack[]::new);
         Recipe recipe = new Recipe(input, itemOut, fluidIn, fluidOut, duration, eu, special, amps);
         recipe.setIds(resourceLocation, map);
         CraftTweakerAPI.apply(new ActionAddRecipe<>(this, recipe));

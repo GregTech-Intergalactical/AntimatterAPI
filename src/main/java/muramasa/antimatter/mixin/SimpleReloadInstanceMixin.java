@@ -24,7 +24,7 @@ public class SimpleReloadInstanceMixin {
     
     @Inject(method = "loadResources", at = @At(value = "HEAD"))
     private static void create(ResourceManager p_206862_, RegistryAccess.Frozen p_206863_, Commands.CommandSelection p_206864_, int p_206865_, Executor p_206866_, Executor p_206867_, CallbackInfoReturnable<CompletableFuture<ReloadableServerResources>> ri) {
-        AntimatterDynamics.onResourceReload(true);
+        AntimatterDynamics.onResourceReload(true, p_206864_ != Commands.CommandSelection.INTEGRATED);
     }
 
 
