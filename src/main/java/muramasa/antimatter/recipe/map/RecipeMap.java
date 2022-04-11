@@ -528,7 +528,6 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
 
     public void reset() {
         this.RECIPES_TO_COMPILE.clear();
-        ;
     }
 
     public void resetCompiled() {

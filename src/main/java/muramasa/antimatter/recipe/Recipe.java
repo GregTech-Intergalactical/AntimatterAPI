@@ -8,6 +8,7 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
+import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -39,6 +40,8 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     public ResourceLocation id;
     public String mapId;
+    //Used for recipe validators, e.g. cleanroom.
+    public final List<IRecipeValidator> validators = Collections.emptyList();
 
     private boolean valid;
 
@@ -313,5 +316,14 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
     @Override
     public boolean isSpecial() {
         return true;
+    }
+
+    @FunctionalInterface
+    public interface IRecipeValidator {
+        boolean validate(Recipe recipe, TileEntityMachine<?> machine);
+
+        default boolean tick(Recipe recipe, TileEntityMachine<?> machine) {
+            return true;
+        }
     }
 }

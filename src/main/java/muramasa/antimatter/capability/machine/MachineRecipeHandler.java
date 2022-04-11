@@ -351,6 +351,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         long voltage = this.generator ? tile.getMaxOutputVoltage() : tile.getMachineType().amps() * tile.getMaxInputVoltage();
         boolean ok = voltage >= r.getPower() / r.getAmps();
         List<ItemStack> consumed = this.tile.itemHandler.map(t -> t.consumeInputs(r, true)).orElse(Collections.emptyList());
+        for (Recipe.IRecipeValidator validator : r.validators) {
+            if (!validator.validate(r, tile)) {
+                return false;
+            }
+        }
         return ok && (consumed.size() > 0 || !r.hasInputItems());
     }
 
