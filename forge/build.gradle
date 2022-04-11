@@ -23,6 +23,14 @@ repositories {
 archivesBaseName = rootProject.antimatter_archive_base_name
 version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
 
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentForge.extendsFrom common
+}
+
 def isCI = System.getenv("GITHUB_ACTION")
 def isRELEASE = System.getenv("GITHUB_RELEASE")
 
@@ -218,7 +226,7 @@ dependencies {
     //implementation project(path: ":TesseractAPI")
     //GT
     if (hasTesseract) {
-        implementation project(path: ':tesseract-forge')
+        implementation(project(path: ":tesseract-forge", configuration: "namedElements"))
     } else {
         modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-forge:${tesseract_version}")
     }
