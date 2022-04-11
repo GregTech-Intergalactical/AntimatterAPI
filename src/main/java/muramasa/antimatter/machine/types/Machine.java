@@ -33,8 +33,10 @@ import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -50,11 +52,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -391,11 +389,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public Component getDisplayName(Tier tier) {
-        if (has(BASIC)) {
-            return new TranslatableComponent("machine." + id + "." + tier.getId());
-        } else {
-            return new TranslatableComponent("machine." + id);
-        }
+        return new TranslatableComponent("machine." + id).append(" (").append(new TextComponent(tier.getId().toUpperCase(Locale.ROOT)).withStyle(tier.getRarityFormatting())).append(")");
     }
 
     public boolean canClientTick() {
@@ -600,5 +594,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public ResourceLocation getModel(String type, Direction dir) {
         return getOverlayModel(dir);
+    }
+
+    @Override
+    public String getLang(String lang) {
+        return Utils.lowerUnderscoreToUpperSpaced(this.getId());
     }
 }

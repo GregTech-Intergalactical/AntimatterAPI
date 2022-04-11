@@ -4,6 +4,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -29,5 +30,10 @@ public class HatchMachine extends Machine<HatchMachine> {
     @Override
     public Direction handlePlacementFacing(BlockPlaceContext ctxt, Property<?> which, Direction dir) {
         return dir.getOpposite();
+    }
+
+    @Override
+    public String getLang(String lang) {
+        return Utils.lowerUnderscoreToUpperSpacedRotated(this.getId());
     }
 }

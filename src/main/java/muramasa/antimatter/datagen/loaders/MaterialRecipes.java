@@ -61,6 +61,22 @@ public class MaterialRecipes {
                         .build(),
                 " W ", "HPF");
 
+        provider.addToolRecipe(DUST_BUILDER.get(GEAR_SMALL.getId()), consumer, Ref.ID, "gear_small", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+                GEAR_SMALL.all().stream().map(t -> GEAR_SMALL.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
+                        .put('H', HAMMER.getTag())
+                        .put('P', PropertyIngredient.builder("primary").types(PLATE).tags(GEAR_SMALL).build())
+                        .build(),
+                "P ", " H");
+
+        provider.addToolRecipe(DUST_BUILDER.get(GEAR.getId()), consumer, Ref.ID, "gear", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
+                GEAR.all().stream().filter(t -> t.has(PLATE, ROD)).map(t -> GEAR.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
+                        .put('W', WRENCH.getTag())
+                        .put('P', PropertyIngredient.builder("primary").types(PLATE).tags(GEAR).build())
+                        .put('R', PropertyIngredient.builder("primary").types(ROD).tags(GEAR).build())
+                        .build(),
+                "RPR", "PWP", "RPR");
+
+
         provider.addToolRecipe(DUST_BUILDER.get(PLATE.getId()), consumer, Ref.ID, "plate", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
                 PLATE.all().stream().filter(t -> t.has(INGOT, PLATE)).map(t -> PLATE.get(t, 1)).collect(Collectors.toList()), ImmutableMap.<Character, Object>builder()
                         .put('H', HAMMER.getTag())
