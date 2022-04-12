@@ -67,6 +67,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
@@ -116,7 +117,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public Holder<IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>(ITEM_HANDLER_CAPABILITY, dispatch);
     public Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>(FLUID_HANDLER_CAPABILITY, dispatch);
     public Holder<ICoverHandler, MachineCoverHandler<T>> coverHandler = new Holder<>(COVERABLE_HANDLER_CAPABILITY, dispatch);
-    public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dispatch);
+    public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(TesseractCaps.ENERGY_HANDLER_CAPABILITY, dispatch);
     public Holder<MachineRecipeHandler, MachineRecipeHandler<T>> recipeHandler = new Holder<>(RECIPE_HANDLER_CAPABILITY, dispatch);
 
     /**
@@ -565,7 +566,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (cap == RECIPE_HANDLER_CAPABILITY && recipeHandler.isPresent()) return recipeHandler.side(side).cast();
 
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.side(side).cast();
-        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent())
+        else if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent())
             return energyHandler.side(side).cast();
         return super.getCapability(cap, side);
     }

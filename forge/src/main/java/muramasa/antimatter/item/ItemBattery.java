@@ -18,6 +18,7 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;
 
@@ -78,7 +79,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).filter(l -> l <= 0).map(l -> super.getBarColor(stack)).orElse(0x00BFFF);
+        return stack.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).filter(l -> l <= 0).map(l -> super.getBarColor(stack)).orElse(0x00BFFF);
     }
 
     @Override
@@ -88,7 +89,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return (int)(13.0f* (stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap));
+        return (int)(13.0f* (stack.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap));
     }
 
     @Nonnull
@@ -104,7 +105,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     }
 
     private static LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
-        return stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).cast();
+        return stack.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).cast();
     }
 
     /**
@@ -123,7 +124,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         if (reusable) {
             tooltip.add(new TranslatableComponent("item.reusable"));
         }
-        long energy = stack.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(IGTNode::getEnergy).orElse(0L);
+        long energy = stack.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).map(IGTNode::getEnergy).orElse(0L);
         tooltip.add(new TranslatableComponent("item.charge").append(": ").append(new TextComponent(energy + "/" + cap).withStyle(energy == 0 ? ChatFormatting.RED : ChatFormatting.GREEN)).append(" (" + tier.getId().toUpperCase() + ")"));
         super.appendHoverText(stack, worldIn, tooltip, flag);
     }

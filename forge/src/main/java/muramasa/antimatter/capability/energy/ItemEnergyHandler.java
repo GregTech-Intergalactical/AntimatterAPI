@@ -10,6 +10,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
 /**
@@ -71,7 +72,7 @@ public class ItemEnergyHandler extends EnergyHandler {
 
         @Override
         public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-            return cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY ? energy.cast() : LazyOptional.empty();
+            return cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY ? energy.cast() : LazyOptional.empty();
         }
 
         @Override

@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.forge.TesseractCaps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -182,7 +183,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             return itemHandler.side(side).cast();
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent() && (coverPresent instanceof CoverInput))
             return fluidHandler.side(side).cast();
-        else if (cap == TesseractGTCapability.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()
+        else if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent()
                 && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
             return energyHandler.side(side).cast();
         return LazyOptional.empty();

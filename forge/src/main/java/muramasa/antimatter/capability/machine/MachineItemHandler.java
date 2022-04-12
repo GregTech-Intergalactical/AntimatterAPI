@@ -27,6 +27,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
@@ -200,7 +201,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
             for (int i = 0; i < chargeables.getSlots(); i++) {
                 ItemStack item = chargeables.getStackInSlot(i);
                 if (!item.isEmpty()) {
-                    item.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).ifPresent(list::add);
+                    item.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).ifPresent(list::add);
                 }
             }
         }

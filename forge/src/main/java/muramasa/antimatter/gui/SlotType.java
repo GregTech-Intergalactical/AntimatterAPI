@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.forge.TesseractCaps;
 
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -40,7 +41,7 @@ public class SlotType<T extends Slot> implements IAntimatterObject {
     public static SlotType<SlotEnergy> ENERGY = new SlotType<>("energy", (type, gui, inv, i, d) -> new SlotEnergy(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> {
         if (t instanceof ICapabilityProvider) {
             ICapabilityProvider tile = (ICapabilityProvider) t;
-            return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(eh -> i.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY).map(inner -> ((inner.getInputVoltage() | inner.getOutputVoltage()) == (eh.getInputVoltage() | eh.getOutputVoltage()))).orElse(false)).orElse(false);
+            return tile.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).map(eh -> i.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).map(inner -> ((inner.getInputVoltage() | inner.getOutputVoltage()) == (eh.getInputVoltage() | eh.getOutputVoltage()))).orElse(false)).orElse(false);
         }
         return true;
     }, ContentEvent.ENERGY_SLOT_CHANGED, true, false);

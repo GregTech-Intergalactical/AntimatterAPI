@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 
@@ -115,7 +116,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
             if (canOutput(dir)) {
                 BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
                 if (tile == null) continue;
-                LazyOptional<IEnergyHandler> handle = tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
+                LazyOptional<IEnergyHandler> handle = tile.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
                 if (!handle.isPresent()) {
                     LazyOptional<IEnergyStorage> cap = tile.getCapability(CapabilityEnergy.ENERGY, dir.getOpposite());
                     if (!cap.isPresent()) continue;
