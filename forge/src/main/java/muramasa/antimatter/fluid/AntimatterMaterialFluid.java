@@ -2,6 +2,7 @@ package muramasa.antimatter.fluid;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
@@ -49,15 +50,15 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
         if (type == Data.GAS) {
             return FluidAttributes.builder(GAS_TEXTURE, GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((70 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
-                    .viscosity(200).density(-1000).gaseous().temperature(material.getGasTemperature());
+                    .viscosity(200).density(-1000).gaseous().temperature(MaterialTags.GAS_TEMPERATURE.getInt(material));
         } else if (type == Data.PLASMA) {
             return FluidAttributes.builder(PLASMA_TEXTURE, PLASMA_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((50 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000);
         } else {
-            return getDefaultAttributesBuilder(material.getLiquidTemperature() >= 400).color((155 << 24) | (material.getRGB() & 0x00ffffff))
+            return getDefaultAttributesBuilder(MaterialTags.LIQUID_TEMPERATURE.getInt(material) >= 400).color((155 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
-                    .viscosity(1000).density(1000).temperature(material.getLiquidTemperature());
+                    .viscosity(1000).density(1000).temperature(MaterialTags.LIQUID_TEMPERATURE.getInt(material));
         }
     }
 

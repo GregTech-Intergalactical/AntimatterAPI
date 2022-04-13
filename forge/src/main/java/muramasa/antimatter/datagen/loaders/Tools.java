@@ -20,9 +20,9 @@ import java.util.function.Function;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.MaterialTag.FLINT;
-import static muramasa.antimatter.material.MaterialTag.HANDLE;
-import static muramasa.antimatter.material.MaterialTag.RUBBERTOOLS;
+import static muramasa.antimatter.material.MaterialTags.FLINT;
+import static muramasa.antimatter.material.MaterialTags.HANDLE;
+import static muramasa.antimatter.material.MaterialTags.RUBBERTOOLS;
 import static muramasa.antimatter.recipe.RecipeBuilders.*;
 
 public class Tools {

@@ -26,8 +26,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.MaterialTag.HANDLE;
-import static muramasa.antimatter.material.MaterialTag.METAL;
+import static muramasa.antimatter.material.MaterialTags.HANDLE;
+import static muramasa.antimatter.material.MaterialTags.METAL;
 
 public class Material implements ISharedAntimatterObject {
 
@@ -45,22 +45,6 @@ public class Material implements ISharedAntimatterObject {
      **/
     private Element element;
     private String chemicalFormula = null;
-
-    /**
-     * Solid Members
-     **/
-    private int meltingPoint, blastFurnaceTemp, miningLevel = 0;
-    private boolean needsBlastFurnace;
-
-    /**
-     * Gem Members
-     **/
-    private boolean transparent;
-
-    /**
-     * Fluid/Gas/Plasma Members
-     **/
-    private int fuelPower, liquidTemperature, gasTemperature;
 
     /**
      * Tool Members
@@ -86,8 +70,6 @@ public class Material implements ISharedAntimatterObject {
     /**
      * Processing Members
      **/
-    private int oreMulti = 1, smeltingMulti = 1, byProductMulti = 1;
-    private Material smeltInto, directSmeltInto, arcSmeltInto, macerateInto;
     private final List<MaterialStack> processInto = new ObjectArrayList<>();
     private final List<Material> byProducts = new ObjectArrayList<>();
 
@@ -96,7 +78,13 @@ public class Material implements ISharedAntimatterObject {
         this.id = id;
         this.rgb = rgb;
         this.set = set;
-        this.smeltInto = directSmeltInto = arcSmeltInto = macerateInto = this;
+        MaterialTags.ORE_MULTI.add(this, 1);
+        MaterialTags.SMELTING_MULTI.add(this, 1);
+        MaterialTags.BY_PRODUCT_MULTI.add(this, 1);
+        MaterialTags.SMELT_INTO.add(this, this);
+        MaterialTags.DIRECT_SMELT_INTO.add(this, this);
+        MaterialTags.ARC_SMELT_INTO.add(this, this);
+        MaterialTags.MACERATE_INTO.add(this, this);
         if (modIds != null && modIds.length > 0) {
             for (String modId : modIds) {
                 if (!AntimatterAPI.isModLoaded(modId)) {
@@ -139,7 +127,7 @@ public class Material implements ISharedAntimatterObject {
     public Material asDust(int meltingPoint, IMaterialTag... tags) {
         flags(DUST, DUST_SMALL, DUST_TINY);
         flags(tags);
-        this.meltingPoint = meltingPoint;
+        MaterialTags.MELTING_POINT.add(this, meltingPoint);
         if (meltingPoint > 295) {
 //            asFluid();//TODO disabled due to Sodium having a fluid
         }
@@ -153,8 +141,10 @@ public class Material implements ISharedAntimatterObject {
     public Material asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
         asDust(meltingPoint, tags);
         flags(INGOT, NUGGET, BLOCK).asFluid(); //TODO: Shall we generate blocks for every solid?
-        this.blastFurnaceTemp = blastFurnaceTemp;
-        this.needsBlastFurnace = blastFurnaceTemp >= 1000;
+        MaterialTags.BLAST_FURNACE_TEMP.add(this, blastFurnaceTemp);
+        if (blastFurnaceTemp >= 1000){
+            flags(MaterialTags.NEEDS_BLAST_FURNACE);
+        }
         if (blastFurnaceTemp > 1750) {
             flags(INGOT_HOT);
         }
@@ -204,8 +194,7 @@ public class Material implements ISharedAntimatterObject {
         asDust(tags);
         flags(GEM, BLOCK);
         if (transparent) {
-            this.transparent = true;
-            flags(PLATE, LENS, GEM_BRITTLE, GEM_POLISHED);
+            flags(MaterialTags.TRANSPARENT, PLATE, LENS, GEM_BRITTLE, GEM_POLISHED);
         }
         return this;
     }
@@ -221,13 +210,14 @@ public class Material implements ISharedAntimatterObject {
     }
 
     public Material asFluid(int fuelPower) {
+        int meltingPoint = this.has(MaterialTags.MELTING_POINT) ? MaterialTags.MELTING_POINT.getInt(this) : 295;
         return asFluid(fuelPower, Math.max(meltingPoint, 295));
     }
 
     public Material asFluid(int fuelPower, int temp) {
         flags(LIQUID);
-        this.fuelPower = fuelPower;
-        this.liquidTemperature = temp;
+        MaterialTags.FUEL_POWER.add(this, fuelPower);
+        MaterialTags.LIQUID_TEMPERATURE.add(this, temp);
         return this;
     }
 
@@ -236,13 +226,14 @@ public class Material implements ISharedAntimatterObject {
     }
 
     public Material asGas(int fuelPower) {
+        int meltingPoint = this.has(MaterialTags.MELTING_POINT) ? MaterialTags.MELTING_POINT.getInt(this) : 295;
         return asGas(fuelPower, Math.max(meltingPoint, 295));
     }
 
     public Material asGas(int fuelPower, int temp) {
         flags(GAS);
-        this.gasTemperature = temp;
-        this.fuelPower = fuelPower;
+        MaterialTags.FUEL_POWER.add(this, fuelPower);
+        MaterialTags.GAS_TEMPERATURE.add(this, temp);
         return this;
     }
 
@@ -257,7 +248,7 @@ public class Material implements ISharedAntimatterObject {
     }
 
     public Material harvestLevel(int harvestLevel) {
-        this.miningLevel = harvestLevel;
+        MaterialTags.MINING_LEVEL.add(this, harvestLevel);
         return this;
     }
 
@@ -273,7 +264,7 @@ public class Material implements ISharedAntimatterObject {
         this.toolSpeed = toolSpeed;
         this.toolDurability = toolDurability;
         this.toolQuality = toolQuality;
-        this.miningLevel = toolQuality - 1;
+        MaterialTags.MINING_LEVEL.add(this, toolQuality - 1);
         this.toolEnchantment = toolEnchantment;
         if (toolTypes.length > 0) {
             this.toolTypes= Arrays.asList(toolTypes);
@@ -465,32 +456,6 @@ public class Material implements ISharedAntimatterObject {
     }
 
     /**
-     * Solid Getters
-     **/
-    public int getMeltingPoint() {
-        return meltingPoint;
-    }
-
-    public int getBlastTemp() {
-        return blastFurnaceTemp;
-    }
-
-    public boolean needsBlastFurnace() {
-        return needsBlastFurnace;
-    }
-
-    public int getMiningLevel() {
-        return miningLevel;
-    }
-
-    /**
-     * Gem Getters
-     **/
-    public boolean isTransparent() {
-        return transparent;
-    }
-
-    /**
      * Tool Getters
      **/
     public float getToolDamage() {
@@ -584,99 +549,43 @@ public class Material implements ISharedAntimatterObject {
         return PLASMA.get().get(this, amount);
     }
 
-    public int getLiquidTemperature() {
-        return liquidTemperature;
-    }
-
-
-    public int getGasTemperature() {
-        return gasTemperature;
-    }
-
-    public int getFuelPower() {
-        return fuelPower;
-    }
-
     /**
      * Processing Getters/Setters
      **/
-    public int getOreMulti() {
-        return oreMulti;
-    }
-
-    public int getSmeltingMulti() {
-        return smeltingMulti;
-    }
-
-    public int getByProductMulti() {
-        return byProductMulti;
-    }
 
     public Material setOreMulti(int multi) {
-        oreMulti = multi;
+        MaterialTags.ORE_MULTI.add(this, multi);
         return this;
     }
 
     public Material setSmeltingMulti(int multi) {
-        smeltingMulti = multi;
+        MaterialTags.SMELTING_MULTI.add(this, multi);
         return this;
     }
 
     public Material setByProductMulti(int multi) {
-        byProductMulti = multi;
+        MaterialTags.BY_PRODUCT_MULTI.add(this, multi);
         return this;
     }
 
-    public Material getSmeltInto() {
-        return smeltInto;
-    }
-
-    public Material getDirectSmeltInto() {
-        return directSmeltInto;
-    }
-
-    public Material getArcSmeltInto() {
-        return arcSmeltInto;
-    }
-
-    public Material getMacerateInto() {
-        return macerateInto;
-    }
-
     public Material setSmeltInto(Material m) {
-        smeltInto = m;
+        MaterialTags.SMELT_INTO.add(this, m);
         return this;
     }
 
     public Material setDirectSmeltInto(Material m) {
-        directSmeltInto = m;
+        MaterialTags.DIRECT_SMELT_INTO.add(this, m);
         return this;
     }
 
     public Material setArcSmeltInto(Material m) {
-        arcSmeltInto = m;
+        MaterialTags.ARC_SMELT_INTO.add(this, m);
         return this;
     }
 
     public Material setMacerateInto(Material m) {
-        macerateInto = m;
+        MaterialTags.MACERATE_INTO.add(this, m);
         return this;
-    }
-
-    public boolean hasSmeltInto() {
-        return smeltInto != this;
-    }
-
-    public boolean hasDirectSmeltInto() {
-        return directSmeltInto != this;
-    }
-
-    public boolean hasArcSmeltInto() {
-        return arcSmeltInto != this;
-    }
-
-    public boolean hasMacerateInto() {
-        return macerateInto != this;
     }
 
     public List<MaterialStack> getProcessInto() {

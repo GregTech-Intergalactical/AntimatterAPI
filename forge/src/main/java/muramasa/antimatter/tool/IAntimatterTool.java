@@ -1,5 +1,6 @@
 package muramasa.antimatter.tool;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
@@ -15,6 +16,9 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -40,6 +44,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
 import net.minecraftforge.common.extensions.IForgeItem;
 import tesseract.api.capability.TesseractGTCapability;
@@ -199,16 +204,16 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     @SuppressWarnings("rawtypes")
-    default InteractionResult onGenericHighlight(Player player, HighlightBlock ev) {
+    default InteractionResult onGenericHighlight(Player player, LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource) {
         InteractionResult result = InteractionResult.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
             if (!(b instanceof IItemHighlight)) continue;
-            InteractionResult type = ((IItemHighlight) b).onDrawHighlight(player, ev);
+            InteractionResult type = ((IItemHighlight) b).onDrawHighlight(player, levelRenderer, camera, target, partialTicks, poseStack, multiBufferSource);
             if (type != InteractionResult.SUCCESS) {
                 result = type;
             } else {
-                ev.setCanceled(true);
+                return InteractionResult.FAIL;
             }
         }
         return result;

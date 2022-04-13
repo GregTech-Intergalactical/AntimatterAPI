@@ -1,7 +1,7 @@
 package muramasa.antimatter.pipe.types;
 
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialTag;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.pipe.BlockFluidPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
@@ -21,7 +21,7 @@ public class FluidPipe<T extends FluidPipe<T>> extends PipeType<T> {
         super(domain, material, TileEntityFluidPipe::new);
         this.maxTemp = maxTemp;
         this.gasProof = gasProof;
-        material.flags(MaterialTag.FLUIDPIPE);
+        material.flags(MaterialTags.FLUIDPIPE);
         sizes(PipeSize.TINY, PipeSize.SMALL, PipeSize.NORMAL, PipeSize.LARGE, PipeSize.HUGE);
     }
 

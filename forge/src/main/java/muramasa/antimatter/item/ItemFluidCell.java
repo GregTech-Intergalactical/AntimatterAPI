@@ -6,6 +6,7 @@ import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
@@ -84,7 +85,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
         });
         this.material = material;
         this.capacity = capacity;
-        this.maxTemp = material.getMeltingPoint();
+        this.maxTemp = MaterialTags.MELTING_POINT.getInt(material);
         this.stack = Fluids.EMPTY;
     }
 

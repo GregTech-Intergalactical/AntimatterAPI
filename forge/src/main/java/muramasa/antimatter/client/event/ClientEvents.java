@@ -79,7 +79,11 @@ public class ClientEvents {
         if (player.isCrouching() && type != Data.WRENCH && type != Data.ELECTRIC_WRENCH && type != Data.CROWBAR && type != Data.WIRE_CUTTER)
             return;
         //Perform highlight of wrench
-        InteractionResult res = item.onGenericHighlight(player, event);
+        InteractionResult res = item.onGenericHighlight(player, event.getLevelRenderer(), event.getCamera(), event.getTarget(), event.getPartialTicks(), event.getPoseStack(), event.getMultiBufferSource());
+        if (res == InteractionResult.FAIL) {
+            event.setCanceled(true);
+            return;
+        }
         if (res.shouldSwing()) {
             return;
         }

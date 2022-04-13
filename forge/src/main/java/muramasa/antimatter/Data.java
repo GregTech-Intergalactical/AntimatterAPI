@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.block.BlockProxy;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.block.BlockSurfaceRock;
@@ -23,7 +22,7 @@ import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
-import muramasa.antimatter.material.MaterialTag;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
 import muramasa.antimatter.material.MaterialTypeFluid;
@@ -273,7 +272,7 @@ public class Data {
     public static final AntimatterToolType WRENCH = new AntimatterToolType(Ref.ID, "wrench", 2, 2, 2, 1.5F, -2.8F, false).setUseSound(Ref.WRENCH).setOverlayLayers(0).setRepairability(false);
     public static final AntimatterToolType SAW = new AntimatterToolType(Ref.ID, "saw", 2, 2, 2, 2.0F, -2.8F, false).addEffectiveBlocks(Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE).setRepairability(false);
     public static final AntimatterToolType FILE = new AntimatterToolType(Ref.ID, "file", 2, 2, 2, -2.0F, -2.4F, false).setRepairability(false);
-    public static final AntimatterToolType CROWBAR = new AntimatterToolType(Ref.ID, "crowbar", 2, 10, 5, 1.0F, -2.0F, false).setUseSound(SoundEvents.ITEM_BREAK).setSecondaryRequirement(MaterialTag.RUBBERTOOLS).setRepairability(false);
+    public static final AntimatterToolType CROWBAR = new AntimatterToolType(Ref.ID, "crowbar", 2, 10, 5, 1.0F, -2.0F, false).setUseSound(SoundEvents.ITEM_BREAK).setSecondaryRequirement(MaterialTags.RUBBERTOOLS).setRepairability(false);
     public static final AntimatterToolType DRILL = new AntimatterToolType(Ref.ID, "drill", 2, 2, 10, 3.0F, -3.0F, false).setType(PICKAXE).setUseAction(UseAnim.BLOCK).setPowered(100000, 1, 2, 3).setUseSound(Ref.DRILL).addTags("pickaxe", "shovel").addEffectiveMaterials(ICE_SOLID, net.minecraft.world.level.material.Material.METAL, net.minecraft.world.level.material.Material.STONE, HEAVY_METAL, PISTON, net.minecraft.world.level.material.Material.DIRT, CLAY, net.minecraft.world.level.material.Material.SAND).setRepairability(false);
     public static final AntimatterToolType SOFT_HAMMER = new AntimatterToolType(Ref.ID, "soft_hammer", 2, 2, 2, 1.0F, -3.0F, false).setRepairability(false);//.setUseSound();
     public static final AntimatterToolType SCREWDRIVER = new AntimatterToolType(Ref.ID, "screwdriver", 2, 2, 2, 0.0F, -1.0F, false).setUseSound(Ref.WRENCH).setRepairability(false);
@@ -281,7 +280,7 @@ public class Data {
     public static final AntimatterToolType WIRE_CUTTER = new AntimatterToolType(Ref.ID, "wire_cutter", 5, 3, 2, 0.0F, -1.5F, false).setUseSound(SoundEvents.SHEEP_SHEAR).addEffectiveMaterials(WOOL, SPONGE, WEB, CLOTH_DECORATION).setRepairability(false);
     public static final AntimatterToolType BRANCH_CUTTER = new AntimatterToolType(Ref.ID, "branch_cutter", 1, 3, 2, 0.0F, -1.5F, false).addTags("grafter").addEffectiveMaterials(LEAVES).setHasContainer(false);
     public static final AntimatterToolType KNIFE = new AntimatterToolType(Ref.ID, "knife", 2, 2, 5, 2.1F, -2.0F, false).setToolClass(MaterialSword.class).addEffectiveBlocks(Blocks.COBWEB).setRepairability(false);
-    public static final AntimatterToolType PLUNGER = new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F, false).setUseSound(SoundEvents.BUCKET_EMPTY).setPrimaryRequirement(MaterialTag.RUBBERTOOLS).setRepairability(false);
+    public static final AntimatterToolType PLUNGER = new AntimatterToolType(Ref.ID, "plunger", 5, 5, 10, 0.0F, -2.9F, false).setUseSound(SoundEvents.BUCKET_EMPTY).setPrimaryRequirement(MaterialTags.RUBBERTOOLS).setRepairability(false);
     public static final AntimatterToolType CHAINSAW = new AntimatterToolType(Ref.ID, "chainsaw", 2, 1, 5, 3.0F, -2.0F, false).setUseAction(UseAnim.BLOCK).setPowered(100000, 1, 2, 3).addEffectiveMaterials(WOOD, PLANT, REPLACEABLE_PLANT, BAMBOO, LEAVES).addTags("axe", "saw");
     public static final AntimatterToolType ELECTRIC_WRENCH = new AntimatterToolType(Ref.ID, "electric_wrench", WRENCH).setTag(WRENCH).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).addTags("wrench");
     public static final AntimatterToolType ELECTRIC_SCREWDRIVER = new AntimatterToolType(Ref.ID, "electric_screwdriver", SCREWDRIVER).setTag(SCREWDRIVER).setPowered(100000, 1, 2, 3).setUseSound(Ref.WRENCH).setOverlayLayers(2);
@@ -305,7 +304,7 @@ public class Data {
     public static Material Bone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "bone", 0xb3b3b3, DULL)).addHandleStat(12, 0.0F);
     public static Material Wood = AntimatterAPI.register(Material.class, new Material(Ref.ID, "wood", 0x643200, TextureSet.WOOD)).asDust(PLATE).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), SOFT_HAMMER).addHandleStat(12, 0.0F);
     public static Material Blaze = AntimatterAPI.register(Material.class, new Material(Ref.ID, "blaze", 0xffc800, NONE)).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
-    public static Material Flint = AntimatterAPI.register(Material.class, new Material(Ref.ID, "flint", 0x002040, FLINT)).asDust(GEM, MaterialTag.FLINT).addTools(1.25F, 2.5F, 128, 1, of(Enchantments.FIRE_ASPECT, 1), PICKAXE, AXE, SHOVEL, SWORD, HOE, MORTAR, KNIFE);
+    public static Material Flint = AntimatterAPI.register(Material.class, new Material(Ref.ID, "flint", 0x002040, FLINT)).asDust(GEM, MaterialTags.FLINT).addTools(1.25F, 2.5F, 128, 1, of(Enchantments.FIRE_ASPECT, 1), PICKAXE, AXE, SHOVEL, SWORD, HOE, MORTAR, KNIFE);
 
     public static Material Charcoal = AntimatterAPI.register(Material.class, new Material(Ref.ID, "charcoal", 0x644646, LIGNITE)).asDust(BLOCK);
     public static Material Coal = AntimatterAPI.register(Material.class, new Material(Ref.ID, "coal", 0x464646, LIGNITE)).asGemBasic(false).asOre(0, 2, true, ORE_STONE);
