@@ -10,21 +10,18 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import tesseract.api.Controller;
 import tesseract.api.GraphWrapper;
 import tesseract.api.ITickingController;
 import tesseract.api.capability.ITransactionModifier;
-import tesseract.api.capability.TesseractGTCapability;
-import tesseract.api.gt.EnergyTileWrapper;
-import tesseract.api.gt.IEnergyHandler;
-import tesseract.graph.*;
+import tesseract.graph.Cache;
+import tesseract.graph.Graph;
+import tesseract.graph.INode;
+import tesseract.graph.NodeCache;
 import tesseract.util.Pos;
 
 import java.util.List;
-import java.util.Map;
 
 public class HeatController extends Controller<IHeatHandler.HeatTransaction,IHeatPipe,IHeatHandler> {
 

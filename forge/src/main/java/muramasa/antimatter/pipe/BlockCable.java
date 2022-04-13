@@ -87,7 +87,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         if (this.insulated) return;
         if (entityIn instanceof LivingEntity entity) {
             if (worldIn.getBlockEntity(pos) instanceof TileEntityCable cable) {
-                if (Tesseract.GT_ENERGY.getController(worldIn, pos.asLong()) instanceof GTController c) {
+                if (Tesseract.getGT_ENERGY().getController(worldIn, pos.asLong()) instanceof GTController c) {
                     if (c.cableIsActive.contains(pos.asLong())) {
                         entity.hurt(DamageSource.GENERIC, this.getType().getTier().getIntegerId());
                     }
@@ -105,7 +105,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
     @Override
     public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         if (world.isClientSide) return info;
-        ITickingController<?, ?, ?> controller = Tesseract.GT_ENERGY.getController(world, pos.asLong());
+        ITickingController<?, ?, ?> controller = Tesseract.getGT_ENERGY().getController(world, pos.asLong());
         if (controller != null) controller.getInfo(pos.asLong(), info);
         return info;
     }

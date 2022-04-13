@@ -8,16 +8,22 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -26,6 +32,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -63,9 +70,9 @@ public class CommonEvents {
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event){
         BlockState placedOff = event.getPlacedAgainst();
         if (placedOff.getBlock() instanceof BlockPipe && !(event.getPlacedBlock().getBlock() instanceof BlockPipe)){
-            if (event.getEntity() instanceof PlayerEntity && !event.getEntity().isCrouching()){
-                TileEntity pipe = event.getWorld().getBlockEntity(event.getPos().relative(event.getEntity().getDirection()));
-                if (pipe instanceof TileEntityPipe && event.getPlacedBlock().getBlock().hasTileEntity(event.getPlacedBlock())){
+            if (event.getEntity() instanceof Player && !event.getEntity().isCrouching()){
+                BlockEntity pipe = event.getWorld().getBlockEntity(event.getPos().relative(event.getEntity().getDirection()));
+                if (pipe instanceof TileEntityPipe && event.getPlacedBlock().getBlock() instanceof EntityBlock){
                     ((TileEntityPipe<?>)pipe).setConnection(event.getEntity().getDirection().getOpposite());
                 }
             }

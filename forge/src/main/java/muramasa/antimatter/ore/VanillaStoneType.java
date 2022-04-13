@@ -6,8 +6,8 @@ import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.texture.Texture;
-import net.minecraft.block.SoundType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 

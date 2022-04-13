@@ -32,6 +32,7 @@ import muramasa.antimatter.material.TextureSet;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.ore.VanillaStoneType;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.structure.BlockStateElement;
 import muramasa.antimatter.structure.StructureBuilder;

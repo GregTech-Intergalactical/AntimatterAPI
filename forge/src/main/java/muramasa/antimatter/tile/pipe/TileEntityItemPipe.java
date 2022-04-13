@@ -34,18 +34,18 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
 
     @Override
     protected void register() {
-        Tesseract.ITEM.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        Tesseract.getITEM().registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return Tesseract.ITEM.remove(getLevel(), getBlockPos().asLong());
+        return Tesseract.getITEM().remove(getLevel(), getBlockPos().asLong());
     }
 
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        Tesseract.ITEM.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        Tesseract.getITEM().blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override

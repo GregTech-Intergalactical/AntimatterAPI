@@ -15,6 +15,7 @@ import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.SubTag;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.Wire;
 import muramasa.antimatter.tool.IAntimatterTool;
