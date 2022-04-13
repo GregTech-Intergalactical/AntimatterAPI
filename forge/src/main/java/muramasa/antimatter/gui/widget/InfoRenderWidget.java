@@ -11,11 +11,11 @@ import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.Tesseract;
 import tesseract.api.ITickingController;
 import tesseract.api.fluid.FluidHolder;
 import tesseract.api.gt.GTController;
 import tesseract.api.item.ItemController;
-import tesseract.forge.TesseractImpl;
 
 import java.util.Set;
 
@@ -90,13 +90,13 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
             final long pos = pipe.getBlockPos().asLong();
             gui.syncLong(() -> {
-                ITickingController controller = TesseractImpl.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.getTotalVoltage();
             }, a -> this.voltAverage = a, SERVER_TO_CLIENT);
             gui.syncLong(() -> {
-                ITickingController controller = TesseractImpl.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.totalAmps();
@@ -108,7 +108,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 return gt.cableFrameAverage(pos);
             }, a -> this.cableAverage = a, SERVER_TO_CLIENT);*/
             gui.syncLong(() -> {
-                ITickingController controller = TesseractImpl.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = Tesseract.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.totalLoss();
@@ -135,13 +135,13 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
             final long pos = pipe.getBlockPos().asLong();
             gui.syncInt(() -> {
-                ITickingController controller = TesseractImpl.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = Tesseract.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0;
                 ItemController gt = (ItemController) controller;
                 return gt.getTransferred();
             }, a -> this.transferred = a, SERVER_TO_CLIENT);
             gui.syncInt(() -> {
-                ITickingController controller = TesseractImpl.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = Tesseract.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0;
                 ItemController gt = (ItemController) controller;
                 return gt.getCableTransferred(pipe.getBlockPos().asLong());

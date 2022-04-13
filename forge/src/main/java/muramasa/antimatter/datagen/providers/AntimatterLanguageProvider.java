@@ -31,12 +31,14 @@ import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
 import muramasa.antimatter.recipe.map.RecipeMap;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -104,26 +106,26 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     }
 
     protected void addTranslations() {
-        processTranslations(providerDomain, locale);
+        if (locale.startsWith("en")) english(providerDomain, locale);
         if (providerDomain.equals(Ref.ID)) processAntimatterTranslations();
     }
 
-    protected void processTranslations(String domain, String locale) {
-        if (!locale.startsWith("en")) return;
+    private String tryComponent(String lang, IAntimatterObject object, Supplier<String> otherwise) {
+        String component = object.getLang(lang);
+        if (component != null) {
+            return component;
+        }
+        return otherwise.get();
+    }
+
+    protected void english(String domain, String locale) {
         AntimatterAPI.all(ItemBasic.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemFluidCell.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(DebugScannerItem.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemCover.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemMultiTextureBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(Machine.class, domain).forEach(i -> {
-            Collection<Tier> tiers = i.getTiers();
-            if (i.has(MachineFlag.BASIC)) {
-                tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), lowerUnderscoreToUpperSpacedRotated(i.getId() + "_" + t.getId())));
-            } else {
-                add("machine." + i.getId(), lowerUnderscoreToUpperSpaced(i.getId()));
-            }
-        });
+        AntimatterAPI.all(Machine.class, domain).forEach(i -> add("machine." + i.getId(), i.getLang(locale)));
 
         AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
             if (t.getAntimatterToolType().isPowered()) {
@@ -164,9 +166,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             AntimatterAPI.all(BlockStoneStair.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
             AntimatterAPI.all(BlockStoneWall.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
             AntimatterAPI.all(AntimatterFluid.class).forEach(s -> {
-                add(s.getAttributes().getTranslationKey(), lowerUnderscoreToUpperSpaced(s.getId()));
+                add(s.getAttributes().getTranslationKey(), tryComponent(locale, s, () -> lowerUnderscoreToUpperSpaced(s.getId())));
                 Item bucket = AntimatterAPI.get(Item.class, s.getId() + "_bucket", Ref.SHARED_ID);
-                if (bucket != null) add(bucket, lowerUnderscoreToUpperSpaced(s.getId()) + " Bucket");
+                if (bucket != null) add(bucket, tryComponent(locale, s, () -> lowerUnderscoreToUpperSpaced(s.getId())) + " Bucket");
             });
             AntimatterAPI.all(BlockStorage.class).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
             AntimatterAPI.all(MaterialItem.class).forEach(item -> {
@@ -178,6 +180,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(item, String.join("", "Purified Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == CRUSHED_CENTRIFUGED)
                     add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                else if (type == DUST_TINY)
+                    add(item, String.join("", "Tiny ", getLocalizedType(item.getMaterial()), " Dust"));
+                else if (type == DUST_SMALL)
+                    add(item, String.join("", "Small ", getLocalizedType(item.getMaterial()), " Dust"));
+                else if (type == DUST_IMPURE)
+                    add(item, String.join("", "Impure ", getLocalizedType(item.getMaterial()), " Dust"));
+                else if (type == DUST_PURE)
+                    add(item, String.join("", "Pure ", getLocalizedType(item.getMaterial()), " Dust"));
                 else {
                     String[] split = getLocalizedMaterialType(type);
                     if (split.length > 1) {
@@ -207,6 +217,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("machine.power.capacity", "Capacity");
         add("generic.amp", "Amperage");
         add("antimatter.tooltip.formula", "Hold Shift to show formula.");
+        add("antimatter.tooltip.chemical_formula", "Formula");
+        add("antimatter.tooltip.mass", "Mass");
         add("antimatter.tooltip.more", "Hold Shift to show more information.");
         add("antimatter.tooltip.stacks", "Stacks");
         add("generic.tier", "Tier");

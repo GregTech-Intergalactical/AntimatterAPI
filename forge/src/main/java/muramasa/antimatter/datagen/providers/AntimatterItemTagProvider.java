@@ -137,7 +137,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
                 //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
             });
             AntimatterAPI.all(MaterialType.class, t -> {
-                t.getOVERRIDES().forEach((m, i) -> {
+                t.getReplacements().forEach((m, i) -> {
                     this.tag(t.getMaterialTag((Material) m)).add(i).replace(replace);
                     this.tag(t.getTag()).add(i).replace(replace);
                 });

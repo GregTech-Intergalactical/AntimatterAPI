@@ -31,7 +31,7 @@ import static muramasa.antimatter.machine.MachineFlag.ITEM;
 public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends TileEntityBasicMultiMachine<T> implements IInfoRenderer<InfoRenderWidget.MultiRenderWidget> {
 
     protected long EUt;
-    protected List<IHeatHandler> HEAT_HANDLERS;
+    protected List<IHeatHandler> heatHandlers = Collections.emptyList();
 
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
@@ -45,6 +45,10 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         if (type.has(FLUID)) {
             fluidHandler.set(() -> new MultiMachineFluidHandler<>((T) this));
         }
+    }
+
+    public List<IHeatHandler> getHeatHandlers() {
+        return heatHandlers;
     }
 
     @Override
@@ -67,18 +71,16 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         this.fluidHandler.ifPresent(handle -> {
             ((MultiMachineFluidHandler<T>) handle).onStructureBuild();
         });
-        this.HEAT_HANDLERS = this.result.components.get("components").stream().map(IComponentHandler::getHeatHandler).filter(LazyOptional::isPresent).map(t -> t.resolve().get()).toList();
+        this.heatHandlers = this.result.components.get("components").stream().map(IComponentHandler::getHeatHandler).filter(LazyOptional::isPresent).map(t -> t.resolve().get()).toList();
     }
 
     @Override
     public void onStructureInvalidated() {
-        this.result.components.forEach((k, v) -> v.forEach(c -> {
-            c.onStructureInvalidated(this);
-        }));
+        this.result.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this)));
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler<T>) handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler<T>) handle).invalidate());
         this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler<T>) handle).invalidate());
-        this.HEAT_HANDLERS = Collections.emptyList();
+        this.heatHandlers = Collections.emptyList();
     }
 
     @Override

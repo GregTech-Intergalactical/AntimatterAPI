@@ -148,7 +148,7 @@ public class Data {
     public static MaterialType<?> TOOLS = new MaterialType<>("tools", 1, false, -1).nonGen();
     public static MaterialType<?> ARMOR = new MaterialType<>("armor", 1, false, -1).nonGen();
 
-    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)).addHandleStat(0, 0.0F));
+    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F));
 
     //Vanilla Stone Materials
     public static Material Stone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F));
@@ -173,11 +173,11 @@ public class Data {
 
     public static StoneType STONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE));
 
-    public static StoneType GRANITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "granite", Granite, new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.GRANITE));
-    public static StoneType DIORITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DIORITE));
-    public static StoneType ANDESITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.ANDESITE));
-    public static StoneType DEEPSLATE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "deepslate", Deepslate, new Texture("minecraft", "block/deepslate"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.DEEPSLATE));
-    public static StoneType TUFF = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "tuff", Tuff, new Texture("minecraft", "block/tuff"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || muramasa.antimatter.Ref.debugStones).setState(Blocks.TUFF));
+    public static StoneType GRANITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "granite", Granite, new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.GRANITE));
+    public static StoneType DIORITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.DIORITE));
+    public static StoneType ANDESITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.ANDESITE));
+    public static StoneType DEEPSLATE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "deepslate", Deepslate, new Texture("minecraft", "block/deepslate"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.DEEPSLATE));
+    public static StoneType TUFF = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "tuff", Tuff, new Texture("minecraft", "block/tuff"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.TUFF));
 
     public static StoneType GRAVEL = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "gravel", Gravel, new Texture("minecraft", "block/gravel"), SoundType.GRAVEL, false).setState(Blocks.GRAVEL).setGravity(true).setBlockMaterial(net.minecraft.world.level.material.Material.SAND).setHardnessAndResistance(0.6F).setRequiresTool(false).setType(BlockTags.MINEABLE_WITH_SHOVEL));
     public static StoneType DIRT = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "dirt", Dirt, new Texture("minecraft", "block/dirt"), SoundType.GRAVEL, false).setState(Blocks.DIRT).setBlockMaterial(net.minecraft.world.level.material.Material.DIRT).setHardnessAndResistance(0.5F).setRequiresTool(false).setType(BlockTags.MINEABLE_WITH_SHOVEL));
@@ -385,34 +385,37 @@ public class Data {
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
 
-        NUGGET.forceOverride(Iron, Items.IRON_NUGGET);
-        NUGGET.forceOverride(Gold, Items.GOLD_NUGGET);
-        INGOT.forceOverride(Iron, Items.IRON_INGOT);
-        INGOT.forceOverride(Gold, Items.GOLD_INGOT);
-        INGOT.forceOverride(Netherite, Items.NETHERITE_INGOT);
-        DUST.forceOverride(Redstone, Items.REDSTONE);
-        DUST.forceOverride(Glowstone, Items.GLOWSTONE_DUST);
-        DUST.forceOverride(Blaze, Items.BLAZE_POWDER);
-        DUST.forceOverride(Sugar, Items.SUGAR);
-        GEM.forceOverride(Flint, Items.FLINT);
-        GEM.forceOverride(Diamond, Items.DIAMOND);
-        GEM.forceOverride(Emerald, Items.EMERALD);
-        GEM.forceOverride(Lapis, Items.LAPIS_LAZULI);
-        GEM.forceOverride(Coal, Items.COAL);
-        GEM.forceOverride(Charcoal, Items.CHARCOAL);
-        GEM.forceOverride(EnderEye, Items.ENDER_EYE);
-        GEM.forceOverride(EnderPearl, Items.ENDER_PEARL);
+        NUGGET.replacement(Iron, Items.IRON_NUGGET);
+        NUGGET.replacement(Gold, Items.GOLD_NUGGET);
+        INGOT.replacement(Iron, Items.IRON_INGOT);
+        INGOT.replacement(Gold, Items.GOLD_INGOT);
+        INGOT.replacement(Netherite, Items.NETHERITE_INGOT);
+        INGOT.replacement(Copper, Items.COPPER_INGOT);
 
-        ROD.forceOverride(Blaze, Items.BLAZE_ROD);
-        ROD.forceOverride(Bone, Items.BONE);
-        ROD.forceOverride(Wood, Items.STICK);
 
-        BLOCK.forceOverride(Iron, Items.IRON_BLOCK);
-        BLOCK.forceOverride(Gold, Items.GOLD_BLOCK);
-        BLOCK.forceOverride(Diamond, Items.DIAMOND_BLOCK);
-        BLOCK.forceOverride(Emerald, Items.EMERALD_BLOCK);
-        BLOCK.forceOverride(Lapis, Items.LAPIS_BLOCK);
-        BLOCK.forceOverride(Netherite, Items.NETHERITE_BLOCK);
+        DUST.replacement(Redstone, Items.REDSTONE);
+        DUST.replacement(Glowstone, Items.GLOWSTONE_DUST);
+        DUST.replacement(Blaze, Items.BLAZE_POWDER);
+        DUST.replacement(Sugar, Items.SUGAR);
+        GEM.replacement(Flint, Items.FLINT);
+        GEM.replacement(Diamond, Items.DIAMOND);
+        GEM.replacement(Emerald, Items.EMERALD);
+        GEM.replacement(Lapis, Items.LAPIS_LAZULI);
+        GEM.replacement(Coal, Items.COAL);
+        GEM.replacement(Charcoal, Items.CHARCOAL);
+        GEM.replacement(EnderEye, Items.ENDER_EYE);
+        GEM.replacement(EnderPearl, Items.ENDER_PEARL);
+
+        ROD.replacement(Blaze, Items.BLAZE_ROD);
+        ROD.replacement(Bone, Items.BONE);
+        ROD.replacement(Wood, Items.STICK);
+
+        BLOCK.replacement(Iron, Items.IRON_BLOCK);
+        BLOCK.replacement(Gold, Items.GOLD_BLOCK);
+        BLOCK.replacement(Diamond, Items.DIAMOND_BLOCK);
+        BLOCK.replacement(Emerald, Items.EMERALD_BLOCK);
+        BLOCK.replacement(Lapis, Items.LAPIS_BLOCK);
+        BLOCK.replacement(Netherite, Items.NETHERITE_BLOCK);
 
         ROTOR.dependents(PLATE, SCREW, RING);
         SCREW.dependents(BOLT);
@@ -432,7 +435,7 @@ public class Data {
     }
 
     public static void postInit() {
-        LIQUID.all().stream().filter(l -> !l.getId().equals("water") || !l.getId().equals("lava")).forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, LIQUID)));
+        LIQUID.all().stream().filter(l -> !l.getId().equals("water") && !l.getId().equals("lava")).forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, LIQUID)));
         GAS.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, GAS)));
         PLASMA.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, PLASMA)));
         AntimatterAPI.all(Material.class, Material::setChemicalFormula);

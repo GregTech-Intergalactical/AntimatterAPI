@@ -7,17 +7,13 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,7 +35,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     protected final Map<MaterialType<?>, TagKey<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
     private boolean hidden = false;
-    protected final BiMap<Material, Item> OVERRIDES = HashBiMap.create();
+    protected final BiMap<Material, Item> replacements = HashBiMap.create();
     protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
     //since we have two instances stored in antimatter.
     protected boolean hasRegistered;
@@ -75,8 +71,8 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     /**
      * Forces these tags to not generate, assuming they have a replacement.
      */
-    public void forceOverride(Material mat, Item replacement) {
-        OVERRIDES.put(mat, replacement);
+    public void replacement(Material mat, Item replacement) {
+        replacements.put(mat, replacement);
         this.add(mat);
         AntimatterAPI.addReplacement(getMaterialTag(mat), replacement);
     }
@@ -87,7 +83,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
             if (item.getType() == this) return item.getMaterial();
             return null;
         }
-        return OVERRIDES.inverse().get(stack.getItem());
+        return replacements.inverse().get(stack.getItem());
     }
 
     public boolean hidden() {
@@ -172,19 +168,19 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         return getId();
     }
 
-    public BiMap<Material, Item> getOVERRIDES() {
-        return OVERRIDES;
+    public BiMap<Material, Item> getReplacements() {
+        return replacements;
     }
 
-    private static ImmutableMap<Item, Material> tooltipCache;
+    public static ImmutableMap<Item, Tuple<MaterialType, Material>> tooltipCache;
 
     @OnlyIn(Dist.CLIENT)
     public static void buildTooltips() {
-        ImmutableMap.Builder<Item, Material> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<Item, Tuple<MaterialType, Material>> builder = ImmutableMap.builder();
         AntimatterAPI.all(MaterialType.class, t -> {
-            BiMap<Item, Material> map = t.getOVERRIDES().inverse();
+            BiMap<Item, Material> map = t.getReplacements().inverse();
             for (Map.Entry<Item, Material> entry : map.entrySet()) {
-                builder.put(entry.getKey(), entry.getValue());
+                builder.put(entry.getKey(), new Tuple<>(t, entry.getValue()));
             }
         });
         tooltipCache = builder.build();
@@ -195,16 +191,14 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     protected static void onTooltipAdd(final ItemTooltipEvent ev) {
         if (ev.getPlayer() == null) return;
         if (tooltipCache == null) return;
-        if (ev.getItemStack().getItem() instanceof MaterialItem) return;
-        if (ev.getItemStack().getItem().getRegistryName().getNamespace().equals(Ref.ID)) return;
-
-        Material mat = tooltipCache.get(ev.getItemStack().getItem());
-        if (mat == null) return;
-        if (!Screen.hasShiftDown()) {
-            ev.getToolTip().add(new TranslatableComponent("antimatter.tooltip.formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
-        } else {
-            ev.getToolTip().add(new TextComponent(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA));
+        var mat = tooltipCache.get(ev.getItemStack().getItem());
+        if (mat == null) {
+            if (ev.getItemStack().getItem() instanceof MaterialItem item) {
+                MaterialItem.addTooltipsForMaterialItems(ev.getItemStack(), item.material, item.type, ev.getPlayer().level, ev.getToolTip(), ev.getFlags());
+            }
+            return;
         }
+        MaterialItem.addTooltipsForMaterialItems(ev.getItemStack(), mat.getB(), mat.getA(), ev.getPlayer().level, ev.getToolTip(), ev.getFlags());
     }
 
     @Override

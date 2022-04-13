@@ -18,6 +18,7 @@ import tesseract.api.GraphWrapper;
 import tesseract.api.ITickingController;
 import tesseract.api.capability.ITransactionModifier;
 import tesseract.api.capability.TesseractGTCapability;
+import tesseract.api.gt.EnergyTileWrapper;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.graph.*;
 import tesseract.util.Pos;

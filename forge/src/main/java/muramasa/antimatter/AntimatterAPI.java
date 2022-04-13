@@ -3,7 +3,11 @@ package muramasa.antimatter;
 import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
@@ -14,7 +18,12 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
-import muramasa.antimatter.registration.*;
+import muramasa.antimatter.registration.AntimatterRegistration;
+import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
+import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +44,14 @@ import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -52,7 +68,6 @@ public final class AntimatterAPI {
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<ResourceLocation, Object> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
-
     private static final Map<String, Map<String, Class<?>>> CLASS_LOOKUP = new Object2ObjectOpenHashMap<>();
 
     private static RegistrationEvent PHASE = null;
@@ -140,32 +155,6 @@ public final class AntimatterAPI {
     }
 
     @Nullable
-    public static <T> T get(String className, String domain, String id) {
-        Map<String, Class<?>> map = CLASS_LOOKUP.get(domain);
-        if (map == null) return null;
-        Class<? extends T> clazz = (Class<? extends T>) map.get(className);
-        if (clazz == null) return null;
-        return get(clazz, id, domain);
-    }
-
-    public static <T> void all(String className, String domain, Consumer<T> consumer) {
-        Map<String, Class<?>> map = CLASS_LOOKUP.get(domain);
-        if (map == null) return;
-        Class<? extends T> clazz = (Class<? extends T>) map.get(className);
-        if (clazz == null) return;
-        if (domain == null) {
-            allInternal(clazz).forEach(consumer);
-        } else {
-            allInternal(clazz, domain).forEach(consumer);
-        }
-    }
-
-    @Nullable
-    public static <T> T get(String className, String id) {
-        return get(className, Ref.SHARED_ID, id);
-    }
-
-    @Nullable
     public static <T> T get(Class<T> c, String id, String domain) {
         T obj = getInternal(c, id, domain);
         if (obj == null) {
@@ -243,6 +232,32 @@ public final class AntimatterAPI {
             return inner != null && inner.left().isPresent();
         }
         return false;
+    }
+
+    @Nullable
+    public static <T> T get(String className, String domain, String id) {
+        Map<String, Class<?>> map = CLASS_LOOKUP.get(domain);
+        if (map == null) return null;
+        Class<? extends T> clazz = (Class<? extends T>) map.get(className);
+        if (clazz == null) return null;
+        return get(clazz, id, domain);
+    }
+
+    public static <T> void all(String className, String domain, Consumer<T> consumer) {
+        Map<String, Class<?>> map = CLASS_LOOKUP.get(domain);
+        if (map == null) return;
+        Class<? extends T> clazz = (Class<? extends T>) map.get(className);
+        if (clazz == null) return;
+        if (domain == null) {
+            allInternal(clazz).forEach(consumer);
+        } else {
+            allInternal(clazz, domain).forEach(consumer);
+        }
+    }
+
+    @Nullable
+    public static <T> T get(String className, String id) {
+        return get(className, Ref.SHARED_ID, id);
     }
 
     public static <T> List<T> all(Class<T> c) {
@@ -477,7 +492,7 @@ public final class AntimatterAPI {
     /**
      * COREMOD METHOD INSERTION: Runs every time when this is called:
      *
-     //  * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
+   //  * @see ServerWorld#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)
      */
     @SuppressWarnings("unused")
     public static void onNotifyBlockUpdate(Level world, BlockPos pos, BlockState oldState, BlockState newState,

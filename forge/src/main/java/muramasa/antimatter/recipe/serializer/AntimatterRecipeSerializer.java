@@ -108,8 +108,7 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
             if (obj.has("fluidTag")) {
                 ResourceLocation tagType = new ResourceLocation(obj.get("tag").getAsString());
                 int amount = obj.has("amount") ? obj.get("amount").getAsInt() : 1000;
-                FluidIngredient ing = FluidIngredient.of(tagType, amount);
-                return ing;
+                return FluidIngredient.of(tagType, amount);
             }
             ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(fluidName);

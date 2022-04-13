@@ -42,7 +42,7 @@ public class StructureCache {
             if ((flags & (1 << 0)) == 0) {
                 return;
             }
-            StructureCache.DimensionEntry entry = LOOKUP.get(world);
+            DimensionEntry entry = LOOKUP.get(world);
             if (entry == null) return;
             Object2BooleanMap<BlockPos> controllerPos = entry.get(pos);
             if (controllerPos != null && controllerPos.size() > 0) {

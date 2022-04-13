@@ -10,13 +10,11 @@ import java.util.Set;
 
 public class RecipeIngredientJS implements IngredientJS {
 
-    private IngredientJS sourceIngredient;
     private int count;
     private boolean nonConsume;
     private boolean ignoreNbt;
 
     private RecipeIngredientJS(IngredientJS source) {
-        this.sourceIngredient = source;
     }
 
     public static RecipeIngredientJS of(IngredientJS json) {
@@ -43,10 +41,15 @@ public class RecipeIngredientJS implements IngredientJS {
     }
 
     public RecipeIngredient into() {
-        RecipeIngredient r = RecipeIngredient.of(sourceIngredient.createVanillaIngredient(), count);
-        if (nonConsume) r.setNoConsume();
-        if (ignoreNbt) r.setIgnoreNbt();
-        return r;
+    //    RecipeIngredient r = RecipeIngredient.of(count, sourceIngredient.createVanillaIngredient().getItems());
+     //   if (nonConsume) r.setNoConsume();
+    //    if (ignoreNbt) r.setIgnoreNbt();
+        return null;
+    }
+
+    @Override
+    public boolean test(ItemStackJS itemStackJS) {
+        return true;
     }
 
     @Override
@@ -60,14 +63,5 @@ public class RecipeIngredientJS implements IngredientJS {
         return obj;
     }
 
-    @Override
-    public Set<ItemStackJS> getStacks() {
-        return sourceIngredient.getStacks();
-    }
-
-    @Override
-    public boolean test(ItemStackJS itemStackJS) {
-        return sourceIngredient.test(itemStackJS);
-    }
 }
 

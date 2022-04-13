@@ -5,7 +5,12 @@ import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.ingredient.IIngredient;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.material.*;
+import muramasa.antimatter.material.Element;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.material.MaterialTypeBlock;
+import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.material.TextureSet;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.openzen.zencode.java.ZenCodeType;
 

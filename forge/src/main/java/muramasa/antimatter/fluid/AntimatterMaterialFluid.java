@@ -3,6 +3,10 @@ package muramasa.antimatter.fluid;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.Utils;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -59,5 +63,17 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
 
     private static Block.Properties prepareProperties(MaterialType<?> type) {
         return getDefaultBlockProperties().lightLevel(s -> type == Data.PLASMA ? 15 : 0);
+    }
+
+
+    @Override
+    public String getLang(String lang) {
+        if (lang.equals(Language.DEFAULT)) {
+            if (this.getAttributes().isGaseous()) {
+                return Utils.lowerUnderscoreToUpperSpaced(material.getId()) + " Gas";
+            }
+            return "Liquid " + Utils.lowerUnderscoreToUpperSpaced(material.getId());
+        }
+        return super.getLang(lang);
     }
 }

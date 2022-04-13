@@ -222,13 +222,13 @@ public class AntimatterConfig {
 
             builder.push("Stone Layers");
 
-            STONE_LAYERS = builder.comment("Enable stone layers - Default: true")
+            STONE_LAYERS = builder.comment("Enable stone layers - Default: false")
                     .translation(Ref.ID + ".config.stone_layers")
-                    .define("STONE_LAYERS", true);
+                    .define("STONE_LAYERS", false);
 
-            STONE_LAYER_ORES = builder.comment("Enable stone layers having ores - Default: true")
+            STONE_LAYER_ORES = builder.comment("Enable stone layers having ores - Default: false")
                     .translation(Ref.ID + ".config.stone_layers_ores")
-                    .define("STONE_LAYER_ORES", true);
+                    .define("STONE_LAYER_ORES", false);
 
             STONE_LAYER_ROCK_CHANCE = builder.comment("Chance of stone layers having surface rocks - Default: 128")
                     .translation(Ref.ID + ".config.stone_layer_rock_chance")

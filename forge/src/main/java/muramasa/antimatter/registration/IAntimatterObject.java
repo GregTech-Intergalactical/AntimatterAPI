@@ -18,4 +18,13 @@ public interface IAntimatterObject {
     default ResourceLocation getLoc() {
         return new ResourceLocation(getDomain(), getId());
     }
+
+    /**
+     * Translates this AntimatterObject. Return null if there is no implementable translation.
+     * @param lang the language to provide for.
+     * @return a component to render.
+     */
+    default String getLang(String lang) {
+        return null;
+    }
 }

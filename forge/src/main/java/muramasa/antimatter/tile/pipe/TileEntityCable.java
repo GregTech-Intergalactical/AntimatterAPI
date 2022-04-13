@@ -18,12 +18,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
+import tesseract.Tesseract;
 import tesseract.api.capability.TesseractGTCapability;
-import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.GTHolder;
 import tesseract.api.gt.IGTCable;
 import tesseract.api.gt.IGTNode;
-import tesseract.forge.TesseractImpl;
 
 public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> implements IGTCable, Dispatch.Sided<IGTNode>, IInfoRenderer<InfoRenderWidget.TesseractGTWidget> {
 
@@ -47,23 +46,23 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     protected void register() {
-        TesseractImpl.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        Tesseract.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return TesseractImpl.GT_ENERGY.remove(getLevel(), getBlockPos().asLong());
+        return Tesseract.GT_ENERGY.remove(getLevel(), getBlockPos().asLong());
     }
 
     @Override
     protected Capability<?> getCapability() {
-        return TesseractCaps.ENERGY_HANDLER_CAPABILITY;
+        return TesseractGTCapability.ENERGY_HANDLER_CAPABILITY;
     }
 
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        TesseractImpl.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        Tesseract.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override
@@ -101,7 +100,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         if (!super.validate(dir)) return false;
         BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
-        return tile.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY, dir.getOpposite()).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
+        return tile.getCapability(TesseractGTCapability.ENERGY_HANDLER_CAPABILITY, dir.getOpposite()).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
     }
 
     @Override

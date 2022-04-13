@@ -61,8 +61,8 @@ import java.util.stream.Stream;
 
 public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObject, IRecipeMap {
 
-    public static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
-    public static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
+    private static final ItemStack[] EMPTY_ITEM = new ItemStack[0];
+    private static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
 
     private final ResourceLocation loc;
     private final B builder;
@@ -443,7 +443,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         List<AbstractMapIngredient> wr = items.get(index);
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
-            Either<List<Recipe>, RecipeMap.Branch> result = map.NODES.get(t);
+            Either<List<Recipe>, Branch> result = map.NODES.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
                 Recipe r = result.map(left -> {
@@ -528,7 +528,6 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
 
     public void reset() {
         this.RECIPES_TO_COMPILE.clear();
-        ;
     }
 
     public void resetCompiled() {
