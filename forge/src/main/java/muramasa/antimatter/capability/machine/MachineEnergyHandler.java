@@ -53,7 +53,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     protected boolean checkVoltage(GTTransaction.TransferData data) {
         if (data.getVoltage() > this.getInputVoltage()) {
-            Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.BREAK);
+            Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.Mode.DESTROY);
         }
         return true;
     }

@@ -112,10 +112,10 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
                 this.tag(BlockTags.STAIRS).add(b);
             });
             AntimatterAPI.all(BlockOreStone.class, s -> {
-                // String id = getConventionalMaterialType(MaterialType.ORE_STONE);
+                String id = "ore_stones/" + s.getMaterial().getId();
                 this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(s).replace(replace);
                 this.tag(Tags.Blocks.ORES).add(s);
-                // this.getBuilder(getForgeBlockTag(id)).add(s);
+                this.tag(getForgeBlockTag(id)).add(s);
             });
             AntimatterAPI.all(BlockStorage.class, block -> {
                 this.tag(block.getType().getTag()).add(block).replace(replace);

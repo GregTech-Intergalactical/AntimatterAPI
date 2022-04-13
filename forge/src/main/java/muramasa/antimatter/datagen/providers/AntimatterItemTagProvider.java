@@ -120,10 +120,10 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
                 }
                 this.copy(getBlockTag(new ResourceLocation(Ref.ID, id)), getItemTag(new ResourceLocation(Ref.ID, id)));
             });
-            // AntimatterAPI.all(BlockOreStone.class, domain, s -> {
-            // String id = s.getId().replaceAll("_stone_", "s/");
-            // this.copy(getBlockTag(new ResourceLocation(domain, id)), getItemTag(new ResourceLocation(domain, id)));
-            // });
+            AntimatterAPI.all(BlockOreStone.class, domain, s -> {
+             String id = "ore_stones/" + s.getMaterial().getId();
+             this.copy(getBlockTag(new ResourceLocation(domain, id)), getItemTag(new ResourceLocation(domain, id)));
+            });
             AntimatterAPI.all(BlockStorage.class, storage -> {
                 MaterialType<?> type = storage.getType();
                 String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());

@@ -173,9 +173,9 @@ public class Data {
 
     public static StoneType STONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE));
 
-    public static StoneType GRANITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "granite", Granite, new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.GRANITE));
-    public static StoneType DIORITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "diorite", Diorite, new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.DIORITE));
-    public static StoneType ANDESITE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "andesite", Andesite, new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.ANDESITE));
+    public static StoneType GRANITE = AntimatterAPI.register(StoneType.class, new VanillaStoneType(Ref.ID, "granite", Granite, "block/stone/", new Texture("minecraft", "block/granite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.GRANITE));
+    public static StoneType DIORITE = AntimatterAPI.register(StoneType.class, new VanillaStoneType(Ref.ID, "diorite", Diorite, "block/stone/", new Texture("minecraft", "block/diorite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.DIORITE));
+    public static StoneType ANDESITE = AntimatterAPI.register(StoneType.class, new VanillaStoneType(Ref.ID, "andesite", Andesite, "block/stone/", new Texture("minecraft", "block/andesite"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.ANDESITE));
     public static StoneType DEEPSLATE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "deepslate", Deepslate, new Texture("minecraft", "block/deepslate"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.DEEPSLATE));
     public static StoneType TUFF = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "tuff", Tuff, new Texture("minecraft", "block/tuff"), SoundType.STONE, AntimatterConfig.WORLD.VANILLA_STONE_GEN || Ref.debugStones).setState(Blocks.TUFF));
 

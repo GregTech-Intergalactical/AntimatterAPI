@@ -59,6 +59,19 @@ public class CommonEvents {
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onBlockPlace(BlockEvent.EntityPlaceEvent event){
+        BlockState placedOff = event.getPlacedAgainst();
+        if (placedOff.getBlock() instanceof BlockPipe && !(event.getPlacedBlock().getBlock() instanceof BlockPipe)){
+            if (event.getEntity() instanceof PlayerEntity && !event.getEntity().isCrouching()){
+                TileEntity pipe = event.getWorld().getBlockEntity(event.getPos().relative(event.getEntity().getDirection()));
+                if (pipe instanceof TileEntityPipe && event.getPlacedBlock().getBlock().hasTileEntity(event.getPlacedBlock())){
+                    ((TileEntityPipe<?>)pipe).setConnection(event.getEntity().getDirection().getOpposite());
+                }
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void onAnvilUpdated(AnvilUpdateEvent event) {
         ItemStack left = event.getLeft();
