@@ -5,6 +5,7 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -25,8 +26,8 @@ public class CobbleStoneType extends StoneType {
     }
 
     @Override
-    public void onRegistryBuild(IForgeRegistry<?> registry) {
-        if (registry == ForgeRegistries.BLOCKS) {
+    public void onRegistryBuild(RegistryType registry) {
+        if (registry == RegistryType.BLOCKS) {
             if (generateBlock) {
                 for (int i = 0; i < SUFFIXES.length; i++) {
                     if (i == 7) {

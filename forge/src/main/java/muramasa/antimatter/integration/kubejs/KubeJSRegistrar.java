@@ -11,6 +11,7 @@ import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
 import muramasa.antimatter.datagen.providers.AntimatterLanguageProvider;
 import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.registration.Side;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -43,7 +44,7 @@ public class KubeJSRegistrar extends AntimatterMod {
     }
 
     @Override
-    public void onRegistrationEvent(RegistrationEvent event, Dist side) {
+    public void onRegistrationEvent(RegistrationEvent event, Side side) {
 
     }
 

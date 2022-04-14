@@ -2,6 +2,7 @@ package muramasa.antimatter.mixin;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +14,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.checkerframework.checker.units.qual.A;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Collections;
@@ -38,8 +40,9 @@ public abstract class LeavesBlockMixin extends Block {
                 ServerLevel serverworld = builder.getLevel();
                 LootTable loottable = serverworld.getServer().getLootTables().get(resourcelocation);
                 ItemStack sapling = ItemStack.EMPTY;
-                if (ForgeRegistries.BLOCKS.containsKey(new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling")))) {
-                    sapling = new ItemStack(ForgeRegistries.BLOCKS.getValue(new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling"))));
+                ResourceLocation location = new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling"));
+                if (AntimatterPlatformUtils.blockExists(location.getNamespace(), location.getPath())) {
+                    sapling = new ItemStack(AntimatterPlatformUtils.getBlockFromId(location.getNamespace(), location.getPath()));
                 }
                 /*for (ItemStack stack1 : list){
                     if (stack1.getItem() instanceof BlockItem && ((BlockItem) stack1.getItem()).getBlock() instanceof SaplingBlock){

@@ -10,6 +10,7 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.tags.TagKey;
@@ -202,7 +203,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     }
 
     @Override
-    public void onRegistryBuild(IForgeRegistry<?> registry) {
+    public void onRegistryBuild(RegistryType registry) {
 
     }
 

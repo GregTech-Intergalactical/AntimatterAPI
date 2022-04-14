@@ -6,7 +6,9 @@ import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -67,8 +69,8 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, En
 
     @Override
     @SuppressWarnings("unchecked")
-    public void onRegistryBuild(IForgeRegistry<?> registry) {
-        if (registry == ForgeRegistries.BLOCK_ENTITIES) {
+    public void onRegistryBuild(RegistryType registry) {
+        if (registry == RegistryType.BLOCK_ENTITIES) {
             TYPE = new BlockEntityType<>((a,b) -> new TileEntityFakeBlock(this,a,b), Set.of(this), null).setRegistryName(new ResourceLocation(getDomain(), getId()));
             //((IForgeRegistry<BlockEntityType<?>>)registry).register(TYPE);
             AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), TYPE);
@@ -85,7 +87,7 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, En
         BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (tileentity instanceof TileEntityFakeBlock) {
             TileEntityFakeBlock fake = (TileEntityFakeBlock) tileentity;
-            ForgeRegistries.ITEMS.getValues().parallelStream().filter(t -> t.isCorrectToolForDrops(fake.getState())).findFirst().ifPresent(item -> {
+            AntimatterPlatformUtils.getAllItems().parallelStream().filter(t -> t.isCorrectToolForDrops(fake.getState())).findFirst().ifPresent(item -> {
                 builder.withParameter(LootContextParams.TOOL, new ItemStack(item));
             });
             return fake.getState().getDrops(builder);

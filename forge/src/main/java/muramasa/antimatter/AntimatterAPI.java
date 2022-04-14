@@ -18,12 +18,9 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
-import muramasa.antimatter.registration.AntimatterRegistration;
-import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
-import muramasa.antimatter.registration.IRegistryEntryProvider;
-import muramasa.antimatter.registration.ISharedAntimatterObject;
-import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.registration.*;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.NonNullSupplier;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -32,13 +29,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 
@@ -291,8 +283,7 @@ public final class AntimatterAPI {
     private static <T> Stream<T> allInternal(Class<T> c, @Nonnull String domain) {
         return allInternal(c)
                 .filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain)
-                        || o instanceof IForgeRegistryEntry && ((IForgeRegistryEntry<?>) o).getRegistryName() != null
-                        && ((IForgeRegistryEntry<?>) o).getRegistryName().getNamespace().equals(domain));
+                        || isRegistryEntry(o, domain));
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
@@ -375,10 +366,10 @@ public final class AntimatterAPI {
     public static void onRegistration(RegistrationEvent event) {
         PHASE = event;
         Antimatter.LOGGER.info("Registration event " + event);
-        Dist side = (FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer()) ? Dist.DEDICATED_SERVER
-                : Dist.CLIENT;
+        Side side = AntimatterPlatformUtils.isServer() ? Side.SERVER
+                : Side.CLIENT;
         if (!REGISTRATION_EVENTS_HANDLED.add(event)) {
-            if (ModLoadingContext.get().getActiveNamespace().equals(Ref.ID))
+            if (AntimatterPlatformUtils.getActiveNamespace().equals(Ref.ID))
                 return;
             throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
         }
@@ -403,7 +394,16 @@ public final class AntimatterAPI {
             INTERNAL_REGISTRAR = registrar;
         else if (registrar.isEnabled() || AntimatterConfig.MOD_COMPAT.ENABLE_ALL_REGISTRARS)
             registerInternal(IAntimatterRegistrar.class, registrar.getId(), registrar.getDomain(), registrar);
+        registerEventBus();
+    }
+
+    private static void registerEventBus(){
         FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
+    }
+
+    public static boolean isRegistryEntry(Object object, String domain){
+        return object instanceof IForgeRegistryEntry<?> r && r.getRegistryName() != null
+                && r.getRegistryName().getNamespace().equals(domain);
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {
@@ -420,13 +420,13 @@ public final class AntimatterAPI {
 
     public static void registerJEICategory(IRecipeMap map, GuiData gui, Tier tier, ResourceLocation model,
                                            boolean override) {
-        if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
+        if (isModLoaded(Ref.MOD_JEI) || isModLoaded(Ref.MOD_REI)) {
             AntimatterJEIPlugin.registerCategory(map, gui, tier, model, override);
         }
     }
 
     public static void registerJEICategory(IRecipeMap map, GuiData gui, Machine<?> machine, boolean override) {
-        if (ModList.get().isLoaded(Ref.MOD_JEI) || ModList.get().isLoaded(Ref.MOD_REI)) {
+        if (isModLoaded(Ref.MOD_JEI) || isModLoaded(Ref.MOD_REI)) {
             AntimatterJEIPlugin.registerCategory(map, gui, machine.getFirstTier(),
                     new ResourceLocation(machine.getDomain(), machine.getId()), override);
         }

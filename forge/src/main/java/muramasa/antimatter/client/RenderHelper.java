@@ -18,8 +18,11 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.mixin.LevelRendererAccessor;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tool.armor.MaterialArmor;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.item.ItemProperties;
@@ -39,6 +42,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -239,21 +243,20 @@ public class RenderHelper {
 
 
     //This code is pretty complicated but it was written while I knew nothing about rendering. it works though
-    public static InteractionResult onDrawHighlight(Player player, HighlightBlock ev, Function<Block, Boolean> validator, BiFunction<Direction, BlockEntity, Boolean> getter) {
-        Vec3 lookPos = player.getEyePosition(ev.getPartialTicks()), rotation = player.getViewVector(ev.getPartialTicks()), realLookPos = lookPos.add(rotation.x * INTERACT_DISTANCE, rotation.y * INTERACT_DISTANCE, rotation.z * INTERACT_DISTANCE);
+    public static InteractionResult onDrawHighlight(Player player, LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, Function<Block, Boolean> validator, BiFunction<Direction, BlockEntity, Boolean> getter) {
+        Vec3 lookPos = player.getEyePosition(partialTicks), rotation = player.getViewVector(partialTicks), realLookPos = lookPos.add(rotation.x * INTERACT_DISTANCE, rotation.y * INTERACT_DISTANCE, rotation.z * INTERACT_DISTANCE);
         BlockHitResult result = player.getCommandSenderWorld().clip(new ClipContext(lookPos, realLookPos, ClipContext.Block.OUTLINE, ClipContext.Fluid.NONE, player));
         BlockState state = player.getCommandSenderWorld().getBlockState(result.getBlockPos());
         if (!validator.apply(state.getBlock())) return InteractionResult.PASS;
         VoxelShape shape = player.getCommandSenderWorld().getBlockState(result.getBlockPos()).getShape(player.getCommandSenderWorld(), result.getBlockPos(), CollisionContext.of(player));
 
         //Build up view & matrix.
-        Vec3 viewPosition = ev.getCamera().getPosition();
+        Vec3 viewPosition = camera.getPosition();
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
-        VertexConsumer builderLines = ev.getMultiBufferSource().getBuffer(RenderType.LINES);
+        VertexConsumer builderLines = multiBufferSource.getBuffer(RenderType.LINES);
 
-        PoseStack matrix = ev.getPoseStack();
         double modX = result.getBlockPos().getX() - viewX, modY = result.getBlockPos().getY() - viewY, modZ = result.getBlockPos().getZ() - viewZ;
-        matrix.pushPose();
+        poseStack.pushPose();
         long time = player.getCommandSenderWorld().getGameTime();
         float r = Math.abs(time % ((255 >> 2) * 2) - (255 >> 2)) * (1 << 2);
         float g = r;
@@ -261,40 +264,40 @@ public class RenderHelper {
         float X = 1;
         float Y = 1;
 
-        matrix.pushPose();
-        LevelRendererAccessor.renderShape(matrix, builderLines, shape, modX, modY, modZ, 0,0,0,0.4f);
+        poseStack.pushPose();
+        LevelRendererAccessor.renderShape(poseStack, builderLines, shape, modX, modY, modZ, 0,0,0,0.4f);
 
-        matrix.popPose();
+        poseStack.popPose();
         switch (result.getDirection()) {
             case UP:
-                matrix.translate(modX, modY + 1, modZ + 1);
-                matrix.mulPose(new Quaternion(new Vector3f(1, 0, 0), -90, true));
+                poseStack.translate(modX, modY + 1, modZ + 1);
+                poseStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -90, true));
                 break;
             case DOWN:
-                matrix.translate(modX, modY, modZ + 1);
-                matrix.mulPose(new Quaternion(new Vector3f(1, 0, 0), -90, true));
+                poseStack.translate(modX, modY, modZ + 1);
+                poseStack.mulPose(new Quaternion(new Vector3f(1, 0, 0), -90, true));
                 break;
             case EAST:
-                matrix.translate(modX + 1, modY, modZ);
-                matrix.mulPose(new Quaternion(new Vector3f(0, 1, 0), -90, true));
+                poseStack.translate(modX + 1, modY, modZ);
+                poseStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -90, true));
                 break;
             case WEST:
-                matrix.translate(modX, modY, modZ);
-                matrix.mulPose(new Quaternion(new Vector3f(0, 1, 0), -90, true));
+                poseStack.translate(modX, modY, modZ);
+                poseStack.mulPose(new Quaternion(new Vector3f(0, 1, 0), -90, true));
                 break;
             case SOUTH:
-                matrix.translate(modX, modY, modZ + 1);
+                poseStack.translate(modX, modY, modZ + 1);
                 break;
             case NORTH:
-                matrix.translate(modX, modY, modZ);
+                poseStack.translate(modX, modY, modZ);
                 break;
         }
 
         //Draw 4 lines.
-        Matrix4f matrix4f = matrix.last().pose();
+        Matrix4f matrix4f = poseStack.last().pose();
 
         //TODO: Use SHAPE to get actual size of box.
-        Matrix3f mat = matrix.last().normal();
+        Matrix3f mat = poseStack.last().normal();
         builderLines.vertex(matrix4f, INDENTATION_SIDE, (float) (0), (float) (0)).color(r, g, b, 0.4F).normal(mat,INDENTATION_SIDE, (float) (0), (float) (0)).endVertex();
         builderLines.vertex(matrix4f, INDENTATION_SIDE, Y, (float) (0)).color(r, g, b, 0.4F).normal(mat, INDENTATION_SIDE, Y, (float) (0)).endVertex();
 
@@ -375,7 +378,7 @@ public class RenderHelper {
                 drawX(builderLines, matrix4f, mat, INDENTATION_SIDE, INDENTATION_SIDE, X - INDENTATION_SIDE, Y - INDENTATION_SIDE, r, g, b);
             }
         }
-        matrix.popPose();
+        poseStack.popPose();
         return InteractionResult.SUCCESS;
     }
 

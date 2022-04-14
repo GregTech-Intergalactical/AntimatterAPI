@@ -16,6 +16,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -249,8 +250,8 @@ public class PropertyIngredient extends Ingredient {
             Set<ItemLike> itemProviders = new ObjectArraySet<>(size);
             for (int i = 0; i < size; i++) {
                 ResourceLocation name = new ResourceLocation(buffer.readUtf());
-                if (ForgeRegistries.ITEMS.containsKey(name)) {
-                    itemProviders.add(ForgeRegistries.ITEMS.getValue(name));
+                if (AntimatterPlatformUtils.itemExists(name)) {
+                    itemProviders.add(AntimatterPlatformUtils.getItemFromID(name));
                 }
             }
             ItemStack[] stacks = new ItemStack[buffer.readVarInt()];
@@ -271,8 +272,8 @@ public class PropertyIngredient extends Ingredient {
             arr = json.getAsJsonArray("items");
             Set<ItemLike> items2 = new ObjectArraySet<>(arr.size());
             arr.forEach(el -> {
-                if (ForgeRegistries.ITEMS.containsKey(new ResourceLocation(el.getAsString())))
-                    items2.add(ForgeRegistries.ITEMS.getValue(new ResourceLocation(el.getAsString())));
+                if (AntimatterPlatformUtils.itemExists(new ResourceLocation(el.getAsString())))
+                    items2.add(AntimatterPlatformUtils.getItemFromID(new ResourceLocation(el.getAsString())));
             });
             String ingId = json.get("id").getAsString();
             boolean inverse = json.get("inverse").getAsBoolean();

@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntList;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.CriterionTriggerInstance;
@@ -133,7 +134,7 @@ public class AntimatterShapedRecipeBuilder {
      * Builds this recipe into an {@link FinishedRecipe}.
      */
     public void build(Consumer<FinishedRecipe> consumer) {
-        this.build(consumer, ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem()));
+        this.build(consumer, AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem()));
     }
 
     /**
@@ -141,7 +142,7 @@ public class AntimatterShapedRecipeBuilder {
      * the result.
      */
     public void build(Consumer<FinishedRecipe> consumer, String save) {
-        ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem());
+        ResourceLocation resourcelocation = AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem());
         if (new ResourceLocation(save).equals(resourcelocation)) {
             throw new IllegalStateException("Shaped Recipe " + save + " should remove its 'save' argument");
         } else {
@@ -166,7 +167,7 @@ public class AntimatterShapedRecipeBuilder {
      * Builds this recipe into an {@link FinishedRecipe}.
      */
     public void buildTool(Consumer<FinishedRecipe> consumer, String builder, ResourceLocation id) {
-        ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.get(0).getItem());
+        ResourceLocation resourcelocation = AntimatterPlatformUtils.getIdFromItem(this.result.get(0).getItem());
         if (id.equals(resourcelocation)) {
             throw new IllegalStateException("Shaped Recipe " + id + " should remove its 'save' argument");
         }
@@ -243,7 +244,7 @@ public class AntimatterShapedRecipeBuilder {
             }
             json.add("key", jsonobject);
             JsonObject resultObj = new JsonObject();
-            resultObj.addProperty("item", ForgeRegistries.ITEMS.getKey(this.result.getItem()).toString());
+            resultObj.addProperty("item", AntimatterPlatformUtils.getIdFromItem(this.result.getItem()).toString());
             if (this.result.getCount() > 1) {
                 resultObj.addProperty("count", this.result.getCount());
             }
@@ -295,7 +296,7 @@ public class AntimatterShapedRecipeBuilder {
             JsonArray arr = new JsonArray();
             result.forEach(el -> {
                 JsonObject resultObj = new JsonObject();
-                resultObj.addProperty("item", ForgeRegistries.ITEMS.getKey(el.getItem()).toString());
+                resultObj.addProperty("item", AntimatterPlatformUtils.getIdFromItem(el.getItem()).toString());
                 if (el.getCount() > 1) {
                     resultObj.addProperty("count", el.getCount());
                 }

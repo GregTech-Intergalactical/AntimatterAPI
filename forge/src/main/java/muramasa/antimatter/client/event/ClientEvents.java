@@ -70,7 +70,7 @@ public class ClientEvents {
             return;
         if (stack.getItem() instanceof IHaveCover) {
             if (player.isCrouching()) return;
-            RenderHelper.onDrawHighlight(player, event, b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
+            RenderHelper.onDrawHighlight(player, event.getLevelRenderer(), event.getCamera(), event.getTarget(), event.getPartialTicks(), event.getPoseStack(), event.getMultiBufferSource(), b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
             event.setCanceled(true);
             return;
         }

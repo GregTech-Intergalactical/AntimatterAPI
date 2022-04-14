@@ -6,6 +6,7 @@ import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
@@ -96,8 +97,8 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     }
 
     @Override
-    public void onRegistryBuild(IForgeRegistry<?> registry) {
-        if (generateBlock && registry == ForgeRegistries.BLOCKS) setState(new BlockStone(this));
+    public void onRegistryBuild(RegistryType registry) {
+        if (generateBlock && registry == RegistryType.BLOCKS) setState(new BlockStone(this));
     }
 
     public String getDomain() {

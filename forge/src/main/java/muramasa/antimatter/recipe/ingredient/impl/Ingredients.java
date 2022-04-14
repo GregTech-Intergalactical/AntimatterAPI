@@ -1,6 +1,7 @@
 package muramasa.antimatter.recipe.ingredient.impl;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -15,7 +16,7 @@ import java.util.stream.Stream;
 
 public class Ingredients {
 
-    public static final Ingredient BURNABLES = Ingredient.of(ForgeRegistries.ITEMS.getValues().stream().map(Item::getDefaultInstance).filter(t -> ForgeHooks.getBurnTime(t, null) > 0));
+    public static final Ingredient BURNABLES = Ingredient.of(AntimatterPlatformUtils.getAllItems().stream().map(Item::getDefaultInstance).filter(t -> ForgeHooks.getBurnTime(t, null) > 0));
 
     public static final RecyclerIngredient RECYCLABLE = new RecyclerIngredient();
 

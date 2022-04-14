@@ -304,12 +304,10 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return type.isPowered() ? enchantment != Enchantments.UNBREAKING : super.canApplyAtEnchantingTable(stack, enchantment);
     }
 
-    @Override
     public boolean hasContainerItem(ItemStack stack) {
         return type.hasContainer();
     }
 
-    @Override
     public ItemStack getContainerItem(ItemStack oldStack) {
         return getGenericContainerItem(oldStack);
     }

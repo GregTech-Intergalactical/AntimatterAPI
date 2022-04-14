@@ -28,6 +28,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.lwjgl.system.CallbackI;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -52,10 +53,10 @@ public final class AntimatterRegistration {
                 AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
                 Data.postInit();
             }
-            AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(e.getRegistry()));
-            AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(e.getRegistry()));
+            AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
+            AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
             List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
-            list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(e.getRegistry())));
+            list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistry()))));
             AntimatterAPI.all(SoundEvent.class, t -> {
                 if (t.getRegistryName() == null) t.setRegistryName(t.getLocation());
             });
@@ -122,5 +123,13 @@ public final class AntimatterRegistration {
             if (i.getItem().getRegistryName() == null) i.getItem().setRegistryName(domain, i.getId());
             registry.register(i.getItem());
         });
+    }
+
+    public static RegistryType getRegistryType(IForgeRegistry<?> registry){
+        if (registry == ForgeRegistries.BLOCKS) return RegistryType.BLOCKS;
+        if (registry == ForgeRegistries.ITEMS) return RegistryType.ITEMS;
+        if (registry == ForgeRegistries.FLUIDS) return RegistryType.FLUIDS;
+        if (registry == ForgeRegistries.BLOCK_ENTITIES) return RegistryType.BLOCK_ENTITIES;
+        return RegistryType.WORLD;
     }
 }

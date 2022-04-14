@@ -33,6 +33,7 @@ import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.ore.VanillaStoneType;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.BlockStateElement;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
@@ -371,7 +372,7 @@ public class Data {
         }
     };
 
-    public static void init(Dist side) {
+    public static void init(Side side) {
         AXE.addBehaviour(BehaviourLogStripping.INSTANCE, BehaviourTreeFelling.INSTANCE);
         PICKAXE.addBehaviour(BehaviourTorchPlacing.INSTANCE);
         CHAINSAW.addBehaviour(BehaviourTreeFelling.INSTANCE, BehaviourLogStripping.INSTANCE, new BehaviourAOEBreak(1, 1, 1));
@@ -429,7 +430,7 @@ public class Data {
         WRENCHBIT.setHidden();
         DRILLBIT.setHidden();
 
-        if (side == Dist.CLIENT) {
+        if (side == Side.CLIENT) {
             clientInit();
         }
     }

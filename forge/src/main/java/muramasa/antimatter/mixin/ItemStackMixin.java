@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,7 +37,7 @@ public abstract class ItemStackMixin extends net.minecraftforge.common.capabilit
             if (armor.getAntimatterArmorType().getSlot() == EquipmentSlot.HEAD && AntimatterAPI.isModLoaded(Ref.MOD_TOP)) {
                 if (invoker.getTag() != null && invoker.getTag().contains("theoneprobe") && invoker.getTag().getBoolean("theoneprobe")) {
                     if (entity instanceof Player) {
-                        ItemStack probe = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(Ref.MOD_TOP, "probe")));
+                        ItemStack probe = new ItemStack(AntimatterPlatformUtils.getItemFromID(new ResourceLocation(Ref.MOD_TOP, "probe")));
                         if (!((Player) entity).addItem(probe)) {
                             ((Player) entity).drop(probe, false);
                         }

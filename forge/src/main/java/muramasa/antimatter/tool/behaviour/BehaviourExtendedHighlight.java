@@ -1,5 +1,6 @@
 package muramasa.antimatter.tool.behaviour;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.behaviour.IItemHighlight;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
@@ -7,12 +8,16 @@ import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterTool;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.client.event.DrawSelectionEvent;
 
 import java.util.function.BiFunction;
@@ -59,7 +64,7 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
     }
 
     @Override
-    public InteractionResult onDrawHighlight(Player player, DrawSelectionEvent.HighlightBlock ev) {
-        return RenderHelper.onDrawHighlight(player, ev, validator, function);
+    public InteractionResult onDrawHighlight(Player player, LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource) {
+        return RenderHelper.onDrawHighlight(player, levelRenderer, camera, target, partialTicks, poseStack, multiBufferSource, validator, function);
     }
 }

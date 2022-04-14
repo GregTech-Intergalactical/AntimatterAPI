@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.builder;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.CriterionTriggerInstance;
@@ -113,7 +114,7 @@ public class AntimatterShapelessRecipeBuilder {
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
     public void build(Consumer<FinishedRecipe> consumerIn) {
-        this.build(consumerIn, ForgeRegistries.ITEMS.getKey(this.result.getItem()));
+        this.build(consumerIn, AntimatterPlatformUtils.getIdFromItem(this.result.getItem()));
     }
 
     /**
@@ -121,7 +122,7 @@ public class AntimatterShapelessRecipeBuilder {
      * the result.
      */
     public void build(Consumer<FinishedRecipe> consumerIn, String save) {
-        ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result.getItem());
+        ResourceLocation resourcelocation = AntimatterPlatformUtils.getIdFromItem(this.result.getItem());
         if (new ResourceLocation(save).equals(resourcelocation)) {
             throw new IllegalStateException("Shapeless Recipe " + save + " should remove its 'save' argument");
         } else {
@@ -174,7 +175,7 @@ public class AntimatterShapelessRecipeBuilder {
             }
             json.add("ingredients", jsonarray);
             JsonObject resultObj = new JsonObject();
-            resultObj.addProperty("item", ForgeRegistries.ITEMS.getKey(this.result.getItem()).toString());
+            resultObj.addProperty("item", AntimatterPlatformUtils.getIdFromItem(this.result.getItem()).toString());
             if (this.result.getCount() > 1) {
                 resultObj.addProperty("count", this.result.getCount());
             }

@@ -9,6 +9,7 @@ import muramasa.antimatter.pipe.PipeItemBlock;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.world.item.Item;
@@ -43,8 +44,8 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
 
     @SuppressWarnings("unchecked")
     @Override
-    public void onRegistryBuild(IForgeRegistry<?> registry) {
-        if (registry != ForgeRegistries.BLOCKS)
+    public void onRegistryBuild(RegistryType registry) {
+        if (registry != RegistryType.BLOCKS)
             return;
         Set<Block> blocks = getBlocks();
         registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(),t))

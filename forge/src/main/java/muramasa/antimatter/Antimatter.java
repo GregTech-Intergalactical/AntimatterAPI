@@ -30,6 +30,7 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeBuilders;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.tesseract.HeatController;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraftforge.api.distmarker.Dist;
@@ -171,7 +172,7 @@ public class Antimatter extends AntimatterMod {
     }
 
     @Override
-    public void onRegistrationEvent(RegistrationEvent event, Dist side) {
+    public void onRegistrationEvent(RegistrationEvent event, Side side) {
         if (event == RegistrationEvent.DATA_INIT) {
             Recipe.init();
 

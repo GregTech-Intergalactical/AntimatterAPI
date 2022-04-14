@@ -25,6 +25,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
+import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.texture.IOverlayModeler;
@@ -273,8 +274,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     @Override
-    public void onRegistryBuild(IForgeRegistry<?> registry) {
-        if (registry != ForgeRegistries.BLOCKS) return;
+    public void onRegistryBuild(RegistryType registry) {
+        if (registry != RegistryType.BLOCKS) return;
         tileType = new BlockEntityType<>(new TileEntityBase.BlockEntityGetter<>(tileFunc, (T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
         AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), getTileType());
     }

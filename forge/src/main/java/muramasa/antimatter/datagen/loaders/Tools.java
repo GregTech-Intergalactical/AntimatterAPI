@@ -7,6 +7,7 @@ import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +32,7 @@ public class Tools {
 
         if (AntimatterAPI.isModLoaded(Ref.MOD_TOP)) {
             provider.addToolRecipe(PROBE_BUILDER.get(HELMET.getId()), consumer, Ref.ID, "helmet_with_probe", "antimatter_armor",
-                    "has_helmet", provider.hasSafeItem(HELMET.getToolStack(NULL).getItem()), Collections.singletonList(HELMET.getToolStack(NULL)), of('H', PropertyIngredient.builder("helmet").itemStacks(HELMET.getToolStack(NULL).getItem()).build(), 'P', ForgeRegistries.ITEMS.getValue(new ResourceLocation(Ref.MOD_TOP, "probe"))), "HP");
+                    "has_helmet", provider.hasSafeItem(HELMET.getToolStack(NULL).getItem()), Collections.singletonList(HELMET.getToolStack(NULL)), of('H', PropertyIngredient.builder("helmet").itemStacks(HELMET.getToolStack(NULL).getItem()).build(), 'P', AntimatterPlatformUtils.getItemFromID(Ref.MOD_TOP, "probe")), "HP");
         }
 
         provider.addToolRecipe(TOOL_BUILDER.get(HAMMER.getId()), consumer, Ref.ID, HAMMER.getId() + "_" + "recipe", "antimatter_tools",

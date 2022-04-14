@@ -13,7 +13,7 @@ public interface IAntimatterRegistrar extends IAntimatterObject {
         return !getId().equals("minecraft");
     }
 
-    void onRegistrationEvent(RegistrationEvent event, Dist side);
+    void onRegistrationEvent(RegistrationEvent event, Side side);
 
     default int getPriority() {
         return 1000;

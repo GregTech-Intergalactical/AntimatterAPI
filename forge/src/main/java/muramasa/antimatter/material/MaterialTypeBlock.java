@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +39,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
     }
 
     @Override
-    public void onRegistryBuild(IForgeRegistry<?> registry) {
+    public void onRegistryBuild(RegistryType registry) {
         super.onRegistryBuild(registry);
         if (doRegister()) {
             for (Material material : this.materials) {
