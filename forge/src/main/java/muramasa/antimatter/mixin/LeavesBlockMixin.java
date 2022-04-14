@@ -41,8 +41,8 @@ public abstract class LeavesBlockMixin extends Block {
                 LootTable loottable = serverworld.getServer().getLootTables().get(resourcelocation);
                 ItemStack sapling = ItemStack.EMPTY;
                 ResourceLocation location = new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling"));
-                if (AntimatterPlatformUtils.blockExists(location.getNamespace(), location.getPath())) {
-                    sapling = new ItemStack(AntimatterPlatformUtils.getBlockFromId(location.getNamespace(), location.getPath()));
+                if (AntimatterPlatformUtils.blockExists(location)) {
+                    sapling = new ItemStack(AntimatterPlatformUtils.getBlockFromId(location));
                 }
                 /*for (ItemStack stack1 : list){
                     if (stack1.getItem() instanceof BlockItem && ((BlockItem) stack1.getItem()).getBlock() instanceof SaplingBlock){

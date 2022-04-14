@@ -84,7 +84,7 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
             }
             JsonObject obj = (JsonObject) element;
             ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
-            Fluid fluid = AntimatterPlatformUtils.getFluidFromID(fluidName.getNamespace(), fluidName.getPath());
+            Fluid fluid = AntimatterPlatformUtils.getFluidFromID(fluidName);
             if (fluid == null) {
                 return FluidStack.EMPTY;
             }
