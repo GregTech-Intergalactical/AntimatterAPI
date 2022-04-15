@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.gui.builder.IIngredientAcceptor;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
@@ -15,6 +16,7 @@ import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
@@ -138,8 +140,13 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
 
             int i = 0;
             for (int y = 0; y < recipe.getHeight(); ++y) {
-                for (int x = 0; x < recipe.getWidth(); ++x) {
+                for (int x = 0; x < 3; ++x) {
                     IRecipeSlotBuilder slot = recipeLayout.addSlot(RecipeIngredientRole.INPUT, x * 18 + 1, y * 18 + 1);
+                    if (x >= recipe.getWidth()) {
+                        //Outside height, insert air.
+                        slot.addIngredient(VanillaTypes.ITEM, ItemStack.EMPTY);
+                        continue;
+                    }
                     slot.addIngredients(VanillaTypes.ITEM, newInputs.get(i++));
                     IntSet set = new IntOpenHashSet();
                     recipe.materialSlots.values().forEach(set::addAll);
