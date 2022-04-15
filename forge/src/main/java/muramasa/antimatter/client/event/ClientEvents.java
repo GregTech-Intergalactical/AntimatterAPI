@@ -12,6 +12,7 @@ import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.mixin.LevelRendererAccessor;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
@@ -43,6 +44,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -123,6 +125,12 @@ public class ClientEvents {
                 matrix.popPose();
             }
         }
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    protected static void onTooltipAdd(final ItemTooltipEvent ev) {
+        MaterialType.addTooltip(ev.getItemStack(), ev.getToolTip(), ev.getPlayer(), ev.getFlags());
     }
 
     // Needs some work, won't work in 3rd person also, needs special ItemModel properties

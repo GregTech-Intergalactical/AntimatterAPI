@@ -77,7 +77,6 @@ public class AntimatterProperties {
          * @param covers
          * @param state
          * @param machTexture
-         * @param multiTextuire
          * @param machineTexturer
          * @param coverTexturer
          */

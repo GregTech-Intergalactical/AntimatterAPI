@@ -6,7 +6,6 @@ import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.IForgeRegistry;
 
 public class MaterialTypeItem<T> extends MaterialType<T> {
 

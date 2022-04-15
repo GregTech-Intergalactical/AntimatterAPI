@@ -24,7 +24,7 @@ public class MaterialTypeFluid<T> extends MaterialType<T> {
 
     @Override
     protected TagKey<?> tagFromString(String name) {
-        return TagUtils.getForgeFluidTag(name);
+        return TagUtils.getForgelikeFluidTag(name);
     }
 
     public interface IFluidGetter {

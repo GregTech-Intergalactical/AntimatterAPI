@@ -20,7 +20,7 @@ import net.minecraft.world.level.material.Fluid;
 import java.util.HashMap;
 import java.util.Map;
 
-import static muramasa.antimatter.util.TagUtils.getForgeFluidTag;
+import static muramasa.antimatter.util.TagUtils.getForgelikeFluidTag;
 
 public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAntimatterProvider {
 
@@ -68,12 +68,12 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
 
     protected void processTags(String domain) {
         AntimatterAPI.all(AntimatterFluid.class, domain).forEach(f -> {
-            tag(getForgeFluidTag(f.getId()))
+            tag(getForgelikeFluidTag(f.getId()))
                     .add(f.getFluid(), f.getFlowingFluid())
                     .replace(replace);
             if (f instanceof AntimatterMaterialFluid) {
                 Material m = ((AntimatterMaterialFluid) f).getMaterial();
-                tag(getForgeFluidTag(m.getId()))
+                tag(getForgelikeFluidTag(m.getId()))
                         .add(f.getFluid(), f.getFlowingFluid())
                         .replace(replace);
             }

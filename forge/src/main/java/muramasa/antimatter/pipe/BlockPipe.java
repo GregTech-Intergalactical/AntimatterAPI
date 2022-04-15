@@ -22,6 +22,7 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -58,7 +59,6 @@ import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -263,7 +263,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                 }
             } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
                 if (player.isCrouching()) {
-                    NetworkHooks.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
+                    AntimatterPlatformUtils.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
                     Utils.damageStack(stack, hand, player);
                     return InteractionResult.SUCCESS;
                 }

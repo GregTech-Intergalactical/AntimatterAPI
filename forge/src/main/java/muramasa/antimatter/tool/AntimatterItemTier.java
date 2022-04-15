@@ -5,8 +5,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
 
@@ -72,11 +70,11 @@ public class AntimatterItemTier implements Tier {
     @Override
     public Ingredient getRepairIngredient() {
         if (primary.has(Data.GEM)) {
-            return Ingredient.of(TagUtils.getForgeItemTag("gems/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgelikeItemTag("gems/".concat(primary.getId())));
         } else if (primary.has(Data.INGOT)) {
-            return Ingredient.of(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgelikeItemTag("ingots/".concat(primary.getId())));
         } else if (primary.has(Data.DUST)) {
-            return Ingredient.of(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgelikeItemTag("dusts/".concat(primary.getId())));
         } //else if (ItemTags.getAllTags().getTag(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
          //   return Ingredient.of(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
      //   }

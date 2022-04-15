@@ -92,7 +92,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     private void antimatterTags() {
-        this.tag(TagUtils.getForgeItemTag("pistons")).add(Items.PISTON, Items.STICKY_PISTON);
+        this.tag(TagUtils.getForgelikeItemTag("pistons")).add(Items.PISTON, Items.STICKY_PISTON);
     }
 
     protected void processTags(String domain) {
@@ -106,9 +106,9 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             AntimatterAPI.all(BlockOre.class, o -> {
                 //if (o.getOreType() == ORE_SMALL) return;
                 String name = String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
-                this.copy(getForgeBlockTag(name), getForgeItemTag(name));
+                this.copy(getForgelikeBlockTag(name), getForgelikeItemTag(name));
                 String forgeName = String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
-                this.copy(getForgeBlockTag(forgeName), getForgeItemTag(forgeName));
+                this.copy(getForgelikeBlockTag(forgeName), getForgelikeItemTag(forgeName));
             });
             AntimatterAPI.all(BlockStone.class, s -> {
                 String id = "blocks/".concat(s.getId());
@@ -128,7 +128,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             AntimatterAPI.all(BlockStorage.class, storage -> {
                 MaterialType<?> type = storage.getType();
                 String name = String.join("", getConventionalMaterialType(type), "/", storage.getMaterial().getId());
-                this.copy(getForgeBlockTag(name), getForgeItemTag(name));
+                this.copy(getForgelikeBlockTag(name), getForgelikeItemTag(name));
             });
             AntimatterAPI.all(MaterialItem.class, item -> {
                 TagKey<Item> type = item.getType().getTag();

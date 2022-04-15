@@ -13,17 +13,18 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -51,7 +52,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     }
 
     protected TagKey<?> tagFromString(String name) {
-        return TagUtils.getForgeItemTag(name);
+        return TagUtils.getForgelikeItemTag(name);
     }
 
     public MaterialType<T> nonGen() {
@@ -107,7 +108,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
 
     public MaterialType<T> blockType() {
         blockType = true;
-        this.tagMap.put(this, TagUtils.getForgeBlockTag(Utils.getConventionalMaterialType(this)));
+        this.tagMap.put(this, TagUtils.getForgelikeBlockTag(Utils.getConventionalMaterialType(this)));
         return this;
     }
 
@@ -187,19 +188,17 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         tooltipCache = builder.build();
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
-    protected static void onTooltipAdd(final ItemTooltipEvent ev) {
-        if (ev.getPlayer() == null) return;
+    public static void addTooltip(ItemStack stack, List<Component> tooltips, Player player, TooltipFlag flag){
+        if (player == null) return;
         if (tooltipCache == null) return;
-        var mat = tooltipCache.get(ev.getItemStack().getItem());
+        var mat = tooltipCache.get(stack.getItem());
         if (mat == null) {
-            if (ev.getItemStack().getItem() instanceof MaterialItem item) {
-                MaterialItem.addTooltipsForMaterialItems(ev.getItemStack(), item.material, item.type, ev.getPlayer().level, ev.getToolTip(), ev.getFlags());
+            if (stack.getItem() instanceof MaterialItem item) {
+                MaterialItem.addTooltipsForMaterialItems(stack, item.material, item.type, player.level, tooltips, flag);
             }
             return;
         }
-        MaterialItem.addTooltipsForMaterialItems(ev.getItemStack(), mat.getB(), mat.getA(), ev.getPlayer().level, ev.getToolTip(), ev.getFlags());
+        MaterialItem.addTooltipsForMaterialItems(stack, mat.getB(), mat.getA(), player.level, tooltips, flag);
     }
 
     @Override

@@ -17,7 +17,6 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.map.IRecipeMap;
-import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.*;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.NonNullSupplier;
@@ -441,7 +440,7 @@ public final class AntimatterAPI {
         if (type.getId().contains("liquid"))
             return null;
         TagKey<Item> tag = TagUtils
-                .getForgeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
+                .getForgelikeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
         return getReplacement(null, tag, namespaces);
     }
 

@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static muramasa.antimatter.util.TagUtils.getBlockTag;
-import static muramasa.antimatter.util.TagUtils.getForgeBlockTag;
+import static muramasa.antimatter.util.TagUtils.getForgelikeBlockTag;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
@@ -83,8 +83,8 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     protected void processTags(String domain) {
         if (domain.equals(Ref.ID)) {
             AntimatterAPI.all(BlockOre.class, o -> {
-                this.tag(getForgeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
-                this.tag(getForgeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
+                this.tag(getForgelikeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
+                this.tag(getForgelikeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(o).replace(replace);
                 if (o.getOreType() == Data.ORE) this.tag(Tags.Blocks.ORES).add(o);
             });
@@ -115,13 +115,13 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
                 String id = "ore_stones/" + s.getMaterial().getId();
                 this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(s).replace(replace);
                 this.tag(Tags.Blocks.ORES).add(s);
-                this.tag(getForgeBlockTag(id)).add(s);
+                this.tag(getForgelikeBlockTag(id)).add(s);
             });
             AntimatterAPI.all(BlockStorage.class, block -> {
                 this.tag(block.getType().getTag()).add(block).replace(replace);
                 String name = String.join("", block.getType().getTag().location().getPath(), "/", block.getMaterial().getId());
                 this.tag(Data.WRENCH.getToolType()).add(block).replace(replace);
-                this.tag(getForgeBlockTag(name)).add(block);
+                this.tag(getForgelikeBlockTag(name)).add(block);
                 // if (block.getType() == FRAME) add climbable tag in 1.16
             });
             AntimatterAPI.all(BlockItemPipe.class, pipe -> {

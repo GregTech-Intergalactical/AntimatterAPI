@@ -17,7 +17,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;

@@ -9,7 +9,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.tags.TagManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
@@ -65,7 +64,7 @@ public class TagUtils {
      * @param name name of a BlockTag, can be new or old, has the namespace "forge" attached
      * @return BlockTag
      */
-    public static TagKey<Block> getForgeBlockTag(String name) {
+    public static TagKey<Block> getForgelikeBlockTag(String name) {
         return getBlockTag(new ResourceLocation("forge", name));
     }
 
@@ -85,7 +84,7 @@ public class TagUtils {
      *             call nc() to get content. (NamedToContent)
      * @return ItemTag
      */
-    public static TagKey<Item> getForgeItemTag(String name) {
+    public static TagKey<Item> getForgelikeItemTag(String name) {
         // TODO: Change "wood" -> "wooden", forge recognises "wooden"
         return getItemTag(new ResourceLocation("forge", name));
     }
@@ -94,7 +93,7 @@ public class TagUtils {
      * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
      * @return FluidTag
      */
-    public static TagKey<Fluid> getForgeFluidTag(String name) {
+    public static TagKey<Fluid> getForgelikeFluidTag(String name) {
         return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::create);
     }
 

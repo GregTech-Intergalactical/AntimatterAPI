@@ -14,6 +14,7 @@ import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
@@ -32,7 +33,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -110,7 +110,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
     default boolean openGui(Player player, Direction side) {
         if (!hasGui())
             return false;
-        NetworkHooks.openGui((ServerPlayer) player, this, packetBuffer -> {
+        AntimatterPlatformUtils.openGui((ServerPlayer) player, this, packetBuffer -> {
             packetBuffer.writeBlockPos(this.source().getTile().getBlockPos());
             packetBuffer.writeInt(side.get3DDataValue());
         });

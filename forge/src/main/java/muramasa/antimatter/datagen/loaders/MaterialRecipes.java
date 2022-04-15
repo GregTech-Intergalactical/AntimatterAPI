@@ -102,8 +102,8 @@ public class MaterialRecipes {
             if (!MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).has(INGOT)) return;
             if (o.getMaterial().has(MaterialTags.NEEDS_BLAST_FURNACE)) return;
             Item ingot = INGOT.get(MaterialTags.SMELT_INTO.getMapping(o.getMaterial()));
-            TagKey<Item> oreTag = TagUtils.getForgeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
-            TagKey<Item> ingotTag = TagUtils.getForgeItemTag("ingots/".concat(MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).getId()));
+            TagKey<Item> oreTag = TagUtils.getForgelikeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
+            TagKey<Item> ingotTag = TagUtils.getForgelikeItemTag("ingots/".concat(MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).getId()));
             AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(oreTag, 1), new ItemStack(ingot, MaterialTags.SMELTING_MULTI.getInt(o.getMaterial())), 2.0F, 100)
                     .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
                     .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot")));

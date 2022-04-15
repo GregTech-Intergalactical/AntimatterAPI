@@ -19,6 +19,7 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -55,7 +56,6 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -242,7 +242,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         return InteractionResult.SUCCESS;
                     }
                     if (getType().has(MachineFlag.GUI) && tile.canPlayerOpenGui(player)) {
-                        NetworkHooks.openGui((ServerPlayer) player, tile, extra -> {
+                        AntimatterPlatformUtils.openGui((ServerPlayer) player, tile, extra -> {
                             extra.writeBlockPos(pos);
                         });
                         return InteractionResult.SUCCESS;

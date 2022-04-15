@@ -17,7 +17,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -87,11 +86,11 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
             return Ingredient.EMPTY;
         }
         if (primary.has(Data.GEM)) {
-            return Ingredient.of(TagUtils.getForgeItemTag("gems/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgelikeItemTag("gems/".concat(primary.getId())));
         } else if (primary.has(Data.INGOT)) {
-            return Ingredient.of(TagUtils.getForgeItemTag("ingots/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgelikeItemTag("ingots/".concat(primary.getId())));
         } else if (primary.has(Data.DUST)) {
-            return Ingredient.of(TagUtils.getForgeItemTag("dusts/".concat(primary.getId())));
+            return Ingredient.of(TagUtils.getForgelikeItemTag("dusts/".concat(primary.getId())));
         } //else if (ItemTags.getAllTags().getTag(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
          //   return Ingredient.of(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
       //  }

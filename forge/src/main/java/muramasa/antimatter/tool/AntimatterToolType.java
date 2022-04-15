@@ -16,7 +16,6 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -93,7 +92,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.overlayLayers = 1;
         this.itemGroup = Ref.TAB_TOOLS;
         this.tag = TagUtils.getItemTag(new ResourceLocation(Ref.ID, id));
-        this.forgeTag = TagUtils.getForgeItemTag("tools/".concat(id));
+        this.forgeTag = TagUtils.getForgelikeItemTag("tools/".concat(id));
         this.useAction = UseAnim.NONE;
         this.toolClass = MaterialTool.class;
         if (vanillaType) {
@@ -207,7 +206,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     }
     public AntimatterToolType setTag(ResourceLocation loc) {
         this.tag = TagUtils.getItemTag(loc);
-        this.forgeTag = TagUtils.getForgeItemTag("tools/" + loc.getPath());
+        this.forgeTag = TagUtils.getForgelikeItemTag("tools/" + loc.getPath());
         return this;
     }
 
@@ -226,7 +225,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     public AntimatterToolType addTags(String... types) {
         if (types.length == 0)
             Utils.onInvalidData(StringUtils.capitalize(id) + " AntimatterToolType was set to have no additional tool types even when it was explicitly called!");
-        Arrays.stream(types).map(t -> TagUtils.getForgeBlockTag(t)).forEach(t -> this.TOOL_TYPES.add(t));
+        Arrays.stream(types).map(t -> TagUtils.getForgelikeBlockTag(t)).forEach(t -> this.TOOL_TYPES.add(t));
         return this;
     }
 

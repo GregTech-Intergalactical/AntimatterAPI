@@ -130,7 +130,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     }
 
     public TagKey<Item> getTag() {
-        return TagUtils.getForgeItemTag(String.join("", Utils.getConventionalMaterialType(type), "/", material.getId()));
+        return TagUtils.getForgelikeItemTag(String.join("", Utils.getConventionalMaterialType(type), "/", material.getId()));
     }
 
     public static boolean hasType(ItemStack stack, MaterialType<?> type) {

@@ -16,10 +16,10 @@ import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +75,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
     }
     
     public final void setStructurePattern(Pattern... patterns) {
-        if (FMLEnvironment.dist.isClient() && AntimatterAPI.isModLoaded(Ref.MOD_JEI)) {
+        if (AntimatterPlatformUtils.isClient() && AntimatterAPI.isModLoaded(Ref.MOD_JEI)) {
             if (patterns.length <= 0) return;
             MultiMachineInfoCategory.addMultiMachine(new MultiMachineInfoPage(this, Arrays.stream(patterns).collect(Collectors.toList())
             ));

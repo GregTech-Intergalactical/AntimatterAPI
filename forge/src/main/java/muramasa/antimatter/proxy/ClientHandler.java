@@ -63,7 +63,6 @@ public class ClientHandler implements IProxyHandler {
 
         IEventBus forge = MinecraftForge.EVENT_BUS;
 
-        forge.register(MaterialType.class);
         forge.addListener(AntimatterDynamics::recipeEvent);
         forge.addListener(AntimatterDynamics::tagsEvent);
     }

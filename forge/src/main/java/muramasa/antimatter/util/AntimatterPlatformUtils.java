@@ -1,15 +1,20 @@
 package muramasa.antimatter.util;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public class AntimatterPlatformUtils {
 
@@ -23,6 +28,18 @@ public class AntimatterPlatformUtils {
 
     public static String getActiveNamespace(){
         return ModLoadingContext.get().getActiveNamespace();
+    }
+
+    public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
+        NetworkHooks.openGui(player, containerSupplier, extraDataWriter);
+    }
+
+    public static boolean isFabric(){
+        return false;
+    }
+
+    public static boolean isForge(){
+        return true;
     }
 
     public static boolean blockExists(ResourceLocation id){
