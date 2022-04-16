@@ -1,7 +1,10 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IHeatHandler;
+import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
 import muramasa.antimatter.datagen.loaders.Pipes;
@@ -35,6 +38,7 @@ import muramasa.antimatter.tesseract.HeatController;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -79,7 +83,7 @@ public class Antimatter extends AntimatterMod {
 
         MinecraftForge.EVENT_BUS.addListener(this::addCraftingLoaders);
         MinecraftForge.EVENT_BUS.addListener(this::providers);
-        MinecraftForge.EVENT_BUS.addListener(AntimatterCaps::register);
+        MinecraftForge.EVENT_BUS.addListener(this::registerCaps);
 
         AntimatterDynamics.clientProvider(Ref.ID,
                 g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
@@ -151,6 +155,12 @@ public class Antimatter extends AntimatterMod {
                 }
             }
         }));
+    }
+
+    public void registerCaps(RegisterCapabilitiesEvent ev) {
+        ev.register(ICoverHandler.class);
+        ev.register(IComponentHandler.class);
+        ev.register(MachineRecipeHandler.class);
     }
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
