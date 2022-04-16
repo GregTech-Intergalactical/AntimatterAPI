@@ -7,9 +7,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
@@ -23,10 +20,6 @@ public class AntimatterPlatformUtils {
 
     public static boolean isServer(){
         return FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer();
-    }
-
-    public static <T> Capability<T> getNewCap() {
-        return CapabilityManager.get(new CapabilityToken<>(){});
     }
 
     public static boolean isClient(){
