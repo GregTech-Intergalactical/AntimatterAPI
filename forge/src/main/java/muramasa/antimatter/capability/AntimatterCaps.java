@@ -9,9 +9,9 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 public class AntimatterCaps {
     
 
-    public static final Capability<ICoverHandler> COVERABLE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+    public static final Capability<ICoverHandler<?>> COVERABLE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
     public static final Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-    public static final Capability<MachineRecipeHandler> RECIPE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+    public static final Capability<MachineRecipeHandler<?>> RECIPE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 
     public static void register(RegisterCapabilitiesEvent ev) {

@@ -36,6 +36,7 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Cache;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -66,7 +67,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
@@ -75,8 +75,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
-import static muramasa.antimatter.capability.AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
-import static muramasa.antimatter.capability.AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
 import static muramasa.antimatter.gui.event.GuiEvents.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvents.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
@@ -110,15 +108,15 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
      **/
    /* public LazyOptional<MachineItemHandler<?>> itemHandler;
     public LazyOptional<MachineFluidHandler<?>> fluidHandler;
-    public LazyOptional<MachineEnergyHandler<T>> energyHandler;
-    public LazyOptional<MachineRecipeHandler<T>> recipeHandler;
+    public LazyOptional<MachineEnergyHandler<U>> energyHandler;
+    public LazyOptional<MachineRecipeHandler<U>> recipeHandler;
     public LazyOptional<MachineCoverHandler<TileEntityMachine>> coverHandler;*/
 
     public Holder<IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>(ITEM_HANDLER_CAPABILITY, dispatch);
     public Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>(FLUID_HANDLER_CAPABILITY, dispatch);
-    public Holder<ICoverHandler, MachineCoverHandler<T>> coverHandler = new Holder<>(COVERABLE_HANDLER_CAPABILITY, dispatch);
+    public Holder<ICoverHandler<?>, MachineCoverHandler<T>> coverHandler = new Holder<>(AntimatterPlatformUtils.getCoverCap(), dispatch);
     public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(TesseractCaps.ENERGY_HANDLER_CAPABILITY, dispatch);
-    public Holder<MachineRecipeHandler, MachineRecipeHandler<T>> recipeHandler = new Holder<>(RECIPE_HANDLER_CAPABILITY, dispatch);
+    public Holder<MachineRecipeHandler<?>, MachineRecipeHandler<T>> recipeHandler = new Holder<>(AntimatterPlatformUtils.getRecipeCap(), dispatch);
 
     /**
      * Client related fields.
@@ -558,12 +556,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.side(side).cast();
+    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
+        if (cap == AntimatterPlatformUtils.getCoverCap() && coverHandler.isPresent()) return coverHandler.side(side).cast();
         if (side == getFacing() && !allowsFrontIO()) return LazyOptional.empty();
         if (blocksCapability(cap, side)) return LazyOptional.empty();
         if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.side(side).cast();
-        if (cap == RECIPE_HANDLER_CAPABILITY && recipeHandler.isPresent()) return recipeHandler.side(side).cast();
+        if (cap == AntimatterPlatformUtils.getRecipeCap() && recipeHandler.isPresent()) return recipeHandler.side(side).cast();
 
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.side(side).cast();
         else if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY && energyHandler.isPresent())

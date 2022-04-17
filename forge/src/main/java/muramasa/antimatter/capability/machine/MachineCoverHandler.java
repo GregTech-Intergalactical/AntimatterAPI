@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 
 
-public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHandler<T> implements IMachineHandler, Dispatch.Sided<ICoverHandler> {
+public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHandler<T> implements IMachineHandler, Dispatch.Sided<ICoverHandler<?>> {
     public MachineCoverHandler(T tile) {
         super(tile, tile.getValidCovers());
         Arrays.stream(Ref.DIRS).forEach(d -> {
@@ -92,12 +92,12 @@ public class MachineCoverHandler<T extends TileEntityMachine<T>> extends CoverHa
     }
 
     @Override
-    public LazyOptional<ICoverHandler> forSide(Direction side) {
+    public LazyOptional<ICoverHandler<?>> forSide(Direction side) {
         return LazyOptional.of(() -> this);
     }
 
     @Override
-    public LazyOptional<? extends ICoverHandler> forNullSide() {
+    public LazyOptional<? extends ICoverHandler<?>> forNullSide() {
         return LazyOptional.of(() -> this);
     }
 }

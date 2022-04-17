@@ -8,6 +8,7 @@ import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -34,7 +35,7 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
     public final static BiFunction<Direction, BlockEntity, Boolean> COVER_FUNCTION = (dir, tile) -> {
         if (tile instanceof TileEntityBase) {
             TileEntityBase<?> machine = (TileEntityBase) tile;
-            return machine.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, dir).map(t -> !t.get(dir).isEmpty()).orElse(false);
+            return machine.getCapability(AntimatterPlatformUtils.getCoverCap(), dir).map(t -> !t.get(dir).isEmpty()).orElse(false);
         }
         return false;
     };

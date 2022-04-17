@@ -1,5 +1,9 @@
 package muramasa.antimatter.util;
 
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,6 +11,9 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
@@ -17,6 +24,16 @@ import java.util.Collection;
 import java.util.function.Consumer;
 
 public class AntimatterPlatformUtils {
+
+    public static Capability<ICoverHandler<?>> getCoverCap(){
+        return AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
+    }
+    public static Capability<IComponentHandler> getComponentCap(){
+        return AntimatterCaps.COMPONENT_HANDLER_CAPABILITY;
+    }
+    public static Capability<MachineRecipeHandler<?>> getRecipeCap(){
+        return AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
+    }
 
     public static boolean isServer(){
         return FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer();

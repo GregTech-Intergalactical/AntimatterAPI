@@ -19,6 +19,7 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureHandle;
 import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +28,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.forge.TesseractCaps;
 
 import javax.annotation.Nonnull;
@@ -332,8 +332,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && componentHandler.isPresent()) {
+    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
+        if (cap == AntimatterPlatformUtils.getComponentCap() && componentHandler.isPresent()) {
             return componentHandler.cast();
         }
         return super.getCapability(cap, side);

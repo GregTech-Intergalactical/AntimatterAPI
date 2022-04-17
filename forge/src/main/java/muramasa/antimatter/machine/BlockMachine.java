@@ -164,7 +164,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     if (player.getItemInHand(hand).getItem() instanceof IHaveCover) {
                         CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
                         Direction dir = Utils.getInteractSide(hit);
-                        boolean ok = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
+                        boolean ok = tile.getCapability(AntimatterPlatformUtils.getCoverCap(), Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
                         if (ok) {
                             return InteractionResult.SUCCESS;
                         }
@@ -186,18 +186,18 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         return InteractionResult.SUCCESS;
                     } else if (type == CROWBAR) {
                         if (!player.isCrouching()) {
-                            if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
+                            if (tile.getCapability(AntimatterPlatformUtils.getCoverCap(), Utils.getInteractSide(hit)).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                                 Utils.damageStack(stack,hand, player);
                                 return InteractionResult.SUCCESS;
                             }
                         } else {
-                            if (tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
+                            if (tile.getCapability(AntimatterPlatformUtils.getCoverCap(), Utils.getInteractSide(hit)).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
                                 Utils.damageStack(stack,hand, player);
                                 return InteractionResult.SUCCESS;
                             }
                         }
                     } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
-                        ICover instance = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY).map(h -> h.get(hit.getDirection())).orElse(ICover.empty);
+                        ICover instance = tile.getCapability(AntimatterPlatformUtils.getCoverCap(), Utils.getInteractSide(hit)).map(h -> h.get(hit.getDirection())).orElse(ICover.empty);
                         if (!player.isCrouching()) {
                             if (!instance.isEmpty() && instance.openGui(player, hit.getDirection())) {
                                 Utils.damageStack(stack,hand, player);
@@ -205,7 +205,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                             }
                         }
                     }
-                    boolean coverInteract = tile.getCapability(AntimatterCaps.COVERABLE_HANDLER_CAPABILITY, hit.getDirection()).map(h -> h.onInteract(player, hand, hit.getDirection(), Utils.getToolType(player))).orElse(false);
+                    boolean coverInteract = tile.getCapability(AntimatterPlatformUtils.getCoverCap(), hit.getDirection()).map(h -> h.onInteract(player, hand, hit.getDirection(), Utils.getToolType(player))).orElse(false);
                     if (coverInteract) return InteractionResult.SUCCESS;
                     //Has gui?
                     if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection()).map(fh -> {

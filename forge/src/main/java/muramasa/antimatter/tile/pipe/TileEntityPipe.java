@@ -21,6 +21,7 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -304,7 +305,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     @Override
     public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
         if (side == null) return LazyOptional.empty();
-        if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && coverHandler.isPresent()) return coverHandler.cast();
+        if (cap == AntimatterPlatformUtils.getCoverCap() && coverHandler.isPresent()) return coverHandler.cast();
         if (!this.connects(side)) return LazyOptional.empty();
         if (cap == getCapability()) {
             return pipeCapHolder.side(side).cast();

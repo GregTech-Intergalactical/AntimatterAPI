@@ -1,9 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
-import muramasa.antimatter.capability.IHeatHandler;
-import muramasa.antimatter.capability.machine.DefaultHeatHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
 import muramasa.antimatter.capability.machine.MachineEnergyHandler;
@@ -15,6 +12,7 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.structure.IComponent;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,7 +24,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.gt.GTTransaction;
 
 import javax.annotation.Nonnull;
-import java.util.Collection;
 import java.util.Collections;
 
 import static muramasa.antimatter.Data.COVERDYNAMO;
@@ -132,8 +129,8 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
 
     @Nonnull
     @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side) {
-        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY)
+    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
+        if (cap == AntimatterPlatformUtils.getComponentCap())
             return componentHandler.cast();
         return super.getCapability(cap, side);
     }

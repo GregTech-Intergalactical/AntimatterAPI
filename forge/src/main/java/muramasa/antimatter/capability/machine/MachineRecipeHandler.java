@@ -34,7 +34,7 @@ import static muramasa.antimatter.machine.MachineState.*;
 import static muramasa.antimatter.machine.event.ContentEvent.ENERGY_SLOT_CHANGED;
 
 //TODO: This needs some look into, a bit of spaghetti code sadly.
-public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMachineHandler, Dispatch.Sided<MachineRecipeHandler> {
+public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMachineHandler, Dispatch.Sided<MachineRecipeHandler<?>> {
 
     protected final T tile;
     protected final boolean generator;
@@ -627,12 +627,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     @Override
-    public LazyOptional<MachineRecipeHandler> forSide(Direction side) {
+    public LazyOptional<MachineRecipeHandler<?>> forSide(Direction side) {
         return LazyOptional.of(() -> this);
     }
 
     @Override
-    public LazyOptional<MachineRecipeHandler> forNullSide() {
+    public LazyOptional<MachineRecipeHandler<?>> forNullSide() {
         return LazyOptional.of(() -> this);
     }
 }
