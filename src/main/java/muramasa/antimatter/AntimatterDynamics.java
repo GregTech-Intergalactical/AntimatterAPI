@@ -200,7 +200,7 @@ public class AntimatterDynamics {
     public static void tagsEvent(TagsUpdatedEvent ev) {
         if (!ClientHandler.isLocal()) {
             AntimatterDynamics.onResourceReload(false, false);
-            AntimatterDynamics.onRecipeCompile(true, Minecraft.getInstance().getConnection().getRecipeManager());
+            AntimatterDynamics.onRecipeCompile(false, Minecraft.getInstance().getConnection().getRecipeManager());
         }
     }
     /**

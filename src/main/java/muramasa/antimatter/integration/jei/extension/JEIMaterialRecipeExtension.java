@@ -139,7 +139,7 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
             }
 
             int i = 0;
-            for (int y = 0; y < recipe.getHeight(); ++y) {
+            for (int y = 0; y < 3; ++y) {
                 for (int x = 0; x < 3; ++x) {
                     IRecipeSlotBuilder slot = recipeLayout.addSlot(RecipeIngredientRole.INPUT, x * 18 + 1, y * 18 + 1);
                     if (x >= recipe.getWidth()) {
