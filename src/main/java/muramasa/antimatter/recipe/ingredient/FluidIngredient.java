@@ -44,7 +44,7 @@ public class FluidIngredient {
                 FluidStack stack = new FluidStack(t.value(), this.getAmount());
                 list.add(stack);
             });
-            return list.toArray(new FluidStack[0]);
+            this.stacks = list.toArray(FluidStack[]::new);
         }
         return stacks;
     }
