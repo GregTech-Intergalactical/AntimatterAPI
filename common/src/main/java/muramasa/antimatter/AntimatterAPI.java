@@ -29,9 +29,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 
 import javax.annotation.Nonnull;
@@ -383,7 +380,7 @@ public final class AntimatterAPI {
 
     @ExpectPlatform
     public static boolean isModLoaded(String mod) {
-        return ModList.get().isLoaded(mod);
+        return false;
     }
 
     public static void runOnEvent(RegistrationEvent event, Runnable runnable) {
@@ -398,13 +395,13 @@ public final class AntimatterAPI {
         registerEventBus();
     }
 
+    @ExpectPlatform
     private static void registerEventBus(){
-        FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
     }
 
+    @ExpectPlatform
     public static boolean isRegistryEntry(Object object, String domain){
-        return object instanceof IForgeRegistryEntry<?> r && r.getRegistryName() != null
-                && r.getRegistryName().getNamespace().equals(domain);
+        return false;
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {

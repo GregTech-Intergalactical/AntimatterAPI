@@ -1,12 +1,9 @@
-package muramasa.antimatter.util;
+package muramasa.antimatter.util.forge;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
-import muramasa.antimatter.registration.Side;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,98 +12,85 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.function.Consumer;
 
-public class AntimatterPlatformUtils {
+public class AntimatterPlatformUtilsImpl {
 
-    @ExpectPlatform
     public static Capability<ICoverHandler<?>> getCoverCap(){
-        return null;
+        return AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
     }
-    @ExpectPlatform
     public static Capability<IComponentHandler> getComponentCap(){
-        return null;
+        return AntimatterCaps.COMPONENT_HANDLER_CAPABILITY;
     }
-    @ExpectPlatform
     public static Capability<MachineRecipeHandler<?>> getRecipeCap(){
-        return null;
+        return AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
     }
 
-    @ExpectPlatform
     public static boolean isServer(){
-        return false;
+        return FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer();
     }
 
-    @ExpectPlatform
     public static boolean isClient(){
-        return false;
+        return FMLEnvironment.dist.isClient() || EffectiveSide.get().isClient();
     }
 
-    @ExpectPlatform
     public static String getActiveNamespace(){
-        return "";
+        return ModLoadingContext.get().getActiveNamespace();
     }
 
-    @ExpectPlatform
     public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
+        NetworkHooks.openGui(player, containerSupplier, extraDataWriter);
     }
 
-    @ExpectPlatform
     public static boolean isFabric(){
         return false;
     }
 
-    @ExpectPlatform
     public static boolean isForge(){
         return true;
     }
 
-    @ExpectPlatform
     public static boolean blockExists(ResourceLocation id){
-        return false;
+        return ForgeRegistries.BLOCKS.containsKey(id);
     }
 
-    @ExpectPlatform
     public static boolean itemExists(ResourceLocation id){
-        return false;
+        return ForgeRegistries.ITEMS.containsKey(id);
     }
 
-    @ExpectPlatform
     public static boolean fluidExists(ResourceLocation id){
-        return false;
+        return ForgeRegistries.FLUIDS.containsKey(id);
     }
 
-    @ExpectPlatform
     public static Block getBlockFromId(ResourceLocation id){
-        return null;
+        return ForgeRegistries.BLOCKS.getValue(id);
     }
 
-    @ExpectPlatform
     public static Item getItemFromID(ResourceLocation id){
-        return null;
+        return ForgeRegistries.ITEMS.getValue(id);
     }
 
-    @ExpectPlatform
     public static Fluid getFluidFromID(ResourceLocation id){
-        return null;
+        return ForgeRegistries.FLUIDS.getValue(id);
     }
 
-    @ExpectPlatform
     public static ResourceLocation getIdFromBlock(Block block){
-        return null;
+        return ForgeRegistries.BLOCKS.getKey(block);
     }
 
-    @ExpectPlatform
     public static ResourceLocation getIdFromItem(Item item){
-        return null;
+        return ForgeRegistries.ITEMS.getKey(item);
     }
 
-    @ExpectPlatform
     public static ResourceLocation getIdFromFluid(Fluid fluid){
-        return null;
+        return ForgeRegistries.FLUIDS.getKey(fluid);
     }
 
     public static Block getBlockFromId(String domain, String id){
@@ -121,13 +105,7 @@ public class AntimatterPlatformUtils {
         return getFluidFromID(new ResourceLocation(domain, id));
     }
 
-    @ExpectPlatform
     public static Collection<Item> getAllItems(){
-        return Collections.emptySet();
-    }
-
-    @ExpectPlatform
-    public static void postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
-
+        return ForgeRegistries.ITEMS.getValues();
     }
 }

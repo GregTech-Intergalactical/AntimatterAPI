@@ -24,6 +24,7 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.ModRegistrar;
+import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.vein.WorldGenVein;
@@ -55,8 +56,8 @@ import java.util.stream.Stream;
 public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
-    public static void onProviderInit(String domain, DataGenerator gen, Dist side) {
-        if (side == Dist.CLIENT) {
+    public static void onProviderInit(String domain, DataGenerator gen, Side side) {
+        if (side == Side.CLIENT) {
             PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
                     .filter(p -> p instanceof AntimatterLanguageProvider).forEach(gen::addProvider);
         }
