@@ -1,7 +1,6 @@
 package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.*;

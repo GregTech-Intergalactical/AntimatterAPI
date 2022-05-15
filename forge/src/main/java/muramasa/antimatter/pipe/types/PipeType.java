@@ -2,7 +2,6 @@ package muramasa.antimatter.pipe.types;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.datafixers.util.Pair;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeItemBlock;
@@ -15,8 +14,6 @@ import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Map;
 import java.util.Set;

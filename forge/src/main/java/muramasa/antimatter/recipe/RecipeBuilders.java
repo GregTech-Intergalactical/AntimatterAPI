@@ -1,7 +1,6 @@
 package muramasa.antimatter.recipe;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;

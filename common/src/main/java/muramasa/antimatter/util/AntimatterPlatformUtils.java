@@ -4,6 +4,11 @@ import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.event.CraftingEvent;
+import muramasa.antimatter.event.ProvidersEvent;
+import muramasa.antimatter.event.WorldGenEvent;
+import muramasa.antimatter.event.MaterialEvent;
+import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import net.minecraft.data.DataGenerator;
@@ -127,7 +132,26 @@ public class AntimatterPlatformUtils {
     }
 
     @ExpectPlatform
-    public static void postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
+    public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
+        return null;
+    }
 
+    @ExpectPlatform
+    public static void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg){
+    }
+
+    @ExpectPlatform
+    public static MaterialEvent postMaterialEvent(IAntimatterRegistrar registrar, MaterialEvent materialEvent){
+        return null;
+    }
+
+    @ExpectPlatform
+    public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
+        return null;
+    }
+
+    @ExpectPlatform
+    public static WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
+        return null;
     }
 }

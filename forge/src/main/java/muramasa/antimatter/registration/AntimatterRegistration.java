@@ -1,6 +1,5 @@
 package muramasa.antimatter.registration;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
@@ -14,7 +13,6 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
-import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -28,7 +26,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
-import org.lwjgl.system.CallbackI;
 
 import java.util.List;
 import java.util.stream.Collectors;

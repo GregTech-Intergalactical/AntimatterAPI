@@ -1,6 +1,5 @@
 package muramasa.antimatter.machine.types;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.CoverFactory;

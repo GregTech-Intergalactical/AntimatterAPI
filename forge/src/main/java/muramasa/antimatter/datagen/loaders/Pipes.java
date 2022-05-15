@@ -1,6 +1,5 @@
 package muramasa.antimatter.datagen.loaders;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;

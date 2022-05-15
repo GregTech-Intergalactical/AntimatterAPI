@@ -1,4 +1,4 @@
-package muramasa.antimatter.event;
+package muramasa.antimatter.event.forge;
 
 import muramasa.antimatter.material.MaterialEvent;
 import muramasa.antimatter.registration.IAntimatterRegistrar;

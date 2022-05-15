@@ -4,7 +4,6 @@ package muramasa.antimatter.gui.slot;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.Tier;

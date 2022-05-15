@@ -1,25 +1,25 @@
-package muramasa.antimatter.event;
+package muramasa.antimatter.event.forge;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Function;
 
 public class AntimatterProvidersEvent extends AntimatterEvent {
-
-    private final List<IAntimatterProvider> providers = new ObjectArrayList<>(10);
     private final Dist dist;
-    public final DataGenerator generator;
+    public final ProvidersEvent event;
 
-    public AntimatterProvidersEvent(DataGenerator generator, Dist type, IAntimatterRegistrar registrar) {
+    public AntimatterProvidersEvent(ProvidersEvent event, Dist type, IAntimatterRegistrar registrar) {
         super(registrar);
         this.dist = type;
-        this.generator = generator;
+        this.event = event;
+    }
+
+    public ProvidersEvent getEvent() {
+        return event;
     }
 
     public Dist getSide() {
@@ -27,10 +27,10 @@ public class AntimatterProvidersEvent extends AntimatterEvent {
     }
 
     public void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> provider) {
-        providers.add(provider.apply(generator));
+        event.addProvider(domain, provider);
     }
 
     public Collection<IAntimatterProvider> getProviders() {
-        return providers;
+        return event.getProviders();
     }
 }

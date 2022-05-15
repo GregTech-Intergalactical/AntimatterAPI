@@ -1,6 +1,5 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 
 public class SubTag implements IAntimatterObject {

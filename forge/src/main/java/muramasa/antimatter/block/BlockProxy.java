@@ -1,6 +1,5 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -25,8 +24,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

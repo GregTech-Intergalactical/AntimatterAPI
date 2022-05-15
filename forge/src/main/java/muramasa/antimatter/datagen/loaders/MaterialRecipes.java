@@ -1,7 +1,6 @@
 package muramasa.antimatter.datagen.loaders;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;

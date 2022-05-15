@@ -1,6 +1,9 @@
-package muramasa.antimatter.material;
+package muramasa.antimatter.event;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.material.IMaterialTag;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTags.METAL;

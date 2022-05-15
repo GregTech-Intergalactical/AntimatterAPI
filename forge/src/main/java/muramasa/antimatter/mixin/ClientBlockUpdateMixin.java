@@ -1,6 +1,5 @@
 package muramasa.antimatter.mixin;
 
-import muramasa.antimatter.AntimatterAPI;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

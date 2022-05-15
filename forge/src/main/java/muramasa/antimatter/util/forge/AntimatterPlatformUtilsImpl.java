@@ -1,9 +1,19 @@
 package muramasa.antimatter.util.forge;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
+import muramasa.antimatter.event.forge.AntimatterLoaderEvent;
+import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
+import muramasa.antimatter.event.forge.AntimatterWorldGenEvent;
+import muramasa.antimatter.material.MaterialEvent;
+import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
+import muramasa.antimatter.registration.Side;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +21,8 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -107,5 +119,34 @@ public class AntimatterPlatformUtilsImpl {
 
     public static Collection<Item> getAllItems(){
         return ForgeRegistries.ITEMS.getValues();
+    }
+
+    public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
+        CraftingEvent event = new CraftingEvent();
+        AntimatterCraftingEvent ev = new AntimatterCraftingEvent(registrar, event);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return event;
+    }
+
+    public static void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg){
+        MinecraftForge.EVENT_BUS.post(new AntimatterLoaderEvent(registrar, reg));
+    }
+
+    public static void postMaterialEvent(IAntimatterRegistrar registrar, MaterialEvent materialEvent){
+
+    }
+
+    public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
+        ProvidersEvent providerEvent = new ProvidersEvent(generator);
+        AntimatterProvidersEvent ev = new AntimatterProvidersEvent(providerEvent, side == Side.CLIENT ? Dist.CLIENT : Dist.DEDICATED_SERVER, registrar);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return providerEvent;
+    }
+
+    public static WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
+        WorldGenEvent event = new WorldGenEvent();
+        AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE, event);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return event;
     }
 }

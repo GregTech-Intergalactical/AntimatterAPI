@@ -1,6 +1,5 @@
 package muramasa.antimatter.fluid;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
@@ -17,8 +16,6 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.ForgeFlowingFluid.Flowing;
 import net.minecraftforge.fluids.ForgeFlowingFluid.Properties;
 import net.minecraftforge.fluids.ForgeFlowingFluid.Source;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * AntimatterFluid is an object that includes all essential information of what a normal fluid would compose of in Minecraft

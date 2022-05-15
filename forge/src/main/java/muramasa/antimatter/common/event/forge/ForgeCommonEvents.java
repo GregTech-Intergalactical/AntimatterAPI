@@ -1,38 +1,16 @@
 package muramasa.antimatter.common.event.forge;
 
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.common.event.CommonEvents;
-import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
-import muramasa.antimatter.gui.container.IAntimatterContainer;
+import muramasa.antimatter.*;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
-import muramasa.antimatter.tool.IAntimatterArmor;
-import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootPool;
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -108,6 +86,24 @@ public class ForgeCommonEvents {
                 map.remap(replacement);
             }
         }
+    }
+
+    /**
+     * Recipe event for local servers, builds recipes.
+     * @param ev forge event callback.
+     */
+    @SubscribeEvent
+    public static void recipeEvent(RecipesUpdatedEvent ev) {
+       CommonEvents.recipeEvent(ev.getRecipeManager());
+    }
+
+    /**
+     * Recipe event for online server, builds recipes.
+     * @param ev forge event callback.
+     */
+    @SubscribeEvent
+    public static void tagsEvent(TagsUpdatedEvent ev) {
+        CommonEvents.tagsEvent();
     }
 
 }

@@ -2,7 +2,6 @@ package muramasa.antimatter.tool.armor;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.material.Material;

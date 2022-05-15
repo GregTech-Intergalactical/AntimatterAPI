@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
@@ -34,7 +33,6 @@ import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -50,8 +48,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -59,7 +55,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
-import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 /**

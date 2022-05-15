@@ -1,6 +1,5 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.util.Utils;

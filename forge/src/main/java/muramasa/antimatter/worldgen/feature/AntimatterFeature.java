@@ -4,13 +4,10 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 
 import java.util.List;
 

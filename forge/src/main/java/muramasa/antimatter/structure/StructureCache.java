@@ -10,7 +10,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

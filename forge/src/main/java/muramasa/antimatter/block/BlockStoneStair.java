@@ -1,6 +1,5 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;

@@ -3,27 +3,23 @@ package muramasa.antimatter.integration.kubejs;
 import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.AntimatterMod;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
-import muramasa.antimatter.datagen.providers.AntimatterBlockTagProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
-import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
 import muramasa.antimatter.datagen.providers.AntimatterLanguageProvider;
-import muramasa.antimatter.event.AntimatterProvidersEvent;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
+
 ;
-import net.minecraftforge.common.MinecraftForge;
 
 public class KubeJSRegistrar extends AntimatterMod {
     public KubeJSRegistrar() {
-        MinecraftForge.EVENT_BUS.addListener(this::providerEvent);
+        //MinecraftForge.EVENT_BUS.addListener(this::providerEvent);
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterBlockStateProvider(Ref.MOD_KJS, "KubeJS BlockStates", g));
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterItemModelProvider(Ref.MOD_KJS, "KubeJS Item Models", g));
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterLanguageProvider(Ref.MOD_KJS, "KubeJS en_us Localization", "en_us", g));
     }
 
-    private void providerEvent(AntimatterProvidersEvent ev) {
+    /*private void providerEvent(AntimatterProvidersEvent ev) {
         if (ev.getSide() == Dist.CLIENT) {
 
         } else {
@@ -36,7 +32,7 @@ public class KubeJSRegistrar extends AntimatterMod {
                     new AntimatterItemTagProvider(Ref.MOD_KJS, "KubeJS Item Tags", false, g, p[0]));
             ev.addProvider(Ref.MOD_KJS, g -> new AntimatterBlockLootProvider(Ref.MOD_KJS, "KubeJS Loot generator", g));
         }
-    }
+    }*/
 
     @Override
     public String getId() {

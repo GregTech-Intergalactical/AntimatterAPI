@@ -1,9 +1,7 @@
 package muramasa.antimatter.tile.pipe;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.ICoverHandler;

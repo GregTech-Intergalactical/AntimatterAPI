@@ -1,6 +1,5 @@
 package muramasa.antimatter.machine;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.texture.Texture;

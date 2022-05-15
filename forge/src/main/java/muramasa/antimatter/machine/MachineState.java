@@ -1,6 +1,5 @@
 package muramasa.antimatter.machine;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 
 import java.util.Locale;

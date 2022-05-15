@@ -1,7 +1,6 @@
 package muramasa.antimatter.datagen.loaders;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
@@ -10,10 +9,8 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collections;
 import java.util.function.Consumer;

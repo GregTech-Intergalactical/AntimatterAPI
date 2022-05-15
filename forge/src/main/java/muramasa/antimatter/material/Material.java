@@ -3,7 +3,6 @@ package muramasa.antimatter.material;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemFluidCell;

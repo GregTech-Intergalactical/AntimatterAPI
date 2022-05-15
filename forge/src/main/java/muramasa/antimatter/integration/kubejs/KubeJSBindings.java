@@ -1,7 +1,6 @@
 package muramasa.antimatter.integration.kubejs;
 
 import dev.latvian.mods.kubejs.item.ItemStackJS;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;

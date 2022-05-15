@@ -1,7 +1,6 @@
 package muramasa.antimatter.integration.kubejs;
 
 import dev.latvian.mods.kubejs.event.EventJS;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Element;

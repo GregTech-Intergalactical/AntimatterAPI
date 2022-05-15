@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.model.AntimatterGroupedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
 import muramasa.antimatter.dynamic.DynamicModel;

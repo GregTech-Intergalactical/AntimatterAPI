@@ -1,6 +1,5 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;

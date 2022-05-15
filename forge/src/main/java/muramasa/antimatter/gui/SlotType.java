@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.gui.slot.AbstractSlot;
@@ -19,7 +18,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.forge.TesseractCaps;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package muramasa.antimatter.event;
+package muramasa.antimatter.event.forge;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.ICraftingLoader;
@@ -9,17 +9,22 @@ import java.util.List;
 
 public class AntimatterCraftingEvent extends AntimatterEvent {
 
-    private final List<ICraftingLoader> loaders = new ObjectArrayList<>();
+    private final CraftingEvent event;
 
-    public AntimatterCraftingEvent(IAntimatterRegistrar registrar) {
+    public AntimatterCraftingEvent(IAntimatterRegistrar registrar, CraftingEvent event) {
         super(registrar);
+        this.event = event;
+    }
+
+    public CraftingEvent getEvent() {
+        return event;
     }
 
     public void addLoader(ICraftingLoader loader) {
-        this.loaders.add(loader);
+        this.event.addLoader(loader);
     }
 
     public Collection<ICraftingLoader> getLoaders() {
-        return loaders;
+        return event.getLoaders();
     }
 }

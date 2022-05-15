@@ -3,7 +3,6 @@ package muramasa.antimatter.client.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.machine.MachineState;
 import net.minecraft.client.renderer.block.model.BlockModel;

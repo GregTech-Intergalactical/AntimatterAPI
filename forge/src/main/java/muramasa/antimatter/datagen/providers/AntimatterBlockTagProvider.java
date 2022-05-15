@@ -3,7 +3,6 @@ package muramasa.antimatter.datagen.providers;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;

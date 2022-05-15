@@ -1,21 +1,15 @@
 package muramasa.antimatter.mixin;
 
-import com.mojang.datafixers.util.Unit;
-import muramasa.antimatter.AntimatterDynamics;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.ReloadableServerResources;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ReloadInstance;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleReloadInstance;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 

@@ -1,7 +1,6 @@
 package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStorage;

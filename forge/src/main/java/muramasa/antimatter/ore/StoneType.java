@@ -1,7 +1,6 @@
 package muramasa.antimatter.ore;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
@@ -9,13 +8,10 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Collection;
 import java.util.List;

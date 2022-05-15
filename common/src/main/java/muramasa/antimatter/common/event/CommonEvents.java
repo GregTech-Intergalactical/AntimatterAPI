@@ -1,13 +1,16 @@
 package muramasa.antimatter.common.event;
 
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
@@ -89,6 +93,28 @@ public class CommonEvents {
             if (container instanceof IAntimatterContainer antimatterContainer) {
                 antimatterContainer.listeners().add(serverPlayer);
             }
+        }
+    }
+
+
+    /**
+     * Recipe event for local servers, builds recipes.
+     * @param manager recipe manager.
+     */
+    public static void recipeEvent(RecipeManager manager) {
+        if (ClientHandler.isLocal()) {
+            //AntimatterDynamics.onResourceReload(false);
+            AntimatterDynamics.onRecipeCompile(false, manager);
+        }
+    }
+
+    /**
+     * Recipe event for online server, builds recipes.
+     */
+    public static void tagsEvent() {
+        if (!ClientHandler.isLocal()) {
+            AntimatterDynamics.onResourceReload(false, false);
+            AntimatterDynamics.onRecipeCompile(true, Minecraft.getInstance().getConnection().getRecipeManager());
         }
     }
 }

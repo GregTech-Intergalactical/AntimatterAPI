@@ -2,7 +2,6 @@ package muramasa.antimatter.integration.kubejs;
 
 import dev.latvian.mods.kubejs.event.EventJS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinBuilder;

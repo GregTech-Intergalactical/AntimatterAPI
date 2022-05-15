@@ -2,7 +2,6 @@ package muramasa.antimatter.cover;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.MenuHandler;

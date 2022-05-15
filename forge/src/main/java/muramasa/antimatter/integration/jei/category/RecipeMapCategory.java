@@ -14,7 +14,6 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
@@ -42,7 +41,6 @@ import net.minecraftforge.fluids.FluidStack;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 

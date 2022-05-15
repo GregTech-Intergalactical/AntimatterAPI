@@ -3,7 +3,6 @@ package muramasa.antimatter.integration.ct;
 import com.blamejared.crafttweaker.api.annotation.BracketResolver;
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.ingredient.IIngredient;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Element;
 import muramasa.antimatter.material.Material;

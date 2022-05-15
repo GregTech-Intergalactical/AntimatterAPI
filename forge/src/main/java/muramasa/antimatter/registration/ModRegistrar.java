@@ -1,6 +1,5 @@
 package muramasa.antimatter.registration;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 

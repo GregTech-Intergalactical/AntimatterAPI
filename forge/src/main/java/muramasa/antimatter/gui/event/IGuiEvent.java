@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui.event;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.registration.ISharedAntimatterObject;

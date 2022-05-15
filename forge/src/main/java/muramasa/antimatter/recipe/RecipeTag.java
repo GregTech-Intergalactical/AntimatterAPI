@@ -1,6 +1,5 @@
 package muramasa.antimatter.recipe;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
 
 public class RecipeTag implements IAntimatterObject {

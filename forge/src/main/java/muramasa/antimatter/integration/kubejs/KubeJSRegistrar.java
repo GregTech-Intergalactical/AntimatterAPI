@@ -1,6 +1,5 @@
 package muramasa.antimatter.integration.kubejs;
 
-import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.AntimatterMod;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
@@ -9,7 +8,7 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockTagProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemTagProvider;
 import muramasa.antimatter.datagen.providers.AntimatterLanguageProvider;
-import muramasa.antimatter.event.AntimatterProvidersEvent;
+import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
 import net.minecraftforge.api.distmarker.Dist;

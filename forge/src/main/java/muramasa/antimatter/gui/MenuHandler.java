@@ -1,6 +1,5 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;

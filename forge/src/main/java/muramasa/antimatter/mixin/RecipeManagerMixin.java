@@ -1,7 +1,6 @@
 package muramasa.antimatter.mixin;
 
 import com.google.gson.JsonElement;
-import muramasa.antimatter.AntimatterDynamics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;

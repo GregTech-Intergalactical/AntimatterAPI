@@ -2,7 +2,6 @@ package muramasa.antimatter.worldgen;
 
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;

@@ -1,10 +1,8 @@
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;

@@ -1,6 +1,5 @@
 package muramasa.antimatter.datagen.resources;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.server.packs.repository.Pack;

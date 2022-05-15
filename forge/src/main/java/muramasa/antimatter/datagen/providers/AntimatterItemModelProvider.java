@@ -1,6 +1,5 @@
 package muramasa.antimatter.datagen.providers;
 
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
