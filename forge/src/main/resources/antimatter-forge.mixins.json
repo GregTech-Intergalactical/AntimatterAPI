@@ -1,0 +1,10 @@
+{
+  "required": true,
+  "package": "muramasa.antimatter.mixin.forge",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "antimatter.refmap.json",
+  "mixins": [
+    "GameDataMixin"
+  ],
+  "minVersion": "0.8"
+}

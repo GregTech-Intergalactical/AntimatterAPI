@@ -1,4 +1,4 @@
-package muramasa.antimatter.mixin;
+package muramasa.antimatter.mixin.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

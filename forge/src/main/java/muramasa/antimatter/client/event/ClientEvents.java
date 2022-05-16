@@ -13,7 +13,6 @@ import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.mixin.LevelRendererAccessor;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;

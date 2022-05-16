@@ -1,4 +1,4 @@
-package muramasa.antimatter.mixin;
+package muramasa.antimatter.mixin.client;
 
 import net.minecraft.world.level.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Mixin;

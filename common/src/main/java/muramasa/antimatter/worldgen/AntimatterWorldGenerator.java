@@ -12,9 +12,12 @@ import muramasa.antimatter.worldgen.feature.FeatureVein;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
+import net.minecraft.world.level.biome.BiomeSpecialEffects;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -36,8 +39,12 @@ public class AntimatterWorldGenerator {
 
     static final AntimatterFeature<NoneFeatureConfiguration> VEIN = new FeatureVein();
 
-    protected record GenHandler(Consumer<BiomeLoadingEvent> consumer,
+    protected record GenHandler(BiomeLoadEvent consumer,
                                 Predicate<Biome.BiomeCategory> validator) {
+    }
+    @FunctionalInterface
+    protected interface BiomeLoadEvent{
+        void accept(ResourceLocation name, Biome.ClimateSettings climate, Biome.BiomeCategory category, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns);
     }
 
     public static void clear() {
@@ -60,7 +67,6 @@ public class AntimatterWorldGenerator {
                 Antimatter.LOGGER.warn("Caught exception during World generator later init: " + ex.toString());
             }
         });
-        MinecraftForge.EVENT_BUS.addListener(AntimatterWorldGenerator::reloadEvent);
         /*
         try {
             //Path config = FMLPaths.CONFIGDIR.get().resolve("GregTech/WorldGenDefault.json");
@@ -85,7 +91,7 @@ public class AntimatterWorldGenerator {
             base.getDims().forEach(d -> feature.getRegistry().computeIfAbsent(d, k -> new LinkedList<>()).add(base));
     }
 
-    public static void register(Consumer<BiomeLoadingEvent> consumer, String id, String domain, Predicate<Biome.BiomeCategory> validator) {
+    public static void register(BiomeLoadEvent consumer, String id, String domain, Predicate<Biome.BiomeCategory> validator) {
         AntimatterAPI.register(GenHandler.class, id, domain, new GenHandler(consumer, validator));
     }
 
@@ -171,26 +177,25 @@ public class AntimatterWorldGenerator {
     }
 
 
-    public static void reloadEvent(BiomeLoadingEvent event) {
+    public static void reloadEvent(ResourceLocation name, Biome.ClimateSettings climate, Biome.BiomeCategory category, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns) {
         AntimatterAPI.all(IAntimatterFeature.class, t -> {
-            t.build(event);
+            t.build(name, climate, category, effects, gen, spawns);
         });
         AntimatterAPI.all(GenHandler.class, t -> {
-            if (event.getName() == null) return;
-            if (t.validator.test(event.getCategory())) {
-                t.consumer.accept(event);
+            if (name == null) return;
+            if (t.validator.test(category)) {
+                t.consumer.accept(name, climate, category, effects, gen, spawns);
             }
         });
-        handleFeatureRemoval(event);
+        handleFeatureRemoval(gen);
     }
 
-    private static void handleFeatureRemoval(BiomeLoadingEvent event) {
-        BiomeGenerationSettingsBuilder builder = event.getGeneration();
+    private static void handleFeatureRemoval(BiomeGenerationSettings.Builder gen) {
         if (AntimatterConfig.WORLD.VANILLA_ORE_GEN) {
-            removeOreFeatures(builder);
+            removeOreFeatures(gen);
         }
         if (AntimatterConfig.WORLD.VANILLA_STONE_GEN) {
-            removeStoneFeatures(builder);
+            removeStoneFeatures(gen);
         }
     }
 }

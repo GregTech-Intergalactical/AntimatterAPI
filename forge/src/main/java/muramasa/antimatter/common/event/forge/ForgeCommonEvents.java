@@ -3,6 +3,8 @@ package muramasa.antimatter.common.event.forge;
 import muramasa.antimatter.*;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.structure.StructureCache;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -13,7 +15,9 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -104,6 +108,16 @@ public class ForgeCommonEvents {
     @SubscribeEvent
     public static void tagsEvent(TagsUpdatedEvent ev) {
         CommonEvents.tagsEvent();
+    }
+
+    @SubscribeEvent
+    public static void biomeLoadEvent(BiomeLoadingEvent event){
+        AntimatterWorldGenerator.reloadEvent(event.getName(),  event.getClimate(), event.getCategory(), event.getEffects(), event.getGeneration(), event.getSpawns());
+    }
+
+    @SubscribeEvent
+    public static void onWorldUnload(WorldEvent.Unload event){
+        StructureCache.onWorldUnload(event.getWorld());
     }
 
 }

@@ -30,7 +30,6 @@ import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
-import muramasa.antimatter.tesseract.HeatController;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;

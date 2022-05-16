@@ -1,4 +1,4 @@
-package muramasa.antimatter.mixin;
+package muramasa.antimatter.mixin.client;
 
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.world.level.Level;

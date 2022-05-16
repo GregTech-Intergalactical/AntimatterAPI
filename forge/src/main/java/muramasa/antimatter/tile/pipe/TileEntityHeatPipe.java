@@ -4,8 +4,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IHeatHandler;
 import muramasa.antimatter.capability.machine.DefaultHeatHandler;
 import muramasa.antimatter.pipe.types.HeatPipe;
-import muramasa.antimatter.tesseract.HeatController;
-import muramasa.antimatter.tesseract.IHeatPipe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;

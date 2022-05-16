@@ -1,14 +1,13 @@
 package muramasa.antimatter.client.scene;
 
 import com.mojang.math.Vector3f;
-import muramasa.antimatter.mixin.DimensionTypeAccessor;
+import muramasa.antimatter.mixin.client.DimensionTypeAccessor;
 import muramasa.antimatter.structure.BlockInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.data.BuiltinRegistries;
-import net.minecraft.data.worldgen.biome.Biomes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;

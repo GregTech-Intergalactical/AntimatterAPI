@@ -1,4 +1,4 @@
-package muramasa.antimatter.tesseract;
+package muramasa.antimatter.tesseract.forge;
 
 import muramasa.antimatter.AntimatterConfig;
 import net.minecraft.core.Direction;

@@ -1,4 +1,4 @@
-package muramasa.antimatter.mixin;
+package muramasa.antimatter.mixin.client;
 
 import muramasa.antimatter.AntimatterAPI;
 import net.fabricmc.api.Environment;

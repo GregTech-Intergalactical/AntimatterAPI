@@ -1,4 +1,4 @@
-package muramasa.antimatter.mixin;
+package muramasa.antimatter.mixin.forge;
 
 import muramasa.antimatter.Ref;
 import net.minecraft.resources.ResourceLocation;

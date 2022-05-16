@@ -4,11 +4,11 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "antimatter.refmap.json",
   "client": [
-    "ChunkReaderAccessor",
-    "ClientBlockUpdateMixin",
-    "DimensionTypeAccessor",
-    "LevelRendererAccessor",
-    "TESRMixin"
+    "client.ChunkReaderAccessor",
+    "client.ClientBlockUpdateMixin",
+    "client.DimensionTypeAccessor",
+    "client.LevelRendererAccessor",
+    "client.TESRMixin"
   ],
   "mixins": [
     "BiomeAccessor",

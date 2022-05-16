@@ -1,4 +1,4 @@
-package muramasa.antimatter.mixin;
+package muramasa.antimatter.mixin.client;
 
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;

@@ -14,10 +14,8 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -29,7 +27,6 @@ import java.util.function.LongConsumer;
  * StructureCache also ensures MAX_SHARES in multiblocks are handled.
  * It also supports listeners for positions to keep track of valid multiblocks.
  */
-@Mod.EventBusSubscriber
 public class StructureCache {
 
     private static final Object2ObjectMap<Level, DimensionEntry> LOOKUP = new Object2ObjectOpenHashMap<>();
@@ -240,10 +237,9 @@ public class StructureCache {
         }
     }
 
-    @SubscribeEvent
-    public static void onWorldUnload(WorldEvent.Unload e) {
-        LOOKUP.remove((Level) e.getWorld());
-        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.remove((Level) e.getWorld());
+    public static void onWorldUnload(LevelAccessor world) {
+        LOOKUP.remove((Level) world);
+        Long2ObjectMap<Set<StructureHandle<?>>> map = CALLBACKS.remove((Level) world);
         if (map != null)
             map.forEach((k, v) -> v.forEach(StructureHandle::structureCacheRemoval));
     }

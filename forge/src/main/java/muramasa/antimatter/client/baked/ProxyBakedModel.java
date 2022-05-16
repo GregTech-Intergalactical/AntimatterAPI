@@ -5,7 +5,6 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.AntimatterProperties.ProxyProperties;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.mixin.ChunkReaderAccessor;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;

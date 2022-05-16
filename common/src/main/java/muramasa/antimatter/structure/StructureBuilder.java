@@ -9,7 +9,6 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.impl.SimpleStructure;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.Direction;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -60,13 +59,6 @@ public class StructureBuilder {
 
     public StructureBuilder at(String key, String name, Collection<? extends IAntimatterObject> objects) {
         elementLookup.put(key, new ComponentElement(name, objects.toArray(new IAntimatterObject[0])));
-        return this;
-    }
-
-    public StructureBuilder at(String key, RegistryObject<?>... objects) {
-        Arrays.stream(objects).forEach(o -> {
-            if (o.get() instanceof IAntimatterObject) at(key, o);
-        });
         return this;
     }
 

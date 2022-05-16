@@ -61,10 +61,6 @@ public class ClientHandler implements IProxyHandler {
         }));
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandler::preResourceRegistration);
 
-        IEventBus forge = MinecraftForge.EVENT_BUS;
-
-        forge.addListener(AntimatterDynamics::recipeEvent);
-        forge.addListener(AntimatterDynamics::tagsEvent);
     }
 
     public static boolean isLocal() {

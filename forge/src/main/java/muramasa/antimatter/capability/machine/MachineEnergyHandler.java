@@ -8,7 +8,7 @@ import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
-import muramasa.antimatter.tesseract.EnergyTileWrapper;
+import muramasa.antimatter.tesseract.forge.EnergyTileWrapper;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Explosion;
