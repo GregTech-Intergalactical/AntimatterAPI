@@ -1,7 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.registration.IAntimatterRegistrar;
-import net.minecraft.data.DataGenerator;
+
 ;
 
 public abstract class AntimatterMod implements IAntimatterRegistrar {

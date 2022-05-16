@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.datagen.BackgroundDataGenerator;
-import muramasa.antimatter.util.XSTR;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;

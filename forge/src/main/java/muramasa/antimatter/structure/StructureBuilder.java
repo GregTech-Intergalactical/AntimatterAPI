@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.impl.SimpleStructure;
-import muramasa.antimatter.util.int3;
 import net.minecraft.core.Direction;
 import net.minecraftforge.registries.RegistryObject;
 

@@ -1,8 +1,5 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.util.int2;
-import muramasa.antimatter.util.int4;
-
 public enum BarDir {
 
     TOP(new int4(176, 0, 20, 18), new int2(72, 18)),

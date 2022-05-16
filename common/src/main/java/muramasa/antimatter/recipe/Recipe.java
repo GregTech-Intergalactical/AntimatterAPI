@@ -9,6 +9,7 @@ import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
@@ -260,7 +261,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
         if (fluidsOutput != null) {
             builder.append("Output Fluids: { ");
             for (int i = 0; i < fluidsOutput.length; i++) {
-                builder.append(fluidsOutput[i].getFluid().getRegistryName()).append(": ").append(fluidsOutput[i].getAmount()).append("mb");
+                builder.append(AntimatterPlatformUtils.getIdFromFluid(fluidsOutput[i].getFluid())).append(": ").append(fluidsOutput[i].getAmount()).append("mb");
                 if (i != fluidsOutput.length - 1) builder.append(", ");
             }
             builder.append(" }\n");

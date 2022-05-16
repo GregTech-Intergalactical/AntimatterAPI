@@ -24,6 +24,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
@@ -45,12 +46,20 @@ public class AntimatterPlatformUtilsImpl {
         return AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
     }
 
+    public static int getFluidColor(Fluid fluid){
+        return fluid.getAttributes().getColor();
+    }
+
     public static boolean isServer(){
         return FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer();
     }
 
     public static boolean isClient(){
         return FMLEnvironment.dist.isClient() || EffectiveSide.get().isClient();
+    }
+
+    public static Side getSide(){
+        return isClient() ? Side.CLIENT : Side.SERVER;
     }
 
     public static String getActiveNamespace(){
@@ -148,5 +157,13 @@ public class AntimatterPlatformUtilsImpl {
         AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE, event);
         MinecraftForge.EVENT_BUS.post(ev);
         return event;
+    }
+
+    public static void writeFluidStack(FluidStack stack, FriendlyByteBuf buf) {
+        buf.writeFluidStack(stack);
+    }
+
+    public static FluidStack readFluidStack(FriendlyByteBuf buf) {
+        return buf.readFluidStack();
     }
 }

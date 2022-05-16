@@ -2,7 +2,6 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;

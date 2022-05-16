@@ -11,7 +11,6 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Containers;

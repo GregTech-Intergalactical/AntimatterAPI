@@ -18,17 +18,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<Recipe> {
+public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
 
     public static final AntimatterRecipeSerializer INSTANCE = new AntimatterRecipeSerializer();
 
@@ -156,7 +153,7 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
         FluidStack[] outf = new FluidStack[size];
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                outf[i] = FluidStack.readFromPacket(buffer);
+                outf[i] = AntimatterPlatformUtils.readFluidStack(buffer);
             }
         }
         size = buffer.readInt();
@@ -205,7 +202,7 @@ public class AntimatterRecipeSerializer extends ForgeRegistryEntry<RecipeSeriali
         }
         buffer.writeInt(!recipe.hasOutputFluids() ? 0 : recipe.getOutputFluids().length);
         if (recipe.hasOutputFluids()) {
-            Arrays.stream(recipe.getOutputFluids()).forEach(buffer::writeFluidStack);
+            Arrays.stream(recipe.getOutputFluids()).forEach(stack -> AntimatterPlatformUtils.writeFluidStack(stack, buffer));
         }
         buffer.writeInt(recipe.hasChances() ? recipe.getChances().length : 0);
         if (recipe.hasChances()) {

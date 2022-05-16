@@ -3,7 +3,6 @@ package muramasa.antimatter.tool.behaviour;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.LivingEntity;

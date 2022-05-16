@@ -2,13 +2,11 @@ package muramasa.antimatter.tool.behaviour;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.behaviour.IItemHighlight;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -19,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.DrawSelectionEvent;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

@@ -1,7 +1,5 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.util.Utils;
-
 public class MaterialStack {
 
     public Material m;

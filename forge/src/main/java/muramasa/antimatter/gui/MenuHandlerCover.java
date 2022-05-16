@@ -1,10 +1,7 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.container.ContainerCover;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;

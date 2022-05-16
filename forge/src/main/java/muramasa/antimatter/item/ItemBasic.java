@@ -8,7 +8,6 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 

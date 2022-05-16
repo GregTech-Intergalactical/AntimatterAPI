@@ -2,7 +2,6 @@ package muramasa.antimatter.gui;
 
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.entity.BlockEntity;

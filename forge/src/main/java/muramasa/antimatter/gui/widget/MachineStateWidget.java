@@ -7,7 +7,6 @@ import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.int4;
 import net.minecraft.network.chat.TextComponent;
 
 public class MachineStateWidget extends Widget {

@@ -13,8 +13,6 @@ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.registries.ForgeRegistries;
-import org.checkerframework.checker.units.qual.A;
 import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Collections;
@@ -40,7 +38,7 @@ public abstract class LeavesBlockMixin extends Block {
                 ServerLevel serverworld = builder.getLevel();
                 LootTable loottable = serverworld.getServer().getLootTables().get(resourcelocation);
                 ItemStack sapling = ItemStack.EMPTY;
-                ResourceLocation location = new ResourceLocation(this.getRegistryName().toString().replace("leaves", "sapling"));
+                ResourceLocation location = new ResourceLocation(AntimatterPlatformUtils.getIdFromBlock(this).toString().replace("leaves", "sapling"));
                 if (AntimatterPlatformUtils.blockExists(location)) {
                     sapling = new ItemStack(AntimatterPlatformUtils.getBlockFromId(location));
                 }

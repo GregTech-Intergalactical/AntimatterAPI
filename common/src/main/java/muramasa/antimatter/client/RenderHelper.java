@@ -18,6 +18,7 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.mixin.LevelRendererAccessor;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tool.armor.MaterialArmor;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -49,6 +50,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
@@ -114,7 +116,7 @@ public class RenderHelper {
         //TODO 1.18
         //RenderSystem.enableAlphaTest();
         TextureAtlasSprite fluidStillSprite = mc.getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(fluid.getAttributes().getStillTexture());
-        int fluidColor = fluid.getAttributes().getColor();
+        int fluidColor = AntimatterPlatformUtils.getFluidColor(fluid);
 
         //Draw the fluid texture
         drawTiledSprite(mstack, mc, posX, posY, width, height, 16, 16, fluidColor, scaledAmount, fluidStillSprite);

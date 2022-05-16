@@ -2,7 +2,6 @@ package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.client.scene.TrackedDummyWorld;
@@ -19,8 +18,6 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.structure.StructureHandle;
 import muramasa.antimatter.structure.StructureResult;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

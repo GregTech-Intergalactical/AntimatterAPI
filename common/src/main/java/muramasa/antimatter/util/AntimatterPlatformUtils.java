@@ -12,6 +12,7 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -41,6 +43,11 @@ public class AntimatterPlatformUtils {
     }
 
     @ExpectPlatform
+    public static int getFluidColor(Fluid fluid){
+        return 0;
+    }
+
+    @ExpectPlatform
     public static boolean isServer(){
         return false;
     }
@@ -48,6 +55,11 @@ public class AntimatterPlatformUtils {
     @ExpectPlatform
     public static boolean isClient(){
         return false;
+    }
+
+    @ExpectPlatform
+    public static Side getSide(){
+        return null;
     }
 
     @ExpectPlatform
@@ -153,5 +165,15 @@ public class AntimatterPlatformUtils {
     @ExpectPlatform
     public static WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
         return null;
+    }
+
+    @ExpectPlatform
+    public static void writeFluidStack(FluidStack stack, FriendlyByteBuf buf) {
+
+    }
+
+    @ExpectPlatform
+    public static FluidStack readFluidStack(FriendlyByteBuf buf) {
+        return FluidStack.EMPTY;
     }
 }

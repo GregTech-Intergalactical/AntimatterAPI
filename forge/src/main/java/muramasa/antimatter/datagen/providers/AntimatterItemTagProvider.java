@@ -18,7 +18,6 @@ import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.Wire;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.tags.BlockTagsProvider;

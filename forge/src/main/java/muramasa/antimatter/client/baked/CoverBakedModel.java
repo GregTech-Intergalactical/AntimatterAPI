@@ -3,7 +3,6 @@ package muramasa.antimatter.client.baked;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;

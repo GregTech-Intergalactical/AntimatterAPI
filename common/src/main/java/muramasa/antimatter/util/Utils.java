@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -13,11 +14,13 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.mixin.BlockAccessor;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -46,11 +49,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -59,13 +58,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.model.ModelDataManager;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
@@ -85,6 +80,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static net.minecraft.advancements.critereon.MinMaxBounds.Ints.ANY;
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
@@ -196,7 +192,7 @@ public class Utils {
         return stack;
     }
 
-    public static FluidStack ca(int amount, FluidStack toCopy) {
+    public static FluidStack ca(long amount, FluidStack toCopy) {
         FluidStack stack = toCopy.copy();
         stack.setAmount(amount);
         return stack;
@@ -232,7 +228,7 @@ public class Utils {
         return ca(stack.getCount() * amount, stack);
     }
 
-    public static FluidStack mul(int amount, FluidStack stack) {
+    public static FluidStack mul(long amount, FluidStack stack) {
         return ca(stack.getAmount() * amount, stack);
     }
 
@@ -295,7 +291,7 @@ public class Utils {
     public static boolean areFluidsValid(FluidStack... fluids) {
         if (fluids == null || fluids.length == 0) return false;
         for (FluidStack fluid : fluids) {
-            if (fluid.getRawFluid() == Fluids.EMPTY) return false;
+            if (fluid.getFluid() == Fluids.EMPTY) return false;
         }
         return true;
     }
@@ -370,17 +366,22 @@ public class Utils {
             if (toInsert.isEmpty() || !filter.test(toInsert)) {
                 continue;
             }
-            ItemStack inserted = ItemHandlerHelper.insertItem(to, toInsert, true);
+            ItemStack inserted = insertItem(to, toInsert, true);
             if (inserted.getCount() < toInsert.getCount()) {
                 int actual = toInsert.getCount() - inserted.getCount();
                 toInsert.setCount(toInsert.getCount() - inserted.getCount());
-                ItemHandlerHelper.insertItem(to, toInsert, false);
+                insertItem(to, toInsert, false);
                 from.extractItem(i, actual, false);
                 if (!successful) successful = true;
                 if (once) break;
             }
         }
         return successful;
+    }
+
+    @ExpectPlatform
+    public static ItemStack insertItem(IItemHandler to, ItemStack toInsert, boolean simulate){
+        return ItemStack.EMPTY;
     }
 
     /**
@@ -449,13 +450,13 @@ public class Utils {
                         continue;
                     }
                     fluid = fluid.copy();
-                    int toDrain = Math.min(cap, fluid.getAmount());
+                    long toDrain = Math.min(cap, fluid.getAmount());
                     fluid.setAmount(toDrain);
                     toInsert = from.drain(fluid, SIMULATE);
                 } else {
                     toInsert = from.drain(from.getFluidInTank(j), SIMULATE);
                 }
-                int filled = to.fill(toInsert, SIMULATE);
+                long filled = to.fill(toInsert, SIMULATE);
                 if (filled > 0) {
                     toInsert.setAmount(filled);
                     to.fill(from.drain(toInsert, EXECUTE), EXECUTE);
@@ -619,9 +620,21 @@ public class Utils {
 
     @Nullable
     public static BlockEntity getTileFromBuf(FriendlyByteBuf buf) {
-        return DistExecutor.runForDist(() -> () -> Antimatter.PROXY.getClientWorld().getBlockEntity(buf.readBlockPos()), () -> () -> {
+        return unsafeRunForDist(() -> () -> Antimatter.PROXY.getClientWorld().getBlockEntity(buf.readBlockPos()), () -> () -> {
             throw new RuntimeException("Shouldn't be called on server!");
         });
+    }
+
+    public static <T> T unsafeRunForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
+        switch (AntimatterPlatformUtils.getSide())
+        {
+            case CLIENT:
+                return clientTarget.get().get();
+            case SERVER:
+                return serverTarget.get().get();
+            default:
+                throw new IllegalArgumentException("UNSIDED?");
+        }
     }
 
     /**
@@ -639,8 +652,13 @@ public class Utils {
         BlockState state = tile.getLevel().getBlockState(tile.getBlockPos());
         if (tile.getLevel().isClientSide) {
             tile.getLevel().sendBlockUpdated(tile.getBlockPos(), state, state, 11);
-            ModelDataManager.requestModelDataRefresh(tile);
+            requestModelDataRefresh(tile);
         }
+    }
+
+    @ExpectPlatform
+    public static void requestModelDataRefresh(BlockEntity tile){
+
     }
 
     private static final Direction[][] TRANSFORM = new Direction[][]{
@@ -864,7 +882,7 @@ public class Utils {
         if (world.isClientSide) return false;
         BlockState state = world.getBlockState(pos);
         ServerPlayer serverPlayer = player == null ? null : ((ServerPlayer) player);
-        int exp = player == null ? -1 : ForgeHooks.onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
+        int exp = player == null ? -1 : onBlockBreakEvent(world, serverPlayer.gameMode.getGameModeForPlayer(), serverPlayer, pos);
 
         if (exp == -1) {
             boolean destroyed = world.removeBlock(pos, false);
@@ -875,10 +893,20 @@ public class Utils {
         }
         stack.hurtAndBreak(state.getDestroySpeed(world, pos) != 0.0F ? damage : 0, player, (onBroken) -> onBroken.broadcastBreakEvent(EquipmentSlot.MAINHAND));
         boolean destroyed = world.removeBlock(pos, false);// world.destroyBlock(pos, !player.isCreative(), player);
-        if (destroyed && state.canHarvestBlock(world, pos, player))
+        if (destroyed && canHarvestBlock(state, world, pos, player))
             state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
-        if (exp > 0) state.getBlock().popExperience((ServerLevel) world, pos, exp);
+        if (exp > 0) ((BlockAccessor)state.getBlock()).popExperience((ServerLevel) world, pos, exp);
         return destroyed;
+    }
+
+    @ExpectPlatform
+    public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
+        return false;
+    }
+
+    @ExpectPlatform
+    public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer player, BlockPos pos){
+        return 0;
     }
 
     /**
@@ -919,7 +947,7 @@ public class Utils {
                 if (stack.getDamageValue() < 2) return false;
                 tempPos.move(Direction.UP);
                 BlockState state = world.getBlockState(tempPos);
-                if (state.isAir() || !ForgeHooks.isCorrectToolForDrops(state, player))
+                if (state.isAir() || !isCorrectToolForDrops(state, player))
                     return false;
                 else if (state.is(BlockTags.LOGS)) {
                     breakBlock(world, player, stack, tempPos, tool.getAntimatterToolType().getUseDurability());
@@ -955,6 +983,11 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    @ExpectPlatform
+    public static boolean isCorrectToolForDrops(BlockState state, Player player){
+        return false;
     }
 
     /**

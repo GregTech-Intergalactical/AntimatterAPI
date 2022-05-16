@@ -15,7 +15,6 @@ import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.structure.PatternBuilder;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

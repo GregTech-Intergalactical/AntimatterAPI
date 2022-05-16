@@ -4,7 +4,6 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;

@@ -7,7 +7,6 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;

@@ -1,6 +1,7 @@
 package muramasa.antimatter.recipe;
 
 import com.google.common.collect.ImmutableMap;
+import dev.latvian.mods.kubejs.util.Tags;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
@@ -15,11 +16,13 @@ import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.TagUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -208,6 +211,25 @@ public class RecipeBuilders {
     });
 
     static {
-        PropertyIngredient.addGetter(Tags.Items.DYES.location(), DyeColor::getColor);
+        PropertyIngredient.addGetter(TagUtils.getForgelikeItemTag("dyes").location(), RecipeBuilders::getColor);
+    }
+
+    public static DyeColor getColor(ItemStack stack) {
+        if (stack.getItem() instanceof DyeItem) {
+            return ((DyeItem)stack.getItem()).getDyeColor();
+        } else {
+            for(int i = 0; i < 15; ++i) {
+                DyeColor color = DyeColor.byId(i);
+                String colorString = color.getName();
+                if (stack.is(TagUtils.getForgelikeItemTag("dyes/" + colorString))) {
+                    return color;
+                }
+                if (stack.is(TagUtils.getForgelikeItemTag(colorString + "_dyes"))){
+                    return color;
+                }
+            }
+
+            return null;
+        }
     }
 }

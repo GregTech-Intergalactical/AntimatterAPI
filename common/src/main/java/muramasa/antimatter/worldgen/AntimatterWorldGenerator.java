@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.mixin.BiomeGenerationBuilderAccessor;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
@@ -13,6 +14,7 @@ import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -20,9 +22,6 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
-import net.minecraftforge.event.world.BiomeLoadingEvent;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -95,11 +94,11 @@ public class AntimatterWorldGenerator {
         return feat != null ? feat.getRegistry().computeIfAbsent(dim.location(), k -> new LinkedList<>()).stream().map(c::cast).collect(Collectors.toList()) : Collections.emptyList();
     }
 
-    private static void removeStoneFeatures(BiomeGenerationSettingsBuilder builder) {
+    private static void removeStoneFeatures(BiomeGenerationSettings.Builder builder) {
         removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.ANDESITE.defaultBlockState(), Blocks.GRANITE.defaultBlockState(), Blocks.DIORITE.defaultBlockState(), Blocks.TUFF.defaultBlockState(), Blocks.DIRT.defaultBlockState(), Blocks.GRAVEL.defaultBlockState());
     }
 
-    private static void removeOreFeatures(BiomeGenerationSettingsBuilder builder) {
+    private static void removeOreFeatures(BiomeGenerationSettings.Builder builder) {
         removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.COAL_ORE.defaultBlockState(), Blocks.IRON_ORE.defaultBlockState(), Blocks.GOLD_ORE.defaultBlockState(), Blocks.COPPER_ORE.defaultBlockState(), Blocks.EMERALD_ORE.defaultBlockState(), Blocks.REDSTONE_ORE.defaultBlockState(), Blocks.LAPIS_ORE.defaultBlockState(), Blocks.DIAMOND_ORE.defaultBlockState());
         removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.DEEPSLATE_COAL_ORE.defaultBlockState(), Blocks.DEEPSLATE_IRON_ORE.defaultBlockState(), Blocks.DEEPSLATE_GOLD_ORE.defaultBlockState(), Blocks.DEEPSLATE_COPPER_ORE.defaultBlockState(), Blocks.DEEPSLATE_EMERALD_ORE.defaultBlockState(), Blocks.DEEPSLATE_REDSTONE_ORE.defaultBlockState(), Blocks.DEEPSLATE_LAPIS_ORE.defaultBlockState(), Blocks.DEEPSLATE_DIAMOND_ORE.defaultBlockState());
     }
@@ -111,12 +110,12 @@ public class AntimatterWorldGenerator {
      * @param featureToRemove feature instance wishing to be removed
      * @param states          BlockStates wish to be removed
      */
-    public static void removeDecoratedFeatureFromAllBiomes(BiomeGenerationSettingsBuilder builder, @Nonnull final GenerationStep.Decoration stage, @Nonnull final Feature<?> featureToRemove, BlockState... states) {
+    public static void removeDecoratedFeatureFromAllBiomes(BiomeGenerationSettings.Builder builder, @Nonnull final GenerationStep.Decoration stage, @Nonnull final Feature<?> featureToRemove, BlockState... states) {
         if (states.length == 0) Utils.onInvalidData("No BlockStates specified to be removed!");
         Set<BlockState> set = Set.of(states);
         // AntimatterAPI.runLaterCommon(() -> {
         //  for (Biome biome : ForgeRegistries.BIOMES.getValues()) {
-        builder.getFeatures(stage).removeIf(f -> isDecoratedFeatureDisabled(f.value().feature().value(), featureToRemove, set));
+        ((BiomeGenerationBuilderAccessor)builder).getFeatures().get(stage.ordinal()).removeIf(f -> isDecoratedFeatureDisabled(f.value().feature().value(), featureToRemove, set));
 
     }
 

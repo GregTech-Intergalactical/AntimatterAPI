@@ -12,6 +12,7 @@ import muramasa.antimatter.client.baked.BakedMachineSide;
 import muramasa.antimatter.client.baked.ListBakedModel;
 import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -28,6 +29,7 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -70,8 +72,8 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
 
     private static BakedModel renderInner(BlockState state, Random rand, int light, BakedModel inner, Fluid fluid) {
         List<BakedQuad> quads = inner.getQuads(state, null, rand, EmptyModelData.INSTANCE);
-        List<BakedQuad> out = VertexTransformer.processMany(quads, fluid.getAttributes().getColor(), Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluid.getAttributes().getStillTexture()));
-        boolean hot = fluid.getAttributes().getTemperature() >= Fluids.LAVA.getAttributes().getTemperature();
+        List<BakedQuad> out = VertexTransformer.processMany(quads, AntimatterPlatformUtils.getFluidColor(fluid), Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluid.getAttributes().getStillTexture()));
+        boolean hot = TesseractPlatformUtils.getFluidTemperature(fluid) >= TesseractPlatformUtils.getFluidTemperature(Fluids.LAVA);
         for (BakedQuad bakedQuad : out) {
             LightUtil.setLightData(bakedQuad, hot ? 1 << 7 : light);
         }

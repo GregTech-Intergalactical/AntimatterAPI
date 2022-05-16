@@ -3,7 +3,6 @@ package muramasa.antimatter.network.packets;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.event.IGuiEvent;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;

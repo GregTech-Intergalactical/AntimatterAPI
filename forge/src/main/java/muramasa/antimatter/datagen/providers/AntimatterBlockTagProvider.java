@@ -17,7 +17,6 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.util.TagUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.tags.BlockTagsProvider;

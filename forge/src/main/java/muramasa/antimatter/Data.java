@@ -54,7 +54,6 @@ import muramasa.antimatter.tool.behaviour.BehaviourTorchPlacing;
 import muramasa.antimatter.tool.behaviour.BehaviourTreeFelling;
 import muramasa.antimatter.tool.behaviour.BehaviourVanillaShovel;
 import muramasa.antimatter.tool.behaviour.BehaviourWaterlogToggle;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -72,7 +71,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;

@@ -7,11 +7,7 @@ import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 public class VanillaStoneType extends CobbleStoneType{
     private final Texture vanillaTexture;

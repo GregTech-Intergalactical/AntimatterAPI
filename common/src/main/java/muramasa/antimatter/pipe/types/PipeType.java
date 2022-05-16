@@ -15,8 +15,6 @@ import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +48,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         Set<Block> blocks = getBlocks();
         registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(),t))
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
-        tileType = new BlockEntityType<>((pos,state) -> tileFunc.create((T) this, pos, state), blocks, null).setRegistryName(getDomain(), getId());
+        tileType = new BlockEntityType<>((pos,state) -> tileFunc.create((T) this, pos, state), blocks, null);
         AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), getTileType());
     }
 

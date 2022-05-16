@@ -12,8 +12,9 @@
   ],
   "mixins": [
     "BiomeAccessor",
+    "BiomeGenerationBuilderAccessor",
+    "BlockAccessor",
     "BlockLootTablesAccessor",
-    "GameDataMixin",
     "GrindstoneContainerMixin",
     "IceBlockMixin",
     "ItemStackMixin",

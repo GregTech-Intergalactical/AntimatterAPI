@@ -3,8 +3,6 @@ package muramasa.antimatter.structure;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.util.Dir;
-import muramasa.antimatter.util.int3;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;

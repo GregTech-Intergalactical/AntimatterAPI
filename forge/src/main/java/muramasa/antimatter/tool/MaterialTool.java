@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;

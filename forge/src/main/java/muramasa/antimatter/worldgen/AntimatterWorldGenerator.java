@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.registration.RegistrationEvent;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import muramasa.antimatter.worldgen.feature.FeatureVein;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;

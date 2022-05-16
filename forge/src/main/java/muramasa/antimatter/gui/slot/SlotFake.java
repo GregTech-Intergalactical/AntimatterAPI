@@ -4,7 +4,6 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;

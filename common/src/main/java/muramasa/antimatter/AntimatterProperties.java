@@ -8,7 +8,6 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityMachine.DynamicKey;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;

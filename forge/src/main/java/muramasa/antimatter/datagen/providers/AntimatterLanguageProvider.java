@@ -31,7 +31,6 @@ import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.util.Utils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;

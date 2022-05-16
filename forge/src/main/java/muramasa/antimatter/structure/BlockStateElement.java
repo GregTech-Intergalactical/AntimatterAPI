@@ -1,7 +1,6 @@
 package muramasa.antimatter.structure;
 
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.util.int3;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class BlockStateElement extends StructureElement {

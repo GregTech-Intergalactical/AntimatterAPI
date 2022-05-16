@@ -33,7 +33,7 @@ public class TagUtils {
      * @return BlockTag variant of the ItemTag
      */
     public static TagKey<Block> itemToBlockTag(TagKey<Item> tag) {
-        return createTag(tag.location(), Block.class, BlockTags::create);
+        return createTag(tag.location(), Block.class, name -> TagKey.create(Registry.BLOCK_REGISTRY, name));
     }
 
     /**
@@ -45,7 +45,7 @@ public class TagUtils {
      * @return ItemTag variant of the BlockTag
      */
     public static TagKey<Item> blockToItemTag(TagKey<Block> tag) {
-        return createTag(tag.location(), Item.class, ItemTags::create);
+        return createTag(tag.location(), Item.class, name -> TagKey.create(Registry.ITEM_REGISTRY, name));
     }
 
     /**
@@ -53,7 +53,7 @@ public class TagUtils {
      * @return BlockTag
      */
     public static TagKey<Block> getBlockTag(ResourceLocation loc) {
-        return createTag(loc, Block.class, BlockTags::create);
+        return createTag(loc, Block.class, name -> TagKey.create(Registry.BLOCK_REGISTRY, name));
     }
 
     public static Map<ResourceLocation, TagKey> getTags(Class clazz) {
@@ -65,7 +65,7 @@ public class TagUtils {
      * @return BlockTag
      */
     public static TagKey<Block> getForgelikeBlockTag(String name) {
-        return getBlockTag(new ResourceLocation("forge", name));
+        return getBlockTag(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", name));
     }
 
     /**
@@ -75,7 +75,7 @@ public class TagUtils {
      * @return ItemTag
      */
     public static TagKey<Item> getItemTag(ResourceLocation loc) {
-        return createTag(loc, Item.class, ItemTags::create);
+        return createTag(loc, Item.class, name -> TagKey.create(Registry.ITEM_REGISTRY, name));
     }
 
     /**
@@ -86,7 +86,7 @@ public class TagUtils {
      */
     public static TagKey<Item> getForgelikeItemTag(String name) {
         // TODO: Change "wood" -> "wooden", forge recognises "wooden"
-        return getItemTag(new ResourceLocation("forge", name));
+        return getItemTag(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", name));
     }
 
     /**
@@ -94,7 +94,7 @@ public class TagUtils {
      * @return FluidTag
      */
     public static TagKey<Fluid> getForgelikeFluidTag(String name) {
-        return createTag(new ResourceLocation("forge", name), Fluid.class, FluidTags::create);
+        return createTag(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", name), Fluid.class, fluidName -> TagKey.create(Registry.FLUID_REGISTRY, fluidName));
     }
 
     /**
@@ -102,7 +102,7 @@ public class TagUtils {
      * @return FluidTag
      */
     public static TagKey<Fluid> getFluidTag(ResourceLocation name) {
-        return createTag(name, Fluid.class, FluidTags::create);
+        return createTag(name, Fluid.class, fluidName -> TagKey.create(Registry.FLUID_REGISTRY, fluidName));
     }
 
     /**

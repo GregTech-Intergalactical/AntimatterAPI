@@ -3,7 +3,6 @@ package muramasa.antimatter.structure;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.util.int3;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.block.entity.BlockEntity;

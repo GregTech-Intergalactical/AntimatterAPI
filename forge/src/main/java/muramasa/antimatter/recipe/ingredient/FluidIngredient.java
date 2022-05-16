@@ -3,24 +3,17 @@ package muramasa.antimatter.recipe.ingredient;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.util.TagUtils;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.tags.TagManager;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public class FluidIngredient {
     private FluidStack[] stacks = new FluidStack[0];

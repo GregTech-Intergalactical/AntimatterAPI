@@ -2,7 +2,6 @@ package muramasa.antimatter.structure;
 
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
-import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;

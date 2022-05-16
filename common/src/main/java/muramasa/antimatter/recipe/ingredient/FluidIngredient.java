@@ -3,6 +3,7 @@ package muramasa.antimatter.recipe.ingredient;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -25,7 +26,7 @@ import java.util.stream.Stream;
 public class FluidIngredient {
     private FluidStack[] stacks = new FluidStack[0];
     private TagKey<Fluid> tag;
-    private int amount = 0;
+    private long amount = 0;
     private boolean evaluated = false;
 
     public static final FluidIngredient EMPTY = new FluidIngredient();
@@ -49,7 +50,7 @@ public class FluidIngredient {
         return stacks;
     }
 
-    public int getAmount() {
+    public long getAmount() {
         return amount;
     }
 
@@ -70,7 +71,7 @@ public class FluidIngredient {
         getStacks();
         buffer.writeVarInt(stacks.length);
         for (FluidStack stack : this.stacks) {
-            buffer.writeFluidStack(stack);
+            AntimatterPlatformUtils.writeFluidStack(stack, buffer);
         }
     }
 
@@ -78,7 +79,7 @@ public class FluidIngredient {
         int count = buf.readVarInt();
         FluidStack[] stacks = new FluidStack[count];
         for (int i = 0; i < count; i++) {
-            stacks[i] = buf.readFluidStack();
+            stacks[i] = AntimatterPlatformUtils.readFluidStack(buf);
         }
         FluidIngredient ing = new FluidIngredient();
         ing.stacks = stacks;
@@ -95,7 +96,7 @@ public class FluidIngredient {
     }
 
     public static FluidIngredient of(Material mat, int amount) {
-        return of(new ResourceLocation("forge", mat.getId()), amount);
+        return of(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", mat.getId()), amount);
     }
 
     public static FluidIngredient of(FluidStack stack) {
@@ -110,8 +111,8 @@ public class FluidIngredient {
         return drain(amount, handler, input, simulate);
     }
 
-    public List<FluidStack> drain(int amount, MachineFluidHandler<?> handler, boolean input, boolean simulate) {
-        int drained = amount;
+    public List<FluidStack> drain(long amount, MachineFluidHandler<?> handler, boolean input, boolean simulate) {
+        long drained = amount;
         List<FluidStack> ret = new ObjectArrayList<>(1);
         IFluidHandler.FluidAction action = simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE;
         for (FluidStack stack : stacks) {
@@ -127,7 +128,7 @@ public class FluidIngredient {
         return ret;
     }
 
-    public int drainedAmount(int amount, MachineFluidHandler<?> handler, boolean input, boolean simulate) {
-        return drain(amount, handler, input, simulate).stream().mapToInt(FluidStack::getAmount).sum();
+    public long drainedAmount(int amount, MachineFluidHandler<?> handler, boolean input, boolean simulate) {
+        return drain(amount, handler, input, simulate).stream().mapToLong(FluidStack::getAmount).sum();
     }
 }
