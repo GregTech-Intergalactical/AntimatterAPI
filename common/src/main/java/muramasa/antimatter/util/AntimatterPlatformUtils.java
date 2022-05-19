@@ -17,6 +17,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
@@ -123,6 +124,11 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static ResourceLocation getIdFromFluid(Fluid fluid){
+        return null;
+    }
+
+    @ExpectPlatform
+    public static ResourceLocation getIdFromMenuType(MenuType<?> menuType){
         return null;
     }
 

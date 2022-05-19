@@ -3,9 +3,13 @@ package muramasa.antimatter.client;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -22,11 +26,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.ForgeModelBakery;
-import net.minecraftforge.client.model.QuadTransformer;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.common.model.TransformationHelper;
+import net.minecraft.world.level.material.Fluid;
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,8 +57,9 @@ public class ModelUtils {
         }
     }
 
+    @ExpectPlatform
     public static UnbakedModel getMissingModel() {
-        return ForgeModelBakery.instance().getModel(new ModelResourceLocation("builtin/missing", "missing"));
+        return null;
     }
 
     public static BakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads, Function<Material, TextureAtlasSprite> getter) {
@@ -65,21 +68,19 @@ public class ModelUtils {
         return builder.build();
     }
 
+    @ExpectPlatform
     public static BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
-        List<BakedQuad> generalQuads = model.bake(bakery, model, getter, transform, loc, true).getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE);
-        SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrides.EMPTY, true).particle(getter.apply(model.getMaterial("particle")));
-        generalQuads.forEach(builder::addUnculledFace);
-        return builder.build();
+        return null;
     }
 
+    @ExpectPlatform
     public static BakedModel getSimpleBakedModel(BakedModel baked) {
-        Map<Direction, List<BakedQuad>> faceQuads = new Object2ObjectOpenHashMap<>();
-        Arrays.stream(Ref.DIRS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, EmptyModelData.INSTANCE)));
-        return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.useAmbientOcclusion(), baked.usesBlockLight(), baked.isGui3d(), baked.getParticleIcon(), baked.getTransforms(), baked.getOverrides());
+        return null;
     }
 
+    @ExpectPlatform
     public static BakedModel getBaked(ResourceLocation loc) {
-        return ForgeModelBakery.instance().getBakedTopLevelModels().get(loc);// SimpleModelState.IDENTITY, ForgeModelBakery.defaultTextureGetter());
+        return null;
     }
 
     public static BakedModel getBakedFromState(BlockState state) {
@@ -87,7 +88,7 @@ public class ModelUtils {
     }
 
     public static BakedModel getBakedFromItem(Item item) {
-        return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getModelManager().getModel(new ModelResourceLocation(item.getRegistryName(), "inventory"));
+        return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getModelManager().getModel(new ModelResourceLocation(AntimatterPlatformUtils.getIdFromItem(item), "inventory"));
     }
 
     public static TextureAtlasSprite getSprite(ResourceLocation loc) {
@@ -98,13 +99,28 @@ public class ModelUtils {
         return new Material(InventoryMenu.BLOCK_ATLAS, loc);
     }
 
+
     public static List<BakedQuad> trans(List<BakedQuad> quads, Vector3f rotationL, Vector3f rotationR) {
-        Quaternion rotL = rotationL == null ? null : TransformationHelper.quatFromXYZ(rotationL, true);
-        Quaternion rotR = rotationR == null ? null : TransformationHelper.quatFromXYZ(rotationR, true);
+        Quaternion rotL = rotationL == null ? null : quatFromXYZ(rotationL, true);
+        Quaternion rotR = rotationR == null ? null : quatFromXYZ(rotationR, true);
         return trans(quads, new Transformation(new Vector3f(0, 0, 0), rotL, null, rotR));
     }
 
+    @ExpectPlatform
+    public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees){
+        return null;
+    }
+
+    @ExpectPlatform
     public static List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform) {
-        return new QuadTransformer(transform.blockCenterToCorner()).processMany(quads);
+        return null;
+    }
+
+    @ExpectPlatform
+    public static void setRenderLayer(Block block, RenderType renderType){
+    }
+
+    @ExpectPlatform
+    public static void setRenderLayer(Fluid fluid, RenderType renderType){
     }
 }

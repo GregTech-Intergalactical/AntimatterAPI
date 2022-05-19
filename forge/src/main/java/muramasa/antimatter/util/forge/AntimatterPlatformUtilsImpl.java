@@ -18,6 +18,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
@@ -112,6 +113,10 @@ public class AntimatterPlatformUtilsImpl {
 
     public static ResourceLocation getIdFromFluid(Fluid fluid){
         return ForgeRegistries.FLUIDS.getKey(fluid);
+    }
+
+    public static ResourceLocation getIdFromMenuType(MenuType<?> menuType){
+        return ForgeRegistries.CONTAINERS.getKey(menuType);
     }
 
     public static Block getBlockFromId(String domain, String id){
