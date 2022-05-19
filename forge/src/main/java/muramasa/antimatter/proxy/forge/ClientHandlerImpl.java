@@ -22,13 +22,7 @@ public class ClientHandlerImpl {
         eventBus.addListener(ClientHandlerImpl::onBlockColorHandler);
         //eventBus.addListener(ClientHandlerImpl::onModelRegistry);
         eventBus.addListener(AntimatterTextureStitcher::onTextureStitch);
-        AntimatterTextureStitcher.addStitcher(event -> AntimatterAPI.all(CoverFactory.class).forEach(cover -> {
-            if (cover == ICover.emptyFactory)
-                return;
-            for (ResourceLocation r : cover.getTextures()) {
-                event.accept(r);
-            }
-        }));
+        new ClientHandler();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientHandlerImpl::preResourceRegistration);
 
     }

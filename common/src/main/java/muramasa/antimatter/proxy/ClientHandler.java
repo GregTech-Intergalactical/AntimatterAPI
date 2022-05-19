@@ -22,6 +22,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.color.item.ItemColors;
@@ -77,8 +78,8 @@ public class ClientHandler implements IProxyHandler {
         AntimatterAPI.runLaterClient(() -> {
             Set<ResourceLocation> registered = new ObjectOpenHashSet<>();
             AntimatterAPI.all(MenuHandler.class, h -> {
-                if (!registered.contains((h.getContainerType()))) {
-                    registered.add((h.getContainerType()));
+                if (!registered.contains(AntimatterPlatformUtils.getIdFromMenuType(h.getContainerType()))) {
+                    registered.add(AntimatterPlatformUtils.getIdFromMenuType(h.getContainerType()));
                     MenuScreens.register(h.getContainerType(), (MenuScreens.ScreenConstructor) h.screen());
                 }
             });
