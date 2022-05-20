@@ -6,7 +6,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.math.Vector3f;
+import muramasa.antimatter.mixin.client.BlockElementAccessor;
+import muramasa.antimatter.mixin.client.GuiLightAccessor;
+import muramasa.antimatter.mixin.client.ItemTransformDeserializerAccessor;
 import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
+import net.minecraft.client.renderer.block.model.ItemTransform.Deserializer;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -14,6 +20,7 @@ import net.minecraft.util.Mth;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -181,7 +188,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         }
 
         if (this.guiLight != null) {
-            root.addProperty("gui_light", this.guiLight.getSerializedName());
+            root.addProperty("gui_light", ((GuiLightAccessor)(Object)this.guiLight).getName());
         }
 
         Map<Perspective, ItemTransform> transforms = this.transforms.build();
@@ -191,13 +198,13 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 JsonObject transform = new JsonObject();
                 ItemTransform vec = e.getValue();
                 if (vec.equals(ItemTransform.NO_TRANSFORM)) continue;
-                if (!vec.rotation.equals(ItemTransform.Deserializer.DEFAULT_ROTATION)) {
+                if (!vec.rotation.equals(ItemTransformDeserializerAccessor.getDEFAULT_ROTATION())) {
                     transform.add("rotation", serializeVector3f(vec.rotation));
                 }
-                if (!vec.translation.equals(ItemTransform.Deserializer.DEFAULT_TRANSLATION)) {
+                if (!vec.translation.equals(ItemTransformDeserializerAccessor.getDEFAULT_TRANSLATION())) {
                     transform.add("translation", serializeVector3f(e.getValue().translation));
                 }
-                if (!vec.scale.equals(ItemTransform.Deserializer.DEFAULT_SCALE)) {
+                if (!vec.scale.equals(ItemTransformDeserializerAccessor.getDEFAULT_SCALE())) {
                     transform.add("scale", serializeVector3f(e.getValue().scale));
                 }
                 display.add(e.getKey().name, transform);
@@ -242,7 +249,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
                     JsonObject faceObj = new JsonObject();
                     faceObj.addProperty("texture", serializeLocOrKey(face.texture));
-                    if (!Arrays.equals(face.uv.uvs, part.uvsByFace(dir))) {
+                    if (!Arrays.equals(face.uv.uvs, ((BlockElementAccessor)(Object)part).uvsByFace(dir))) {
                         faceObj.add("uv", new Gson().toJsonTree(face.uv.uvs));
                     }
                     if (face.cullForDirection != null) {
@@ -437,7 +444,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         BlockElement build() {
             Map<Direction, BlockElementFace> faces = this.faces.entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
+                    .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
             return new BlockElement(from, to, faces, rotation == null ? null : rotation.build(), shade);
         }
 
@@ -608,16 +615,16 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
         Map<Perspective, ItemTransform> build() {
             return this.transforms.entrySet().stream()
-                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
+                    .collect(Collectors.toMap(Entry::getKey, e -> e.getValue().build(), (k1, k2) -> { throw new IllegalArgumentException(); }, LinkedHashMap::new));
         }
 
         public T end() { return self(); }
 
         public class TransformVecBuilder {
 
-            private Vector3f rotation = ItemTransform.Deserializer.DEFAULT_ROTATION.copy();
-            private Vector3f translation = ItemTransform.Deserializer.DEFAULT_TRANSLATION.copy();
-            private Vector3f scale = ItemTransform.Deserializer.DEFAULT_SCALE.copy();
+            private Vector3f rotation = ItemTransformDeserializerAccessor.getDEFAULT_ROTATION().copy();
+            private Vector3f translation = ItemTransformDeserializerAccessor.getDEFAULT_TRANSLATION().copy();
+            private Vector3f scale = ItemTransformDeserializerAccessor.getDEFAULT_SCALE().copy();
 
             TransformVecBuilder(Perspective type) {
                 // param unused for functional match

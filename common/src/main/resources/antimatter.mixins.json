@@ -4,10 +4,13 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "antimatter.refmap.json",
   "client": [
+    "client.BlockElementAccessor",
     "client.ChunkReaderAccessor",
     "client.ClientBlockUpdateMixin",
     "client.ClientPackSourceAccessor",
     "client.DimensionTypeAccessor",
+    "client.GuiLightAccessor",
+    "client.ItemTransformDeserializerAccessor",
     "client.LevelRendererAccessor",
     "client.TESRMixin"
   ],
