@@ -45,14 +45,15 @@ public class ExistingFileHelper {
 
         var8 = existingMods.iterator();
 
-        for (String existingMod : existingMods){
+        //TODO fix this
+        /*for (String existingMod : existingMods){
             IModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
             if (modFileInfo != null) {
                 PackResources pack = ResourcePackLoader.createPackForMod(modFileInfo);
                 candidateClientResources.add(pack);
                 candidateServerResources.add(pack);
             }
-        }
+        }*/
 
         this.clientResources = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, candidateClientResources);
         this.serverData = new MultiPackResourceManager(PackType.SERVER_DATA, candidateServerResources);
