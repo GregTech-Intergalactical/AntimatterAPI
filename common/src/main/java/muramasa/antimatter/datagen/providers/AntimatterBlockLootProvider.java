@@ -16,6 +16,7 @@ import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.BlockPipe;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.DataGenerator;
@@ -95,7 +96,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     @Override
     public void onCompletion() {
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
-            DynamicResourcePack.addLootEntry(e.getKey().getRegistryName(), e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build());
+            DynamicResourcePack.addLootEntry(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build());
         }
     }
 

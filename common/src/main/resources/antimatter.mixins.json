@@ -6,6 +6,7 @@
   "client": [
     "client.ChunkReaderAccessor",
     "client.ClientBlockUpdateMixin",
+    "client.ClientPackSourceAccessor",
     "client.DimensionTypeAccessor",
     "client.LevelRendererAccessor",
     "client.TESRMixin"

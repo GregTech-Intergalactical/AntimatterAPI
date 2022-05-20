@@ -3,12 +3,8 @@ package muramasa.antimatter.datagen.providers;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.models.ModelProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockModelProvider;
-import net.minecraftforge.client.model.generators.ModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import java.util.function.Function;
 
