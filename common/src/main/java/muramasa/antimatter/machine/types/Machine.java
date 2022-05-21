@@ -35,6 +35,7 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -49,10 +50,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.Property;
-;
-;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -277,7 +274,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     @Override
     public void onRegistryBuild(RegistryType registry) {
         if (registry != RegistryType.BLOCKS) return;
-        tileType = new BlockEntityType<>(new TileEntityBase.BlockEntityGetter<>(tileFunc, (T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null).setRegistryName(domain, id);
+        tileType = new BlockEntityType<>(new TileEntityBase.BlockEntityGetter<>(tileFunc, (T)this), tiers.stream().map(t -> getBlock(this, t)).collect(Collectors.toSet()), null);
         AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), getTileType());
     }
 

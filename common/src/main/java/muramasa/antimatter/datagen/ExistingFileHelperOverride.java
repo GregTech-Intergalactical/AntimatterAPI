@@ -3,10 +3,10 @@ package muramasa.antimatter.datagen;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.base.ExistingFileHelper;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.Arrays;
 import java.util.Collections;

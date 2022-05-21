@@ -1,6 +1,7 @@
 package muramasa.antimatter.datagen.providers;
 
 import com.google.gson.JsonObject;
+import dev.latvian.mods.kubejs.util.Tags;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -27,7 +28,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
-        super(gen, providerDomain, null);
+        super(gen);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
@@ -86,13 +86,13 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
                 this.tag(getForgelikeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 this.tag(getForgelikeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(o).replace(replace);
-                if (o.getOreType() == Data.ORE) this.tag(Tags.Blocks.ORES).add(o);
+                if (o.getOreType() == Data.ORE) this.tag(TagUtils.getForgelikeBlockTag("ores")).add(o);
             });
             AntimatterAPI.all(BlockStone.class, s -> {
                 if (s.getSuffix().isEmpty()) {
-                    this.tag(Tags.Blocks.STONE).add(s);
+                    this.tag(TagUtils.getForgelikeBlockTag("stone")).add(s);
                 } else if (s.getSuffix().equals("cobble")) {
-                    this.tag(Tags.Blocks.COBBLESTONE).add(s);
+                    this.tag(TagUtils.getForgelikeBlockTag("cobblestone")).add(s);
                 } else if (s.getSuffix().contains("bricks")) {
                     this.tag(BlockTags.STONE_BRICKS).add(s);
                 }
@@ -114,7 +114,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
             AntimatterAPI.all(BlockOreStone.class, s -> {
                 String id = "ore_stones/" + s.getMaterial().getId();
                 this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(s).replace(replace);
-                this.tag(Tags.Blocks.ORES).add(s);
+                this.tag(TagUtils.getForgelikeBlockTag("ores")).add(s);
                 this.tag(getForgelikeBlockTag(id)).add(s);
             });
             AntimatterAPI.all(BlockStorage.class, block -> {

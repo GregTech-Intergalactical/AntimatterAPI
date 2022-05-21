@@ -1,5 +1,24 @@
 package muramasa.antimatter.datagen.base;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.*;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -7,55 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-
-import muramasa.antimatter.util.AntimatterPlatformUtils;
-import net.minecraft.world.level.block.ButtonBlock;
-import net.minecraft.world.level.block.PressurePlateBlock;
-import net.minecraft.world.level.block.StandingSignBlock;
-import net.minecraft.world.level.block.WallSignBlock;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.FenceBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.CrossCollisionBlock;
-import net.minecraft.world.level.block.IronBarsBlock;
-import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.PipeBlock;
-import net.minecraft.world.level.block.SlabBlock;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.TrapDoorBlock;
-import net.minecraft.world.level.block.WallBlock;
-import net.minecraft.world.level.block.state.properties.WallSide;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
-import net.minecraft.data.DataProvider;
-import net.minecraft.world.level.block.state.properties.Property;
-import net.minecraft.world.level.block.state.properties.AttachFace;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DoorHingeSide;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.Half;
-import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.block.state.properties.StairsShape;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
-import net.minecraft.resources.ResourceLocation;
 
 /**
  * Data provider for blockstate files. Extends {@link BlockModelProvider} so that

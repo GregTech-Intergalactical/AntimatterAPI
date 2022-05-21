@@ -10,12 +10,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.datagen.base.BlockModelBuilder;
+import muramasa.antimatter.datagen.base.ExistingFileHelper;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;

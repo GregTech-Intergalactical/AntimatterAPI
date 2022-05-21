@@ -37,11 +37,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.DrawSelectionEvent;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.api.capability.TesseractGTCapability;
-import tesseract.api.forge.TesseractCaps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

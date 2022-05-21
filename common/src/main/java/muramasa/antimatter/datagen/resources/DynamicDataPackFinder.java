@@ -6,16 +6,13 @@ import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
-import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
-@Mod.EventBusSubscriber(modid = Ref.ID)
+//@Mod.EventBusSubscriber(modid = Ref.ID)
 public class DynamicDataPackFinder implements RepositorySource {
 
     protected final String id, name;
@@ -34,8 +31,8 @@ public class DynamicDataPackFinder implements RepositorySource {
     }*/
 
 
-    @SubscribeEvent
-    public static void addPackFinder(ServerStartingEvent e) {
+    //@SubscribeEvent
+    public static void addPackFinder(/*ServerStartingEvent e*/) {
         //Antimatter.LOGGER.info("Adding Antimatter's Dynamic Datapack to the server...");
         //e.getServer().getResourcePacks().addPackFinder(Ref.SERVER_PACK_FINDER);
         //e.getServer().getResourcePacks().getEnabledPacks().forEach(p -> Antimatter.LOGGER.info(p.getName() + " is being loaded into the server..."));

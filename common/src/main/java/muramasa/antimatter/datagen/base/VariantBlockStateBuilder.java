@@ -1,32 +1,20 @@
 package muramasa.antimatter.datagen.base;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
-
 import muramasa.antimatter.datagen.base.BlockStateProvider.ConfiguredModelList;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Builder for variant-type blockstates, i.e. non-multipart blockstates. Should

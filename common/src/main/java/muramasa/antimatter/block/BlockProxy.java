@@ -25,8 +25,6 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -61,7 +59,6 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, En
         prov.state(block, builder);
     }
 
-    @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getBlockEntity(pos);
         return tile != null && tile.getState() != null ? tile.getState().getBlock().asItem().getDefaultInstance() : ItemStack.EMPTY;
@@ -71,7 +68,7 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, En
     @SuppressWarnings("unchecked")
     public void onRegistryBuild(RegistryType registry) {
         if (registry == RegistryType.BLOCK_ENTITIES) {
-            TYPE = new BlockEntityType<>((a,b) -> new TileEntityFakeBlock(this,a,b), Set.of(this), null).setRegistryName(new ResourceLocation(getDomain(), getId()));
+            TYPE = new BlockEntityType<>((a,b) -> new TileEntityFakeBlock(this,a,b), Set.of(this), null);
             //((IForgeRegistry<BlockEntityType<?>>)registry).register(TYPE);
             AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), TYPE);
         }

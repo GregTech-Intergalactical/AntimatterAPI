@@ -32,7 +32,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.Tags;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +53,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, BlockTagsProvider p) {
-        super(gen, p, providerDomain, null);
+        super(gen, p);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
@@ -97,9 +96,9 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
 
     protected void processTags(String domain) {
         TagKey<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
-        this.copy(Tags.Blocks.ORES, Tags.Items.ORES);
-        this.copy(Tags.Blocks.STONE, Tags.Items.STONE);
-        this.copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
+        this.copy(TagUtils.getForgelikeBlockTag("ores"), TagUtils.getForgelikeItemTag("ores"));
+        this.copy(TagUtils.getForgelikeBlockTag("stone"), TagUtils.getForgelikeItemTag("stone"));
+        this.copy(TagUtils.getForgelikeBlockTag("storage_blocks"), TagUtils.getForgelikeItemTag("storage_blocks"));
         this.copy(blockTag, blockToItemTag(blockTag));
         this.copy(frameTag, blockToItemTag(frameTag));
         if (domain.equals(Ref.ID)) {
@@ -113,9 +112,9 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             AntimatterAPI.all(BlockStone.class, s -> {
                 String id = "blocks/".concat(s.getId());
                 if (s.getSuffix().isEmpty()) {
-                    this.tag(Tags.Items.STONE).add(s.asItem());
+                    this.tag(TagUtils.getForgelikeItemTag("stone")).add(s.asItem());
                 } else if (s.getSuffix().equals("cobble")) {
-                    this.tag(Tags.Items.COBBLESTONE).add(s.asItem());
+                    this.tag(TagUtils.getForgelikeItemTag("cobblestone")).add(s.asItem());
                 } else if (s.getSuffix().contains("bricks")) {
                     this.tag(ItemTags.STONE_BRICKS).add(s.asItem());
                 }

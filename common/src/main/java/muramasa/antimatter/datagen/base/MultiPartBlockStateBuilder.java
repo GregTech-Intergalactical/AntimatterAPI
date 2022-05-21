@@ -9,7 +9,10 @@ import com.google.gson.JsonObject;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.Property;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map.Entry;
 
 public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {

@@ -45,9 +45,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
-import net.minecraftforge.common.extensions.IForgeItem;
-import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
@@ -59,7 +56,7 @@ import java.util.Set;
 
 import static muramasa.antimatter.Data.NULL;
 
-public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IForgeItem {
+public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
     AntimatterToolType getAntimatterToolType();
 

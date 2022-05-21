@@ -3,6 +3,8 @@ package muramasa.antimatter.tool;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.base.ItemModelBuilder;
+import muramasa.antimatter.datagen.base.ModelFile;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IColorHandler;
@@ -26,15 +28,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.extensions.IForgeItem;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IForgeItem {
+public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
     AntimatterArmorType getAntimatterArmorType();
 
     default Material getMaterial(ItemStack stack) {

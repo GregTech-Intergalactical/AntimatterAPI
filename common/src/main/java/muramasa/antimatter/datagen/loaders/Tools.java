@@ -1,6 +1,7 @@
 package muramasa.antimatter.datagen.loaders;
 
 import com.google.common.collect.ImmutableMap;
+import dev.latvian.mods.kubejs.util.Tags;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
@@ -8,12 +9,11 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.TagUtils;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -61,7 +61,7 @@ public class Tools {
                 "has_wrench", in, WRENCH.getToolStack(NULL, NULL), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(WRENCH, true).build(), 'H', HAMMER.getTag()), "IHI", "III", " I ");
 
         provider.addToolRecipe(TOOL_BUILDER.get(MORTAR.getId()), consumer, Ref.ID, MORTAR.getId() + "_recipe", "antimatter_mortars",
-                "has_wrench", in, MORTAR.getToolStack(NULL, NULL), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(MORTAR, true).build(), 'S', Tags.Items.STONE), " I ", "SIS", "SSS");
+                "has_wrench", in, MORTAR.getToolStack(NULL, NULL), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(MORTAR, true).build(), 'S', TagUtils.getForgelikeItemTag("stone")), " I ", "SIS", "SSS");
 
         provider.addToolRecipe(TOOL_BUILDER.get(FILE.getId()), consumer, Ref.ID, FILE.getId() + "_recipe", "antimatter_files",
                 "has_wrench", in, FILE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(FILE, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "P", "P", "R");
@@ -122,7 +122,7 @@ public class Tools {
                 "has_wrench", in, HOE.getToolStack(NULL, NULL), map1.apply(HOE), "PIH", "FR ", " R ");
 
         provider.addToolRecipe(CROWBAR_BUILDER.get(CROWBAR.getId()), consumer, Ref.ID, CROWBAR.getId() + "_recipe", "antimatter_crowbars",
-                "has_wrench", in, CROWBAR.getToolStack(NULL, NULL), of('H', HAMMER.getTag(), 'C', PropertyIngredient.builder("secondary").itemTags(Tags.Items.DYES).build(), 'R', PropertyIngredient.builder("primary").types(ROD).tool(CROWBAR, true).build(), 'F', FILE.getTag()), "HCR", "CRC", "RCF");
+                "has_wrench", in, CROWBAR.getToolStack(NULL, NULL), of('H', HAMMER.getTag(), 'C', PropertyIngredient.builder("secondary").itemTags(TagUtils.getForgelikeItemTag("dyes")).build(), 'R', PropertyIngredient.builder("primary").types(ROD).tool(CROWBAR, true).build(), 'F', FILE.getTag()), "HCR", "CRC", "RCF");
 
         provider.addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID, KNIFE.getId() + "_with", "antimatter_knives",
                 "has_wrench", in, KNIFE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(KNIFE, true).build(), 'S', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FP", "HS");

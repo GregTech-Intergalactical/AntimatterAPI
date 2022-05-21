@@ -11,7 +11,6 @@ import muramasa.antimatter.mixin.client.GuiLightAccessor;
 import muramasa.antimatter.mixin.client.ItemTransformDeserializerAccessor;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
-import net.minecraft.client.renderer.block.model.ItemTransform.Deserializer;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.Direction;

@@ -6,18 +6,14 @@ import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.datagen.base.*;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockModelProvider;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -58,11 +54,11 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     public void onCompletion() {
         models().generatedModels.forEach(DynamicResourcePack::addBlock);
         registeredBlocks.forEach((b, s) -> {
-            if (b.getRegistryName() == null) {
+            if (AntimatterPlatformUtils.getIdFromBlock(b) == null) {
                 BlockBasic block = (BlockBasic) b;
                 DynamicResourcePack.addState(new ResourceLocation(block.getDomain(), block.getId()), s);
             } else {
-                DynamicResourcePack.addState(b.getRegistryName(), s);
+                DynamicResourcePack.addState(AntimatterPlatformUtils.getIdFromBlock(b), s);
             }
         });
     }
@@ -82,14 +78,14 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     }
 
     public AntimatterBlockModelBuilder getBuilder(Block block) {
-        if (block.getRegistryName() == null) {
+        if (AntimatterPlatformUtils.getIdFromBlock(block) == null) {
             return (AntimatterBlockModelBuilder) models().getBuilder(((BlockBasic) block).getId());
         }
-        return (AntimatterBlockModelBuilder) models().getBuilder(block.getRegistryName().getPath());
+        return (AntimatterBlockModelBuilder) models().getBuilder(AntimatterPlatformUtils.getIdFromBlock(block).getPath());
     }
 
     public BlockModelBuilder cubeAll(Block block, ResourceLocation texture) {
-        return models().cubeAll(block.getRegistryName().toString(), texture);
+        return models().cubeAll(AntimatterPlatformUtils.getIdFromBlock(block).toString(), texture);
     }
 
     public void state(Block block, ModelFile model) {

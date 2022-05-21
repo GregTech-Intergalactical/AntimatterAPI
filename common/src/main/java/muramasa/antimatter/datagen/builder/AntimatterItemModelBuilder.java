@@ -3,10 +3,12 @@ package muramasa.antimatter.datagen.builder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.datagen.base.ExistingFileHelper;
+import muramasa.antimatter.datagen.base.ItemModelBuilder;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import tesseract.TesseractPlatformUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -47,11 +49,11 @@ public class AntimatterItemModelBuilder extends ItemModelBuilder {
     }
 
     public AntimatterItemModelBuilder bucketProperties(Fluid fluid) {
-        return bucketProperties(fluid, true, fluid.getAttributes().isLighterThanAir());
+        return bucketProperties(fluid, true, TesseractPlatformUtils.isFluidGaseous(fluid));
     }
 
     public AntimatterItemModelBuilder bucketProperties(Fluid fluid, boolean tint, boolean islighter) {
-        property("fluid", fluid.getRegistryName().toString());
+        property("fluid", AntimatterPlatformUtils.getIdFromFluid(fluid).toString());
         property("flipGas", islighter);
         property("applyTint", tint);
         // property("coverIsMask", false);

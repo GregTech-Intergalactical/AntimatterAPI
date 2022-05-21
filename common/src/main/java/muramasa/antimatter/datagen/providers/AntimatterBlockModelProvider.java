@@ -1,10 +1,10 @@
 package muramasa.antimatter.datagen.providers;
 
+import muramasa.antimatter.datagen.base.BlockModelProvider;
+import muramasa.antimatter.datagen.base.ExistingFileHelper;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.models.ModelProvider;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
@@ -14,11 +14,8 @@ public class AntimatterBlockModelProvider extends BlockModelProvider {
     private final String name;
 
     public AntimatterBlockModelProvider(DataGenerator generator, String modid, String name, ExistingFileHelper exFileHelper) {
-        super(generator, modid, exFileHelper);
+        super(generator, modid, loc -> new AntimatterBlockModelBuilder(loc, exFileHelper), exFileHelper);
         this.name = name;
-        Function<ResourceLocation, BlockModelBuilder> factoryOverride = loc -> new AntimatterBlockModelBuilder(loc, exFileHelper);
-        //TODO 1.18
-        ObfuscationReflectionHelper.setPrivateValue(ModelProvider.class, this, factoryOverride, "factory");
     }
 
     @Override

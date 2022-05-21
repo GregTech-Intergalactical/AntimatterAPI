@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.base.IGeneratedBlockstate;
+import muramasa.antimatter.datagen.base.ModelBuilder;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
@@ -13,8 +15,6 @@ import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
-import net.minecraftforge.client.model.generators.ModelBuilder;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -48,7 +48,7 @@ public class DynamicResourcePack implements PackResources {
 
     static {
         CLIENT_DOMAINS.addAll(Sets.newHashSet(Ref.ID, Ref.SHARED_ID));
-        SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, Ref.SHARED_ID, "minecraft", "forge"));
+        SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, Ref.SHARED_ID, "minecraft", "forge", "c"));
     }
 
     public DynamicResourcePack(String name, Collection<String> domains) {
