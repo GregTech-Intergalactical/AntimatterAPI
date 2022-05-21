@@ -19,7 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.client.event.DrawSelectionEvent;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

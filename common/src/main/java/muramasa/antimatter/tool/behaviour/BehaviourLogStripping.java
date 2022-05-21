@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.behaviour.BehaviourUtil.BehaviourToolAction;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -17,9 +18,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.event.ForgeEventFactory;
 
 public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
 
@@ -43,7 +41,7 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
     @Override
     public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
-        BlockState stripped = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolActions.AXE_STRIP);
+        BlockState stripped = getToolModifiedState(state, c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), BehaviourToolAction.AXE_STRIP);
         if (stripped != null) {
             if (state.hasProperty(RotatedPillarBlock.AXIS) && stripped.hasProperty(RotatedPillarBlock.AXIS)) {
                 stripped = stripped.setValue(RotatedPillarBlock.AXIS, state.getValue(RotatedPillarBlock.AXIS));
@@ -56,8 +54,8 @@ public class BehaviourLogStripping implements IItemUse<IAntimatterTool> {
         return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction action) {
-        BlockState eventState = ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, action);
+    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, BehaviourToolAction action) {
+        BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
         return eventState != originalState ? eventState : STRIPPING_MAP.get(originalState);
     }
 

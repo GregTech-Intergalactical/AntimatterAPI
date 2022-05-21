@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.behaviour.BehaviourUtil.BehaviourToolAction;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,11 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.player.UseHoeEvent;
 
 public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
 
@@ -44,10 +40,9 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
     @Override
     public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
         if (c.getClickedFace() != Direction.DOWN && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
-            BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolActions.HOE_DIG);
+            BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), BehaviourToolAction.HOE_DIG);
             if (blockstate == null) return InteractionResult.PASS;
-            UseHoeEvent hoeEvent = new UseHoeEvent(c);
-            if (MinecraftForge.EVENT_BUS.post(hoeEvent)) return InteractionResult.PASS;
+            if (BehaviourUtil.onUseHoe(c)) return InteractionResult.PASS;
             Utils.damageStack(c.getItemInHand(), c.getPlayer());
             SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.HOE_TILL : instance.getAntimatterToolType().getUseSound();
             c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -57,8 +52,8 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
         return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction action) {
-        BlockState eventState = ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, action);
+    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, BehaviourToolAction action) {
+        BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
         return eventState != originalState ? eventState : TILLING_MAP.get(originalState);
     }
 

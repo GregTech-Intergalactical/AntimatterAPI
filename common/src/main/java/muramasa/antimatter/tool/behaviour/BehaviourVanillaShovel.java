@@ -2,6 +2,7 @@ package muramasa.antimatter.tool.behaviour;
 
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.behaviour.BehaviourUtil.BehaviourToolAction;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,9 +17,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ToolAction;
-import net.minecraftforge.common.ToolActions;
-import net.minecraftforge.event.ForgeEventFactory;
 
 public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
 
@@ -35,13 +33,13 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
         BlockState state = c.getLevel().getBlockState(c.getClickedPos());
         BlockState changedState = null;
         if (state.getBlock() == Blocks.GRASS_BLOCK && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
-            changedState = getToolModifiedState(state, Blocks.DIRT_PATH.defaultBlockState(), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolActions.SHOVEL_FLATTEN);
+            changedState = getToolModifiedState(state, Blocks.DIRT_PATH.defaultBlockState(), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), BehaviourToolAction.SHOVEL_FLATTEN);
             if (changedState != null) {
                 SoundEvent soundEvent = instance.getAntimatterToolType().getUseSound() == null ? SoundEvents.SHOVEL_FLATTEN : instance.getAntimatterToolType().getUseSound();
                 c.getLevel().playSound(c.getPlayer(), c.getClickedPos(), soundEvent, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
         } else if (state.getBlock() instanceof CampfireBlock && state.getValue(CampfireBlock.LIT)) {
-            changedState = getToolModifiedState(state, state.setValue(CampfireBlock.LIT, false), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), ToolActions.SHOVEL_DIG);
+            changedState = getToolModifiedState(state, state.setValue(CampfireBlock.LIT, false), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), BehaviourToolAction.SHOVEL_DIG);
             if (changedState != null) {
                 c.getLevel().levelEvent(c.getPlayer(), 1009, c.getClickedPos(), 0);
             }
@@ -53,8 +51,8 @@ public class BehaviourVanillaShovel implements IItemUse<IAntimatterTool> {
         } else return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, BlockState changedState, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction action) {
-        BlockState eventState = ForgeEventFactory.onToolUse(originalState, world, pos, player, stack, action);
+    private BlockState getToolModifiedState(BlockState originalState, BlockState changedState, Level world, BlockPos pos, Player player, ItemStack stack, BehaviourToolAction action) {
+        BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
         return eventState != originalState ? eventState : changedState;
     }
 }
