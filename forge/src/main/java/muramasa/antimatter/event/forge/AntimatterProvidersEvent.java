@@ -1,7 +1,6 @@
 package muramasa.antimatter.event.forge;
 
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
 

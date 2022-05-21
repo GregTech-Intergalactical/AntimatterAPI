@@ -1,7 +1,6 @@
 package muramasa.antimatter.material;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 
 public class TextureSet implements IAntimatterObject {

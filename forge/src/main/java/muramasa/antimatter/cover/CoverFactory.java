@@ -6,7 +6,6 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;

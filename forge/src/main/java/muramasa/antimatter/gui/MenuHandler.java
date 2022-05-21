@@ -3,7 +3,6 @@ package muramasa.antimatter.gui;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
-import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.network.FriendlyByteBuf;

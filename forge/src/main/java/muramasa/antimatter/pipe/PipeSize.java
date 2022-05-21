@@ -1,6 +1,5 @@
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.phys.AABB;

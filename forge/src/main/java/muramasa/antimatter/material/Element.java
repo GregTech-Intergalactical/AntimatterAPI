@@ -1,7 +1,5 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.registration.IAntimatterObject;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 

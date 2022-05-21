@@ -6,7 +6,6 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemFluidCell;
-import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;

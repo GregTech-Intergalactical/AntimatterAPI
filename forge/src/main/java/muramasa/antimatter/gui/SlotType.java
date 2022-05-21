@@ -10,7 +10,6 @@ import muramasa.antimatter.gui.slot.SlotFakeFluid;
 import muramasa.antimatter.gui.slot.SlotInput;
 import muramasa.antimatter.gui.slot.SlotOutput;
 import muramasa.antimatter.machine.event.ContentEvent;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;

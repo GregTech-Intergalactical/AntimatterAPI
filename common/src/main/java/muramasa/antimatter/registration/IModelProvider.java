@@ -4,12 +4,11 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.extensions.IForgeBlock;
 
 public interface IModelProvider {
 
     default void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        if (item instanceof IForgeBlock) prov.blockItem(item);
+        if (item instanceof Block) prov.blockItem(item);
         else if (item instanceof ITextureProvider) prov.tex(item, ((ITextureProvider) item).getTextures());
         else prov.getBuilder(item);
     }

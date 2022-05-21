@@ -33,7 +33,6 @@ import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.ore.VanillaStoneType;
 import muramasa.antimatter.pipe.BlockPipe;
-import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.BlockStateElement;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;

@@ -1,7 +1,5 @@
 package muramasa.antimatter.recipe;
 
-import muramasa.antimatter.registration.IAntimatterObject;
-
 public class RecipeTag implements IAntimatterObject {
 
     public static RecipeTag IGNORE_NBT = new RecipeTag("ignore_nbt");

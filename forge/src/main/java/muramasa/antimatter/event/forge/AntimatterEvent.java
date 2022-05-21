@@ -1,6 +1,5 @@
 package muramasa.antimatter.event.forge;
 
-import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraftforge.eventbus.api.Event;
 
 public abstract class AntimatterEvent extends Event {

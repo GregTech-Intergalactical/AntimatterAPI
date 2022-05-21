@@ -1,11 +1,8 @@
 package muramasa.antimatter.event.forge;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.ICraftingLoader;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
 
 import java.util.Collection;
-import java.util.List;
 
 public class AntimatterCraftingEvent extends AntimatterEvent {
 

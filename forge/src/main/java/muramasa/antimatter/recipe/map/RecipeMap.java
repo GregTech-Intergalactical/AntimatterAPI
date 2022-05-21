@@ -18,7 +18,6 @@ import muramasa.antimatter.recipe.ingredient.MapItemStackIngredient;
 import muramasa.antimatter.recipe.ingredient.MapTagIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.ingredient.SpecialIngredientWrapper;
-import muramasa.antimatter.registration.ISharedAntimatterObject;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;

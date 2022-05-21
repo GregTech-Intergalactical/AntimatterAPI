@@ -1,9 +1,6 @@
 package muramasa.antimatter.fluid;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.registration.IRegistryEntryProvider;
-import muramasa.antimatter.registration.ISharedAntimatterObject;
-import muramasa.antimatter.registration.RegistryType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.CreativeModeTab;

@@ -1,7 +1,6 @@
 package muramasa.antimatter.event.forge;
 
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
 
 public class AntimatterLoaderEvent extends AntimatterEvent {
 

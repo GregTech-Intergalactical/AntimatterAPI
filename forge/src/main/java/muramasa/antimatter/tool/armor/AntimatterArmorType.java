@@ -4,7 +4,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;

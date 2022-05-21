@@ -3,7 +3,6 @@ package muramasa.antimatter.ore;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockMaterialType;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.registration.ISharedAntimatterObject;
 import net.minecraft.world.level.block.Block;
 
 public class BlockOreStone extends BlockMaterialType implements ISharedAntimatterObject {

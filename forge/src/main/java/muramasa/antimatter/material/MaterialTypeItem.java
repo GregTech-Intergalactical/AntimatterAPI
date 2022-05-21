@@ -1,7 +1,6 @@
 package muramasa.antimatter.material;
 
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.registration.RegistryType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 

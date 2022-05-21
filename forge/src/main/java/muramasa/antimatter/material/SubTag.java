@@ -1,7 +1,5 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.registration.IAntimatterObject;
-
 public class SubTag implements IAntimatterObject {
 
     public static final SubTag GOOD_SOLDER = new SubTag("solder_good");

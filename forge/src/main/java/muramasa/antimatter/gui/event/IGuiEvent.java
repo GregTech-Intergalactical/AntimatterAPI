@@ -2,7 +2,6 @@ package muramasa.antimatter.gui.event;
 
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.machine.event.IMachineEvent;
-import muramasa.antimatter.registration.ISharedAntimatterObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 

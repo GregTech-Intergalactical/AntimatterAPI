@@ -1,9 +1,6 @@
 package muramasa.antimatter.example;
 
 import muramasa.antimatter.item.ItemBasic;
-import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.registration.IModelProvider;
-import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.world.item.Item;
 

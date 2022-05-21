@@ -1,6 +1,5 @@
 package muramasa.antimatter.client.dynamic;
 
-import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 

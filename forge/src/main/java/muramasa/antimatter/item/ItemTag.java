@@ -1,7 +1,5 @@
 package muramasa.antimatter.item;
 
-import muramasa.antimatter.registration.IAntimatterObject;
-
 //TODO replace with vanilla tag system
 public class ItemTag implements IAntimatterObject {
 

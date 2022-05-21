@@ -3,7 +3,6 @@ package muramasa.antimatter.gui;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.resources.ResourceLocation;
 
 //@OnlyIn(Dist.CLIENT)

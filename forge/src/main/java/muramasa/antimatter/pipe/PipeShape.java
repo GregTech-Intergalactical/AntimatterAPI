@@ -1,7 +1,5 @@
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.registration.IAntimatterObject;
-
 import java.util.Locale;
 
 public enum PipeShape implements IAntimatterObject {

@@ -5,30 +5,18 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.capability.FluidHandler;
-import muramasa.antimatter.capability.Holder;
-import muramasa.antimatter.capability.machine.MachineFluidHandler;
-import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jei.renderer.InfoRenderers;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.Recipe;
-import muramasa.antimatter.recipe.ingredient.AbstractMapIngredient;
-import muramasa.antimatter.recipe.ingredient.FluidIngredient;
-import muramasa.antimatter.recipe.ingredient.MapFluidIngredient;
-import muramasa.antimatter.recipe.ingredient.MapItemIngredient;
-import muramasa.antimatter.recipe.ingredient.MapItemStackIngredient;
-import muramasa.antimatter.recipe.ingredient.MapTagIngredient;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
-import muramasa.antimatter.recipe.ingredient.SpecialIngredientWrapper;
+import muramasa.antimatter.recipe.RecipeUtil;
+import muramasa.antimatter.recipe.ingredient.*;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.ItemStack;
@@ -36,25 +24,11 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
-;
-;
-import net.minecraftforge.common.crafting.CompoundIngredient;
-import net.minecraftforge.common.crafting.NBTIngredient;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -100,7 +74,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         List<ItemStack> list = new ObjectArrayList<>(input.length);
         loop: for (ItemStack item : input) {
             for (ItemStack obj : list) {
-                if (item.equals(obj, false)) {
+                if (ItemStack.matches(item, obj)) {
                     obj.grow(item.getCount());
                     continue loop;
                 }
@@ -604,8 +578,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     public static boolean isIngredientSpecial(Ingredient i) {
         Class<? extends Ingredient> clazz = i.getClass();
         if (clazz == RecipeIngredient.class) return false;
-        return /* i.getMatchingStacks().length == 0 && */(clazz != Ingredient.class && clazz != CompoundIngredient.class
-                && clazz != NBTIngredient.class);
+        return /* i.getMatchingStacks().length == 0 && */(clazz != Ingredient.class && !RecipeUtil.isNBTIngredient(clazz)
+        && !RecipeUtil.isCompoundIngredient(clazz));
     }
 
     /**
