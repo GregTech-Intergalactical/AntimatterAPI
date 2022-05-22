@@ -3,7 +3,6 @@ package muramasa.antimatter.tile.multi;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.IHeatHandler;
 import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
 import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
@@ -19,6 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.heat.IHeatHandler;
 
 import java.util.Collections;
 import java.util.List;

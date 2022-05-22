@@ -1,5 +1,6 @@
 package muramasa.antimatter.gui;
 
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
@@ -14,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraftforge.common.extensions.IForgeMenuType;
+import org.apache.commons.lang3.function.TriFunction;
 
 
 //An arbitrary menu handler for e.g. guiclass.
@@ -27,7 +28,7 @@ public abstract class MenuHandler<T extends AbstractContainerMenu & IAntimatterC
         loc = new ResourceLocation(domain, id);
         AntimatterAPI.register(MenuHandler.class, this);
         MenuType<?> type = getContainerType();
-        AntimatterAPI.register(MenuType.class, type.getRegistryName().toString(), type.getRegistryName().getNamespace(), type);
+        AntimatterAPI.register(MenuType.class, id, domain, type);
     }
 
     @Override
@@ -53,10 +54,14 @@ public abstract class MenuHandler<T extends AbstractContainerMenu & IAntimatterC
     @MethodsReturnNonnullByDefault
     public MenuType<T> getContainerType() {
         if (containerType == null) {
-            containerType = IForgeMenuType.create(this::onContainerCreate);
-            containerType.setRegistryName(loc);
+            containerType = create(this::onContainerCreate);
         }
         return containerType;
+    }
+
+    @ExpectPlatform
+    static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
+        return null;
     }
 
     public abstract T onContainerCreate(int windowId, Inventory inv, FriendlyByteBuf data);

@@ -135,13 +135,13 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
             final long pos = pipe.getBlockPos().asLong();
             gui.syncInt(() -> {
-                ITickingController controller = Tesseract.getITEM().getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = Tesseract.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0;
                 ItemController gt = (ItemController) controller;
                 return gt.getTransferred();
             }, a -> this.transferred = a, SERVER_TO_CLIENT);
             gui.syncInt(() -> {
-                ITickingController controller = Tesseract.getITEM().getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = Tesseract.ITEM.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0;
                 ItemController gt = (ItemController) controller;
                 return gt.getCableTransferred(pipe.getBlockPos().asLong());

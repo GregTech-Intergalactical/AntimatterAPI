@@ -3,10 +3,10 @@ package muramasa.antimatter.capability.machine;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.ingredient.impl.Ingredients;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.ForgeHooks;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,7 +28,7 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
             return !stack.isEmpty();
         }
         if (!(stack = tile.itemHandler.map(t -> t.consumeInputs(BURNABLE.get(), false)).orElse(Collections.emptyList())).isEmpty()) {
-            burnDuration += ForgeHooks.getBurnTime(stack.get(0), null)/ 10;
+            burnDuration += AntimatterPlatformUtils.getBurnTime(stack.get(0), null)/ 10;
             return true;
         }
         return false;

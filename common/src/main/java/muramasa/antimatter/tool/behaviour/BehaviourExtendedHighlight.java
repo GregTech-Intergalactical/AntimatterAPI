@@ -34,7 +34,7 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
     public final static BiFunction<Direction, BlockEntity, Boolean> COVER_FUNCTION = (dir, tile) -> {
         if (tile instanceof TileEntityBase) {
             TileEntityBase<?> machine = (TileEntityBase) tile;
-            return machine.getCapability(AntimatterPlatformUtils.getCoverCap(), dir).map(t -> !t.get(dir).isEmpty()).orElse(false);
+            return machine.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), dir).map(t -> !t.get(dir).isEmpty()).orElse(false);
         }
         return false;
     };

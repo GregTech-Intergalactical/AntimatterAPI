@@ -1,22 +1,20 @@
 package muramasa.antimatter.capability;
 
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 
 public class AntimatterCaps {
-    
-
-    public static final Capability<ICoverHandler<?>> COVERABLE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-    public static final Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-    public static final Capability<MachineRecipeHandler<?>> RECIPE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
-
-
-    public static void register(RegisterCapabilitiesEvent ev) {
-        ev.register(ICoverHandler.class);
-        ev.register(IComponentHandler.class);
-        ev.register(MachineRecipeHandler.class);
+    @ExpectPlatform
+    public static Capability<ICoverHandler<?>> getCOVERABLE_HANDLER_CAPABILITY(){
+        return null;
+    }
+    @ExpectPlatform
+    public static Capability<IComponentHandler> getCOMPONENT_HANDLER_CAPABILITY(){
+        return null;
+    }
+    @ExpectPlatform
+    public static Capability<MachineRecipeHandler<?>> getRECIPE_HANDLER_CAPABILITY(){
+        return null;
     }
 }

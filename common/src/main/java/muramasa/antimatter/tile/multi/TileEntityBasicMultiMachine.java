@@ -333,7 +333,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Nonnull
     @Override
     public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
-        if (cap == AntimatterPlatformUtils.getComponentCap() && componentHandler.isPresent()) {
+        if (cap == AntimatterCaps.getCOMPONENT_HANDLER_CAPABILITY() && componentHandler.isPresent()) {
             return componentHandler.cast();
         }
         return super.getCapability(cap, side);

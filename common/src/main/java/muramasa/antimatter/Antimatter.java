@@ -15,7 +15,6 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeBuilders;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
-import muramasa.antimatter.tesseract.HeatController;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,7 +52,6 @@ public class Antimatter extends AntimatterMod {
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
                 g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us", g));
         AntimatterAPI.init();
-        HeatController.init();
 
         //if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
             //new KubeJSRegistrar();

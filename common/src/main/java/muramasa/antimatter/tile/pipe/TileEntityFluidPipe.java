@@ -52,18 +52,18 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        Tesseract.getFLUID().blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
 
     @Override
     protected void register() {
-        Tesseract.getFLUID().registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return Tesseract.getFLUID().remove(getLevel(), getBlockPos().asLong());
+        return Tesseract.FLUID.remove(getLevel(), getBlockPos().asLong());
     }
 
 

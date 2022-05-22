@@ -22,7 +22,7 @@ public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHan
         BlockEntity tile = Utils.getTileFromBuf(data);
         if (tile != null) {
             Direction dir = Direction.from3DDataValue(data.readInt());
-            LazyOptional<ICoverHandler<?>> coverHandler = tile.getCapability(AntimatterPlatformUtils.getCoverCap(), dir);
+            LazyOptional<ICoverHandler<?>> coverHandler = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), dir);
             return menu(coverHandler.map(ch -> ch.get(dir)).orElse(null), inv, windowId);
         }
         return null;

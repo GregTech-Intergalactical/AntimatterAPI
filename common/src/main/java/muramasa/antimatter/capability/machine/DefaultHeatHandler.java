@@ -1,17 +1,15 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
-import muramasa.antimatter.capability.IHeatHandler;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import muramasa.antimatter.util.int3;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.TesseractCaps;
+import tesseract.api.heat.HeatTransaction;
+import tesseract.api.heat.IHeatHandler;
 
 public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHandler> {
 
@@ -62,7 +60,7 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
             //Transfer 1 degree of power each second.
             HeatTransaction tx = extract();
             if (tx.isValid()) {
-                Utils.entitiesAround(tile.getLevel(), tile.getBlockPos(), (dir, ent) -> ent.getCapability(HEAT_CAPABILITY, dir.getOpposite()).ifPresent(t -> t.insert(tx)));
+                Utils.entitiesAround(tile.getLevel(), tile.getBlockPos(), (dir, ent) -> ent.getCapability(TesseractCaps.getHEAT_CAPABILITY(), dir.getOpposite()).ifPresent(t -> t.insert(tx)));
                 tx.commit();
             }
         }

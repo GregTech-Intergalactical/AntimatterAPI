@@ -9,11 +9,12 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockEntity {
+public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockEntity implements ICapabilityProvider {
 
     protected final Dispatch dispatch;
 

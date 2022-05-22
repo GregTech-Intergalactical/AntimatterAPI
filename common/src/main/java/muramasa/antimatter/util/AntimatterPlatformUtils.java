@@ -19,11 +19,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
@@ -31,16 +34,8 @@ import java.util.function.Consumer;
 public class AntimatterPlatformUtils {
 
     @ExpectPlatform
-    public static Capability<ICoverHandler<?>> getCoverCap(){
-        return null;
-    }
-    @ExpectPlatform
-    public static Capability<IComponentHandler> getComponentCap(){
-        return null;
-    }
-    @ExpectPlatform
-    public static Capability<MachineRecipeHandler<?>> getRecipeCap(){
-        return null;
+    public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
+        return 0;
     }
 
     @ExpectPlatform

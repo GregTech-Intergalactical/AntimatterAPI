@@ -305,7 +305,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     @Override
     public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
         if (side == null) return LazyOptional.empty();
-        if (cap == AntimatterPlatformUtils.getCoverCap() && coverHandler.isPresent()) return coverHandler.cast();
+        if (cap == AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY() && coverHandler.isPresent()) return coverHandler.cast();
         if (!this.connects(side)) return LazyOptional.empty();
         if (cap == getCapability()) {
             return pipeCapHolder.side(side).cast();

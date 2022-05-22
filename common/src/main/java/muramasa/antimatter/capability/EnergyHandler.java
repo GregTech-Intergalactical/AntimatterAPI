@@ -4,13 +4,12 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.api.gt.GTConsumer;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 
 
-public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
+public class EnergyHandler implements IEnergyHandler {
 
     protected final long capacity;
 
@@ -149,7 +148,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     /**
      * Forge IEnergyStorage Implementations
      **/
-    @Override
+    /*@Override
     public int receiveEnergy(int maxReceive, boolean simulate) {
         GTTransaction transaction = new GTTransaction((long) (maxReceive / AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), a -> {
         });
@@ -186,7 +185,7 @@ public class EnergyHandler implements IEnergyStorage, IEnergyHandler {
     @Override
     public boolean canExtract() {
         return canOutput();
-    }
+    }*/
 
     @Override
     public CompoundTag serializeNBT() {

@@ -9,6 +9,7 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
+import muramasa.antimatter.datagen.base.ConfiguredModel;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -237,7 +238,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (stack.getItem() instanceof IHaveCover) {
                 CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
                 Direction dir = Utils.getInteractSide(hit);
-                boolean ok = tile.getCapability(AntimatterPlatformUtils.getCoverCap(), Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
+                boolean ok = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
                 if (ok) {
                     return InteractionResult.SUCCESS;
                 }
@@ -248,13 +249,13 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             }
             if (type == Data.CROWBAR) {
                 if (!player.isCrouching()) {
-                    if (tile.getCapability(AntimatterPlatformUtils.getCoverCap(), hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
+                    if (tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                         Utils.damageStack(stack, hand, player);
                         return InteractionResult.SUCCESS;
                     }
                     return InteractionResult.PASS;
                 } else {
-                    if (tile.getCapability(AntimatterPlatformUtils.getCoverCap(), hit.getDirection()).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
+                    if (tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), hit.getDirection()).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
                         Utils.damageStack(stack, player);
                         return InteractionResult.SUCCESS;
                     }
@@ -266,7 +267,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                     Utils.damageStack(stack, hand, player);
                     return InteractionResult.SUCCESS;
                 }
-                ICover instance = tile.getCapability(AntimatterPlatformUtils.getCoverCap(), hit.getDirection()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
+                ICover instance = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), hit.getDirection()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                 if (!player.isCrouching()) {
                     if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {
                         Utils.damageStack(stack, hand, player);

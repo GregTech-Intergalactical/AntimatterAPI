@@ -1,12 +1,8 @@
 package muramasa.antimatter.tile.pipe;
 
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.IHeatHandler;
 import muramasa.antimatter.capability.machine.DefaultHeatHandler;
 import muramasa.antimatter.pipe.types.HeatPipe;
-import muramasa.antimatter.tesseract.HeatController;
-import muramasa.antimatter.tesseract.IHeatPipe;
-import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,6 +10,11 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.Tesseract;
+import tesseract.api.TesseractCaps;
+import tesseract.api.heat.HeatTransaction;
+import tesseract.api.heat.IHeatHandler;
+import tesseract.api.heat.IHeatPipe;
 
 public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T> implements IHeatPipe {
 
@@ -36,7 +37,7 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
                                 mutPos = mutPos.offset(1,dir);
                                 BlockEntity ent = level.getBlockEntity(mutPos);
                                 if (ent == null) continue;
-                                ent.getCapability(IHeatHandler.HEAT_CAPABILITY, dir.getOpposite()).ifPresent(t -> t.insert(tx));
+                                ent.getCapability(TesseractCaps.getHEAT_CAPABILITY(), dir.getOpposite()).ifPresent(t -> t.insert(tx));
                             }
                         }
                         tx.commit();
@@ -49,17 +50,17 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
 
     @Override
     protected Capability<?> getCapability() {
-        return IHeatHandler.HEAT_CAPABILITY;
+        return TesseractCaps.getHEAT_CAPABILITY();
     }
 
     @Override
     protected void register() {
-        HeatController.HEAT_CONTROLLER.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        Tesseract.HEAT_CONTROLLER.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return HeatController.HEAT_CONTROLLER.remove(level, getBlockPos().asLong());
+        return Tesseract.HEAT_CONTROLLER.remove(level, getBlockPos().asLong());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
+import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
@@ -130,7 +131,7 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     @Nonnull
     @Override
     public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
-        if (cap == AntimatterPlatformUtils.getComponentCap())
+        if (cap == AntimatterCaps.getCOMPONENT_HANDLER_CAPABILITY())
             return componentHandler.cast();
         return super.getCapability(cap, side);
     }

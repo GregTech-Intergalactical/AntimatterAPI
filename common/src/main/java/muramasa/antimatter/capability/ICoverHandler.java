@@ -9,12 +9,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 
-public interface ICoverHandler<T extends BlockEntity> extends ICapabilitySerializable<CompoundTag> {
+public interface ICoverHandler<T extends BlockEntity> extends ICapabilityProvider, INBTSerializable<CompoundTag> {
 
     /**
      * Getters/Setters

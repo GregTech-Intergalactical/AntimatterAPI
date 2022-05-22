@@ -18,9 +18,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fluids.FluidStack;
@@ -30,19 +33,14 @@ import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
 public class AntimatterPlatformUtilsImpl {
 
-    public static Capability<ICoverHandler<?>> getCoverCap(){
-        return AntimatterCaps.COVERABLE_HANDLER_CAPABILITY;
-    }
-    public static Capability<IComponentHandler> getComponentCap(){
-        return AntimatterCaps.COMPONENT_HANDLER_CAPABILITY;
-    }
-    public static Capability<MachineRecipeHandler<?>> getRecipeCap(){
-        return AntimatterCaps.RECIPE_HANDLER_CAPABILITY;
+    public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
+        return ForgeHooks.getBurnTime(stack, recipeType);
     }
 
     public static int getFluidColor(Fluid fluid){
