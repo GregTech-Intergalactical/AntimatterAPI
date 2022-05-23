@@ -4,5 +4,5 @@ accessible class net/minecraft/world/level/biome/Biome$ClimateSettings
 accessible class net/minecraft/client/renderer/block/model/ItemTransform$Deserializer
 accessible field net/minecraft/data/tags/TagsProvider builders Ljava/util/Map;
 accessible class net/minecraft/world/item/crafting/Ingredient$Value
-mutable class net/minecraft/world/item/crafting/Ingredient
+extendable class net/minecraft/world/item/crafting/Ingredient
 accessible method net/minecraft/world/item/crafting/Ingredient <init> (Ljava/util/stream/Stream;)V
