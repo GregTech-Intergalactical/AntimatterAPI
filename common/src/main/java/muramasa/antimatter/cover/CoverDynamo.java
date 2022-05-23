@@ -4,8 +4,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.core.Direction;
-import tesseract.api.capability.TesseractGTCapability;
-import tesseract.api.forge.TesseractCaps;
+import tesseract.api.TesseractCaps;
 
 import javax.annotation.Nullable;
 
@@ -23,6 +22,6 @@ public class CoverDynamo extends BaseCover {
     @Override
     public void onPlace() {
         super.onPlace();
-        ((TileEntityMachine<?>) handler.getTile()).invalidateCap(TesseractCaps.ENERGY_HANDLER_CAPABILITY);
+        ((TileEntityMachine<?>) handler.getTile()).invalidateCap(TesseractCaps.getENERGY_HANDLER_CAPABILITY());
     }
 }

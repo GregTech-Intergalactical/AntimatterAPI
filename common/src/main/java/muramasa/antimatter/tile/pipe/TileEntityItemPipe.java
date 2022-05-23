@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.Tesseract;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.capability.TesseractItemCapability;
 import tesseract.api.item.IItemPipe;
 
@@ -65,7 +66,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null)
             return false;
-        return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
+        return TesseractPlatformUtils.getCapability(tile, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
     }
 
     @Override

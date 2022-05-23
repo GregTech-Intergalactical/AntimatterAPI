@@ -10,6 +10,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.TesseractPlatformUtils;
 
 public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHandler<T> {
 
@@ -22,7 +23,7 @@ public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHan
         BlockEntity tile = Utils.getTileFromBuf(data);
         if (tile != null) {
             Direction dir = Direction.from3DDataValue(data.readInt());
-            LazyOptional<ICoverHandler<?>> coverHandler = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), dir);
+            LazyOptional<ICoverHandler<?>> coverHandler = TesseractPlatformUtils.getCapability(tile, AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), dir);
             return menu(coverHandler.map(ch -> ch.get(dir)).orElse(null), inv, windowId);
         }
         return null;

@@ -45,7 +45,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import tesseract.api.forge.TesseractCaps;
+import tesseract.api.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
@@ -127,7 +127,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (!getAntimatterToolType().isPowered()) return dataTag;
         dataTag.putLong(Ref.KEY_TOOL_DATA_ENERGY, startingEnergy);
         dataTag.putLong(Ref.KEY_TOOL_DATA_MAX_ENERGY, maxEnergy);
-        IEnergyHandler h = stack.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).map(t -> t).orElse(null);
+        IEnergyHandler h = stack.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY()).map(t -> t).orElse(null);
         if (h instanceof ToolEnergyHandler) {
             ((ToolEnergyHandler) h).setEnergy(startingEnergy);
             ((ToolEnergyHandler) h).setMaxEnergy(maxEnergy);
@@ -244,7 +244,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default int damage(ItemStack stack, int amount) {
         if (!getAntimatterToolType().isPowered()) return amount;
-        IEnergyHandler h = stack.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY).map(t -> t).orElse(null);
+        IEnergyHandler h = stack.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY()).map(t -> t).orElse(null);
         if (!(h instanceof ItemEnergyHandler)) {
             return amount;
         }

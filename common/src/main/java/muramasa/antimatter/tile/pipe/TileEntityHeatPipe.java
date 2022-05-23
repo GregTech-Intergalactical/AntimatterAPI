@@ -3,6 +3,7 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.DefaultHeatHandler;
 import muramasa.antimatter.pipe.types.HeatPipe;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.Tesseract;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.TesseractCaps;
 import tesseract.api.heat.HeatTransaction;
 import tesseract.api.heat.IHeatHandler;
@@ -37,7 +39,7 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
                                 mutPos = mutPos.offset(1,dir);
                                 BlockEntity ent = level.getBlockEntity(mutPos);
                                 if (ent == null) continue;
-                                ent.getCapability(TesseractCaps.getHEAT_CAPABILITY(), dir.getOpposite()).ifPresent(t -> t.insert(tx));
+                                TesseractPlatformUtils.getCapability(ent, TesseractCaps.getHEAT_CAPABILITY(), dir.getOpposite()).ifPresent(t -> t.insert(tx));
                             }
                         }
                         tx.commit();

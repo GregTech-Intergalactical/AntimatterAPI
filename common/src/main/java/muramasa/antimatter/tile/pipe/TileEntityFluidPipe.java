@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
 import tesseract.api.fluid.FluidHolder;
@@ -129,7 +130,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         if (!super.validate(dir)) return false;
         BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
-        return tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
+        return TesseractPlatformUtils.getCapability(tile, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
     }
 
     @Override

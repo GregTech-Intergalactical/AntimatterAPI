@@ -17,10 +17,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import tesseract.Tesseract;
+import tesseract.TesseractPlatformUtils;
+import tesseract.api.TesseractCaps;
 import tesseract.api.capability.TesseractGTCapability;
-import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.GTHolder;
 import tesseract.api.gt.IGTCable;
 import tesseract.api.gt.IGTNode;
@@ -57,7 +57,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     protected Capability<?> getCapability() {
-        return TesseractCaps.ENERGY_HANDLER_CAPABILITY;
+        return TesseractCaps.getENERGY_HANDLER_CAPABILITY();
     }
 
     @Override
@@ -101,7 +101,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         if (!super.validate(dir)) return false;
         BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
-        return tile.getCapability(TesseractCaps.ENERGY_HANDLER_CAPABILITY, dir.getOpposite()).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
+        return TesseractPlatformUtils.getCapability(tile, TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite()).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
     }
 
     @Override

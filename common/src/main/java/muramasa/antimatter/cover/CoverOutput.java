@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nullable;
 
@@ -89,9 +90,9 @@ public class CoverOutput extends CoverInput {
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
-        adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
+        TesseractPlatformUtils.getCapability(adjTile, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    handler.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
+                    TesseractPlatformUtils.getCapability(handler.getTile(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
                 });
     }
 
@@ -99,9 +100,9 @@ public class CoverOutput extends CoverInput {
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
-        adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
+        TesseractPlatformUtils.getCapability(adjTile, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    handler.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side).ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h, 1000, true));
+                    TesseractPlatformUtils.getCapability(handler.getTile(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side).ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h, 1000, true));
                 });
     }
 
