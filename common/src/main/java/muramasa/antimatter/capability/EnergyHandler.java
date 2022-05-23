@@ -145,48 +145,6 @@ public class EnergyHandler implements IEnergyHandler {
         return voltageOut > 0;
     }
 
-    /**
-     * Forge IEnergyStorage Implementations
-     **/
-    /*@Override
-    public int receiveEnergy(int maxReceive, boolean simulate) {
-        GTTransaction transaction = new GTTransaction((long) (maxReceive / AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), a -> {
-        });
-        insert(transaction);
-        if (!simulate) transaction.commit();
-        return transaction.isValid() ? (int) transaction.getData().stream().mapToLong(t -> t.getEnergy((long) (t.getAmps(true) * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), true)).sum() : 0;
-    }
-
-    @Override
-    public int extractEnergy(int maxExtract, boolean simulate) {
-        GTTransaction transaction = extract(GTTransaction.Mode.INTERNAL);
-        transaction.addData((long) (maxExtract / AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), this::extractEnergy);
-        if (!simulate) transaction.commit();
-        return transaction.isValid() ? (int) transaction.getData().stream().mapToLong(t -> t.getEnergy((long) (t.getAmps(false) * AntimatterConfig.GAMEPLAY.EU_TO_FE_RATIO), false)).sum() : 0;
-    }
-
-    @Override
-    public int getEnergyStored() {
-        long energy = getEnergy();
-        return energy > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) energy;
-    }
-
-    @Override
-    public int getMaxEnergyStored() {
-        long capacity = getCapacity();
-        return capacity > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) capacity;
-    }
-
-    @Override
-    public boolean canReceive() {
-        return canInput();
-    }
-
-    @Override
-    public boolean canExtract() {
-        return canOutput();
-    }*/
-
     @Override
     public CompoundTag serializeNBT() {
         CompoundTag tag = new CompoundTag();

@@ -61,10 +61,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
-;
-;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -648,7 +644,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             if (outputs > 0) slots += (" FL_OUT: " + outputs + ",");
         }
         if (slots.length() > 0) info.add("Slots:" + slots);
-        energyHandler.ifPresent(h -> info.add("Energy: " + h.getEnergyStored() + " / " + h.getMaxEnergyStored()));
+        energyHandler.ifPresent(h -> info.add("Energy: " + h.getEnergy() + " / " + h.getCapacity()));
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (Direction side : Ref.DIRS) {

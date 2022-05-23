@@ -11,6 +11,8 @@ import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.event.forge.AntimatterWorldGenEvent;
 import muramasa.antimatter.material.MaterialEvent;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
+import muramasa.antimatter.tesseract.forge.EnergyTileWrapper;
+import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -21,23 +23,35 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
+import tesseract.TesseractPlatformUtils;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
 
 public class AntimatterPlatformUtilsImpl {
+
+    public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
+        LazyOptional<IEnergyStorage> cap = be.getCapability(CapabilityEnergy.ENERGY, side);
+        if (!cap.isPresent()) return LazyOptional.empty();
+        return LazyOptional.of(() -> new EnergyTileWrapper(be, cap.orElse(null)));
+    }
 
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         return ForgeHooks.getBurnTime(stack, recipeType);

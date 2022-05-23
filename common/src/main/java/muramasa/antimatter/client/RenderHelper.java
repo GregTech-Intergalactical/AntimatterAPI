@@ -50,6 +50,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.graph.Connectivity;
@@ -94,7 +95,7 @@ public class RenderHelper {
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
         ItemProperties.register(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living, some_int) -> {
-            LazyOptional<IEnergyHandler> handler = stack.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY());
+            LazyOptional<IEnergyHandler> handler = TesseractPlatformUtils.getEnergyHandlerItem(stack);
             return handler.map(h -> ((float) h.getEnergy() / (float) h.getCapacity())).orElse(1.0F);
         });
     }

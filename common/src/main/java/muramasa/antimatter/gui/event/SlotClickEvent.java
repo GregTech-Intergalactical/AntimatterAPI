@@ -18,6 +18,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import tesseract.TesseractPlatformUtils;
 
 import java.util.function.BiFunction;
 
@@ -77,7 +78,7 @@ public class SlotClickEvent implements IGuiEvent {
             } else {
                 max = 1000;
             }
-            LazyOptional<IFluidHandlerItem> iHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+            LazyOptional<IFluidHandlerItem> iHandler = TesseractPlatformUtils.getFluidHandlerItem(stack);
             boolean hasFluid = iHandler.map(t -> t.getTanks() > 0 && !t.getFluidInTank(0).isEmpty()).orElse(false);
             FluidActionResult res;
             if (hasFluid && type == SlotType.FL_IN) {

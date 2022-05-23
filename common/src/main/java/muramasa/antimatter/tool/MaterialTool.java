@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.TesseractCaps;
 
 import javax.annotation.Nonnull;
@@ -346,7 +347,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
     }
 
     private LazyOptional<ToolEnergyHandler> getCastedHandler(ItemStack stack) {
-        return stack.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY()).cast();
+        return TesseractPlatformUtils.getEnergyHandlerItem(stack).cast();
     }
 
     @Nullable

@@ -8,15 +8,13 @@ import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
-import muramasa.antimatter.tesseract.EnergyTileWrapper;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.IEnergyStorage;
 import tesseract.TesseractPlatformUtils;
 import tesseract.api.TesseractCaps;
 import tesseract.api.gt.GTTransaction;
@@ -116,11 +114,9 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
             if (canOutput(dir)) {
                 BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
                 if (tile == null) continue;
-                LazyOptional<IEnergyHandler> handle = TesseractPlatformUtils.getCapability(tile, TesseractCaps.ENERGY_HANDLER_CAPABILITY, dir.getOpposite());
+                LazyOptional<IEnergyHandler> handle = TesseractPlatformUtils.getCapability(tile, TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite());
                 if (!handle.isPresent()) {
-                    LazyOptional<IEnergyStorage> cap = TesseractPlatformUtils.getCapability(tile, CapabilityEnergy.ENERGY, dir.getOpposite());
-                    if (!cap.isPresent()) continue;
-                    handle = LazyOptional.of(() -> new EnergyTileWrapper(tile, cap.orElse(null)));
+                    handle = AntimatterPlatformUtils.getWrappedHandler(tile, dir.getOpposite());
                 }
                 handle.ifPresent(eh -> Utils.transferEnergy(this, eh));
             }

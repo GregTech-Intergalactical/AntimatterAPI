@@ -56,6 +56,7 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
@@ -119,7 +120,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         if (worldIn == null) return;
-        stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).ifPresent(x -> {
+        TesseractPlatformUtils.getFluidHandlerItem(stack).ifPresent(x -> {
             FluidStack fluid = x.getFluidInTank(0);
             if (!fluid.isEmpty()) {
                 BaseComponent fluidname = (BaseComponent) fluid.getDisplayName();
@@ -136,7 +137,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     public ItemStack fill(Fluid fluid, int amount) {
         ItemStack stack = new ItemStack(this);
-        IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).map(h -> {
+        IFluidHandlerItem handler = TesseractPlatformUtils.getFluidHandlerItem(stack).map(h -> {
             h.fill(new FluidStack(fluid, amount), EXECUTE);
             return h;
         }).orElse(null);
@@ -145,14 +146,14 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
 
     public ItemStack fill(Fluid fluid) {
         ItemStack stack = new ItemStack(this);
-        stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).ifPresent(h -> {
+        TesseractPlatformUtils.getFluidHandlerItem(stack).ifPresent(h -> {
             h.fill(new FluidStack(fluid, h.getTankCapacity(0)), EXECUTE);
         });
         return stack;
     }
 
     public ItemStack drain(ItemStack old, FluidStack fluid) {
-        old.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).ifPresent(h -> {
+        TesseractPlatformUtils.getFluidHandlerItem(old).ifPresent(h -> {
             h.drain(fluid, EXECUTE);
         });
         return old;
@@ -186,7 +187,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
      * @return Fluid contained in the container
      */
     public FluidStack getFluid(ItemStack stack) {
-        return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(t -> t.getFluidInTank(0)).orElse(FluidStack.EMPTY);
+        return TesseractPlatformUtils.getFluidHandlerItem(stack).map(t -> t.getFluidInTank(0)).orElse(FluidStack.EMPTY);
     }
 
     @Override
