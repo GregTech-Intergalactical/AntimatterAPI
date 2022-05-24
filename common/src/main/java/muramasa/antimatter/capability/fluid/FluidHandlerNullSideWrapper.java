@@ -24,7 +24,7 @@ public class FluidHandlerNullSideWrapper implements IFluidHandler {
     }
 
     @Override
-    public int getTankCapacity(int tank) {
+    public long getTankCapacity(int tank) {
         return fluidHandler.getTankCapacity(tank);
     }
 
@@ -34,7 +34,7 @@ public class FluidHandlerNullSideWrapper implements IFluidHandler {
     }
 
     @Override
-    public int fill(FluidStack resource, FluidAction action) {
+    public long fill(FluidStack resource, FluidAction action) {
         return 0;
     }
 
@@ -46,7 +46,7 @@ public class FluidHandlerNullSideWrapper implements IFluidHandler {
 
     @Nonnull
     @Override
-    public FluidStack drain(int maxDrain, FluidAction action) {
+    public FluidStack drain(long maxDrain, FluidAction action) {
         return FluidStack.EMPTY;
     }
 }

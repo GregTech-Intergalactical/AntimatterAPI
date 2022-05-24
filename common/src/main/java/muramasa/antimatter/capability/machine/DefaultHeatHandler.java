@@ -1,12 +1,14 @@
 package muramasa.antimatter.capability.machine;
 
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractPlatformUtils;
 import tesseract.api.TesseractCaps;
@@ -98,5 +100,17 @@ public class DefaultHeatHandler implements IHeatHandler, Dispatch.Sided<IHeatHan
     @Override
     public LazyOptional<? extends IHeatHandler> forNullSide() {
         return forSide(null);
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt(Ref.TAG_MACHINE_HEAT, this.currentHeat);
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        this.currentHeat = nbt.getInt(Ref.TAG_MACHINE_HEAT);
     }
 }

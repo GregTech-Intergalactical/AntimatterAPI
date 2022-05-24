@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.fluid;
 
+import com.sun.jna.platform.win32.COM.IStream;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 /**
  * Array of multiple instances of FluidTank
@@ -30,9 +33,9 @@ public class FluidTanks implements IFluidHandler {
     }
 
     private final FluidTank[] tanks;
-    private final int totalCapacity;
+    private final long totalCapacity;
 
-    public FluidTanks(int tanks, int tankAmount) {
+    public FluidTanks(int tanks, long tankAmount) {
         this.tanks = new FluidTank[tanks];
         for (int i = 0; i < tanks; i++) {
             this.tanks[i] = new FluidTank(tankAmount);
@@ -40,7 +43,7 @@ public class FluidTanks implements IFluidHandler {
         this.totalCapacity = tanks * tankAmount;
     }
 
-    public FluidTanks(int tanks, int tankAmount, Predicate<FluidStack> validator) {
+    public FluidTanks(int tanks, long tankAmount, Predicate<FluidStack> validator) {
         this.tanks = new FluidTank[tanks];
         for (int i = 0; i < tanks; i++) {
             this.tanks[i] = new FluidTank(tankAmount, validator);
@@ -48,22 +51,22 @@ public class FluidTanks implements IFluidHandler {
         this.totalCapacity = tanks * tankAmount;
     }
 
-    public FluidTanks(int... tankAmounts) {
+    public FluidTanks(long... tankAmounts) {
         this.tanks = new FluidTank[tankAmounts.length];
         for (int i = 0; i < this.tanks.length; i++) {
             this.tanks[i] = new FluidTank(tankAmounts[i]);
         }
-        this.totalCapacity = IntStream.of(tankAmounts).sum();
+        this.totalCapacity = LongStream.of(tankAmounts).sum();
     }
 
     public FluidTanks(Collection<FluidTank> tanks) {
         this.tanks = tanks.toArray(new FluidTank[0]);
-        this.totalCapacity = tanks.stream().mapToInt(FluidTank::getCapacity).sum();
+        this.totalCapacity = tanks.stream().mapToLong(FluidTank::getCapacity).sum();
     }
 
     public FluidTanks(FluidTank... tanks) {
         this.tanks = tanks;
-        this.totalCapacity = Arrays.stream(tanks).mapToInt(FluidTank::getCapacity).sum();
+        this.totalCapacity = Arrays.stream(tanks).mapToLong(FluidTank::getCapacity).sum();
     }
 
     public int getFirstAvailableTank(FluidStack stack, boolean drain) {
@@ -105,7 +108,7 @@ public class FluidTanks implements IFluidHandler {
     }
 
     @Override
-    public int getTankCapacity(int tank) {
+    public long getTankCapacity(int tank) {
         return this.tanks[tank].getCapacity();
     }
 
@@ -122,14 +125,14 @@ public class FluidTanks implements IFluidHandler {
         return amount;
     }
 
-    public int getTotalCapacity() {
+    public long getTotalCapacity() {
         return this.totalCapacity;
     }
 
     @Override
-    public int fill(FluidStack stack, FluidAction action) {
+    public long fill(FluidStack stack, FluidAction action) {
         for (int i = 0; i < tanks.length; i++) {
-            int fill = getTank(i).fill(stack, action);
+            long fill = getTank(i).fill(stack, action);
             if (fill > 0)
                 return fill;
         }
@@ -167,7 +170,7 @@ public class FluidTanks implements IFluidHandler {
 
     @Nonnull
     @Override
-    public FluidStack drain(int maxDrain, FluidAction action) {
+    public FluidStack drain(long maxDrain, FluidAction action) {
         for (int i = 0; i < getTanks(); i++) {
             FluidTank tank = getTank(i);
             FluidStack stack = tank.drain(maxDrain, action);

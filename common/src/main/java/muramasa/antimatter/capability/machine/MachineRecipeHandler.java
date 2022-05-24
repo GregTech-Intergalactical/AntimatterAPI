@@ -479,7 +479,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         //make sure there are fluids avaialble
         if (actualConsume == 0 || tile.fluidHandler.map(h -> {
             FluidIngredient in = activeRecipe.getInputFluids().get(0);
-            int amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
             if (amount == actualConsume) {
                 if (!simulate)
                     in.drain(amount, h, true, false);
@@ -498,7 +498,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     protected long calculateGeneratorConsumption(int volt, Recipe r) {
         long power = r.getPower();
-        int amount = r.getInputFluids().get(0).getAmount();
+        long amount = r.getInputFluids().get(0).getAmount();
         if (currentProgress > 0 && amount == 1) {
             return 0;
         }
@@ -602,7 +602,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         CompoundTag nbt = new CompoundTag();
         ListTag item = new ListTag();
         if (itemInputs.size() > 0) {
-            itemInputs.forEach(t -> item.add(t.serializeNBT()));
+            itemInputs.forEach(t -> {
+                item.add(t.save(new CompoundTag()));
+            });
         }
         ListTag fluid = new ListTag();
         if (fluidInputs.size() > 0) {

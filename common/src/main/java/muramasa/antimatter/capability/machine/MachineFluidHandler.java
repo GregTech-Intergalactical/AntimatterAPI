@@ -20,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.TesseractPlatformUtils;
 
@@ -127,7 +126,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     }
 
     @Override
-    public int fill(FluidStack stack, FluidAction action) {
+    public long fill(FluidStack stack, FluidAction action) {
         if (!tile.recipeHandler.map(t -> t.accepts(stack)).orElse(true)) return 0;
         return super.fill(stack, action);
     }
@@ -210,7 +209,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         if (inputs != null) {
             for (FluidIngredient input : inputs) {
                 List<FluidStack> inner = input.drain(this, true, simulate);
-                if (inner.stream().mapToInt(FluidStack::getAmount).sum() != input.getAmount()) {
+                if (inner.stream().mapToLong(FluidStack::getAmount).sum() != input.getAmount()) {
                     ret = false;
                 } else {
                     consumed.addAll(inner);
@@ -225,7 +224,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             return new FluidStack[0];
         }
         List<FluidStack> notExported = new ObjectArrayList<>();
-        int result;
+        long result;
         for (int i = 0; i < outputs.length; i++) {
             result = fill(outputs[i], EXECUTE);
             if (result == 0) notExported.add(outputs[i]); //Valid space was not found
@@ -279,7 +278,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             }
 
             @Override
-            public int getTankCapacity(int tank) {
+            public long getTankCapacity(int tank) {
                 return MachineFluidHandler.this.getTankCapacity(tank);
             }
 
@@ -289,8 +288,8 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             }
 
             @Override
-            public int fill(FluidStack resource, FluidAction action) {
-                int ret = MachineFluidHandler.this.fill(resource, action);
+            public long fill(FluidStack resource, FluidAction action) {
+                long ret = MachineFluidHandler.this.fill(resource, action);
                 return ret;
             }
 
@@ -303,7 +302,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
             @Nonnull
             @Override
-            public FluidStack drain(int maxDrain, FluidAction action) {
+            public FluidStack drain(long maxDrain, FluidAction action) {
                 FluidStack ret = MachineFluidHandler.this.drain(maxDrain, action);
                 return ret.isEmpty() ? MachineFluidHandler.this.drainInput(maxDrain, action) : ret;
             }

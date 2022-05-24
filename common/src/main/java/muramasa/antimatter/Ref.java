@@ -90,6 +90,7 @@ public class Ref {
     public static final String KEY_MACHINE_COVER = "co";
     public static final String KEY_MACHINE_INTERACT = "ci";
     public static final String TAG_MACHINE_STATE = "ms";
+    public static final String TAG_MACHINE_HEAT = "mh";
     public static final String TAG_MACHINE_ENERGY = "me";
     public static final String TAG_MACHINE_CAPACITY = "cp";
     public static final String TAG_MACHINE_VOLTAGE_IN = "vi";

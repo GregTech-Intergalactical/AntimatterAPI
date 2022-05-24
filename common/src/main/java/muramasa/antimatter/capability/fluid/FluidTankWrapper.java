@@ -61,7 +61,7 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Override
-    public int getTankCapacity(int tank) {
+    public long getTankCapacity(int tank) {
         return tanks[tank].getCapacity();
     }
 
@@ -71,7 +71,7 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Override
-    public int fill(FluidStack resource, FluidAction action) {
+    public long fill(FluidStack resource, FluidAction action) {
         int tank = getFirstValidTank(resource.getFluid());
         return tank != -1 ? getTank(tank).fill(resource, action) : 0;
     }
@@ -86,7 +86,7 @@ public class FluidTankWrapper implements IFluidHandler {
     @Nonnull
     @Override
     @Deprecated
-    public FluidStack drain(int maxDrain, FluidAction action) {
+    public FluidStack drain(long maxDrain, FluidAction action) {
         FluidTank tank = getFirstValidTank();
         return tank != null ? tank.drain(maxDrain, action) : FluidStack.EMPTY;
     }
