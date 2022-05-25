@@ -8,6 +8,7 @@ import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
+import muramasa.antimatter.mixin.BucketItemAccessor;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
@@ -52,7 +53,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -65,7 +65,7 @@ import java.util.Locale;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
 
-public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
+public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContainerItem {
 
     public final Material material;
     private final int capacity;
@@ -112,7 +112,6 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
     }*/
 
     @Nullable
-    @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         return new FluidHandlerItemCell(stack, capacity, maxTemp);
     }
@@ -241,7 +240,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
             if ((fluid.isEmpty() || fluid.getAmount() + 1000 <= capacity) && block instanceof BucketPickup) {
                 ItemStack bucket = ((BucketPickup) block).pickupBlock(world, pos, state);
                 if (!bucket.isEmpty()) {
-                    Fluid newFluid = ((BucketItem)bucket.getItem()).getFluid();
+                    Fluid newFluid = ((BucketItemAccessor)bucket.getItem()).getContent();
                     player.awardStat(Stats.ITEM_USED.get(this));
 
                     // play sound effect
@@ -381,7 +380,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
                     LayeredCauldronBlock.lowerFillLevel(state, world, pos);
                 }
                 world.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-                ItemStack newStack = cell.fill(Fluids.WATER, 1000).getContainerItem();
+                ItemStack newStack = cell.getContainerItem(cell.fill(Fluids.WATER, 1000));
                 if (stack.getCount() > 1) {
                     stack.shrink(1);
                     addItem(player, newStack);

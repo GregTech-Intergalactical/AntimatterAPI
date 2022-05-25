@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.item.IContainerItem;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -39,7 +40,7 @@ import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class MaterialSword extends SwordItem implements IAntimatterTool {
+public class MaterialSword extends SwordItem implements IAntimatterTool, IContainerItem {
 
     protected String domain;
     protected AntimatterToolType type;

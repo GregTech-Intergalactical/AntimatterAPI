@@ -337,7 +337,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
     }
 
     @Nullable
-    @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
         if (type.isPowered()) {
             //TODO: not lv

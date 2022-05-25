@@ -19,6 +19,7 @@
     "BiomeGenerationBuilderAccessor",
     "BlockAccessor",
     "BlockLootTablesAccessor",
+    "BucketItemAccessor",
     "GrindstoneContainerMixin",
     "IceBlockMixin",
     "ItemStackMixin",

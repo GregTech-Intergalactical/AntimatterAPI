@@ -69,10 +69,10 @@ public class DebugScannerItem extends ItemBasic<DebugScannerItem> {
         return super.useOn(context);
     }
 
-    @Override
+    /*@Override
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         return super.onItemUseFirst(stack, context);
-    }
+    }*/
 
     //    @Override
 //    public EnumActionResult onItemUse(PlayerEntity player, World world, BlockPos pos, Hand hand, Direction side, float hitX, float hitY, float hitZ) {
