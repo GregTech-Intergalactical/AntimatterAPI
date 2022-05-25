@@ -13,6 +13,7 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.TagKey;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.TesseractPlatformUtils;
 
@@ -59,7 +61,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         }
     }
 
-    public void fillCell(int cellSlot, int maxFill) {
+    public void fillCell(int cellSlot, long maxFill) {
         if (fillingCell) return;
         fillingCell = true;
         if (getInputTanks() != null) {
@@ -74,10 +76,10 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 ItemStack toActOn = cell.copy();
                 toActOn.setCount(1);
                 return TesseractPlatformUtils.getFluidHandlerItem(toActOn).map(cfh -> {
-                    final long actualMax = maxFill == -1 ? cfh.getTankCapacity(0) : maxFill;
+                    final long actualMax = maxFill == -1 ? cfh.getTankCapacityLong(0) : maxFill;
                     ItemStack checkContainer = TesseractPlatformUtils.getFluidHandlerItem(toActOn.copy()).map(t -> {
                         if (t.getFluidInTank(0).isEmpty()) {
-                            t.fill(FluidUtil.tryFluidTransfer(t, this.getAllTanks(), actualMax, false), EXECUTE);
+                            t.fillLong(FluidUtil.tryFluidTransfer(t, this.getAllTanks(), (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), false), EXECUTE);
                         } else {
                             t.drain(actualMax, EXECUTE);
                         }
@@ -88,9 +90,9 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
                     FluidStack stack;
                     if (cfh.getFluidInTank(0).isEmpty()) {
-                        stack = FluidUtil.tryFluidTransfer(cfh, this.getAllTanks(), actualMax, true);
+                        stack = FluidUtil.tryFluidTransfer(cfh, this.getAllTanks(), (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), true);
                     } else {
-                        stack = FluidUtil.tryFluidTransfer(this.getAllTanks(), cfh, actualMax, true);
+                        stack = FluidUtil.tryFluidTransfer(this.getAllTanks(), cfh, (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), true);
                     }
                     if (!stack.isEmpty()) {
                         ItemStack insert = cfh.getContainer();
@@ -126,9 +128,9 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     }
 
     @Override
-    public long fill(FluidStack stack, FluidAction action) {
+    public long fillLong(FluidStack stack, FluidAction action) {
         if (!tile.recipeHandler.map(t -> t.accepts(stack)).orElse(true)) return 0;
-        return super.fill(stack, action);
+        return super.fillLong(stack, action);
     }
 
     @Override
@@ -226,7 +228,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         List<FluidStack> notExported = new ObjectArrayList<>();
         long result;
         for (int i = 0; i < outputs.length; i++) {
-            result = fill(outputs[i], EXECUTE);
+            result = fillLong(outputs[i], EXECUTE);
             if (result == 0) notExported.add(outputs[i]); //Valid space was not found
             else outputs[i] = Utils.ca(result, outputs[i]); //Fluid was partially exported
         }
@@ -278,7 +280,17 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             }
 
             @Override
-            public long getTankCapacity(int tank) {
+            public long getTankCapacityLong(int tank) {
+                return MachineFluidHandler.this.getTankCapacityLong(tank);
+            }
+
+            @Override
+            public long fillLong(FluidStack stack, FluidAction action) {
+                return MachineFluidHandler.this.fillLong(stack, action);
+            }
+
+            @Override
+            public int getTankCapacity(int tank) {
                 return MachineFluidHandler.this.getTankCapacity(tank);
             }
 
@@ -288,9 +300,8 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             }
 
             @Override
-            public long fill(FluidStack resource, FluidAction action) {
-                long ret = MachineFluidHandler.this.fill(resource, action);
-                return ret;
+            public int fill(FluidStack resource, FluidAction action) {
+                return MachineFluidHandler.this.fill(resource, action);
             }
 
             @Nonnull
@@ -298,6 +309,11 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             public FluidStack drain(FluidStack resource, FluidAction action) {
                 FluidStack ret = MachineFluidHandler.this.drain(resource, action);
                 return ret.isEmpty() ? MachineFluidHandler.this.drainInput(resource, action) : ret;
+            }
+
+            @Override
+            public FluidStack drain(int amount, FluidAction action) {
+                return drain((long) amount, action);
             }
 
             @Nonnull

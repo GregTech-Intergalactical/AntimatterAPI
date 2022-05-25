@@ -32,8 +32,13 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     }
 
     @Override
-    public long getTankCapacity(int tank) {
+    public int getTankCapacity(int tank) {
         return fluidHandler.getTankCapacity(tank);
+    }
+
+    @Override
+    public long getTankCapacityLong(int tank) {
+        return fluidHandler.getTankCapacityLong(tank);
     }
 
     @Override
@@ -42,14 +47,19 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     }
 
     @Override
-    public long fill(FluidStack resource, FluidAction action) {
+    public long fillLong(FluidStack resource, FluidAction action) {
         if (coverHandler != null && coverHandler.get(side).blocksInput(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)) {
             return 0;
         }
         if (!fluidHandler.canInput(resource, side) || !fluidHandler.canInput(side)) {
             return 0;
         }
-        return fluidHandler.fill(resource, action);
+        return fluidHandler.fillLong(resource, action);
+    }
+
+    @Override
+    public int fill(FluidStack resource, FluidAction action){
+        return (int) fillLong(resource, action);
     }
 
     @Nonnull
@@ -70,5 +80,11 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
         }
         if (!fluidHandler.canOutput(side)) return FluidStack.EMPTY;
         return fluidHandler.drain(maxDrain, action);
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack drain(int maxDrain, FluidAction action) {
+        return drain((long) maxDrain, action);
     }
 }

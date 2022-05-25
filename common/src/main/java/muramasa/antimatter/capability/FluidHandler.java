@@ -110,8 +110,13 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     }
 
     @Override
-    public long getTankCapacity(int tank) {
-        return getTanks(tank).getTankCapacity(offsetTank(tank));
+    public long getTankCapacityLong(int tank) {
+        return getTanks(tank).getTankCapacityLong(offsetTank(tank));
+    }
+
+    @Override
+    public int getTankCapacity(int tank){
+        return (int) getTankCapacityLong(tank);
     }
 
     @Override
@@ -128,21 +133,26 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         return new FluidTanks(list);
     }
 
-    public long fill(FluidStack stack, IFluidHandler.FluidAction action) {
+    public long fillLong(FluidStack stack, IFluidHandler.FluidAction action) {
         FluidTanks input = getInputTanks();
         if (input != null && !empty(input)) {
-            return getInputTanks().fill(stack, action);
+            return getInputTanks().fillLong(stack, action);
         }
         return 0;
+    }
+
+    @Override
+    public int fill(FluidStack stack, FluidAction action){
+        return (int) this.fillLong(stack, action);
     }
 
     protected boolean empty(FluidTanks tank) {
         return tank.getTanks() == 0;
     }
 
-    public int fillOutput(FluidStack stack, IFluidHandler.FluidAction action) {
+    public long fillOutput(FluidStack stack, IFluidHandler.FluidAction action) {
         if (getOutputTanks() != null) {
-            return getOutputTanks().fill(stack, action);
+            return getOutputTanks().fillLong(stack, action);
         }
         return 0;
     }
@@ -177,11 +187,17 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     }
 
     @Nonnull
+    @Override
     public FluidStack drain(long maxDrain, IFluidHandler.FluidAction action) {
         if (getOutputTanks() != null) {
             return getOutputTanks().drain(maxDrain, action);
         }
         return FluidStack.EMPTY;
+    }
+
+    @Override
+    public FluidStack drain(int amount, FluidAction action) {
+        return drain((long) amount, action);
     }
 
     protected boolean checkValidFluid(FluidStack fluid) {

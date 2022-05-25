@@ -135,10 +135,10 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
         return TagUtils.getItemTag(new ResourceLocation(Ref.ID, "cell"));
     }
 
-    public ItemStack fill(Fluid fluid, int amount) {
+    public ItemStack fill(Fluid fluid, long amount) {
         ItemStack stack = new ItemStack(this);
         IFluidHandlerItem handler = TesseractPlatformUtils.getFluidHandlerItem(stack).map(h -> {
-            h.fill(new FluidStack(fluid, amount), EXECUTE);
+            h.fillLong(new FluidStack(fluid, amount), EXECUTE);
             return h;
         }).orElse(null);
         return handler != null ? handler.getContainer() : stack;
@@ -147,7 +147,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> {
     public ItemStack fill(Fluid fluid) {
         ItemStack stack = new ItemStack(this);
         TesseractPlatformUtils.getFluidHandlerItem(stack).ifPresent(h -> {
-            h.fill(new FluidStack(fluid, h.getTankCapacity(0)), EXECUTE);
+            h.fillLong(new FluidStack(fluid, h.getTankCapacityLong(0)), EXECUTE);
         });
         return stack;
     }

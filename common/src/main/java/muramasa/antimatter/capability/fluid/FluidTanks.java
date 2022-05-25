@@ -77,7 +77,7 @@ public class FluidTanks implements IFluidHandler {
                 firstAvailable = i;
                 break;
             } else if ((drain && !tank.drain(stack, FluidAction.SIMULATE).isEmpty())
-                    || (!drain && tank.fill(stack, FluidAction.SIMULATE) != 0)) {
+                    || (!drain && tank.fillLong(stack, FluidAction.SIMULATE) != 0)) {
                 return i;
             }
         }
@@ -108,8 +108,13 @@ public class FluidTanks implements IFluidHandler {
     }
 
     @Override
-    public long getTankCapacity(int tank) {
-        return this.tanks[tank].getCapacity();
+    public long getTankCapacityLong(int tank) {
+        return this.tanks[tank].getCapacityLong();
+    }
+
+    @Override
+    public int getTankCapacity(int tank) {
+        return (int) getTankCapacityLong(tank);
     }
 
     @Override
@@ -117,10 +122,10 @@ public class FluidTanks implements IFluidHandler {
         return this.tanks[tank].isFluidValid(stack);
     }
 
-    public int getTotalFluidAmount() {
-        int amount = 0;
+    public long getTotalFluidAmount() {
+        long amount = 0;
         for (FluidTank tank : tanks) {
-            amount += tank.getFluidAmount();
+            amount += tank.getFluidAmountLong();
         }
         return amount;
     }
@@ -130,13 +135,18 @@ public class FluidTanks implements IFluidHandler {
     }
 
     @Override
-    public long fill(FluidStack stack, FluidAction action) {
+    public long fillLong(FluidStack stack, FluidAction action) {
         for (int i = 0; i < tanks.length; i++) {
-            long fill = getTank(i).fill(stack, action);
+            long fill = getTank(i).fillLong(stack, action);
             if (fill > 0)
                 return fill;
         }
         return 0;
+    }
+
+    @Override
+    public int fill(FluidStack stack, FluidAction action){
+        return (int) fillLong(stack, action);
     }
 
     @Nonnull
@@ -179,6 +189,12 @@ public class FluidTanks implements IFluidHandler {
             }
         }
         return FluidStack.EMPTY;
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack drain(int maxDrain, FluidAction action) {
+        return drain((long) maxDrain, action);
     }
 
     public static class Builder<T extends TileEntityBase & IMachineHandler> {
