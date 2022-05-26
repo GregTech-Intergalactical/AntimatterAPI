@@ -11,7 +11,7 @@ import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import muramasa.antimatter.client.RenderHelper;
-import muramasa.antimatter.client.event.ClientEvents;
+import muramasa.antimatter.client.event.forge.ClientEventsForge;
 import muramasa.antimatter.client.scene.ImmediateWorldSceneRenderer;
 import muramasa.antimatter.client.scene.TrackedDummyWorld;
 import muramasa.antimatter.client.scene.WorldSceneRenderer;
@@ -119,7 +119,7 @@ public class MultiMachineInfoPage {
     }
 
     public void setRecipeLayout(IRecipeLayout layout, IGuiHelper guiHelper) {
-        if (ClientEvents.lastDelta == 0 || LAST_PAGE != this) {
+        if (ClientEventsForge.lastDelta == 0 || LAST_PAGE != this) {
             LAST_PAGE = this;
             this.zoom = 8;
             this.rotationYaw = 20.0f;
@@ -127,7 +127,7 @@ public class MultiMachineInfoPage {
             this.currentRendererPage = 0;
             setNextLayer(-1);
         } else {
-            zoom = (float) Mth.clamp(zoom + (ClientEvents.lastDelta < 0 ? 0.5 : -0.5), 3, 999);
+            zoom = (float) Mth.clamp(zoom + (ClientEventsForge.lastDelta < 0 ? 0.5 : -0.5), 3, 999);
             setNextLayer(getLayerIndex());
         }
         if (getCurrentRenderer() != null) {
@@ -206,11 +206,11 @@ public class MultiMachineInfoPage {
         AbstractWidget.drawCenteredString(matrixStack, Minecraft.getInstance().font, descriptions[currentRendererPage], WIDTH / 2, 15, -1);
         boolean insideView = mouseX >= 0 && mouseY >= 0 && mouseX < WIDTH && mouseY < HEIGHT;
         if (insideView) {
-            if (ClientEvents.leftDown) {
+            if (ClientEventsForge.leftDown) {
                 rotationPitch += mouseX - lastMouseX + 360;
                 rotationPitch = rotationPitch % 360;
                 rotationYaw = (float) Mth.clamp(rotationYaw + (mouseY - lastMouseY), -89.9, 89.9);
-            } else if (ClientEvents.rightDown) {
+            } else if (ClientEventsForge.rightDown) {
                 int mouseDeltaY = mouseY - lastMouseY;
                 if (Math.abs(mouseDeltaY) > 1) {
                     this.zoom = (float) Mth.clamp(zoom + (mouseDeltaY > 0 ? 0.5 : -0.5), 3, 999);
@@ -266,7 +266,7 @@ public class MultiMachineInfoPage {
     }
 
     public List<Component> getTooltipStrings(double mouseX, double mouseY) {
-        if (getCurrentRenderer() != null && !ClientEvents.leftDown && !ClientEvents.rightDown && !ClientEvents.middleDown) {
+        if (getCurrentRenderer() != null && !ClientEventsForge.leftDown && !ClientEventsForge.rightDown && !ClientEventsForge.middleDown) {
             WorldSceneRenderer renderer = getCurrentRenderer();
             BlockHitResult rayTraceResult = renderer.getLastTraceResult();
             if (rayTraceResult != null) {

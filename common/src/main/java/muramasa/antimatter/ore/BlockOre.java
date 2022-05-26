@@ -7,6 +7,7 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -208,7 +209,8 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
         return properties;
     }
 
-    @Override
+    //TODO figure out fabric alternative
+    //@Override
     public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silktouch) {
         if (silktouch == 0 && material.getExpRange() != null) {
             List<ItemStack> self = getDrops(state, ((ServerLevel) world), pos, world.getBlockEntity(pos));

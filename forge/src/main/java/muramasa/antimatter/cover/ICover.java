@@ -4,7 +4,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
-import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.Tier;

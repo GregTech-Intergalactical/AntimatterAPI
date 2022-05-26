@@ -118,7 +118,7 @@ public class AntimatterContainerScreen<T extends AbstractContainerMenu & IAntima
 
     public void drawTexture(PoseStack stack, ResourceLocation loc, int left, int top, int x, int y, int sizeX, int sizeY) {
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        Minecraft.getInstance().textureManager.bindForSetup(loc);
+        Minecraft.getInstance().getTextureManager().bindForSetup(loc);
         blit(stack, left, top, x, y, sizeX, sizeY);
     }
 

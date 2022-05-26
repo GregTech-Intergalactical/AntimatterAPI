@@ -18,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IGTNode;
 
@@ -129,9 +128,8 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
     }
 
     @Nullable
-    @Override
     public CompoundTag getShareTag(ItemStack stack) {
-        CompoundTag nbt = super.getShareTag(stack);
+        CompoundTag nbt = stack.getOrCreateTag();
         CompoundTag inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
         if (inner != null) {
             if (nbt == null) nbt = new CompoundTag();
@@ -140,9 +138,8 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         return nbt;
     }
 
-    @Override
     public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
-        super.readShareTag(stack, nbt);
+        stack.setTag(nbt);
         if (nbt != null) {
             getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound("E")));
         }

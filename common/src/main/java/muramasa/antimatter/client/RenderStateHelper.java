@@ -3,6 +3,8 @@ package muramasa.antimatter.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 ;
 ;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.lwjgl.opengl.GL13;
 
 @Environment(EnvType.CLIENT)

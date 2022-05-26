@@ -17,14 +17,20 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -34,12 +40,18 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
         return LazyOptional.empty();
+    }
+
+    @ExpectPlatform
+    public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
+        return null;
     }
 
     @ExpectPlatform
@@ -51,6 +63,13 @@ public class AntimatterPlatformUtils {
     public static int getFluidColor(Fluid fluid){
         return 0;
     }
+
+    @ExpectPlatform
+    public static SoundEvent getFluidSound(Fluid fluid, boolean fill){
+        return null;
+    }
+
+
 
     @ExpectPlatform
     public static boolean isServer(){
@@ -175,6 +194,11 @@ public class AntimatterPlatformUtils {
     @ExpectPlatform
     public static WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
         return null;
+    }
+
+    @ExpectPlatform
+    public static InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
+        return InteractionResultHolder.pass(stack);
     }
 
     @ExpectPlatform

@@ -12,8 +12,8 @@ import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.mixin.client.LevelRendererAccessor;
+import muramasa.antimatter.mixin.client.MultiPlayerGameModeAccessor;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -21,10 +21,13 @@ import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
 import muramasa.antimatter.tool.behaviour.BehaviourExtendedHighlight;
 import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
@@ -35,182 +38,157 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-;
-;
-import net.minecraftforge.client.event.DrawSelectionEvent.HighlightBlock;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-@Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class ClientEvents {
 
     private static final Minecraft MC = Minecraft.getInstance();
 
-    @SubscribeEvent
-    public static void onBlockHighlight(HighlightBlock event) throws IllegalAccessException {
+
+
+    public static boolean onBlockHighlight(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource) throws IllegalAccessException {
         Player player = MC.player;
         Level world = player.getCommandSenderWorld();
         ItemStack stack = player.getMainHandItem();
         if (stack.isEmpty() || (!(stack.getItem() instanceof IAntimatterTool) && !(stack.getItem() instanceof IHaveCover)))
-            return;
+            return false;
         if (stack.getItem() instanceof IHaveCover) {
-            if (player.isCrouching()) return;
-            RenderHelper.onDrawHighlight(player, event.getLevelRenderer(), event.getCamera(), event.getTarget(), event.getPartialTicks(), event.getPoseStack(), event.getMultiBufferSource(), b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
-            event.setCanceled(true);
-            return;
+            if (player.isCrouching()) return false;
+            RenderHelper.onDrawHighlight(player, levelRenderer, camera, target, partialTick, poseStack, bufferSource, b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION);
+            return true;
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         AntimatterToolType type = item.getAntimatterToolType();
         if (player.isCrouching() && type != Data.WRENCH && type != Data.ELECTRIC_WRENCH && type != Data.CROWBAR && type != Data.WIRE_CUTTER)
-            return;
+            return false;
         //Perform highlight of wrench
-        InteractionResult res = item.onGenericHighlight(player, event.getLevelRenderer(), event.getCamera(), event.getTarget(), event.getPartialTicks(), event.getPoseStack(), event.getMultiBufferSource());
+        InteractionResult res = item.onGenericHighlight(player, levelRenderer, camera, target, partialTick, poseStack, bufferSource);
         if (res == InteractionResult.FAIL) {
-            event.setCanceled(true);
-            return;
+            return true;
         }
         if (res.shouldSwing()) {
-            return;
+            return false;
         }
         IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
-        if (!(behaviour instanceof BehaviourAOEBreak)) return;
+        if (!(behaviour instanceof BehaviourAOEBreak)) return false;
         BehaviourAOEBreak aoeBreakBehaviour = (BehaviourAOEBreak) behaviour;
 
-        BlockPos currentPos = event.getTarget().getBlockPos();
+        BlockPos currentPos = target.getBlockPos();
         BlockState state = world.getBlockState(currentPos);
-        if (state.isAir() || !Utils.isToolEffective(item, state)) return;
-        Vec3 viewPosition = event.getCamera().getPosition();
-        Entity entity = event.getCamera().getEntity();
-        VertexConsumer builderLines = event.getMultiBufferSource().getBuffer(RenderType.LINES);
-        PoseStack matrix = event.getPoseStack();
+        if (state.isAir() || !Utils.isToolEffective(item, state)) return false;
+        Vec3 viewPosition = camera.getPosition();
+        Entity entity = camera.getEntity();
+        VertexConsumer builderLines = bufferSource.getBuffer(RenderType.LINES);
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
         ImmutableSet<BlockPos> positions = Utils.getHarvestableBlocksToBreak(world, player, item, aoeBreakBehaviour.getColumn(), aoeBreakBehaviour.getRow(), aoeBreakBehaviour.getDepth());
         for (BlockPos nextPos : positions) {
             double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
             VoxelShape shape = world.getBlockState(nextPos).getShape(world, nextPos, CollisionContext.of(entity));
-            matrix.pushPose();
-            LevelRendererAccessor.renderShape(matrix, builderLines, shape, modX, modY, modZ, 0,0,0,0.4f);
-            matrix.popPose();
+            poseStack.pushPose();
+            LevelRendererAccessor.renderShape(poseStack, builderLines, shape, modX, modY, modZ, 0,0,0,0.4f);
+            poseStack.popPose();
         }
         if (MC.gameMode.isDestroying()) {
             for (BlockPos nextPos : positions) {
                 double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
                 //TODO 1.18
                 //int partialDamage = 1;
-                int partialDamage = (int) (ObfuscationReflectionHelper.findField(MultiPlayerGameMode.class, "destroyProgress").getFloat(MC.gameMode) * 10) - 1; // destroyProgress = curBlockDamageMP
-                matrix.pushPose();
-                matrix.translate(modX, modY, modZ);
+                int partialDamage = (int) (((MultiPlayerGameModeAccessor)MC.gameMode).getDestroyProgress() * 10) - 1; // destroyProgress = curBlockDamageMP
+                poseStack.pushPose();
+                poseStack.translate(modX, modY, modZ);
                 if (partialDamage == -1)
-                    return; // Not sure why this happens, but it certainly is an edge-case, if we made it so it returns 0 every time it hit -1, the animation will have a delay
-                VertexConsumer builderBreak = new SheetedDecalTextureGenerator(event.getMultiBufferSource().getBuffer(ModelBakery.DESTROY_TYPES.get(partialDamage)), matrix.last().pose(), matrix.last().normal());
-                MC.getBlockRenderer().renderBreakingTexture(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak);
+                    return false; // Not sure why this happens, but it certainly is an edge-case, if we made it so it returns 0 every time it hit -1, the animation will have a delay
+                VertexConsumer builderBreak = new SheetedDecalTextureGenerator(bufferSource.getBuffer(ModelBakery.DESTROY_TYPES.get(partialDamage)), poseStack.last().pose(), poseStack.last().normal());
+                MC.getBlockRenderer().renderBreakingTexture(world.getBlockState(nextPos), nextPos, world, poseStack, builderBreak);
                 // MC.getBlockRendererDispatcher().renderModel(world.getBlockState(nextPos), nextPos, world, matrix, builderBreak, ModelDataManager.getModelData(world, nextPos));
-                matrix.popPose();
+                poseStack.popPose();
             }
         }
-    }
-
-    @Environment(EnvType.CLIENT)
-    @SubscribeEvent
-    protected static void onTooltipAdd(final ItemTooltipEvent ev) {
-        MaterialType.addTooltip(ev.getItemStack(), ev.getToolTip(), ev.getPlayer(), ev.getFlags());
+        return false;
     }
 
     // Needs some work, won't work in 3rd person also, needs special ItemModel properties
-    @SubscribeEvent
-    public static void onPlayerTick(TickEvent.PlayerTickEvent e) {
-        if (e.phase == TickEvent.Phase.END) {
-            Player player = e.player;
-            if (player == null || player.getMainHandItem().isEmpty()) return;
-            ItemStack stack = player.getMainHandItem();
-            if (!(stack.getItem() instanceof IAntimatterTool)) return;
-            IAntimatterTool item = (IAntimatterTool) stack.getItem();
-            if (item.getAntimatterToolType().getUseAction() != UseAnim.NONE && player.swinging) {
-                item.getItem().onUsingTick(stack, player, stack.getCount());
-                //player.swingProgress = player.prevSwingProgress;
-            }
+    public static void onPlayerTickEnd(Player player) {
+        if (player == null || player.getMainHandItem().isEmpty()) return;
+        ItemStack stack = player.getMainHandItem();
+        if (!(stack.getItem() instanceof IAntimatterTool)) return;
+        IAntimatterTool item = (IAntimatterTool) stack.getItem();
+        if (item.getAntimatterToolType().getUseAction() != UseAnim.NONE && player.swinging) {
+            item.getItem().onUsingTick(stack, player, stack.getCount());
+            //player.swingProgress = player.prevSwingProgress;
         }
     }
 
-    @SubscribeEvent
-    public static void onRenderDebugInfo(RenderGameOverlayEvent.Text e) {
+    public static void onRenderDebugInfo(ArrayList<String> left) {
         if (!MC.options.renderDebug || MC.hitResult == null || MC.hitResult.getType() != HitResult.Type.BLOCK)
             return;
         Level world = Minecraft.getInstance().level;
         if (world == null) return;
         BlockPos pos = new BlockPos(MC.hitResult.getLocation());
         BlockState state = world.getBlockState(pos);
-        if (state.getBlock() instanceof IInfoProvider) {
-            e.getLeft().add("");
-            e.getLeft().add(ChatFormatting.AQUA + "[Antimatter Debug Server]");
-            e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ObjectArrayList<>(), world, state, pos));
+        if (state.getBlock() instanceof IInfoProvider info) {
+            left.add("");
+            left.add(ChatFormatting.AQUA + "[Antimatter Debug Server]");
+            left.addAll(info.getInfo(new ObjectArrayList<>(), world, state, pos));
         }
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof TileEntityBase) {
-            e.getLeft().addAll(((TileEntityBase) tile).getInfo());
+        if (tile instanceof TileEntityBase<?> b) {
+            left.addAll(b.getInfo());
         }
         if (MC.player.isCrouching()) {
-            e.getLeft().add("");
-            e.getLeft().add(ChatFormatting.AQUA + "[Antimatter Debug Client]");
+            left.add("");
+            left.add(ChatFormatting.AQUA + "[Antimatter Debug Client]");
         }
     }
 
-    @SubscribeEvent
-    public static void onItemTooltip(ItemTooltipEvent e) {
-        if (e.getFlags().isAdvanced() && Ref.SHOW_ITEM_TAGS) {
+    public static void onItemTooltip(TooltipFlag flags, List<Component> tooltip) {
+        if (flags.isAdvanced() && Ref.SHOW_ITEM_TAGS) {
             Collection<ResourceLocation> tags = Collections.emptyList(); //ItemTags.getAllTags().getMatchingTags(e.getItemStack().getItem());
             if (!tags.isEmpty()) {
-                List<Component> list = e.getToolTip();
-                list.add(new TextComponent("Tags:").withStyle(ChatFormatting.DARK_GRAY));
+                tooltip.add(new TextComponent("Tags:").withStyle(ChatFormatting.DARK_GRAY));
                 for (ResourceLocation loc : tags) {
-                    list.add(new TextComponent(loc.toString()).withStyle(ChatFormatting.DARK_GRAY));
+                    tooltip.add(new TextComponent(loc.toString()).withStyle(ChatFormatting.DARK_GRAY));
                 }
             }
         }
     }
 
     public static double lastDelta;
-    @SubscribeEvent
-    public static void onGuiMouseScrollPre(ScreenEvent.MouseScrollEvent e) {
-        lastDelta = e.getScrollDelta();
+    public static void onGuiMouseScrollPre(double lastScrollDelta) {
+        lastDelta = lastScrollDelta;
     }
 
     public static boolean leftDown;
     public static boolean rightDown;
     public static boolean middleDown;
-    @SubscribeEvent
-    public static void onGuiMouseClickPre(ScreenEvent.MouseClickedEvent e) {
-        if (e.getButton() == 0) {
+    public static void onGuiMouseClickPre(int button) {
+        if (button == 0) {
             leftDown = true;
-        } else if (e.getButton() == 1) {
+        } else if (button == 1) {
             rightDown = true;
         } else {
             middleDown = true;
         }
     }
 
-    @SubscribeEvent
-    public static void onGuiMouseReleasedPre(ScreenEvent.MouseReleasedEvent e) {
-        if (e.getButton() == 0) {
+    public static void onGuiMouseReleasedPre(int button) {
+        if (button == 0) {
             leftDown = false;
-        } else if (e.getButton() == 1) {
+        } else if (button == 1) {
             rightDown = false;
         } else {
             middleDown = false;

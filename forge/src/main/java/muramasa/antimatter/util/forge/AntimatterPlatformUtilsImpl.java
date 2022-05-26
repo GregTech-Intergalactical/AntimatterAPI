@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.client.forge.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterLoaderEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
@@ -17,33 +18,39 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
-import tesseract.TesseractPlatformUtils;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class AntimatterPlatformUtilsImpl {
 
@@ -53,12 +60,21 @@ public class AntimatterPlatformUtilsImpl {
         return LazyOptional.of(() -> new EnergyTileWrapper(be, cap.orElse(null)));
     }
 
+
+    public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
+        return new AntimatterItemGroup(domain, id, iconSupplier);
+    }
+
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
         return ForgeHooks.getBurnTime(stack, recipeType);
     }
 
     public static int getFluidColor(Fluid fluid){
         return fluid.getAttributes().getColor();
+    }
+
+    public static SoundEvent getFluidSound(Fluid fluid, boolean fill){
+        return fill ? fluid.getAttributes().getFillSound() : fluid.getAttributes().getEmptySound();
     }
 
     public static boolean isServer(){
@@ -172,6 +188,10 @@ public class AntimatterPlatformUtilsImpl {
         AntimatterWorldGenEvent ev = new AntimatterWorldGenEvent(Antimatter.INSTANCE, event);
         MinecraftForge.EVENT_BUS.post(ev);
         return event;
+    }
+
+    public static InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
+        return ForgeEventFactory.onBucketUse(player, world, stack, trace);
     }
 
     public static void writeFluidStack(FluidStack stack, FriendlyByteBuf buf) {

@@ -4,8 +4,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
-import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.machine.Tier;

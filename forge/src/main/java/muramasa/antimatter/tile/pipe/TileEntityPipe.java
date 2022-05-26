@@ -10,8 +10,6 @@ import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;

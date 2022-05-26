@@ -9,6 +9,7 @@ import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.mixin.BucketItemAccessor;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
@@ -217,7 +218,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
         BlockHitResult trace = getPlayerPOVHitResult(world, player, fluid.isEmpty() ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
 
         // fire Forge event for bucket use
-        InteractionResultHolder<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, stack, trace);
+        InteractionResultHolder<ItemStack> ret = AntimatterPlatformUtils.postBucketUseEvent(player, world, stack, trace);
         if (ret != null) {
             return ret;
         }
@@ -244,7 +245,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
                     player.awardStat(Stats.ITEM_USED.get(this));
 
                     // play sound effect
-                    SoundEvent sound = newFluid.getAttributes().getFillSound();
+                    SoundEvent sound = AntimatterPlatformUtils.getFluidSound(newFluid, true);
                     if (sound == null) {
                         sound = newFluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
                     }
@@ -344,7 +345,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
      * @param pos    Position of sound
      */
     private void playEmptySound(Fluid fluid, @Nullable Player player, LevelAccessor world, BlockPos pos) {
-        SoundEvent sound = fluid.getAttributes().getEmptySound();
+        SoundEvent sound = AntimatterPlatformUtils.getFluidSound(fluid, false);
         if (sound == null) {
             sound = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
         }
@@ -450,7 +451,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        ((AntimatterItemModelBuilder) prov.getAntimatterBuilder(item).bucketProperties(stack, true, false).parent(new ModelFile.UncheckedModelFile("forge:item/bucket"))).tex((map) -> {
+        ((AntimatterItemModelBuilder) prov.getAntimatterBuilder(item).bucketProperties(stack, true, false).parent(new ModelFile.UncheckedModelFile("antimatter:item/bucket"))).tex((map) -> {
             map.put("base", getDomain() + ":item/basic/" + getId());
             map.put("cover", getDomain() + ":item/other/" + getId() + "_cover");
             map.put("fluid", getDomain() + ":item/other/" + getId() + "_fluid");

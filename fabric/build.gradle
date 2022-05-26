@@ -1,8 +1,29 @@
 archivesBaseName = rootProject.antimatter_archive_base_name
 version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
 
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
 dependencies{
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    common(project(path: ":tesseract-common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":tesseract-common", configuration: "transformProductionFabric")) { transitive false }
+    compileOnly(project(path: ":tesseract-common-dep", configuration: "namedElements")){
+        transitive = false
+    }
+    shadowCommon(project(path: ":tesseract-common-dep", configuration: "namedElements")) { transitive false }
+    common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
+    //modImplementation(include("io.github.fabricators_of_create:Porting-Lib:0.2.0+1.18.2.${rootProject.port_lib_hash}")) { transitive(false) }
+    modApi("teamreborn:energy:${project.energy_version}") {
+        transitive = false
+    }
 }
 
 architectury {

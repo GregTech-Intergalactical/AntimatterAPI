@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.gui.MenuHandler;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.core.Direction;

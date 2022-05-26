@@ -367,7 +367,7 @@ public class RTree<T extends IGuiElement> {
         // could be modified and inlined because it's only adjusting for the addition
         // of a single node.  Left as-is for now for readability.
         @SuppressWarnings("unchecked")
-        Node[] nn = new Node[]
+        Node[] nn = new RTree.Node[]
                 {n, new Node(n.coords, n.dimensions, n.leaf)};
         nn[1].parent = n.parent;
         if (nn[1].parent != null) {
@@ -642,7 +642,7 @@ public class RTree<T extends IGuiElement> {
         return true;
     }
 
-    private class Node {
+    private static class Node {
         final float[] coords;
         final float[] dimensions;
         final LinkedList<Node> children;

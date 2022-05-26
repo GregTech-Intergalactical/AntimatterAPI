@@ -1,8 +1,6 @@
 package muramasa.antimatter.network.packets;
 
 import io.netty.buffer.ByteBuf;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.ICanSyncData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import net.minecraft.client.Minecraft;

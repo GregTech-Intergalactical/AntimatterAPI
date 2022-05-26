@@ -18,6 +18,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import tesseract.Tesseract;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.ITickingController;
 import tesseract.api.fluid.FluidHolder;
 
@@ -67,7 +68,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
         if (holder == null) return;
         long max = 0;
         for (FluidHolder.SetHolder fluid : holder.getFluids()) {
-            max = Math.max(max, fluid.fluid.getAttributes().getTemperature());
+            max = Math.max(max, TesseractPlatformUtils.getFluidTemperature(fluid.fluid));
         }
         if (max >= (295 + 100)) {
             entityIn.hurt(DamageSource.GENERIC, Mth.clamp(((max + 200) - (295 + 100)) / 100, 2, 20));

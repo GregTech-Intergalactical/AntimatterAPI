@@ -2,12 +2,13 @@ package muramasa.antimatter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import muramasa.antimatter.client.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.datagen.BackgroundDataGenerator;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
 public class Ref {
@@ -31,11 +32,11 @@ public class Ref {
     /**
      * Creative Tabs
      **/
-    public static final AntimatterItemGroup TAB_ITEMS = new AntimatterItemGroup(ID, "items", () -> new ItemStack(Data.DEBUG_SCANNER));
-    public static final AntimatterItemGroup TAB_TOOLS = new AntimatterItemGroup(ID, "tools", () -> new ItemStack(Data.DEBUG_SCANNER));
-    public static final AntimatterItemGroup TAB_BLOCKS = new AntimatterItemGroup(ID, "blocks", () -> new ItemStack(Data.DEBUG_SCANNER));
-    public static final AntimatterItemGroup TAB_MATERIALS = new AntimatterItemGroup(ID, "materials", () -> new ItemStack(Data.DEBUG_SCANNER));
-    public static final AntimatterItemGroup TAB_MACHINES = new AntimatterItemGroup(ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_ITEMS = AntimatterPlatformUtils.createTab(ID, "items", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_TOOLS = AntimatterPlatformUtils.createTab(ID, "tools", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_BLOCKS = AntimatterPlatformUtils.createTab(ID, "blocks", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_MATERIALS = AntimatterPlatformUtils.createTab(ID, "materials", () -> new ItemStack(Data.DEBUG_SCANNER));
+    public static final CreativeModeTab TAB_MACHINES = AntimatterPlatformUtils.createTab(ID, "machines", () -> new ItemStack(Data.DEBUG_SCANNER));
 
     /**
      * Sound Events

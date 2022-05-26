@@ -1,8 +1,6 @@
 package muramasa.antimatter.tile.single;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;

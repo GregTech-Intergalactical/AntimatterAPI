@@ -12,6 +12,7 @@
     "client.GuiLightAccessor",
     "client.ItemTransformDeserializerAccessor",
     "client.LevelRendererAccessor",
+    "client.MultiPlayerGameModeAccessor",
     "client.TESRMixin"
   ],
   "mixins": [
