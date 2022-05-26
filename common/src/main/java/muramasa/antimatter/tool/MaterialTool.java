@@ -120,12 +120,10 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         onGenericFillItemGroup(group, list, maxEnergy);
     }
 
-    @Override
     public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
         return Utils.doesStackHaveToolTypes(stack, WRENCH, ELECTRIC_WRENCH, SCREWDRIVER, ELECTRIC_SCREWDRIVER, CROWBAR, WIRE_CUTTER); // ???
     }
 
-    @Override
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
         AntimatterToolType type = this.getAntimatterToolType();
         if (type.getEffectiveMaterials().contains(state.getMaterial())) {
@@ -157,7 +155,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         super.appendHoverText(stack, world, tooltip, flag);
     }
 
-    @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
     }
@@ -184,7 +181,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return getToolTypes().contains(tool) ? getTier(stack).getLevel() : -1;
     }*/
 
-    @Override
     public int getMaxDamage(ItemStack stack) {
         if (getId().equals("branch_cutter")) {
             return Math.round((float) getTier(stack).getUses() / 4);
@@ -221,12 +217,10 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return type.getBlockBreakability();
     }
 
-    @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
-    @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlot.MAINHAND) {
@@ -269,10 +263,9 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
 //        return result;
 //    }
 
-    @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         if (!type.isPowered()) {
-            return super.damageItem(stack, amount, entity, onBroken);
+            return amount;
         }
         if (entity instanceof Player && ((Player) entity).isCreative()) {
             return 0;
@@ -295,12 +288,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return true;
     }
 
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE) && enchantment.category == EnchantmentCategory.WEAPON) {
             return true;
         }
-        return type.isPowered() ? enchantment != Enchantments.UNBREAKING : super.canApplyAtEnchantingTable(stack, enchantment);
+        return type.isPowered() ? enchantment != Enchantments.UNBREAKING : enchantment.category.canEnchant(stack.getItem());
     }
 
     public boolean hasContainerItem(ItemStack stack) {
@@ -350,9 +342,8 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
     }
 
     @Nullable
-    @Override
     public CompoundTag getShareTag(ItemStack stack) {
-        CompoundTag nbt = super.getShareTag(stack);
+        CompoundTag nbt = stack.getTag();
         CompoundTag inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
         if (inner != null) {
             if (nbt == null) nbt = new CompoundTag();
@@ -365,9 +356,8 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return nbt;
     }
 
-    @Override
     public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
-        super.readShareTag(stack, nbt);
+        stack.setTag(nbt);
         if (nbt != null) {
             getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound(Ref.TAG_TOOL_DATA)));
         }

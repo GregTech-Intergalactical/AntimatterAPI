@@ -105,7 +105,6 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         super.appendHoverText(stack, world, tooltip, flag);
     }
 
-    @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
     }
@@ -131,7 +130,6 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return getToolTypes().contains(tool) ? getTier(stack).getLevel() : -1;
     }*/
 
-    @Override
     public int getMaxDamage(ItemStack stack) {
         return getTier(stack).getUses();
     }
@@ -162,12 +160,10 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return type.getBlockBreakability();
     }
 
-    @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
-    @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlot.MAINHAND) {
@@ -177,12 +173,10 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return modifiers;
     }
 
-    @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         return (entity instanceof Player && ((Player) entity).isCreative()) ? 0 : damage(stack, amount);
     }
 
-    @Override
     public int getItemEnchantability(ItemStack stack) {
         return getTier(stack).getEnchantmentValue();
     }
@@ -197,9 +191,8 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return true;
     }
 
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        return type.isPowered() ? enchantment != Enchantments.UNBREAKING : super.canApplyAtEnchantingTable(stack, enchantment);
+        return type.isPowered() ? enchantment != Enchantments.UNBREAKING : enchantment.category.canEnchant(stack.getItem());
     }
 
     @Override
