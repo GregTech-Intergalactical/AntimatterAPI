@@ -33,7 +33,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods {
     AntimatterArmorType getAntimatterArmorType();
 
     default Material getMaterial(ItemStack stack) {

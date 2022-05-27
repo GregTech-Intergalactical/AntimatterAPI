@@ -263,6 +263,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
 //        return result;
 //    }
 
+    @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         if (!type.isPowered()) {
             return amount;

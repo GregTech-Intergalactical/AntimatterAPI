@@ -57,7 +57,7 @@ import java.util.Set;
 
 import static muramasa.antimatter.Data.NULL;
 
-public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
+public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods {
 
     AntimatterToolType getAntimatterToolType();
 
