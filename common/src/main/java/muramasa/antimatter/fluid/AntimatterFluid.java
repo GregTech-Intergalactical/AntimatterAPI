@@ -12,13 +12,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fluids.ForgeFlowingFluid.Flowing;
-import net.minecraftforge.fluids.ForgeFlowingFluid.Properties;
-import net.minecraftforge.fluids.ForgeFlowingFluid.Source;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * AntimatterFluid is an object that includes all essential information of what a normal fluid would compose of in Minecraft
@@ -42,33 +38,30 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     public static final ResourceLocation PLASMA_FLOW_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/plasma"); // _flow
 
     private final String domain, id;
-
-    protected Properties fluidProperties;
-    protected Source source;
-    protected Flowing flowing;
+    protected Fluid source;
+    protected FlowingFluid flowing;
     protected Block.Properties blockProperties;
-    protected FluidAttributes attributes;
+    protected AntimatterFluidAttributes attributes;
     protected LiquidBlock fluidBlock;
     protected Item containerItem = Items.AIR;
 
-    public AntimatterFluid(String domain, String id, FluidAttributes.Builder builder, Block.Properties blockProperties) {
+    public AntimatterFluid(String domain, String id, AntimatterFluidAttributes.Builder builder, Block.Properties blockProperties) {
         this.domain = domain;
         this.id = id;
-        this.fluidProperties = new Properties(this::getFluid, this::getFlowingFluid, builder).bucket(this::getContainerItem).block(this::getFluidBlock);
         this.blockProperties = blockProperties;
-        this.attributes = builder.translationKey("block." + domain + ".liquid." + id).build(this.source);
+        this.attributes = builder.translationKey("block." + domain + ".liquid." + id).build(this);
     }
 
     public AntimatterFluid(String domain, String id) {
         this(domain, id, getDefaultAttributesBuilder(), getDefaultBlockProperties());
     }
 
-    public AntimatterFluid(String domain, String id, FluidAttributes.Builder builder) {
+    public AntimatterFluid(String domain, String id, AntimatterFluidAttributes.Builder builder) {
         this(domain, id, builder, getDefaultBlockProperties());
     }
 
     public AntimatterFluid(String domain, String id, ResourceLocation stillLoc, ResourceLocation flowLoc) {
-        this(domain, id, FluidAttributes.builder(stillLoc, flowLoc), getDefaultBlockProperties());
+        this(domain, id, AntimatterFluidAttributes.builder(stillLoc, flowLoc), getDefaultBlockProperties());
     }
 
     public AntimatterFluid(String domain, String id, Block.Properties properties) {
@@ -78,25 +71,24 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     @Override
     public void onRegistryBuild(RegistryType registry) {
         if (registry == RegistryType.ITEMS) {
-            AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this::getFluid, new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(CreativeModeTab.TAB_MISC)).setRegistryName(getDomain(), getId() + "_bucket"));
+            AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this.getFluid(), new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(CreativeModeTab.TAB_MISC)));
         } else if (registry == RegistryType.BLOCKS) {
-            this.fluidBlock = new LiquidBlock(this::getFluid, blockProperties);
-            this.fluidBlock.setRegistryName(getDomain(), "block_fluid_".concat(getId()));
+            this.source = AntimatterFluidUtils.createSourceFluid(this);
+            this.flowing = AntimatterFluidUtils.createFlowingFluid(this);
+            this.fluidBlock = new LiquidBlock(getFlowingFluid(), blockProperties);
             AntimatterAPI.register(Block.class, "block_fluid_".concat(getId()), getDomain(), fluidBlock);
         } else if (registry == RegistryType.FLUIDS) {
-            this.source = new Source(this.fluidProperties);
-            this.flowing = new Flowing(this.fluidProperties);
-            this.source.setRegistryName(getDomain(), getId());
-            this.flowing.setRegistryName(getDomain(), "flowing_".concat(getId()));
+            AntimatterAPI.register(Fluid.class, getId(), getDomain(), source);
+            AntimatterAPI.register(FlowingFluid.class, "flowing_".concat(getId()), getDomain(), flowing);
         }
     }
 
-    public AntimatterFluid source(Source source) {
+    public AntimatterFluid source(Fluid source) {
         this.source = source;
         return this;
     }
 
-    public AntimatterFluid flowing(Flowing flowing) {
+    public AntimatterFluid flowing(FlowingFluid flowing) {
         this.flowing = flowing;
         return this;
     }
@@ -116,23 +108,19 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
         return id;
     }
 
-    public Properties getFluidProperties() {
-        return fluidProperties;
-    }
-
     public Block.Properties getBlockProperties() {
         return blockProperties;
     }
 
-    public FluidAttributes getAttributes() {
+    public AntimatterFluidAttributes getAttributes() {
         return attributes;
     }
 
-    public Source getFluid() {
+    public Fluid getFluid() {
         return source;
     }
 
-    public Flowing getFlowingFluid() {
+    public FlowingFluid getFlowingFluid() {
         return flowing;
     }
 
@@ -148,14 +136,14 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
         return Block.Properties.of(Material.WATER).strength(100.0F).noDrops();
     }
 
-    protected static FluidAttributes.Builder getDefaultAttributesBuilder() {
+    protected static AntimatterFluidAttributes.Builder getDefaultAttributesBuilder() {
         return getDefaultAttributesBuilder(false);
     }
 
-    protected static FluidAttributes.Builder getDefaultAttributesBuilder(boolean hot) {
+    protected static AntimatterFluidAttributes.Builder getDefaultAttributesBuilder(boolean hot) {
         if (hot) {
-            return FluidAttributes.builder(LIQUID_HOT_STILL_TEXTURE, LIQUID_HOT_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE);
+            return AntimatterFluidAttributes.builder(LIQUID_HOT_STILL_TEXTURE, LIQUID_HOT_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE);
         }
-        return FluidAttributes.builder(LIQUID_STILL_TEXTURE, LIQUID_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE);
+        return AntimatterFluidAttributes.builder(LIQUID_STILL_TEXTURE, LIQUID_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE);
     }
 }
