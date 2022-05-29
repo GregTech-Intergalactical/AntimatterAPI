@@ -1,6 +1,6 @@
 package muramasa.antimatter.ore;
 
-import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.config.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;
@@ -23,7 +23,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.ticks.ScheduledTick;
 ;

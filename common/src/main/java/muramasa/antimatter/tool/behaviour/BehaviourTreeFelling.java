@@ -1,6 +1,6 @@
 package muramasa.antimatter.tool.behaviour;
 
-import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.config.AntimatterConfig;
 import muramasa.antimatter.behaviour.IBlockDestroyed;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;

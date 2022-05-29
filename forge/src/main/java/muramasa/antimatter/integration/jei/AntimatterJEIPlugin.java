@@ -19,7 +19,6 @@ import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
 import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;

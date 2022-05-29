@@ -6,8 +6,6 @@ import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.cover.*;
-import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.gui.container.ContainerBasicMachine;
 import muramasa.antimatter.gui.container.ContainerCover;
 import muramasa.antimatter.gui.container.ContainerHatch;

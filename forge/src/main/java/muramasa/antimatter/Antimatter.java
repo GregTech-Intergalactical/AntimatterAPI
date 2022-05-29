@@ -39,7 +39,6 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(Ref.ID)
 public class Antimatter extends AntimatterMod {
 
     public static Antimatter INSTANCE;

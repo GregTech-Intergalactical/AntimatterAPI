@@ -1,9 +1,12 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
-import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
-import muramasa.antimatter.datagen.providers.AntimatterLanguageProvider;
+import muramasa.antimatter.datagen.loaders.MaterialRecipes;
+import muramasa.antimatter.datagen.loaders.Pipes;
+import muramasa.antimatter.datagen.loaders.Tools;
+import muramasa.antimatter.datagen.providers.*;
+import muramasa.antimatter.event.CraftingEvent;
+import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.item.interaction.CauldronInteractions;
@@ -25,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 public class Antimatter extends AntimatterMod {
 
     public static Antimatter INSTANCE;
-    public static final AntimatterNetwork NETWORK = new AntimatterNetwork();
+    public static final AntimatterNetwork NETWORK = AntimatterNetwork.createAntimatterNetwork();
     public static final Logger LOGGER = LogManager.getLogger(Ref.ID);
     public static IProxyHandler PROXY;
 
@@ -55,6 +58,30 @@ public class Antimatter extends AntimatterMod {
 
         //if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
             //new KubeJSRegistrar();
+    }
+
+    public void addCraftingLoaders(CraftingEvent ev) {
+        ev.addLoader(MaterialRecipes::init);
+        ev.addLoader(Pipes::loadRecipes);
+        ev.addLoader(Tools::init);
+    }
+
+    public void providers(ProvidersEvent ev) {
+        if (ev.getSide() == Side.CLIENT) {
+
+        } else {
+            final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
+            ev.addProvider(Ref.ID, g -> {
+                p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g);
+                return p[0];
+            });
+            ev.addProvider(Ref.SHARED_ID, g -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
+                    "Antimatter Shared Fluid Tags", false, g));
+            ev.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
+                    false, g, p[0]));
+            ev.addProvider(Ref.ID,
+                    g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
+        }
     }
 
     @Override

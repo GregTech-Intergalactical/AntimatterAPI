@@ -1,9 +1,8 @@
-package muramasa.antimatter.registration;
+package muramasa.antimatter.registration.forge;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;

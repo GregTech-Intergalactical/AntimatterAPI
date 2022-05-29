@@ -1,6 +1,6 @@
 package muramasa.antimatter.common.event;
 
-import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.config.AntimatterConfig;
 import muramasa.antimatter.AntimatterDynamics;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
@@ -19,10 +19,8 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;

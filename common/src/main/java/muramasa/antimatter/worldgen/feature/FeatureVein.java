@@ -1,6 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
-import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.config.AntimatterConfig;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
@@ -9,7 +9,6 @@ import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinVariant;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinVariantMaterial;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.WorldGenLevel;

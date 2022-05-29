@@ -18,7 +18,8 @@ dependencies{
         modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-tesseract-common:${tesseract_version}")
         modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-tesseract-common-dep:${tesseract_version}")
     }
-
+    compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
+    compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
 }
 
 architectury {

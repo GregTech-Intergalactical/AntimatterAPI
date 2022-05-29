@@ -2,6 +2,7 @@ package muramasa.antimatter.event;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import muramasa.antimatter.registration.Side;
 import net.minecraft.data.DataGenerator;
 
 import java.util.Collection;
@@ -12,9 +13,11 @@ public class ProvidersEvent {
     private final List<IAntimatterProvider> providers = new ObjectArrayList<>(10);
 
     public final DataGenerator generator;
+    public final Side side;
 
-    public ProvidersEvent(DataGenerator generator) {
+    public ProvidersEvent(DataGenerator generator, Side side) {
         this.generator = generator;
+        this.side = side;
     }
 
     public void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> provider) {
@@ -23,5 +26,9 @@ public class ProvidersEvent {
 
     public Collection<IAntimatterProvider> getProviders() {
         return providers;
+    }
+
+    public Side getSide() {
+        return side;
     }
 }

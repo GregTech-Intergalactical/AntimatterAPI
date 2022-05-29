@@ -11,9 +11,8 @@ public class AntimatterProvidersEvent extends AntimatterEvent {
     private final Dist dist;
     public final ProvidersEvent event;
 
-    public AntimatterProvidersEvent(ProvidersEvent event, Dist type, IAntimatterRegistrar registrar) {
+    public AntimatterProvidersEvent(ProvidersEvent event, IAntimatterRegistrar registrar) {
         super(registrar);
-        this.dist = type;
         this.event = event;
     }
 
@@ -22,7 +21,7 @@ public class AntimatterProvidersEvent extends AntimatterEvent {
     }
 
     public Dist getSide() {
-        return dist;
+        return getEvent();
     }
 
     public void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> provider) {

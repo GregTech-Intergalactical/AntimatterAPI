@@ -2,7 +2,7 @@ package muramasa.antimatter.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.config.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IModelProvider;

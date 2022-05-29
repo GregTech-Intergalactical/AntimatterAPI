@@ -7,9 +7,8 @@ import muramasa.antimatter.gui.container.AntimatterContainer;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -39,17 +38,14 @@ public class GuiSyncPacket {
         return new GuiSyncPacket(buf.copy());
     }
 
-    public static void handle(final GuiSyncPacket msg, Supplier<NetworkEvent.Context> ctx) {
-        if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-            ctx.get().enqueueWork(() -> {
-                AbstractContainerMenu c = Minecraft.getInstance().player.containerMenu;
-                if (c instanceof IAntimatterContainer) {
-                    ((AntimatterContainer) c).handler.receivePacket(msg, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
-                }
-            });
-        } else {
-            ctx.get().enqueueWork(() -> ((AntimatterContainer) ctx.get().getSender().containerMenu).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT));
+    public static void handleServer(GuiSyncPacket msg){
+        AbstractContainerMenu c = Minecraft.getInstance().player.containerMenu;
+        if (c instanceof IAntimatterContainer) {
+            ((AntimatterContainer) c).handler.receivePacket(msg, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
         }
-        ctx.get().setPacketHandled(true);
+    }
+
+    public static void handleClient(GuiSyncPacket msg, ServerPlayer sender){
+        ((AntimatterContainer) sender.containerMenu).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
     }
 }

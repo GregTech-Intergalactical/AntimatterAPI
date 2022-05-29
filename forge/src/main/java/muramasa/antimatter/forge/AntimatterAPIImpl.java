@@ -1,6 +1,6 @@
 package muramasa.antimatter.forge;
 
-import muramasa.antimatter.registration.AntimatterRegistration;
+import muramasa.antimatter.registration.forge.AntimatterRegistration;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistryEntry;
