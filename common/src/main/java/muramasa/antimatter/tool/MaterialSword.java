@@ -105,6 +105,8 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         super.appendHoverText(stack, world, tooltip, flag);
     }
 
+    //TODO figure this out
+    //@Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
     }
@@ -130,6 +132,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return getToolTypes().contains(tool) ? getTier(stack).getLevel() : -1;
     }*/
 
+    @Override
     public int getMaxDamage(ItemStack stack) {
         return getTier(stack).getUses();
     }
@@ -160,10 +163,12 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return type.getBlockBreakability();
     }
 
+    @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
+    @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlot.MAINHAND) {

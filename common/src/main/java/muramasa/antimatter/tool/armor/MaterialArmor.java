@@ -6,6 +6,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.tool.IAbstractToolMethods;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.CompoundTag;
@@ -59,20 +60,21 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
         return resolveStack(primary);
     }
 
+    @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
         return getRepairMaterial(toRepair).test(repair);
     }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        if (getMaterial(stack) == null) return super.getMaxDamage(stack);
+        if (getMaterial(stack) == null) return super.getMaxDamage();
         return MAX_DAMAGE_ARRAY[slot.getIndex()] * getMaterial(stack).getArmorDurabilityFactor();
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Material mat = getMaterial(stack);
-        if (mat == null || mat == NULL || slotType != this.slot) return super.getAttributeModifiers(slotType, stack);
+        if (mat == null || mat == NULL || slotType != this.slot) return super.getDefaultAttributeModifiers(slotType);
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
         modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDefenseForSlot(slot) + mat.getArmor()[slot.getIndex()], AttributeModifier.Operation.ADDITION));
@@ -88,7 +90,6 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
     }
 
     @Nullable
-    @Override
     public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         String extra = "";
         if (slot == EquipmentSlot.HEAD && type != null) {

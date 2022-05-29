@@ -120,6 +120,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         onGenericFillItemGroup(group, list, maxEnergy);
     }
 
+    @Override
     public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
         return Utils.doesStackHaveToolTypes(stack, WRENCH, ELECTRIC_WRENCH, SCREWDRIVER, ELECTRIC_SCREWDRIVER, CROWBAR, WIRE_CUTTER); // ???
     }
@@ -132,7 +133,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         if (type.getEffectiveBlocks().contains(state.getBlock())) {
             return true;
         }
-        return state.is(getAntimatterToolType().getToolType()) && net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(getTier(stack), state);
+        return state.is(getAntimatterToolType().getToolType()) && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
     }
 
     @Override
@@ -155,6 +156,8 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         super.appendHoverText(stack, world, tooltip, flag);
     }
 
+    //TODO figure this out
+    //@Override
     public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
         return false;
     }
@@ -181,6 +184,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return getToolTypes().contains(tool) ? getTier(stack).getLevel() : -1;
     }*/
 
+    @Override
     public int getMaxDamage(ItemStack stack) {
         if (getId().equals("branch_cutter")) {
             return Math.round((float) getTier(stack).getUses() / 4);
@@ -217,10 +221,12 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return type.getBlockBreakability();
     }
 
+    @Override
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
+    @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlot.MAINHAND) {
@@ -289,6 +295,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return true;
     }
 
+    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
         if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE) && enchantment.category == EnchantmentCategory.WEAPON) {
             return true;
