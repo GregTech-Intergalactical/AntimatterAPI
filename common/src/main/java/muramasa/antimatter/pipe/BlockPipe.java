@@ -210,7 +210,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
         }
     }
 
-    @Override // Used to clear connection for sides where neighbor was removed
+    // Used to clear connection for sides where neighbor was removed
     public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor) {
         if (!world.isClientSide()) {
             TileEntityPipe<?> tile = (TileEntityPipe<?>) world.getBlockEntity(pos);

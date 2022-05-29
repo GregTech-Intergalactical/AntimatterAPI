@@ -10,6 +10,7 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.FluidPipe;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -166,7 +167,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, PoseStack stack, Font renderer, int left, int top) {
         renderer.draw(stack, "Pressure used: " + instance.stack.getAmount(), left, top, 16448255);
         renderer.draw(stack, "Pressure total: " + getPressure()*20, left, top + 8, 16448255);
-        renderer.draw(stack, "Fluid: " + instance.stack.getFluid().getRegistryName().toString(), left, top + 16, 16448255);
+        renderer.draw(stack, "Fluid: " + TesseractPlatformUtils.getFluidId(instance.stack.getFluid()).toString(), left, top + 16, 16448255);
         renderer.draw(stack, "(Above only in intersection)", left, top + 24, 16448255);
         //renderer.draw(stack, "Frame average: " + instance.holderPressure / 20, left, top + 32, 16448255);
         return 32;
@@ -178,7 +179,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         fluidHandler.ifPresent(t -> {
             for (int i = 0; i < t.getTanks(); i++) {
                 FluidStack stack = t.getFluidInTank(i);
-                list.add(stack.getFluid().getRegistryName().toString() + " " + stack.getAmount() + " mb.");
+                list.add(TesseractPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + stack.getAmount() + " mb.");
             }
         });
         list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));

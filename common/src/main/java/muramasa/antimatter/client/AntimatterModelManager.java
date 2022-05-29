@@ -15,6 +15,7 @@ import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -89,21 +90,21 @@ public class AntimatterModelManager {
     }
 
     public static void put(Item item, IItemProviderOverride override) {
-        ITEM_OVERRIDES.put(item.getRegistryName(), override);
+        ITEM_OVERRIDES.put(AntimatterPlatformUtils.getIdFromItem(item), override);
     }
 
     public static void put(Block block, IBlockProviderOverride override) {
-        BLOCK_OVERRIDES.put(block.getRegistryName(), override);
+        BLOCK_OVERRIDES.put(AntimatterPlatformUtils.getIdFromBlock(block), override);
     }
 
     public static void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        IItemProviderOverride override = ITEM_OVERRIDES.get(item.asItem().getRegistryName());
+        IItemProviderOverride override = ITEM_OVERRIDES.get(AntimatterPlatformUtils.getIdFromItem(item.asItem()));
         if (override != null) override.apply(item.asItem(), prov);
         else if (item instanceof IModelProvider) ((IModelProvider) item).onItemModelBuild(item, prov);
     }
 
     public static void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        IBlockProviderOverride override = BLOCK_OVERRIDES.get(block.getRegistryName());
+        IBlockProviderOverride override = BLOCK_OVERRIDES.get(AntimatterPlatformUtils.getIdFromBlock(block));
         if (override != null) override.apply(block, prov, prov.getBuilder(block));
         else if (block instanceof IModelProvider) ((IModelProvider) block).onBlockModelBuild(block, prov);
     }

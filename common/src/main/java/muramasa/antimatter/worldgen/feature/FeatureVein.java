@@ -1,6 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
-import muramasa.antimatter.config.AntimatterConfig;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;

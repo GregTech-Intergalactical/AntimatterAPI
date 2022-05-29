@@ -49,12 +49,10 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         };
     }
 
-    @Override
     public int getFlammability(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
         return 300;
     }
 
-    @Override
     public boolean isFlammable(BlockState state, BlockGetter world, BlockPos pos, Direction face) {
         return true;
     }
@@ -64,7 +62,6 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
         return Data.WIRE_CUTTER;
     }
 
-    @Override
     public boolean isFireSource(BlockState state, LevelReader world, BlockPos pos, Direction side) {
         return true;
     }

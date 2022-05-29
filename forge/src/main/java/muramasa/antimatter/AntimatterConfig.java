@@ -40,7 +40,6 @@ public class AntimatterConfig {
 
     @SubscribeEvent
     public static void onModConfigEvent(final ModConfigEvent e) {
-
         if (e.getConfig().getSpec() == CLIENT_SPEC) bakeClientConfig();
         else if (e.getConfig().getSpec() == COMMON_SPEC) bakeCommonConfig();
 

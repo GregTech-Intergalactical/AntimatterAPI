@@ -1,6 +1,6 @@
 package muramasa.antimatter.ore;
 
-import muramasa.antimatter.config.AntimatterConfig;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;

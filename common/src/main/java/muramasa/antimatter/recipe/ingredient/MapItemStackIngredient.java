@@ -2,6 +2,7 @@ package muramasa.antimatter.recipe.ingredient;
 
 import com.google.common.collect.ImmutableSet;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
@@ -61,7 +62,7 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
         boolean nbt = stack.hasTag();
         long tempHash = 1;
 
-        tempHash = 31 * tempHash + stack.getItem().getRegistryName().hashCode();
+        tempHash = 31 * tempHash + AntimatterPlatformUtils.getIdFromItem(stack.getItem()).hashCode();
         if (nbt && stack.getTag() != null) {
             CompoundTag newNbt = filterTags(stack.getTag());
             if (!newNbt.isEmpty()) tempHash = 31 * tempHash + newNbt.hashCode();

@@ -15,7 +15,6 @@ public class AntimatterItemBlock extends BlockItem {
 
     public AntimatterItemBlock(Block block) {
         super(block, new Properties().tab(block instanceof IItemBlockProvider ? ((IItemBlockProvider) block).getItemGroup() : Ref.TAB_BLOCKS));
-        if (block.getRegistryName() != null) setRegistryName(block.getRegistryName());
     }
 
     @Nonnull

@@ -6,6 +6,7 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
+import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -45,10 +46,11 @@ public class AntimatterImpl {
 
     private void providers(AntimatterProvidersEvent ev) {
         Antimatter.INSTANCE.providers(ev.getEvent());
+        KubeJSRegistrar.providersEvent(ev.getEvent());
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
-        ClientHandler.setup(e);
+        ClientHandler.setup();
         // AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         e.enqueueWork(() -> AntimatterAPI.getClientDeferredQueue().ifPresent(t -> {
@@ -63,7 +65,7 @@ public class AntimatterImpl {
     }
 
     private void commonSetup(final FMLCommonSetupEvent e) {
-        CommonHandler.setup(e);
+        CommonHandler.setup();
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         e.enqueueWork(() -> AntimatterAPI.getCommonDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
@@ -77,7 +79,7 @@ public class AntimatterImpl {
     }
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
-        ServerHandler.setup(e);
+        ServerHandler.setup();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
         e.enqueueWork(() -> AntimatterAPI.getServerDeferredQueue().ifPresent(t -> {

@@ -5,6 +5,7 @@ import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nullable;
 
@@ -20,7 +21,7 @@ public class CoverDebug extends BaseCover {
         if (execute) {
             String fmt = "";
             if (object instanceof FluidStack) {
-                fmt = String.format("Fluid: %s, amount: %d", ((FluidStack) object).getFluid().getRegistryName(), ((FluidStack) object).getAmount());
+                fmt = String.format("Fluid: %s, amount: %d", TesseractPlatformUtils.getFluidId(((FluidStack) object).getFluid()), ((FluidStack) object).getAmount());
             } else {
                 fmt = object.toString();
             }

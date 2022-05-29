@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.Ref;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
 // TODO: simpler solution
 public class ConfigCondition implements ICondition {

@@ -28,10 +28,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.IIngredientSerializer;
-import net.minecraftforge.common.crafting.MultiItemValue;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -154,7 +150,7 @@ public class PropertyIngredient extends Ingredient {
         obj.add("item_tags", materialArr);
         materialArr = new JsonArray();
         for (ItemLike item : this.items) {
-            ResourceLocation name = item.asItem().getRegistryName();
+            ResourceLocation name = AntimatterPlatformUtils.getIdFromItem(item.asItem());
             if (name != null) materialArr.add(name.toString());
         }
         obj.add("items", materialArr);
@@ -323,7 +319,7 @@ public class PropertyIngredient extends Ingredient {
             }
             buffer.writeVarInt(ingredient.items.size());
             for (ItemLike item : ingredient.items) {
-                ResourceLocation name = item.asItem().getRegistryName();
+                ResourceLocation name = AntimatterPlatformUtils.getIdFromItem(item.asItem());
                 if (name != null) buffer.writeUtf(name.toString());
             }
             //Needed because tags might not be available on client.

@@ -5,6 +5,7 @@ import dev.latvian.mods.kubejs.recipe.RegisterRecipeHandlersEvent;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.event.MaterialEvent;
 import net.minecraft.resources.ResourceLocation;
 
 public class AntimatterKubeJS extends KubeJSPlugin {
@@ -23,6 +24,10 @@ public class AntimatterKubeJS extends KubeJSPlugin {
     @Override
     public void addRecipes(RegisterRecipeHandlersEvent event) {
         event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
+    }
+
+    public static void loadMaterialEvent(){
+        new AMMaterialEvent(new MaterialEvent()).post(ScriptType.STARTUP, "antimatter.material_event");
     }
 
     public static void loadWorldgenScripts() {

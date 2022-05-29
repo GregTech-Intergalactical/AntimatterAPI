@@ -16,6 +16,7 @@ import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.TesseractPlatformUtils;
 
 import java.util.List;
 
@@ -104,7 +105,7 @@ public class KubeJSRecipe extends RecipeJS {
 
     public static JsonElement serializeStack(FluidStack stack) {
         JsonObject obj = new JsonObject();
-        obj.addProperty("fluid", stack.getFluid().getRegistryName().toString());
+        obj.addProperty("fluid", TesseractPlatformUtils.getFluidId(stack.getFluid()).toString());
         obj.addProperty("amount", stack.getAmount());
         if (stack.hasTag()) {
             obj.add("tag", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getTag()));

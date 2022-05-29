@@ -1,7 +1,13 @@
-package muramasa.antimatter.config;
+package muramasa.antimatter;
 
-import dev.architectury.utils.value.IntValue;
 import muramasa.antimatter.Ref;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.fml.config.ModConfig;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class AntimatterConfig {
 
@@ -21,8 +27,8 @@ public class AntimatterConfig {
 
     static {
 
-        final Pair<CommonConfig, ForgeConfigSpec> COMMON_PAIR = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
-        final Pair<ClientConfig, ForgeConfigSpec> CLIENT_PAIR = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+        final Pair<CommonConfig, ForgeConfigSpec> COMMON_PAIR = new Builder().configure(CommonConfig::new);
+        final Pair<ClientConfig, ForgeConfigSpec> CLIENT_PAIR = new Builder().configure(ClientConfig::new);
         CLIENT_CONFIG = CLIENT_PAIR.getLeft();
         CLIENT_SPEC = CLIENT_PAIR.getRight();
         COMMON_CONFIG = COMMON_PAIR.getLeft();
@@ -30,12 +36,11 @@ public class AntimatterConfig {
 
     }
 
-    @SubscribeEvent
-    public static void onModConfigEvent(final ModConfigEvent e) {
-
-        if (e.getConfig().getSpec() == CLIENT_SPEC) bakeClientConfig();
-        else if (e.getConfig().getSpec() == COMMON_SPEC) bakeCommonConfig();
-
+    public static void onModConfigEvent(final ModConfig e) {
+        if (e.getModId().equals(Ref.ID)){
+            if (e.getSpec() == CLIENT_SPEC) bakeClientConfig();
+            else if (e.getSpec() == COMMON_SPEC) bakeCommonConfig();
+        }
     }
 
     public static class Client {
