@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
+import muramasa.antimatter.recipe.condition.ConditionalRecipe;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.util.TagUtils;
