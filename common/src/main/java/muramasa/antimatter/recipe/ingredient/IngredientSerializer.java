@@ -1,21 +1,20 @@
 package muramasa.antimatter.recipe.ingredient;
 
 import com.google.gson.JsonObject;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 
-public class IngredientSerializer extends ForgeRegistryEntry<IngredientSerializer> implements IIngredientSerializer<RecipeIngredient> {
+public class IngredientSerializer implements IIngredientSerializer<RecipeIngredient> {
 
     public static final IngredientSerializer INSTANCE = new IngredientSerializer();
 
     static {
-        INSTANCE.setRegistryName(new ResourceLocation(Ref.ID, "ingredient"));
+        AntimatterAPI.register(IIngredientSerializer.class, "ingredient", Ref.ID, INSTANCE);
     }
     @Override
     public RecipeIngredient parse(FriendlyByteBuf buffer) {

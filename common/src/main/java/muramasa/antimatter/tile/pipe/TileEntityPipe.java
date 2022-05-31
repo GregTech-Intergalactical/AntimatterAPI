@@ -82,7 +82,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         return getPipeType().domain;
     }
 
-    @Override
+    //@Override
     public void onLoad() {
         if (isServerSide()) {
             register();
