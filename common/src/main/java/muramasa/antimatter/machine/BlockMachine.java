@@ -10,7 +10,7 @@ import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
-import muramasa.antimatter.datagen.base.ItemModelBuilder;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;

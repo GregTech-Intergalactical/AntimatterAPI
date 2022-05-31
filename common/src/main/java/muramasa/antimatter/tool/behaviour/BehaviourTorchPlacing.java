@@ -80,8 +80,9 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
                     }
                 }
 
-                SoundType soundtype = blockstate1.getSoundType(world, blockpos, context.getPlayer());
-                world.playSound(playerentity, blockpos, Blocks.TORCH.getSoundType(blockstate1, world, blockpos, context.getPlayer()).getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
+                //TODO figure out why this used world, blockstate, and player in getSountType
+                SoundType soundtype = blockstate1.getSoundType();
+                world.playSound(playerentity, blockpos, Blocks.TORCH.getSoundType(blockstate1).getPlaceSound(), SoundSource.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 
                 return InteractionResult.sidedSuccess(world.isClientSide);
             }

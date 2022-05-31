@@ -9,7 +9,7 @@ import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.event.SlotClickEvent;
-import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -88,7 +88,7 @@ public class FluidSlotWidget extends Widget {
         str.add(new TextComponent(
                 NumberFormat.getNumberInstance(Locale.US).format(this.stack.getAmount()) + " mB")
                 .withStyle(ChatFormatting.GRAY));
-        AntimatterJEIPlugin.addModDescriptor(str, this.stack);
+        AntimatterJEIREIPlugin.addModDescriptor(str, this.stack);
         drawHoverText(str, (int) mouseX, (int) mouseY, Minecraft.getInstance().font, stack);
     }
 
@@ -99,7 +99,7 @@ public class FluidSlotWidget extends Widget {
         InputConstants.Key input = InputConstants.getKey(keyCode, scanCode);
         if (!(input.getName().equals("key.keyboard.u") || input.getName().equals("key.keyboard.r")))
             return false;
-        AntimatterJEIPlugin.uses(stack, input.getName().equals("key.keyboard.u"));
+        AntimatterJEIREIPlugin.uses(stack, input.getName().equals("key.keyboard.u"));
         return true;
     }
 

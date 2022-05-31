@@ -15,6 +15,7 @@ dependencies{
         implementation(project(path: ":tesseract-common", configuration: "namedElements"))
         implementation(project(path: ":fabricated-forge-caps", configuration: "namedElements"))
         implementation(project(path: ":fabricated-forge-recipe-api", configuration: "namedElements"))
+        implementation(project(path: ":fabricated-forge-datagen", configuration: "namedElements"))
     } else {
         modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-tesseract-common:${tesseract_version}")
         modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-tesseract-common-dep:${tesseract_version}")

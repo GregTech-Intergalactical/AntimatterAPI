@@ -14,8 +14,6 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import java.util.function.Predicate;
-
 public class UtilsImpl {
     public static ItemStack insertItem(IItemHandler to, ItemStack toInsert, boolean simulate){
         return ItemHandlerHelper.insertItem(to, toInsert, simulate);

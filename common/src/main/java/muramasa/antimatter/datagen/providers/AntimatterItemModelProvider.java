@@ -4,10 +4,10 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.base.ExistingFileHelper;
-import muramasa.antimatter.datagen.base.ItemModelBuilder;
-import muramasa.antimatter.datagen.base.ItemModelProvider;
-import muramasa.antimatter.datagen.base.ModelFile;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
@@ -20,8 +20,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-
-import java.util.function.Function;
 
 public class AntimatterItemModelProvider extends ItemModelProvider implements IAntimatterProvider {
 

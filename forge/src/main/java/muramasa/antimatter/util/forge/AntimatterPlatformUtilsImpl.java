@@ -1,25 +1,23 @@
 package muramasa.antimatter.util.forge;
 
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.capability.AntimatterCaps;
-import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.capability.ICoverHandler;
-import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.client.forge.itemgroup.AntimatterItemGroup;
+import muramasa.antimatter.event.CraftingEvent;
+import muramasa.antimatter.event.MaterialEvent;
+import muramasa.antimatter.event.ProvidersEvent;
+import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterLoaderEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.event.forge.AntimatterWorldGenEvent;
-import muramasa.antimatter.material.MaterialEvent;
-import muramasa.antimatter.network.AntimatterNetwork;
-import muramasa.antimatter.network.forge.AntimatterNetworkImpl;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
+import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.tesseract.forge.EnergyTileWrapper;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResultHolder;
@@ -35,7 +33,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.LazyOptional;
@@ -48,7 +45,6 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
@@ -185,8 +181,8 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
-        ProvidersEvent providerEvent = new ProvidersEvent(generator);
-        AntimatterProvidersEvent ev = new AntimatterProvidersEvent(providerEvent, side == Side.CLIENT ? Dist.CLIENT : Dist.DEDICATED_SERVER, registrar);
+        ProvidersEvent providerEvent = new ProvidersEvent(generator, side);
+        AntimatterProvidersEvent ev = new AntimatterProvidersEvent(providerEvent, registrar);
         MinecraftForge.EVENT_BUS.post(ev);
         return providerEvent;
     }

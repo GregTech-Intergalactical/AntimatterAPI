@@ -2,6 +2,7 @@ package muramasa.antimatter.proxy.forge;
 
 import muramasa.antimatter.client.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
+import muramasa.antimatter.proxy.ClientHandler;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;

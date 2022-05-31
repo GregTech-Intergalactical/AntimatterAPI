@@ -5,7 +5,7 @@ import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
-import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
+import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;

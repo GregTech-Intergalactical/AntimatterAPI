@@ -1,8 +1,8 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.datagen.base.BlockModelBuilder;
-import muramasa.antimatter.datagen.base.ConfiguredModel;
+import net.minecraftforge.client.model.generators.BlockModelBuilder;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;

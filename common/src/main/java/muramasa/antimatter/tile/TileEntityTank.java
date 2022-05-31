@@ -3,7 +3,7 @@ package muramasa.antimatter.tile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.capability.fluid.FluidTanks;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
-import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
+import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.machine.types.TankMachine;
 import net.minecraft.client.gui.Font;

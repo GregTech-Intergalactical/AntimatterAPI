@@ -6,7 +6,7 @@ import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
-import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
+import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;

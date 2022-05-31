@@ -1,12 +1,10 @@
 package muramasa.antimatter.datagen.providers;
 
-import muramasa.antimatter.datagen.base.BlockModelProvider;
-import muramasa.antimatter.datagen.base.ExistingFileHelper;
+import net.minecraftforge.client.model.generators.BlockModelProvider;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.data.DataGenerator;
-
-import java.util.function.Function;
 
 @MethodsReturnNonnullByDefault
 public class AntimatterBlockModelProvider extends BlockModelProvider {

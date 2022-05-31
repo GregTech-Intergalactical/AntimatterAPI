@@ -1,6 +1,8 @@
 package muramasa.antimatter.event.forge;
 
 import muramasa.antimatter.datagen.ICraftingLoader;
+import muramasa.antimatter.event.CraftingEvent;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
 
 import java.util.Collection;
 

@@ -1,14 +1,17 @@
 package muramasa.antimatter.forge;
 
 
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Ref;
+import muramasa.antimatter.*;
+import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
-import net.minecraftforge.api.distmarker.Dist;
+import muramasa.antimatter.proxy.ClientHandler;
+import muramasa.antimatter.proxy.CommonHandler;
+import muramasa.antimatter.proxy.ServerHandler;
+import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -19,6 +22,9 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+
+import static muramasa.antimatter.Antimatter.LOGGER;
 
 @Mod(Ref.ID)
 public class AntimatterImpl {
@@ -35,6 +41,7 @@ public class AntimatterImpl {
         eventBus.addListener(this::commonSetup);
         eventBus.addListener(this::serverSetup);
         eventBus.addListener(this::loadComplete);
+        eventBus.addListener(EventPriority.LOWEST, this::onGatherData);
 
         MinecraftForge.EVENT_BUS.addListener(this::addCraftingLoaders);
         MinecraftForge.EVENT_BUS.addListener(this::providers);
@@ -46,7 +53,11 @@ public class AntimatterImpl {
 
     private void providers(AntimatterProvidersEvent ev) {
         Antimatter.INSTANCE.providers(ev.getEvent());
-        KubeJSRegistrar.providersEvent(ev.getEvent());
+        KubeJSRegistrar.providerEvent(ev.getEvent());
+    }
+
+    private void onGatherData(GatherDataEvent event){
+        AntimatterMod.onGatherData(event.getGenerator(), event.includeClient(), event.includeServer());
     }
 
     private void clientSetup(final FMLClientSetupEvent e) {
@@ -58,7 +69,7 @@ public class AntimatterImpl {
                 try {
                     r.run();
                 } catch (Exception ex) {
-                    Antimatter.LOGGER.warn("Caught error during client setup: " + ex.getMessage());
+                    LOGGER.warn("Caught error during client setup: " + ex.getMessage());
                 }
             }
         }));
@@ -72,7 +83,7 @@ public class AntimatterImpl {
                 try {
                     r.run();
                 } catch (Exception ex) {
-                    Antimatter.LOGGER.warn("Caught error during common setup: " + ex.getMessage());
+                    LOGGER.warn("Caught error during common setup: " + ex.getMessage());
                 }
             }
         }));
@@ -87,7 +98,7 @@ public class AntimatterImpl {
                 try {
                     r.run();
                 } catch (Exception ex) {
-                    Antimatter.LOGGER.warn("Caught error during server setup: " + ex.getMessage());
+                    LOGGER.warn("Caught error during server setup: " + ex.getMessage());
                 }
             }
         }));

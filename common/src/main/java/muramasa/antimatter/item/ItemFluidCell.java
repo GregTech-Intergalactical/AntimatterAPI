@@ -3,7 +3,7 @@ package muramasa.antimatter.item;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.fluid.FluidHandlerItemCell;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
-import muramasa.antimatter.datagen.base.ModelFile;
+import net.minecraftforge.client.model.generators.ModelFile;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
@@ -55,7 +55,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import tesseract.TesseractPlatformUtils;
 

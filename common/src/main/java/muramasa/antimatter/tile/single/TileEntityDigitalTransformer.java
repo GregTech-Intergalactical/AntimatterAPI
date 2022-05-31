@@ -7,7 +7,7 @@ import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
-import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
+import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;

@@ -231,6 +231,9 @@ dependencies {
         modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-tesseract-forge:${tesseract_version}")
     }
 
+    common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
+
     //MIXIN
     if (System.getProperty('idea.sync.active') != 'true') {
         annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'

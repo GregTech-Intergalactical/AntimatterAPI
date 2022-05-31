@@ -1,6 +1,9 @@
 package muramasa.antimatter.common.event.forge;
 
-import muramasa.antimatter.*;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.structure.StructureCache;

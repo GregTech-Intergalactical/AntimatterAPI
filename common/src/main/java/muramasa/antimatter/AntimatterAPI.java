@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.*;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.gui.GuiData;
-import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
@@ -408,13 +408,13 @@ public final class AntimatterAPI {
     public static void registerJEICategory(IRecipeMap map, GuiData gui, Tier tier, ResourceLocation model,
                                            boolean override) {
         if (isModLoaded(Ref.MOD_JEI) || isModLoaded(Ref.MOD_REI)) {
-            AntimatterJEIPlugin.registerCategory(map, gui, tier, model, override);
+            AntimatterJEIREIPlugin.registerCategory(map, gui, tier, model, override);
         }
     }
 
     public static void registerJEICategory(IRecipeMap map, GuiData gui, Machine<?> machine, boolean override) {
         if (isModLoaded(Ref.MOD_JEI) || isModLoaded(Ref.MOD_REI)) {
-            AntimatterJEIPlugin.registerCategory(map, gui, machine.getFirstTier(),
+            AntimatterJEIREIPlugin.registerCategory(map, gui, machine.getFirstTier(),
                     new ResourceLocation(machine.getDomain(), machine.getId()), override);
         }
     }

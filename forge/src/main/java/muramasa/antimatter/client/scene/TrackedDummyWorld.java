@@ -1,6 +1,7 @@
 package muramasa.antimatter.client.scene;
 
 import com.mojang.math.Vector3f;
+import muramasa.antimatter.mixin.client.DimensionTypeAccessor;
 import muramasa.antimatter.structure.BlockInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

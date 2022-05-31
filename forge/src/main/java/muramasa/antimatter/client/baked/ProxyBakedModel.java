@@ -5,6 +5,7 @@ import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.AntimatterProperties.ProxyProperties;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.mixin.client.ChunkReaderAccessor;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -30,11 +31,7 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 

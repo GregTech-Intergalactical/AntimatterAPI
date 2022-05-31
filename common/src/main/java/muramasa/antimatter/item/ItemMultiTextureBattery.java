@@ -2,8 +2,8 @@ package muramasa.antimatter.item;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.RenderHelper;
-import muramasa.antimatter.datagen.base.ItemModelBuilder;
-import muramasa.antimatter.datagen.base.ModelFile;
+import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import net.minecraftforge.client.model.generators.ModelFile;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.texture.Texture;

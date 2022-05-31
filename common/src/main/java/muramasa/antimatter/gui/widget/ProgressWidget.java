@@ -7,7 +7,7 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerMachine;
-import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.int4;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -103,7 +103,7 @@ public class ProgressWidget extends Widget {
     public void onClick(double mouseX, double mouseY, int button) {
         super.onClick(mouseX, mouseY, button);
         if (this.gui.handler instanceof TileEntityMachine) {
-            AntimatterJEIPlugin.showCategory(((TileEntityMachine<?>) this.gui.handler).getMachineType());
+            AntimatterJEIREIPlugin.showCategory(((TileEntityMachine<?>) this.gui.handler).getMachineType());
         }
     }
 }
