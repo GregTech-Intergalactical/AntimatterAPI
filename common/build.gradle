@@ -21,7 +21,9 @@ dependencies{
     }
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
-    implementation 'com.github.Trinsdar:forgeconfigapiport-fabric:abc19f9a99'
+    implementation("com.github.Trinsdar:forgeconfigapiport-fabric:abc19f9a99"){
+        transitive = false
+    }
 }
 
 architectury {
