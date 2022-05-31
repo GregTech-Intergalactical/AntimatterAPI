@@ -64,6 +64,10 @@ public class AntimatterPlatformUtilsImpl {
         return LazyOptional.of(() -> new EnergyTileWrapper(be, cap.orElse(null)));
     }
 
+    public static boolean tileHasFEOrTRE(BlockEntity entity, Direction side){
+        return entity.getCapability(CapabilityEnergy.ENERGY, side).isPresent();
+    }
+
 
     public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
         return new AntimatterItemGroup(domain, id, iconSupplier);

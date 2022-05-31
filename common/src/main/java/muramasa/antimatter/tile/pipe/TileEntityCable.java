@@ -9,6 +9,7 @@ import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -101,7 +102,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         if (!super.validate(dir)) return false;
         BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
-        return TesseractPlatformUtils.getCapability(tile, TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite()).isPresent() || tile.getCapability(CapabilityEnergy.ENERGY, dir).isPresent();
+        return TesseractPlatformUtils.getCapability(tile, TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite()).isPresent() || AntimatterPlatformUtils.tileHasFEOrTRE(tile, dir);
     }
 
     @Override

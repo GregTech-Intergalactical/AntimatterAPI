@@ -7,6 +7,7 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -98,5 +99,15 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
     @Override
     public int temperatureCoefficient() {
         return this.type.conductivity;
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        return ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).map(h -> h.serializeNBT()).orElse(null);
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag nbt) {
+        ((LazyOptional<IHeatHandler>) pipeCapHolder.nullSide()).ifPresent(h -> h.deserializeNBT(nbt));
     }
 }

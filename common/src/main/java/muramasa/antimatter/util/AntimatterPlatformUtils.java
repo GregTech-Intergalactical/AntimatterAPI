@@ -45,6 +45,11 @@ public class AntimatterPlatformUtils {
     }
 
     @ExpectPlatform
+    public static boolean tileHasFEOrTRE(BlockEntity entity, Direction side){
+        return false;
+    }
+
+    @ExpectPlatform
     public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
         return null;
     }
