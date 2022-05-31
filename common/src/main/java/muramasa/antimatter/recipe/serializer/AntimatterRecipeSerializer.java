@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -30,7 +32,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
     public static final AntimatterRecipeSerializer INSTANCE = new AntimatterRecipeSerializer();
 
     static {
-        INSTANCE.setRegistryName(new ResourceLocation(Ref.ID, "machine"));
+        AntimatterAPI.register(RecipeSerializer.class, "machine", Ref.ID, INSTANCE);
     }
 
     @Override

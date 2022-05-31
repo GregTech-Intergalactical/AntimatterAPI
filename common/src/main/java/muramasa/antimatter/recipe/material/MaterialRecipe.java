@@ -106,9 +106,9 @@ public class MaterialRecipe extends ShapedRecipe {
                 if (k >= 0 && l >= 0 && k < getWidth() && l < getHeight()) {
                     int offset;
                     if (mirrored)
-                        offset = this.getRecipeWidth() - k - 1 + l * this.getRecipeWidth();
+                        offset = this.getWidth() - k - 1 + l * this.getWidth();
                     else
-                        offset = k + l * this.getRecipeWidth();
+                        offset = k + l * this.getWidth();
                     ingredient = this.getIngredients().get(offset);
                     ItemStack stack = inv.getItem(i + j * inv.getWidth());
                     if (ingredient instanceof PropertyIngredient) {

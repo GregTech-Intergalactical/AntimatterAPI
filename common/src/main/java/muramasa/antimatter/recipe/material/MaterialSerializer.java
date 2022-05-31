@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import net.minecraft.core.NonNullList;
@@ -24,12 +25,12 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<MaterialRecipe> {
+public class MaterialSerializer implements RecipeSerializer<MaterialRecipe> {
 
     public static final MaterialSerializer INSTANCE = new MaterialSerializer();
 
     static {
-        INSTANCE.setRegistryName(new ResourceLocation(Ref.ID, "material"));
+        AntimatterAPI.register(RecipeSerializer.class, "material", Ref.ID, INSTANCE);
     }
 
     private static final int MAX_HEIGHT = 3;
@@ -71,8 +72,8 @@ public class MaterialSerializer extends net.minecraftforge.registries.ForgeRegis
 
     @Override
     public void toNetwork(FriendlyByteBuf buffer, MaterialRecipe recipe) {
-        buffer.writeVarInt(recipe.getRecipeWidth());
-        buffer.writeVarInt(recipe.getRecipeHeight());
+        buffer.writeVarInt(recipe.getWidth());
+        buffer.writeVarInt(recipe.getHeight());
         buffer.writeUtf(recipe.getGroup());
 
         for (Ingredient ingredient : recipe.getIngredients()) {

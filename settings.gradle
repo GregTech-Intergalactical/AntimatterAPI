@@ -24,8 +24,10 @@ if (tesseractFolder.exists()) {
     project(':tesseract-forge').setProjectDir(new File("TesseractAPI/forge"))
     include 'tesseract-common'
     project(':tesseract-common').setProjectDir(new File("TesseractAPI/common"))
-    include 'tesseract-common-dep'
-    project(':tesseract-common-dep').setProjectDir(new File("TesseractAPI/common-dep"))
+    include 'fabricated-forge-caps'
+    project(':fabricated-forge-caps').setProjectDir(new File("TesseractAPI/fabricated-forge-caps"))
+    include 'fabricated-forge-recipe-api'
+    project(':fabricated-forge-recipe-api').setProjectDir(new File("TesseractAPI/fabricated-forge-recipe-api"))
     include 'tesseract-fabric'
     project(':tesseract-fabric').setProjectDir(new File("TesseractAPI/fabric"))
 }

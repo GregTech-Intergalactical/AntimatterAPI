@@ -28,6 +28,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.IIngredientSerializer;
+import net.minecraftforge.common.crafting.MultiItemValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -130,7 +133,6 @@ public class PropertyIngredient extends Ingredient {
         return id;
     }
 
-    @Override
     public IIngredientSerializer<? extends Ingredient> getSerializer() {
         return Serializer.INSTANCE;
     }

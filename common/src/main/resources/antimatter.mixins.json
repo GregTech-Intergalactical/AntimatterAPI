@@ -23,6 +23,7 @@
     "BucketItemAccessor",
     "GrindstoneContainerMixin",
     "IceBlockMixin",
+    "IngredientAccessor",
     "ItemStackMixin",
     "LeavesBlockMixin",
     "MultiPackManagerMixin",
