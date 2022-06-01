@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.function.Function;
 
 public class AntimatterProvidersEvent extends AntimatterEvent {
-    private final Dist dist;
     public final ProvidersEvent event;
 
     public AntimatterProvidersEvent(ProvidersEvent event, IAntimatterRegistrar registrar) {
@@ -20,10 +19,6 @@ public class AntimatterProvidersEvent extends AntimatterEvent {
 
     public ProvidersEvent getEvent() {
         return event;
-    }
-
-    public Dist getSide() {
-        return getEvent();
     }
 
     public void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> provider) {

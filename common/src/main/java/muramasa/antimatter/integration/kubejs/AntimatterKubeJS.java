@@ -26,8 +26,8 @@ public class AntimatterKubeJS extends KubeJSPlugin {
         event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
     }
 
-    public static void loadMaterialEvent(){
-        new AMMaterialEvent(new MaterialEvent()).post(ScriptType.STARTUP, "antimatter.material_event");
+    public static void loadMaterialEvent(MaterialEvent event){
+        new AMMaterialEvent(event).post(ScriptType.STARTUP, "antimatter.material_event");
     }
 
     public static void loadWorldgenScripts() {

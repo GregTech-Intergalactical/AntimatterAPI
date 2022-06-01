@@ -6,10 +6,7 @@ import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
-import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
-import muramasa.antimatter.event.forge.AntimatterLoaderEvent;
-import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
-import muramasa.antimatter.event.forge.AntimatterWorldGenEvent;
+import muramasa.antimatter.event.forge.*;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
@@ -177,7 +174,8 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static void postMaterialEvent(IAntimatterRegistrar registrar, MaterialEvent materialEvent){
-
+        AntimatterMaterialEvent event = new AntimatterMaterialEvent(registrar, materialEvent);
+        MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){

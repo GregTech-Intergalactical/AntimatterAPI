@@ -26,10 +26,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -270,6 +272,40 @@ public final class AntimatterAPI {
         return allInternal(c)
                 .filter(o -> o instanceof IAntimatterObject && ((IAntimatterObject) o).getDomain().equals(domain)
                         || isRegistryEntry(o, domain));
+    }
+
+    public static <T> void all(Class<T> c, TriConsumer<T, String, String> consumer){
+        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+        if (map != null) {
+            map.forEach((d, e) -> {
+                if (e.left().isPresent()){
+                    e.left().ifPresent(o -> consumer.accept(c.cast(o), o.getDomain(), o.getId()));
+                } else {
+                    e.right().ifPresent(m -> m.forEach((i, o) -> {
+                        consumer.accept(c.cast(o), d, i);
+                    }));
+                }
+            });
+        }
+    }
+
+    public static <T> void all(Class<T> c, String domain, TriConsumer<T, String, String> consumer){
+        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+        if (map != null) {
+            map.forEach((d, e) -> {
+                if (e.left().isPresent()){
+                    if (domain.equals(Ref.SHARED_ID)) {
+                        e.left().ifPresent(o -> consumer.accept(c.cast(o), o.getDomain(), o.getId()));
+                    }
+                } else {
+                    e.right().ifPresent(m -> m.forEach((i, o) -> {
+                        if (d.equals(domain)) {
+                            consumer.accept(c.cast(o), d, i);
+                        }
+                    }));
+                }
+            });
+        }
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {

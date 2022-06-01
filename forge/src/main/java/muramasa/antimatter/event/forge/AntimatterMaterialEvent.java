@@ -1,6 +1,6 @@
 package muramasa.antimatter.event.forge;
 
-import muramasa.antimatter.material.MaterialEvent;
+import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 
 public class AntimatterMaterialEvent extends AntimatterEvent {

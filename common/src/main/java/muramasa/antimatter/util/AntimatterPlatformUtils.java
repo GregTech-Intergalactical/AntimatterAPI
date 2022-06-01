@@ -182,8 +182,7 @@ public class AntimatterPlatformUtils {
     }
 
     @ExpectPlatform
-    public static MaterialEvent postMaterialEvent(IAntimatterRegistrar registrar, MaterialEvent materialEvent){
-        return null;
+    public static void postMaterialEvent(IAntimatterRegistrar registrar, MaterialEvent materialEvent){
     }
 
     @ExpectPlatform

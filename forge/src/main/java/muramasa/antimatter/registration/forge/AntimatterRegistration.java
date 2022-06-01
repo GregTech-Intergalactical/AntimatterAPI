@@ -1,10 +1,13 @@
 package muramasa.antimatter.registration.forge;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
+import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
@@ -15,6 +18,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -59,6 +63,9 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(SoundEvent.class, t -> {
                 if (t.getRegistryName() == null) t.setRegistryName(t.getLocation());
             });
+            MaterialEvent event = new MaterialEvent();
+            AntimatterPlatformUtils.postMaterialEvent(Antimatter.INSTANCE, event);
+            AntimatterKubeJS.loadMaterialEvent(event);
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, b -> {
@@ -78,15 +85,24 @@ public final class AntimatterRegistration {
             });
             registerTools(domain, e.getRegistry());
         } else if (e.getRegistry() == ForgeRegistries.BLOCK_ENTITIES) {
-            AntimatterAPI.all(BlockEntityType.class, domain, t -> ((IForgeRegistry) e.getRegistry()).register(t));
+            AntimatterAPI.all(BlockEntityType.class, domain, (t, d, i) -> {
+                if (t.getRegistryName() == null) t.setRegistryName(d, i);
+                ((IForgeRegistry) e.getRegistry()).register(t);
+            });
         } else if (e.getRegistry() == ForgeRegistries.FLUIDS) {
             AntimatterAPI.all(AntimatterFluid.class, domain, f -> {
+                if (f.getFluid().getRegistryName() == null) f.getFluid().setRegistryName(domain, f.getId());
+                if (f.getFlowingFluid().getRegistryName() == null) f.getFlowingFluid().setRegistryName(domain, "flowing_".concat(f.getId()));
                 ((IForgeRegistry) e.getRegistry()).registerAll(f.getFluid(), f.getFlowingFluid());
             });
         } else if (e.getRegistry() == ForgeRegistries.CONTAINERS) {
-            AntimatterAPI.all(MenuType.class, domain, h -> ((IForgeRegistry) e.getRegistry()).register(h));
+            AntimatterAPI.all(MenuType.class, domain, (h, d, i) -> {
+                if (h.getRegistryName() == null) h.setRegistryName(d, i);
+                ((IForgeRegistry) e.getRegistry()).register(h);
+            });
         } else if (e.getRegistry() == ForgeRegistries.SOUND_EVENTS) {
-            AntimatterAPI.all(SoundEvent.class, domain, t -> {
+            AntimatterAPI.all(SoundEvent.class, domain, (t, d, i) -> {
+                if (t.getRegistryName() == null) t.setRegistryName(d, i);
                 ((IForgeRegistry) e.getRegistry()).register(t);
             });
         } else if (e.getRegistry() == ForgeRegistries.RECIPE_SERIALIZERS) {
@@ -95,11 +111,16 @@ public final class AntimatterRegistration {
                 CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "material"), PropertyIngredient.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), IngredientSerializer.INSTANCE);
+                MaterialSerializer.INSTANCE.setRegistryName(new ResourceLocation("antimatter", "material"));
+                AntimatterRecipeSerializer.INSTANCE.setRegistryName(new ResourceLocation("antimatter", "ingredient"));
                 ((IForgeRegistry) e.getRegistry()).register(AntimatterRecipeSerializer.INSTANCE);
                 ((IForgeRegistry) e.getRegistry()).register(MaterialSerializer.INSTANCE);
             }
         } else if (e.getRegistry() == ForgeRegistries.FEATURES) {
-            AntimatterAPI.all(IAntimatterFeature.class, domain,t -> ((IForgeRegistry)e.getRegistry()).register(t.asFeature()));
+            AntimatterAPI.all(IAntimatterFeature.class, domain,(t, d, i) -> {
+                if (t.asFeature().getRegistryName() == null) t.asFeature().setRegistryName(d, i);
+                ((IForgeRegistry) e.getRegistry()).register(t.asFeature());
+            });
         }
     }
 
