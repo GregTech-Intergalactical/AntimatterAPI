@@ -79,6 +79,8 @@ allprojects {
                 includeGroup "dev.latvian.mods"
             }
         }
+        //GT.
+        maven { url 'https://jitpack.io' }
     }
 
     java {
