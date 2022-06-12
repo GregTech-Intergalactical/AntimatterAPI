@@ -23,7 +23,5 @@ run/
 *.db
 forge/src/generated/
 
-TesseractAPI
-
 .vscode/
 mcmodsrepo/
