@@ -187,6 +187,12 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     @Override
+    protected TagAppender<Item> tag(TagKey<Item> tag) {
+        Tag.Builder builder = this.getOrCreateRawBuilder(tag);
+        return new TagAppender(builder, this.registry, providerDomain);
+    }
+
+    @Override
     public void onCompletion() {
         TAGS.forEach((k, v) -> DynamicResourcePack.addTag("items", k, v));
     }

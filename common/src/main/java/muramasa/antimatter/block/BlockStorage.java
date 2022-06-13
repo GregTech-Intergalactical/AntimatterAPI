@@ -110,8 +110,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     public Tag<Block> getHarvestTool(BlockState state) {
         return Tag<Block>.PICKAXE;
     }*/
-
-    @Override
+    //todo in felt
     public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity) {
         return type == Data.FRAME;
     }

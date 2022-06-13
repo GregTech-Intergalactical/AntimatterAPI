@@ -1,7 +1,6 @@
 package muramasa.antimatter.datagen.providers;
 
 import com.google.gson.JsonObject;
-import dev.latvian.mods.kubejs.util.Tags;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
@@ -160,6 +159,12 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
             obj = obj.addFromJson(json, "Antimatter - Dynamic Data");
             TAGS.put(loc, obj.serializeToJson());
         }
+    }
+
+    @Override
+    protected TagAppender<Block> tag(TagKey<Block> tag) {
+        Tag.Builder builder = this.getOrCreateRawBuilder(tag);
+        return new TagAppender(builder, this.registry, providerDomain);
     }
 
     @Override

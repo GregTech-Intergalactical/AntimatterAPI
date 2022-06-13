@@ -15,6 +15,7 @@ import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
-        super(gen,providerDomain,null);
+        super(gen);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.replace = replace;
@@ -101,6 +102,12 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
             obj = obj.addFromJson(json, "Antimatter - Dynamic Data");
             TAGS.put(loc, obj.serializeToJson());
         }
+    }
+
+    @Override
+    protected TagAppender<Fluid> tag(TagKey<Fluid> tag) {
+        Tag.Builder builder = this.getOrCreateRawBuilder(tag);
+        return new TagAppender(builder, this.registry, providerDomain);
     }
 
     @Override

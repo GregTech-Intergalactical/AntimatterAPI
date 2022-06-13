@@ -27,7 +27,7 @@ public class BlockStoneStair extends StairBlock implements ISharedAntimatterObje
     CobbleStoneType type;
 
     public BlockStoneStair(CobbleStoneType type, String suffix, Block baseState) {
-        super(baseState::defaultBlockState, getProps(type));
+        super(baseState.defaultBlockState(), getProps(type));
         domain = type.getDomain();
         id = type.getId() + "_" + suffix + "_stairs";
         this.suffix = suffix;
