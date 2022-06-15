@@ -29,6 +29,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+;
+;
+import net.minecraftforge.client.model.data.IModelData;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
@@ -267,7 +270,7 @@ public abstract class WorldSceneRenderer {
                         BlockState state = world.getBlockState(pos);
                         Block block = state.getBlock();
                         BlockEntity te = world.getBlockEntity(pos);
-                        IAntimatterModelData modelData = net.minecraftforge.client.model.data.EmptyModelData.INSTANCE;
+                        IModelData modelData = net.minecraftforge.client.model.data.EmptyModelData.INSTANCE;
                         if (te != null) {
                             modelData = te.getModelData();
                         }

@@ -6,6 +6,7 @@ import muramasa.antimatter.Ref;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,13 +23,13 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
         public Random rand;
         @Nullable
         public BlockState state;
-        public IAntimatterModelData data;
+        public IModelData data;
         public T source;
         public U key;
         public Direction currentDir;
         public String type;
 
-        public BuilderData(String type, Random r, BlockState s, IAntimatterModelData d, T t, U u, Direction dir) {
+        public BuilderData(String type, Random r, BlockState s, IModelData d, T t, U u, Direction dir) {
             rand = r;
             state = s;
             data = d;
@@ -48,7 +49,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
         this.builder = builder;
     }
 
-    public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, IAntimatterModelData data) {
+    public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, IModelData data) {
       //  return MODEL_CACHE.compute(t.getId(), (k, v) -> {
      //       if (v == null) v = new WeakHashMap<>();
     //        v.computeIfAbsent(key, (k1) -> bakeQuads(type, state, t, key, data));
@@ -57,7 +58,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
      return bakeQuads(type, state, t, key, data);
     }
 
-    private List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, IAntimatterModelData data) {
+    private List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, IModelData data) {
         List<BakedQuad>[] bakedArray = new List[Ref.DIRS.length];
         for (Direction dir : Ref.DIRS) {
             bakedArray[dir.get3DDataValue()] = builder.apply(new BuilderData(type, Ref.RNG, state, data, c, key, dir));

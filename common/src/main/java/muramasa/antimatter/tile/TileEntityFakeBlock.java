@@ -9,13 +9,10 @@ import muramasa.antimatter.block.BlockProxy;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
-import muramasa.antimatter.client.modeldata.AntimatterModelDataMap;
-import muramasa.antimatter.client.modeldata.IAntimatterModelData;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
-import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,6 +24,9 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+;
+;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -157,8 +157,8 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
 
     @Nonnull
     @Override
-    public IAntimatterModelData getModelData() {
-        return new AntimatterModelDataMap.Builder().withInitial(AntimatterProperties.STATE_MODEL_PROPERTY, getState())
+    public IModelData getModelData() {
+        return new ModelDataMap.Builder().withInitial(AntimatterProperties.STATE_MODEL_PROPERTY, getState())
                 .withInitial(AntimatterProperties.TILE_PROPERTY, this).build();
     }
 

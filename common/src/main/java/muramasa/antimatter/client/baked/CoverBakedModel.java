@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +26,7 @@ public class CoverBakedModel extends GroupedBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         EnumMap<Direction, Byte> bitmap = data.getData(AntimatterProperties.COVER_REMOVAL);
         if (bitmap == null) return super.getBlockQuads(state, side, rand, data);
         Byte f = bitmap.get(side);
@@ -42,7 +43,7 @@ public class CoverBakedModel extends GroupedBakedModel {
     }
 
     @Nonnull
-    public static IAntimatterModelData addCoverModelData(Direction side, ICoverHandler<?> handler, @Nonnull IAntimatterModelData tileData) {
+    public static IModelData addCoverModelData(Direction side, ICoverHandler<?> handler, @Nonnull IModelData tileData) {
         if (handler == null) return tileData;
         EnumMap<Direction, Byte> map = tileData.getData(AntimatterProperties.COVER_REMOVAL);
         if (map == null) {

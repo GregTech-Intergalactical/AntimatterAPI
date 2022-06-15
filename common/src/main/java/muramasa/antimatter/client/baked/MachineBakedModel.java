@@ -26,6 +26,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.IModelData;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +42,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
     }    
 
 
-    protected List<BakedQuad> getCoverQuads(BlockState state, Direction side, Random rand, AntimatterProperties.MachineProperties data, IAntimatterModelData extra) {
+    protected List<BakedQuad> getCoverQuads(BlockState state, Direction side, Random rand, AntimatterProperties.MachineProperties data, IModelData extra) {
    
         ICover cover = data.covers[side.get3DDataValue()];
         if (cover.isEmpty()) return Collections.emptyList();
@@ -57,7 +58,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         return list;
     }
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IAntimatterModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data) {
         if (side == null) {
             return Collections.emptyList();
         }
@@ -96,7 +97,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         return sides.get(m)[side.get3DDataValue()];
     }
 /*
-    public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
+    public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         BlockMachine bm = (BlockMachine) state.getBlock();
     
         if (data.hasProperty(AntimatterProperties.MACHINE_TEXTURE)) {
@@ -120,8 +121,8 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 */
 
     @Override
-    public IAntimatterModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, IAntimatterModelData d) {
-        final IAntimatterModelData data = super.getModelData(world, pos, state, d);
+    public IModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, IModelData d) {
+        final IModelData data = super.getModelData(world, pos, state, d);
         TileEntityMachine<?> machine = (TileEntityMachine<?>) world.getBlockEntity(pos);
         if (machine == null) {
             return d;
@@ -166,7 +167,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getItemQuads(Direction side, Random rand, IAntimatterModelData data) {
+    public List<BakedQuad> getItemQuads(Direction side, Random rand, IModelData data) {
         return Collections.EMPTY_LIST;
     }
 
