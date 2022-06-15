@@ -18,7 +18,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -35,14 +34,14 @@ public class PipeBakedModel extends DynamicBakedModel {
     }
 
     @Override
-    public @NotNull IModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, @NotNull IModelData data) {
+    public @NotNull IAntimatterModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, @NotNull IAntimatterModelData data) {
         data = super.getModelData(world, pos, state, data);
         data.setData(AntimatterProperties.TILE_PROPERTY, ((TileEntityPipe) world.getBlockEntity(pos)));
         return data;
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IAntimatterModelData data) {
         if (!data.hasProperty(AntimatterProperties.TILE_PROPERTY))
             return super.getBlockQuads(state, side, rand, data);
         TileEntityPipe<?> pipe = (TileEntityPipe<?>) data.getData(AntimatterProperties.TILE_PROPERTY);

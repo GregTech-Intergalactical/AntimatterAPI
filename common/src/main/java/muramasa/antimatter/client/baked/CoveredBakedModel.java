@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -21,12 +20,12 @@ public class CoveredBakedModel extends AttachableBakedModel {
 
     @Override
     protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand,
-                                                 @Nonnull IModelData data) {
+                                                 @Nonnull IAntimatterModelData data) {
         return null;//attachCoverQuads(new ArrayList<>(), state, side, data);
     }
 /*
     protected final List<BakedQuad> attachCoverQuads(List<BakedQuad> quads, BlockState state, Direction side,
-                                                     @Nonnull IModelData data) {
+                                                     @Nonnull IAntimatterModelData data) {
         TileEntityBase<?> tile = data.getData(AntimatterProperties.TILE_PROPERTY);
         if (tile == null)
             return quads;

@@ -3,13 +3,13 @@ package muramasa.antimatter.client.baked;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.client.modeldata.IAntimatterModelData;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ public class AttachableBakedModel extends DynamicBakedModel {
 
     @Nonnull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         try {
             if (onlyGeneralQuads && side != null) return Collections.emptyList();
             if (state == null) {
@@ -50,7 +50,7 @@ public class AttachableBakedModel extends DynamicBakedModel {
     }
 
     @Override
-    public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         //if (side != null) return super.getBlockQuads(state, side, rand, data);
         // if (side == null) return super.getBlockQuads(state, null,rand,data);
         //if (side == null) return super.getBlockQuads(state,null,rand,data);
@@ -60,7 +60,7 @@ public class AttachableBakedModel extends DynamicBakedModel {
         return sideQuads;
     }
 
-    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         return Collections.emptyList();
     }
 }

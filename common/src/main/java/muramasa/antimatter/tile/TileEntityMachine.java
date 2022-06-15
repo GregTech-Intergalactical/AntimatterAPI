@@ -9,6 +9,8 @@ import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
+import muramasa.antimatter.client.modeldata.AntimatterModelDataMap;
+import muramasa.antimatter.client.modeldata.IAntimatterModelData;
 import muramasa.antimatter.client.tesr.Caches;
 import muramasa.antimatter.client.tesr.MachineTESR;
 import muramasa.antimatter.cover.CoverFactory;
@@ -494,8 +496,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     @Nonnull
     @Override
-    public IModelData getModelData() {
-        ModelDataMap.Builder builder = new ModelDataMap.Builder();
+    public IAntimatterModelData getModelData() {
+        AntimatterModelDataMap.Builder builder = new AntimatterModelDataMap.Builder();
         if (this.getMachineType() instanceof BasicMultiMachine) return builder.build();
         TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
         if (mTile != null) {

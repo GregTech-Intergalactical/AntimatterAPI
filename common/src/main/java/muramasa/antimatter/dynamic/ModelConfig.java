@@ -6,7 +6,6 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -43,7 +42,7 @@ public class ModelConfig {
         return modelIndex;
     }
 
-    public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<BakedModel[]> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<BakedModel[]> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         BakedModel[] baked;
         if (side == null) {
             for (int i = 0; i < config.length; i++) {
@@ -70,7 +69,7 @@ public class ModelConfig {
         return quads;
     }
 
-    public void addBaked(List<BakedQuad> quads, BakedModel[] baked, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public void addBaked(List<BakedQuad> quads, BakedModel[] baked, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         for (int j = 0; j < baked.length; j++) {
             quads.addAll(baked[j].getQuads(state, side, rand, data));
         }

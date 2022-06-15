@@ -26,7 +26,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
@@ -45,7 +44,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
+    public IAntimatterModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IAntimatterModelData tileData) {
         if (tileData instanceof EmptyModelData) {
             tileData = new ModelDataMap.Builder().build();
         }
@@ -81,13 +80,13 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
 
     @Override
-    public TextureAtlasSprite getParticleIcon(@Nonnull IModelData data) {
+    public TextureAtlasSprite getParticleIcon(@Nonnull IAntimatterModelData data) {
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(data.getData(AntimatterProperties.STATE_MODEL_PROPERTY));
         return model != null ? model.getParticleIcon(data) : getParticleIcon();
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         ProxyProperties props = data.getData(AntimatterProperties.FAKE_MODEL_PROPERTY);
         if (props == null || props.state == null) return Collections.emptyList();
         if (side == null)
@@ -100,7 +99,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         return Collections.emptyList();
     }
 

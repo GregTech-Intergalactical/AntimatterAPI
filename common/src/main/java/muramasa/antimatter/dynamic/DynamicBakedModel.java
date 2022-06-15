@@ -3,6 +3,8 @@ package muramasa.antimatter.dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.client.baked.AntimatterBakedModel;
+import muramasa.antimatter.client.modeldata.AntimatterEmptyModelData;
+import muramasa.antimatter.client.modeldata.IAntimatterModelData;
 import muramasa.antimatter.tile.TileEntityBase;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
@@ -13,8 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
@@ -41,9 +41,9 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData data) {
+    public IAntimatterModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IAntimatterModelData data) {
         if (!hasConfig || !(state.getBlock() instanceof BlockDynamic)) return data;
-        if (data instanceof EmptyModelData) {
+        if (data instanceof AntimatterEmptyModelData) {
             data = new ModelDataMap.Builder().build();
         }
         mutablePos.set(pos);
@@ -55,7 +55,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         if (!hasConfig || data == null) return Collections.emptyList();//bakedDefault.getQuads(state, side, rand, data);
         List<BakedQuad> quads = new LinkedList<>();
         ModelConfig config = data.getData(AntimatterProperties.DYNAMIC_CONFIG);
@@ -69,7 +69,7 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IAntimatterModelData data) {
         BakedModel[] model = this.bakedConfigs.get(0);
         if (model != null) {
             return Arrays.stream(model).flatMap(t -> t.getQuads(null, side, rand, data).stream()).collect(Collectors.toList());
