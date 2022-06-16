@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "fabricated-forge-modeldata",
+  "version": "${version}",
+  "name": "Fabricated Forge Modeldata",
+  "description": "Ports forge's modeldata to fabric.",
+  "authors": [
+    "Trinsdar"
+  ],
+  "contact": {
+    "sources": "https://github.com/FeltMC/Fabricated-Forge-API"
+  },
+  "license": "LGPL-2.1-only",
+  "mixins": [
+    "fabricated-forge-modeldata.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "fabric": "*"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1087": [
+        "net/minecraftforge/client/extensions/IForgeBakedModel"
+      ]
+    }
+  }
+}

@@ -6,6 +6,7 @@ import com.mojang.math.Vector3f;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.client.IAntimatterModel;
 import muramasa.antimatter.client.ModelUtils;
+import muramasa.antimatter.client.SimpleModelState;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -15,7 +16,6 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.common.model.TransformationHelper;
 
 import java.util.Collection;

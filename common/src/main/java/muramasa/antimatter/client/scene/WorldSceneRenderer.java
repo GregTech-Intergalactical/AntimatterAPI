@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Vector3f;
 import muramasa.antimatter.client.RenderStateHelper;
 import muramasa.antimatter.client.glu.GLU;
+import muramasa.antimatter.tile.TileEntityBase;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -271,8 +272,9 @@ public abstract class WorldSceneRenderer {
                         Block block = state.getBlock();
                         BlockEntity te = world.getBlockEntity(pos);
                         IModelData modelData = net.minecraftforge.client.model.data.EmptyModelData.INSTANCE;
-                        if (te != null) {
-                            modelData = te.getModelData();
+                        if (te instanceof TileEntityBase<?> base) {
+                            //todo compat with forge mods run by fabricated forge api
+                            modelData = base.getModelData();
                         }
                         if (block == Blocks.AIR) continue;
                         if (state.getRenderShape() != RenderShape.INVISIBLE && ItemBlockRenderTypes.canRenderInLayer(state, layer)) {

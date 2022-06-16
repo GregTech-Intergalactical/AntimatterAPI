@@ -3,6 +3,7 @@ package muramasa.antimatter.client.baked;
 import com.google.common.collect.Sets;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.AntimatterProperties.ProxyProperties;
+import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.mixin.client.ChunkReaderAccessor;
@@ -54,9 +55,9 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
             return tileData;
         }
         BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fake.getState());
-        UnbakedModel m = ForgeModelBakery.instance().getModel(BlockModelShaper.stateToModelLocation(fake.getState()));
+        UnbakedModel m = ModelUtils.getModel(BlockModelShaper.stateToModelLocation(fake.getState()));
 
-        Collection<Material> mats = m.getMaterials(ForgeModelBakery.defaultModelGetter(), Sets.newLinkedHashSet());
+        Collection<Material> mats = m.getMaterials(ModelUtils.getDefaultModelGetter(), Sets.newLinkedHashSet());
         Material first = mats.iterator().next();
         tileData = model.getModelData(world, pos, state, tileData);
         BlockState cState = Blocks.AIR.defaultBlockState();

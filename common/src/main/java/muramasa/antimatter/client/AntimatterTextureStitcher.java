@@ -2,15 +2,13 @@ package muramasa.antimatter.client;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber
 public class AntimatterTextureStitcher {
 
     public interface ITextureSticher {
@@ -31,10 +29,10 @@ public class AntimatterTextureStitcher {
         });
     }
 
-    public static void onTextureStitch(final TextureStitchEvent.Pre event) {
+    public static void onTextureStitch(TextureAtlas atlas, Consumer<ResourceLocation> consumer) {
         STITCHERS.forEach((k, v) -> {
-            if (!event.getAtlas().location().getPath().contains(k)) return;
-            v.forEach(t -> t.stitch(event::addSprite));
+            if (!atlas.location().getPath().contains(k)) return;
+            v.forEach(t -> t.stitch(consumer));
         });
     }
 }

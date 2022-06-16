@@ -9,6 +9,7 @@ boolean hasTesseract = findProject(':tesseract-common') != null
 
 dependencies{
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    implementation(project(":fabricated-forge-modeldata"))
     compileOnly("com.blamejared.crafttweaker:CraftTweaker-common-1.18.2:${rootProject.crafttweaker_version}")
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     if (hasTesseract) {

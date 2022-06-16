@@ -1,6 +1,7 @@
 package muramasa.antimatter.client.baked;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;

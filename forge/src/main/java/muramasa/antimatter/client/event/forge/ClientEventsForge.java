@@ -10,6 +10,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.client.RenderHelper;
+import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.material.MaterialType;
@@ -26,6 +27,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
@@ -49,6 +51,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -56,6 +59,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = Ref.ID, value = Dist.CLIENT)
 public class ClientEventsForge {
@@ -214,5 +218,10 @@ public class ClientEventsForge {
         } else {
             middleDown = false;
         }
+    }
+
+    @SubscribeEvent
+    public static void worldUnload(WorldEvent.Unload ev) {
+        SoundHelper.worldUnload(ev.getWorld());
     }
 }

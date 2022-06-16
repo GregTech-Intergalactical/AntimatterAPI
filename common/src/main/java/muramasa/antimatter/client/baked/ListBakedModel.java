@@ -2,6 +2,7 @@ package muramasa.antimatter.client.baked;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
@@ -45,6 +46,11 @@ public class ListBakedModel implements BakedModel {
     @Override
     public TextureAtlasSprite getParticleIcon() {
         return null;
+    }
+
+    @Override
+    public ItemTransforms getTransforms() {
+        return ItemTransforms.NO_TRANSFORMS;
     }
 
     @Override

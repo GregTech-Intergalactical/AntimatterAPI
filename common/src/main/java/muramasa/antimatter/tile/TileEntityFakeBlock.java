@@ -13,6 +13,7 @@ import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

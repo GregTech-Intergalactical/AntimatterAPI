@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "net.minecraftforge.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "fabricated-forge-modeldata.refmap.json",
+  "mixins": [
+  ],
+  "minVersion": "0.8",
+  "client": [
+    "MixinBakedModel",
+    "MixinModelBlockRenderer"
+  ]
+}

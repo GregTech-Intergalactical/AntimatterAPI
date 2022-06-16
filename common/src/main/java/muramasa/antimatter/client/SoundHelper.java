@@ -10,11 +10,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.Level;
-;
-;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraft.world.level.LevelAccessor;
 
 import java.util.Map;
 
@@ -32,9 +28,8 @@ public class SoundHelper {
         MACHINE_SOUNDS.computeIfAbsent(level, l -> new Object2ObjectOpenHashMap<>()).put(pos, simplesoundinstance);
     }
 
-    @SubscribeEvent
-    public static void worldUnload(WorldEvent.Unload ev) {
-        Map<BlockPos, SoundInstance> sounds = MACHINE_SOUNDS.remove(ev.getWorld());
+    public static void worldUnload(LevelAccessor world) {
+        Map<BlockPos, SoundInstance> sounds = MACHINE_SOUNDS.remove(world);
         if (sounds != null) {
             for (SoundInstance value : sounds.values()) {
                 Minecraft.getInstance().getSoundManager().stop(value);

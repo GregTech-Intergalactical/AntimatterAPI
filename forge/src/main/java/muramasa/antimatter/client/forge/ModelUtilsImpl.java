@@ -18,7 +18,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.client.model.QuadTransformer;
+import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.common.model.TransformationHelper;
 
 import java.util.Arrays;
@@ -29,6 +31,26 @@ import java.util.function.Function;
 public class ModelUtilsImpl {
     public static UnbakedModel getMissingModel() {
         return ForgeModelBakery.instance().getModel(new ModelResourceLocation("builtin/missing", "missing"));
+    }
+
+    public static UnbakedModel getModel(ResourceLocation resourceLocation){
+        return ForgeModelBakery.instance().getModel(resourceLocation);
+    }
+
+    public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
+        return ForgeModelBakery.defaultModelGetter();
+    }
+
+    public static Function<Material, TextureAtlasSprite> getDefaultTextureGetter(){
+        return ForgeModelBakery.defaultTextureGetter();
+    }
+
+    public static ModelBakery getModelBakery(){
+        return ForgeModelBakery.instance();
+    }
+
+    public static void setLightData(BakedQuad quad, int light){
+        LightUtil.setLightData(quad, light);
     }
 
     public static BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {

@@ -87,12 +87,8 @@ public class TrackedDummyWorld extends Level {
             blockInfo.getTileEntity().setLevel(this);
         }
         this.renderedBlocks.put(pos, blockInfo);
-        minPos.setX(Math.min(minPos.x(), pos.getX()));
-        minPos.setY(Math.min(minPos.y(), pos.getY()));
-        minPos.setZ(Math.min(minPos.z(), pos.getZ()));
-        maxPos.setX(Math.max(maxPos.x(), pos.getX()));
-        maxPos.setY(Math.max(maxPos.y(), pos.getY()));
-        maxPos.setZ(Math.max(maxPos.z(), pos.getZ()));
+        minPos.set(Math.min(minPos.x(), pos.getX()), Math.min(minPos.y(), pos.getY()), Math.min(minPos.z(), pos.getZ()));
+        maxPos.set(Math.max(maxPos.x(), pos.getX()), Math.max(maxPos.y(), pos.getY()), Math.max(maxPos.z(), pos.getZ()));
     }
 
     @Override
@@ -128,9 +124,7 @@ public class TrackedDummyWorld extends Level {
 
     public Vector3f getSize() {
         Vector3f result = new Vector3f();
-        result.setX(maxPos.x() - minPos.x() + 1);
-        result.setY(maxPos.y() - minPos.y() + 1);
-        result.setZ(maxPos.z() - minPos.z() + 1);
+        result.set(maxPos.x() - minPos.x() + 1, maxPos.y() - minPos.y() + 1, maxPos.z() - minPos.z() + 1);
         return result;
     }
 

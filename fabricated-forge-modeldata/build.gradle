@@ -1,0 +1,13 @@
+archivesBaseName = rootProject.antimatter_archive_base_name
+version = "${rootProject.minecraft_version}-${project.mod_version}"
+
+boolean hasTesseract = findProject(':tesseract-common') != null
+
+dependencies{
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modCompileOnly("net.fabricmc.fabric-api:fabric-renderer-api-v1:${project.fabric_renderer_api_version}")
+}
+
+architectury {
+    common()
+}
