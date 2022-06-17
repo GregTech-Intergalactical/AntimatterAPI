@@ -6,8 +6,6 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.widget.ProgressWidget;
-import muramasa.antimatter.integration.jeirei.category.MultiMachineInfoCategory;
-import muramasa.antimatter.integration.jeirei.category.MultiMachineInfoPage;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
@@ -75,10 +73,9 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
     }
     
     public final void setStructurePattern(Pattern... patterns) {
-        if (AntimatterPlatformUtils.isClient() && AntimatterAPI.isModLoaded(Ref.MOD_JEI)) {
+        if (AntimatterPlatformUtils.isClient()) {
             if (patterns.length <= 0) return;
-            MultiMachineInfoCategory.addMultiMachine(new MultiMachineInfoPage(this, Arrays.stream(patterns).collect(Collectors.toList())
-            ));
+            AntimatterPlatformUtils.addMultiMachineInfo(this, Arrays.stream(patterns).collect(Collectors.toList()));
         }
     }
 }

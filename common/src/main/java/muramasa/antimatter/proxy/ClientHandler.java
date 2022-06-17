@@ -30,12 +30,15 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.Set;
 
@@ -72,6 +75,10 @@ public class ClientHandler implements IProxyHandler {
     private static void registerLoader(ResourceLocation location, AntimatterModelLoader<?> loader){
     }
 
+    @ExpectPlatform
+    private static<T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
+    }
+
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup() {
         /* Register screens. */
@@ -98,7 +105,7 @@ public class ClientHandler implements IProxyHandler {
                 ModelUtils.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
             });
         });
-        AntimatterAPI.all(Machine.class).stream().filter(Machine::renderAsTesr).filter(Machine::renderContainerLiquids).map(Machine::getTileType).distinct().forEach(i -> BlockEntityRenderers.register(i, MachineTESR::new));
+        AntimatterAPI.all(Machine.class).stream().filter(Machine::renderAsTesr).filter(Machine::renderContainerLiquids).map(Machine::getTileType).distinct().forEach(i -> registerBlockEntityRenderer(i, MachineTESR::new));
     }
 
     public static void onItemColorHandler(ItemColors colors) {

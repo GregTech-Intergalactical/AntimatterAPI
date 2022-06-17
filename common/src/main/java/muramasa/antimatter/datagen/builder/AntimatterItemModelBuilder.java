@@ -8,7 +8,7 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
-import tesseract.TesseractPlatformUtils;
+import tesseract.FluidPlatformUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class AntimatterItemModelBuilder extends ItemModelBuilder {
     }
 
     public AntimatterItemModelBuilder bucketProperties(Fluid fluid) {
-        return bucketProperties(fluid, true, TesseractPlatformUtils.isFluidGaseous(fluid));
+        return bucketProperties(fluid, true, FluidPlatformUtils.isFluidGaseous(fluid));
     }
 
     public AntimatterItemModelBuilder bucketProperties(Fluid fluid, boolean tint, boolean islighter) {

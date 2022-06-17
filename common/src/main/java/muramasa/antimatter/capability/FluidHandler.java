@@ -11,7 +11,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import tesseract.TesseractPlatformUtils;
+import tesseract.FluidPlatformUtils;
 import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
@@ -270,7 +270,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
             for (int i = 0; i < getInputTanks().getTanks(); i++) {
                 FluidStack stack = getInputTanks().getFluidInTank(i);
                 if (stack != FluidStack.EMPTY) {
-                    builder.append(TesseractPlatformUtils.getFluidId(stack.getFluid())).append(" - ").append(stack.getAmount());
+                    builder.append(FluidPlatformUtils.getFluidId(stack.getFluid())).append(" - ").append(stack.getAmount());
                     if (i != getInputTanks().getTanks() - 1) {
                         builder.append("\n");
                     }
@@ -282,7 +282,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
             for (int i = 0; i < getOutputTanks().getTanks(); i++) {
                 FluidStack stack = getOutputTanks().getFluidInTank(i);
                 if (stack != FluidStack.EMPTY) {
-                    builder.append(TesseractPlatformUtils.getFluidId(stack.getFluid())).append(" - ").append(stack.getAmount());
+                    builder.append(FluidPlatformUtils.getFluidId(stack.getFluid())).append(" - ").append(stack.getAmount());
                     if (i != getOutputTanks().getTanks() - 1) {
                         builder.append("\n");
                     }

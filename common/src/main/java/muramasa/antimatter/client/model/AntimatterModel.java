@@ -1,6 +1,7 @@
 package muramasa.antimatter.client.model;
 
 import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import muramasa.antimatter.Antimatter;
@@ -16,7 +17,6 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.common.model.TransformationHelper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,6 +59,6 @@ public class AntimatterModel implements IAntimatterModel<AntimatterModel> {
 
     public ModelState getModelTransform(ModelState base, int[] rots) {
         if (rots == null || rots.length != 3 || (rots[0] == 0 && rots[1] == 0 && rots[2] == 0)) return base;
-        return new SimpleModelState(new Transformation(null, TransformationHelper.quatFromXYZ(new Vector3f(rots[0], rots[1], rots[2]), true), null, null));
+        return new SimpleModelState(new Transformation(null, new Quaternion(rots[0], rots[1], rots[2], true), null, null));
     }
 }

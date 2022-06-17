@@ -22,6 +22,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import tesseract.FluidPlatformUtils;
 import tesseract.Tesseract;
 import tesseract.TesseractPlatformUtils;
 import tesseract.api.capability.TesseractFluidCapability;
@@ -166,7 +167,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     public int drawInfo(InfoRenderWidget.TesseractFluidWidget instance, PoseStack stack, Font renderer, int left, int top) {
         renderer.draw(stack, "Pressure used: " + instance.stack.getAmount(), left, top, 16448255);
         renderer.draw(stack, "Pressure total: " + getPressure()*20, left, top + 8, 16448255);
-        renderer.draw(stack, "Fluid: " + TesseractPlatformUtils.getFluidId(instance.stack.getFluid()).toString(), left, top + 16, 16448255);
+        renderer.draw(stack, "Fluid: " + FluidPlatformUtils.getFluidId(instance.stack.getFluid()).toString(), left, top + 16, 16448255);
         renderer.draw(stack, "(Above only in intersection)", left, top + 24, 16448255);
         //renderer.draw(stack, "Frame average: " + instance.holderPressure / 20, left, top + 32, 16448255);
         return 32;
@@ -178,7 +179,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
         fluidHandler.ifPresent(t -> {
             for (int i = 0; i < t.getTanks(); i++) {
                 FluidStack stack = t.getFluidInTank(i);
-                list.add(TesseractPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + stack.getAmount() + " mb.");
+                list.add(FluidPlatformUtils.getFluidId(stack.getFluid()).toString() + " " + stack.getAmount() + " mb.");
             }
         });
         list.add("Pressure: " + getPipeType().getPressure(getPipeSize()));

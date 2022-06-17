@@ -1,6 +1,7 @@
 package muramasa.antimatter.mixin.client;
 
 import muramasa.antimatter.AntimatterAPI;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

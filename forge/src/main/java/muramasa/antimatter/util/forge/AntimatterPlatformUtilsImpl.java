@@ -1,15 +1,21 @@
 package muramasa.antimatter.util.forge;
 
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.forge.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.event.forge.*;
+import muramasa.antimatter.integration.jeirei.forge.category.MultiMachineInfoCategory;
+import muramasa.antimatter.integration.jeirei.forge.category.MultiMachineInfoPage;
+import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
+import muramasa.antimatter.structure.Pattern;
 import muramasa.antimatter.tesseract.forge.EnergyTileWrapper;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
@@ -45,9 +51,12 @@ import net.minecraftforge.registries.ForgeRegistries;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class AntimatterPlatformUtilsImpl {
 
@@ -202,5 +211,11 @@ public class AntimatterPlatformUtilsImpl {
 
     public static FluidStack readFluidStack(FriendlyByteBuf buf) {
         return buf.readFluidStack();
+    }
+
+    public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
+        if (AntimatterAPI.isModLoaded(Ref.MOD_JEI)){
+            MultiMachineInfoCategory.addMultiMachine(new MultiMachineInfoPage(machine, patterns));
+        }
     }
 }

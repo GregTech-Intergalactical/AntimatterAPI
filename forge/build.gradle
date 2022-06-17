@@ -227,6 +227,7 @@ dependencies {
     //GT
     if (hasTesseract) {
         implementation(project(path: ":tesseract-forge", configuration: "namedElements"))
+        implementation(project(path: ":tesseract-common", configuration: "namedElements"))
     } else {
         modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-tesseract-forge:${tesseract_version}")
     }

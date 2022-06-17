@@ -1,8 +1,7 @@
 package muramasa.antimatter.recipe.ingredient;
 
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraftforge.fluids.FluidStack;
-import tesseract.TesseractPlatformUtils;
+import tesseract.FluidPlatformUtils;
 
 public class MapFluidIngredient extends AbstractMapIngredient {
 
@@ -15,7 +14,7 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     @Override
     protected int hash() {
-        return TesseractPlatformUtils.getFluidId(stack.getFluid()).hashCode();
+        return FluidPlatformUtils.getFluidId(stack.getFluid()).hashCode();
     }
 
     @Override
@@ -33,6 +32,6 @@ public class MapFluidIngredient extends AbstractMapIngredient {
 
     @Override
     public String toString() {
-        return TesseractPlatformUtils.getFluidId(stack.getFluid()).toString();
+        return FluidPlatformUtils.getFluidId(stack.getFluid()).toString();
     }
 }

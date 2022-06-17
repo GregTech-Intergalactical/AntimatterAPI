@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.model.AntimatterGroupedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
+import muramasa.antimatter.client.model.VanillaProxy;
 import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -19,7 +20,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 
 import java.util.List;
@@ -97,7 +97,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
                         map.computeIfAbsent(name == null ? "" : name, a -> new ObjectArrayList<>()).add(context.deserialize(jsonelement, BlockElement.class));
                     }
                 } 
-                return new AntimatterGroupedModel(particle, map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, k -> new ModelLoaderRegistry.VanillaProxy(k.getValue()))));
+                return new AntimatterGroupedModel(particle, map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, k -> new VanillaProxy(k.getValue()))));
             } catch (Exception e) {
                 throw new RuntimeException("Caught error deserializing model : " + e);
             }

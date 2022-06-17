@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
-import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
@@ -16,7 +15,7 @@ import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.fluids.FluidStack;
-import tesseract.TesseractPlatformUtils;
+import tesseract.FluidPlatformUtils;
 
 import java.util.List;
 
@@ -105,7 +104,7 @@ public class KubeJSRecipe extends RecipeJS {
 
     public static JsonElement serializeStack(FluidStack stack) {
         JsonObject obj = new JsonObject();
-        obj.addProperty("fluid", TesseractPlatformUtils.getFluidId(stack.getFluid()).toString());
+        obj.addProperty("fluid", FluidPlatformUtils.getFluidId(stack.getFluid()).toString());
         obj.addProperty("amount", stack.getAmount());
         if (stack.hasTag()) {
             obj.add("tag", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getTag()));

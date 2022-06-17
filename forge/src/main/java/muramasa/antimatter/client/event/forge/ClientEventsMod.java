@@ -1,5 +1,6 @@
 package muramasa.antimatter.client.event.forge;
 
+import com.mojang.math.Transformation;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.proxy.ClientHandler;

@@ -5,9 +5,11 @@ import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.event.MaterialEvent;
+import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
+import muramasa.antimatter.structure.Pattern;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
@@ -34,6 +36,7 @@ import tesseract.api.gt.IEnergyHandler;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -208,5 +211,9 @@ public class AntimatterPlatformUtils {
     @ExpectPlatform
     public static FluidStack readFluidStack(FriendlyByteBuf buf) {
         return FluidStack.EMPTY;
+    }
+
+    @ExpectPlatform
+    public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
     }
 }
