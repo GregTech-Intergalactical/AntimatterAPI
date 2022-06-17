@@ -1,9 +1,7 @@
 {
-  "custom": {
-    "loom:injected_interfaces": {
-      "net/minecraft/class_1087": [
-        "net/minecraftforge/client/extensions/IForgeBakedModel"
-      ]
-    }
+  "injected_interfaces": {
+    "net/minecraft/class_1087": [
+      "net/minecraftforge/client/extensions/IForgeBakedModel"
+    ]
   }
 }
