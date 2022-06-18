@@ -36,6 +36,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -222,5 +224,17 @@ public class AntimatterPlatformUtilsImpl {
 
     public static Matrix4f createMatrix4f(float[] values){
         return new Matrix4f(values);
+    }
+
+    public static boolean isRepairable(ItemStack stack){
+        return stack.isRepairable();
+    }
+
+    public static void addPool(LootTable table, LootPool pool){
+        table.addPool(pool);
+    }
+
+    public static ResourceLocation getLootTableID(LootTable table){
+        return table.getLootTableId();
     }
 }

@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "net.minecraftforge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "fabricated-forge-modeldata.refmap.json",
+  "mixins": [
+    "TagAppenderMixin",
+    "TagBuilderMixin"
+  ],
+  "minVersion": "0.8",
+  "client": [
+    "client.BlockElementAccessor",
+    "client.ClientPackSourceAccessor",
+    "client.GuiLightAccessor",
+    "client.ItemTransformDeserializerAccessor"
+  ]
+}

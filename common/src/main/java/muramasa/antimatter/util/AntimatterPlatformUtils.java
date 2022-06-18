@@ -29,6 +29,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -220,6 +222,20 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static Matrix4f createMatrix4f(float[] values){
+        return null;
+    }
+
+    @ExpectPlatform
+    public static boolean isRepairable(ItemStack stack){
+        return false;
+    }
+
+    @ExpectPlatform
+    public static void addPool(LootTable table, LootPool pool){
+    }
+
+    @ExpectPlatform
+    public static ResourceLocation getLootTableID(LootTable table){
         return null;
     }
 }

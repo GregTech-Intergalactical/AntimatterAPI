@@ -34,13 +34,13 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 public class CommonEvents {
     public static void lootTableLoad(LootTable table, ResourceLocation name){
-        if (table.getLootTableId().getPath().startsWith("blocks/")) {
-            ResourceLocation blockId = new ResourceLocation(table.getLootTableId().getNamespace(), name.getPath().replace("blocks/", ""));
+        if (AntimatterPlatformUtils.getLootTableID(table).getPath().startsWith("blocks/")) {
+            ResourceLocation blockId = new ResourceLocation(AntimatterPlatformUtils.getLootTableID(table).getNamespace(), name.getPath().replace("blocks/", ""));
             if (AntimatterPlatformUtils.blockExists(blockId)) {
                 Block block = AntimatterPlatformUtils.getBlockFromId(blockId);
                 //Antimatter.LOGGER.info(blockId.toString());
                 if (block == Blocks.ICE || block == Blocks.PACKED_ICE || block == Blocks.BLUE_ICE) {
-                    table.addPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(AntimatterBlockLootProvider.SAW).add(LootItem.lootTableItem(block)).build());
+                    AntimatterPlatformUtils.addPool(table, LootPool.lootPool().setRolls(ConstantValue.exactly(1)).when(AntimatterBlockLootProvider.SAW).add(LootItem.lootTableItem(block)).build());
                 }
             }
         }
