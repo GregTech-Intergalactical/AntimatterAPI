@@ -16,6 +16,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.mixin.client.LevelRendererAccessor;
+import muramasa.antimatter.mixin.client.VertexFormatAccessor;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tool.armor.MaterialArmor;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -49,6 +50,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.FluidPlatformUtils;
 import tesseract.TesseractPlatformUtils;
 import tesseract.api.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
@@ -65,25 +67,25 @@ public class RenderHelper {
 
 
     public static float xFromQuad(BakedQuad quad, int index) {
-        int size = DefaultVertexFormat.BLOCK.getOffset(index);
+        int size = ((VertexFormatAccessor)DefaultVertexFormat.BLOCK).getOffsets().getInt(index);
 
         return Float.intBitsToFloat(quad.getVertices()[size]);
     }
 
     public static float yFromQuad(BakedQuad quad, int index) {
-        int size = DefaultVertexFormat.BLOCK.getOffset(index);
+        int size = ((VertexFormatAccessor)DefaultVertexFormat.BLOCK).getOffsets().getInt(index);
 
         return Float.intBitsToFloat(quad.getVertices()[size + 1]);
     }
 
     public static float zFromQuad(BakedQuad quad, int index) {
-        int size = DefaultVertexFormat.BLOCK.getOffset(index);
+        int size = ((VertexFormatAccessor)DefaultVertexFormat.BLOCK).getOffsets().getInt(index);
 
         return Float.intBitsToFloat(quad.getVertices()[size + 2]);
     }
 
     public static Vector3f normalFromQuad(BakedQuad quad, int index) {
-        int size = DefaultVertexFormat.BLOCK.getOffset(index);
+        int size = ((VertexFormatAccessor)DefaultVertexFormat.BLOCK).getOffsets().getInt(index);
         int off = DefaultVertexFormat.ELEMENT_POSITION.getByteSize() + DefaultVertexFormat.ELEMENT_COLOR.getByteSize() + DefaultVertexFormat.ELEMENT_UV0.getByteSize() + DefaultVertexFormat.ELEMENT_UV2.getByteSize();
         float first = Float.intBitsToFloat(quad.getVertices()[off]);
         float two = Float.intBitsToFloat(quad.getVertices()[off+1]);
@@ -113,7 +115,7 @@ public class RenderHelper {
         RenderSystem.enableBlend();
         //TODO 1.18
         //RenderSystem.enableAlphaTest();
-        TextureAtlasSprite fluidStillSprite = mc.getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(fluid.getAttributes().getStillTexture());
+        TextureAtlasSprite fluidStillSprite = mc.getModelManager().getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(FluidPlatformUtils.getStillTexture(fluid));
         int fluidColor = AntimatterPlatformUtils.getFluidColor(fluid);
 
         //Draw the fluid texture
@@ -188,7 +190,7 @@ public class RenderHelper {
      * Colors a quad, defaults to using vertex format block.
      */
     public static void colorQuad(BakedQuad quad, int rgb) {
-        colorQuad(quad, DefaultVertexFormat.BLOCK.getIntegerSize(), DefaultVertexFormat.BLOCK.getOffset(1) / 4, rgb);
+        colorQuad(quad, DefaultVertexFormat.BLOCK.getIntegerSize(), ((VertexFormatAccessor)DefaultVertexFormat.BLOCK).getOffsets().getInt(1) / 4, rgb);
     }
 
     public static void colorQuad(BakedQuad quad, int size, int offset, int rgb) {

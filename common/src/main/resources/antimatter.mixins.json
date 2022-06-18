@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "antimatter.refmap.json",
   "client": [
+    "client.VertexFormatAccessor",
     "client.BlockElementAccessor",
     "client.BlockModelAccessor",
     "client.ChunkReaderAccessor",

@@ -3,6 +3,7 @@ package muramasa.antimatter.client.baked;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;

@@ -64,7 +64,7 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
             stack.last().pose().multiply(RenderHelper.faceRotation(tile.getBlockState()).getMatrix());
             stack.translate(-0.5D, -0.5D, -0.5D);
             stack.scale(1.0f, liquidCache.percentage, 1.0f);
-            Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tile.getLevel(), liquidCache.model,tile.getBlockState(), tile.getBlockPos(), stack, builder, true, tile.getLevel().getRandom(), light ,overlay, EmptyModelData.INSTANCE);
+            Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateBlock(tile.getLevel(), liquidCache.model,tile.getBlockState(), tile.getBlockPos(), stack, builder, true, tile.getLevel().getRandom(), light ,overlay);
             stack.popPose();
         }
 
@@ -72,7 +72,7 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
 
     private static BakedModel renderInner(BlockState state, Random rand, int light, BakedModel inner, Fluid fluid) {
         List<BakedQuad> quads = inner.getQuads(state, null, rand, EmptyModelData.INSTANCE);
-        List<BakedQuad> out = VertexTransformer.processMany(quads, AntimatterPlatformUtils.getFluidColor(fluid), Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(fluid.getAttributes().getStillTexture()));
+        List<BakedQuad> out = VertexTransformer.processMany(quads, AntimatterPlatformUtils.getFluidColor(fluid), Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(FluidPlatformUtils.getStillTexture(fluid)));
         boolean hot = FluidPlatformUtils.getFluidTemperature(fluid) >= FluidPlatformUtils.getFluidTemperature(Fluids.LAVA);
         for (BakedQuad bakedQuad : out) {
             ModelUtils.setLightData(bakedQuad, hot ? 1 << 7 : light);

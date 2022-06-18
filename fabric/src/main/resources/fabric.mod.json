@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "antimatter",
+  "version": "${version}",
+  "name": "Antimatter API",
+  "description": "Well-rounded API for Minecraft, primarily made for GregTech.",
+  "authors": [
+    "Muramasa",
+    "Rongmario"
+  ],
+  "credits": [
+    "mitchej123",
+    "e99999",
+    "qubka",
+    "Vliro(aka abbe)",
+    "repolainen",
+    "Trinsdar"
+  ],
+  "contact": {
+    "sources": "https://github.com/GregTech-Intergalactical/AntimatterAPI",
+    "issues": "https://github.com/GregTech-Intergalactical/AntimatterAPI/issues",
+    "discord": "https://discord.gg/9kM4bRj"
+  },
+  "license": "LGPL-3.0",
+  "mixins": [
+    "antimatter.mixins.json"
+  ],
+  "accessWidener" : "antimatter.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "fabric": "*",
+    "tesseractapi": ">=0.1"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1087": [
+        "net/minecraftforge/client/extensions/IForgeBakedModel"
+      ],
+      "net/minecraft/class_1159": [
+        "net/minecraftforge/client/extensions/IForgeMatrix4f"
+      ],
+      "net/minecraft/class_4590": [
+        "net/minecraftforge/client/extensions/IForgeTransformation"
+      ]
+    }
+  }
+}

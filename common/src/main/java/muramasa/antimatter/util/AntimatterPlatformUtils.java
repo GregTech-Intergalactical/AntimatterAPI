@@ -1,5 +1,6 @@
 package muramasa.antimatter.util;
 
+import com.mojang.math.Matrix4f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
@@ -215,5 +216,10 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
+    }
+
+    @ExpectPlatform
+    public static Matrix4f createMatrix4f(float[] values){
+        return null;
     }
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.mixin.client.VertexFormatAccessor;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
@@ -46,7 +47,7 @@ public class VertexTransformer {
         }
         if (index == fmt.getElements().size() || element == null)
             throw new IllegalStateException("BLOCK format does not have normals?");
-        return fmt.getOffset(index)/4;
+        return ((VertexFormatAccessor)fmt).getOffsets().getInt(index)/4;
     }
 
     private static int findColorOffset(VertexFormat fmt)
@@ -64,7 +65,7 @@ public class VertexTransformer {
         }
         if (index == fmt.getElements().size() || element == null)
             throw new IllegalStateException("BLOCK format does not have normals?");
-        return fmt.getOffset(index)/4;
+        return ((VertexFormatAccessor)fmt).getOffsets().getInt(index)/4;
     }
     /**
      * Processes multiple quads, producing a new array of new quads.

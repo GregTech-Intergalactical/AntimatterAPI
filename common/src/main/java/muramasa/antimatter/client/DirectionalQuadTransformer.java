@@ -26,6 +26,7 @@ import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
+import muramasa.antimatter.mixin.client.VertexFormatAccessor;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
 
@@ -56,7 +57,7 @@ public class DirectionalQuadTransformer
             float z = Float.intBitsToFloat(getAtByteOffset(inData, offset + 8));
 
             Vector4f pos = new Vector4f(x, y, z, 1);
-            transform.transformPosition(pos);
+            pos.transform(transform.getMatrix());
             //pos.perspectiveDivide();
 
             putAtByteOffset(outData, offset, Float.floatToRawIntBits(pos.x()));
@@ -140,7 +141,7 @@ public class DirectionalQuadTransformer
             throw new RuntimeException("Expected POSITION attribute to have data type FLOAT");
         if (element.getByteSize() < 3)
             throw new RuntimeException("Expected POSITION attribute to have at least 3 dimensions");
-        return fmt.getOffset(index);
+        return ((VertexFormatAccessor)fmt).getOffsets().getInt(index);
     }
 
     private static int findNormalOffset(VertexFormat fmt)
@@ -162,7 +163,7 @@ public class DirectionalQuadTransformer
             throw new RuntimeException("Expected NORMAL attribute to have data type BYTE");
         if (element.getByteSize() < 3)
             throw new RuntimeException("Expected NORMAL attribute to have at least 3 dimensions");
-        return fmt.getOffset(index);
+        return ((VertexFormatAccessor)fmt).getOffsets().getInt(index);
     }
 
     /**
