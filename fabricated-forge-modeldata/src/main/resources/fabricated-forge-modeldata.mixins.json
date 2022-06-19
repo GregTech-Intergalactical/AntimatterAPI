@@ -1,16 +1,17 @@
 {
   "required": true,
-  "package": "net.minecraftforge.mixin.client",
+  "package": "net.minecraftforge.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "fabricated-forge-modeldata.refmap.json",
   "mixins": [
-    "MixinMatrix4f"
+    "BlockEntityMixin",
+    "client.MixinMatrix4f"
   ],
   "minVersion": "0.8",
   "client": [
-    "MixinBakedModel",
-    "MixinModelBlockRenderer",
-    "MixinTransformation",
-    "SimpleBakedModelBuilderAccessor"
+    "client.MixinBakedModel",
+    "client.MixinModelBlockRenderer",
+    "client.MixinTransformation",
+    "client.SimpleBakedModelBuilderAccessor"
   ]
 }

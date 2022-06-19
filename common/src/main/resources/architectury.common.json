@@ -14,6 +14,9 @@
     ],
     "net/minecraft/class_3494\u0024class_3495": [
       "net/minecraftforge/common/extensions/IForgeRawTagBuilder"
+    ],
+    "net/minecraft/class_2586": [
+      "net/minecraftforge/common/extensions/IForgeBlockEntityExtension"
     ]
   }
 }

@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -69,10 +70,14 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockE
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
-    @Override
+    //TODO figure this out
+    //@Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
-        super.onDataPacket(net, pkt);
-        handleUpdateTag(pkt.getTag());
+        CompoundTag compoundtag = pkt.getTag();
+        if (compoundtag != null) {
+            load(compoundtag);
+        }
+        //handleUpdateTag(pkt.getTag());
         sidedSync(true);
     }
 
