@@ -39,7 +39,7 @@ public class MapItemStackIngredient extends AbstractMapIngredient {
         if (a.getItem() != b.getItem()) return false;
         if (aTag.isEmpty() != bTag.isEmpty()) return false;
         if (!aTag.equals(bTag)) return false;
-        return a.areCapsCompatible(b);
+        return AntimatterPlatformUtils.areCapsCompatible(a, b);
     }
 
     protected static final Set<String> CUSTOM_TAGS = ImmutableSet.of(Ref.KEY_STACK_NO_CONSUME, Ref.KEY_STACK_IGNORE_NBT);

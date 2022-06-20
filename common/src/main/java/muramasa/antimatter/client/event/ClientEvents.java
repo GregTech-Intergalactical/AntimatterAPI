@@ -128,7 +128,8 @@ public class ClientEvents {
         if (!(stack.getItem() instanceof IAntimatterTool)) return;
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         if (item.getAntimatterToolType().getUseAction() != UseAnim.NONE && player.swinging) {
-            item.getItem().onUsingTick(stack, player, stack.getCount());
+            //todo abstract this
+            //item.getItem().onUsingTick(stack, player, stack.getCount());
             //player.swingProgress = player.prevSwingProgress;
         }
     }

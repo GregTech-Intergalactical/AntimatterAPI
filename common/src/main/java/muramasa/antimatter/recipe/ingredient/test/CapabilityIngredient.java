@@ -1,5 +1,6 @@
 package muramasa.antimatter.recipe.ingredient.test;
 
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -24,7 +25,7 @@ public class CapabilityIngredient extends Ingredient {
     }
 
     @Override
-    public boolean test(@Nullable ItemStack p_test_1_) {
-        return p_test_1_ != null && p_test_1_.getCapability(cap.get()).isPresent();
+    public boolean test(@Nullable ItemStack stack) {
+        return stack != null && AntimatterPlatformUtils.getStackCap(cap.get(), stack).isPresent();
     }
 }

@@ -32,6 +32,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.api.gt.IEnergyHandler;
@@ -237,5 +238,15 @@ public class AntimatterPlatformUtils {
     @ExpectPlatform
     public static ResourceLocation getLootTableID(LootTable table){
         return null;
+    }
+
+    @ExpectPlatform
+    public static boolean areCapsCompatible(ItemStack a, ItemStack b){
+        return true;
+    }
+
+    @ExpectPlatform
+    public static<T> LazyOptional<T> getStackCap(Capability<T> cap, ItemStack stack){
+        return LazyOptional.empty();
     }
 }

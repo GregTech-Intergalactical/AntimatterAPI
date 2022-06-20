@@ -41,6 +41,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -236,5 +237,13 @@ public class AntimatterPlatformUtilsImpl {
 
     public static ResourceLocation getLootTableID(LootTable table){
         return table.getLootTableId();
+    }
+
+    public static boolean areCapsCompatible(ItemStack a, ItemStack b){
+        return a.areCapsCompatible(b);
+    }
+
+    public static<T> LazyOptional<T> getStackCap(Capability<T> cap, ItemStack stack){
+        return stack.getCapability(cap);
     }
 }

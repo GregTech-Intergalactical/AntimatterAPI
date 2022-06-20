@@ -277,12 +277,13 @@ public abstract class WorldSceneRenderer {
                             modelData = base.getModelData();
                         }
                         if (block == Blocks.AIR) continue;
-                        if (state.getRenderShape() != RenderShape.INVISIBLE && ItemBlockRenderTypes.canRenderInLayer(state, layer)) {
+                        //todo abstract this
+                        /*if (state.getRenderShape() != RenderShape.INVISIBLE && ItemBlockRenderTypes.canRenderInLayer(state, layer)) {
                             matrixstack.pushPose();
                             matrixstack.translate(pos.getX(), pos.getY(), pos.getZ());
-                            blockrendererdispatcher.renderBatched(state, pos, world, matrixstack, buffer, false, random, modelData);
+                            //blockrendererdispatcher.renderBatched(state, pos, world, matrixstack, buffer, false, random, modelData);
                             matrixstack.popPose();
-                        }
+                        }*/
                     }
 
                     Tesselator.getInstance().end();

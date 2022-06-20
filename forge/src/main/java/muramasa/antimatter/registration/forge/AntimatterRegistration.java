@@ -32,6 +32,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -111,8 +112,8 @@ public final class AntimatterRegistration {
                 CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "material"), PropertyIngredient.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), IngredientSerializer.INSTANCE);
-                MaterialSerializer.INSTANCE.setRegistryName(new ResourceLocation("antimatter", "material"));
-                AntimatterRecipeSerializer.INSTANCE.setRegistryName(new ResourceLocation("antimatter", "ingredient"));
+                ((IForgeRegistryEntry)MaterialSerializer.INSTANCE).setRegistryName(new ResourceLocation("antimatter", "material"));
+                ((IForgeRegistryEntry)AntimatterRecipeSerializer.INSTANCE).setRegistryName(new ResourceLocation("antimatter", "ingredient"));
                 ((IForgeRegistry) e.getRegistry()).register(AntimatterRecipeSerializer.INSTANCE);
                 ((IForgeRegistry) e.getRegistry()).register(MaterialSerializer.INSTANCE);
             }
