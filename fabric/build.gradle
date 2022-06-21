@@ -1,12 +1,27 @@
 archivesBaseName = rootProject.antimatter_archive_base_name
 version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
 
+def generatedResources = file("src/generated/resources")
+def accessWidenerFile = project(":antimatter-common").file("src/main/resources/antimatter.accesswidener")
+
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
     developmentFabric.extendsFrom common
+}
+
+loom {
+    accessWidenerPath = accessWidenerFile
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir generatedResources
+        }
+    }
 }
 
 dependencies{
@@ -28,6 +43,24 @@ dependencies{
 
 architectury {
     fabric()
+}
+
+task copyAccessWidener(type: Copy) {
+    from accessWidenerFile
+    into generatedResources
+}
+
+processResources {
+    dependsOn copyAccessWidener
+
+    def toReplace = [
+            "version"             : project.version
+    ]
+
+    inputs.properties toReplace
+    filesMatching("fabric.mod.json") {
+        expand toReplace
+    }
 }
 
 /*
