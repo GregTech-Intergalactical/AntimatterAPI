@@ -14,11 +14,10 @@ dependencies{
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     common(project(path: ":tesseract-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":tesseract-common", configuration: "transformProductionFabric")) { transitive false }
-    compileOnly(project(path: ":fabricated-forge-caps", configuration: "namedElements")){
-        transitive = false
-    }
-    common(project(path: ":fabricated-forge-modeldata", configuration: "namedElements"))
-    common(include(project(path: ":fabricated-forge-caps", configuration: "namedElements"))) { transitive false }
+    implementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-caps:${rootProject.fabricated_forge_hash}"))
+    include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-recipe-api:${rootProject.fabricated_forge_hash}")
+    implementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}"))
+    include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-datagen:${rootProject.fabricated_forge_hash}")
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     //modImplementation(include("io.github.fabricators_of_create:Porting-Lib:0.2.0+1.18.2.${rootProject.port_lib_hash}")) { transitive(false) }

@@ -23,18 +23,12 @@ include 'tesseract-forge'
 project(':tesseract-forge').setProjectDir(new File("TesseractAPI/forge"))
 include 'tesseract-common'
 project(':tesseract-common').setProjectDir(new File("TesseractAPI/common"))
-include 'fabricated-forge-caps'
-project(':fabricated-forge-caps').setProjectDir(new File("TesseractAPI/fabricated-forge-caps"))
-include 'fabricated-forge-recipe-api'
-project(':fabricated-forge-recipe-api').setProjectDir(new File("TesseractAPI/fabricated-forge-recipe-api"))
-include 'fabricated-forge-datagen'
 include 'tesseract-fabric'
 project(':tesseract-fabric').setProjectDir(new File("TesseractAPI/fabric"))
 
 include("antimatter-common")
 include("antimatter-fabric")
 include("antimatter-forge")
-include("fabricated-forge-modeldata")
 
 project(':antimatter-common').setProjectDir(new File("common"))
 project(':antimatter-forge').setProjectDir(new File("forge"))
