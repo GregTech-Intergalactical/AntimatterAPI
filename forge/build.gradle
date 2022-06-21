@@ -23,14 +23,6 @@ repositories {
 archivesBaseName = rootProject.antimatter_archive_base_name
 version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
 
-configurations {
-    common
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-    compileClasspath.extendsFrom common
-    runtimeClasspath.extendsFrom common
-    developmentForge.extendsFrom common
-}
-
 def isCI = System.getenv("GITHUB_ACTION")
 def isRELEASE = System.getenv("GITHUB_RELEASE")
 
@@ -247,15 +239,8 @@ publishing {
     }
 }
 
-
-//jar.finalizedBy('reobfJar')
-/*configurations.compile {
-    exclude group: 'it.unimi.dsi', module: 'fastutil'
-}*/
-
-/*shadowJar {
-    configurations = [project.configurations.shadowCommon]
-    classifier ''
-}*/
-
-//jar.classifier = 'nodep'
+sourcesJar {
+    def commonSources = project(":tesseract-common").sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+}
