@@ -34,89 +34,32 @@ configurations {
 def isCI = System.getenv("GITHUB_ACTION")
 def isRELEASE = System.getenv("GITHUB_RELEASE")
 
-boolean hasTesseract = new File("TesseractAPI").exists()
-
-if (hasTesseract) {
-    println('TesseractAPI in local workspace')
+architectury {
+    platformSetupLoomIde()
+    forge()
 }
-boolean isWorkspace = hasTesseract
-String getenv() {
-    boolean vscode = gradle.startParameter.taskNames[0].equals("genVSCodeRuns")  || gradle.startParameter.taskNames[0].equals(":genVSCodeRuns")
-    boolean hasTesseract = findProject(':tesseract-forge') != null
-
-    String resourcePath = vscode ? 'bin/main' : 'build/resources/main'
-    String codePath = vscode ? 'bin/main' : 'build/classes/java/main'
-    String s = "antimatter%%${project.file(resourcePath)}" + getPathSeparator() + "antimatter%%${project.file(codePath)}"
-    if (hasTesseract) {
-        s += getPathSeparator() + "tesseract%%${project(':tesseract-forge').file(resourcePath)}" + getPathSeparator() + "tesseract%%${project(':tesseract-forge').file(codePath)}"
-    }
-    return s
-}
-import org.apache.tools.ant.taskdefs.condition.Os
-//println(project(":TesseractAPI").sourceSets.main.output.getDirs().getAsPath())
-def getPathSeparator() {
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        return ";"
-    }
-    return ":"
-}
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-        }
-        resources {
-            include '**/**'
-            srcDirs += 'src/generated/resources'
-            exclude '.cache'
-            exclude 'Thumbs.db'
-        }
-    }
-//    if (hasTesseract) {
-//        tesseractapi {
-//            java {
-//                srcDir 'TesseractAPI/common/src/main/java'
-//                srcDir 'TesseractAPI/forge/src/main/java'
-//            }
-//            resources {
-//                include '**/**'
-//                srcDirs += 'TesseractAPI/common/build/resources'
-//                srcDirs += 'TesseractAPI/forge/build/resources'
-//                exclude '.cache'
-//                exclude 'Thumbs.db'
-//            }
+//sourceSets {
+//    main {
+//        java {
+//            srcDir 'src/main/java'
+//        }
+//        resources {
+//            include '**/**'
+//            srcDirs += 'src/generated/resources'
+//            exclude '.cache'
+//            exclude 'Thumbs.db'
 //        }
 //    }
-
-}
+//}
 
 loom{
+    accessWidenerPath = project(":antimatter-common").file("src/main/resources/antimatter.accesswidener")
     forge {
-        // specify the mixin configs used in this mod
-        // this will be added to the jar manifest as well!
+        convertAccessWideners = true
+        extraAccessWideners.add("antimatter.accesswidener")
         mixinConfigs = [
                 "antimatter.mixins.json", "antimatter-forge.mixins.json"
         ]
-
-        localMods {
-            forge {
-                //if (hasTesseract) it.add(project(":antimatter-forge").sourceSets.tesseractapi)
-            }
-        }
-
-        // missing access transformers?
-        // don't worry, you can still use them!
-        // note that your AT *MUST* be located at
-        // src/main/resources/META-INF/accesstransformer.cfg
-        // to work as there is currently no config option to change this.
-        // also, any names used in your access transformer will need to be
-        // in SRG mapped ("func_" / "field_" with MCP class names) to work!
-        // (both of these things may be subject to change in the future)
-
-        // this will create a data generator configuration
-        // that you can use to automatically generate assets and data
-        // using architectury loom. Note that this currently *only* works
-        // for forge projects made with architectury loom!
         dataGen {
             mod project.modid
         }
@@ -128,13 +71,6 @@ loom{
         }
     }
 }
-/*
-sourceSets {
-    clientComponent {
-        compileClasspath += project(":TesseractAPI").sourceSets.main.compileClasspath
-        runtimeClasspath += project(":TesseractAPI").sourceSets.main.runtimeClasspath
-    }
-}*/
 //minecraft {
     /*runs {
         client {
@@ -224,16 +160,11 @@ sourceSets {
 dependencies {
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
     //implementation project(path: ":TesseractAPI")
-    //GT
-    if (hasTesseract) {
-        implementation(project(path: ":tesseract-forge", configuration: "namedElements"))
-        implementation(project(path: ":tesseract-common", configuration: "namedElements"))
-    } else {
-        modImplementation("com.github.GregTech-Intergalactical.TesseractAPI:TesseractAPI-tesseract-forge:${tesseract_version}")
-    }
+    implementation(project(path: ":tesseract-forge", configuration: "namedElements"))
+    implementation(project(path: ":tesseract-common", configuration: "namedElements"))
 
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionForge")) { transitive false }
 
     //MIXIN
     if (System.getProperty('idea.sync.active') != 'true') {
@@ -244,13 +175,17 @@ dependencies {
     modRuntimeOnly("mezz.jei:jei-${jei_version}")
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${rootProject.crafttweaker_version}")
     modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
+}
 
+processResources {
+    def toReplace = [
+            "version"             : project.version
+    ]
 
-    /** KUBEJS STUFF **/
-   // modImplementation("curse.maven:rhino-416294:${rhino_file}")
-   // modImplementation("curse.maven:architecturyforge-419699:${architectury_file}")
-  //  modImplementation("curse.maven:kubejs-238086:${kubejs_file}")
-//    modImplementation("curse.maven:top-245211:${top_file}")
+    inputs.properties toReplace
+    filesMatching("META-INF/mods.toml") {
+        expand toReplace
+    }
 }
 
 // Example configuration to allow publishing using the maven-publish task

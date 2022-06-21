@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/GregTech-Intergalactical/AntimatterAPI/issue
 
 [[mods]]
 modId="antimatter"
-version="${file.jarVersion}"
+version="${version}"
 displayName="AntimatterAPI"
 displayURL="https://github.com/GregTech-Intergalactical/AntimatterAPI"
 #logoFile="examplemod.png"
@@ -38,7 +38,7 @@ ordering="AFTER"
 side="BOTH"
 [[mods]]
 modId="antimatter_shared"
-version="${file.jarVersion}"
+version="${version}"
 displayName="Antimatter Shared Data"
 displayURL="https://github.com/GregTech-Intergalactical/AntimatterAPI"
 #logoFile="examplemod.png"
