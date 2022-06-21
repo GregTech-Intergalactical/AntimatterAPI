@@ -20,7 +20,7 @@ repositories {
     }
 }
 
-archivesBaseName = rootProject.antimatter_archive_base_name
+archivesBaseName = "${rootProject.antimatter_archive_base_name}-forge"
 version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
 
 def isCI = System.getenv("GITHUB_ACTION")
