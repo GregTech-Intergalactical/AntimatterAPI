@@ -12,18 +12,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 public class AntimatterAPIImpl {
     @SuppressWarnings("UnstableApiUsage")
     public static void registerTransferApi(BlockEntityType<?> type){
-        FluidStorage.SIDED.registerForBlockEntities((be, direction) -> ((TileEntityMachine<?>)be).fluidHandler.side(direction).map(f -> {
-            if (f instanceof IFluidHandlerStorage storage){
-                return storage;
-            }
-            return TransferApiImpl.EMPTY_STORAGE;
-        }).orElse(TransferApiImpl.EMPTY_STORAGE), type);
-        ItemStorage.SIDED.registerForBlockEntities((be, direction) -> ((TileEntityMachine<?>)be).itemHandler.side(direction).map(i -> {
-            if (i instanceof IItemHandlerStorage storage){
-                return storage;
-            }
-            return TransferApiImpl.EMPTY_STORAGE;
-        }).orElse(TransferApiImpl.EMPTY_STORAGE), type);
+        FluidStorage.SIDED.registerForBlockEntities((be, direction) -> ((TileEntityMachine<?>)be).fluidHandler.side(direction).map(f -> f).orElse(null), type);
+        ItemStorage.SIDED.registerForBlockEntities((be, direction) -> ((TileEntityMachine<?>)be).itemHandler.side(direction).map(i -> i).orElse(null), type);
     }
 
     public static boolean isModLoaded(String mod) {
