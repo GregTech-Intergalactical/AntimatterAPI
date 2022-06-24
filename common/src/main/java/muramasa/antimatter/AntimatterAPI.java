@@ -24,6 +24,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -427,6 +428,11 @@ public final class AntimatterAPI {
     @ExpectPlatform
     public static boolean isRegistryEntry(Object object, String domain){
         return false;
+    }
+
+    @ExpectPlatform
+    public static void registerTransferApi(BlockEntityType<?> type){
+
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {

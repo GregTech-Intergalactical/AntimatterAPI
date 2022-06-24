@@ -374,7 +374,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
 
     @Override
     public LazyOptional<IItemHandler> forSide(Direction side) {
-        return LazyOptional.of(() -> new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().toArray(new IItemHandlerModifiable[0])));
+        return LazyOptional.of(() -> new SidedCombinedInvWrapper(side, tile.coverHandler.map(c -> c).orElse(null), this.inventories.values().stream().filter(t -> !(t instanceof FakeTrackedItemHandler)).toArray(IItemHandlerModifiable[]::new)));
     }
 
     @Override

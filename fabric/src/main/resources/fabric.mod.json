@@ -23,7 +23,8 @@
   },
   "license": "LGPL-3.0",
   "mixins": [
-    "antimatter.mixins.json"
+    "antimatter.mixins.json",
+    "antimatter-fabric.mixins.json"
   ],
   "accessWidener" : "antimatter.accesswidener",
   "depends": {
@@ -33,15 +34,6 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_1087": [
-        "net/minecraftforge/client/extensions/IForgeBakedModel"
-      ],
-      "net/minecraft/class_1159": [
-        "net/minecraftforge/client/extensions/IForgeMatrix4f"
-      ],
-      "net/minecraft/class_4590": [
-        "net/minecraftforge/client/extensions/IForgeTransformation"
-      ]
     }
   }
 }

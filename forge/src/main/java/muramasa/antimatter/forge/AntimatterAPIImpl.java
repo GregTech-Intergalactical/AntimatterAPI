@@ -1,11 +1,13 @@
 package muramasa.antimatter.forge;
 
 import muramasa.antimatter.registration.forge.AntimatterRegistration;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class AntimatterAPIImpl {
+    public static void registerTransferApi(BlockEntityType<?> type){}
     public static boolean isModLoaded(String mod) {
         return ModList.get().isLoaded(mod);
     }

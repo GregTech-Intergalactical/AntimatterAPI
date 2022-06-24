@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "muramasa.antimatter.mixin.fabric",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "antimatter.refmap.json",
+  "mixins": [
+    "FluidHandlerMixin",
+    "FluidHandlerNullSideWrapperMixin",
+    "FluidHandlerSidedWrapperMixin",
+    "ITrackedHandlerMixin",
+    "ROCombionedInvWrapperMixin",
+    "SidedCombinedInvWrapperMixin"
+  ],
+  "minVersion": "0.8"
+}
