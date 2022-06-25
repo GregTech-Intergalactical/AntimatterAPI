@@ -11,6 +11,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -35,38 +36,38 @@ public class FluidTanks implements IFluidHandler {
     private final FluidTank[] tanks;
     private final long totalCapacity;
 
-    public FluidTanks(int tanks, long tankAmount) {
+    public FluidTanks(int tanks, long tankAmountInMB) {
         this.tanks = new FluidTank[tanks];
         for (int i = 0; i < tanks; i++) {
-            this.tanks[i] = new FluidTank(tankAmount);
+            this.tanks[i] = new FluidTank(tankAmountInMB * Tesseract.dropletMultiplier);
         }
-        this.totalCapacity = tanks * tankAmount;
+        this.totalCapacity = tanks * tankAmountInMB * Tesseract.dropletMultiplier;
     }
 
-    public FluidTanks(int tanks, long tankAmount, Predicate<FluidStack> validator) {
+    public FluidTanks(int tanks, long tankAmountInMB, Predicate<FluidStack> validator) {
         this.tanks = new FluidTank[tanks];
         for (int i = 0; i < tanks; i++) {
-            this.tanks[i] = new FluidTank(tankAmount, validator);
+            this.tanks[i] = new FluidTank(tankAmountInMB * Tesseract.dropletMultiplier, validator);
         }
-        this.totalCapacity = tanks * tankAmount;
+        this.totalCapacity = tanks * tankAmountInMB * Tesseract.dropletMultiplier;
     }
 
-    public FluidTanks(long... tankAmounts) {
-        this.tanks = new FluidTank[tankAmounts.length];
+    public FluidTanks(long... tankAmountsInMB) {
+        this.tanks = new FluidTank[tankAmountsInMB.length];
         for (int i = 0; i < this.tanks.length; i++) {
-            this.tanks[i] = new FluidTank(tankAmounts[i]);
+            this.tanks[i] = new FluidTank(tankAmountsInMB[i] * Tesseract.dropletMultiplier);
         }
-        this.totalCapacity = LongStream.of(tankAmounts).sum();
+        this.totalCapacity = LongStream.of(tankAmountsInMB).sum() * Tesseract.dropletMultiplier;
     }
 
     public FluidTanks(Collection<FluidTank> tanks) {
         this.tanks = tanks.toArray(new FluidTank[0]);
-        this.totalCapacity = tanks.stream().mapToLong(FluidTank::getCapacity).sum();
+        this.totalCapacity = tanks.stream().mapToLong(FluidTank::getCapacityInDroplets).sum();
     }
 
     public FluidTanks(FluidTank... tanks) {
         this.tanks = tanks;
-        this.totalCapacity = Arrays.stream(tanks).mapToLong(FluidTank::getCapacity).sum();
+        this.totalCapacity = Arrays.stream(tanks).mapToLong(FluidTank::getCapacityInDroplets).sum();
     }
 
     public int getFirstAvailableTank(FluidStack stack, boolean drain) {
@@ -77,7 +78,7 @@ public class FluidTanks implements IFluidHandler {
                 firstAvailable = i;
                 break;
             } else if ((drain && !tank.drain(stack, FluidAction.SIMULATE).isEmpty())
-                    || (!drain && tank.fillLong(stack, FluidAction.SIMULATE) != 0)) {
+                    || (!drain && tank.fillDroplets(stack, FluidAction.SIMULATE) != 0)) {
                 return i;
             }
         }
@@ -108,13 +109,13 @@ public class FluidTanks implements IFluidHandler {
     }
 
     @Override
-    public long getTankCapacityLong(int tank) {
-        return this.tanks[tank].getCapacityLong();
+    public long getTankCapacityInDroplets(int tank) {
+        return this.tanks[tank].getCapacityInDroplets();
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        return (int) getTankCapacityLong(tank);
+        return (int) (getTankCapacityInDroplets(tank) / Tesseract.dropletMultiplier);
     }
 
     @Override
@@ -125,7 +126,7 @@ public class FluidTanks implements IFluidHandler {
     public long getTotalFluidAmount() {
         long amount = 0;
         for (FluidTank tank : tanks) {
-            amount += tank.getFluidAmountLong();
+            amount += tank.getFluidAmountInDroplets();
         }
         return amount;
     }
@@ -135,9 +136,9 @@ public class FluidTanks implements IFluidHandler {
     }
 
     @Override
-    public long fillLong(FluidStack stack, FluidAction action) {
+    public long fillDroplets(FluidStack stack, FluidAction action) {
         for (int i = 0; i < tanks.length; i++) {
-            long fill = getTank(i).fillLong(stack, action);
+            long fill = getTank(i).fillDroplets(stack, action);
             if (fill > 0)
                 return fill;
         }
@@ -146,7 +147,7 @@ public class FluidTanks implements IFluidHandler {
 
     @Override
     public int fill(FluidStack stack, FluidAction action){
-        return (int) fillLong(stack, action);
+        return (int) (fillDroplets(stack, action) / Tesseract.dropletMultiplier);
     }
 
     @Nonnull
@@ -194,7 +195,7 @@ public class FluidTanks implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
-        return drain((long) maxDrain, action);
+        return drain((long) maxDrain * Tesseract.dropletMultiplier, action);
     }
 
     public static class Builder<T extends TileEntityBase & IMachineHandler> {

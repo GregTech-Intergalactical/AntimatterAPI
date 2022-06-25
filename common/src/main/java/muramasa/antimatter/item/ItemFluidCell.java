@@ -137,7 +137,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
     public ItemStack fill(Fluid fluid, long amount) {
         ItemStack stack = new ItemStack(this);
         IFluidHandlerItem handler = TesseractPlatformUtils.getFluidHandlerItem(stack).map(h -> {
-            h.fillLong(new FluidStack(fluid, amount), EXECUTE);
+            h.fillDroplets(new FluidStack(fluid, amount), EXECUTE);
             return h;
         }).orElse(null);
         return handler != null ? handler.getContainer() : stack;
@@ -146,7 +146,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
     public ItemStack fill(Fluid fluid) {
         ItemStack stack = new ItemStack(this);
         TesseractPlatformUtils.getFluidHandlerItem(stack).ifPresent(h -> {
-            h.fillLong(new FluidStack(fluid, h.getTankCapacityLong(0)), EXECUTE);
+            h.fillDroplets(new FluidStack(fluid, h.getTankCapacityInDroplets(0)), EXECUTE);
         });
         return stack;
     }

@@ -23,6 +23,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import tesseract.Tesseract;
 import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nonnull;
@@ -76,10 +77,10 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 ItemStack toActOn = cell.copy();
                 toActOn.setCount(1);
                 return TesseractPlatformUtils.getFluidHandlerItem(toActOn).map(cfh -> {
-                    final long actualMax = maxFill == -1 ? cfh.getTankCapacityLong(0) : maxFill;
+                    final long actualMax = maxFill == -1 ? cfh.getTankCapacityInDroplets(0) : maxFill;
                     ItemStack checkContainer = TesseractPlatformUtils.getFluidHandlerItem(toActOn.copy()).map(t -> {
                         if (t.getFluidInTank(0).isEmpty()) {
-                            t.fillLong(FluidUtil.tryFluidTransfer(t, this.getAllTanks(), (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), false), EXECUTE);
+                            t.fillDroplets(FluidUtil.tryFluidTransfer(t, this.getAllTanks(), (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), false), EXECUTE);
                         } else {
                             t.drain(actualMax, EXECUTE);
                         }
@@ -160,7 +161,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         int matchCount = 0;
         if (getOutputTanks() != null) {
             for (FluidStack output : outputs) {
-                if (fillOutput(output, SIMULATE) == output.getAmount()) {
+                if (fillOutput(output, SIMULATE) == output.getRealAmount()) {
                     matchCount++;
                 }
             }
@@ -211,7 +212,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         if (inputs != null) {
             for (FluidIngredient input : inputs) {
                 List<FluidStack> inner = input.drain(this, true, simulate);
-                if (inner.stream().mapToLong(FluidStack::getAmount).sum() != input.getAmount()) {
+                if (inner.stream().mapToLong(FluidStack::getRealAmount).sum() != input.getAmount()) {
                     ret = false;
                 } else {
                     consumed.addAll(inner);
@@ -280,13 +281,13 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
             }
 
             @Override
-            public long getTankCapacityLong(int tank) {
-                return MachineFluidHandler.this.getTankCapacityLong(tank);
+            public long getTankCapacityInDroplets(int tank) {
+                return MachineFluidHandler.this.getTankCapacityInDroplets(tank);
             }
 
             @Override
-            public long fillLong(FluidStack stack, FluidAction action) {
-                return MachineFluidHandler.this.fillLong(stack, action);
+            public long fillDroplets(FluidStack stack, FluidAction action) {
+                return MachineFluidHandler.this.fillDroplets(stack, action);
             }
 
             @Override
@@ -313,7 +314,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
             @Override
             public FluidStack drain(int amount, FluidAction action) {
-                return drain((long) amount, action);
+                return drain((long) amount * Tesseract.dropletMultiplier, action);
             }
 
             @Nonnull

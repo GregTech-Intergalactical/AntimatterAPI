@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
 
@@ -37,8 +38,8 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     }
 
     @Override
-    public long getTankCapacityLong(int tank) {
-        return fluidHandler.getTankCapacityLong(tank);
+    public long getTankCapacityInDroplets(int tank) {
+        return fluidHandler.getTankCapacityInDroplets(tank);
     }
 
     @Override
@@ -47,19 +48,19 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     }
 
     @Override
-    public long fillLong(FluidStack resource, FluidAction action) {
+    public long fillDroplets(FluidStack resource, FluidAction action) {
         if (coverHandler != null && coverHandler.get(side).blocksInput(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side)) {
             return 0;
         }
         if (!fluidHandler.canInput(resource, side) || !fluidHandler.canInput(side)) {
             return 0;
         }
-        return fluidHandler.fillLong(resource, action);
+        return fluidHandler.fillDroplets(resource, action);
     }
 
     @Override
     public int fill(FluidStack resource, FluidAction action){
-        return (int) fillLong(resource, action);
+        return (int) (fillDroplets(resource, action) / Tesseract.dropletMultiplier);
     }
 
     @Nonnull
@@ -85,6 +86,6 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
-        return drain((long) maxDrain, action);
+        return drain((long) maxDrain * Tesseract.dropletMultiplier, action);
     }
 }

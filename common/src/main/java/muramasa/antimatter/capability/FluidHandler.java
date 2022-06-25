@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.FluidPlatformUtils;
+import tesseract.Tesseract;
 import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
@@ -110,13 +111,13 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     }
 
     @Override
-    public long getTankCapacityLong(int tank) {
-        return getTanks(tank).getTankCapacityLong(offsetTank(tank));
+    public long getTankCapacityInDroplets(int tank) {
+        return getTanks(tank).getTankCapacityInDroplets(offsetTank(tank));
     }
 
     @Override
     public int getTankCapacity(int tank){
-        return (int) getTankCapacityLong(tank);
+        return (int) (getTankCapacityInDroplets(tank) / Tesseract.dropletMultiplier);
     }
 
     @Override
@@ -136,14 +137,14 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
     public long fillLong(FluidStack stack, IFluidHandler.FluidAction action) {
         FluidTanks input = getInputTanks();
         if (input != null && !empty(input)) {
-            return getInputTanks().fillLong(stack, action);
+            return getInputTanks().fillDroplets(stack, action);
         }
         return 0;
     }
 
     @Override
     public int fill(FluidStack stack, FluidAction action){
-        return (int) this.fillLong(stack, action);
+        return (int) (this.fillDroplets(stack, action) / Tesseract.dropletMultiplier);
     }
 
     protected boolean empty(FluidTanks tank) {
@@ -152,7 +153,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     public long fillOutput(FluidStack stack, IFluidHandler.FluidAction action) {
         if (getOutputTanks() != null) {
-            return getOutputTanks().fillLong(stack, action);
+            return getOutputTanks().fillDroplets(stack, action);
         }
         return 0;
     }
@@ -197,7 +198,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     @Override
     public FluidStack drain(int amount, FluidAction action) {
-        return drain((long) amount, action);
+        return drain((long) amount * Tesseract.dropletMultiplier, action);
     }
 
     protected boolean checkValidFluid(FluidStack fluid) {

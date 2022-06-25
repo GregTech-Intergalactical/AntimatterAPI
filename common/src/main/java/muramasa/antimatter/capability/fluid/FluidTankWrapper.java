@@ -9,6 +9,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import tesseract.Tesseract;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,13 +62,13 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Override
-    public long getTankCapacityLong(int tank) {
-        return tanks[tank].getCapacityLong();
+    public long getTankCapacityInDroplets(int tank) {
+        return tanks[tank].getCapacityInDroplets();
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        return (int)getTankCapacityLong(tank);
+        return (int)(getTankCapacityInDroplets(tank) / Tesseract.dropletMultiplier);
     }
 
     @Override
@@ -76,14 +77,14 @@ public class FluidTankWrapper implements IFluidHandler {
     }
 
     @Override
-    public long fillLong(FluidStack resource, FluidAction action) {
+    public long fillDroplets(FluidStack resource, FluidAction action) {
         int tank = getFirstValidTank(resource.getFluid());
-        return tank != -1 ? getTank(tank).fillLong(resource, action) : 0;
+        return tank != -1 ? getTank(tank).fillDroplets(resource, action) : 0;
     }
 
     @Override
     public int fill(FluidStack stack, FluidAction action) {
-        return (int)fillLong(stack, action);
+        return (int)(fillDroplets(stack, action) / Tesseract.dropletMultiplier);
     }
 
     @Nonnull
@@ -104,7 +105,7 @@ public class FluidTankWrapper implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(int amount, FluidAction action) {
-        return drain((long)amount, action);
+        return drain((long)amount * Tesseract.dropletMultiplier, action);
     }
 
     public boolean isDirty() {
@@ -124,7 +125,7 @@ public class FluidTankWrapper implements IFluidHandler {
             if (stack.isEmpty()) {
                 tank = i;
             } else {
-                if (stack.getFluid().equals(fluid) && getTankCapacityLong(i) > stack.getAmount()) {
+                if (stack.getFluid().equals(fluid) && getTankCapacityInDroplets(i) > stack.getRealAmount()) {
                     return i;
                 }
             }

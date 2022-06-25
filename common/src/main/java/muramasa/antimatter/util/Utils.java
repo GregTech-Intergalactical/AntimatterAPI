@@ -439,7 +439,7 @@ public class Utils {
         boolean successful = false;
         for (int i = 0; i < to.getTanks(); i++) {
             //if (i >= from.getTanks()) break;
-            FluidStack toInsert = FluidStack.EMPTY;
+            FluidStack toInsert;
             for (int j = 0; j < from.getTanks(); j++) {
                 if (cap > 0) {
                     FluidStack fluid = from.getFluidInTank(j);
@@ -453,10 +453,10 @@ public class Utils {
                 } else {
                     toInsert = from.drain(from.getFluidInTank(j), SIMULATE);
                 }
-                long filled = to.fillLong(toInsert, SIMULATE);
+                long filled = to.fillDroplets(toInsert, SIMULATE);
                 if (filled > 0) {
                     toInsert.setAmount(filled);
-                    to.fillLong(from.drain(toInsert, EXECUTE), EXECUTE);
+                    to.fillDroplets(from.drain(toInsert, EXECUTE), EXECUTE);
                     successful = true;
                 }
             }
