@@ -129,9 +129,9 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
     }
 
     @Override
-    public long fillLong(FluidStack stack, FluidAction action) {
+    public long fillDroplets(FluidStack stack, FluidAction action) {
         if (!tile.recipeHandler.map(t -> t.accepts(stack)).orElse(true)) return 0;
-        return super.fillLong(stack, action);
+        return super.fillDroplets(stack, action);
     }
 
     @Override
@@ -229,7 +229,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         List<FluidStack> notExported = new ObjectArrayList<>();
         long result;
         for (int i = 0; i < outputs.length; i++) {
-            result = fillLong(outputs[i], EXECUTE);
+            result = fillDroplets(outputs[i], EXECUTE);
             if (result == 0) notExported.add(outputs[i]); //Valid space was not found
             else outputs[i] = Utils.ca(result, outputs[i]); //Fluid was partially exported
         }

@@ -59,17 +59,21 @@ public class FluidIngredient {
         return (int) (getAmount() / Tesseract.dropletMultiplier);
     }
 
-    public FluidIngredient copy(long amount) {
+    public FluidIngredient copy(long droplets) {
         FluidIngredient ing = new FluidIngredient();
         ing.stacks = Arrays.stream(stacks).map(t -> {
             FluidStack stack = t.copy();
-            stack.setAmount(amount);
+            stack.setAmount(droplets);
             return stack;
         }).toArray(FluidStack[]::new);
         ing.evaluated = this.evaluated;
-        ing.amount = amount;
+        ing.amount = droplets;
         ing.tag = this.tag;
         return ing;
+    }
+
+    public FluidIngredient copyMB(int amount) {
+        return copy(amount * Tesseract.dropletMultiplier);
     }
 
     public void write(FriendlyByteBuf buffer) {
@@ -92,16 +96,24 @@ public class FluidIngredient {
         return ing;
     }
 
-    public static FluidIngredient of(ResourceLocation loc, long amount) {
+    public static FluidIngredient of(ResourceLocation loc, long droplets) {
         Objects.requireNonNull(loc);
         FluidIngredient ing = new FluidIngredient();
         ing.tag = TagUtils.getFluidTag(loc);
-        ing.amount = amount;
+        ing.amount = droplets;
         return ing;
     }
 
-    public static FluidIngredient of(Material mat, long amount) {
-        return of(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", mat.getId()), amount);
+    public static FluidIngredient of(Material mat, long droplets) {
+        return of(new ResourceLocation(AntimatterPlatformUtils.isForge() ? "forge" : "c", mat.getId()), droplets);
+    }
+
+    public static FluidIngredient ofMB(ResourceLocation loc, int amount) {
+        return of(loc, amount * Tesseract.dropletMultiplier);
+    }
+
+    public static FluidIngredient ofMB(Material mat, int amount) {
+        return of(mat, amount * Tesseract.dropletMultiplier);
     }
 
     public static FluidIngredient of(FluidStack stack) {

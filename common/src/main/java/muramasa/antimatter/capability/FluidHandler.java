@@ -134,7 +134,8 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
         return new FluidTanks(list);
     }
 
-    public long fillLong(FluidStack stack, IFluidHandler.FluidAction action) {
+    @Override
+    public long fillDroplets(FluidStack stack, IFluidHandler.FluidAction action) {
         FluidTanks input = getInputTanks();
         if (input != null && !empty(input)) {
             return getInputTanks().fillDroplets(stack, action);

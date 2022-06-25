@@ -56,6 +56,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
+import tesseract.FluidPlatformUtils;
+import tesseract.Tesseract;
 import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nullable;
@@ -64,6 +66,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static net.minecraftforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE;
+import static tesseract.FluidPlatformUtils.createFluidStack;
 
 public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContainerItem {
 
@@ -137,18 +140,23 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
     public ItemStack fill(Fluid fluid, long amount) {
         ItemStack stack = new ItemStack(this);
         IFluidHandlerItem handler = TesseractPlatformUtils.getFluidHandlerItem(stack).map(h -> {
-            h.fillDroplets(new FluidStack(fluid, amount), EXECUTE);
+            h.fillDroplets(createFluidStack(fluid, amount), EXECUTE);
             return h;
         }).orElse(null);
         return handler != null ? handler.getContainer() : stack;
     }
 
+    public ItemStack fill(Fluid fluid, int amount){
+        return fill(fluid, amount * Tesseract.dropletMultiplier);
+    }
+
     public ItemStack fill(Fluid fluid) {
         ItemStack stack = new ItemStack(this);
-        TesseractPlatformUtils.getFluidHandlerItem(stack).ifPresent(h -> {
-            h.fillDroplets(new FluidStack(fluid, h.getTankCapacityInDroplets(0)), EXECUTE);
-        });
-        return stack;
+        IFluidHandlerItem handler = TesseractPlatformUtils.getFluidHandlerItem(stack).map(h -> {
+            h.fillDroplets(createFluidStack(fluid, h.getTankCapacityInDroplets(0)), EXECUTE);
+            return h;
+        }).orElse(null);
+        return handler != null ? handler.getContainer() : stack;
     }
 
     public ItemStack drain(ItemStack old, FluidStack fluid) {
