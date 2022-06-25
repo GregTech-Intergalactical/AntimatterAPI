@@ -1,11 +1,8 @@
 package muramasa.antimatter.fabric;
 
 import muramasa.antimatter.tile.TileEntityMachine;
-import net.fabricatedforgeapi.fluid.IFluidHandlerStorage;
-import net.fabricatedforgeapi.item.IItemHandlerStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
-import net.fabricmc.fabric.impl.transfer.TransferApiImpl;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
