@@ -1,5 +1,5 @@
 archivesBaseName = rootProject.antimatter_archive_base_name
-version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
+version = "${rootProject.minecraft_version}-${project.mod_version}"
 
 loom {
     accessWidenerPath = file("src/main/resources/antimatter.accesswidener")

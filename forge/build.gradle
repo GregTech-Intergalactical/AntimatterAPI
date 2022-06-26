@@ -1,27 +1,5 @@
-repositories {
-    //JEI
-    maven { url 'https://dvs1.progwml6.com/files/maven' }
-    /*maven {
-        url = "https://maven.speiger.com/repository/main"
-    }*/
-    //GT.
-    //maven { url 'https://jitpack.io' }
-
-    //Needed for intellij
-    maven {
-        name = 'sponge'
-        url = 'https://repo.spongepowered.org/repository/maven-public/'
-    }
-    maven {
-        url "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
-}
-
 archivesBaseName = "${rootProject.antimatter_archive_base_name}-forge"
-version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
+version = "${rootProject.minecraft_version}-${project.mod_version}"
 
 def isCI = System.getenv("GITHUB_ACTION")
 def isRELEASE = System.getenv("GITHUB_RELEASE")

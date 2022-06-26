@@ -62,6 +62,19 @@ allprojects {
             name = 'parchment'
             url = 'https://maven.parchmentmc.org'
         }
+        //JEI
+        maven { url 'https://dvs1.progwml6.com/files/maven' }
+        maven {
+            url "https://www.cursemaven.com"
+            content {
+                includeGroup "curse.maven"
+            }
+        }
+        //Needed for intellij
+        maven {
+            name = 'sponge'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
         maven {
             // Shedaniel's maven (Architectury API)
             url = "https://maven.architectury.dev"

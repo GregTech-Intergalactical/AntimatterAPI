@@ -1,5 +1,5 @@
 archivesBaseName = "${rootProject.antimatter_archive_base_name}-fabric"
-version = "${rootProject.minecraft_version}-${rootProject.antimatter_mod_version}"
+version = "${rootProject.minecraft_version}-${project.mod_version}"
 
 def generatedResources = file("src/generated/resources")
 def accessWidenerFile = project(":antimatter-common").file("src/main/resources/antimatter.accesswidener")
