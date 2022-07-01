@@ -70,6 +70,7 @@ allprojects {
                 includeGroup "curse.maven"
             }
         }
+        maven { url = "https://mvn.devos.one/snapshots/" }
         //Needed for intellij
         maven {
             name = 'sponge'

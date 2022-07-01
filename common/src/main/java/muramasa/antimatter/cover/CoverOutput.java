@@ -91,9 +91,9 @@ public class CoverOutput extends CoverInput {
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
-        TesseractPlatformUtils.getCapability(adjTile, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
+        adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    TesseractPlatformUtils.getCapability(handler.getTile(), CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
+                    handler.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
                 });
     }
 
@@ -101,9 +101,9 @@ public class CoverOutput extends CoverInput {
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
-        TesseractPlatformUtils.getCapability(adjTile, CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
+        adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    TesseractPlatformUtils.getCapability(handler.getTile(), CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side).ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h, 1000, true));
+                    handler.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side).ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h, 1000, true));
                 });
     }
 

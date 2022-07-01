@@ -79,7 +79,7 @@ public class SlotClickEvent implements IGuiEvent {
             } else {
                 max = 1000;
             }
-            LazyOptional<IFluidHandlerItem> iHandler = TesseractPlatformUtils.getFluidHandlerItem(stack);
+            LazyOptional<IFluidHandlerItem> iHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
             boolean hasFluid = iHandler.map(t -> t.getTanks() > 0 && !t.getFluidInTank(0).isEmpty()).orElse(false);
             FluidActionResult res;
             if (hasFluid && type == SlotType.FL_IN) {

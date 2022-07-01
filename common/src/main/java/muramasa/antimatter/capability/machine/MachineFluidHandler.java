@@ -22,6 +22,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.Tesseract;
 import tesseract.TesseractPlatformUtils;
@@ -76,9 +77,9 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 }
                 ItemStack toActOn = cell.copy();
                 toActOn.setCount(1);
-                return TesseractPlatformUtils.getFluidHandlerItem(toActOn).map(cfh -> {
+                return toActOn.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(cfh -> {
                     final long actualMax = maxFill == -1 ? cfh.getTankCapacityInDroplets(0) : maxFill;
-                    ItemStack checkContainer = TesseractPlatformUtils.getFluidHandlerItem(toActOn.copy()).map(t -> {
+                    ItemStack checkContainer = toActOn.copy().getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).map(t -> {
                         if (t.getFluidInTank(0).isEmpty()) {
                             t.fillDroplets(FluidUtil.tryFluidTransfer(t, this.getAllTanks(), (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), false), EXECUTE);
                         } else {

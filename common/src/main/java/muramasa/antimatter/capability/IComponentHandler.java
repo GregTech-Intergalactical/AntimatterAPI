@@ -29,10 +29,7 @@ public interface IComponentHandler {
     LazyOptional<MachineEnergyHandler<?>> getEnergyHandler();
 
     default LazyOptional<IHeatHandler> getHeatHandler() {
-        if (getTile() instanceof ICapabilityProvider prov){
-            return prov.getCapability(TesseractCaps.getHEAT_CAPABILITY());
-        }
-        return LazyOptional.empty();
+        return getTile().getCapability(TesseractCaps.getHEAT_CAPABILITY());
     }
 
     void onStructureFormed(TileEntityMultiMachine<?> tile);

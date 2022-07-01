@@ -40,7 +40,7 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
                                 mutPos = mutPos.offset(1,dir);
                                 BlockEntity ent = level.getBlockEntity(mutPos);
                                 if (ent == null) continue;
-                                TesseractPlatformUtils.getCapability(ent, TesseractCaps.getHEAT_CAPABILITY(), dir.getOpposite()).ifPresent(t -> t.insert(tx));
+                                ent.getCapability(TesseractCaps.getHEAT_CAPABILITY(), dir.getOpposite()).ifPresent(t -> t.insert(tx));
                             }
                         }
                         tx.commit();

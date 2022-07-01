@@ -102,7 +102,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         if (!super.validate(dir)) return false;
         BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
-        return TesseractPlatformUtils.getCapability(tile, TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite()).isPresent() || AntimatterPlatformUtils.tileHasFEOrTRE(tile, dir);
+        return tile.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite()).isPresent() || AntimatterPlatformUtils.tileHasFEOrTRE(tile, dir);
     }
 
     @Override

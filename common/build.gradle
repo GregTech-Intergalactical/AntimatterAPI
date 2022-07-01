@@ -12,10 +12,20 @@ dependencies{
     compileOnly("com.blamejared.crafttweaker:CraftTweaker-common-1.18.2:${rootProject.crafttweaker_version}")
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     implementation(project(path: ":tesseract-common", configuration: "namedElements"))
-    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-caps:${rootProject.fabricated_forge_hash}")
-    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-recipe-api:${rootProject.fabricated_forge_hash}")
-    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}")
-    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-datagen:${rootProject.fabricated_forge_hash}")
+    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-caps:${rootProject.fabricated_forge_hash}"){
+        transitive = false
+    }
+    modCompileOnly("net.fabricmc.fabric-api:fabric-transfer-api-v1:${rootProject.fabric_transfer_api_version}")
+    modCompileOnly("io.github.fabricators_of_create:Porting-Lib:1.1.310-beta+1.18.2-dev.${rootProject.port_lib_hash}"){ transitive(false) }
+    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-recipe-api:${rootProject.fabricated_forge_hash}"){
+        transitive = false
+    }
+    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}"){
+        transitive = false
+    }
+    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-datagen:${rootProject.fabricated_forge_hash}"){
+        transitive = false
+    }
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     implementation("com.github.Trinsdar:forgeconfigapiport-fabric:abc19f9a99"){

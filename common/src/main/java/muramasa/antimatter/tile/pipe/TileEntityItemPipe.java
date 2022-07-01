@@ -66,7 +66,7 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
         BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null)
             return false;
-        return TesseractPlatformUtils.getCapability(tile, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
+        return tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite()).isPresent();
     }
 
     @Override
