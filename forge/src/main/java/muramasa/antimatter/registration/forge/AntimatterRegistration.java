@@ -6,6 +6,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.event.MaterialEvent;
+import muramasa.antimatter.event.forge.AntimatterMaterialEvent;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
@@ -26,6 +27,7 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -61,12 +63,14 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
             List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
             list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistry()))));
-            AntimatterAPI.all(SoundEvent.class, t -> {
-                if (t.getRegistryName() == null) t.setRegistryName(t.getLocation());
-            });
-            MaterialEvent event = new MaterialEvent();
-            AntimatterPlatformUtils.postMaterialEvent(Antimatter.INSTANCE, event);
-            AntimatterKubeJS.loadMaterialEvent(event);
+            if (e.getRegistry() == ForgeRegistries.BLOCKS) {
+                AntimatterAPI.all(SoundEvent.class, t -> {
+                    if (t.getRegistryName() == null) t.setRegistryName(t.getLocation());
+                });
+                MaterialEvent event = new MaterialEvent();
+                MinecraftForge.EVENT_BUS.post(new AntimatterMaterialEvent(Antimatter.INSTANCE, event));
+                AntimatterKubeJS.loadMaterialEvent(event);
+            }
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, b -> {

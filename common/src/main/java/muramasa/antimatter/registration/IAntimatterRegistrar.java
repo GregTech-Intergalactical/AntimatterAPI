@@ -2,9 +2,7 @@ package muramasa.antimatter.registration;
 
 ;
 
-public interface IAntimatterRegistrar extends IAntimatterObject {
-
-    default void onInitialize(){}
+public interface IAntimatterRegistrar extends IAntimatterObject, IAntimatterRegistrarInitializer {
 
     default String getDomain() {
         return getId();

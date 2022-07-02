@@ -1,18 +1,17 @@
 package muramasa.antimatter.datagen.loaders;
 
 import com.google.common.collect.ImmutableMap;
-import dev.latvian.mods.kubejs.util.Tags;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 
 import java.util.Collections;
@@ -45,13 +44,13 @@ public class Tools {
         }
 
         provider.addToolRecipe(ARMOR_BUILDER.get(HELMET.getId()), consumer, Ref.ID, HELMET.getId() + "_recipe", "antimatter_helmets",
-                "has_wrench", in, Collections.singletonList(HELMET.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI");
+                "has_wrench", in, Collections.singletonList(HELMET.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI");
         provider.addToolRecipe(ARMOR_BUILDER.get(CHESTPLATE.getId()), consumer, Ref.ID, CHESTPLATE.getId() + "_recipe", "antimatter_chestplates",
-                "has_wrench", in, Collections.singletonList(CHESTPLATE.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(ARMOR).build(), 'H', HAMMER.getTag()), "IHI", "III", "III");
+                "has_wrench", in, Collections.singletonList(CHESTPLATE.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', HAMMER.getTag()), "IHI", "III", "III");
         provider.addToolRecipe(ARMOR_BUILDER.get(LEGGINGS.getId()), consumer, Ref.ID, LEGGINGS.getId() + "_recipe", "antimatter_leggings",
-                "has_wrench", in, Collections.singletonList(LEGGINGS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI", "I I");
+                "has_wrench", in, Collections.singletonList(LEGGINGS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI", "I I");
         provider.addToolRecipe(ARMOR_BUILDER.get(BOOTS.getId()), consumer, Ref.ID, BOOTS.getId() + "_recipe", "antimatter_boots",
-                "has_wrench", in, Collections.singletonList(BOOTS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(ARMOR).build(), 'H', HAMMER.getTag()), "I I", "IHI");
+                "has_wrench", in, Collections.singletonList(BOOTS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', HAMMER.getTag()), "I I", "IHI");
 
             /*addToolRecipe(TOOL_BUILDER.get(PLUNGER.getId()), consumer, muramasa.antimatter.Ref.ID, PLUNGER.getId() + "_recipe", "antimatter_plungers",
                     "has_wrench", in, Collections.singletonList(PLUNGER.getToolStack(NULL, NULL)),

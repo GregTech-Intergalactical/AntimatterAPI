@@ -31,7 +31,7 @@ public class MaterialTags {
     /**
      * ETC
      **/
-    public static final MaterialTag HANDLE = new MaterialTag("handle");
+    public static final HandleMaterialTag HANDLE = new HandleMaterialTag();
     /**
      * PIPES
      **/
@@ -55,4 +55,7 @@ public class MaterialTags {
     public static final NumberMaterialTag ORE_MULTI = new NumberMaterialTag("ore_multi");
     public static final NumberMaterialTag SMELTING_MULTI = new NumberMaterialTag("smelting_multi");
     public static final NumberMaterialTag BY_PRODUCT_MULTI = new NumberMaterialTag("by_product_multi");
+    //Dummy Types
+    public static ToolMaterialTag TOOLS = new ToolMaterialTag();
+    public static ArmorMaterialTag ARMOR = new ArmorMaterialTag();
 }

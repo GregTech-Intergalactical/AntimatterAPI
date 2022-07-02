@@ -4,6 +4,7 @@ package muramasa.antimatter.forge;
 import muramasa.antimatter.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
+import muramasa.antimatter.event.forge.AntimatterMaterialEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.proxy.ClientHandler;
@@ -45,6 +46,11 @@ public class AntimatterImpl {
 
         MinecraftForge.EVENT_BUS.addListener(this::addCraftingLoaders);
         MinecraftForge.EVENT_BUS.addListener(this::providers);
+        MinecraftForge.EVENT_BUS.addListener(this::onMaterialRegister);
+    }
+
+    private void onMaterialRegister(AntimatterMaterialEvent event){
+        MaterialDataInit.onMaterialEvent(event.getMaterialEvent());
     }
 
     private void addCraftingLoaders(AntimatterCraftingEvent ev) {

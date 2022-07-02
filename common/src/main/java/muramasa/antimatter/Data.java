@@ -119,32 +119,28 @@ public class Data {
     public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> GAS = new MaterialTypeFluid<>("gas", 1, true, -1);
     public static MaterialTypeFluid<MaterialTypeFluid.IFluidGetter> PLASMA = new MaterialTypeFluid<>("plasma", 1, true, -1);
 
-    //Dummy Types
-    public static MaterialType<?> TOOLS = new MaterialType<>("tools", 1, false, -1).nonGen();
-    public static MaterialType<?> ARMOR = new MaterialType<>("armor", 1, false, -1).nonGen();
-
-    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F));
+    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE));
 
     //Vanilla Stone Materials
-    public static Material Stone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "stone", 0xcdcdcd, NONE).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F));
-    public static Material Granite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "granite", 0xa07882, NONE).asDust(ROCK));
-    public static Material Diorite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "diorite", 0xf0f0f0, NONE).asDust(ROCK));
-    public static Material Andesite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "andesite", 0xbfbfbf, NONE).asDust(ROCK));
-    public static Material Deepslate = AntimatterAPI.register(Material.class, new Material(Ref.ID, "deepslate", 0x1e1414, NONE).asDust(ROCK));
-    public static Material Tuff = AntimatterAPI.register(Material.class, new Material(Ref.ID, "tuff", 0x392923, NONE).asDust(ROCK));
+    public static Material Stone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "stone", 0xcdcdcd, NONE));
+    public static Material Granite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "granite", 0xa07882, NONE));
+    public static Material Diorite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "diorite", 0xf0f0f0, NONE));
+    public static Material Andesite = AntimatterAPI.register(Material.class, new Material(Ref.ID, "andesite", 0xbfbfbf, NONE));
+    public static Material Deepslate = AntimatterAPI.register(Material.class, new Material(Ref.ID, "deepslate", 0x1e1414, NONE));
+    public static Material Tuff = AntimatterAPI.register(Material.class, new Material(Ref.ID, "tuff", 0x392923, NONE));
 
-    public static Material Gravel = AntimatterAPI.register(Material.class, new Material(Ref.ID, "gravel", 0xcdcdcd, NONE).asDust(ROCK));
-    public static Material Dirt = AntimatterAPI.register(Material.class, new Material(Ref.ID, "dirt", 0x976d4d, NONE)).asDust(ROCK);
-    public static Material Sand = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sand", 0xfafac8, NONE).asDust(ROCK));
-    public static Material RedSand = AntimatterAPI.register(Material.class, new Material(Ref.ID, "red_sand", 0xff8438, NONE).asDust(ROCK));
-    public static Material Sandstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sandstone", 0xfafac8, NONE).asDust(ROCK));
-    public static Material Blackstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "blackstone", 0x2c272d, NONE).asDust());
-    public static Material Basalt = AntimatterAPI.register(Material.class, new Material(Ref.ID, "basalt", 0x1e1414, ROUGH)).asDust(ROCK);
-    public static Material Endstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "endstone", 0xffffff, NONE).asDust());
-    public static Material Netherrack = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherrack", 0xc80000, NONE).asDust());
+    public static Material Gravel = AntimatterAPI.register(Material.class, new Material(Ref.ID, "gravel", 0xcdcdcd, NONE));
+    public static Material Dirt = AntimatterAPI.register(Material.class, new Material(Ref.ID, "dirt", 0x976d4d, NONE));
+    public static Material Sand = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sand", 0xfafac8, NONE));
+    public static Material RedSand = AntimatterAPI.register(Material.class, new Material(Ref.ID, "red_sand", 0xff8438, NONE));
+    public static Material Sandstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "sandstone", 0xfafac8, NONE));
+    public static Material Blackstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "blackstone", 0x2c272d, NONE));
+    public static Material Basalt = AntimatterAPI.register(Material.class, new Material(Ref.ID, "basalt", 0x1e1414, ROUGH));
+    public static Material Endstone = AntimatterAPI.register(Material.class, new Material(Ref.ID, "endstone", 0xffffff, NONE));
+    public static Material Netherrack = AntimatterAPI.register(Material.class, new Material(Ref.ID, "netherrack", 0xc80000, NONE));
 
-    public static Material Prismarine = AntimatterAPI.register(Material.class, new Material(Ref.ID, "prismarine", 0x6eb2a5, NONE)).asDust();
-    public static Material DarkPrismarine = AntimatterAPI.register(Material.class, new Material(Ref.ID, "dark_prismarine", 0x587d6c, NONE)).asDust();
+    public static Material Prismarine = AntimatterAPI.register(Material.class, new Material(Ref.ID, "prismarine", 0x6eb2a5, NONE));
+    public static Material DarkPrismarine = AntimatterAPI.register(Material.class, new Material(Ref.ID, "dark_prismarine", 0x587d6c, NONE));
 
     public static StoneType STONE = AntimatterAPI.register(StoneType.class, new StoneType(Ref.ID, "stone", Stone, new Texture("minecraft", "block/stone"), SoundType.STONE, false).setState(Blocks.STONE));
 

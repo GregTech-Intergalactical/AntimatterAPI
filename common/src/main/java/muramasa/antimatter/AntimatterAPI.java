@@ -392,7 +392,7 @@ public final class AntimatterAPI {
         Side side = AntimatterPlatformUtils.isServer() ? Side.SERVER
                 : Side.CLIENT;
         if (!REGISTRATION_EVENTS_HANDLED.add(event)) {
-            if (AntimatterPlatformUtils.getActiveNamespace().equals(Ref.ID))
+            if (AntimatterPlatformUtils.isForge() && AntimatterPlatformUtils.getActiveNamespace().equals(Ref.ID))
                 return;
             throw new IllegalStateException("The RegistrationEvent " + event.name() + " has already been handled");
         }

@@ -38,6 +38,11 @@ public class Antimatter extends AntimatterMod {
 
     public Antimatter() {
         super();
+    }
+
+    @Override
+    public void onRegistrarInit() {
+        super.onRegistrarInit();
         LOGGER.info("Loading Antimatter");
         INSTANCE = this;
 
@@ -55,9 +60,6 @@ public class Antimatter extends AntimatterMod {
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
                 g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us", g));
         AntimatterAPI.init();
-
-        //if (AntimatterAPI.isModLoaded(Ref.MOD_KJS))
-            //new KubeJSRegistrar();
     }
 
     public void addCraftingLoaders(CraftingEvent ev) {

@@ -32,6 +32,15 @@
     "fabric": "*",
     "tesseractapi": ">=0.1"
   },
+  "entrypoints": {
+    "main": [
+      "muramasa.antimatter.fabric.AntimatterImpl"
+    ],
+    "antimatter": [
+      "muramasa.antimatter.Antimatter",
+      "muramasa.antimatter.fabric.AntimatterRegistrarInitializer"
+    ]
+  },
   "custom": {
     "loom:injected_interfaces": {
     }

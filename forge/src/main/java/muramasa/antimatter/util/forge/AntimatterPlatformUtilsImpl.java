@@ -99,10 +99,6 @@ public class AntimatterPlatformUtilsImpl {
         return FMLEnvironment.dist.isClient() || EffectiveSide.get().isClient();
     }
 
-    public static Side getSide(){
-        return isClient() ? Side.CLIENT : Side.SERVER;
-    }
-
     public static String getActiveNamespace(){
         return ModLoadingContext.get().getActiveNamespace();
     }
@@ -241,9 +237,5 @@ public class AntimatterPlatformUtilsImpl {
 
     public static boolean areCapsCompatible(ItemStack a, ItemStack b){
         return a.areCapsCompatible(b);
-    }
-
-    public static<T> LazyOptional<T> getStackCap(Capability<T> cap, ItemStack stack){
-        return stack.getCapability(cap);
     }
 }

@@ -1,11 +1,13 @@
 package muramasa.antimatter;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
+import tesseract.TesseractPlatformUtils;
 
 ;import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +19,19 @@ public abstract class AntimatterMod implements IAntimatterRegistrar {
         void onGatherData(DataGenerator gen, String namespace, boolean includeClient, boolean includeServer);
     }
 
+    //TODO data gen event in fabricated forge api
     private static final Map<String, DataEvent> DATA_EVENTS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterMod() {
-        DATA_EVENTS.put(AntimatterPlatformUtils.getActiveNamespace(), this::onGatherData);
         //FMLJavaModLoadingContext.get().getModEventBus().addListener(EventPriority.LOWEST, this::onGatherData);
-        onInitialize();
+        if (TesseractPlatformUtils.isForge()){
+            onRegistrarInit();
+        }
     }
 
     @Override
-    public void onInitialize() {
+    public void onRegistrarInit() {
+        DATA_EVENTS.put(this.getDomain(), this::onGatherData);
         AntimatterAPI.addRegistrar(this);
     }
 

@@ -26,6 +26,6 @@ public class CapabilityIngredient extends Ingredient {
 
     @Override
     public boolean test(@Nullable ItemStack stack) {
-        return stack != null && AntimatterPlatformUtils.getStackCap(cap.get(), stack).isPresent();
+        return stack != null && stack.getCapability(cap.get()).isPresent();
     }
 }

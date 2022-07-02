@@ -26,6 +26,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.material.MaterialTags.ARMOR;
 import static muramasa.antimatter.material.MaterialTags.HANDLE;
 import static muramasa.antimatter.material.MaterialTags.METAL;
 
@@ -258,40 +259,33 @@ public class Material implements ISharedAntimatterObject {
 
     public Material addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
         if (has(INGOT))
-            flags(TOOLS, PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
-        else flags(TOOLS, ROD);
-        this.toolDamage = toolDamage;
-        this.toolSpeed = toolSpeed;
-        this.toolDurability = toolDurability;
-        this.toolQuality = toolQuality;
+            flags(PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
+        else flags(ROD);
+        List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
+        MaterialTags.TOOLS.add(this, new ToolMaterialTag.ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, toolEnchantment, toolTypesList));
         MaterialTags.MINING_LEVEL.add(this, toolQuality - 1);
-        this.toolEnchantment = toolEnchantment;
-        if (toolTypes.length > 0) {
-            this.toolTypes= Arrays.asList(toolTypes);
-        } else {
-            this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
-        }
-        if (this.toolTypes.contains(ELECTRIC_WRENCH)) flags(WRENCHBIT);
-        if (this.toolTypes.contains(BUZZSAW)) flags(BUZZSAW_BLADE);
-        if (this.toolTypes.contains(DRILL)) flags(DRILLBIT);
-        if (this.toolTypes.contains(CHAINSAW)) flags(CHAINSAWBIT);
+        if (toolTypesList.contains(ELECTRIC_WRENCH)) flags(WRENCHBIT);
+        if (toolTypesList.contains(BUZZSAW)) flags(BUZZSAW_BLADE);
+        if (toolTypesList.contains(DRILL)) flags(DRILLBIT);
+        if (toolTypesList.contains(CHAINSAW)) flags(CHAINSAWBIT);
         return this;
     }
 
     public Material addTools(Material derivedMaterial, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality, toolEnchantment);
+        ToolMaterialTag.ToolData data = MaterialTags.TOOLS.getToolData(derivedMaterial);
+        return addTools(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality(), toolEnchantment);
     }
 
     public Material addTools(Material derivedMaterial) {
-        return addTools(derivedMaterial.toolDamage, derivedMaterial.toolSpeed, derivedMaterial.toolDurability, derivedMaterial.toolQuality);
+        ToolMaterialTag.ToolData data = MaterialTags.TOOLS.getToolData(derivedMaterial);
+        return addTools(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality());
     }
 
     public Material setAllowedTypes(AntimatterToolType... toolTypes) {
-        if (toolTypes.length > 0) {
-            this.toolTypes = Arrays.asList(toolTypes);
-        } else {
-            this.toolTypes = AntimatterAPI.all(AntimatterToolType.class);
-        }
+        if (!has(MaterialTags.TOOLS)) return this;
+        ToolMaterialTag.ToolData data = MaterialTags.TOOLS.getToolData(this);
+        List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
+        MaterialTags.TOOLS.add(this, new ToolMaterialTag.ToolData(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality(), data.toolEnchantment(), toolTypesList));
         return this;
     }
 
@@ -300,26 +294,25 @@ public class Material implements ISharedAntimatterObject {
     }
 
     public Material addArmor(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        if (armor.length < 4) {
-            Antimatter.LOGGER.info("Material " + this.getId() + " unable to add armor, protection array must have at least 4 values");
+        if (armor.length != 4) {
+            Antimatter.LOGGER.info("Material " + this.getId() + " unable to add armor, protection array must have exactly 4 values");
             return this;
         }
-        if (has(INGOT)) flags(ARMOR, PLATE);
-        else flags(ARMOR);
-        this.armor = armor;
-        this.toughness = toughness;
-        this.armorDurabilityFactor = armorDurabilityFactor;
-        this.knockbackResistance = knockbackResistance;
-        this.armorEnchantment = toolEnchantment;
+        if (has(INGOT)) flags(PLATE);
+        MaterialTags.ARMOR.add(this, new ArmorMaterialTag.ArmorData(armor, toughness, knockbackResistance, armorDurabilityFactor, toolEnchantment));
         return this;
     }
 
     public Material addArmor(Material material, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        return addArmor(material.armor, material.toughness, material.knockbackResistance, material.armorDurabilityFactor, toolEnchantment);
+        if (!material.has(ARMOR)) return this;
+        ArmorMaterialTag.ArmorData data = ARMOR.getArmorData(material);
+        return addArmor(data.armor(), data.toughness(), data.knockbackResistance(), data.armorDurabilityFactor(), toolEnchantment);
     }
 
     public Material addArmor(Material material) {
-        return addArmor(material.armor, material.toughness, material.knockbackResistance, material.armorDurabilityFactor);
+        if (!material.has(ARMOR)) return this;
+        ArmorMaterialTag.ArmorData data = ARMOR.getArmorData(material);
+        return addArmor(data.armor(), data.toughness(), data.knockbackResistance(), data.armorDurabilityFactor());
     }
 
     public Material addHandleStat(int durability, float speed) {
@@ -328,11 +321,7 @@ public class Material implements ISharedAntimatterObject {
 
     public Material addHandleStat(int durability, float speed, ImmutableMap<Enchantment, Integer> toolEnchantment) {
         if (!has(ROD)) flags(ROD);
-        flags(HANDLE);
-        this.isHandle = true;
-        this.handleDurability = durability;
-        this.handleSpeed = speed;
-        this.handleEnchantment = toolEnchantment;
+        HANDLE.add(this, new HandleMaterialTag.HandleData(durability, speed, toolEnchantment));
         return this;
     }
 

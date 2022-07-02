@@ -9,4 +9,8 @@ public class AntimatterMaterialEvent extends AntimatterEvent {
         super(registrar);
         this.materialEvent = materialEvent;
     }
+
+    public MaterialEvent getMaterialEvent() {
+        return materialEvent;
+    }
 }

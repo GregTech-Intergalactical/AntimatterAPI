@@ -88,9 +88,8 @@ public class AntimatterPlatformUtils {
         return false;
     }
 
-    @ExpectPlatform
     public static Side getSide(){
-        return null;
+        return isClient() ? Side.CLIENT : Side.SERVER;
     }
 
     @ExpectPlatform
@@ -243,10 +242,5 @@ public class AntimatterPlatformUtils {
     @ExpectPlatform
     public static boolean areCapsCompatible(ItemStack a, ItemStack b){
         return true;
-    }
-
-    @ExpectPlatform
-    public static<T> LazyOptional<T> getStackCap(Capability<T> cap, ItemStack stack){
-        return LazyOptional.empty();
     }
 }
