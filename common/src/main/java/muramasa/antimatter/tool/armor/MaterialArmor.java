@@ -6,6 +6,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.tool.IAbstractToolMethods;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -67,19 +68,19 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        if (getMaterial(stack) == null) return super.getMaxDamage();
-        return MAX_DAMAGE_ARRAY[slot.getIndex()] * getMaterial(stack).getArmorDurabilityFactor();
+        if (getMaterial(stack) == null || !getMaterial(stack).has(MaterialTags.ARMOR)) return super.getMaxDamage();
+        return MAX_DAMAGE_ARRAY[slot.getIndex()] * MaterialTags.ARMOR.getArmorData(getMaterial(stack)).armorDurabilityFactor();
     }
 
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Material mat = getMaterial(stack);
-        if (mat == null || mat == NULL || slotType != this.slot) return super.getDefaultAttributeModifiers(slotType);
+        if (mat == null || mat == NULL || !mat.has(MaterialTags.ARMOR) || slotType != this.slot) return super.getDefaultAttributeModifiers(slotType);
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
-        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDefenseForSlot(slot) + mat.getArmor()[slot.getIndex()], AttributeModifier.Operation.ADDITION));
-        modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + mat.getToughness(), AttributeModifier.Operation.ADDITION));
-        modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", mat.getKnockbackResistance(), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDefenseForSlot(slot) + MaterialTags.ARMOR.getArmorData(mat).armor()[slot.getIndex()], AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + MaterialTags.ARMOR.getArmorData(mat).toughness(), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", MaterialTags.ARMOR.getArmorData(mat).knockbackResistance(), AttributeModifier.Operation.ADDITION));
         return modifiers;
     }
 

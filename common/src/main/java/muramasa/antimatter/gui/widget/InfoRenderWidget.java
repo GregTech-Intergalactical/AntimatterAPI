@@ -11,6 +11,7 @@ import muramasa.antimatter.tile.pipe.TileEntityFluidPipe;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.FluidPlatformUtils;
 import tesseract.Tesseract;
 import tesseract.TesseractPlatformUtils;
 import tesseract.api.ITickingController;
@@ -181,7 +182,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                     Set<FluidHolder.SetHolder> fluids = holder.getFluids();
                     if (fluids != null && fluids.size() > 0) {
                         long pressure = holder.tickPressure*20 - holder.getPressureAvailable();
-                        return new FluidStack(fluids.iterator().next().fluid, TesseractPlatformUtils.isForge() ? ((int)pressure) : pressure);
+                        return FluidPlatformUtils.createFluidStack(fluids.iterator().next().fluid, pressure);
                     }
                 }
                 return FluidStack.EMPTY;

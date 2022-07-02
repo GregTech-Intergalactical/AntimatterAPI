@@ -2,6 +2,7 @@ package muramasa.antimatter.block;
 
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
@@ -74,9 +75,10 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
             if (entity.isInWater())
                 entity.setDeltaMovement(entity.getDeltaMovement().x, 0.02D, entity.getDeltaMovement().z);
             else entity.setDeltaMovement(entity.getDeltaMovement().x, 0.08D, entity.getDeltaMovement().z);
-        } else if (entity.horizontalCollision)
-            entity.setDeltaMovement(entity.getDeltaMovement().x, 0.22D + (material.getToolSpeed() / 75), entity.getDeltaMovement().z);
-        else
+        } else if (entity.horizontalCollision) {
+            float toolSpeed = material.has(MaterialTags.TOOLS) ? MaterialTags.TOOLS.getToolData(material).toolSpeed() : 0;
+            entity.setDeltaMovement(entity.getDeltaMovement().x, 0.22D + (toolSpeed / 75), entity.getDeltaMovement().z);
+        } else
             entity.setDeltaMovement(entity.getDeltaMovement().x, Math.max(entity.getDeltaMovement().y, -0.2D), entity.getDeltaMovement().z);
     }
 

@@ -28,6 +28,6 @@ public class MaterialTypeFluid<T> extends MaterialType<T> {
     }
 
     public interface IFluidGetter {
-        FluidStack get(Material m, int amount);
+        FluidStack get(Material m, long amount);
     }
 }

@@ -38,7 +38,7 @@ public class Tools {
                 "has_wrench", in, Collections.singletonList(HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(HAMMER, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
         provider.addToolRecipe(TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_" + "recipe", "antimatter_tools",
                 "has_wrench", in, Collections.singletonList(SOFT_HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(SOFT_HAMMER, true).tags(RUBBERTOOLS).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
-        if (Material.get("wood") != NULL && Material.get("wood").getToolTypes().contains(SOFT_HAMMER)) {
+        if (Material.get("wood") != NULL && Material.get("wood").has(MaterialTags.TOOLS) && MaterialTags.TOOLS.getToolData(Material.get("wood")).toolTypes().contains(SOFT_HAMMER)) {
             provider.addToolRecipe(WOOD_TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_wood_" + "recipe", "antimatter_tools",
                     "has_wrench", in, Collections.singletonList(SOFT_HAMMER.getToolStack(Material.get("wood"), NULL)), of('I', ItemTags.PLANKS, 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
         }

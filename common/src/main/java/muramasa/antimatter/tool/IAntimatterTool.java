@@ -10,6 +10,7 @@ import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
@@ -111,13 +112,17 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         Item item = (Item) this;
         ItemStack stack = new ItemStack(item);
         validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
-        Map<Enchantment, Integer> mainEnchants = primary.getToolEnchantments(), handleEnchants = secondary.getHandleEnchantments();
+        if (!primary.has(MaterialTags.TOOLS) || (!secondary.has(MaterialTags.HANDLE) && secondary != NULL)){
+            return stack;
+        }
+        Map<Enchantment, Integer> mainEnchants = MaterialTags.TOOLS.getToolData(primary).toolEnchantment(), handleEnchants = MaterialTags.HANDLE.getHandleData(secondary).toolEnchantment();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack)).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
             //return stack;
         }
-        if (!handleEnchants.isEmpty())
+        if (!handleEnchants.isEmpty()) {
             handleEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack) && !mainEnchants.containsKey(e.getKey())).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
+        }
         return stack;
     }
 
@@ -151,6 +156,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         } else list.add(asItemStack(NULL, NULL));
     }
 
+    @SuppressWarnings("NoTranslation")
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);

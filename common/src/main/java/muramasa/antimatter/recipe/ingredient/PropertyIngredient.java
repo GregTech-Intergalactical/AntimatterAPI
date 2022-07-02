@@ -14,6 +14,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -64,8 +65,8 @@ public class PropertyIngredient extends Ingredient {
         Stream<Value> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new MultiItemValue(TagUtils.nc(t).getValues().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new MultiItemValue((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
             boolean ok = t.has(tags);
             boolean types = true;
-            if (tools.size() > 0) {
-                Set<AntimatterToolType> set = new HashSet<>(t.getToolTypes());
+            if (tools.size() > 0 && t.has(MaterialTags.TOOLS)) {
+                Set<AntimatterToolType> set = new HashSet<>(MaterialTags.TOOLS.getToolData(t).toolTypes());
                 for (Object2BooleanMap.Entry<AntimatterToolType> entry : tools.object2BooleanEntrySet()) {
                     types &= entry.getBooleanValue() == set.contains(entry.getKey());
                 }

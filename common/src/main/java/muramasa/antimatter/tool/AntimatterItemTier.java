@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -26,8 +27,8 @@ public class AntimatterItemTier implements Tier {
     }
 
     AntimatterItemTier(@Nonnull Material primary, @Nonnull Material secondary) {
-        this.primary = primary;
-        this.secondary = secondary;
+        this.primary = primary.has(MaterialTags.TOOLS) ? primary : Data.NULL;
+        this.secondary = secondary.has(MaterialTags.HANDLE) ? secondary : Data.NULL;
     }
 
     public static Optional<AntimatterItemTier> get(int key) {
@@ -44,22 +45,22 @@ public class AntimatterItemTier implements Tier {
 
     @Override
     public int getUses() {
-        return primary.getToolDurability() + secondary.getHandleDurability();
+        return MaterialTags.TOOLS.getToolData(primary).toolDurability() + MaterialTags.HANDLE.getHandleData(secondary).durability();
     }
 
     @Override
     public float getSpeed() {
-        return primary.getToolSpeed() + secondary.getHandleSpeed();
+        return MaterialTags.TOOLS.getToolData(primary).toolSpeed() + MaterialTags.HANDLE.getHandleData(secondary).speed();
     }
 
     @Override
     public float getAttackDamageBonus() {
-        return primary.getToolDamage();
+        return MaterialTags.TOOLS.getToolData(primary).toolDamage();
     }
 
     @Override
     public int getLevel() {
-        return primary.getToolQuality();
+        return MaterialTags.TOOLS.getToolData(primary).toolQuality();
     }
 
     @Override

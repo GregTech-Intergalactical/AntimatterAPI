@@ -17,6 +17,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.Tesseract;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,21 +47,6 @@ public class Material implements ISharedAntimatterObject {
      **/
     private Element element;
     private String chemicalFormula = null;
-
-    /**
-     * Tool Members
-     **/
-    private float toolDamage, toolSpeed, toughness, knockbackResistance;
-    private int toolDurability, toolQuality, armorDurabilityFactor;
-    private int[] armor;
-    private boolean isHandle;
-    private int handleDurability;
-    private float handleSpeed;
-    private ImmutableMap<Enchantment, Integer> toolEnchantment;
-    private ImmutableMap<Enchantment, Integer> armorEnchantment;
-    private ImmutableMap<Enchantment, Integer> handleEnchantment;
-    private List<AntimatterToolType> toolTypes;
-
     /**
      * Ore members
      **/
@@ -447,65 +433,6 @@ public class Material implements ISharedAntimatterObject {
     /**
      * Tool Getters
      **/
-    public float getToolDamage() {
-        return toolDamage;
-    }
-
-    public float getToolSpeed() {
-        return toolSpeed;
-    }
-
-    public int getToolDurability() {
-        return toolDurability;
-    }
-
-    public int getToolQuality() {
-        return toolQuality;
-    }
-
-    public Map<Enchantment, Integer> getToolEnchantments() {
-        return toolEnchantment != null ? toolEnchantment : Collections.emptyMap();
-    }
-
-    public Map<Enchantment, Integer> getArmorEnchantments() {
-        return armorEnchantment != null ? armorEnchantment : Collections.emptyMap();
-    }
-
-    public Map<Enchantment, Integer> getHandleEnchantments() {
-        return handleEnchantment != null ? handleEnchantment : Collections.emptyMap();
-    }
-
-    public int getArmorDurabilityFactor() {
-        return armorDurabilityFactor;
-    }
-
-    public int[] getArmor() {
-        return armor;
-    }
-
-    public float getToughness() {
-        return toughness;
-    }
-
-    public float getKnockbackResistance() {
-        return knockbackResistance;
-    }
-
-    public List<AntimatterToolType> getToolTypes() {
-        return toolTypes != null ? toolTypes : Collections.emptyList();
-    }
-
-    public boolean isHandle() {
-        return isHandle;
-    }
-
-    public int getHandleDurability() {
-        return handleDurability;
-    }
-
-    public float getHandleSpeed() {
-        return handleSpeed;
-    }
 
     public IntRange getExpRange() {
         return expRange;
@@ -526,16 +453,28 @@ public class Material implements ISharedAntimatterObject {
         return PLASMA.get().get(this, 1).getFluid();
     }
 
-    public FluidStack getLiquid(int amount) {
-        return LIQUID.get().get(this, amount);
+    public FluidStack getLiquid(long droplets) {
+        return LIQUID.get().get(this, droplets);
     }
 
-    public FluidStack getGas(int amount) {
-        return GAS.get().get(this, amount);
+    public FluidStack getGas(long droplets) {
+        return GAS.get().get(this, droplets);
     }
 
-    public FluidStack getPlasma(int amount) {
-        return PLASMA.get().get(this, amount);
+    public FluidStack getPlasma(long droplets) {
+        return PLASMA.get().get(this, droplets);
+    }
+
+    public FluidStack getLiquid(int mb) {
+        return this.getLiquid(mb * Tesseract.dropletMultiplier);
+    }
+
+    public FluidStack getGas(int mb) {
+        return this.getGas(mb * Tesseract.dropletMultiplier);
+    }
+
+    public FluidStack getPlasma(int mb) {
+        return this.getPlasma(mb * Tesseract.dropletMultiplier);
     }
 
     /**
