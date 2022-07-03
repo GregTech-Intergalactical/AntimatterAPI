@@ -123,7 +123,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         return true;
     }
 
-    protected void tryFillCell(int slot, int maxFill) {
+    protected void tryFillCell(int slot, long maxFill) {
         if (tile.itemHandler.map(MachineItemHandler::getCellCount).orElse(0) > 0) {
             fillCell(slot, maxFill);
         }
