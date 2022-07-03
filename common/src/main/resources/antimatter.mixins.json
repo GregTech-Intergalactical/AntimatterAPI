@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "antimatter.refmap.json",
   "client": [
-    "client.VertexFormatAccessor",
+    "client.AbstractContainerAccessor",
     "client.BlockElementAccessor",
     "client.BlockModelAccessor",
     "client.ChunkReaderAccessor",
@@ -15,7 +15,8 @@
     "client.ItemTransformDeserializerAccessor",
     "client.LevelRendererAccessor",
     "client.MultiPlayerGameModeAccessor",
-    "client.TESRMixin"
+    "client.TESRMixin",
+    "client.VertexFormatAccessor"
   ],
   "mixins": [
     "BiomeAccessor",
