@@ -8,6 +8,7 @@ import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
@@ -68,6 +69,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         if (allowdedIn(group) && getType().isVisible()) items.add(new ItemStack(this));
     }
 
+    @SuppressWarnings("NoTranslation")
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         //Here only add specific types, events are handled below.
@@ -76,11 +78,13 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         }
     }
 
+    @SuppressWarnings("NoTranslation")
     public static void addTooltipsForMaterialItems(ItemStack stack, Material mat, MaterialType<?> type, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         if (!mat.getChemicalFormula().isEmpty()) {
             if (Screen.hasShiftDown()) {
                 tooltip.add(new TranslatableComponent("antimatter.tooltip.chemical_formula").append(": ").append(new TextComponent(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA)));
                 tooltip.add(new TranslatableComponent("antimatter.tooltip.mass").append(": ").append(new TextComponent(mat.getMass() + "").withStyle(ChatFormatting.DARK_AQUA)));
+                tooltip.add(new TranslatableComponent("antimatter.tooltip.material_modid", AntimatterPlatformUtils.getModName(mat.materialDomain())));
             } else {
                 tooltip.add(new TranslatableComponent("antimatter.tooltip.formula").withStyle(ChatFormatting.AQUA).withStyle(ChatFormatting.ITALIC));
             }

@@ -47,6 +47,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
@@ -113,6 +114,10 @@ public class AntimatterPlatformUtilsImpl {
 
     public static boolean isForge(){
         return true;
+    }
+
+    public static String getModName(String modid){
+        return ModList.get().getModContainerById(modid).map(m -> m.getModInfo().getDisplayName()).orElse(modid);
     }
 
     public static boolean blockExists(ResourceLocation id){

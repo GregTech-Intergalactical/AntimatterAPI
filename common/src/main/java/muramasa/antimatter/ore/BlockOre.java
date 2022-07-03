@@ -2,6 +2,7 @@ package muramasa.antimatter.ore;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
@@ -211,12 +212,12 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     //TODO figure out fabric alternative
     //@Override
     public int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silktouch) {
-        if (silktouch == 0 && material.getExpRange() != null) {
+        if (silktouch == 0 && material.has(MaterialTags.EXP_RANGE)) {
             List<ItemStack> self = getDrops(state, ((ServerLevel) world), pos, world.getBlockEntity(pos));
             if (self.stream().anyMatch(i -> i.getItem() == this.asItem())) {
                 return 0;
             }
-            return 1;
+            return MaterialTags.EXP_RANGE.getIntRange(material).sample(((ServerLevel) world).getRandom());
         }
         return 0;
     }

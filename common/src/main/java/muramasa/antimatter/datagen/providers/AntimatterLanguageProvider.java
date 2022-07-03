@@ -238,6 +238,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.energy", "Energy");
         add("antimatter.tooltip.heat_capacity", "Heat capacity");
         add("antimatter.tooltip.heat_capacity_total", "Heat capacity (total)");
+        add("antimatter.tooltip.material_modid", "Added by: %s");
     }
 
     private final void pipeTranslations() {

@@ -1,6 +1,7 @@
 package muramasa.antimatter.event;
 
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
@@ -8,13 +9,16 @@ import muramasa.antimatter.material.ArmorMaterialTag;
 import muramasa.antimatter.material.HandleMaterialTag;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialStack;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.ToolMaterialTag;
 import muramasa.antimatter.tool.AntimatterToolType;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTags.ARMOR;
@@ -251,15 +255,14 @@ public class MaterialEvent {
         return this;
     }
 
-    /*public MaterialEvent setExpRange(IntRange expRange) {
-        this.expRange = expRange;
+    public MaterialEvent setExpRange(UniformInt expRange) {
+        MaterialTags.EXP_RANGE.add(this.material, expRange);
         return this;
     }
 
     public MaterialEvent setExpRange(int min, int max) {
-        this.expRange = IntRange.range(min, max);
-        return this;
-    }*/
+        return this.setExpRange(UniformInt.of(min, max));
+    }
 
     public void remove(IMaterialTag... tags) {
         if (!this.material.enabled) return;
@@ -268,14 +271,59 @@ public class MaterialEvent {
         }
     }
 
-    /*public MaterialEvent mats(Function<ImmutableMap.Builder<Material, Integer>, ImmutableMap.Builder<Material, Integer>> func) {
+    public MaterialEvent mats(Function<ImmutableMap.Builder<Material, Integer>, ImmutableMap.Builder<Material, Integer>> func) {
         if (!this.material.enabled) return this;
         return mats(func.apply(new ImmutableMap.Builder<>()).build());
     }
 
     public MaterialEvent mats(ImmutableMap<Material, Integer> stacks) {
         if (!this.material.enabled) return this;
-        stacks.forEach((k, v) -> processInto.add(new MaterialStack(k, v)));
+        stacks.forEach((k, v) -> MaterialTags.PROCESS_INTO.add(this.material, new MaterialStack(k, v)));
         return this;
-    }*/
+    }
+
+    /**
+     * Processing Getters/Setters
+     **/
+
+    public MaterialEvent setOreMulti(int multi) {
+        MaterialTags.ORE_MULTI.add(this.material, multi);
+        return this;
+    }
+
+    public MaterialEvent setSmeltingMulti(int multi) {
+        MaterialTags.SMELTING_MULTI.add(this.material, multi);
+        return this;
+    }
+
+    public MaterialEvent setByProductMulti(int multi) {
+        MaterialTags.BY_PRODUCT_MULTI.add(this.material, multi);
+        return this;
+    }
+
+    public MaterialEvent setSmeltInto(Material m) {
+        MaterialTags.SMELT_INTO.add(this.material, m);
+        return this;
+    }
+
+    public MaterialEvent setDirectSmeltInto(Material m) {
+        MaterialTags.DIRECT_SMELT_INTO.add(this.material, m);
+        return this;
+    }
+
+    public MaterialEvent setArcSmeltInto(Material m) {
+        MaterialTags.ARC_SMELT_INTO.add(this.material, m);
+        return this;
+    }
+
+    public MaterialEvent setMacerateInto(Material m) {
+        MaterialTags.MACERATE_INTO.add(this.material, m);
+        return this;
+    }
+
+    public MaterialEvent addByProduct(Material... mats) {
+        MaterialTags.BYPRODUCTS.add(this.material, new ObjectArrayList<>());
+        MaterialTags.BYPRODUCTS.getList(this.material).addAll(Arrays.asList(mats));
+        return this;
+    }
 }

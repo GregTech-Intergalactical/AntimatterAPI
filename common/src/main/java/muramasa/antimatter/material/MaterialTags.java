@@ -28,6 +28,8 @@ public class MaterialTags {
     public static final MaterialTag METAL = new MaterialTag("metal");
     public static final MaterialTag ELEMENTAL = new MaterialTag("elemental");
     public static final MaterialTag FLINT = new MaterialTag("flint");
+
+    public static final IntRangeMaterialTag EXP_RANGE = new IntRangeMaterialTag("exp_range");
     /**
      * ETC
      **/
@@ -55,6 +57,10 @@ public class MaterialTags {
     public static final NumberMaterialTag ORE_MULTI = new NumberMaterialTag("ore_multi");
     public static final NumberMaterialTag SMELTING_MULTI = new NumberMaterialTag("smelting_multi");
     public static final NumberMaterialTag BY_PRODUCT_MULTI = new NumberMaterialTag("by_product_multi");
+
+    public static final ListMaterialTag<MaterialStack> PROCESS_INTO = new ListMaterialTag<>("process_into");
+
+    public static final ListMaterialTag<Material> BYPRODUCTS = new ListMaterialTag<>("byproducts");
     //Dummy Types
     public static ToolMaterialTag TOOLS = new ToolMaterialTag();
     public static ArmorMaterialTag ARMOR = new ArmorMaterialTag();

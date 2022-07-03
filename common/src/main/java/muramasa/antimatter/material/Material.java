@@ -12,6 +12,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.material.Fluid;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.Tesseract;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -47,18 +49,8 @@ public class Material implements ISharedAntimatterObject {
      **/
     private Element element;
     private String chemicalFormula = null;
-    /**
-     * Ore members
-     **/
-    private IntRange expRange = null;
 
     public final boolean enabled;
-
-    /**
-     * Processing Members
-     **/
-    private final List<MaterialStack> processInto = new ObjectArrayList<>();
-    private final List<Material> byProducts = new ObjectArrayList<>();
 
     public Material(String domain, String id, int rgb, TextureSet set, String... modIds) {
         this.domain = domain;
@@ -72,6 +64,8 @@ public class Material implements ISharedAntimatterObject {
         MaterialTags.DIRECT_SMELT_INTO.add(this, this);
         MaterialTags.ARC_SMELT_INTO.add(this, this);
         MaterialTags.MACERATE_INTO.add(this, this);
+        MaterialTags.PROCESS_INTO.add(this, new ObjectArrayList<>());
+        MaterialTags.BYPRODUCTS.add(this, new ObjectArrayList<>());
         if (modIds != null && modIds.length > 0) {
             for (String modId : modIds) {
                 if (!AntimatterAPI.isModLoaded(modId)) {
@@ -149,7 +143,7 @@ public class Material implements ISharedAntimatterObject {
     }
 
     public Material asOre(int minXp, int maxXp, boolean small, IMaterialTag... tags) {
-        this.expRange = IntRange.range(minXp, maxXp);
+        MaterialTags.EXP_RANGE.add(this, UniformInt.of(minXp, maxXp));
         return asOre(small, tags);
     }
 
@@ -329,14 +323,13 @@ public class Material implements ISharedAntimatterObject {
         return this;
     }
 
-    public Material setExpRange(IntRange expRange) {
-        this.expRange = expRange;
+    public Material setExpRange(UniformInt expRange) {
+        MaterialTags.EXP_RANGE.add(this, expRange);
         return this;
     }
 
     public Material setExpRange(int min, int max) {
-        this.expRange = IntRange.range(min, max);
-        return this;
+        return this.setExpRange(UniformInt.of(min, max));
     }
 
     public void remove(IMaterialTag... tags) {
@@ -353,7 +346,7 @@ public class Material implements ISharedAntimatterObject {
 
     public Material mats(ImmutableMap<Material, Integer> stacks) {
         if (!enabled) return this;
-        stacks.forEach((k, v) -> processInto.add(new MaterialStack(k, v)));
+        stacks.forEach((k, v) -> MaterialTags.PROCESS_INTO.add(this, new MaterialStack(k, v)));
         return this;
     }
 
@@ -361,9 +354,9 @@ public class Material implements ISharedAntimatterObject {
         if (!enabled) return;
         if (chemicalFormula != null) return;
         if (element != null) chemicalFormula = element.getElement();
-        else if (!processInto.isEmpty()) {
-            processInto.forEach(t -> t.m.setChemicalFormula());
-            chemicalFormula = String.join("", processInto.stream().map(MaterialStack::toString).collect(Collectors.joining()));
+        else if (!MaterialTags.PROCESS_INTO.getList(this).isEmpty()) {
+            MaterialTags.PROCESS_INTO.getList(this).forEach(t -> t.m.setChemicalFormula());
+            chemicalFormula = String.join("", MaterialTags.PROCESS_INTO.getList(this).stream().map(MaterialStack::toString).collect(Collectors.joining()));
         }
     }
 
@@ -388,9 +381,9 @@ public class Material implements ISharedAntimatterObject {
 
     public long getProtons() {
         if (element != null) return element.getProtons();
-        if (processInto.size() <= 0) return Element.Tc.getProtons();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getProtons();
         long rAmount = 0, tAmount = 0;
-        for (MaterialStack stack : processInto) {
+        for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getProtons();
         }
@@ -399,9 +392,9 @@ public class Material implements ISharedAntimatterObject {
 
     public long getNeutrons() {
         if (element != null) return element.getNeutrons();
-        if (processInto.size() <= 0) return Element.Tc.getNeutrons();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getNeutrons();
         long rAmount = 0, tAmount = 0;
-        for (MaterialStack stack : processInto) {
+        for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getNeutrons();
         }
@@ -410,9 +403,9 @@ public class Material implements ISharedAntimatterObject {
 
     public long getMass() {
         if (element != null) return element.getMass();
-        if (processInto.size() <= 0) return Element.Tc.getMass();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getMass();
         long rAmount = 0, tAmount = 0;
-        for (MaterialStack stack : processInto) {
+        for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getMass();
         }
@@ -428,14 +421,6 @@ public class Material implements ISharedAntimatterObject {
 
     public String getChemicalFormula() {
         return chemicalFormula == null ? "" : chemicalFormula;
-    }
-
-    /**
-     * Tool Getters
-     **/
-
-    public IntRange getExpRange() {
-        return expRange;
     }
 
     /**
@@ -517,19 +502,19 @@ public class Material implements ISharedAntimatterObject {
     }
 
     public List<MaterialStack> getProcessInto() {
-        return processInto;
+        return MaterialTags.PROCESS_INTO.getList(this);
     }
 
     public List<Material> getByProducts() {
-        return byProducts;
+        return MaterialTags.BYPRODUCTS.getList(this);
     }
 
     public boolean hasByProducts() {
-        return byProducts.size() > 0;
+        return MaterialTags.BYPRODUCTS.getList(this).size() > 0;
     }
 
     public Material addByProduct(Material... mats) {
-        byProducts.addAll(Arrays.asList(mats));
+        MaterialTags.BYPRODUCTS.getList(this).addAll(Arrays.asList(mats));
         return this;
     }
 

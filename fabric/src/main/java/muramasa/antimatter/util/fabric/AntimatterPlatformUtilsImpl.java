@@ -52,6 +52,10 @@ public class AntimatterPlatformUtilsImpl {
         return false;
     }
 
+    public static String getModName(String modid){
+        return FabricLoader.getInstance().getModContainer(modid).map(m -> m.getMetadata().getName()).orElse(modid);
+    }
+
     public static boolean blockExists(ResourceLocation id){
         return Registry.BLOCK.containsKey(id);
     }

@@ -112,6 +112,11 @@ public class AntimatterPlatformUtils {
     }
 
     @ExpectPlatform
+    public static String getModName(String modid){
+        return "";
+    }
+
+    @ExpectPlatform
     public static boolean blockExists(ResourceLocation id){
         return false;
     }
