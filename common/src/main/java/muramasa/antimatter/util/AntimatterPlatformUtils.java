@@ -88,6 +88,11 @@ public class AntimatterPlatformUtils {
         return false;
     }
 
+    @ExpectPlatform
+    public static boolean isProduction(){
+        return false;
+    }
+
     public static Side getSide(){
         return isClient() ? Side.CLIENT : Side.SERVER;
     }
@@ -180,6 +185,11 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static Collection<Item> getAllItems(){
+        return Collections.emptySet();
+    }
+
+    @ExpectPlatform
+    public static Collection<Fluid> getAllFluids(){
         return Collections.emptySet();
     }
 

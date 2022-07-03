@@ -42,7 +42,7 @@ public class AntimatterWorldGenerator {
                                 Predicate<Biome.BiomeCategory> validator) {
     }
     @FunctionalInterface
-    protected interface BiomeLoadEvent{
+    public interface BiomeLoadEvent{
         void accept(ResourceLocation name, Biome.ClimateSettings climate, Biome.BiomeCategory category, BiomeSpecialEffects effects, BiomeGenerationSettings.Builder gen, MobSpawnSettings.Builder spawns);
     }
 

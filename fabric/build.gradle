@@ -39,6 +39,9 @@ dependencies{
     modApi("teamreborn:energy:${project.energy_version}") {
         transitive = false
     }
+    implementation("com.github.Trinsdar:forgeconfigapiport-fabric:abc19f9a99"){
+        transitive = false
+    }
 }
 
 architectury {

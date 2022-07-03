@@ -58,6 +58,7 @@ import tesseract.api.gt.IEnergyHandler;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -98,6 +99,10 @@ public class AntimatterPlatformUtilsImpl {
 
     public static boolean isClient(){
         return FMLEnvironment.dist.isClient() || EffectiveSide.get().isClient();
+    }
+
+    public static boolean isProduction(){
+        return FMLEnvironment.production;
     }
 
     public static String getActiveNamespace(){
@@ -174,6 +179,10 @@ public class AntimatterPlatformUtilsImpl {
 
     public static Collection<Item> getAllItems(){
         return ForgeRegistries.ITEMS.getValues();
+    }
+
+    public static Collection<Fluid> getAllFluids(){
+        return ForgeRegistries.FLUIDS.getValues();
     }
 
     public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){

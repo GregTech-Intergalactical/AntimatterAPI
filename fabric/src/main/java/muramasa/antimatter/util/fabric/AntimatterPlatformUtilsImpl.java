@@ -29,6 +29,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.function.Supplier;
 
 public class AntimatterPlatformUtilsImpl {
@@ -50,6 +51,10 @@ public class AntimatterPlatformUtilsImpl {
 
     public static boolean isForge(){
         return false;
+    }
+
+    public static boolean isProduction(){
+        return !FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     public static String getModName(String modid){
@@ -98,6 +103,10 @@ public class AntimatterPlatformUtilsImpl {
 
     public static Collection<Item> getAllItems(){
         return Registry.ITEM.stream().toList();
+    }
+
+    public static Collection<Fluid> getAllFluids(){
+        return Registry.FLUID.stream().toList();
     }
 
     public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
