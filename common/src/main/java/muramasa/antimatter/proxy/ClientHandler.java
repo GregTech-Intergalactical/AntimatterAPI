@@ -76,7 +76,7 @@ public class ClientHandler implements IProxyHandler {
     }
 
     @ExpectPlatform
-    private static<T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
+    public static<T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
     }
 
     @SuppressWarnings({"unchecked", "unused"})
