@@ -272,9 +272,8 @@ public abstract class WorldSceneRenderer {
                         Block block = state.getBlock();
                         BlockEntity te = world.getBlockEntity(pos);
                         IModelData modelData = net.minecraftforge.client.model.data.EmptyModelData.INSTANCE;
-                        if (te instanceof TileEntityBase<?> base) {
-                            //todo compat with forge mods run by fabricated forge api
-                            modelData = base.getModelData();
+                        if (te != null) {
+                            modelData = te.getModelData();
                         }
                         if (block == Blocks.AIR) continue;
                         //todo abstract this

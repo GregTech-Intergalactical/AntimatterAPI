@@ -26,6 +26,9 @@ dependencies{
     modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-datagen:${rootProject.fabricated_forge_hash}"){
         transitive = false
     }
+    modImplementation("com.github.Trinsdar:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"){
+        transitive = false
+    }
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     implementation("com.github.Trinsdar:forgeconfigapiport-fabric:abc19f9a99"){
