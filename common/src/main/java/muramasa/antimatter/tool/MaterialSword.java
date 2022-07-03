@@ -28,6 +28,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -92,6 +93,11 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     @Override
     public ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary) {
         return resolveStack(primary, secondary, 0, maxEnergy);
+    }
+
+    @Override
+    public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
+        return false;
     }
 
     @Override
@@ -168,7 +174,6 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
-    @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlot.MAINHAND) {
@@ -178,13 +183,24 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return modifiers;
     }
 
+    //fabric method
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slotType) {
+        return this.getAttributeModifiers(slotType, stack);
+    }
+
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         return (entity instanceof Player && ((Player) entity).isCreative()) ? 0 : damage(stack, amount);
     }
 
+    @Override
     public int getItemEnchantability(ItemStack stack) {
         return getTier(stack).getEnchantmentValue();
+    }
+
+    public int getEnchantability(ItemStack stack)
+    {
+        return getItemEnchantability(stack);
     }
 
     @Override

@@ -136,6 +136,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return state.is(getAntimatterToolType().getToolType()) && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
     }
 
+    //fabric method
+    public boolean isSuitableFor(ItemStack stack, BlockState state) {
+        return this.isCorrectToolForDrops(stack, state);
+    }
+
     @Override
     public void onUseTick(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
         super.onUseTick(p_41428_, p_41429_, p_41430_, p_41431_);
@@ -226,7 +231,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
-    @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlot.MAINHAND) {
@@ -234,6 +238,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
             modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
         }
         return modifiers;
+    }
+
+    //fabric method
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slotType) {
+        return this.getAttributeModifiers(slotType, stack);
     }
 
 //    @Override
@@ -283,6 +292,11 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool {
     @Override
     public int getItemEnchantability(ItemStack stack) {
         return getTier(stack).getEnchantmentValue();
+    }
+
+    public int getEnchantability(ItemStack stack)
+    {
+        return getItemEnchantability(stack);
     }
 
     @Override

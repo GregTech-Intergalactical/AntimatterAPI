@@ -43,6 +43,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
@@ -312,4 +313,11 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         prov.tex(item, "minecraft:item/handheld", getTextures());
     }
 
+
+    // abstraction shit
+    boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player);
+
+    boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker);
+
+    int getItemEnchantability(ItemStack stack);
 }

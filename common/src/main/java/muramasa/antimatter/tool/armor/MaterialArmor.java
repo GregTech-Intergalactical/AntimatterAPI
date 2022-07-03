@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -22,11 +23,13 @@ import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.DyeableLeatherItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static muramasa.antimatter.Data.NULL;
 
@@ -67,21 +70,35 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
     }
 
     @Override
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
+        return amount;
+    }
+
+    @Override
     public int getMaxDamage(ItemStack stack) {
-        if (getMaterial(stack) == null || !getMaterial(stack).has(MaterialTags.ARMOR)) return super.getMaxDamage();
+        if (getMaterial(stack) == null || !getMaterial(stack).has(MaterialTags.ARMOR)) return stack.getItem().getMaxDamage();
         return MAX_DAMAGE_ARRAY[slot.getIndex()] * MaterialTags.ARMOR.getArmorData(getMaterial(stack)).armorDurabilityFactor();
     }
 
     @Override
+    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+        return enchantment.category.canEnchant(stack.getItem());
+    }
+
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Material mat = getMaterial(stack);
         if (mat == null || mat == NULL || !mat.has(MaterialTags.ARMOR) || slotType != this.slot) return super.getDefaultAttributeModifiers(slotType);
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
-        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", material.getDefenseForSlot(slot) + MaterialTags.ARMOR.getArmorData(mat).armor()[slot.getIndex()], AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", MaterialTags.ARMOR.getArmorData(mat).armor()[slot.getIndex()] + material.getDefenseForSlot(slot), AttributeModifier.Operation.ADDITION));
         modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + MaterialTags.ARMOR.getArmorData(mat).toughness(), AttributeModifier.Operation.ADDITION));
         modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", MaterialTags.ARMOR.getArmorData(mat).knockbackResistance(), AttributeModifier.Operation.ADDITION));
         return modifiers;
+    }
+
+    //fabric method
+    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slotType) {
+        return this.getAttributeModifiers(slotType, stack);
     }
 
     @Override

@@ -28,8 +28,8 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
     private final String domain, id;
     private final List<Component> tooltip = new ObjectArrayList<>();
     private final boolean repairable;
-    private final int durabilityFactor, baseArmor;
-    private final float baseToughness, baseKnockback;
+    private final int durabilityFactor, extraArmor;
+    private final float extraToughness, extraKnockback;
     private final CreativeModeTab itemGroup;
     private EquipmentSlot slot;
     private SoundEvent event;
@@ -43,20 +43,20 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
      * @param domain           unique identifier provided by the mod
      * @param id               unique identifier
      * @param durabilityFactor durability multiplier used to determine the durability of an armor piece, it is multiplied by these to determine the durability: 13(head), 15(chest), 16(legs), 11(feet)
-     * @param baseArmor        base armor protection that would be applied to item's attribute
-     * @param baseToughness    base toughness that would be applied to item's attribute
-     * @param baseKnockback    base knockback resistance that would be applied to the item's attributes
+     * @param extraArmor       extra armor protection that would be applied to item's attribute on top of material value
+     * @param extraToughness   extra toughness that would be applied to item's attribute on top of material value
+     * @param extraKnockback   extra knockback resistance that would be applied to the item's attributes on top of material value
      * @param slot             armor slot the item goes in
      * @return a brand new AntimatterArmorType for enjoyment
      */
-    public AntimatterArmorType(String domain, String id, int durabilityFactor, int baseArmor, float baseToughness, float baseKnockback, EquipmentSlot slot) {
+    public AntimatterArmorType(String domain, String id, int durabilityFactor, int extraArmor, float extraToughness, float extraKnockback, EquipmentSlot slot) {
         this.domain = domain;
         this.id = id;
         this.repairable = true;
         this.durabilityFactor = durabilityFactor;
-        this.baseArmor = baseArmor;
-        this.baseToughness = baseToughness;
-        this.baseKnockback = baseKnockback;
+        this.extraArmor = extraArmor;
+        this.extraToughness = extraToughness;
+        this.extraKnockback = extraKnockback;
         this.itemGroup = Ref.TAB_TOOLS;
         this.slot = slot;
         this.event = SoundEvents.ARMOR_EQUIP_IRON;
@@ -134,16 +134,16 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
         return durabilityFactor;
     }
 
-    public int getBaseArmor() {
-        return baseArmor;
+    public int getExtraArmor() {
+        return extraArmor;
     }
 
-    public float getBaseToughness() {
-        return baseToughness;
+    public float getExtraToughness() {
+        return extraToughness;
     }
 
-    public float getBaseKnockback() {
-        return baseKnockback;
+    public float getExtraKnockback() {
+        return extraKnockback;
     }
 
     public CreativeModeTab getItemGroup() {

@@ -21,7 +21,7 @@ public class MatArmorMaterial implements ArmorMaterial {
 
     @Override
     public int getDefenseForSlot(EquipmentSlot slotIn) {
-        return type.getBaseArmor();
+        return type.getExtraArmor();
     }
 
     @Override
@@ -46,11 +46,11 @@ public class MatArmorMaterial implements ArmorMaterial {
 
     @Override
     public float getToughness() {
-        return type.getBaseToughness();
+        return type.getExtraToughness();
     }
 
     @Override
     public float getKnockbackResistance() {
-        return type.getBaseKnockback();
+        return type.getExtraKnockback();
     }
 }
