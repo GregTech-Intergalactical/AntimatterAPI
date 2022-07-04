@@ -4,7 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "antimatter.refmap.json",
   "client": [
-    "client.AbstractContainerAccessor",
+    "client.AbstractContainerScreenAccessor",
     "client.BlockElementAccessor",
     "client.BlockModelAccessor",
     "client.ChunkReaderAccessor",
