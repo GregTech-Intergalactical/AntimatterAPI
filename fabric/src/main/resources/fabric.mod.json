@@ -37,8 +37,7 @@
       "muramasa.antimatter.fabric.AntimatterImpl"
     ],
     "antimatter": [
-      "muramasa.antimatter.Antimatter",
-      "muramasa.antimatter.fabric.AntimatterRegistrarInitializer"
+      "muramasa.antimatter.Antimatter"
     ]
   },
   "custom": {

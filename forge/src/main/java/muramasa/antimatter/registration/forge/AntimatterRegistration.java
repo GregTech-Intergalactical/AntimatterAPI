@@ -3,6 +3,7 @@ package muramasa.antimatter.registration.forge;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.MaterialDataInit;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.event.MaterialEvent;
@@ -68,6 +69,7 @@ public final class AntimatterRegistration {
                     if (t.getRegistryName() == null) t.setRegistryName(t.getLocation());
                 });
                 MaterialEvent event = new MaterialEvent();
+                MaterialDataInit.onMaterialEvent(event);
                 MinecraftForge.EVENT_BUS.post(new AntimatterMaterialEvent(Antimatter.INSTANCE, event));
                 AntimatterKubeJS.loadMaterialEvent(event);
             }

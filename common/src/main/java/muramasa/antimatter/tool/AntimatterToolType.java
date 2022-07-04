@@ -51,7 +51,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private int baseQuality, overlayLayers;
     private final float baseAttackDamage, baseAttackSpeed;
     private CreativeModeTab itemGroup;
-    private TagKey<Item> tag, forgeTag; // Set?
+    protected TagKey<Item> tag, forgeTag; // Set?
     private UseAnim useAction;
     private Class<? extends IAntimatterTool> toolClass;
     @Nullable
@@ -172,7 +172,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return new MaterialTool(domain, this, properties.get());
     }
 
-    private Item.Properties prepareInstantiation(String domain) {
+    protected Item.Properties prepareInstantiation(String domain) {
         if (domain.isEmpty()) Utils.onInvalidData("An AntimatterToolType was instantiated with an empty domain name!");
         return ToolUtils.getToolProperties(itemGroup, repairable);
     }

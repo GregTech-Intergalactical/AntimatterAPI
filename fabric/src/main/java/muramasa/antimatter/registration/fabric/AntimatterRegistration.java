@@ -5,6 +5,7 @@ package muramasa.antimatter.registration.fabric;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.MaterialDataInit;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.event.MaterialEvent;
@@ -63,6 +64,7 @@ public class AntimatterRegistration {
             }
 
             MaterialEvent event = new MaterialEvent();
+            MaterialDataInit.onMaterialEvent(event);
             MaterialEvents.MATERIAL.invoker().onMaterialRegister(event);
             AntimatterKubeJS.loadMaterialEvent(event);
         }
