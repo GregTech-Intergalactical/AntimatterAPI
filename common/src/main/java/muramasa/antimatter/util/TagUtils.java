@@ -10,6 +10,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
@@ -61,7 +62,7 @@ public class TagUtils {
     }
 
     /**
-     * @param name name of a BlockTag, can be new or old, has the namespace "forge" attached
+     * @param name name of a BlockTag, can be new or old, has the namespace "forge" or "c" attached
      * @return BlockTag
      */
     public static TagKey<Block> getForgelikeBlockTag(String name) {
@@ -79,7 +80,7 @@ public class TagUtils {
     }
 
     /**
-     * @param name name of a ItemTag, can be new or old, has the namespace "forge" attached.
+     * @param name name of a ItemTag, can be new or old, has the namespace "forge" or "c" attached.
      *             This is NOT safe to use for recipes outside of Antimatter recipe builders,
      *             call nc() to get content. (NamedToContent)
      * @return ItemTag
@@ -90,7 +91,7 @@ public class TagUtils {
     }
 
     /**
-     * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
+     * @param name name of a FluidTag, can be new or old, has the namespace "forge" or "c" attached
      * @return FluidTag
      */
     public static TagKey<Fluid> getForgelikeFluidTag(String name) {
@@ -98,11 +99,19 @@ public class TagUtils {
     }
 
     /**
-     * @param name name of a FluidTag, can be new or old, has the namespace "forge" attached
+     * @param name name of a FluidTag, can be new or old
      * @return FluidTag
      */
     public static TagKey<Fluid> getFluidTag(ResourceLocation name) {
         return createTag(name, Fluid.class, fluidName -> TagKey.create(Registry.FLUID_REGISTRY, fluidName));
+    }
+
+    /**
+     * @param name name of a BiomeTag, can be new or old
+     * @return FluidTag
+     */
+    public static TagKey<Biome> getBiomeTag(ResourceLocation name){
+        return createTag(name, Biome.class, biomeName -> TagKey.create(Registry.BIOME_REGISTRY, biomeName));
     }
 
     /**
