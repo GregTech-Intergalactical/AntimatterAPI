@@ -2,8 +2,9 @@
   "required": true,
   "package": "muramasa.antimatter.mixin.fabric",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "antimatter.refmap.json",
+  "refmap": "antimatter-fabric.refmap.json",
   "mixins": [
+    "ItemBatteryMixin",
     "MaterialArmorMixin",
     "MaterialSwordMixin",
     "MaterialToolMixin"
