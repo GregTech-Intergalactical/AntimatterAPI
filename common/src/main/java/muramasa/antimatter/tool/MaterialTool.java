@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
+import muramasa.antimatter.item.IContainerItem;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -53,7 +54,7 @@ import static muramasa.antimatter.Data.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class MaterialTool extends DiggerItem implements IAntimatterTool {
+public class MaterialTool extends DiggerItem implements IAntimatterTool, IContainerItem {
 
     protected final String domain;
     protected final AntimatterToolType type;

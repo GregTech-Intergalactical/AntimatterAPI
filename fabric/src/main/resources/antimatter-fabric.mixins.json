@@ -4,6 +4,9 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "antimatter.refmap.json",
   "mixins": [
+    "MaterialArmorMixin",
+    "MaterialSwordMixin",
+    "MaterialToolMixin"
   ],
   "minVersion": "0.8"
 }

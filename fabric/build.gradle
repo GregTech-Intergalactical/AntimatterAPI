@@ -32,6 +32,7 @@ dependencies{
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-caps:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-recipe-api:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}")) { transitive false }
+    modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:05a5fe1533")) { transitive false }
     include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-datagen:${rootProject.fabricated_forge_hash}") { transitive false }
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
