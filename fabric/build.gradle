@@ -33,10 +33,9 @@ dependencies{
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-recipe-api:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:05a5fe1533")) { transitive false }
-    include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-datagen:${rootProject.fabricated_forge_hash}") { transitive false }
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
-    modCompileOnly("io.github.fabricators_of_create:Porting-Lib:1.1.310-beta+1.18.2-dev.${rootProject.port_lib_hash}"){ transitive(false) }
+    modCompileOnly("com.github.FeltMC:Porting-Lib:${rootProject.port_lib_hash}"){ transitive(false) }
     modApi("teamreborn:energy:${project.energy_version}") {
         transitive = false
     }
