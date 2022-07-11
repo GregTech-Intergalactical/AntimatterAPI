@@ -33,6 +33,9 @@
     "tesseractapi": ">=0.1"
   },
   "entrypoints": {
+    "client": [
+      "muramasa.antimatter.client.fabric.AntimatterClientImpl"
+    ],
     "main": [
       "muramasa.antimatter.fabric.AntimatterImpl"
     ],

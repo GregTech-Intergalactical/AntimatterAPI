@@ -156,6 +156,7 @@ public class ClientEvents {
         }
     }
 
+    //TODO still needed?
     public static void onItemTooltip(TooltipFlag flags, List<Component> tooltip) {
         if (flags.isAdvanced() && Ref.SHOW_ITEM_TAGS) {
             Collection<ResourceLocation> tags = Collections.emptyList(); //ItemTags.getAllTags().getMatchingTags(e.getItemStack().getItem());
@@ -177,22 +178,18 @@ public class ClientEvents {
     public static boolean rightDown;
     public static boolean middleDown;
     public static void onGuiMouseClickPre(int button) {
-        if (button == 0) {
-            leftDown = true;
-        } else if (button == 1) {
-            rightDown = true;
-        } else {
-            middleDown = true;
+        switch (button){
+            case 0 -> leftDown = true;
+            case 1 -> rightDown = true;
+            case 2 -> middleDown = true;
         }
     }
 
     public static void onGuiMouseReleasedPre(int button) {
-        if (button == 0) {
-            leftDown = false;
-        } else if (button == 1) {
-            rightDown = false;
-        } else {
-            middleDown = false;
+        switch (button){
+            case 0 -> leftDown = false;
+            case 1 -> rightDown = false;
+            case 2 -> middleDown = false;
         }
     }
 }
