@@ -85,14 +85,6 @@ public class AntimatterPlatformUtilsImpl {
         return ForgeHooks.getBurnTime(stack, recipeType);
     }
 
-    public static int getFluidColor(Fluid fluid){
-        return fluid.getAttributes().getColor();
-    }
-
-    public static SoundEvent getFluidSound(Fluid fluid, boolean fill){
-        return fill ? fluid.getAttributes().getFillSound() : fluid.getAttributes().getEmptySound();
-    }
-
     public static boolean isServer(){
         return FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer();
     }

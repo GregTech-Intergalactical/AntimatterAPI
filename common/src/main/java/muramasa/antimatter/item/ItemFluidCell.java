@@ -253,7 +253,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
                     player.awardStat(Stats.ITEM_USED.get(this));
 
                     // play sound effect
-                    SoundEvent sound = AntimatterPlatformUtils.getFluidSound(newFluid, true);
+                    SoundEvent sound = newFluid.getAttributes().getFillSound();
                     if (sound == null) {
                         sound = newFluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_FILL_LAVA : SoundEvents.BUCKET_FILL;
                     }
@@ -353,7 +353,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
      * @param pos    Position of sound
      */
     private void playEmptySound(Fluid fluid, @Nullable Player player, LevelAccessor world, BlockPos pos) {
-        SoundEvent sound = AntimatterPlatformUtils.getFluidSound(fluid, false);
+        SoundEvent sound = fluid.getAttributes().getEmptySound();
         if (sound == null) {
             sound = fluid.is(FluidTags.LAVA) ? SoundEvents.BUCKET_EMPTY_LAVA : SoundEvents.BUCKET_EMPTY;
         }

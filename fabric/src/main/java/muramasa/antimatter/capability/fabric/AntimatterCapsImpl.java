@@ -10,7 +10,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import org.objectweb.asm.Type;
 
 public class AntimatterCapsImpl {
-    public static final Capability<ICoverHandler<?>> COVERABLE_HANDLER_CAPABILITY = CapabilityManager.INSTANCE.get(Type.getInternalName(MachineRecipeHandler.class), false);
+    public static final Capability<ICoverHandler<?>> COVERABLE_HANDLER_CAPABILITY = CapabilityManager.INSTANCE.get(Type.getInternalName(ICoverHandler.class), false);
     public static final Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY = CapabilityManager.get(IComponentHandler.class);
     public static final Capability<MachineRecipeHandler<?>> RECIPE_HANDLER_CAPABILITY = CapabilityManager.INSTANCE.get(Type.getInternalName(MachineRecipeHandler.class), false);
 

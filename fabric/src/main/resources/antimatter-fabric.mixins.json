@@ -5,6 +5,8 @@
   "refmap": "antimatter-fabric.refmap.json",
   "mixins": [
     "ItemBatteryMixin",
+    "LootTableMixin",
+    "LootTablesMixin",
     "MaterialArmorMixin",
     "MaterialSwordMixin",
     "MaterialToolMixin"

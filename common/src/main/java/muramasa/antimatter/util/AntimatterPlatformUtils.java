@@ -67,18 +67,6 @@ public class AntimatterPlatformUtils {
     }
 
     @ExpectPlatform
-    public static int getFluidColor(Fluid fluid){
-        return 0;
-    }
-
-    @ExpectPlatform
-    public static SoundEvent getFluidSound(Fluid fluid, boolean fill){
-        return null;
-    }
-
-
-
-    @ExpectPlatform
     public static boolean isServer(){
         return false;
     }
