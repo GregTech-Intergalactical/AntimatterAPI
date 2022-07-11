@@ -3,6 +3,7 @@ package muramasa.antimatter.fabric;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.capability.fabric.AntimatterCapsImpl;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
@@ -14,6 +15,7 @@ import muramasa.antimatter.registration.fabric.AntimatterRegistration;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraftforge.api.fml.event.config.ModConfigEvent;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 
 public class AntimatterImpl implements ModInitializer {
     @Override
@@ -25,6 +27,7 @@ public class AntimatterImpl implements ModInitializer {
         ProviderEvents.PROVIDERS.register(this::providers);
         ModConfigEvent.LOADING.register(AntimatterConfig::onModConfigEvent);
         ModConfigEvent.RELOADING.register(AntimatterConfig::onModConfigEvent);
+        RegisterCapabilitiesEvent.REGISTER_CAPS.register(AntimatterCapsImpl::register);
     }
 
     private void providers(ProvidersEvent ev) {
