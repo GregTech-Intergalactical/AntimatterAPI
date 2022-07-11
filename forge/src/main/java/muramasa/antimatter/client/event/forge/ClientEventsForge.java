@@ -136,7 +136,8 @@ public class ClientEventsForge {
         MaterialType.addTooltip(ev.getItemStack(), ev.getToolTip(), ev.getPlayer(), ev.getFlags());
     }
 
-    // Needs some work, won't work in 3rd person also, needs special ItemModel properties
+    //TODO why is this client only?
+    //Needs some work, won't work in 3rd person also, needs special ItemModel properties
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent e) {
         if (e.phase == TickEvent.Phase.END) {
@@ -166,8 +167,8 @@ public class ClientEventsForge {
             e.getLeft().addAll(((IInfoProvider) state.getBlock()).getInfo(new ObjectArrayList<>(), world, state, pos));
         }
         BlockEntity tile = world.getBlockEntity(pos);
-        if (tile instanceof TileEntityBase) {
-            e.getLeft().addAll(((TileEntityBase) tile).getInfo());
+        if (tile instanceof TileEntityBase<?> base) {
+            e.getLeft().addAll(base.getInfo());
         }
         if (MC.player.isCrouching()) {
             e.getLeft().add("");
@@ -175,6 +176,7 @@ public class ClientEventsForge {
         }
     }
 
+    //TODO still needed?
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent e) {
         if (e.getFlags().isAdvanced() && Ref.SHOW_ITEM_TAGS) {
@@ -191,7 +193,7 @@ public class ClientEventsForge {
 
     public static double lastDelta;
     @SubscribeEvent
-    public static void onGuiMouseScrollPre(ScreenEvent.MouseScrollEvent e) {
+    public static void onGuiMouseScrollPre(ScreenEvent.MouseScrollEvent.Pre e) {
         lastDelta = e.getScrollDelta();
     }
 
@@ -199,24 +201,22 @@ public class ClientEventsForge {
     public static boolean rightDown;
     public static boolean middleDown;
     @SubscribeEvent
-    public static void onGuiMouseClickPre(ScreenEvent.MouseClickedEvent e) {
-        if (e.getButton() == 0) {
-            leftDown = true;
-        } else if (e.getButton() == 1) {
-            rightDown = true;
-        } else {
-            middleDown = true;
+    public static void onGuiMouseClickPre(ScreenEvent.MouseClickedEvent.Pre e) {
+        int button = e.getButton();
+        switch (button){
+            case 0 -> leftDown = true;
+            case 1 -> rightDown = true;
+            case 2 -> middleDown = true;
         }
     }
 
     @SubscribeEvent
-    public static void onGuiMouseReleasedPre(ScreenEvent.MouseReleasedEvent e) {
-        if (e.getButton() == 0) {
-            leftDown = false;
-        } else if (e.getButton() == 1) {
-            rightDown = false;
-        } else {
-            middleDown = false;
+    public static void onGuiMouseReleasedPre(ScreenEvent.MouseReleasedEvent.Pre e) {
+        int button = e.getButton();
+        switch (button){
+            case 0 -> leftDown = false;
+            case 1 -> rightDown = false;
+            case 2 -> middleDown = false;
         }
     }
 
