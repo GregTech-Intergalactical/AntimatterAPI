@@ -18,7 +18,6 @@ import net.minecraftforge.client.model.generators.BlockModelProvider;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.IGeneratedBlockstate;
 import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import javax.annotation.Nonnull;
@@ -70,7 +69,7 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
     }
 
     @Override
-    public ModelProvider<BlockModelBuilder> models() {
+    public BlockModelProvider models() {
         return blockModelProvider;
     }
 

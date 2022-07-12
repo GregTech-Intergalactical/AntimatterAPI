@@ -70,7 +70,7 @@ public class AntimatterRegistration {
         }
         AntimatterAPI.all(Block.class, domain, (b, d, i) -> {
             if (!(b instanceof IItemBlockProvider bp) || bp.generateItemBlock()) {
-                AntimatterAPI.register(Item.class, i, d, b instanceof IItemBlockProvider bpl ? bpl.getItemBlock() : new AntimatterItemBlock(b));
+                AntimatterAPI.register(Item.class, i, d, b instanceof IItemBlockProvider bp ? bp.getItemBlock() : new AntimatterItemBlock(b));
             }
             Registry.register(Registry.BLOCK, new ResourceLocation(d, i), b);
         });
