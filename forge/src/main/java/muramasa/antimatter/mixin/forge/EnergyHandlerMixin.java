@@ -6,24 +6,10 @@ import net.minecraftforge.energy.IEnergyStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import tesseract.api.gt.GTTransaction;
+import tesseract.api.gt.IEnergyHandler;
 
 @Mixin(EnergyHandler.class)
-public abstract class EnergyHandlerMixin implements IEnergyStorage {
-    @Shadow
-    abstract boolean insert(GTTransaction transaction);
-    @Shadow
-    abstract GTTransaction extract(GTTransaction.Mode mode);
-    @Shadow
-    abstract boolean extractEnergy(GTTransaction.TransferData data);
-    @Shadow
-    abstract long getEnergy();
-    @Shadow
-    abstract long getCapacity();
-    @Shadow
-    abstract boolean canInput();
-    @Shadow
-    abstract boolean canOutput();
-
+public abstract class EnergyHandlerMixin implements IEnergyStorage, IEnergyHandler {
     /**
      * Forge IEnergyStorage Implementations
      **/
