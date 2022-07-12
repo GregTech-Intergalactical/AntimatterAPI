@@ -12,6 +12,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.machine.BlockMachine;
@@ -22,12 +23,15 @@ import muramasa.antimatter.tool.armor.MaterialArmor;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -35,8 +39,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -95,17 +102,29 @@ public class RenderHelper {
 
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
-        ItemProperties.register(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living, some_int) -> {
+        registerProperty(battery, new ResourceLocation(Ref.ID, "battery"), new ItemPropertyFunctionWrapper((stack, world, living, some_int) -> {
             LazyOptional<IEnergyHandler> handler = TesseractPlatformUtils.getEnergyHandlerItem(stack);
             return handler.map(h -> ((float) h.getEnergy() / (float) h.getCapacity())).orElse(1.0F);
-        });
+        }));
     }
 
     public static void registerProbePropertyOverrides(MaterialArmor armor) {
-        ItemProperties.register(armor, new ResourceLocation(Ref.ID, "probe"), (stack, world, living, some_int) -> {
+        registerProperty(armor, new ResourceLocation(Ref.ID, "probe"), new ItemPropertyFunctionWrapper((stack, world, living, some_int) -> {
             CompoundTag nbt = stack.getTag();
             return nbt != null && nbt.contains("theoneprobe") && nbt.getBoolean("theoneprobe") ? 1.0F : 0.0F;
-        });
+        }));
+    }
+
+    @ExpectPlatform
+    private static void registerProperty(Item item, ResourceLocation location, ClampedItemPropertyFunction function){
+
+    }
+
+    public record ItemPropertyFunctionWrapper(ItemPropertyFunction function) implements ClampedItemPropertyFunction{
+        @Override
+        public float unclampedCall(ItemStack itemStack, @org.jetbrains.annotations.Nullable ClientLevel clientLevel, @org.jetbrains.annotations.Nullable LivingEntity livingEntity, int i) {
+            return function.call(itemStack, clientLevel, livingEntity, i);
+        }
     }
 
     public static void drawFluid(PoseStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {

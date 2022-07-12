@@ -4,6 +4,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
+import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
@@ -21,12 +22,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
-public class AntimatterItemModelProvider extends ItemModelProvider implements IAntimatterProvider {
+public class AntimatterItemModelProvider extends ModelProvider<ItemModelBuilder> implements IAntimatterProvider {
 
     protected final String providerDomain, providerName;
 
     public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator generator, ExistingFileHelper exFileHelper) {
-        super(generator, providerDomain, loc -> new AntimatterItemModelBuilder(loc, exFileHelper), exFileHelper);
+        super(generator, providerDomain, ITEM_FOLDER, loc -> new AntimatterItemModelBuilder(loc, exFileHelper), exFileHelper);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
     }
