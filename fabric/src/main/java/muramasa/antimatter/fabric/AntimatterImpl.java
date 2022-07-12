@@ -1,27 +1,40 @@
 package muramasa.antimatter.fabric;
 
+import io.github.fabricators_of_create.porting_lib.event.common.BlockPlaceCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.ItemCraftedCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.PlayerEvents;
+import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.fabric.AntimatterCapsImpl;
+import muramasa.antimatter.common.event.CommonEvents;
+import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
+import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.fabric.AntimatterRegistration;
 import muramasa.antimatter.structure.StructureCache;
+import net.devtech.arrp.api.RRPCallback;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.biome.v1.BiomeModification;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.event.world.WorldTickCallback;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.fml.event.config.ModConfigEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+
+import java.util.stream.Collectors;
 
 public class AntimatterImpl implements ModInitializer {
     @Override
@@ -35,6 +48,17 @@ public class AntimatterImpl implements ModInitializer {
         ModConfigEvent.RELOADING.register(AntimatterConfig::onModConfigEvent);
         ServerWorldEvents.UNLOAD.register((server, world) -> StructureCache.onWorldUnload(world));
         RegisterCapabilitiesEvent.REGISTER_CAPS.register(AntimatterCapsImpl::register);
+        ItemCraftedCallback.EVENT.register(((player, crafted, container) -> CommonEvents.onItemCrafted(container, player)));
+        CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> CommonEvents.tagsEvent());
+        RecipesUpdatedCallback.EVENT.register((CommonEvents::recipeEvent));
+        //TODO figure out variables to insert
+        BlockPlaceCallback.EVENT.register(context -> {
+            BlockPos placedOffPos = context.getClickedPos().relative(context.getClickedFace().getOpposite());
+            BlockState placedOff = context.getLevel().getBlockState(placedOffPos);
+            CommonEvents.placeBlock(placedOff, context.getPlayer(), context.getLevel(), context.getClickedPos(), context.getLevel().getBlockState(context.getClickedPos()));
+            return InteractionResult.PASS;
+        });
+        RRPCallback.AFTER_VANILLA.register((resources -> resources.add(new DynamicResourcePack("Antimatter - Dynamic Data", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())))));
     }
 
     private void providers(ProvidersEvent ev) {

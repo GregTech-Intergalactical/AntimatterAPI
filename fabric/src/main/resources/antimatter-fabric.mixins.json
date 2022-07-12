@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "antimatter-fabric.refmap.json",
   "mixins": [
+    "AnvilMenuMixin",
     "ItemBatteryMixin",
     "LootTableMixin",
     "LootTablesMixin",

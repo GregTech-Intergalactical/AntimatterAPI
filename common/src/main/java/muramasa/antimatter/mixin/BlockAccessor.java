@@ -12,7 +12,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Block.class)
 public interface BlockAccessor {
     @Invoker("popExperience")
-    default void popExperience(ServerLevel level, BlockPos pos, int amount) {
-        throw new AssertionError();
-    }
+    void popExperience(ServerLevel level, BlockPos pos, int amount);
 }

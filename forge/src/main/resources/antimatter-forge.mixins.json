@@ -5,7 +5,8 @@
   "refmap": "antimatter.refmap.json",
   "mixins": [
     "GameDataMixin",
-    "EnergyHandlerMixin"
+    "EnergyHandlerMixin",
+    "MultiPackManagerMixin"
   ],
   "minVersion": "0.8"
 }

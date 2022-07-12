@@ -12,6 +12,12 @@ configurations {
     developmentFabric.extendsFrom common
 }
 
+repositories {
+    maven {
+        url = uri("https://storage.googleapis.com/devan-maven/")
+    }
+}
+
 loom {
     accessWidenerPath = accessWidenerFile
 }
@@ -29,13 +35,15 @@ dependencies{
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     common(project(path: ":tesseract-common", configuration: "namedElements")) { transitive false }
+    common(project(path: ":tesseract-fabric", configuration: "namedElements")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-caps:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-recipe-api:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:05a5fe1533")) { transitive false }
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
-    modCompileOnly("com.github.FeltMC:Porting-Lib:${rootProject.port_lib_hash}"){ transitive(false) }
+    modImplementation("com.github.FeltMC:Porting-Lib:${rootProject.port_lib_hash}"){ transitive(false) }
+    modImplementation(include("net.devtech:arrp:0.+"))
     modApi("teamreborn:energy:${project.energy_version}") {
         transitive = false
     }
