@@ -5,7 +5,6 @@
   "refmap": "antimatter.refmap.json",
   "client": [
     "client.AbstractContainerScreenAccessor",
-    "client.BlockElementAccessor",
     "client.BlockModelAccessor",
     "client.ChunkReaderAccessor",
     "client.ClientBlockUpdateMixin",
