@@ -27,9 +27,6 @@ public class ClientHandlerImpl {
     public static void registerLoader(ResourceLocation location, AntimatterModelLoader<?> loader){
         ModelLoaderRegistry.registerLoader(location, loader);
     }
-    public static void setup(FMLClientSetupEvent e){
-        ClientHandler.setup();
-    }
 
     public static<T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
         BlockEntityRenderers.register(type, renderProvider);
