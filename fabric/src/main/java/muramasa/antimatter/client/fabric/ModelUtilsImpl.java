@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ModelUtilsImpl {
-    public static UnbakedModel getMissingModel() {
+    /*public static UnbakedModel getMissingModel() {
         return ForgeModelBakery.instance().getModel(new ModelResourceLocation("builtin/missing", "missing"));
     }
 
@@ -50,7 +50,7 @@ public class ModelUtilsImpl {
 
     public static ModelBakery getModelBakery(){
         return ForgeModelBakery.instance();
-    }
+    }*/
 
     public static void setLightData(BakedQuad quad, int light){
         int[] data = quad.getVertices();
@@ -78,17 +78,17 @@ public class ModelUtilsImpl {
         return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.useAmbientOcclusion(), baked.usesBlockLight(), baked.isGui3d(), baked.getParticleIcon(), baked.getTransforms(), baked.getOverrides());
     }
 
-    public static BakedModel getBaked(ResourceLocation loc) {
+    /*public static BakedModel getBaked(ResourceLocation loc) {
         return ForgeModelBakery.instance().getBakedTopLevelModels().get(loc);// SimpleModelState.IDENTITY, ForgeModelBakery.defaultTextureGetter());
-    }
+    }*/
 
     public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees){
         return TransformationHelper.quatFromXYZ(xyz, degrees);
     }
 
-    public static List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform) {
+    /*public static List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform) {
         return new QuadTransformer(transform.blockCenterToCorner()).processMany(quads);
-    }
+    }*/
 
     public static void setRenderLayer(Block block, RenderType renderType){
         BlockRenderLayerMap.INSTANCE.putBlock(block, renderType);

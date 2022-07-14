@@ -1,15 +1,12 @@
 package muramasa.antimatter.util.fabric;
 
-import dev.architectury.event.events.common.BlockEvent;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -28,9 +25,9 @@ public class UtilsImpl {
         ModelDataManager.requestModelDataRefresh(tile);
     }
 
-    public static boolean isCorrectToolForDrops(BlockState state, Player player){
+    /*public static boolean isCorrectToolForDrops(BlockState state, Player player){
         return ForgeHooks.isCorrectToolForDrops(state, player);
-    }
+    }*/
 
     public static int onBlockBreakEvent(Level level, GameType gameType, ServerPlayer entityPlayer, BlockPos pos)
     {
@@ -86,7 +83,7 @@ public class UtilsImpl {
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
+    /*public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
         return state.canHarvestBlock(level, pos, player);
-    }
+    }*/
 }
