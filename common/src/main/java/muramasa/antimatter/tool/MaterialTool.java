@@ -339,8 +339,8 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         if (!type.isPowered()) return super.getBarWidth(stack);
         long currentEnergy = getCurrentEnergy(stack);
         if (currentEnergy > 0) {
-            double maxAmount = getMaxEnergy(stack), difference = maxAmount - currentEnergy;
-            return (int)( 13*(difference / maxAmount));
+            double maxAmount = getMaxEnergy(stack), difference = maxAmount - currentEnergy, percent = 1.0 - difference;
+            return (int)( 13*(percent));
         }
         return super.getBarWidth(stack);
     }
