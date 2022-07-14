@@ -10,7 +10,7 @@ import tesseract.api.gt.IEnergyHandler;
 
 public class EnergyHandler implements IEnergyHandler {
 
-    protected final long capacity;
+    protected long capacity;
 
     protected long energy;
     protected long voltageIn, voltageOut, amperageIn, amperageOut;

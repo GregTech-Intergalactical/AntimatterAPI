@@ -26,7 +26,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -48,7 +47,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
@@ -89,11 +87,11 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default long getCurrentEnergy(ItemStack stack) {
-        return getDataTag(stack).getLong(Ref.KEY_TOOL_DATA_ENERGY);
+        return getDataTag(stack).getLong(Ref.KEY_ITEM_ENERGY);
     }
 
     default long getMaxEnergy(ItemStack stack) {
-        return getDataTag(stack).getLong(Ref.KEY_TOOL_DATA_MAX_ENERGY);
+        return getDataTag(stack).getLong(Ref.KEY_ITEM_MAX_ENERGY);
     }
 
     ItemStack asItemStack(Material primary, Material secondary);
@@ -132,12 +130,12 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
         dataTag.putString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL, secondary.getId());
         if (!getAntimatterToolType().isPowered()) return dataTag;
-        dataTag.putLong(Ref.KEY_TOOL_DATA_ENERGY, startingEnergy);
-        dataTag.putLong(Ref.KEY_TOOL_DATA_MAX_ENERGY, maxEnergy);
+        dataTag.putLong(Ref.KEY_ITEM_ENERGY, startingEnergy);
+        dataTag.putLong(Ref.KEY_ITEM_MAX_ENERGY, maxEnergy);
         IEnergyHandler h = TesseractPlatformUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
-        if (h instanceof ToolEnergyHandler) {
-            ((ToolEnergyHandler) h).setEnergy(startingEnergy);
-            ((ToolEnergyHandler) h).setMaxEnergy(maxEnergy);
+        if (h != null){
+            h.setEnergy(startingEnergy);
+            h.setCapacity(maxEnergy);
         }
         return dataTag;
     }
@@ -152,8 +150,13 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (group != Ref.TAB_TOOLS) return;
         if (getAntimatterToolType().isPowered()) {
             ItemStack stack = asItemStack(NULL, NULL);
-            getDataTag(stack).putLong(Ref.KEY_TOOL_DATA_ENERGY, maxEnergy);
-            list.add(stack);
+            IEnergyHandler h = TesseractPlatformUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
+            if (h != null){
+                list.add(stack.copy());
+                h.setCapacity(maxEnergy);
+                h.setEnergy(maxEnergy);
+                list.add(stack);
+            }
         } else list.add(asItemStack(NULL, NULL));
     }
 

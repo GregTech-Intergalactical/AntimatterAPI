@@ -25,8 +25,8 @@ public class BehaviourPoweredDebug implements IItemUse<IAntimatterTool> {
             ItemStack stack = c.getPlayer().getItemInHand(c.getHand());
             CompoundTag tag = instance.getDataTag(stack);
             if (instance.getMaxEnergy(stack) - instance.getCurrentEnergy(stack) <= 50000)
-                tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, instance.getMaxEnergy(stack));
-            else tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, tag.getLong(Ref.KEY_TOOL_DATA_ENERGY) + 50000);
+                tag.putLong(Ref.KEY_ITEM_ENERGY, instance.getMaxEnergy(stack));
+            else tag.putLong(Ref.KEY_ITEM_ENERGY, tag.getLong(Ref.KEY_ITEM_ENERGY) + 50000);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.PASS;

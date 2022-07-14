@@ -124,10 +124,11 @@ public class Ref {
     public static final String KEY_TOOL_DATA_SECONDARY_MATERIAL = "sm";
     public static final String KEY_TOOL_DATA_SECONDARY_COLOUR = "sc";
     public static final String KEY_TOOL_DATA_TIER = "t";
-    public static final String KEY_TOOL_DATA_ENERGY = "e";
-    public static final String KEY_TOOL_DATA_MAX_ENERGY = "me";
 
-    public static final String KEY_ITEM_ENERGY = "ie";
+    public static final String KEY_ITEM_ENERGY_DATA = "ied";
+    public static final String KEY_ITEM_ENERGY = "e";
+    public static final String KEY_ITEM_ENERGY_OLD = "ie";
+    public static final String KEY_ITEM_MAX_ENERGY = "me";
     public static final String KEY_ITEM_DISCHARGE_MODE = "idm";
 
     /**

@@ -11,6 +11,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
 import tesseract.api.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyHandlerItem;
 
 /**
  * ItemEnergyHandler represents the Antimatter Energy capability implementation for items.
@@ -19,9 +20,11 @@ import tesseract.api.gt.IEnergyHandler;
 public class ItemEnergyHandler extends EnergyHandler {
 
     protected boolean discharge = true;
+    protected long maxEnergy;
 
     public ItemEnergyHandler(long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         super(0, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
+        this.maxEnergy = capacity;
     }
 
     @Override
@@ -43,6 +46,12 @@ public class ItemEnergyHandler extends EnergyHandler {
         return discharge;
     }
 
+    @Override
+    public void setCapacity(long capacity) {
+        this.maxEnergy = capacity;
+    }
+
+    @Override
     public void setEnergy(long energy) {
         this.energy = energy;
     }
@@ -51,14 +60,21 @@ public class ItemEnergyHandler extends EnergyHandler {
     public CompoundTag serializeNBT() {
         CompoundTag nbt = new CompoundTag();
         nbt.putLong(Ref.KEY_ITEM_ENERGY, this.energy);
+        nbt.putLong(Ref.KEY_ITEM_MAX_ENERGY, this.maxEnergy);
         nbt.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, this.discharge);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
-        this.energy = nbt.getLong(Ref.KEY_ITEM_ENERGY);
+        this.energy = nbt.contains(Ref.KEY_ITEM_ENERGY_OLD) ? nbt.getLong(Ref.KEY_ITEM_ENERGY_OLD) : nbt.getLong(Ref.KEY_ITEM_ENERGY);
+        this.maxEnergy = nbt.getLong(Ref.KEY_ITEM_MAX_ENERGY);
         this.discharge = nbt.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
+    }
+
+    @Override
+    public long getCapacity() {
+        return maxEnergy;
     }
 
 
