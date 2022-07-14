@@ -87,14 +87,19 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default long getCurrentEnergy(ItemStack stack) {
-        return getDataTag(stack).getLong(Ref.KEY_ITEM_ENERGY);
+        return getEnergyTag(stack).getLong(Ref.KEY_ITEM_ENERGY);
     }
 
     default long getMaxEnergy(ItemStack stack) {
-        return getDataTag(stack).getLong(Ref.KEY_ITEM_MAX_ENERGY);
+        return getEnergyTag(stack).getLong(Ref.KEY_ITEM_MAX_ENERGY);
     }
 
     ItemStack asItemStack(Material primary, Material secondary);
+
+    default CompoundTag getEnergyTag(ItemStack stack){
+        CompoundTag dataTag = stack.getTagElement(Ref.TAG_ITEM_ENERGY_DATA);
+        return dataTag != null ? dataTag : validateEnergyTag(stack, 0, 10000);
+    }
 
     default CompoundTag getDataTag(ItemStack stack) {
         CompoundTag dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
@@ -130,14 +135,17 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
         dataTag.putString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL, secondary.getId());
         if (!getAntimatterToolType().isPowered()) return dataTag;
-        dataTag.putLong(Ref.KEY_ITEM_ENERGY, startingEnergy);
-        dataTag.putLong(Ref.KEY_ITEM_MAX_ENERGY, maxEnergy);
+        validateEnergyTag(stack, startingEnergy, maxEnergy);
+        return dataTag;
+    }
+
+    default CompoundTag validateEnergyTag(ItemStack stack, long startingEnergy, long maxEnergy){
         IEnergyHandler h = TesseractPlatformUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
         if (h != null){
             h.setEnergy(startingEnergy);
             h.setCapacity(maxEnergy);
         }
-        return dataTag;
+        return stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
     }
 
     default AntimatterItemTier resolveTierTag(CompoundTag dataTag) {

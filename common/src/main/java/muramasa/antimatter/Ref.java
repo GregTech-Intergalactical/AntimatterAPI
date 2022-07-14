@@ -125,7 +125,7 @@ public class Ref {
     public static final String KEY_TOOL_DATA_SECONDARY_COLOUR = "sc";
     public static final String KEY_TOOL_DATA_TIER = "t";
 
-    public static final String KEY_ITEM_ENERGY_DATA = "ied";
+    public static final String TAG_ITEM_ENERGY_DATA = "ied";
     public static final String KEY_ITEM_ENERGY = "e";
     public static final String KEY_ITEM_ENERGY_OLD = "ie";
     public static final String KEY_ITEM_MAX_ENERGY = "me";

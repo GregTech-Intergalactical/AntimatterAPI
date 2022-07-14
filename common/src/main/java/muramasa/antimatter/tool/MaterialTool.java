@@ -370,10 +370,10 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         CompoundTag inner = getCastedHandler(stack).map(ItemEnergyHandler::serializeNBT).orElse(null);
         if (inner != null) {
             if (nbt == null) nbt = new CompoundTag();
-            if (nbt.contains(Ref.TAG_TOOL_DATA)) {
-                nbt.getCompound(Ref.TAG_TOOL_DATA).merge(inner);
+            if (nbt.contains(Ref.TAG_ITEM_ENERGY_DATA)) {
+                nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA).merge(inner);
             } else {
-                nbt.put(Ref.TAG_TOOL_DATA, inner);
+                nbt.put(Ref.TAG_ITEM_ENERGY_DATA, inner);
             }
         }
         return nbt;
@@ -382,7 +382,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
         stack.setTag(nbt);
         if (nbt != null) {
-            getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound(Ref.TAG_TOOL_DATA)));
+            getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA)));
         }
     }
 }
