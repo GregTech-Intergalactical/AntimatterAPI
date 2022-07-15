@@ -5,6 +5,7 @@
   "refmap": "antimatter-fabric.refmap.json",
   "mixins": [
     "AnvilMenuMixin",
+    "EnergyHandlerMixin",
     "ItemBatteryMixin",
     "LootTableMixin",
     "LootTablesMixin",

@@ -79,11 +79,11 @@ public class AntimatterConfig {
          * @see CommonConfig
          **/
 
-        public double EU_TO_FE_RATIO, PIPE_LEAK;
+        public double EU_TO_FE_RATIO, PIPE_LEAK, EU_TO_TRE_RATIO;
 
         public int AXE_TIMBER_MAX;
 
-        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS;
+        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_FE_OR_TRE_INPUT;
 
     }
 
@@ -135,13 +135,13 @@ public class AntimatterConfig {
 
     public static class CommonConfig {
 
-        public final DoubleValue EU_TO_FE_RATIO, PIPE_LEAK;
+        public final DoubleValue EU_TO_FE_RATIO, PIPE_LEAK, EU_TO_TRE_RATIO;
 
         public final IntValue AXE_TIMBER_MAX, ORE_VEIN_ROCK_CHANCE, STONE_LAYER_ROCK_CHANCE, ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS,
                 ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
 
         public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS,
-                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
+                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS, ENABLE_FE_OR_TRE_INPUT;
 
         public CommonConfig(Builder builder) {
 
@@ -247,7 +247,16 @@ public class AntimatterConfig {
 
             EU_TO_FE_RATIO = builder.comment("The ratio of the eu to the fe energy converting - Default: (1.0 EU = 4.0 FE)")
                     .translation(Ref.ID + ".config.eu_to_rf_ratio")
-                    .defineInRange("EU_TO_FE_RATIO", 1.0D, 0.1D, (Double.MAX_VALUE));
+                    .defineInRange("EU_TO_FE_RATIO", 4.0D, 0.1D, (Double.MAX_VALUE));
+
+            EU_TO_TRE_RATIO = builder.comment("The ratio of the eu to the tre energy converting - Default: (1.0 EU = 1.0 TRE)")
+                    .translation(Ref.ID + ".config.eu_to_tre_ratio")
+                    .defineInRange("EU_TO_TRE_RATIO", 1.0D, 0.1D, (Double.MAX_VALUE));
+
+            ENABLE_FE_OR_TRE_INPUT = builder.comment("Enables GT Machines and  cables being able to input FE or TRE(Tech Reborn Energy),",
+                    "Please do not enable unless you have balanced the fe compat to not be broken due to power creep. - Default: false")
+                    .translation(Ref.ID + ".config.eenable_fe_or_tre_input")
+                    .define("ENABLE_FE_OR_TRE_INPUT", false);
 
             PIPE_LEAK = builder.comment("Amount of gas retained passing through a leaky pipe - Default: 90%")
                     .translation(Ref.ID + ".config.pipe_leak")
@@ -324,6 +333,8 @@ public class AntimatterConfig {
         WORLD.ORE_VEIN_SPECTATOR_DEBUG = COMMON_CONFIG.ORE_VEIN_SPECTATOR_DEBUG.get();
 
         GAMEPLAY.EU_TO_FE_RATIO = COMMON_CONFIG.EU_TO_FE_RATIO.get();
+        GAMEPLAY.EU_TO_TRE_RATIO = COMMON_CONFIG.EU_TO_TRE_RATIO.get();
+        GAMEPLAY.ENABLE_FE_OR_TRE_INPUT = COMMON_CONFIG.ENABLE_FE_OR_TRE_INPUT.get();
         GAMEPLAY.PIPE_LEAK = COMMON_CONFIG.PIPE_LEAK.get();
         GAMEPLAY.HARDCORE_CABLES = COMMON_CONFIG.HARDCORE_CABLES.get();
         GAMEPLAY.HARDCORE_PIPES = COMMON_CONFIG.HARDCORE_PIPES.get();

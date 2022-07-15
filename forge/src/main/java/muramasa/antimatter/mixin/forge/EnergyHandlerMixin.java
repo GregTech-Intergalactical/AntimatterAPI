@@ -44,7 +44,7 @@ public abstract class EnergyHandlerMixin implements IEnergyStorage, IEnergyHandl
 
     @Override
     public boolean canReceive() {
-        return canInput();
+        return AntimatterConfig.GAMEPLAY.ENABLE_FE_OR_TRE_INPUT && canInput();
     }
 
     @Override

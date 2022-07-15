@@ -16,20 +16,19 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
+import muramasa.antimatter.tesseract.fabric.EnergyTileWrapper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -38,33 +37,39 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.network.client.NetworkHooks;
+import team.reborn.energy.api.EnergyStorage;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AntimatterPlatformUtilsImpl {
-    //TODO
-    /*public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
-        LazyOptional<IEnergyStorage> cap = be.getCapability(CapabilityEnergy.ENERGY, side);
-        if (!cap.isPresent()) return LazyOptional.empty();
-        return LazyOptional.of(() -> new EnergyTileWrapper(be, cap.orElse(null)));
+    //TODO cache this
+    public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
+        Level l = be.getLevel();
+        BlockPos pos = be.getBlockPos();
+        BlockState state = be.getBlockState();
+        EnergyStorage storage = EnergyStorage.SIDED.find(l, pos, state, be, side);
+        if (storage == null) return LazyOptional.empty();
+        return LazyOptional.of(() -> new EnergyTileWrapper(be, storage));
     }
 
-    public static boolean tileHasFEOrTRE(BlockEntity entity, Direction side){
-        return entity.getCapability(CapabilityEnergy.ENERGY, side).isPresent();
-    }*/
+    public static boolean tileHasFEOrTRE(BlockEntity be, Direction side){
+        Level l = be.getLevel();
+        BlockPos pos = be.getBlockPos();
+        BlockState state = be.getBlockState();
+        EnergyStorage storage = EnergyStorage.SIDED.find(l, pos, state, be, side);
+        return storage != null;
+    }
 
     public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
         return FabricItemGroupBuilder.build(new ResourceLocation(domain, id), iconSupplier);
