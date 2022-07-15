@@ -17,7 +17,6 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
-import muramasa.antimatter.tesseract.forge.EnergyTileWrapper;
 import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
@@ -52,6 +51,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
+import tesseract.api.forge.wrapper.EnergyTileWrapper;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;

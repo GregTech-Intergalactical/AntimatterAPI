@@ -16,7 +16,6 @@ import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
-import muramasa.antimatter.tesseract.fabric.EnergyTileWrapper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
@@ -44,6 +43,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import team.reborn.energy.api.EnergyStorage;
+import tesseract.api.fabric.wrapper.EnergyTileWrapper;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;

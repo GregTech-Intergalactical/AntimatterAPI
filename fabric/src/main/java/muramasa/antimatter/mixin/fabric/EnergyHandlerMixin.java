@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import team.reborn.energy.api.EnergyStorage;
+import tesseract.TesseractConfig;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 
@@ -21,35 +22,35 @@ public abstract class EnergyHandlerMixin implements EnergyStorage, IEnergyHandle
      **/
     @Override
     public long insert(long maxReceive, TransactionContext context) {
-        GTTransaction transaction = new GTTransaction((long) (maxReceive / AntimatterConfig.GAMEPLAY.EU_TO_TRE_RATIO), a -> {
+        GTTransaction transaction = new GTTransaction((long) (maxReceive / TesseractConfig.COMMON.EU_TO_TRE_RATIO), a -> {
         });
         insert(transaction);
         transaction.commit();
-        return transaction.isValid() ? (int) transaction.getData().stream().mapToLong(t -> t.getEnergy((long) (t.getAmps(true) * AntimatterConfig.GAMEPLAY.EU_TO_TRE_RATIO), true)).sum() : 0;
+        return transaction.isValid() ? (int) transaction.getData().stream().mapToLong(t -> t.getEnergy((long) (t.getAmps(true) * TesseractConfig.COMMON.EU_TO_TRE_RATIO), true)).sum() : 0;
     }
 
     @Override
     public long extract(long maxExtract, TransactionContext simulate) {
         GTTransaction transaction = extract(GTTransaction.Mode.INTERNAL);
-        transaction.addData((long) (maxExtract / AntimatterConfig.GAMEPLAY.EU_TO_TRE_RATIO), this::extractEnergy);
+        transaction.addData((long) (maxExtract / TesseractConfig.COMMON.EU_TO_TRE_RATIO), this::extractEnergy);
         //if (!simulate) transaction.commit();
         transaction.commit();
-        return transaction.isValid() ? (int) transaction.getData().stream().mapToLong(t -> t.getEnergy((long) (t.getAmps(false) * AntimatterConfig.GAMEPLAY.EU_TO_TRE_RATIO), false)).sum() : 0;
+        return transaction.isValid() ? (int) transaction.getData().stream().mapToLong(t -> t.getEnergy((long) (t.getAmps(false) * TesseractConfig.COMMON.EU_TO_TRE_RATIO), false)).sum() : 0;
     }
 
     @Override
     public long getAmount() {
-        return (long) (getEnergy() / AntimatterConfig.GAMEPLAY.EU_TO_TRE_RATIO);
+        return (long) (getEnergy() * TesseractConfig.COMMON.EU_TO_TRE_RATIO);
     }
 
     @Override
     public long getCapacity() {
-        return (long) (capacity / AntimatterConfig.GAMEPLAY.EU_TO_TRE_RATIO);
+        return (long) (capacity * TesseractConfig.COMMON.EU_TO_TRE_RATIO);
     }
 
     @Override
     public boolean supportsInsertion() {
-        return AntimatterConfig.GAMEPLAY.ENABLE_FE_OR_TRE_INPUT && canInput();
+        return TesseractConfig.COMMON.ENABLE_FE_OR_TRE_INPUT && canInput();
     }
 
     @Override
