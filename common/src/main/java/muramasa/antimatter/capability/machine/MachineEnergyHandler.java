@@ -116,7 +116,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
                 if (tile == null) continue;
                 LazyOptional<IEnergyHandler> handle = tile.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite());
                 if (!handle.isPresent()) {
-                    handle = AntimatterPlatformUtils.getWrappedHandler(tile, dir.getOpposite());
+                    handle = TesseractPlatformUtils.getWrappedHandler(tile, dir.getOpposite());
                 }
                 handle.ifPresent(eh -> Utils.transferEnergy(this, eh));
             }

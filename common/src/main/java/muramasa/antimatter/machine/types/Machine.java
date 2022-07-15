@@ -72,7 +72,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     /**
      * Basic Members
      **/
-    protected BlockEntityType<?> tileType;
+    protected BlockEntityType<? extends TileEntityMachine<?>> tileType;
     protected TileEntityBase.BlockEntitySupplier<TileEntityMachine<?>, T> tileFunc = TileEntityMachine::new;
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();

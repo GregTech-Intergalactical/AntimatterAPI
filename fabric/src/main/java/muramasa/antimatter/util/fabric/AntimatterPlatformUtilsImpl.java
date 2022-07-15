@@ -44,6 +44,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import team.reborn.energy.api.EnergyStorage;
 import tesseract.api.fabric.wrapper.EnergyTileWrapper;
+import tesseract.api.fabric.wrapper.IEnergyHandlerStorage;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
@@ -60,6 +61,7 @@ public class AntimatterPlatformUtilsImpl {
         BlockState state = be.getBlockState();
         EnergyStorage storage = EnergyStorage.SIDED.find(l, pos, state, be, side);
         if (storage == null) return LazyOptional.empty();
+        if (storage instanceof IEnergyHandlerStorage handlerStorage) return LazyOptional.of(handlerStorage::getEnergyHandler);
         return LazyOptional.of(() -> new EnergyTileWrapper(be, storage));
     }
 

@@ -52,6 +52,7 @@ import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import tesseract.api.forge.wrapper.EnergyTileWrapper;
+import tesseract.api.forge.wrapper.IEnergyHandlerStorage;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
@@ -68,7 +69,9 @@ public class AntimatterPlatformUtilsImpl {
     public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
         LazyOptional<IEnergyStorage> cap = be.getCapability(CapabilityEnergy.ENERGY, side);
         if (!cap.isPresent()) return LazyOptional.empty();
-        return LazyOptional.of(() -> new EnergyTileWrapper(be, cap.orElse(null)));
+        IEnergyStorage storage = cap.orElse(null);
+        if (storage instanceof IEnergyHandlerStorage handlerStorage) return LazyOptional.of(handlerStorage::getEnergyHandler);
+        return LazyOptional.of(() -> new EnergyTileWrapper(be, storage));
     }
 
     public static boolean tileHasFEOrTRE(BlockEntity entity, Direction side){

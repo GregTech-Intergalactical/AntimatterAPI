@@ -15,6 +15,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.registration.*;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.NonNullSupplier;
 import muramasa.antimatter.util.TagUtils;
@@ -431,7 +432,7 @@ public final class AntimatterAPI {
     }
 
     @ExpectPlatform
-    public static void registerTransferApi(BlockEntityType<?> type){
+    public static void registerTransferApi(BlockEntityType<? extends TileEntityMachine<?>> type){
 
     }
 
