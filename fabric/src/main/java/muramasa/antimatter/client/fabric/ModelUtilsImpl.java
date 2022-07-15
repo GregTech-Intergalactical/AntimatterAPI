@@ -3,6 +3,7 @@ package muramasa.antimatter.client.fabric;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
+import io.github.fabricators_of_create.porting_lib.util.LightUtil;
 import io.github.fabricators_of_create.porting_lib.util.TransformationHelper;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
@@ -53,16 +54,7 @@ public class ModelUtilsImpl {
     }*/
 
     public static void setLightData(BakedQuad quad, int light){
-        int[] data = quad.getVertices();
-        for (int i = 0; i < 4; i++)
-        {
-            data[getLightOffset(i)] = light;
-        }
-    }
-
-    private static int getLightOffset(int v)
-    {
-        return (v * 8) + 6;
+        LightUtil.setLightData(quad, light);
     }
 
     public static BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
