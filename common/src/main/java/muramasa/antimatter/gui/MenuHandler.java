@@ -54,13 +54,13 @@ public abstract class MenuHandler<T extends AbstractContainerMenu & IAntimatterC
     @MethodsReturnNonnullByDefault
     public MenuType<T> getContainerType() {
         if (containerType == null) {
-            containerType = create(this::onContainerCreate);
+            containerType = create(loc, this::onContainerCreate);
         }
         return containerType;
     }
 
     @ExpectPlatform
-    static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
+    static <T extends AbstractContainerMenu> MenuType<T> create(ResourceLocation id, TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
         return null;
     }
 

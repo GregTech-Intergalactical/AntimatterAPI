@@ -1,9 +1,7 @@
 package muramasa.antimatter.util.fabric;
 
 import com.mojang.math.Matrix4f;
-import dev.architectury.registry.registries.Registries;
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
+import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
@@ -20,6 +18,7 @@ import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 import net.minecraft.core.Direction;
@@ -71,10 +70,8 @@ public class AntimatterPlatformUtilsImpl {
         return FabricItemGroupBuilder.build(new ResourceLocation(domain, id), iconSupplier);
     }
 
-    //TODO
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
-        return 0;
-        //return ForgeHooks.getBurnTime(stack, recipeType);
+        return FuelRegistry.INSTANCE.get(stack.getItem());
     }
 
     public static boolean isServer(){
@@ -93,9 +90,8 @@ public class AntimatterPlatformUtilsImpl {
         return Ref.ID;
     }
 
-    //TODO
     public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
-        //NetworkHooks.openGui(player, containerSupplier, extraDataWriter);
+        NetworkUtil.openGui(player, containerSupplier, extraDataWriter);
     }
     public static boolean isFabric(){
         return true;

@@ -23,7 +23,6 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
@@ -65,7 +64,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class AntimatterPlatformUtilsImpl {
-
+    //todo cache this
     public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
         LazyOptional<IEnergyStorage> cap = be.getCapability(CapabilityEnergy.ENERGY, side);
         if (!cap.isPresent()) return LazyOptional.empty();
