@@ -11,9 +11,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-public class GuiSyncPacket {
+public class GuiSyncPacket implements IAntimatterPacket {
     private GuiInstance.SyncHolder[] data;
     public ByteBuf clientData;
 
@@ -26,7 +25,7 @@ public class GuiSyncPacket {
 
     }
 
-    public static void encode(GuiSyncPacket msg, FriendlyByteBuf buf) {
+    public static void encodeStatic(GuiSyncPacket msg, FriendlyByteBuf buf) {
         buf.writeVarInt(msg.data.length);
         for (GuiInstance.SyncHolder data : msg.data) {
             buf.writeVarInt(data.index);
@@ -38,14 +37,22 @@ public class GuiSyncPacket {
         return new GuiSyncPacket(buf.copy());
     }
 
-    public static void handleServer(GuiSyncPacket msg){
+    @Override
+    public void handleServer(){
         AbstractContainerMenu c = Minecraft.getInstance().player.containerMenu;
         if (c instanceof IAntimatterContainer) {
-            ((AntimatterContainer) c).handler.receivePacket(msg, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
+            ((AntimatterContainer) c).handler.receivePacket(this, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
         }
     }
 
-    public static void handleClient(GuiSyncPacket msg, ServerPlayer sender){
-        ((AntimatterContainer) sender.containerMenu).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
+    @Override
+    public void encode(FriendlyByteBuf buf) {
+        encodeStatic(this, buf);
+    }
+
+
+    @Override
+    public void handleClient(ServerPlayer sender){
+        ((AntimatterContainer) sender.containerMenu).handler.receivePacket(this, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
     }
 }

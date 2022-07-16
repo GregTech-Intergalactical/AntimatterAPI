@@ -11,6 +11,8 @@ import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
 import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
+import muramasa.antimatter.network.AntimatterNetwork;
+import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -212,8 +214,8 @@ public class GuiInstance implements ICanSyncData {
             writeToServer(toSync);
     }
 
-    public void sendPacket(Object pkt) {
-        Antimatter.NETWORK.sendToServer(pkt);
+    public void sendPacket(AbstractGuiEventPacket pkt) {
+        Antimatter.NETWORK.sendToServer(pkt.getChannelId(), pkt);
     }
 
     /**
@@ -257,13 +259,13 @@ public class GuiInstance implements ICanSyncData {
     private void write(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new GuiSyncPacket(data);
         for (ServerPlayer listener : ((IAntimatterContainer)container).listeners()) {
-            Antimatter.NETWORK.sendTo(pkt, listener);
+            Antimatter.NETWORK.sendToClient(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt, listener);
         }
     }
 
     private void writeToServer(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new GuiSyncPacket(data);
-        Antimatter.NETWORK.sendToServer(pkt);
+        Antimatter.NETWORK.sendToServer(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt);
     }
 
     @Override

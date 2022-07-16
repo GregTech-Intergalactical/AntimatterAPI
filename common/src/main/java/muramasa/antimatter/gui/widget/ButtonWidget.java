@@ -140,11 +140,11 @@ public class ButtonWidget extends Widget {
     }
 
     public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
+        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
     }
 
     public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, but -> Antimatter.NETWORK.sendToServer(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
+        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
     }
 
 }

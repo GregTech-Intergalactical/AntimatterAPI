@@ -4,6 +4,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
+import muramasa.antimatter.network.packets.IAntimatterPacket;
 import muramasa.antimatter.network.packets.TileGuiEventPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -13,11 +14,9 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.IndexedMessageCodec;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.server.ServerLifecycleHooks;
 
-import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -41,25 +40,23 @@ public class AntimatterNetworkImpl extends AntimatterNetwork {
     }
 
     public void register() {
-        handler.registerMessage(currMessageId++, TileGuiEventPacket.class, TileGuiEventPacket::encode, TileGuiEventPacket::decode, (msg, ctx) -> {
+        handler.registerMessage(currMessageId++, TileGuiEventPacket.class, TileGuiEventPacket::encodeStatic, TileGuiEventPacket::decode, (msg, ctx) -> {
             ctx.get().enqueueWork(() -> {
-                TileGuiEventPacket.handle(msg, ctx.get().getSender());
+                msg.handleClient(ctx.get().getSender());
             });
             ctx.get().setPacketHandled(true);
         });
-        handler.registerMessage(currMessageId++, CoverGuiEventPacket.class, CoverGuiEventPacket::encode, CoverGuiEventPacket::decode, (msg, ctx) -> {
+        handler.registerMessage(currMessageId++, CoverGuiEventPacket.class, CoverGuiEventPacket::encodeStatic, CoverGuiEventPacket::decode, (msg, ctx) -> {
             ctx.get().enqueueWork(() -> {
-                CoverGuiEventPacket.handle(msg, ctx.get().getSender());
+                msg.handleClient(ctx.get().getSender());
             });
             ctx.get().setPacketHandled(true);
         });
         handler.registerMessage(currMessageId++, GuiSyncPacket.class, GuiSyncPacket::encode, GuiSyncPacket::decode, (msg, ctx) -> {
             if (ctx.get().getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-                ctx.get().enqueueWork(() -> {
-                    GuiSyncPacket.handleServer(msg);
-                });
+                ctx.get().enqueueWork(msg::handleServer);
             } else {
-                ctx.get().enqueueWork(() -> GuiSyncPacket.handleClient(msg, ctx.get().getSender()));
+                ctx.get().enqueueWork(() -> msg.handleClient(ctx.get().getSender()));
             }
             ctx.get().setPacketHandled(true);
         });
@@ -69,11 +66,11 @@ public class AntimatterNetworkImpl extends AntimatterNetwork {
         handler.registerMessage(currMessageId++, messageType, encoder, decoder, messageConsumer);
     }
 
-    public void sendToServer(Object msg) {
+    public void sendToServer(ResourceLocation id, IAntimatterPacket msg) {
         handler.sendToServer(msg);
     }
 
-    public void sendTo(Object msg, ServerPlayer player) {
+    public void sendToClient(ResourceLocation id, IAntimatterPacket msg, ServerPlayer player) {
         if (!(player instanceof FakePlayer))
             handler.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
     }
