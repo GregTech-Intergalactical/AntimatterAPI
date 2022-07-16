@@ -67,6 +67,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
@@ -564,7 +565,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (cap == AntimatterCaps.getRECIPE_HANDLER_CAPABILITY() && recipeHandler.isPresent()) return recipeHandler.side(side).cast();
 
         else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.side(side).cast();
-        else if (cap == TesseractCaps.getENERGY_HANDLER_CAPABILITY() && energyHandler.isPresent())
+        else if ((cap == TesseractCaps.getENERGY_HANDLER_CAPABILITY() || TesseractPlatformUtils.isFeCap(cap)) && energyHandler.isPresent())
             return energyHandler.side(side).cast();
         return super.getCapability(cap, side);
     }

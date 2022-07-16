@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.TesseractPlatformUtils;
 import tesseract.api.IConnectable;
 import tesseract.graph.Connectivity;
 
@@ -310,6 +311,9 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         if (cap == getCapability()) {
             return pipeCapHolder.side(side).cast();
         }
+        if (TesseractPlatformUtils.isFeCap(cap) && this instanceof TileEntityCable<T>){
+            return pipeCapHolder.side(side).cast();
+        }
         return LazyOptional.empty();
     }
 
@@ -320,6 +324,9 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         //if (!this.connects(side)) return LazyOptional.empty();
         if (cap == getCapability()) {
             return pipeCapHolder.side(null).cast();
+        }
+        if (TesseractPlatformUtils.isFeCap(cap) && this instanceof TileEntityCable<T>){
+            return pipeCapHolder.side(side).cast();
         }
         return LazyOptional.empty();
     }
