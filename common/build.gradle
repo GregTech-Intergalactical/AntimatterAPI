@@ -13,7 +13,7 @@ dependencies{
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     implementation(project(path: ":tesseract-common", configuration: "namedElements"))
     modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-caps:${rootProject.fabricated_forge_hash}"){
-        transitive = false
+        exclude(group: "net.fabricmc.fabric-api")
     }
     modCompileOnly("net.fabricmc.fabric-api:fabric-transfer-api-v1:${rootProject.fabric_transfer_api_version}")
     modCompileOnly("com.github.FeltMC:Porting-Lib:${rootProject.port_lib_hash}"){ transitive(false) }
@@ -29,6 +29,7 @@ dependencies{
     modImplementation("com.github.Trinsdar:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"){
         transitive = false
     }
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     implementation("com.github.Trinsdar:forgeconfigapiport-fabric:abc19f9a99"){

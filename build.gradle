@@ -70,6 +70,9 @@ allprojects {
                 includeGroup "curse.maven"
             }
         }
+        repositories {
+            maven { url "https://maven.shedaniel.me" }
+        }
         maven { url = "https://mvn.devos.one/snapshots/" }
         //Needed for intellij
         maven {

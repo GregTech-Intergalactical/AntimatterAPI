@@ -44,6 +44,7 @@ dependencies{
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
     modImplementation("com.github.FeltMC:Porting-Lib:${rootProject.port_lib_hash}"){ transitive(false) }
     modImplementation(include("net.devtech:arrp:0.+"))
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
     modApi("teamreborn:energy:${project.energy_version}") {
         transitive = false
     }
