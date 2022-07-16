@@ -102,29 +102,22 @@ public class RenderHelper {
 
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
-        registerProperty(battery, new ResourceLocation(Ref.ID, "battery"), new ItemPropertyFunctionWrapper((stack, world, living, some_int) -> {
+        registerProperty(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living, some_int) -> {
             LazyOptional<IEnergyHandler> handler = TesseractPlatformUtils.getEnergyHandlerItem(stack);
             return handler.map(h -> ((float) h.getEnergy() / (float) h.getCapacity())).orElse(1.0F);
-        }));
+        });
     }
 
     public static void registerProbePropertyOverrides(MaterialArmor armor) {
-        registerProperty(armor, new ResourceLocation(Ref.ID, "probe"), new ItemPropertyFunctionWrapper((stack, world, living, some_int) -> {
+        registerProperty(armor, new ResourceLocation(Ref.ID, "probe"), (stack, world, living, some_int) -> {
             CompoundTag nbt = stack.getTag();
             return nbt != null && nbt.contains("theoneprobe") && nbt.getBoolean("theoneprobe") ? 1.0F : 0.0F;
-        }));
+        });
     }
 
     @ExpectPlatform
-    private static void registerProperty(Item item, ResourceLocation location, ClampedItemPropertyFunction function){
+    public static void registerProperty(Item item, ResourceLocation location, ClampedItemPropertyFunction function){
 
-    }
-
-    public record ItemPropertyFunctionWrapper(ItemPropertyFunction function) implements ClampedItemPropertyFunction{
-        @Override
-        public float unclampedCall(ItemStack itemStack, @org.jetbrains.annotations.Nullable ClientLevel clientLevel, @org.jetbrains.annotations.Nullable LivingEntity livingEntity, int i) {
-            return function.call(itemStack, clientLevel, livingEntity, i);
-        }
     }
 
     public static void drawFluid(PoseStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {
