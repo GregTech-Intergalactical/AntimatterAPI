@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -37,7 +38,8 @@ public class UtilsImpl {
     }
 
     //TODO
-    /*public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
-        return state.canHarvestBlock(level, pos, player);
-    }*/
+    public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
+        return isCorrectToolForDrops(state, player);
+        //return state.canHarvestBlock(level, pos, player);
+    }
 }

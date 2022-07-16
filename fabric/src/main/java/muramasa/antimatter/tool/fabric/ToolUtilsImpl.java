@@ -1,5 +1,6 @@
 package muramasa.antimatter.tool.fabric;
 
+import io.github.fabricators_of_create.porting_lib.util.TierSortingRegistry;
 import muramasa.antimatter.tool.IAbstractToolMethods;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.world.item.CreativeModeTab;
@@ -14,8 +15,7 @@ public class ToolUtilsImpl {
         return properties;
     }
 
-    //TODO figure out
     public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
-        return true;
+        return TierSortingRegistry.isCorrectTierForDrops(tier, state);
     }
 }
