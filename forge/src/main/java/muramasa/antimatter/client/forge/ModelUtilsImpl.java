@@ -29,13 +29,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ModelUtilsImpl {
-    public static UnbakedModel getMissingModel() {
-        return ForgeModelBakery.instance().getModel(new ModelResourceLocation("builtin/missing", "missing"));
-    }
-
-    public static UnbakedModel getModel(ResourceLocation resourceLocation){
-        return ForgeModelBakery.instance().getModel(resourceLocation);
-    }
 
     public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
         return ForgeModelBakery.defaultModelGetter();
@@ -64,10 +57,6 @@ public class ModelUtilsImpl {
         Map<Direction, List<BakedQuad>> faceQuads = new Object2ObjectOpenHashMap<>();
         Arrays.stream(Ref.DIRS).forEach(d -> faceQuads.put(d, baked.getQuads(null, d, Ref.RNG, EmptyModelData.INSTANCE)));
         return new SimpleBakedModel(baked.getQuads(null, null, Ref.RNG, EmptyModelData.INSTANCE), faceQuads, baked.useAmbientOcclusion(), baked.usesBlockLight(), baked.isGui3d(), baked.getParticleIcon(), baked.getTransforms(), baked.getOverrides());
-    }
-
-    public static BakedModel getBaked(ResourceLocation loc) {
-        return ForgeModelBakery.instance().getBakedTopLevelModels().get(loc);// SimpleModelState.IDENTITY, ForgeModelBakery.defaultTextureGetter());
     }
 
     public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees){

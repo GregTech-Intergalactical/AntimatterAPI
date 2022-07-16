@@ -59,15 +59,13 @@ public class ModelUtils {
         }
     }
 
-    @ExpectPlatform
     public static UnbakedModel getMissingModel() {
-        return null;
+        return getModelBakery().getModel(new ModelResourceLocation("builtin/missing", "missing"));
     }
 
 
-    @ExpectPlatform
     public static UnbakedModel getModel(ResourceLocation resourceLocation){
-        return null;
+        return getModelBakery().getModel(resourceLocation);
     }
 
 
@@ -107,9 +105,8 @@ public class ModelUtils {
         return null;
     }
 
-    @ExpectPlatform
     public static BakedModel getBaked(ResourceLocation loc) {
-        return null;
+        return getModelBakery().getBakedTopLevelModels().get(loc);// SimpleModelState.IDENTITY, ForgeModelBakery.defaultTextureGetter());
     }
 
     public static BakedModel getBakedFromState(BlockState state) {

@@ -13,5 +13,8 @@
     "MaterialSwordMixin",
     "MaterialToolMixin"
   ],
-  "minVersion": "0.8"
+  "minVersion": "0.8",
+  "client": [
+    "ModelBakeryMixin"
+  ]
 }
