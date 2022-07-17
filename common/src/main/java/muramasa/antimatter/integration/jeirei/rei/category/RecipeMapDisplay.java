@@ -5,17 +5,23 @@ import dev.architectury.fluid.FluidStack;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
+import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
+import me.shedaniel.rei.api.common.util.EntryStacks;
 import muramasa.antimatter.integration.jeirei.rei.AntimatterREIPlugin;
 import muramasa.antimatter.recipe.Recipe;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
 public class RecipeMapDisplay implements Display {
     private final ResourceLocation id;
@@ -33,10 +39,28 @@ public class RecipeMapDisplay implements Display {
             builder.add(EntryIngredients.of(VanillaEntryTypes.FLUID, Arrays.stream(recipe.getOutputFluids()).map(AntimatterREIPlugin::toREIFLuidStack).toList()));
         }
         if (recipe.getOutputItems(false) != null){
-            //Stream<ItemStack> stream = Arrays.stream()
-            builder.add(EntryIngredients.of(VanillaEntryTypes.ITEM, Arrays.asList(recipe.getOutputItems(false))));
+            builder.add(createOutputEntries(Arrays.asList(recipe.getOutputItems(false)), recipe));
         }
         this.output = builder.build();
+    }
+    public static EntryIngredient createOutputEntries(List<ItemStack> input, Recipe recipe) {
+        return EntryIngredient.of(input.stream().map(i -> EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getProbabilitySetting(recipe.getChancesWithStacks().get(i)))).toList());
+    }
+
+    public static Component getProbabilityTooltip(int probability) {
+        if (probability == 100) {
+            return null;
+        } else {
+            MutableComponent text = new TextComponent("Chance: " + probability + "%");
+            text.withStyle(ChatFormatting.WHITE);
+            return text;
+        }
+    }
+
+    public static Function<EntryStack<?>, List<Component>> getProbabilitySetting(int probability) {
+        @Nullable
+        Component tooltip = getProbabilityTooltip(probability);
+        return es -> tooltip == null ? List.of() : List.of(tooltip);
     }
 
     @Override

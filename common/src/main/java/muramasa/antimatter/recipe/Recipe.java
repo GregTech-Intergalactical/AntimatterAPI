@@ -1,6 +1,8 @@
 package muramasa.antimatter.recipe;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
@@ -22,6 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
     private int[] chances;
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
+    private Map<ItemStack, Integer> itemsWithChances = null;
     public ResourceLocation id;
     public String mapId;
     //Used for recipe validators, e.g. cleanroom.
@@ -227,6 +231,27 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
 
     public Set<RecipeTag> getTags() {
         return tags;
+    }
+
+    public Map<ItemStack, Integer> getChancesWithStacks(){
+        if (itemsWithChances == null) {
+            if (itemsOutput != null){
+                ImmutableMap.Builder<ItemStack, Integer> map = ImmutableMap.builder();
+                if (hasChances()){
+                    for (int i = 0; i < itemsOutput.length; i++) {
+                        map.put(itemsOutput[i], chances[i]);
+                    }
+                } else {
+                    for (ItemStack itemStack : itemsOutput) {
+                        map.put(itemStack, 100);
+                    }
+                }
+                itemsWithChances = map.build();
+            } else {
+                itemsWithChances = ImmutableMap.of();
+            }
+        }
+        return itemsWithChances;
     }
 
     @Override
