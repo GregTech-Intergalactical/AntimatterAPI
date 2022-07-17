@@ -16,6 +16,9 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.WallBlock;
 
+import static net.minecraft.world.level.block.state.properties.WallSide.LOW;
+import static net.minecraft.world.level.block.state.properties.WallSide.TALL;
+
 public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject, ITextureProvider, IModelProvider {
     protected String domain, id, suffix;
     CobbleStoneType type;
@@ -57,7 +60,7 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
         BlockModelBuilder post = prov.models().getBuilder(getId() + "_post").parent(prov.existing("minecraft", "block/template_wall_post")).texture("wall", getTextures()[0]);
         BlockModelBuilder side = prov.models().getBuilder(getId() + "_side").parent(prov.existing("minecraft", "block/template_wall_side")).texture("wall", getTextures()[0]);
         BlockModelBuilder side_tall = prov.models().getBuilder(getId() + "_side_tall").parent(prov.existing("minecraft", "block/template_wall_side_tall")).texture("wall", getTextures()[0]);
-        /*prov.getMultipartBuilder(block)
+        prov.getMultipartBuilder(block)
                 .part().modelFile(post).addModel().condition(UP, true).end()
                 .part().modelFile(side).uvLock(true).addModel().condition(NORTH_WALL, LOW).end()
                 .part().modelFile(side).rotationY(90).uvLock(true).addModel().condition(EAST_WALL, LOW).end()
@@ -66,7 +69,7 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
                 .part().modelFile(side_tall).uvLock(true).addModel().condition(NORTH_WALL, TALL).end()
                 .part().modelFile(side_tall).rotationY(90).uvLock(true).addModel().condition(EAST_WALL, TALL).end()
                 .part().modelFile(side_tall).rotationY(180).uvLock(true).addModel().condition(SOUTH_WALL, TALL).end()
-                .part().modelFile(side_tall).rotationY(270).uvLock(true).addModel().condition(WEST_WALL, TALL).end();*/
+                .part().modelFile(side_tall).rotationY(270).uvLock(true).addModel().condition(WEST_WALL, TALL).end();
 
     }
 }

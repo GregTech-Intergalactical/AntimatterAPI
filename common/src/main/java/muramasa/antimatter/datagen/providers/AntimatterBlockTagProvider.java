@@ -164,7 +164,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     @Override
     protected TagAppender<Block> tag(TagKey<Block> tag) {
         Tag.Builder builder = this.getOrCreateRawBuilder(tag);
-        return new TagAppender(builder, this.registry, providerDomain);
+        return new TagAppender<>(builder, this.registry, providerDomain);
     }
 
     @Override
