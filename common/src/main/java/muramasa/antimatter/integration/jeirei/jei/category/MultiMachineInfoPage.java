@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.forge.category;
+package muramasa.antimatter.integration.jeirei.jei.category;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -12,7 +12,6 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.event.ClientEvents;
-import muramasa.antimatter.client.event.forge.ClientEventsForge;
 import muramasa.antimatter.client.scene.ImmediateWorldSceneRenderer;
 import muramasa.antimatter.client.scene.TrackedDummyWorld;
 import muramasa.antimatter.client.scene.WorldSceneRenderer;
@@ -263,7 +262,7 @@ public class MultiMachineInfoPage {
     }
 
     public void setIngredients(IIngredients ingredients) {
-        ingredients.setOutput(VanillaTypes.ITEM, machine.getItem(machine.getFirstTier()).getDefaultInstance());
+        ingredients.setOutput(VanillaTypes.ITEM_STACK, machine.getItem(machine.getFirstTier()).getDefaultInstance());
     }
 
     public List<Component> getTooltipStrings(double mouseX, double mouseY) {
@@ -273,7 +272,7 @@ public class MultiMachineInfoPage {
             if (rayTraceResult != null) {
                 Minecraft minecraft = Minecraft.getInstance();
                 BlockState blockState = renderer.world.getBlockState(rayTraceResult.getBlockPos());
-                ItemStack itemStack = blockState.getBlock().getCloneItemStack(blockState, rayTraceResult, renderer.world, rayTraceResult.getBlockPos(), minecraft.player);
+                ItemStack itemStack = blockState.getBlock().getCloneItemStack(renderer.world, rayTraceResult.getBlockPos(), blockState);
                 if (itemStack != null && !itemStack.isEmpty()) {
                     TooltipFlag flag = minecraft.options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL;
                     List<Component> list = itemStack.getTooltipLines(minecraft.player, flag);

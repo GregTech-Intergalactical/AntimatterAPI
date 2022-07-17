@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.forge.category;
+package muramasa.antimatter.integration.jeirei.jei.category;
 
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.vertex.PoseStack;

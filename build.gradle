@@ -87,6 +87,12 @@ allprojects {
             }
         }
         maven {
+            url "https://maven.terraformersmc.com"
+            content {
+                includeGroup "com.terraformersmc"
+            }
+        }
+        maven {
             url = 'https://maven.blamejared.com'
             name = 'BlameJared Maven'
         }

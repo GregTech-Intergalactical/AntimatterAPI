@@ -42,12 +42,5 @@
     "antimatter": [
       "muramasa.antimatter.Antimatter"
     ]
-  },
-  "custom": {
-    "modmenu": {
-      "badges": [
-        "library"
-      ]
-    }
   }
 }

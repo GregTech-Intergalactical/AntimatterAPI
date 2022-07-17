@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.forge.category;
+package muramasa.antimatter.integration.jeirei.jei.category;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -11,6 +11,7 @@ import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
+import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
@@ -19,6 +20,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.integration.jeirei.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.Recipe;
@@ -67,17 +69,17 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack) {
-                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, (ItemStack) icon);
+                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, (ItemStack) icon);
             }
             if (icon instanceof ItemLike) {
-                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack((ItemLike) icon));
+                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack((ItemLike) icon));
             }
             if (icon instanceof IDrawable) {
                 this.icon = (IDrawable) icon;
             }
         } else {
             Block block = AntimatterAPI.get(Block.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
-            this.icon = block == null ? guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(block.asItem(), 1));
+            this.icon = block == null ? guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(block.asItem(), 1));
         }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();
@@ -125,9 +127,9 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                         if (input.size() == 0) {
                             List<ItemStack> st = new ObjectArrayList<>(1);
                             st.add(new ItemStack(Data.DEBUG_SCANNER, 1));
-                            slot.addIngredients(VanillaTypes.ITEM, st);
+                            slot.addIngredients(VanillaTypes.ITEM_STACK, st);
                         } else {
-                            slot.addIngredients(VanillaTypes.ITEM, input);
+                            slot.addIngredients(VanillaTypes.ITEM_STACK, input);
                             final int ss = s;
                             slot.addTooltipCallback((ing, list) -> {
                                 if (recipe.getInputItems().get(ss) instanceof RecipeIngredient ri) {
@@ -156,7 +158,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 slotCount = Math.min(slotCount, outputs.size());
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    slot.addIngredient(VanillaTypes.ITEM, outputs.get(s));
+                    slot.addIngredient(VanillaTypes.ITEM_STACK, outputs.get(s));
                     final int ss = s;
                     slot.addTooltipCallback((ing, list) -> {
                         if (recipe.hasChances()) {
@@ -177,10 +179,10 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 slotCount = Math.min(slotCount, fluids.size());
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    slot.addIngredients(VanillaTypes.FLUID, Arrays.asList(fluids.get(s).getStacks()));
-                    slot.setFluidRenderer((int) fluids.get(s).getAmount(), true, 16, 16);
+                    AntimatterJEIPlugin.addFluidIngredients(slot, Arrays.asList(fluids.get(s).getStacks()));
+                    slot.setFluidRenderer(fluids.get(s).getAmount(), true, 16, 16);
                     slot.addTooltipCallback((ing, list) -> {
-                        if (Utils.hasNoConsumeTag(ing.getDisplayedIngredient().get().getIngredient(VanillaTypes.FLUID).get()))
+                        if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
                             list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
                     });
                     inputFluids++;
@@ -195,8 +197,8 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    slot.setFluidRenderer(fluids[s].getAmount(), true, 16, 16);
-                    slot.addIngredient(VanillaTypes.FLUID, fluids[s]);
+                    slot.setFluidRenderer(fluids[s].getRealAmount(), true, 16, 16);
+                    AntimatterJEIPlugin.addFluidIngredients(slot, Collections.singletonList(fluids[s]));
                 }
             }
         }

@@ -1,0 +1,66 @@
+package muramasa.antimatter.integration.jeirei.jei.forge;
+
+import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.ingredients.IIngredientType;
+import mezz.jei.api.ingredients.ITypedIngredient;
+import mezz.jei.api.recipe.IFocus;
+import mezz.jei.api.recipe.RecipeIngredientRole;
+import muramasa.antimatter.integration.jeirei.jei.AntimatterJEIPlugin;
+import net.minecraftforge.fluids.FluidStack;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class AntimatterJEIPluginImpl {
+    public static void uses(FluidStack val, boolean USE) {
+        FluidStack v = val.copy();
+        AntimatterJEIPlugin.getRuntime().getRecipesGui().show(new IFocus<FluidStack>() {
+            @Override
+            public ITypedIngredient<FluidStack> getTypedValue() {
+                return new ITypedIngredient<>() {
+                    @Override
+                    public IIngredientType<FluidStack> getType() {
+                        return ForgeTypes.FLUID_STACK;
+                    }
+
+                    @Override
+                    public FluidStack getIngredient() {
+                        return v;
+                    }
+
+                    @Override
+                    public <V> Optional<V> getIngredient(IIngredientType<V> ingredientType) {
+                        if (ingredientType == ForgeTypes.FLUID_STACK) return ((Optional<V>) Optional.of(v));
+                        return Optional.empty();
+                    }
+                };
+            }
+
+            @Override
+            public RecipeIngredientRole getRole() {
+                return USE ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
+            }
+
+            @Override
+            public <T> Optional<IFocus<T>> checkedCast(IIngredientType<T> ingredientType) {
+                return Optional.empty();
+            }
+
+            @Override
+            public Mode getMode() {
+                return null;
+            }
+
+        });
+    }
+
+    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidStack> stacks){
+        builder.addIngredients(ForgeTypes.FLUID_STACK, stacks);
+    }
+
+    public static FluidStack getIngredient(ITypedIngredient<?> ingredient){
+        return ingredient.getIngredient(ForgeTypes.FLUID_STACK).get();
+    }
+}
