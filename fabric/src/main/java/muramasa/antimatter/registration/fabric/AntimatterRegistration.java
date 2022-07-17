@@ -66,7 +66,9 @@ public class AntimatterRegistration {
             MaterialEvent event = new MaterialEvent();
             MaterialDataInit.onMaterialEvent(event);
             MaterialEvents.MATERIAL.invoker().onMaterialRegister(event);
-            AntimatterKubeJS.loadMaterialEvent(event);
+            if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+                AntimatterKubeJS.loadMaterialEvent(event);
+            }
         }
         AntimatterAPI.all(Block.class, domain, (b, d, i) -> {
             if (!(b instanceof IItemBlockProvider bp) || bp.generateItemBlock()) {

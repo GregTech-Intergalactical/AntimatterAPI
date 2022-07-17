@@ -42,13 +42,17 @@ dependencies{
     modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:05a5fe1533")) { transitive false }
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
-    modImplementation("com.github.FeltMC:Porting-Lib:${rootProject.port_lib_hash}"){ transitive(false) }
+    modImplementation("com.github.FeltMC:Porting-Lib:${rootProject.port_lib_hash}"){
+        exclude(group: "net.fabricmc.fabric-api")
+    }
     modImplementation(include("net.devtech:arrp:0.+"))
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
     modApi("teamreborn:energy:${project.energy_version}") {
         transitive = false
     }
-    implementation("com.github.Trinsdar:forgeconfigapiport-fabric:abc19f9a99"){
+    implementation("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
+    implementation("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
+    modImplementation("com.github.FeltMC:forgeconfigapiport-fabric:c1486f80f7"){
         transitive = false
     }
 }

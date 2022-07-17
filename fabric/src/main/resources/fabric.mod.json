@@ -26,7 +26,7 @@
     "antimatter.mixins.json",
     "antimatter-fabric.mixins.json"
   ],
-  "accessWidener" : "antimatter.accesswidener",
+  "accessWidener" : "antimatter2.accesswidener",
   "depends": {
     "fabricloader": ">=0.14.0",
     "fabric": "*",
@@ -44,7 +44,10 @@
     ]
   },
   "custom": {
-    "loom:injected_interfaces": {
+    "modmenu": {
+      "badges": [
+        "library"
+      ]
     }
   }
 }

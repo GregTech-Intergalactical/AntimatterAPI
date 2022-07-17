@@ -11,7 +11,7 @@ import muramasa.antimatter.event.fabric.LoaderEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.event.fabric.WorldGenEvents;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
-import muramasa.antimatter.mixin.fabric.LootTableExtension;
+import muramasa.antimatter.fabric.LootTableExtension;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
