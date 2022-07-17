@@ -1,6 +1,7 @@
 package muramasa.antimatter.proxy.fabric;
 
 
+import io.github.fabricators_of_create.porting_lib.event.client.ModelLoadCallback;
 import io.github.fabricators_of_create.porting_lib.model.IModelLoader;
 import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import muramasa.antimatter.client.AntimatterModelLoader;
@@ -16,7 +17,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 public class ClientHandlerImpl {
     public static void registerLoader(ResourceLocation location, AntimatterModelLoader<?> loader){
-        ModelLoaderRegistry.registerLoader(location, (IModelLoader<?>) loader);
+        ModelLoaderRegistry.registerLoader(location, loader);
     }
 
     public static<T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){

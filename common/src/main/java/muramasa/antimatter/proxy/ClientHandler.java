@@ -75,7 +75,7 @@ public class ClientHandler implements IProxyHandler {
     }
 
     @ExpectPlatform
-    private static void registerLoader(ResourceLocation location, AntimatterModelLoader<?> loader){
+    public static void registerLoader(ResourceLocation location, AntimatterModelLoader<?> loader){
     }
 
     @ExpectPlatform
