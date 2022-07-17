@@ -22,6 +22,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.registration.IColorHandler;
+import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -68,8 +69,7 @@ public class ClientHandler implements IProxyHandler {
 
     // Called before resource registration is performed.
     public static void preResourceRegistration() {
-
-        AntimatterModelManager.init();
+        AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
         AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> registerLoader(l.getLoc(), l));
         AntimatterDynamics.runAssetProvidersDynamically();
     }

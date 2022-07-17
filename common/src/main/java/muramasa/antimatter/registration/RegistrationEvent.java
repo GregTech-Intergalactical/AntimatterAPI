@@ -7,4 +7,5 @@ public enum RegistrationEvent {
     DATA_POST_INIT, //When the initial data can be altered (Material tags from other addons etc)
     DATA_READY, //When all data should be ready to use
     WORLDGEN_INIT, //When WorldGen objects need to initialize
+    CLIENT_DATA_INIT // When client stuff initializes on fabric
 }

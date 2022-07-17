@@ -3,6 +3,7 @@ package muramasa.antimatter.client.fabric;
 import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvents;
 import io.github.fabricators_of_create.porting_lib.event.client.ColorHandlersCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.TextureStitchCallback;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.event.ClientEvents;

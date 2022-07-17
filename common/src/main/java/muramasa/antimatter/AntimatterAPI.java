@@ -150,7 +150,7 @@ public final class AntimatterAPI {
     }
 
     static boolean allowRegistration() {
-        return PHASE == RegistrationEvent.DATA_INIT || PHASE == RegistrationEvent.WORLDGEN_INIT;
+        return PHASE == RegistrationEvent.DATA_INIT || PHASE == RegistrationEvent.CLIENT_DATA_INIT || PHASE == RegistrationEvent.WORLDGEN_INIT;
     }
 
     private static <T extends ISharedAntimatterObject> T getInternal(Class<? extends T> c, String id) {
@@ -388,6 +388,7 @@ public final class AntimatterAPI {
      **/
 
     public static void onRegistration(RegistrationEvent event) {
+        RegistrationEvent previous = PHASE;
         PHASE = event;
         Antimatter.LOGGER.info("Registration event " + event);
         Side side = AntimatterPlatformUtils.isServer() ? Side.SERVER
@@ -403,6 +404,8 @@ public final class AntimatterAPI {
         list.forEach(r -> r.onRegistrationEvent(event, side));
         if (CALLBACKS.containsKey(event))
             CALLBACKS.get(event).forEach(Runnable::run);
+        if (event == RegistrationEvent.CLIENT_DATA_INIT)
+            PHASE = previous;
     }
 
     @ExpectPlatform
