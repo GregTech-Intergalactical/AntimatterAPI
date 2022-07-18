@@ -174,6 +174,18 @@ public class WorldGenVeinBuilder {
         .withFill(stoneType);
   }
 
+  public final WorldGenVeinBuilder asStoneVein(int weight, int minY, int maxY, StoneType stoneType,
+                                               List<ResourceKey<Level>> dimensions) {
+    for (ResourceKey<Level> dimension : dimensions) {
+      this.inDimension(dimension);
+    }
+    return this
+            .onLayer(WorldGenVein.STONE_VEIN_LAYER)
+            .withWeight(weight)
+            .atHeight(minY, maxY)
+            .withFill(stoneType);
+  }
+
   @SafeVarargs
   public final WorldGenVeinBuilder asVein(int weight, int minY, int maxY,
       ResourceKey<Level>... dimensions) {
