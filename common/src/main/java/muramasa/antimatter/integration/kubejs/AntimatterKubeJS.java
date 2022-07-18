@@ -10,12 +10,6 @@ import net.minecraft.resources.ResourceLocation;
 
 public class AntimatterKubeJS extends KubeJSPlugin {
 
-
-    @Override
-    public void initStartup() {
-        super.initStartup();
-        new AMCreationEvent().post(ScriptType.STARTUP, "antimatter.creation");}
-
     @Override
     public void addBindings(BindingsEvent event) {
         event.add("antimatter", new KubeJSBindings());
@@ -24,6 +18,11 @@ public class AntimatterKubeJS extends KubeJSPlugin {
     @Override
     public void addRecipes(RegisterRecipeHandlersEvent event) {
         event.register(new ResourceLocation(Ref.ID, "machine"), KubeJSRecipe::new);
+    }
+
+    public static void loadStartup(){
+        AMCreationEvent.init();
+        new AMCreationEvent().post(ScriptType.STARTUP, "antimatter.creation");
     }
 
     public static void loadMaterialEvent(MaterialEvent event){

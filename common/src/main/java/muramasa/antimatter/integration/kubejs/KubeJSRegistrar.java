@@ -15,6 +15,7 @@ public class KubeJSRegistrar extends AntimatterMod {
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterBlockStateProvider(Ref.MOD_KJS, "KubeJS BlockStates", g));
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterItemModelProvider(Ref.MOD_KJS, "KubeJS Item Models", g));
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterLanguageProvider(Ref.MOD_KJS, "KubeJS en_us Localization", "en_us", g));
+        onRegistrarInit();
     }
 
     public static void providerEvent(ProvidersEvent ev) {
@@ -39,7 +40,9 @@ public class KubeJSRegistrar extends AntimatterMod {
 
     @Override
     public void onRegistrationEvent(RegistrationEvent event, Side side) {
-
+        if (event == RegistrationEvent.DATA_INIT){
+            AntimatterKubeJS.loadStartup();
+        }
     }
 
     @Override

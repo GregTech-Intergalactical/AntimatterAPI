@@ -10,6 +10,7 @@ import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.event.GuiEvents;
+import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.material.SubTag;
@@ -46,8 +47,9 @@ public class Antimatter extends AntimatterMod {
         super.onRegistrarInit();
         LOGGER.info("Loading Antimatter");
         INSTANCE = this;
-
-
+        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
+            new KubeJSRegistrar();
+        }
         AntimatterDynamics.clientProvider(Ref.ID,
                 g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
         AntimatterDynamics.clientProvider(Ref.ID,
