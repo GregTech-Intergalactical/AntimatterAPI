@@ -73,7 +73,6 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
 
     public final Material material;
     private final int capacity;
-    private final int maxTemp;
 
     private final Fluid stack;
 
@@ -90,7 +89,6 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
         });
         this.material = material;
         this.capacity = capacity;
-        this.maxTemp = MaterialTags.MELTING_POINT.getInt(material);
         this.stack = Fluids.EMPTY;
     }
 
@@ -99,7 +97,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
     }
 
     public int getMaxTemp() {
-        return maxTemp;
+        return MaterialTags.MELTING_POINT.getInt(material);
     }
 
    /* @Override
@@ -117,7 +115,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
 
     @Nullable
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        return new FluidHandlerItemCell(stack, capacity, maxTemp);
+        return new FluidHandlerItemCell(stack, capacity, getMaxTemp());
     }
 
     @Override
