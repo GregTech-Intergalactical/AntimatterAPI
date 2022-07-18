@@ -16,8 +16,12 @@ import java.util.Map;
 public class CobbleStoneType extends StoneType {
     String beginningPath;
     Map<String, Block> blocks = new LinkedHashMap<>();
-    public static final String[] SUFFIXES = {"bricks_chiseled", "bricks_cracked", "bricks_mossy", "cobble_mossy", "bricks", "cobble", "smooth", "", "bricks_mossy_slab", "cobble_mossy_slab", "bricks_slab", "cobble_slab", "smooth_slab", "slab", "bricks_mossy_stairs", "cobble_mossy_stairs", "bricks_stairs", "cobble_stairs", "smooth_stairs", "stairs", "bricks_mossy_wall", "cobble_mossy_wall", "bricks_wall", "cobble_wall", "smooth_wall", "wall"};
+    public static final String[] SUFFIXES = {"bricks_chiseled", "bricks_cracked", "bricks_mossy", "cobble_mossy", "bricks", "cobble", "smooth", ""};
 
+    public static final String[] SLAB_SUFFIXES = {"bricks_mossy_slab", "cobble_mossy_slab", "bricks_slab", "cobble_slab", "smooth_slab", "slab"};
+
+    public static final String[] STAIR_SUFFIXES = {"bricks_mossy_stairs", "cobble_mossy_stairs", "bricks_stairs", "cobble_stairs", "smooth_stairs", "stairs"};
+    public static final String[] WALL_SUFFIXES = {"bricks_mossy_wall", "cobble_mossy_wall", "bricks_wall", "cobble_wall", "smooth_wall", "wall"};
     public CobbleStoneType(String domain, String id, Material material, String beginningPath, SoundType soundType, boolean generateBlock) {
         super(domain, id, material, new Texture(domain, beginningPath + id + "/stone"), soundType, generateBlock);
         this.beginningPath = beginningPath;
@@ -28,24 +32,21 @@ public class CobbleStoneType extends StoneType {
         if (registry == RegistryType.BLOCKS) {
             if (generateBlock) {
                 for (int i = 0; i < SUFFIXES.length; i++) {
+                    Block stone;
                     if (i == 7) {
-                        setState(new BlockStone(this));
-                        blocks.put(SUFFIXES[i], this.getState().getBlock());
+                        stone = new BlockStone(this);
+                        setState(stone);
+                    } else {
+                        stone = new BlockStone(this, SUFFIXES[i]);
+                    }
+                    blocks.put(SUFFIXES[i], stone);
+                    if (i < 2){
                         continue;
                     }
-                    if (i > 7 && i < 14) {
-                        blocks.put(SUFFIXES[i], new BlockStoneSlab(this, SUFFIXES[i - 6]));
-                        continue;
-                    }
-                    if (i > 13 && i < 20) {
-                        blocks.put(SUFFIXES[i], new BlockStoneStair(this, SUFFIXES[i - 12], blocks.get(SUFFIXES[i - 8])));
-                        continue;
-                    }
-                    if (i > 19) {
-                        blocks.put(SUFFIXES[i], new BlockStoneWall(this, SUFFIXES[i - 18]));
-                        continue;
-                    }
-                    blocks.put(SUFFIXES[i], new BlockStone(this, SUFFIXES[i]));
+                    int i2 = i - 2;
+                    blocks.put(SLAB_SUFFIXES[i2], new BlockStoneSlab(this, SUFFIXES[i]));
+                    blocks.put(STAIR_SUFFIXES[i2], new BlockStoneStair(this, SUFFIXES[i], stone));
+                    blocks.put(WALL_SUFFIXES[i2], new BlockStoneWall(this, SUFFIXES[i]));
                 }
             }
         }
