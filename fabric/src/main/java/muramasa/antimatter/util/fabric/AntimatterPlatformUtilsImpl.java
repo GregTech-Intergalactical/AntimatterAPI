@@ -1,6 +1,7 @@
 package muramasa.antimatter.util.fabric;
 
 import com.mojang.math.Matrix4f;
+import io.github.fabricators_of_create.porting_lib.util.LevelUtil;
 import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.CraftingEvent;
@@ -37,6 +38,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -71,6 +73,10 @@ public class AntimatterPlatformUtilsImpl {
         BlockState state = be.getBlockState();
         EnergyStorage storage = EnergyStorage.SIDED.find(l, pos, state, be, side);
         return storage != null;
+    }
+
+    public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
+        LevelUtil.markAndNotifyBlock(level, arg, levelchunk, blockstate, arg2, j, k);
     }
 
     public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
