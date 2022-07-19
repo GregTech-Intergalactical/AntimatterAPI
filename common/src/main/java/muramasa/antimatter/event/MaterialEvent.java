@@ -11,10 +11,15 @@ import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialStack;
 import muramasa.antimatter.material.MaterialTags;
+import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.material.MaterialTypeBlock;
+import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.material.ToolMaterialTag;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
 import java.util.List;
@@ -324,6 +329,16 @@ public class MaterialEvent {
     public MaterialEvent addByProduct(Material... mats) {
         MaterialTags.BYPRODUCTS.add(this.material, new ObjectArrayList<>());
         MaterialTags.BYPRODUCTS.getList(this.material).addAll(Arrays.asList(mats));
+        return this;
+    }
+
+    public MaterialEvent replaceItem(MaterialTypeItem<?> type, Item toReplace){
+        type.replacement(this.material, toReplace);
+        return this;
+    }
+
+    public MaterialEvent replaceBlock(MaterialTypeBlock<?> type, Item toReplace){
+        type.replacement(this.material, toReplace);
         return this;
     }
 }
