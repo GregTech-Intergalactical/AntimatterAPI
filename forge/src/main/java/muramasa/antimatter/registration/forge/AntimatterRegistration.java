@@ -58,21 +58,21 @@ public final class AntimatterRegistration {
         if (domain.equals(Ref.ID)) {
             if (e.getRegistry() == ForgeRegistries.BLOCKS) {
                 AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
-                Data.postInit();
-            }
-            AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
-            AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
-            List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
-            list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistry()))));
-            if (e.getRegistry() == ForgeRegistries.BLOCKS) {
                 AntimatterAPI.all(SoundEvent.class, t -> {
                     if (t.getRegistryName() == null) t.setRegistryName(t.getLocation());
                 });
                 MaterialEvent event = new MaterialEvent();
                 MaterialDataInit.onMaterialEvent(event);
                 MinecraftForge.EVENT_BUS.post(new AntimatterMaterialEvent(Antimatter.INSTANCE, event));
-                AntimatterKubeJS.loadMaterialEvent(event);
+                if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+                    AntimatterKubeJS.loadMaterialEvent(event);
+                }
+                Data.postInit();
             }
+            AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
+            AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
+            List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
+            list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistry()))));
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, (b, d, i) -> {

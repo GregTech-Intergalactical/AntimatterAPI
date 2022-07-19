@@ -55,19 +55,18 @@ public class AntimatterRegistration {
     public static void onRegister(final String domain) {
         if (domain.equals(Ref.ID)) {
             AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
+            MaterialEvent event = new MaterialEvent();
+            MaterialDataInit.onMaterialEvent(event);
+            MaterialEvents.MATERIAL.invoker().onMaterialRegister(event);
+            if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+                AntimatterKubeJS.loadMaterialEvent(event);
+            }
             Data.postInit();
             for (RegistryType type : RegistryType.values()){
                 AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(type));
                 AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(type));
                 List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
                 list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(type)));
-            }
-
-            MaterialEvent event = new MaterialEvent();
-            MaterialDataInit.onMaterialEvent(event);
-            MaterialEvents.MATERIAL.invoker().onMaterialRegister(event);
-            if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-                AntimatterKubeJS.loadMaterialEvent(event);
             }
         }
         AntimatterAPI.all(Block.class, domain, (b, d, i) -> {
