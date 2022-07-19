@@ -6,12 +6,12 @@ import net.minecraft.world.item.crafting.Ingredient;
 public class RecipeUtil {
     @ExpectPlatform
     public static boolean isNBTIngredient(Class<? extends Ingredient> clazz){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isCompoundIngredient(Class<? extends Ingredient> clazz){
-        return false;
+        throw new AssertionError();
     }
 
 }

@@ -48,37 +48,37 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
-        return LazyOptional.empty();
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean tileHasFEOrTRE(BlockEntity entity, Direction side){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static CreativeModeTab createTab(String domain, String id, Supplier<ItemStack> iconSupplier){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
-        return 0;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isServer(){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isClient(){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isProduction(){
-        return false;
+        throw new AssertionError();
     }
 
     public static Side getSide(){
@@ -87,76 +87,77 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static String getActiveNamespace(){
-        return "";
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isFabric(){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isForge(){
-        return true;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static String getModName(String modid){
-        return "";
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean blockExists(ResourceLocation id){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean itemExists(ResourceLocation id){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean fluidExists(ResourceLocation id){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static Block getBlockFromId(ResourceLocation id){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static Item getItemFromID(ResourceLocation id){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static Fluid getFluidFromID(ResourceLocation id){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static ResourceLocation getIdFromBlock(Block block){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static ResourceLocation getIdFromItem(Item item){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static ResourceLocation getIdFromFluid(Fluid fluid){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static ResourceLocation getIdFromMenuType(MenuType<?> menuType){
-        return null;
+        throw new AssertionError();
     }
 
     public static Block getBlockFromId(String domain, String id){
@@ -173,77 +174,81 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static Collection<Item> getAllItems(){
-        return Collections.emptySet();
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static Collection<Fluid> getAllFluids(){
-        return Collections.emptySet();
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void postLoaderEvent(IAntimatterRegistrar registrar, IRecipeRegistrate reg){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void postMaterialEvent(IAntimatterRegistrar registrar, MaterialEvent materialEvent){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static WorldGenEvent postWorldEvent(IAntimatterRegistrar registrar){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static InteractionResultHolder<ItemStack> postBucketUseEvent(Player player, Level world, ItemStack stack, BlockHitResult trace){
-        return InteractionResultHolder.pass(stack);
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void writeFluidStack(FluidStack stack, FriendlyByteBuf buf) {
-
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static FluidStack readFluidStack(FriendlyByteBuf buf) {
-        return FluidStack.EMPTY;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void addMultiMachineInfo(BasicMultiMachine<?> machine, List<Pattern> patterns){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static Matrix4f createMatrix4f(float[] values){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isRepairable(ItemStack stack){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void addPool(LootTable table, LootPool pool){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static ResourceLocation getLootTableID(LootTable table){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean areCapsCompatible(ItemStack a, ItemStack b){
-        return true;
+        throw new AssertionError();
     }
 }

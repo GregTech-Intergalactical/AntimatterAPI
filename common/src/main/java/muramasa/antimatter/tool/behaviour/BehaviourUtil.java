@@ -11,12 +11,12 @@ import net.minecraft.world.level.block.state.BlockState;
 public class BehaviourUtil {
     @ExpectPlatform
     public static BlockState onToolUse(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, BehaviourToolAction action){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean onUseHoe(UseOnContext context){
-        return false;
+        throw new AssertionError();
     }
 
     public enum BehaviourToolAction {

@@ -378,7 +378,7 @@ public class Utils {
 
     @ExpectPlatform
     public static ItemStack insertItem(IItemHandler to, ItemStack toInsert, boolean simulate){
-        return ItemStack.EMPTY;
+        throw new AssertionError();
     }
 
     /**
@@ -655,7 +655,7 @@ public class Utils {
 
     @ExpectPlatform
     public static void requestModelDataRefresh(BlockEntity tile){
-
+        throw new AssertionError();
     }
 
     private static final Direction[][] TRANSFORM = new Direction[][]{
@@ -898,12 +898,12 @@ public class Utils {
 
     @ExpectPlatform
     public static boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer player, BlockPos pos){
-        return 0;
+        throw new AssertionError();
     }
 
     /**

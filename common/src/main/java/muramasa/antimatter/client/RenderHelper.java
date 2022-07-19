@@ -117,7 +117,7 @@ public class RenderHelper {
 
     @ExpectPlatform
     public static void registerProperty(Item item, ResourceLocation location, ClampedItemPropertyFunction function){
-
+        throw new AssertionError();
     }
 
     public static void drawFluid(PoseStack mstack, Minecraft mc, int posX, int posY, int width, int height, int scaledAmount, FluidStack stack) {

@@ -121,14 +121,17 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @ExpectPlatform
     public static void uses(FluidStack val, boolean USE) {
+        throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidStack> stacks){}
+    public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidStack> stacks){
+        throw new AssertionError();
+    }
 
     @ExpectPlatform
     public static FluidStack getIngredient(ITypedIngredient<?> ingredient){
-        return FluidStack.EMPTY;
+        throw new AssertionError();
     }
 
     public static IJeiRuntime getRuntime() {

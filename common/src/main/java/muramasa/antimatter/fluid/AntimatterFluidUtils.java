@@ -7,11 +7,11 @@ import net.minecraft.world.level.material.Fluid;
 public class AntimatterFluidUtils {
     @ExpectPlatform
     public static Fluid createSourceFluid(AntimatterFluid fluid){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static FlowingFluid createFlowingFluid(AntimatterFluid fluid){
-        return null;
+        throw new AssertionError();
     }
 }

@@ -61,7 +61,7 @@ public abstract class MenuHandler<T extends AbstractContainerMenu & IAntimatterC
 
     @ExpectPlatform
     static <T extends AbstractContainerMenu> MenuType<T> create(TriFunction<Integer, Inventory, FriendlyByteBuf, T> factory) {
-        return null;
+        throw new AssertionError();
     }
 
     public abstract T onContainerCreate(int windowId, Inventory inv, FriendlyByteBuf data);

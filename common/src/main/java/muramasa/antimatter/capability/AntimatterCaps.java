@@ -7,14 +7,14 @@ import net.minecraftforge.common.capabilities.Capability;
 public class AntimatterCaps {
     @ExpectPlatform
     public static Capability<ICoverHandler<?>> getCOVERABLE_HANDLER_CAPABILITY(){
-        return null;
+        throw new AssertionError();
     }
     @ExpectPlatform
     public static Capability<IComponentHandler> getCOMPONENT_HANDLER_CAPABILITY(){
-        return null;
+        throw new AssertionError();
     }
     @ExpectPlatform
     public static Capability<MachineRecipeHandler<?>> getRECIPE_HANDLER_CAPABILITY(){
-        return null;
+        throw new AssertionError();
     }
 }

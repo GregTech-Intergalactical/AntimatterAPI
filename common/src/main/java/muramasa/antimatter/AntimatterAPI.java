@@ -410,7 +410,7 @@ public final class AntimatterAPI {
 
     @ExpectPlatform
     public static boolean isModLoaded(String mod) {
-        return false;
+        throw new AssertionError();
     }
 
     public static void runOnEvent(RegistrationEvent event, Runnable runnable) {
@@ -427,16 +427,17 @@ public final class AntimatterAPI {
 
     @ExpectPlatform
     private static void registerEventBus(){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isRegistryEntry(Object object, String domain){
-        return false;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void registerTransferApi(BlockEntityType<? extends TileEntityMachine<?>> type){
-
+        throw new AssertionError();
     }
 
     public static Optional<IAntimatterRegistrar> getRegistrar(String id) {

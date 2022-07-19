@@ -76,14 +76,18 @@ public class ClientHandler implements IProxyHandler {
 
     @ExpectPlatform
     public static void registerLoader(ResourceLocation location, AntimatterModelLoader<?> loader){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static<T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<T> type, BlockEntityRendererProvider<T> renderProvider){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
-    public static<T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererProvider<T> renderProvider){}
+    public static<T extends Entity> void registerEntityRenderer(EntityType<T> type, EntityRendererProvider<T> renderProvider){
+        throw new AssertionError();
+    }
 
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup() {

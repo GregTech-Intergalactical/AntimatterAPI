@@ -71,22 +71,22 @@ public class ModelUtils {
 
     @ExpectPlatform
     public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static Function<Material, TextureAtlasSprite> getDefaultTextureGetter(){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static ModelBakery getModelBakery(){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void setLightData(BakedQuad model, int light){
-
+        throw new AssertionError();
     }
 
     public static BakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads, Function<Material, TextureAtlasSprite> getter) {
@@ -97,12 +97,12 @@ public class ModelUtils {
 
     @ExpectPlatform
     public static BakedModel getBakedFromModel(BlockModel model, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static BakedModel getSimpleBakedModel(BakedModel baked) {
-        return null;
+        throw new AssertionError();
     }
 
     public static BakedModel getBaked(ResourceLocation loc) {
@@ -134,19 +134,21 @@ public class ModelUtils {
 
     @ExpectPlatform
     public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static List<BakedQuad> trans(List<BakedQuad> quads, Transformation transform) {
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void setRenderLayer(Block block, RenderType renderType){
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static void setRenderLayer(Fluid fluid, RenderType renderType){
+        throw new AssertionError();
     }
 }

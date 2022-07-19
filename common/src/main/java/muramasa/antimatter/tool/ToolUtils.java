@@ -9,11 +9,11 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ToolUtils {
     @ExpectPlatform
     public static Item.Properties getToolProperties(CreativeModeTab group, boolean repairable){
-        return null;
+        throw new AssertionError();
     }
 
     @ExpectPlatform
     public static boolean isCorrectTierForDrops(Tier tier, BlockState state){
-        return false;
+        throw new AssertionError();
     }
 }

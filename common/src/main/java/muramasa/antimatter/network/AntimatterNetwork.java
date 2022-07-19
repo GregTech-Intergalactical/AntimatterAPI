@@ -25,7 +25,7 @@ public abstract class AntimatterNetwork {
 
     @ExpectPlatform
     public static AntimatterNetwork createAntimatterNetwork(){
-        return null;
+        throw new AssertionError();
     }
 
     public abstract void sendToServer(ResourceLocation id, IAntimatterPacket msg);
