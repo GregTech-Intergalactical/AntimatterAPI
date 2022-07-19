@@ -2,7 +2,6 @@
   "required": true,
   "package": "muramasa.antimatter.mixin",
   "compatibilityLevel": "JAVA_17",
-  "refmap": "antimatter.refmap.json",
   "client": [
     "client.AbstractContainerScreenAccessor",
     "client.BlockModelAccessor",
