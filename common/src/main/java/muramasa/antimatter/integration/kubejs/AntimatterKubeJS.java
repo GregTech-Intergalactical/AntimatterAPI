@@ -1,14 +1,28 @@
 package muramasa.antimatter.integration.kubejs;
 
+import dev.architectury.injectables.annotations.ExpectPlatform;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.recipe.RegisterRecipeHandlersEvent;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.MaterialEvent;
+import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraft.resources.ResourceLocation;
 
 public class AntimatterKubeJS extends KubeJSPlugin {
+
+    @Override
+    public void initStartup() {
+        super.initStartup();
+        onRegister();
+    }
+
+    @ExpectPlatform
+    private static void onRegister(){
+        throw new AssertionError();
+    }
 
     @Override
     public void addBindings(BindingsEvent event) {

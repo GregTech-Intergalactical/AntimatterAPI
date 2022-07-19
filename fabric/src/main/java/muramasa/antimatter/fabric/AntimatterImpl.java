@@ -6,6 +6,7 @@ import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCa
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.fabric.AntimatterCapsImpl;
 import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
@@ -35,8 +36,10 @@ public class AntimatterImpl implements ModInitializer {
     @Override
     public void onInitialize() {
         EntrypointUtils.invoke("antimatter", IAntimatterRegistrarInitializer.class, IAntimatterRegistrarInitializer::onRegistrarInit);
-        AntimatterRegistration.onRegister();
-        AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        if (!AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
+            AntimatterRegistration.onRegister();
+            AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        }
         CraftingEvents.CRAFTING.register(Antimatter.INSTANCE::addCraftingLoaders);
         ProviderEvents.PROVIDERS.register(this::providers);
         ModConfigEvent.LOADING.register(AntimatterConfig::onModConfigEvent);
