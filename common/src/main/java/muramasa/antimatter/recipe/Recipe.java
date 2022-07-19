@@ -2,7 +2,6 @@ package muramasa.antimatter.recipe;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Ref;
@@ -28,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Recipe implements net.minecraft.world.item.crafting.Recipe<Container> {
+public class Recipe implements IRecipe {
     private final ItemStack[] itemsOutput;
     @Nonnull
     private final List<Ingredient> itemsInput;
@@ -39,10 +38,10 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
     private final int special;
     private final long power;
     private final int amps;
-    private int[] chances;
+    private double[] chances;
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
-    private Map<ItemStack, Integer> itemsWithChances = null;
+    private Map<ItemStack, Double> itemsWithChances = null;
     public ResourceLocation id;
     public String mapId;
     //Used for recipe validators, e.g. cleanroom.
@@ -82,7 +81,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
         return amps;
     }
 
-    public void addChances(int[] chances) {
+    public void addChances(double[] chances) {
         this.chances = chances;
     }
 
@@ -120,6 +119,11 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
         this.mapId = map;
     }
 
+    @Override
+    public void setId(ResourceLocation id) {
+        this.id = id;
+    }
+
     public void sortInputItems() {
         this.itemsInput.sort((a, b) -> {
             boolean a1 = RecipeMap.isIngredientSpecial(a);
@@ -152,7 +156,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
             if (chances != null) {
                 List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
-                    if (!chance || Ref.RNG.nextInt(100) < chances[i]) {
+                    if (!chance || Ref.RNG.nextDouble() < chances[i]) {
                         evaluated.add(outputs[i].copy());
                     }
                 }
@@ -174,7 +178,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
             if (chances != null) {
                 List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
-                    if (chances[i] < 100) continue;
+                    if (chances[i] < 1.0) continue;
                     evaluated.add(outputs[i]);
                 }
                 outputs = evaluated.toArray(new ItemStack[0]);
@@ -213,12 +217,8 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
     }
 
     @Nullable
-    public int[] getChances() {
+    public double[] getChances() {
         return chances;
-    }
-
-    public long getTotalPower() {
-        return getDuration() * getPower();
     }
 
     public int getSpecialValue() {
@@ -233,17 +233,17 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
         return tags;
     }
 
-    public Map<ItemStack, Integer> getChancesWithStacks(){
+    public Map<ItemStack, Double> getChancesWithStacks(){
         if (itemsWithChances == null) {
             if (itemsOutput != null){
-                ImmutableMap.Builder<ItemStack, Integer> map = ImmutableMap.builder();
+                ImmutableMap.Builder<ItemStack, Double> map = ImmutableMap.builder();
                 if (hasChances()){
                     for (int i = 0; i < itemsOutput.length; i++) {
                         map.put(itemsOutput[i], chances[i]);
                     }
                 } else {
                     for (ItemStack itemStack : itemsOutput) {
-                        map.put(itemStack, 100);
+                        map.put(itemStack, 1.0);
                     }
                 }
                 itemsWithChances = map.build();
@@ -294,7 +294,7 @@ public class Recipe implements net.minecraft.world.item.crafting.Recipe<Containe
         if (chances != null) {
             builder.append("Chances: { ");
             for (int i = 0; i < chances.length; i++) {
-                builder.append(chances[i]).append("%");
+                builder.append(chances[i] * 100).append("%");
                 if (i != chances.length - 1) builder.append(", ");
             }
             builder.append(" }\n");

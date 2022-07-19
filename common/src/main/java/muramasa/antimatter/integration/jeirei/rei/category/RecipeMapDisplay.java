@@ -10,6 +10,7 @@ import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import muramasa.antimatter.integration.jeirei.rei.AntimatterREIPlugin;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -26,9 +27,9 @@ import java.util.function.Function;
 public class RecipeMapDisplay implements Display {
     private final ResourceLocation id;
     private final List<EntryIngredient> input, output;
-    private final Recipe recipe;
+    private final IRecipe recipe;
 
-    public RecipeMapDisplay(ResourceLocation id, Recipe recipe){
+    public RecipeMapDisplay(ResourceLocation id, IRecipe recipe){
         this.id = id;
         this.recipe = recipe;
         List<FluidStack> fluidInputs = recipe.getInputFluids().stream().flatMap(fluidIngredient -> Arrays.stream(fluidIngredient.getStacks())).map(AntimatterREIPlugin::toREIFLuidStack).toList();
@@ -43,21 +44,21 @@ public class RecipeMapDisplay implements Display {
         }
         this.output = builder.build();
     }
-    public static EntryIngredient createOutputEntries(List<ItemStack> input, Recipe recipe) {
+    public static EntryIngredient createOutputEntries(List<ItemStack> input, IRecipe recipe) {
         return EntryIngredient.of(input.stream().map(i -> EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getProbabilitySetting(recipe.getChancesWithStacks().get(i)))).toList());
     }
 
-    public static Component getProbabilityTooltip(int probability) {
-        if (probability == 100) {
+    public static Component getProbabilityTooltip(double probability) {
+        if (probability == 1.0) {
             return null;
         } else {
-            MutableComponent text = new TextComponent("Chance: " + probability + "%");
+            MutableComponent text = new TextComponent("Chance: " + (probability * 100) + "%");
             text.withStyle(ChatFormatting.WHITE);
             return text;
         }
     }
 
-    public static Function<EntryStack<?>, List<Component>> getProbabilitySetting(int probability) {
+    public static Function<EntryStack<?>, List<Component>> getProbabilitySetting(double probability) {
         @Nullable
         Component tooltip = getProbabilityTooltip(probability);
         return es -> tooltip == null ? List.of() : List.of(tooltip);

@@ -24,7 +24,7 @@ public class RecipeBuilder {
     protected List<Ingredient> ingredientInput = new ObjectArrayList<>();
     protected List<FluidIngredient> fluidsInput = new ObjectArrayList<>();
     protected List<FluidStack> fluidsOutput = new ObjectArrayList<>();
-    protected int[] chances;
+    protected double[] chances;
     protected int duration, special;
     protected long power;
     protected int amps;
@@ -156,7 +156,7 @@ public class RecipeBuilder {
     /**
      * 10 = 10%, 75 = 75% etc
      **/
-    public RecipeBuilder chances(int... values) {
+    public RecipeBuilder chances(double... values) {
         chances = values;
         return this;
     }

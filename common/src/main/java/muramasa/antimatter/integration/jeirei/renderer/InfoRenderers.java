@@ -2,6 +2,7 @@ package muramasa.antimatter.integration.jeirei.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import net.minecraft.client.gui.Font;
 
@@ -14,7 +15,7 @@ import java.util.Objects;
 public class InfoRenderers {
     public static final IRecipeInfoRenderer BLASTING_RENDERER = new IRecipeInfoRenderer() {
         @Override
-        public void render(PoseStack stack, Recipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
+        public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
             if (recipe.getDuration() == 0 && recipe.getPower() == 0) return;
             String power = "Duration: " + recipe.getDuration() + " ticks";
             String euT = "EU/t: " + recipe.getPower();
@@ -34,7 +35,7 @@ public class InfoRenderers {
     };
 
     public static final IRecipeInfoRenderer DEFAULT_RENDERER = new IRecipeInfoRenderer() {
-        public void render(PoseStack stack, Recipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
+        public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
             if (recipe.getDuration() == 0 && recipe.getPower() == 0) return;
             String power = "Duration: " + recipe.getDuration() + " ticks";
             String euT = "EU/t: " + recipe.getPower();
@@ -52,7 +53,7 @@ public class InfoRenderers {
 
     public static final IRecipeInfoRenderer FUEL_RENDERER = new IRecipeInfoRenderer() {
         @Override
-        public void render(PoseStack stack, Recipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
+        public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
             String fuelPerMb = "Fuel content(mb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids()).get(0).getAmount());
             String fuelPerB = "Fuel content(bb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids()).get(0).getAmount()) * 1000;
             renderString(stack, fuelPerMb, fontRenderer, 5, 5, guiOffsetX, guiOffsetY);
@@ -62,7 +63,7 @@ public class InfoRenderers {
 
     public static final IRecipeInfoRenderer STEAM_RENDERER = new IRecipeInfoRenderer() {
         @Override
-        public void render(PoseStack stack, Recipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
+        public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
             String power = "Duration: " + recipe.getDuration() + " ticks";
             String euT = "Steam: ";
             String total = "Total steam: " + recipe.getDuration() * recipe.getPower() + " mb";

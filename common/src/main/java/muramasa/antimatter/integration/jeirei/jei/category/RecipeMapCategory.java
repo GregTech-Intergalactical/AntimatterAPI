@@ -23,6 +23,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jeirei.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
@@ -45,7 +46,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class RecipeMapCategory implements IRecipeCategory<Recipe> {
+public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     protected static int JEI_OFFSET_X = 1, JEI_OFFSET_Y = 1;
     //protected static FluidStackRenderer fluidRenderer = new FluidStackRenderer();
@@ -107,7 +108,7 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, Recipe recipe, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, IRecipe recipe, IFocusGroup focuses) {
         List<List<ItemStack>> inputs = recipe.hasInputItems() ? recipe.getInputItems().stream().map(t -> Arrays.asList(t.getItems())).toList() : Collections.emptyList();
         List<ItemStack> outputs = recipe.hasOutputItems() ? Arrays.stream(recipe.getOutputItems()).toList() : Collections.emptyList();
         List<SlotData<?>> slots;
@@ -236,11 +237,11 @@ public class RecipeMapCategory implements IRecipeCategory<Recipe> {
 
     @Override
     public Class getRecipeClass() {
-        return Recipe.class;
+        return IRecipe.class;
     }
 
     @Override
-    public void draw(Recipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack stack, double mouseX, double mouseY) {
+    public void draw(IRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack stack, double mouseX, double mouseY) {
         if (progressBar != null)
             progressBar.draw(stack, gui.dir.getPos().x + gui.getArea().x, gui.dir.getPos().y + gui.getArea().y);
         infoRenderer.render(stack, recipe, Minecraft.getInstance().font, JEI_OFFSET_X, gui.getArea().y + JEI_OFFSET_Y + gui.getArea().z / 2);
