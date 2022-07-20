@@ -91,6 +91,7 @@ public class ClientHandler implements IProxyHandler {
 
     @SuppressWarnings({"unchecked", "unused"})
     public static void setup() {
+        MaterialType.buildTooltips();
         /* Register screens. */
         AntimatterAPI.runLaterClient(() -> {
             Set<ResourceLocation> registered = new ObjectOpenHashSet<>();

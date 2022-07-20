@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTags.ARMOR;
@@ -333,11 +334,21 @@ public class MaterialEvent {
     }
 
     public MaterialEvent replaceItem(MaterialTypeItem<?> type, Item toReplace){
-        type.replacement(this.material, toReplace);
+        type.replacement(this.material, () -> toReplace);
         return this;
     }
 
     public MaterialEvent replaceBlock(MaterialTypeBlock<?> type, Item toReplace){
+        type.replacement(this.material, () -> toReplace);
+        return this;
+    }
+
+    public MaterialEvent replaceItem(MaterialTypeItem<?> type, Supplier<Item> toReplace){
+        type.replacement(this.material, toReplace);
+        return this;
+    }
+
+    public MaterialEvent replaceBlock(MaterialTypeBlock<?> type, Supplier<Item> toReplace){
         type.replacement(this.material, toReplace);
         return this;
     }

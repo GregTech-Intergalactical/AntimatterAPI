@@ -49,7 +49,7 @@ public final class AntimatterAPI {
             .noneOf(RegistrationEvent.class);
     private static final ObjectList<IBlockUpdateEvent> BLOCK_UPDATE_HANDLERS = new ObjectArrayList<>();
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
-    private static final Object2ObjectMap<ResourceLocation, Object> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectMap<ResourceLocation, Supplier<Object>> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
     private static final Map<String, Map<String, Class<?>>> CLASS_LOOKUP = new Object2ObjectOpenHashMap<>();
 
     private static RegistrationEvent PHASE = null;
@@ -497,7 +497,7 @@ public final class AntimatterAPI {
         if (tag == null)
             throw new IllegalArgumentException("AntimatterAPI#getReplacement received a null tag!");
         if (REPLACEMENTS.containsKey(tag.location()))
-            return (T) REPLACEMENTS.get(tag.location());// return
+            return (T) REPLACEMENTS.get(tag.location()).get();// return
         // RecipeIngredient.of(REPLACEMENTS.get(tag.getName().getPath().hashCode()),1);
         return originalItem;
         // if (replacementsFound) return originalItem;
@@ -511,12 +511,12 @@ public final class AntimatterAPI {
          */
     }
 
-    public static <T> void addReplacement(ResourceLocation tag, T obj) {
-        REPLACEMENTS.put(tag, obj);
+    public static <T> void addReplacement(ResourceLocation tag, Supplier<T> obj) {
+        REPLACEMENTS.put(tag, obj::get);
     }
 
-    public static <T> void addReplacement(TagKey<Item> tag, T obj) {
-        REPLACEMENTS.put(tag.location(), obj);
+    public static <T> void addReplacement(TagKey<Item> tag, Supplier<T> obj) {
+        REPLACEMENTS.put(tag.location(), obj::get);
     }
 
     public static void registerBlockUpdateHandler(IBlockUpdateEvent handler) {

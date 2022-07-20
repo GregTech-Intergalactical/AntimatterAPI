@@ -357,37 +357,37 @@ public class Data {
             if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
         }
 
-        NUGGET.replacement(Iron, Items.IRON_NUGGET);
-        NUGGET.replacement(Gold, Items.GOLD_NUGGET);
-        INGOT.replacement(Iron, Items.IRON_INGOT);
-        INGOT.replacement(Gold, Items.GOLD_INGOT);
-        INGOT.replacement(Netherite, Items.NETHERITE_INGOT);
-        INGOT.replacement(Copper, Items.COPPER_INGOT);
+        NUGGET.replacement(Iron, () -> Items.IRON_NUGGET);
+        NUGGET.replacement(Gold, () -> Items.GOLD_NUGGET);
+        INGOT.replacement(Iron, () -> Items.IRON_INGOT);
+        INGOT.replacement(Gold, () -> Items.GOLD_INGOT);
+        INGOT.replacement(Netherite, () -> Items.NETHERITE_INGOT);
+        INGOT.replacement(Copper, () -> Items.COPPER_INGOT);
 
 
-        DUST.replacement(Redstone, Items.REDSTONE);
-        DUST.replacement(Glowstone, Items.GLOWSTONE_DUST);
-        DUST.replacement(Blaze, Items.BLAZE_POWDER);
-        DUST.replacement(Sugar, Items.SUGAR);
-        GEM.replacement(Flint, Items.FLINT);
-        GEM.replacement(Diamond, Items.DIAMOND);
-        GEM.replacement(Emerald, Items.EMERALD);
-        GEM.replacement(Lapis, Items.LAPIS_LAZULI);
-        GEM.replacement(Coal, Items.COAL);
-        GEM.replacement(Charcoal, Items.CHARCOAL);
-        GEM.replacement(EnderEye, Items.ENDER_EYE);
-        GEM.replacement(EnderPearl, Items.ENDER_PEARL);
+        DUST.replacement(Redstone, () -> Items.REDSTONE);
+        DUST.replacement(Glowstone, () -> Items.GLOWSTONE_DUST);
+        DUST.replacement(Blaze, () -> Items.BLAZE_POWDER);
+        DUST.replacement(Sugar, () -> Items.SUGAR);
+        GEM.replacement(Flint, () -> Items.FLINT);
+        GEM.replacement(Diamond, () -> Items.DIAMOND);
+        GEM.replacement(Emerald, () -> Items.EMERALD);
+        GEM.replacement(Lapis, () -> Items.LAPIS_LAZULI);
+        GEM.replacement(Coal, () -> Items.COAL);
+        GEM.replacement(Charcoal, () -> Items.CHARCOAL);
+        GEM.replacement(EnderEye, () -> Items.ENDER_EYE);
+        GEM.replacement(EnderPearl, () -> Items.ENDER_PEARL);
 
-        ROD.replacement(Blaze, Items.BLAZE_ROD);
-        ROD.replacement(Bone, Items.BONE);
-        ROD.replacement(Wood, Items.STICK);
+        ROD.replacement(Blaze, () -> Items.BLAZE_ROD);
+        ROD.replacement(Bone, () -> Items.BONE);
+        ROD.replacement(Wood, () -> Items.STICK);
 
-        BLOCK.replacement(Iron, Items.IRON_BLOCK);
-        BLOCK.replacement(Gold, Items.GOLD_BLOCK);
-        BLOCK.replacement(Diamond, Items.DIAMOND_BLOCK);
-        BLOCK.replacement(Emerald, Items.EMERALD_BLOCK);
-        BLOCK.replacement(Lapis, Items.LAPIS_BLOCK);
-        BLOCK.replacement(Netherite, Items.NETHERITE_BLOCK);
+        BLOCK.replacement(Iron, () -> Items.IRON_BLOCK);
+        BLOCK.replacement(Gold, () -> Items.GOLD_BLOCK);
+        BLOCK.replacement(Diamond, () -> Items.DIAMOND_BLOCK);
+        BLOCK.replacement(Emerald, () -> Items.EMERALD_BLOCK);
+        BLOCK.replacement(Lapis, () -> Items.LAPIS_BLOCK);
+        BLOCK.replacement(Netherite, () -> Items.NETHERITE_BLOCK);
 
         ROTOR.dependents(PLATE, SCREW, RING);
         SCREW.dependents(BOLT);
@@ -420,7 +420,5 @@ public class Data {
         ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.builtInRegistryHolder().is(WRENCH.getToolType())), BehaviourExtendedHighlight.PIPE_FUNCTION));
         WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && b.builtInRegistryHolder().is(WIRE_CUTTER.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
         CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
-
-        MaterialType.buildTooltips();
     }
 }

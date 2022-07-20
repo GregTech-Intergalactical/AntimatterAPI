@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.BLOCK;
 import static muramasa.antimatter.Data.FRAME;
@@ -138,8 +139,8 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             });
             AntimatterAPI.all(MaterialType.class, t -> {
                 t.getReplacements().forEach((m, i) -> {
-                    this.tag(t.getMaterialTag((Material) m)).add(i).replace(replace);
-                    this.tag(t.getTag()).add(i).replace(replace);
+                    this.tag(t.getMaterialTag((Material) m)).add(((Supplier<Item>)i).get()).replace(replace);
+                    this.tag(t.getTag()).add(((Supplier<Item>)i).get()).replace(replace);
                 });
             });
             processSubtags();

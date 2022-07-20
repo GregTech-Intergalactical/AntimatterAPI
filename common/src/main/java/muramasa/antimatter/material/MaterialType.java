@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, IRegistryEntryProvider {
 
@@ -39,7 +40,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     protected final Map<MaterialType<?>, TagKey<?>> tagMap = new Object2ObjectOpenHashMap<>();
     protected T getter;
     private boolean hidden = false;
-    protected final BiMap<Material, Item> replacements = HashBiMap.create();
+    protected final BiMap<Material, Supplier<Item>> replacements = HashBiMap.create();
     protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
     //since we have two instances stored in antimatter.
     protected boolean hasRegistered;
@@ -75,7 +76,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     /**
      * Forces these tags to not generate, assuming they have a replacement.
      */
-    public void replacement(Material mat, Item replacement) {
+    public void replacement(Material mat, Supplier<Item> replacement) {
         replacements.put(mat, replacement);
         this.add(mat);
         AntimatterAPI.addReplacement(getMaterialTag(mat), replacement);
@@ -172,7 +173,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         return getId();
     }
 
-    public BiMap<Material, Item> getReplacements() {
+    public BiMap<Material, Supplier<Item>> getReplacements() {
         return replacements;
     }
 
@@ -182,9 +183,9 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     public static void buildTooltips() {
         ImmutableMap.Builder<Item, Tuple<MaterialType, Material>> builder = ImmutableMap.builder();
         AntimatterAPI.all(MaterialType.class, t -> {
-            BiMap<Item, Material> map = t.getReplacements().inverse();
-            for (Map.Entry<Item, Material> entry : map.entrySet()) {
-                builder.put(entry.getKey(), new Tuple<>(t, entry.getValue()));
+            BiMap<Supplier<Item>, Material> map = t.getReplacements().inverse();
+            for (Map.Entry<Supplier<Item>, Material> entry : map.entrySet()) {
+                builder.put(entry.getKey().get(), new Tuple<>(t, entry.getValue()));
             }
         });
         tooltipCache = builder.build();
