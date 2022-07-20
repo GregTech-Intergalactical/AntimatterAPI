@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.rei.category;
+package muramasa.antimatter.integration.rei.category;
 
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory;

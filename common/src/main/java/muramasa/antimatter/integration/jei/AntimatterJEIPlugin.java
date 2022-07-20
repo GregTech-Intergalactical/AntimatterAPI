@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.jei;
+package muramasa.antimatter.integration.jei;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -20,9 +20,9 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
-import muramasa.antimatter.integration.jeirei.jei.category.MultiMachineInfoCategory;
-import muramasa.antimatter.integration.jeirei.jei.category.RecipeMapCategory;
-import muramasa.antimatter.integration.jeirei.jei.extension.JEIMaterialRecipeExtension;
+import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
+import muramasa.antimatter.integration.jei.category.RecipeMapCategory;
+import muramasa.antimatter.integration.jei.extension.JEIMaterialRecipeExtension;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTypeItem;

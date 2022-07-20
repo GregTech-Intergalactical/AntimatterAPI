@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.jei.category;
+package muramasa.antimatter.integration.jei.category;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;

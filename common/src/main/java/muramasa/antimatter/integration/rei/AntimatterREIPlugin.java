@@ -1,9 +1,7 @@
-package muramasa.antimatter.integration.jeirei.rei;
+package muramasa.antimatter.integration.rei;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
-import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.integration.jeirei.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.fluids.FluidStack;

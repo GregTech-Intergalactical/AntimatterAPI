@@ -1,19 +1,10 @@
-package muramasa.antimatter.integration.jeirei.jei.fabric;
+package muramasa.antimatter.integration.jei.fabric;
 
-import mezz.jei.api.fabric.constants.FabricTypes;
-import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
-import mezz.jei.api.recipe.IFocus;
-import mezz.jei.api.recipe.RecipeIngredientRole;
-import muramasa.antimatter.integration.jeirei.jei.AntimatterJEIPlugin;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class AntimatterJEIPluginImpl {
     public static void uses(FluidStack val, boolean USE) {

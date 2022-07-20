@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.rei.category;
+package muramasa.antimatter.integration.rei.category;
 
 import com.google.common.collect.ImmutableList;
 import dev.architectury.fluid.FluidStack;
@@ -9,9 +9,8 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import muramasa.antimatter.integration.jeirei.rei.AntimatterREIPlugin;
+import muramasa.antimatter.integration.rei.AntimatterREIPlugin;
 import muramasa.antimatter.recipe.IRecipe;
-import muramasa.antimatter.recipe.Recipe;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

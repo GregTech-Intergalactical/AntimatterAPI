@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.jei.forge;
+package muramasa.antimatter.integration.jei.forge;
 
 import mezz.jei.api.forge.ForgeTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -6,12 +6,11 @@ import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
 import mezz.jei.api.recipe.IFocus;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import muramasa.antimatter.integration.jeirei.jei.AntimatterJEIPlugin;
+import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class AntimatterJEIPluginImpl {
     public static void uses(FluidStack val, boolean USE) {

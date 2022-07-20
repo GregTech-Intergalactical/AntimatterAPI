@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.jeirei.jei.extension;
+package muramasa.antimatter.integration.jei.extension;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;

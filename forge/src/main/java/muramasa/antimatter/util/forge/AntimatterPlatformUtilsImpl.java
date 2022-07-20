@@ -6,12 +6,11 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.forge.itemgroup.AntimatterItemGroup;
 import muramasa.antimatter.event.CraftingEvent;
-import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.event.forge.*;
-import muramasa.antimatter.integration.jeirei.jei.category.MultiMachineInfoCategory;
-import muramasa.antimatter.integration.jeirei.jei.category.MultiMachineInfoPage;
+import muramasa.antimatter.integration.jei.category.MultiMachineInfoCategory;
+import muramasa.antimatter.integration.jei.category.MultiMachineInfoPage;
 import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
@@ -42,7 +41,6 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -59,13 +57,10 @@ import tesseract.api.forge.wrapper.IEnergyHandlerStorage;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class AntimatterPlatformUtilsImpl {
     //todo cache this
