@@ -39,6 +39,10 @@ public class MaterialEvent {
         return this;
     }
 
+    public MaterialEvent setMaterial(String material){
+        return setMaterial(Material.get(material));
+    }
+
     public MaterialEvent asDust(IMaterialTag... tags) {
         return asDust(295, tags);
     }
