@@ -2,14 +2,12 @@ package muramasa.antimatter.registration.fabric;
 
 
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.MaterialDataInit;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.event.MaterialEvent;
-import muramasa.antimatter.event.fabric.MaterialEvents;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
@@ -17,7 +15,6 @@ import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
@@ -27,7 +24,6 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
@@ -40,7 +36,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.crafting.CraftingHelper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AntimatterRegistration {
 
@@ -55,9 +50,10 @@ public class AntimatterRegistration {
     public static void onRegister(final String domain) {
         if (domain.equals(Ref.ID)) {
             AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
+            List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).toList();
             MaterialEvent event = new MaterialEvent();
             MaterialDataInit.onMaterialEvent(event);
-            MaterialEvents.MATERIAL.invoker().onMaterialRegister(event);
+            list.forEach(r -> r.onMaterialEvent(event));
             if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
                 AntimatterKubeJS.loadMaterialEvent(event);
             }
@@ -65,7 +61,6 @@ public class AntimatterRegistration {
             for (RegistryType type : RegistryType.values()){
                 AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(type));
                 AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(type));
-                List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
                 list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(type)));
             }
         }

@@ -196,11 +196,6 @@ public class AntimatterPlatformUtilsImpl {
         MinecraftForge.EVENT_BUS.post(new AntimatterLoaderEvent(registrar, reg));
     }
 
-    public static void postMaterialEvent(IAntimatterRegistrar registrar, MaterialEvent materialEvent){
-        AntimatterMaterialEvent event = new AntimatterMaterialEvent(registrar, materialEvent);
-        MinecraftForge.EVENT_BUS.post(event);
-    }
-
     public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
         ProvidersEvent providerEvent = new ProvidersEvent(generator, side);
         AntimatterProvidersEvent ev = new AntimatterProvidersEvent(providerEvent, registrar);

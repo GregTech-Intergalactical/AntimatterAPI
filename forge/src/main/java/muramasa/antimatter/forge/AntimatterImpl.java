@@ -4,7 +4,6 @@ package muramasa.antimatter.forge;
 import muramasa.antimatter.*;
 import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
-import muramasa.antimatter.event.forge.AntimatterMaterialEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.proxy.ClientHandler;

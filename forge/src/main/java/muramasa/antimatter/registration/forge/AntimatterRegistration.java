@@ -1,13 +1,11 @@
 package muramasa.antimatter.registration.forge;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.MaterialDataInit;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.event.MaterialEvent;
-import muramasa.antimatter.event.forge.AntimatterMaterialEvent;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.condition.ConfigCondition;
@@ -20,7 +18,6 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -28,7 +25,6 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,7 +34,6 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public final class AntimatterRegistration {
 
@@ -56,6 +51,7 @@ public final class AntimatterRegistration {
     public static void onRegister(final String domain, final RegistryEvent.Register<?> e) {
 
         if (domain.equals(Ref.ID)) {
+            List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).toList();
             if (e.getRegistry() == ForgeRegistries.BLOCKS) {
                 AntimatterAPI.onRegistration(RegistrationEvent.DATA_INIT);
                 AntimatterAPI.all(SoundEvent.class, t -> {
@@ -63,7 +59,7 @@ public final class AntimatterRegistration {
                 });
                 MaterialEvent event = new MaterialEvent();
                 MaterialDataInit.onMaterialEvent(event);
-                MinecraftForge.EVENT_BUS.post(new AntimatterMaterialEvent(Antimatter.INSTANCE, event));
+                list.forEach(r -> r.onMaterialEvent(event));
                 if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
                     AntimatterKubeJS.loadMaterialEvent(event);
                 }
@@ -71,7 +67,6 @@ public final class AntimatterRegistration {
             }
             AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
             AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
-            List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
             list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistry()))));
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {

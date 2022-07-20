@@ -1,6 +1,6 @@
 package muramasa.antimatter.registration;
 
-;
+import muramasa.antimatter.event.MaterialEvent;
 
 public interface IAntimatterRegistrar extends IAntimatterObject, IAntimatterRegistrarInitializer {
 
@@ -13,6 +13,8 @@ public interface IAntimatterRegistrar extends IAntimatterObject, IAntimatterRegi
     }
 
     void onRegistrationEvent(RegistrationEvent event, Side side);
+
+    default void onMaterialEvent(MaterialEvent event){}
 
     default int getPriority() {
         return 1000;

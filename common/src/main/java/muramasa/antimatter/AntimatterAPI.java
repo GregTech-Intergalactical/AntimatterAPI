@@ -400,7 +400,7 @@ public final class AntimatterAPI {
         }
         INTERNAL_REGISTRAR.onRegistrationEvent(event, side);
         List<IAntimatterRegistrar> list = all(IAntimatterRegistrar.class).stream()
-                .sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).collect(Collectors.toList());
+                .sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).toList();
         list.forEach(r -> r.onRegistrationEvent(event, side));
         if (CALLBACKS.containsKey(event))
             CALLBACKS.get(event).forEach(Runnable::run);
