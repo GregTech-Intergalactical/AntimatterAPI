@@ -7,15 +7,23 @@ import muramasa.antimatter.datagen.providers.*;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 
 ;
 
 public class KubeJSRegistrar extends AntimatterMod {
     public KubeJSRegistrar() {
+        if (AntimatterPlatformUtils.isFabric()){
+            onRegistrarInit();
+        }
+    }
+
+    @Override
+    public void onRegistrarInit() {
+        super.onRegistrarInit();
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterBlockStateProvider(Ref.MOD_KJS, "KubeJS BlockStates", g));
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterItemModelProvider(Ref.MOD_KJS, "KubeJS Item Models", g));
         AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterLanguageProvider(Ref.MOD_KJS, "KubeJS en_us Localization", "en_us", g));
-        onRegistrarInit();
     }
 
     public static void providerEvent(ProvidersEvent ev) {
