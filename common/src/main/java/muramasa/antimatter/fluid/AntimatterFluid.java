@@ -73,8 +73,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
         if (registry == RegistryType.ITEMS) {
             AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this.getFluid(), new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(CreativeModeTab.TAB_MISC)));
         } else if (registry == RegistryType.BLOCKS) {
-            this.source = AntimatterFluidUtils.createSourceFluid(this);
-            this.flowing = AntimatterFluidUtils.createFlowingFluid(this);
+            AntimatterFluidUtils.createSourceAndFlowingFluid(this, s -> this.source = s, f -> this.flowing = f);
             this.fluidBlock = new LiquidBlock(getFlowingFluid(), blockProperties);
             AntimatterAPI.register(Block.class, "block_fluid_".concat(getId()), getDomain(), fluidBlock);
         } else if (registry == RegistryType.FLUIDS) {
