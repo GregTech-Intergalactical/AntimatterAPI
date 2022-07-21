@@ -1,10 +1,8 @@
 package muramasa.antimatter.proxy.fabric;
 
 
-import io.github.fabricators_of_create.porting_lib.event.client.ModelLoadCallback;
-import io.github.fabricators_of_create.porting_lib.model.IModelLoader;
 import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
-import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;

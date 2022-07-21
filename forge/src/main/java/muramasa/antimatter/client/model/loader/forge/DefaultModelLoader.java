@@ -1,4 +1,4 @@
-package muramasa.antimatter.client.forge;
+package muramasa.antimatter.client.model.loader.forge;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;

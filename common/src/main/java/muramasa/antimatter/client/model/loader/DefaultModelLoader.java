@@ -1,9 +1,11 @@
-package muramasa.antimatter.client;
+package muramasa.antimatter.client.model.loader;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.model.AntimatterModel;
+import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;

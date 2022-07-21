@@ -1,10 +1,10 @@
-package muramasa.antimatter.client.model;
+package muramasa.antimatter.client.model.loader.forge;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.model.MachineModel;
 import muramasa.antimatter.machine.MachineState;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;

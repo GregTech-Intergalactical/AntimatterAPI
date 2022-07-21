@@ -161,10 +161,8 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
-    exclude "muramasa/antimatter/client/AntimatterModelLoader.class"
-    exclude "muramasa/antimatter/client/DefaultModelLoader.class"
-    relocate "muramasa.antimatter.client.forge.AntimatterModelLoader", "muramasa.antimatter.client.AntimatterModelLoader"
-    relocate "muramasa.antimatter.client.forge.DefaultModelLoader", "muramasa.antimatter.client.DefaultModelLoader"
+    exclude "muramasa/antimatter/client/loader"
+    relocate "muramasa.antimatter.client.model.loader.forge", "muramasa.antimatter.client.model.loader"
 }
 
 // Example configuration to allow publishing using the maven-publish task

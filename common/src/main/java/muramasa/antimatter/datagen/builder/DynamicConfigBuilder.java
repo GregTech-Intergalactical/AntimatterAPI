@@ -1,7 +1,7 @@
 package muramasa.antimatter.datagen.builder;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.antimatter.client.AntimatterModelLoader;
+import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
