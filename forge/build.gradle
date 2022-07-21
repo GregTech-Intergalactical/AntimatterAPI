@@ -161,7 +161,7 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
-    exclude "muramasa/antimatter/client/loader"
+    exclude "muramasa/antimatter/client/model/loader"
     relocate "muramasa.antimatter.client.model.loader.forge", "muramasa.antimatter.client.model.loader"
 }
 
