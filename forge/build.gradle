@@ -130,7 +130,7 @@ loom{
 dependencies {
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
     //implementation project(path: ":TesseractAPI")
-    implementation(project(path: ":tesseract-forge", configuration: "namedElements"))
+    common(project(path: ":tesseract-forge", configuration: "namedElements"))
     common(project(path: ":tesseract-common", configuration: "namedElements"))
 
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
@@ -156,6 +156,15 @@ processResources {
     filesMatching("META-INF/mods.toml") {
         expand toReplace
     }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowCommon]
+    classifier "dev-shadow"
+    exclude "muramasa/antimatter/client/AntimatterModelLoader.class"
+    exclude "muramasa/antimatter/client/DefaultModelLoader.class"
+    relocate "muramasa.antimatter.client.forge.AntimatterModelLoader", "muramasa.antimatter.client.AntimatterModelLoader"
+    relocate "muramasa.antimatter.client.forge.DefaultModelLoader", "muramasa.antimatter.client.DefaultModelLoader"
 }
 
 // Example configuration to allow publishing using the maven-publish task
