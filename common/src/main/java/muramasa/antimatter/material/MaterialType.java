@@ -50,6 +50,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         this.visible = visible;
         this.unitValue = unitValue;
         this.layers = layers;
+        this.splitName = id.contains("_");
         this.tagMap.put(this, tagFromString(Utils.getConventionalMaterialType(this)));
         register(MaterialType.class, getId());
     }
@@ -102,7 +103,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
 
     @SuppressWarnings("unchecked")
     public TagKey<Item> getMaterialTag(Material m) {
-        return (TagKey<Item>) tagFromString(String.join("", Utils.getConventionalMaterialType(this), "/", m.getId()));
+        return (TagKey<Item>) tagFromString(String.join("", Utils.getConventionalMaterialType(this), "/", (getId().equals("raw_ore_block") ? "raw_" : ""), m.getId()));
     }
 
     public RecipeIngredient getMaterialIngredient(Material m, int count) {

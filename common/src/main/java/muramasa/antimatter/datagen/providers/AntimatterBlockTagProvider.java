@@ -118,7 +118,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
             });
             AntimatterAPI.all(BlockStorage.class, block -> {
                 this.tag(block.getType().getTag()).add(block).replace(replace);
-                String name = String.join("", block.getType().getTag().location().getPath(), "/", block.getMaterial().getId());
+                String name = String.join("", block.getType().getTag().location().getPath(), "/", (block.getType().getId().equals("raw_ore_block") ? "raw_" : ""), block.getMaterial().getId());
                 this.tag(Data.WRENCH.getToolType()).add(block).replace(replace);
                 this.tag(getForgelikeBlockTag(name)).add(block);
                 // if (block.getType() == FRAME) add climbable tag in 1.16

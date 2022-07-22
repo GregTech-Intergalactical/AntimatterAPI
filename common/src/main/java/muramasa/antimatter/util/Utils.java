@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.mixin.BlockAccessor;
@@ -1134,13 +1135,20 @@ public class Utils {
     }
 
     public static String getConventionalMaterialType(MaterialType<?> type) {
+        if (type.getId().equals("raw_ore")){
+            //thank forge for this stupid tag
+            return "raw_materials";
+        }
+        if (type.getId().equals("raw_ore_block") || type.getId().equals("block")){
+            return "storage_blocks";
+        }
         String id = type.getId();
         int index = id.indexOf("_");
         if (index != -1 && type.isSplitName()) {
             id = String.join("", id.substring(index + 1), "_", id.substring(0, index), "s");
-            if (id.contains("crushed")) id = StringUtils.replace(id, "crushed", "crushed_ore");
+            if (id.contains("crushed")) id = StringUtils.replace(id, "crushed", "ore");
             return id;
-        } else if (id.contains("crushed")) return StringUtils.replace(id, "crushed", "crushed_ores");
+        } else if (id.equals("crushed")) return StringUtils.replace(id, "crushed", "crushed_ores");
         return id.charAt(id.length() - 1) == 's' ? id.concat("es") : id.concat("s");
     }
 

@@ -27,6 +27,11 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
         this.itemSupplier = itemSupplier;
     }
 
+    @Override
+    public MaterialTypeItem<T> unSplitName() {
+        return (MaterialTypeItem<T>) super.unSplitName();
+    }
+
     public boolean allowItemGen(Material material) {
         return !replacements.containsKey(material) && allowGen(material) && !blockType;
     }
