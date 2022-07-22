@@ -170,7 +170,16 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 Item bucket = AntimatterAPI.get(Item.class, s.getId() + "_bucket", Ref.SHARED_ID);
                 if (bucket != null) add(bucket, tryComponent(locale, s, () -> lowerUnderscoreToUpperSpaced(s.getId())) + " Bucket");
             });
-            AntimatterAPI.all(BlockStorage.class).forEach(block -> add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType()))));
+            AntimatterAPI.all(BlockStorage.class).forEach(block -> {
+                MaterialType<?> type = block.getType();
+                if (type == BLOCK)
+                    add(block, String.join("","Block of ", getLocalizedType(block.getMaterial())));
+                else if (type == RAW_ORE_BLOCK)
+                    add(block, String.join("","Block of Raw ", getLocalizedType(block.getMaterial())));
+                else {
+                    add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType())));
+                }
+            });
             AntimatterAPI.all(MaterialItem.class).forEach(item -> {
                 MaterialType<?> type = item.getType();
                 if (type == ROCK) add(item, String.join("", getLocalizedType(item.getMaterial()), " Bearing Rock"));
@@ -188,6 +197,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(item, String.join("", "Impure ", getLocalizedType(item.getMaterial()), " Dust"));
                 else if (type == DUST_PURE)
                     add(item, String.join("", "Pure ", getLocalizedType(item.getMaterial()), " Dust"));
+                else if (type == RAW_ORE)
+                    add(item, String.join("", "Raw ", getLocalizedType(item.getMaterial())));
                 else {
                     String[] split = getLocalizedMaterialType(type);
                     if (split.length > 1) {

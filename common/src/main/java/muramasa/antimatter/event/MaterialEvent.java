@@ -94,7 +94,7 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asOre(boolean small, IMaterialTag... tags) {
-        asDust(ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, RAW_ORE);
+        asDust(ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, RAW_ORE, RAW_ORE_BLOCK);
         if (small) flags(ORE_SMALL);
         flags(tags);
         return this;

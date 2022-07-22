@@ -113,6 +113,7 @@ public class Data {
     public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE_SMALL = new MaterialTypeBlock<>("ore_small", 1, false, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, mat, s, type)));
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> ORE_STONE = new MaterialTypeBlock<>("ore_stone", 1, true, -1,(domain, type, mat) -> new BlockOreStone(domain, mat));
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> BLOCK = new MaterialTypeBlock<>("block", 1, false, -1, BlockStorage::new);
+    public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> RAW_ORE_BLOCK = new MaterialTypeBlock<>("raw_ore_block", 2, false, -1, BlockStorage::new);
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> FRAME = new MaterialTypeBlock<>("frame", 1, true, -1, BlockStorage::new);
 
     //Fluid Types
@@ -203,6 +204,17 @@ public class Data {
             }
             if (m == null || !BLOCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(BLOCK, m);
             BlockStorage block = AntimatterAPI.get(BlockStorage.class, BLOCK.getId() + "_" + m.getId());
+            return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
+        }).blockType();
+        RAW_ORE_BLOCK.set(m -> {
+            if (m != null) {
+                Item item = AntimatterAPI.getReplacement(RAW_ORE_BLOCK, m);
+                if (item instanceof BlockItem) {
+                    return new MaterialTypeBlock.Container(((BlockItem) item).getBlock().defaultBlockState());
+                }
+            }
+            if (m == null || !RAW_ORE_BLOCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(RAW_ORE_BLOCK, m);
+            BlockStorage block = AntimatterAPI.get(BlockStorage.class, RAW_ORE_BLOCK.getId() + "_" + m.getId());
             return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
         }).blockType();
         FRAME.set(m -> {
@@ -369,6 +381,9 @@ public class Data {
         DUST.replacement(Glowstone, () -> Items.GLOWSTONE_DUST);
         DUST.replacement(Blaze, () -> Items.BLAZE_POWDER);
         DUST.replacement(Sugar, () -> Items.SUGAR);
+        RAW_ORE.replacement(Iron, () -> Items.RAW_IRON);
+        RAW_ORE.replacement(Copper, () -> Items.RAW_COPPER);
+        RAW_ORE.replacement(Gold, () -> Items.RAW_GOLD);
         GEM.replacement(Flint, () -> Items.FLINT);
         GEM.replacement(Diamond, () -> Items.DIAMOND);
         GEM.replacement(Emerald, () -> Items.EMERALD);
@@ -383,11 +398,15 @@ public class Data {
         ROD.replacement(Wood, () -> Items.STICK);
 
         BLOCK.replacement(Iron, () -> Items.IRON_BLOCK);
+        BLOCK.replacement(Copper, () -> Items.COPPER_BLOCK);
         BLOCK.replacement(Gold, () -> Items.GOLD_BLOCK);
         BLOCK.replacement(Diamond, () -> Items.DIAMOND_BLOCK);
         BLOCK.replacement(Emerald, () -> Items.EMERALD_BLOCK);
         BLOCK.replacement(Lapis, () -> Items.LAPIS_BLOCK);
         BLOCK.replacement(Netherite, () -> Items.NETHERITE_BLOCK);
+        RAW_ORE_BLOCK.replacement(Iron, () -> Items.RAW_IRON_BLOCK);
+        RAW_ORE_BLOCK.replacement(Copper, () -> Items.RAW_COPPER_BLOCK);
+        RAW_ORE_BLOCK.replacement(Gold, () -> Items.RAW_GOLD_BLOCK);
 
         ROTOR.dependents(PLATE, SCREW, RING);
         SCREW.dependents(BOLT);
