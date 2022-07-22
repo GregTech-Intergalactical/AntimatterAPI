@@ -8,23 +8,35 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.IAntimatterModel;
+import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterGroupedModel;
 import muramasa.antimatter.client.model.AntimatterModel;
+import muramasa.antimatter.client.model.ProxyModel;
 import muramasa.antimatter.client.model.VanillaProxy;
 import muramasa.antimatter.dynamic.DynamicModel;
 import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> implements IModelLoader<T>, IAntimatterObject {
@@ -138,6 +150,34 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
                 models[i] = new AntimatterModel(context.deserialize(array.get(i).getAsJsonObject(), BlockModel.class), buildRotations(array.get(i).getAsJsonObject()));
             }
             return models;
+        }
+    }
+
+    public static class ProxyModelLoader extends AntimatterModelLoader<ProxyModel> {
+
+        public ProxyModelLoader(ResourceLocation location) {
+            super(location);
+        }
+
+        @Override
+        public ProxyModel read(JsonDeserializationContext context, JsonObject json) {
+            return new ProxyModel();
+        }
+    }
+
+    public static class PipeModelLoader extends DynamicModelLoader{
+        public PipeModelLoader(ResourceLocation location) {
+            super(location);
+        }
+
+        @Override
+        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
+            return new DynamicModel(super.read(context, json)) {
+                @Override
+                public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
+                    return new PipeBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                }
+            };
         }
     }
 }

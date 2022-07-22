@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.client.model.AntimatterGroupedModel;
 import muramasa.antimatter.client.model.MachineModel;
 import muramasa.antimatter.machine.MachineState;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -36,5 +37,29 @@ public class MachineModelLoader extends AntimatterModelLoader<MachineModel> {
         });
         return new MachineModel(m, particle);
     }
-    
+
+
+    public static class SideModelLoader extends BlockBenchLoader{
+        public SideModelLoader(ResourceLocation loc) {
+            super(loc);
+        }
+
+        @Override
+        public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
+            AntimatterGroupedModel model = super.read(context, json);
+            return new AntimatterGroupedModel.MachineSideModel(model);
+        }
+    }
+
+    public static class CoverModelLoader extends BlockBenchLoader {
+        public CoverModelLoader(ResourceLocation loc) {
+            super(loc);
+        }
+
+        @Override
+        public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
+            AntimatterGroupedModel model = super.read(context, json);
+            return new AntimatterGroupedModel.CoverModel(model);
+        }
+    }
 }

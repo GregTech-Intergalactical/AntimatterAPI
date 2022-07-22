@@ -161,7 +161,16 @@ processResources {
 shadowJar {
     configurations = [project.configurations.shadowCommon]
     classifier "dev-shadow"
-    exclude "muramasa/antimatter/client/model/loader"
+    exclude "muramasa/antimatter/client/model/loader/AntimatterModelLoader.class"
+    exclude 'muramasa/antimatter/client/model/loader/AntimatterModelLoader$BlockBenchLoader.class'
+    exclude 'muramasa/antimatter/client/model/loader/AntimatterModelLoader$DynamicModelLoader.class'
+    exclude 'muramasa/antimatter/client/model/loader/AntimatterModelLoader$PipeModelLoader.class'
+    exclude 'muramasa/antimatter/client/model/loader/AntimatterModelLoader$PipeModelLoader$1.class'
+    exclude 'muramasa/antimatter/client/model/loader/AntimatterModelLoader$ProxyModelLoader.class'
+    exclude 'muramasa/antimatter/client/model/loader/MachineModelLoader$SideModelLoader.class'
+    exclude 'muramasa/antimatter/client/model/loader/MachineModelLoader$CoverModelLoader.class'
+    exclude "muramasa/antimatter/client/model/loader/DefaultModelLoader.class"
+    exclude "muramasa/antimatter/client/model/loader/MachineModelLoader.class"
     relocate "muramasa.antimatter.client.model.loader.forge", "muramasa.antimatter.client.model.loader"
 }
 

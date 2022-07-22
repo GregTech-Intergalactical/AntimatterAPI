@@ -54,39 +54,12 @@ public class AntimatterModelManager {
 
     static {
         LOADER_MAIN = new DefaultModelLoader(new ResourceLocation(Ref.ID, "main"));
-        LOADER_COVER = new AntimatterModelLoader.BlockBenchLoader(new ResourceLocation(Ref.ID, "cover")) {
-            @Override
-            public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
-                AntimatterGroupedModel model = super.read(context, json);
-                return new AntimatterGroupedModel.CoverModel(model);
-            }
-        };
-        LOADER_MACHINE_SIDE = new AntimatterModelLoader.BlockBenchLoader(new ResourceLocation(Ref.ID, "machine_side")) {
-            @Override
-            public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
-                AntimatterGroupedModel model = super.read(context, json);
-                return new AntimatterGroupedModel.MachineSideModel(model);
-            }
-        };
+        LOADER_COVER = new MachineModelLoader.CoverModelLoader(new ResourceLocation(Ref.ID, "cover"));
+        LOADER_MACHINE_SIDE = new MachineModelLoader.SideModelLoader(new ResourceLocation(Ref.ID, "machine_side"));
         LOADER_DYNAMIC = new DynamicModelLoader(new ResourceLocation(Ref.ID, "dynamic"));
         LOADER_MACHINE = new MachineModelLoader(new ResourceLocation(Ref.ID, "machine"));
-        LOADER_PIPE = new DynamicModelLoader(new ResourceLocation(Ref.ID, "pipe")) {
-            @Override
-            public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
-                return new DynamicModel(super.read(context, json)) {
-                    @Override
-                    public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
-                        return new PipeBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
-                    }
-                };
-            }
-        };
-        LOADER_PROXY = new AntimatterModelLoader<ProxyModel>(new ResourceLocation(Ref.ID, "proxy")) {
-            @Override
-            public ProxyModel read(JsonDeserializationContext context, JsonObject json) {
-                return new ProxyModel();
-            }
-        };
+        LOADER_PIPE = new AntimatterModelLoader.PipeModelLoader(new ResourceLocation(Ref.ID, "pipe"));
+        LOADER_PROXY = new AntimatterModelLoader.ProxyModelLoader(new ResourceLocation(Ref.ID, "proxy"));
     }
 
     public static void init() {
