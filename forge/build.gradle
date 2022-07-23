@@ -130,7 +130,7 @@ loom{
 dependencies {
     forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
     //implementation project(path: ":TesseractAPI")
-    common(project(path: ":tesseract-forge", configuration: "namedElements"))
+    implementation(project(path: ":tesseract-forge", configuration: "namedElements"))
     common(project(path: ":tesseract-common", configuration: "namedElements"))
 
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
@@ -142,7 +142,8 @@ dependencies {
     }
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
-    modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
+    //modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
+    modRuntimeOnly("mezz.jei:jei-1.18.2:9.5.0.132")
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${rootProject.crafttweaker_version}")
     modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
 }

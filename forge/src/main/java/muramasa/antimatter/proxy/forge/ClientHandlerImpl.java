@@ -1,6 +1,6 @@
 package muramasa.antimatter.proxy.forge;
 
-import muramasa.antimatter.client.model.loader.forge.AntimatterModelLoader;
+import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.proxy.ClientHandler;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
