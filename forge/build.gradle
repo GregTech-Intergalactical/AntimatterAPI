@@ -1,4 +1,4 @@
-archivesBaseName = "${rootProject.antimatter_archive_base_name}-forge"
+archivesBaseName = "antimatter-forge"
 version = "${rootProject.minecraft_version}-${project.mod_version}"
 
 def isCI = System.getenv("GITHUB_ACTION")

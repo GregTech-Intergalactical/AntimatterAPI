@@ -1,4 +1,4 @@
-archivesBaseName = "${rootProject.antimatter_archive_base_name}-fabric"
+archivesBaseName = "antimatter-fabric"
 version = "${rootProject.minecraft_version}-${project.mod_version}"
 
 def generatedResources = file("src/generated/resources")
