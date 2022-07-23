@@ -35,7 +35,7 @@ dependencies{
     modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
     modCompileOnly("dev.latvian.mods:kubejs-fabric:${rootProject.kubejs_version}")
     common(project(path: ":tesseract-common", configuration: "namedElements")) { transitive false }
-    common(project(path: ":tesseract-fabric", configuration: "namedElements")) { transitive false }
+    implementation(project(path: ":tesseract-fabric", configuration: "namedElements")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-caps:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-recipe-api:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}")) { transitive false }
