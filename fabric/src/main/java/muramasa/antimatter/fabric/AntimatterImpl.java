@@ -9,6 +9,7 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.fabric.AntimatterCapsImpl;
 import muramasa.antimatter.common.event.CommonEvents;
+import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
@@ -56,7 +57,7 @@ public class AntimatterImpl implements ModInitializer {
             CommonEvents.placeBlock(placedOff, context.getPlayer(), context.getLevel(), context.getClickedPos(), context.getLevel().getBlockState(context.getClickedPos()));
             return InteractionResult.PASS;
         });
-        RRPCallback.AFTER_VANILLA.register((resources -> resources.add(new DynamicResourcePack("Antimatter - Dynamic Data", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())))));
+        RRPCallback.AFTER_VANILLA.register(resources -> resources.add(AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK));
     }
 
     private void providers(ProvidersEvent ev) {

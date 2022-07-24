@@ -343,7 +343,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
             arr.add(obj);
         }
 
-        builder.property(state.getDisplayName(), arr);
+        builder.property(state.toString().toLowerCase(), arr);
     }
 
     @Override

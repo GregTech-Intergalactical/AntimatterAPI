@@ -1,15 +1,18 @@
 package muramasa.antimatter.datagen.providers;
 
+import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import net.devtech.arrp.json.blockstate.JState;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -63,9 +66,22 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
                 BlockBasic block = (BlockBasic) b;
                 DynamicResourcePack.addState(new ResourceLocation(block.getDomain(), block.getId()), s);
             } else {
+                //AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addBlockState()
                 DynamicResourcePack.addState(AntimatterPlatformUtils.getIdFromBlock(b), s);
             }
         });
+    }
+
+    public JState fromGenerated(IGeneratedBlockstate state){
+        JState jState = JState.state();
+        JsonObject json = state.toJson();
+        if (json.has("variants")) {
+            JsonObject variants = json.getAsJsonObject("variants");
+        }
+        if (json.has("multipart")) {
+            JsonObject multiparts = json.getAsJsonObject("multipart");
+        }
+        return jState;
     }
 
     @Override

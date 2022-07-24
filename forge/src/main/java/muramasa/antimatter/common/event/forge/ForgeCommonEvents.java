@@ -131,7 +131,7 @@ public class ForgeCommonEvents {
 
     @SubscribeEvent
     public static void onResurcePackAddAfter(RRPEvent.AfterVanilla event){
-        event.addPack(new DynamicResourcePack("Antimatter - Dynamic Data", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
+        event.addPack(AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK);
     }
 
 }
