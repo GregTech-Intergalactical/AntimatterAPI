@@ -1,6 +1,12 @@
 archivesBaseName = "${rootProject.antimatter_archive_base_name}-common"
 version = "${rootProject.minecraft_version}-${project.mod_version}"
 
+repositories {
+    maven {
+        url = uri("https://storage.googleapis.com/devan-maven/")
+    }
+}
+
 loom {
     accessWidenerPath = file("src/main/resources/antimatter.accesswidener")
 }
@@ -33,6 +39,7 @@ dependencies{
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
+    modCompileOnly("net.devtech:arrp:0.5.5")
     modImplementation("com.github.FeltMC:forgeconfigapiport-fabric:c1486f80f7"){
         transitive = false
     }
