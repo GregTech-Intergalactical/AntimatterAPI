@@ -4,7 +4,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.common.event.CommonEvents;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
