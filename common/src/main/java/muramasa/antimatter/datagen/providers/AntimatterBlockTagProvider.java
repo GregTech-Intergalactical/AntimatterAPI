@@ -14,7 +14,6 @@ import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
@@ -31,7 +30,9 @@ import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static muramasa.antimatter.util.TagUtils.getBlockTag;
@@ -44,7 +45,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     private final String providerDomain, providerName;
     private final boolean replace;
 
-    public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
+    public Object2ObjectMap<ResourceLocation, JTag> TAGS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
         super(gen);
@@ -147,7 +148,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     }
 
     // Must append 's' in the identifier
-    public void addTag(ResourceLocation loc, JsonObject obj) {
+    public void addTag(ResourceLocation loc, JTag obj) {
         TAGS.put(loc, obj);
     }
 
@@ -164,14 +165,32 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     // Must append 's' in the identifier
     // Appends data to the tag.
     public void addTag(ResourceLocation loc, Tag.Builder obj) {
-        JsonObject json = TAGS.get(loc);
+        JTag jTag = TAGS.get(loc);
         //if no tag just put this one in.
-        if (json == null) {
-            addTag(loc, obj.serializeToJson());
+        if (jTag == null) {
+            addTag(loc, fromJson(obj.serializeToJson()));
         } else {
+            JsonObject json = fromJTag(jTag);
             obj = obj.addFromJson(json, "Antimatter - Dynamic Data");
-            addTag(loc, obj.serializeToJson());
+            addTag(loc, fromJson(obj.serializeToJson()));
         }
+    }
+
+    public JsonObject fromJTag(JTag tag){
+        JsonObject json = new JsonObject();
+        try {
+            Field replace = tag.getClass().getDeclaredField("replace");
+            replace.setAccessible(true);
+            json.addProperty("replace", (Boolean) replace.get(tag));
+            Field values = tag.getClass().getDeclaredField("values");
+            values.setAccessible(true);
+            List<String> entries = (List<String>) values.get(tag);
+            JsonArray array = new JsonArray();
+            entries.forEach(array::add);
+            json.add("values", array);
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+        }
+        return json;
     }
 
     @Override
@@ -183,7 +202,7 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
     @Override
     public void onCompletion() {
         TAGS.forEach((k, v) -> {
-            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addTag(AntimatterRuntimeResourceGeneration.getTagLoc("blocks", k), fromJson(v));
+            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addTag(AntimatterRuntimeResourceGeneration.getTagLoc("blocks", k), v);
             //DynamicResourcePack.addTag("blocks", k, v);
         });
     }

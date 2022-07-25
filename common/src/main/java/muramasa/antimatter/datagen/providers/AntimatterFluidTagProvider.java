@@ -1,14 +1,17 @@
 package muramasa.antimatter.datagen.providers;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.fluid.AntimatterMaterialFluid;
 import muramasa.antimatter.material.Material;
+import net.devtech.arrp.json.tags.JTag;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.tags.FluidTagsProvider;
@@ -18,7 +21,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static muramasa.antimatter.util.TagUtils.getForgelikeFluidTag;
@@ -28,7 +33,7 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
     private final String providerDomain, providerName;
     private final boolean replace;
 
-    public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
+    public Object2ObjectMap<ResourceLocation, JTag> TAGS = new Object2ObjectOpenHashMap<>();
 
     public AntimatterFluidTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
         super(gen);
@@ -87,21 +92,49 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
     }
 
     // Must append 's' in the identifier
-    public void addTag(ResourceLocation loc, JsonObject obj) {
+    public void addTag(ResourceLocation loc, JTag obj) {
         this.TAGS.put(loc, obj);
+    }
+
+    public JTag fromJson(JsonObject obj){
+        JTag tag = JTag.tag();
+        if (obj.getAsJsonObject("replace").getAsBoolean()) tag.replace();
+        JsonArray array = obj.getAsJsonArray("values");
+        array.forEach(e -> {
+            tag.add(new ResourceLocation(e.getAsString()));
+        });
+        return tag;
     }
 
     // Must append 's' in the identifier
     // Appends data to the tag.
     public void addTag(ResourceLocation loc, Tag.Builder obj) {
-        JsonObject json = TAGS.get(loc);
+        JTag jTag = TAGS.get(loc);
         //if no tag just put this one in.
-        if (json == null) {
-            addTag(loc, obj.serializeToJson());
+        if (jTag == null) {
+            addTag(loc, fromJson(obj.serializeToJson()));
         } else {
+            JsonObject json = fromJTag(jTag);
             obj = obj.addFromJson(json, "Antimatter - Dynamic Data");
-            TAGS.put(loc, obj.serializeToJson());
+            addTag(loc, fromJson(obj.serializeToJson()));
         }
+    }
+
+    public JsonObject fromJTag(JTag tag){
+        JsonObject json = new JsonObject();
+        try {
+            Field replace = tag.getClass().getDeclaredField("replace");
+            replace.setAccessible(true);
+            json.addProperty("replace", (Boolean) replace.get(tag));
+            Field values = tag.getClass().getDeclaredField("values");
+            values.setAccessible(true);
+            List<String> entries = (List<String>) values.get(tag);
+            JsonArray array = new JsonArray();
+            entries.forEach(array::add);
+            json.add("values", array);
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {
+        }
+        return json;
     }
 
     @Override
@@ -112,6 +145,9 @@ public class AntimatterFluidTagProvider extends FluidTagsProvider implements IAn
 
     @Override
     public void onCompletion() {
-        TAGS.forEach((k, v) -> DynamicResourcePack.addTag("fluids", k, v));
+        TAGS.forEach((k, v) -> {
+            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addTag(AntimatterRuntimeResourceGeneration.getTagLoc("fluids", k), v);
+            //DynamicResourcePack.addTag("blocks", k, v);
+        });
     }
 }

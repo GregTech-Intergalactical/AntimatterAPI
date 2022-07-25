@@ -9,6 +9,7 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
@@ -35,10 +36,12 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
+import net.devtech.arrp.json.lang.JLang;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -80,7 +83,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
     @Override
     public void onCompletion() {
-        data.forEach((k, v) -> DynamicResourcePack.addLangLoc(providerDomain, locale, k, v));
+        data.forEach((k, v) -> {
+            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.mergeLang(new ResourceLocation(providerDomain, locale), JLang.lang().entry(k, v));
+        });
     }
 
     @Override

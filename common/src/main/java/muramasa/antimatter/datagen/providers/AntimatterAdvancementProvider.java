@@ -1,8 +1,17 @@
 package muramasa.antimatter.datagen.providers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import net.devtech.arrp.impl.RuntimeResourcePackImpl;
+import net.devtech.arrp.json.blockstate.JMultipart;
+import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
@@ -16,6 +25,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
@@ -49,9 +61,33 @@ public class AntimatterAdvancementProvider implements DataProvider, IAntimatterP
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {
             if (!locs.add(a.getId())) throw new IllegalStateException("Duplicate advancement " + a.getId());
-            else DynamicResourcePack.addAdvancement(a.getId(), a.deconstruct().serializeToJson());
+            else {
+                AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addData(fix(a.getId(), "advancements", "json"), serialize(a.deconstruct()));
+                //DynamicResourcePack.addAdvancement(a.getId(), a.deconstruct().serializeToJson());
+            }
         };
         advancements.forEach(a -> a.accept(consumer));
+    }
+
+    private static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .disableHtmlEscaping()
+            .registerTypeAdapter(Advancement.Builder.class, (JsonSerializer<Advancement.Builder>) (src, typeOfSrc, context) -> src.serializeToJson())
+            .create();
+    private static byte[] serialize(Object object) {
+        UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(ubaos);
+        GSON.toJson(object, writer);
+        try {
+            writer.close();
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ubaos.getBytes();
+    }
+
+    private static ResourceLocation fix(ResourceLocation identifier, String prefix, String append) {
+        return new ResourceLocation(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
     }
 
     @Override

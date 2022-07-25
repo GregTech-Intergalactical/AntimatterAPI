@@ -72,18 +72,6 @@ public class AntimatterBlockStateProvider extends BlockStateProvider implements 
         });
     }
 
-    public JState fromGenerated(IGeneratedBlockstate state){
-        JState jState = JState.state();
-        JsonObject json = state.toJson();
-        if (json.has("variants")) {
-            JsonObject variants = json.getAsJsonObject("variants");
-        }
-        if (json.has("multipart")) {
-            JsonObject multiparts = json.getAsJsonObject("multipart");
-        }
-        return jState;
-    }
-
     @Override
     public BlockModelProvider models() {
         return blockModelProvider;
