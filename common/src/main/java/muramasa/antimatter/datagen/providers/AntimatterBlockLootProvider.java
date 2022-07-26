@@ -13,6 +13,7 @@ import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.CobbleStoneType;
@@ -111,6 +112,10 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     }
 
     protected void addToFortune(BlockOre block) {
+        if (block.getMaterial().has(MaterialTags.CUSTOM_ORE_DROPS)){
+            tables.put(block, b -> MaterialTags.CUSTOM_ORE_DROPS.getBuilderFunction(block.getMaterial()).apply(block));
+            return;
+        }
         if (block.getOreType() == Data.ORE_SMALL) {
             if (!block.getMaterial().has(GEM) && !(block.getMaterial().has(RAW_ORE))) return;
             Item item = block.getMaterial().has(GEM) ? GEM.get(block.getMaterial()) : null;
@@ -141,11 +146,11 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     }
 
     protected void addToStone(BlockOreStone block) {
-        if (block.getMaterial() == Coal) {
-            tables.put(block, b -> createOreDrop(b, GEM.get(block.getMaterial())));
-        } else {
-            add(block);
+        if (block.getMaterial().has(MaterialTags.CUSTOM_ORE_STONE_DROPS)){
+            tables.put(block, b -> MaterialTags.CUSTOM_ORE_STONE_DROPS.getBuilderFunction(block.getMaterial()).apply(block));
+            return;
         }
+        add(block);
     }
 
     protected void add(Block block) {

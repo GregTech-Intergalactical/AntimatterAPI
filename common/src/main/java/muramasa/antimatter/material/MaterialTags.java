@@ -1,5 +1,9 @@
 package muramasa.antimatter.material;
 
+import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.ore.BlockOreStone;
+import net.minecraft.world.level.block.OreBlock;
+
 public class MaterialTags {
 
     //TODO move to GTI
@@ -61,6 +65,11 @@ public class MaterialTags {
     public static final ListMaterialTag<MaterialStack> PROCESS_INTO = new ListMaterialTag<>("process_into");
 
     public static final ListMaterialTag<Material> BYPRODUCTS = new ListMaterialTag<>("byproducts");
+
+    public static final BlockDropMaterialTag<BlockOre> CUSTOM_ORE_DROPS = new BlockDropMaterialTag<>("custom_ore_drops");
+
+    public static final BlockDropMaterialTag<BlockOreStone> CUSTOM_ORE_STONE_DROPS = new BlockDropMaterialTag<>("custom_ore_stone_drops");
+
     //Dummy Types
     public static ToolMaterialTag TOOLS = new ToolMaterialTag();
     public static ArmorMaterialTag ARMOR = new ArmorMaterialTag();

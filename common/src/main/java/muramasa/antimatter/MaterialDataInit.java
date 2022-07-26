@@ -4,8 +4,10 @@ import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.TextureSet;
+import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
@@ -55,6 +57,7 @@ public class MaterialDataInit {
 
         event.setMaterial(Charcoal).asDust(BLOCK);
         event.setMaterial(Coal).asGemBasic(false).asOre(0, 2, true, ORE_STONE);
+        MaterialTags.CUSTOM_ORE_STONE_DROPS.add(Coal, b -> BlockLoot.createOreDrop(b, GEM.get(Coal)));
         event.setMaterial(Diamond).asGemBasic(false).asOre(3, 7, true).addTools(Tiers.DIAMOND.getAttackDamageBonus(), Tiers.DIAMOND.getSpeed(), Tiers.DIAMOND.getUses(), Tiers.DIAMOND.getLevel());
         event.setMaterial(Emerald).asGemBasic(false).asOre(3, 7, true).harvestLevel(2);
         event.setMaterial(EnderPearl).asGemBasic(false);
