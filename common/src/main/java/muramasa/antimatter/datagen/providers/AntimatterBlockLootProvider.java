@@ -15,6 +15,7 @@ import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
+import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
@@ -79,10 +80,10 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             AntimatterAPI.all(BlockPipe.class, this::add);
             AntimatterAPI.all(BlockStorage.class, this::add);
             AntimatterAPI.all(BlockStone.class, b -> {
-                /*if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
+                if (b.getType() instanceof CobbleStoneType && b.getSuffix().isEmpty()) {
                     tables.put(b, b2 -> createSingleItemTableWithSilkTouch(b, ((CobbleStoneType) b.getType()).getBlock("cobble")));
                     return;
-                }*/
+                }
                 this.add(b);
             });
             AntimatterAPI.all(BlockStoneSlab.class, b -> tables.put(b, BlockLoot::createSlabItemTable));
