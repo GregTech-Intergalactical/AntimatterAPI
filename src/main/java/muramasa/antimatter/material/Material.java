@@ -5,14 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.item.ItemFluidCell;
-import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.ore.BlockOreStone;
-import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
@@ -23,13 +16,8 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,6 +26,21 @@ import static muramasa.antimatter.material.MaterialTag.HANDLE;
 import static muramasa.antimatter.material.MaterialTag.METAL;
 
 public class Material implements ISharedAntimatterObject {
+
+    public record DistillationProduct(Material mat, String mattype, int amount){
+
+        public FluidStack convert(){
+            if(mattype=="fluid"){
+                return mat.getLiquid(amount);
+            }else if(mattype=="gas"){
+                return mat.getGas(amount);
+            }else if(mattype=="plasma"){
+                return mat.getPlasma(amount);
+            }else{
+                return Water.getLiquid(1);
+            }
+        }
+    }
 
     /**
      * Basic Members
@@ -69,6 +72,9 @@ public class Material implements ISharedAntimatterObject {
      * Fluid/Gas/Plasma Members
      **/
     private int fuelPower, liquidTemperature, gasTemperature;
+    public boolean canDistill;
+    public DistillationProduct[] distillationProducts;
+    public int distillationAmount;
 
     /**
      * Tool Members
@@ -224,43 +230,57 @@ public class Material implements ISharedAntimatterObject {
         return this;
     }
 
-    public Material asFluid() {
-        return asFluid(0);
-    }
+    public Material asFluid() {return asFluid(0,0,false,null,0);}
 
-    public Material asFluid(int fuelPower) {
-        return asFluid(fuelPower, Math.max(meltingPoint, 295));
-    }
+    public Material asFluid(int fuelPower) {return asFluid(fuelPower, Math.max(meltingPoint, 295), false,null,0);}
 
-    public Material asFluid(int fuelPower, int temp) {
+    public Material asFluid(int fuelPower, int temp) {return asFluid(fuelPower, temp, false,null,0);}
+
+    public Material asFluid(int fuelPower, int temp, boolean canDistill, DistillationProduct[] distillationProducts, int distillationAmount) {
         flags(LIQUID);
         this.fuelPower = fuelPower;
         this.liquidTemperature = temp;
+        this.canDistill = canDistill;
+        this.distillationProducts = distillationProducts;
+        this.distillationAmount = distillationAmount;
         return this;
     }
 
-    public Material asGas() {
-        return asGas(0);
-    }
+    public Material asGas() {return asGas(0,0,false,null,0);}
 
     public Material asGas(int fuelPower) {
-        return asGas(fuelPower, Math.max(meltingPoint, 295));
+        return asGas(fuelPower, Math.max(meltingPoint, 295),false,null,0);
     }
 
-    public Material asGas(int fuelPower, int temp) {
+    public Material asGas(int fuelPower,int temp) {
+        return asGas(fuelPower, temp,false,null,0);
+    }
+
+    public Material asGas(int fuelPower, int temp, boolean canDistill, DistillationProduct[] distillationProducts, int distillationAmount) {
         flags(GAS);
         this.gasTemperature = temp;
         this.fuelPower = fuelPower;
+        this.canDistill = canDistill;
+        this.distillationProducts = distillationProducts;
+        this.distillationAmount = distillationAmount;
         return this;
     }
 
     public Material asPlasma() {
-        return asPlasma(0);
+        return asPlasma(0,0,false,null,0);
     }
 
     public Material asPlasma(int fuelPower) {
-        asGas(fuelPower);
+        return asPlasma(fuelPower,0,false,null,0);
+    }
+
+    public Material asPlasma(int fuelPower,int temp) {
+        return asPlasma(fuelPower,temp,false,null,0);
+    }
+
+    public Material asPlasma(int fuelPower,int temp,boolean canDistill,DistillationProduct[] distillationProducts,int distillationAmount) {
         flags(PLASMA);
+        asGas(fuelPower,temp,canDistill,distillationProducts,distillationAmount);
         return this;
     }
 
@@ -424,10 +444,6 @@ public class Material implements ISharedAntimatterObject {
         return set;
     }
 
-    public long getDensity() {
-        return Ref.U;
-    }
-
     public long getProtons() {
         if (element != null) return element.getProtons();
         if (processInto.size() <= 0) return Element.Tc.getProtons();
@@ -436,7 +452,7 @@ public class Material implements ISharedAntimatterObject {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getProtons();
         }
-        return (getDensity() * rAmount) / (tAmount * Ref.U);
+        return (rAmount) / (tAmount);
     }
 
     public long getNeutrons() {
@@ -447,18 +463,39 @@ public class Material implements ISharedAntimatterObject {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getNeutrons();
         }
-        return (getDensity() * rAmount) / (tAmount * Ref.U);
+        return (rAmount) / (tAmount);
     }
 
     public long getMass() {
         if (element != null) return element.getMass();
         if (processInto.size() <= 0) return Element.Tc.getMass();
+        long rAmount = 0;
+        for (MaterialStack stack : processInto) {
+            rAmount += stack.s * stack.m.getMass();
+        }
+        return rAmount;
+    }
+
+    public long getHardness() {
+        if (element != null) return element.getHardness();
+        if (processInto.size() <= 0) return Element.Tc.getHardness();
         long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : processInto) {
             tAmount += stack.s;
-            rAmount += stack.s * stack.m.getMass();
+            rAmount += stack.s * stack.m.getHardness();
         }
-        return (getDensity() * rAmount) / (tAmount * Ref.U);
+        return (rAmount) / (tAmount);
+    }
+
+    public long getDensity() {
+        if (element != null) return element.getDensity();
+        if (processInto.size() <= 0) return Element.Tc.getDensity();
+        long rAmount = 0, tAmount = 0;
+        for (MaterialStack stack : processInto) {
+            tAmount += stack.s;
+            rAmount += stack.s * stack.m.getDensity();
+        }
+        return (rAmount) / (tAmount);
     }
 
     /**
