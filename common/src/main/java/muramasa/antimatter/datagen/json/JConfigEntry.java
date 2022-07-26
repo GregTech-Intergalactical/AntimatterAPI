@@ -1,7 +1,5 @@
 package muramasa.antimatter.datagen.json;
 
-import net.devtech.arrp.json.models.JModel;
-
 import java.util.ArrayList;
 import java.util.List;
 

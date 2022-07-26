@@ -9,7 +9,7 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
+import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -353,10 +353,9 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        prov.getVariantBuilder(block).forAllStates(s -> ConfiguredModel.builder()
+        prov.getVariantBuilder(block).forAllStates(s -> new VariantBlockStateBuilder.VariantBuilder()
                 .modelFile(getPipeConfig(prov.getBuilder(block)))
-                .uvLock(true)
-                .build()
+                .uvLock()
         );
     }
 

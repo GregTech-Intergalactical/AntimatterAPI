@@ -1,50 +1,47 @@
 package muramasa.antimatter.datagen.builder;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import net.devtech.arrp.json.loot.JCondition;
+import net.devtech.arrp.json.models.JOverride;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import tesseract.FluidPlatformUtils;
 
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class AntimatterItemModelBuilder extends ItemModelBuilder {
+public class AntimatterItemModelBuilder extends AntimatterModelBuilder<AntimatterItemModelBuilder> {
 
     protected ResourceLocation loader;
-    protected final List<Consumer<JsonObject>> properties = new ObjectArrayList<>();
 
-    public AntimatterItemModelBuilder(ResourceLocation outputLocation, ExistingFileHelper exFileHelper) {
-        super(outputLocation, exFileHelper);
+    public AntimatterItemModelBuilder(ResourceLocation outputLocation) {
+        super(outputLocation);
     }
 
-    public AntimatterItemModelBuilder property(String property, JsonElement element) {
-        properties.add(o -> o.add(property, element));
+    public AntimatterItemModelBuilder property(String property, Object element) {
+        model.property(property, element);
         return this;
     }
 
     public AntimatterItemModelBuilder property(String property, String value) {
-        properties.add(o -> o.addProperty(property, value));
+        model.property(property, value);
         return this;
     }
 
     public AntimatterItemModelBuilder property(String property, boolean value) {
-        properties.add(o -> o.addProperty(property, value));
+        model.property(property, value);
         return this;
     }
 
     public AntimatterItemModelBuilder bucketLoader() {
-        this.loader = new ResourceLocation("forge", "bucket");
+        super.loader(new ResourceLocation("forge", "bucket"));
         return this;
     }
 
     public AntimatterItemModelBuilder cell() {
-        this.loader = new ResourceLocation("antimatter", "cell");
+        super.loader(new ResourceLocation("antimatter", "cell"));
         return this;
     }
 
@@ -61,17 +58,41 @@ public class AntimatterItemModelBuilder extends ItemModelBuilder {
     }
 
     public AntimatterItemModelBuilder tex(Consumer<Map<String, String>> texer) {
-        texer.accept(this.textures);
+        Map<String, String> textureMap = new Object2ObjectArrayMap<>();
+        texer.accept(textureMap);
+        textureMap.forEach((k, v) -> textures.var(k, v));
         return this;
     }
 
-
-    @Override
-    public JsonObject toJson() {
-        JsonObject root = super.toJson();
-        if (loader != null) root.addProperty("loader", loader.toString());
-        if (!properties.isEmpty()) properties.forEach(c -> c.accept(root));
-        return root;
+    public OverrideBuilder override(){
+        return new OverrideBuilder();
     }
 
+    public class OverrideBuilder {
+
+        private ResourceLocation model = null;
+        private final Map<ResourceLocation, Float> predicates = new LinkedHashMap<>();
+
+        public OverrideBuilder model(IModelLocation model) {
+            this.model = model.getLocation();
+            return this;
+        }
+
+        public OverrideBuilder model(ResourceLocation model) {
+            this.model = model;
+            return this;
+        }
+
+        public OverrideBuilder predicate(ResourceLocation key, float value) {
+            this.predicates.put(key, value);
+            return this;
+        }
+
+        public AntimatterItemModelBuilder end() {
+            JCondition condition = new JCondition();
+            predicates.forEach((k, v) -> condition.parameter(k.toString(), v));
+            AntimatterItemModelBuilder.this.model.addOverride(new JOverride(condition, model.toString()));
+            return AntimatterItemModelBuilder.this;
+        }
+    }
 }

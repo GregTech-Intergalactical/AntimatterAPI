@@ -3,9 +3,8 @@ package muramasa.antimatter.tool;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.material.MaterialTags;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ModelFile;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.registration.IColorHandler;
@@ -122,8 +121,8 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
     default void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
         if (this.getAntimatterArmorType().getSlot() == EquipmentSlot.HEAD) {
             String id = this.getId();
-            ItemModelBuilder builder = prov.getBuilder(id + "_probe");
-            builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation("minecraft", "item/handheld")));
+            AntimatterItemModelBuilder builder = prov.getBuilder(id + "_probe");
+            builder.parent(new ResourceLocation("minecraft", "item/handheld"));
             Texture[] textures = getTextures();
             for (int i = 0; i < textures.length + 1; i++) {
                 if (i == textures.length) {
@@ -132,7 +131,7 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
                 }
                 builder.texture("layer" + i, textures[i]);
             }
-            prov.tex(item, "minecraft:item/handheld", getTextures()).override().predicate(new ResourceLocation(Ref.ID, "probe"), 1).model(new ModelFile.UncheckedModelFile(new ResourceLocation(Ref.ID, "item/" + id + "_probe")));
+            prov.tex(item, "minecraft:item/handheld", getTextures()).override().predicate(new ResourceLocation(Ref.ID, "probe"), 1).model(new ResourceLocation(Ref.ID, "item/" + id + "_probe"));
             return;
         }
         prov.tex(item, "minecraft:item/handheld", getTextures());

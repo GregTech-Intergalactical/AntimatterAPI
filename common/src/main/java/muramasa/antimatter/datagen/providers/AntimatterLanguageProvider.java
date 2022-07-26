@@ -67,10 +67,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
     private final String providerDomain, providerName, locale;
     private final Object2ObjectMap<String, String> data = new Object2ObjectRBTreeMap<>();
-    private final DataGenerator gen;
 
-    public AntimatterLanguageProvider(String providerDomain, String providerName, String locale, DataGenerator gen) {
-        this.gen = gen;
+    public AntimatterLanguageProvider(String providerDomain, String providerName, String locale) {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.locale = locale;
@@ -90,24 +88,6 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
     @Override
     public void run(HashCache cache) throws IOException {
-        addTranslations();
-        if (!data.isEmpty())
-            save(cache, data, this.gen.getOutputFolder().resolve(String.join("", "assets/", providerDomain, "/lang/", locale, ".json")));
-    }
-
-    // Forge implementation
-    @SuppressWarnings("all")
-    private void save(HashCache cache, Object object, Path target) throws IOException {
-        String data = Ref.GSON.toJson(object);
-        data = JavaUnicodeEscaper.outsideOf(0, 0x7f).translate(data); // Escape unicode after the fact so that it's not double escaped by GSON
-        String hash = SHA1.hashUnencodedChars(data).toString();
-        if (!Objects.equals(cache.getHash(target), hash) || !Files.exists(target)) {
-            Files.createDirectories(target.getParent());
-            try (BufferedWriter bufferedwriter = Files.newBufferedWriter(target)) {
-                bufferedwriter.write(data);
-            }
-        }
-        cache.putNew(target, hash);
     }
 
     protected void addTranslations() {

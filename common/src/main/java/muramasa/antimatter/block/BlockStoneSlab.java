@@ -1,9 +1,9 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
+import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
+import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder.VariantBuilder;
+import net.minecraft.resources.ResourceLocation;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
@@ -48,14 +48,14 @@ public class BlockStoneSlab extends SlabBlock implements ISharedAntimatterObject
     }
 
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        BlockModelBuilder top = prov.models().getBuilder(getId() + "_top").parent(prov.existing("minecraft", "block/slab_top")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
-        BlockModelBuilder bottom = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/slab")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
-        ModelFile.ExistingModelFile both = prov.existing(this.getDomain(), "block/" + this.getId().replace("_slab", ""));
+        AntimatterBlockModelBuilder top = prov.models().getBuilder(getId() + "_top").parent(prov.existing("minecraft", "block/slab_top")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
+        AntimatterBlockModelBuilder bottom = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/slab")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
+        ResourceLocation both = prov.existing(this.getDomain(), "block/" + this.getId().replace("_slab", ""));
         prov.getVariantBuilder(block).forAllStates(s -> {
             if (s.getValue(TYPE) == SlabType.DOUBLE) {
-                return ConfiguredModel.builder().modelFile(both).build();
+                return new VariantBuilder().modelFile(both);
             }
-            return ConfiguredModel.builder().modelFile(s.getValue(TYPE) == SlabType.TOP ? top : bottom).build();
+            return new VariantBuilder().modelFile(s.getValue(TYPE) == SlabType.TOP ? top : bottom);
         });
     }
 }

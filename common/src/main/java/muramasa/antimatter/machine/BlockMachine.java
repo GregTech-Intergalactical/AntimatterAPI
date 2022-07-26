@@ -10,7 +10,8 @@ import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
+import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
+import muramasa.antimatter.datagen.json.JLoaderModel;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -59,6 +60,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
@@ -310,7 +312,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        ItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier)[0]);
+        AntimatterItemModelBuilder b = prov.getBuilder(item).parent(prov.existing(Ref.ID, "block/preset/layered")).texture("base", type.getBaseTexture(tier)[0]);
         Texture[] base = type.getBaseTexture(tier);
         if (base.length >= 6) {
             for (int s = 0; s < 6; s++) {
@@ -335,10 +337,10 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
         Texture[] overlays = type.getOverlayTextures(state, tier);
-        JsonArray arr = new JsonArray();
+        List<JLoaderModel> arr = new ArrayList<>();
 
         for (Direction dir : Ref.DIRS) {
-            JsonObject obj = builder.addModelObject(new JsonObject(), this.getType().getOverlayModel(dir).toString(), of("base", getType().getBaseTexture(tier, dir).toString(), "overlay", overlays[dir.get3DDataValue()].toString()));
+            JLoaderModel obj = builder.addModelObject(JLoaderModel.model(), this.getType().getOverlayModel(dir).toString(), of("base", getType().getBaseTexture(tier, dir).toString(), "overlay", overlays[dir.get3DDataValue()].toString()));
            // obj.addProperty("loader", AntimatterModelManager.LOADER_MACHINE_SIDE.getLoc().toString());
             arr.add(obj);
         }

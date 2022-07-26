@@ -2,38 +2,34 @@ package muramasa.antimatter.datagen.providers;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.datagen.ExistingFileHelperOverride;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import net.minecraftforge.client.model.generators.ModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.client.model.generators.ItemModelBuilder;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.client.model.generators.ModelFile;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
-public class AntimatterItemModelProvider extends ModelProvider<ItemModelBuilder> implements IAntimatterProvider {
+import java.io.IOException;
 
-    protected final String providerDomain, providerName;
+public class AntimatterItemModelProvider extends AntimatterModelProvider<AntimatterItemModelBuilder> implements IAntimatterProvider {
 
-    public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator generator, ExistingFileHelper exFileHelper) {
-        super(generator, providerDomain, ITEM_FOLDER, loc -> new AntimatterItemModelBuilder(loc, exFileHelper), exFileHelper);
-        this.providerDomain = providerDomain;
+    protected final String providerName;
+
+    public AntimatterItemModelProvider(String providerDomain, String providerName) {
+        super(providerDomain, ITEM_FOLDER, AntimatterItemModelBuilder::new);
         this.providerName = providerName;
     }
 
-    public AntimatterItemModelProvider(String providerDomain, String providerName, DataGenerator gen, String... domains) {
-        this(providerDomain, providerName, gen, new ExistingFileHelperOverride(domains).addDomains(providerDomain));
+    @Override
+    public void run(HashCache cache) throws IOException {
+
     }
 
     @Override
@@ -44,12 +40,15 @@ public class AntimatterItemModelProvider extends ModelProvider<ItemModelBuilder>
     @Override
     public void run() {
         registerModels();
-        generatedModels.forEach(DynamicResourcePack::addItem);
     }
 
     @Override
+    public void onCompletion() {
+        buildAll();
+    }
+
     protected void registerModels() {
-        processItemModels(providerDomain);
+        processItemModels(modid);
     }
 
     public void processItemModels(String domain) {
@@ -63,44 +62,44 @@ public class AntimatterItemModelProvider extends ModelProvider<ItemModelBuilder>
         });
     }
 
-    public ItemModelBuilder getBuilder(ItemLike item) {
+    public AntimatterItemModelBuilder getBuilder(ItemLike item) {
         return getBuilder(AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath());
     }
 
-    public ItemModelBuilder tex(ItemLike item, ResourceLocation... textures) {
+    public AntimatterItemModelBuilder tex(ItemLike item, ResourceLocation... textures) {
         return tex(item, "minecraft:item/generated", textures);
     }
 
-    public ItemModelBuilder tex(ItemLike item, String parent, ResourceLocation... textures) {
-        ItemModelBuilder builder = getBuilder(item);
-        builder.parent(new ModelFile.UncheckedModelFile(new ResourceLocation(parent)));
+    public AntimatterItemModelBuilder tex(ItemLike item, String parent, ResourceLocation... textures) {
+        AntimatterItemModelBuilder builder = getBuilder(item);
+        builder.parent(new ResourceLocation(parent));
         for (int i = 0; i < textures.length; i++) {
             builder.texture("layer" + i, textures[i]);
         }
         return builder;
     }
 
-    public ItemModelBuilder blockItem(Block block) {
+    public AntimatterItemModelBuilder blockItem(Block block) {
         return blockItem(block.asItem());
     }
 
-    public ItemModelBuilder blockItem(ItemLike item) {
-        return withExistingParent(AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath(), modLoc("block/" + AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath()));
+    public AntimatterItemModelBuilder blockItem(ItemLike item) {
+        return withParent(AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath(), modLoc("block/" + AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath()));
     }
 
-    public ModelFile.ExistingModelFile existing(String domain, String path) {
-        return getExistingFile(new ResourceLocation(domain, path));
+    public ResourceLocation existing(String domain, String path) {
+        return new ResourceLocation(domain, path);
     }
 
     public AntimatterItemModelBuilder getAntimatterBuilder(ItemLike item) {
-        return (AntimatterItemModelBuilder) getBuilder(AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath());
+        return getBuilder(AntimatterPlatformUtils.getIdFromItem(item.asItem()).getPath());
     }
 
     public AntimatterItemModelBuilder modelAndTexture(ItemLike item, String namespace, String path) {
-        return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(namespace, path)));
+        return getAntimatterBuilder(item).parent(new ResourceLocation(namespace, path));
     }
 
     public AntimatterItemModelBuilder modelAndTexture(ItemLike item, String resource) {
-        return (AntimatterItemModelBuilder) getAntimatterBuilder(item).parent(new ModelFile.UncheckedModelFile(new ResourceLocation(resource)));
+        return getAntimatterBuilder(item).parent(new ResourceLocation(resource));
     }
 }
