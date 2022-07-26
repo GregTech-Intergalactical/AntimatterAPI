@@ -11,6 +11,7 @@ import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -23,6 +24,7 @@ public class AntimatterRuntimeResourceGeneration {
             .registerTypeAdapter(Advancement.Builder.class, (JsonSerializer<Advancement.Builder>) (src, typeOfSrc, context) -> src.serializeToJson())
             .registerTypeAdapter(JAntimatterModel.class, new JAntimatterModel.JAntimatterModelSerializer())
             .registerTypeAdapter(JTextures.class, new JTextures.Serializer())
+            .registerTypeAdapter(LootTable.class, new LootTable.Serializer())
             .create();
 
     public static ResourceLocation getLootLoc(ResourceLocation id) {

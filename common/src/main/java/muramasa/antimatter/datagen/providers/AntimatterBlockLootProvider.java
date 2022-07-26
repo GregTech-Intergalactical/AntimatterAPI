@@ -9,6 +9,7 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
@@ -96,7 +97,8 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     @Override
     public void onCompletion() {
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
-            DynamicResourcePack.addLootEntry(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build());
+            LootTable table = e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build();
+            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addData(AntimatterRuntimeResourceGeneration.fix(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), "loot_tables/blocks", "json"), AntimatterRuntimeResourceGeneration.serialize(table));
         }
     }
 
