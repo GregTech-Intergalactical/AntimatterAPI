@@ -8,6 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Collection;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class AntimatterProvidersEvent extends AntimatterEvent {
     public final ProvidersEvent event;
@@ -21,7 +22,7 @@ public class AntimatterProvidersEvent extends AntimatterEvent {
         return event;
     }
 
-    public void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> provider) {
+    public void addProvider(String domain, Supplier<IAntimatterProvider> provider) {
         event.addProvider(domain, provider);
     }
 

@@ -51,17 +51,17 @@ public class Antimatter extends AntimatterMod {
             new KubeJSRegistrar();
         }
         AntimatterDynamics.clientProvider(Ref.ID,
-                g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
+                () -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates")));
         AntimatterDynamics.clientProvider(Ref.ID,
-                g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models")));
+                () -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models")));
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
-                g -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates", g));
+                () -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates"));
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
-                g -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models"));
+                () -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models"));
         AntimatterDynamics.clientProvider(Ref.ID,
-                g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us"));
+                () -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us"));
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
-                g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us"));
+                () -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us"));
         AntimatterAPI.init();
     }
 
@@ -72,20 +72,18 @@ public class Antimatter extends AntimatterMod {
     }
 
     public void providers(ProvidersEvent ev) {
-        if (ev.getSide() == Side.CLIENT) {
-
-        } else {
+        if (ev.getSide() == Side.SERVER) {
             final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
-            ev.addProvider(Ref.ID, g -> {
-                p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g);
+            ev.addProvider(Ref.ID, () -> {
+                p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false);
                 return p[0];
             });
-            ev.addProvider(Ref.SHARED_ID, g -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
-                    "Antimatter Shared Fluid Tags", false, g));
-            ev.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
-                    false, g, p[0]));
+            ev.addProvider(Ref.SHARED_ID, () -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
+                    "Antimatter Shared Fluid Tags", false));
+            ev.addProvider(Ref.ID, () -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
+                    false, p[0]));
             ev.addProvider(Ref.ID,
-                    g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
+                    () -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator")));
         }
     }
 

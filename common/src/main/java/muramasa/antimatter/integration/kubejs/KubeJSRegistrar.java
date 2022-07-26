@@ -21,23 +21,21 @@ public class KubeJSRegistrar extends AntimatterMod {
     @Override
     public void onRegistrarInit() {
         super.onRegistrarInit();
-        AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterBlockStateProvider(Ref.MOD_KJS, "KubeJS BlockStates", g));
-        AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterItemModelProvider(Ref.MOD_KJS, "KubeJS Item Models", g));
-        AntimatterDynamics.clientProvider(Ref.MOD_KJS, g -> new AntimatterLanguageProvider(Ref.MOD_KJS, "KubeJS en_us Localization", "en_us"));
+        AntimatterDynamics.clientProvider(Ref.MOD_KJS, () -> new AntimatterBlockStateProvider(Ref.MOD_KJS, "KubeJS BlockStates"));
+        AntimatterDynamics.clientProvider(Ref.MOD_KJS, () -> new AntimatterItemModelProvider(Ref.MOD_KJS, "KubeJS Item Models"));
+        AntimatterDynamics.clientProvider(Ref.MOD_KJS, () -> new AntimatterLanguageProvider(Ref.MOD_KJS, "KubeJS en_us Localization", "en_us"));
     }
 
     public static void providerEvent(ProvidersEvent ev) {
-        if (ev.getSide() == Side.CLIENT) {
-
-        } else {
+        if (ev.getSide() == Side.SERVER) {
             final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
-            ev.addProvider(Ref.MOD_KJS, g -> {
-                p[0] = new AntimatterBlockTagProvider(Ref.MOD_KJS, "KubeJS Block Tags", false, g);
+            ev.addProvider(Ref.MOD_KJS, () -> {
+                p[0] = new AntimatterBlockTagProvider(Ref.MOD_KJS, "KubeJS Block Tags", false);
                 return p[0];
             });
-            ev.addProvider(Ref.MOD_KJS, g ->
-                    new AntimatterItemTagProvider(Ref.MOD_KJS, "KubeJS Item Tags", false, g, p[0]));
-            ev.addProvider(Ref.MOD_KJS, g -> new AntimatterBlockLootProvider(Ref.MOD_KJS, "KubeJS Loot generator", g));
+            ev.addProvider(Ref.MOD_KJS, () ->
+                    new AntimatterItemTagProvider(Ref.MOD_KJS, "KubeJS Item Tags", false, p[0]));
+            ev.addProvider(Ref.MOD_KJS, () -> new AntimatterBlockLootProvider(Ref.MOD_KJS, "KubeJS Loot generator"));
         }
     }
 

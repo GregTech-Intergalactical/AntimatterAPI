@@ -12,6 +12,7 @@ import muramasa.antimatter.datagen.json.JLoaderModel;
 import muramasa.antimatter.datagen.json.JRotationModel;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
+import net.devtech.arrp.json.models.JElement;
 import net.devtech.arrp.json.models.JTextures;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -28,7 +29,6 @@ public class AntimatterBlockModelBuilder extends AntimatterModelBuilder<Antimatt
     protected static final String SIMPLE = Ref.ID.concat(":block/preset/simple");
     protected static final String LAYERED = Ref.ID.concat(":block/preset/layered");
 
-    protected ResourceLocation loader;
     protected final List<Consumer<Object>> properties = new ObjectArrayList<>();
 
     public AntimatterBlockModelBuilder(ResourceLocation outputLocation) {
@@ -50,11 +50,6 @@ public class AntimatterBlockModelBuilder extends AntimatterModelBuilder<Antimatt
     }
     
     private record StringToString(String key, String value){}
-
-    public AntimatterBlockModelBuilder loader(AntimatterModelLoader<?> loader) {
-        this.loader = loader.getLoc();
-        return this;
-    }
 
     public AntimatterBlockModelBuilder particle(Texture tex) {
         model.property("particle", tex.toString());
@@ -111,7 +106,7 @@ public class AntimatterBlockModelBuilder extends AntimatterModelBuilder<Antimatt
     public JModel[] getModelObjects(ImmutableList<DynamicConfigBuilder> builders) {
         List<JModel> models = new ArrayList<>();
         builders.forEach(b -> {
-            JRotationModel model1 = JRotationModel.model();
+            JRotationModel model1 = JRotationModel.modelKeepElements();
             model1.parent(b.parent);
             JTextures textures1 = new JTextures();
             b.textures.forEach(textures1::var);

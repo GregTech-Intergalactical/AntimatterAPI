@@ -1,5 +1,6 @@
 package muramasa.antimatter.datagen.providers;
 
+import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -21,9 +22,11 @@ import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.util.TagUtils;
 import net.devtech.arrp.json.tags.JTag;
+import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
@@ -40,47 +43,12 @@ import static muramasa.antimatter.util.TagUtils.getForgelikeBlockTag;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
-public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAntimatterProvider {
-
-    private final String providerDomain, providerName;
+public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
     private final boolean replace;
 
-    public Object2ObjectMap<ResourceLocation, JTag> TAGS = new Object2ObjectOpenHashMap<>();
-
-    public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen) {
-        super(gen);
-        this.providerDomain = providerDomain;
-        this.providerName = providerName;
+    public AntimatterBlockTagProvider(String providerDomain, String providerName, boolean replace) {
+        super(Registry.BLOCK, providerDomain, providerName, "blocks");
         this.replace = replace;
-    }
-
-    @Override
-    protected Tag.Builder getOrCreateRawBuilder(TagKey<Block> p_126563_) {
-        return this.builders.computeIfAbsent(p_126563_.location(), (p_176838_) -> new Tag.Builder());
-    }
-
-    @Override
-    public void run() {
-        Map<ResourceLocation, Tag.Builder> b = new HashMap<>(this.builders);
-        this.builders.clear();
-        addTags();
-        builders.forEach(this::addTag);
-        builders.putAll(b);
-    }
-
-    @Override
-    public void run(HashCache cache) {
-
-    }
-
-    @Override
-    public void addTags() {
-        processTags(providerDomain);
-    }
-
-    @Override
-    public boolean async() {
-        return false;
     }
 
     protected void processTags(String domain) {
@@ -140,70 +108,5 @@ public class AntimatterBlockTagProvider extends BlockTagsProvider implements IAn
                 this.tag(Data.WRENCH.getToolType()).add(pipe);
             });
         }
-    }
-
-    @Override
-    public String getName() {
-        return providerName;
-    }
-
-    // Must append 's' in the identifier
-    public void addTag(ResourceLocation loc, JTag obj) {
-        TAGS.put(loc, obj);
-    }
-
-    public JTag fromJson(JsonObject obj){
-        JTag tag = JTag.tag();
-        if (obj.getAsJsonObject("replace").getAsBoolean()) tag.replace();
-        JsonArray array = obj.getAsJsonArray("values");
-        array.forEach(e -> {
-            tag.add(new ResourceLocation(e.getAsString()));
-        });
-        return tag;
-    }
-
-    // Must append 's' in the identifier
-    // Appends data to the tag.
-    public void addTag(ResourceLocation loc, Tag.Builder obj) {
-        JTag jTag = TAGS.get(loc);
-        //if no tag just put this one in.
-        if (jTag == null) {
-            addTag(loc, fromJson(obj.serializeToJson()));
-        } else {
-            JsonObject json = fromJTag(jTag);
-            obj = obj.addFromJson(json, "Antimatter - Dynamic Data");
-            addTag(loc, fromJson(obj.serializeToJson()));
-        }
-    }
-
-    public JsonObject fromJTag(JTag tag){
-        JsonObject json = new JsonObject();
-        try {
-            Field replace = tag.getClass().getDeclaredField("replace");
-            replace.setAccessible(true);
-            json.addProperty("replace", (Boolean) replace.get(tag));
-            Field values = tag.getClass().getDeclaredField("values");
-            values.setAccessible(true);
-            List<String> entries = (List<String>) values.get(tag);
-            JsonArray array = new JsonArray();
-            entries.forEach(array::add);
-            json.add("values", array);
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
-        }
-        return json;
-    }
-
-    @Override
-    protected TagAppender<Block> tag(TagKey<Block> tag) {
-        Tag.Builder builder = this.getOrCreateRawBuilder(tag);
-        return new TagAppender<>(builder, this.registry, providerDomain);
-    }
-
-    @Override
-    public void onCompletion() {
-        TAGS.forEach((k, v) -> {
-            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addTag(AntimatterRuntimeResourceGeneration.getTagLoc("blocks", k), v);
-            //DynamicResourcePack.addTag("blocks", k, v);
-        });
     }
 }

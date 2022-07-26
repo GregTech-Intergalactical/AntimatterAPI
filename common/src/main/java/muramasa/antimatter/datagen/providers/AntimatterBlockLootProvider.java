@@ -46,7 +46,6 @@ import static muramasa.antimatter.Data.*;
 
 public class AntimatterBlockLootProvider extends BlockLoot implements DataProvider, IAntimatterProvider {
     protected final String providerDomain, providerName;
-    protected final DataGenerator generator;
     protected final Map<Block, Function<Block, LootTable.Builder>> tables = new Object2ObjectOpenHashMap<>();
 
     public static final LootItemCondition.Builder BRANCH_CUTTER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Data.BRANCH_CUTTER.getToolStack(Data.NULL, Data.NULL).getItem()));
@@ -62,8 +61,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     //public static final ILootCondition.IBuilder BRANCH_CUTTER_SHEARS_SILK_TOUCH_INVERTED = BRANCH_CUTTER_SHEARS_SILK_TOUCH.inverted();
 
 
-    public AntimatterBlockLootProvider(String providerDomain, String providerName, DataGenerator gen) {
-        generator = gen;
+    public AntimatterBlockLootProvider(String providerDomain, String providerName) {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
     }

@@ -176,8 +176,8 @@ public class AntimatterPlatformUtilsImpl {
         LoaderEvents.LOADER.invoker().load(registrar, reg);
     }
 
-    public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
-        ProvidersEvent providerEvent = new ProvidersEvent(generator, side);
+    public static ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar){
+        ProvidersEvent providerEvent = new ProvidersEvent(side);
         ProviderEvents.PROVIDERS.invoker().onProvidersInit(providerEvent);
         return providerEvent;
     }

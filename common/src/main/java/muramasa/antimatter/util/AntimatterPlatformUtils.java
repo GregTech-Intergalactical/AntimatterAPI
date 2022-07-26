@@ -206,7 +206,7 @@ public class AntimatterPlatformUtils {
     }
 
     @ExpectPlatform
-    public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
+    public static ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar){
         throw new AssertionError();
     }
 

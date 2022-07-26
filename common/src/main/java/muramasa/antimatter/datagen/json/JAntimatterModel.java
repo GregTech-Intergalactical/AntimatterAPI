@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import net.devtech.arrp.json.models.JModel;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -24,6 +23,15 @@ public class JAntimatterModel extends JRotationModel {
     public static JAntimatterModel model(String parent) {
         JAntimatterModel model = new JAntimatterModel();
         model.parent(parent);
+        return model;
+    }
+
+    /**
+     * @return a new jmodel that does not override it's parent's elements
+     */
+    public static JAntimatterModel modelKeepElements() {
+        JAntimatterModel model = new JAntimatterModel();
+        model.elements = null;
         return model;
     }
 

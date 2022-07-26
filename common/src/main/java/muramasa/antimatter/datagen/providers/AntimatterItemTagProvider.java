@@ -23,6 +23,7 @@ import muramasa.antimatter.pipe.types.Wire;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.TagUtils;
 import net.devtech.arrp.json.tags.JTag;
+import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.tags.BlockTagsProvider;
@@ -42,7 +43,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static muramasa.antimatter.Data.BLOCK;
 import static muramasa.antimatter.Data.FRAME;
@@ -51,49 +54,15 @@ import static muramasa.antimatter.util.TagUtils.*;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
-public class AntimatterItemTagProvider extends ItemTagsProvider implements IAntimatterProvider {
-
-    private final String providerDomain, providerName;
+public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> implements IAntimatterProvider {
     private final boolean replace;
+    private final Function<TagKey<Block>, Tag.Builder> blockTags;
 
-    public Object2ObjectMap<ResourceLocation, JTag> TAGS = new Object2ObjectOpenHashMap<>();
-
-    public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, DataGenerator gen, BlockTagsProvider p) {
-        super(gen, p);
-        this.providerDomain = providerDomain;
-        this.providerName = providerName;
+    public AntimatterItemTagProvider(String providerDomain, String providerName, boolean replace, AntimatterBlockTagProvider p) {
+        super(Registry.ITEM, providerDomain, providerName, "items");
+        Objects.requireNonNull(p);
+        this.blockTags = p::getOrCreateRawBuilder;
         this.replace = replace;
-    }
-
-    @Override
-    protected Tag.Builder getOrCreateRawBuilder(TagKey<Item> p_126563_) {
-        return this.builders.computeIfAbsent(p_126563_.location(), (p_176838_) -> new Tag.Builder());
-    }
-
-    @Override
-    public void run() {
-        Map<ResourceLocation, Tag.Builder> b = new HashMap<>(this.builders);
-        this.builders.clear();
-        addTags();
-        //TagUtils.getTags(Item.class).forEach((k,v) -> addTag(k, getOrCreateBuilder(v).getInternalBuilder()));
-        builders.forEach(this::addTag);
-        b.forEach(builders::put);
-    }
-
-    @Override
-    public void run(HashCache cache) {
-
-    }
-
-    @Override
-    public boolean async() {
-        return false;
-    }
-
-    @Override
-    public void addTags() {
-        processTags(providerDomain);
-        if (this.providerDomain.equals(Ref.ID)) antimatterTags();
     }
 
     private void antimatterTags() {
@@ -101,6 +70,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
     }
 
     protected void processTags(String domain) {
+        if (domain.equals(Ref.ID)) antimatterTags();
         TagKey<Block> blockTag = BLOCK.getTag(), frameTag = FRAME.getTag();
         this.copy(TagUtils.getForgelikeBlockTag("ores"), TagUtils.getForgelikeItemTag("ores"));
         this.copy(TagUtils.getForgelikeBlockTag("stone"), TagUtils.getForgelikeItemTag("stone"));
@@ -137,7 +107,7 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
             });
             AntimatterAPI.all(MaterialItem.class, item -> {
                 TagKey<Item> type = item.getType().getTag();
-                TagAppender<Item> provider = this.tag(type);
+                TagsProvider.TagAppender<Item> provider = this.tag(type);
                 provider.add(item).replace(replace);
                 this.tag(item.getTag()).add(item).replace(replace);
                 //if (item.getType() == INGOT || item.getType() == GEM) this.getBuilder(Tags.Items.BEACON_PAYMENT).add(item);
@@ -169,68 +139,11 @@ public class AntimatterItemTagProvider extends ItemTagsProvider implements IAnti
         }
     }
 
-    @Override
-    public String getName() {
-        return providerName;
-    }
-
-    // Must append 's' in the identifier
-    public void addTag(ResourceLocation loc, JTag obj) {
-        this.TAGS.put(loc, obj);
-    }
-
-    public JTag fromJson(JsonObject obj){
-        JTag tag = JTag.tag();
-        if (obj.getAsJsonObject("replace").getAsBoolean()) tag.replace();
-        JsonArray array = obj.getAsJsonArray("values");
-        array.forEach(e -> {
-            tag.add(new ResourceLocation(e.getAsString()));
-        });
-        return tag;
-    }
-
-    // Must append 's' in the identifier
-    // Appends data to the tag.
-    public void addTag(ResourceLocation loc, Tag.Builder obj) {
-        JTag jTag = TAGS.get(loc);
-        //if no tag just put this one in.
-        if (jTag == null) {
-            addTag(loc, fromJson(obj.serializeToJson()));
-        } else {
-            JsonObject json = fromJTag(jTag);
-            obj = obj.addFromJson(json, "Antimatter - Dynamic Data");
-            addTag(loc, fromJson(obj.serializeToJson()));
-        }
-    }
-
-    public JsonObject fromJTag(JTag tag){
-        JsonObject json = new JsonObject();
-        try {
-            Field replace = tag.getClass().getDeclaredField("replace");
-            replace.setAccessible(true);
-            json.addProperty("replace", (Boolean) replace.get(tag));
-            Field values = tag.getClass().getDeclaredField("values");
-            values.setAccessible(true);
-            List<String> entries = (List<String>) values.get(tag);
-            JsonArray array = new JsonArray();
-            entries.forEach(array::add);
-            json.add("values", array);
-        } catch (NoSuchFieldException | IllegalAccessException ignored) {
-        }
-        return json;
-    }
-
-    @Override
-    protected TagAppender<Item> tag(TagKey<Item> tag) {
-        Tag.Builder builder = this.getOrCreateRawBuilder(tag);
-        return new TagAppender(builder, this.registry, providerDomain);
-    }
-
-    @Override
-    public void onCompletion() {
-        TAGS.forEach((k, v) -> {
-            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addTag(AntimatterRuntimeResourceGeneration.getTagLoc("items", k), v);
-            //DynamicResourcePack.addTag("blocks", k, v);
-        });
+    protected void copy(TagKey<Block> blockTag, TagKey<Item> itemTag) {
+        Tag.Builder builder = this.getOrCreateRawBuilder(itemTag);
+        Tag.Builder builder2 = this.blockTags.apply(blockTag);
+        Stream<Tag.BuilderEntry> stream = builder2.getEntries();
+        Objects.requireNonNull(builder);
+        stream.forEach(builder::add);
     }
 }

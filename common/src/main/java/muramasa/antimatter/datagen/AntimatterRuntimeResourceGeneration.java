@@ -10,6 +10,7 @@ import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.models.JTextures;
 import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootTable;
 
@@ -22,26 +23,11 @@ public class AntimatterRuntimeResourceGeneration {
             .setPrettyPrinting()
             .disableHtmlEscaping()
             .registerTypeAdapter(Advancement.Builder.class, (JsonSerializer<Advancement.Builder>) (src, typeOfSrc, context) -> src.serializeToJson())
+            .registerTypeAdapter(FinishedRecipe.class, (JsonSerializer<FinishedRecipe>) (src, typeOfSrc, context) -> src.serializeRecipe())
             .registerTypeAdapter(JAntimatterModel.class, new JAntimatterModel.JAntimatterModelSerializer())
             .registerTypeAdapter(JTextures.class, new JTextures.Serializer())
             .registerTypeAdapter(LootTable.class, new LootTable.Serializer())
             .create();
-
-    public static ResourceLocation getLootLoc(ResourceLocation id) {
-        return new ResourceLocation(id.getNamespace(), "loot_tables/blocks/" + id.getPath());
-    }
-
-    public static ResourceLocation getStateLoc(ResourceLocation registryId) {
-        return new ResourceLocation(registryId.getNamespace(), String.join("", "blockstates/", registryId.getPath()));
-    }
-
-    public static ResourceLocation getModelLoc(ResourceLocation registryId) {
-        return new ResourceLocation(registryId.getNamespace(), String.join("", "models/", registryId.getPath()));
-    }
-
-    public static ResourceLocation getRecipeLog(ResourceLocation recipeId) {
-        return new ResourceLocation(recipeId.getNamespace(), String.join("", "recipes/", recipeId.getPath()));
-    }
 
     public static ResourceLocation getTagLoc(String identifier, ResourceLocation tagId) {
         return new ResourceLocation(tagId.getNamespace(), String.join("", identifier, "/", tagId.getPath()));

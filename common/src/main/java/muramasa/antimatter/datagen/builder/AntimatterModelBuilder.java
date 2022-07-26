@@ -6,6 +6,7 @@ import com.mojang.math.Vector3f;
 import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.datagen.json.JAntimatterModel;
 import muramasa.antimatter.datagen.json.JModel;
+import muramasa.antimatter.texture.Texture;
 import net.devtech.arrp.json.models.JElement;
 import net.devtech.arrp.json.models.JTextures;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AntimatterModelBuilder<T extends AntimatterModelBuilder<T>> implements IModelLocation {
-    protected JAntimatterModel model = JAntimatterModel.model();
+    protected JAntimatterModel model = JAntimatterModel.modelKeepElements();
     protected JTextures textures = null;
     protected List<JElement> elements = new ArrayList<>();
     protected ResourceLocation customLoader = null;
@@ -27,12 +28,12 @@ public class AntimatterModelBuilder<T extends AntimatterModelBuilder<T>> impleme
 
     private T self() { return (T) this; }
 
-    protected T loader(ResourceLocation customLoader){
+    public T loader(ResourceLocation customLoader){
         this.customLoader = customLoader;
         return self();
     }
 
-    protected T loader(AntimatterModelLoader<?> customLoader){
+    public T loader(AntimatterModelLoader<?> customLoader){
         return this.loader(customLoader.getLoc());
     }
 
@@ -42,7 +43,6 @@ public class AntimatterModelBuilder<T extends AntimatterModelBuilder<T>> impleme
      * @param parent the parent model
      * @return this builder
      * @throws NullPointerException  if {@code parent} is {@code null}
-     * @throws IllegalStateException if {@code parent} does not {@link ModelFile#assertExistence() exist}
      */
     public T parent(ResourceLocation parent) {
         Preconditions.checkNotNull(parent, "Parent must not be null");
@@ -68,7 +68,6 @@ public class AntimatterModelBuilder<T extends AntimatterModelBuilder<T>> impleme
         if (textures == null){
             textures = new JTextures();
         }
-
         if (texture.charAt(0) == '#') {
             this.textures.var(key, texture);
             return self();
@@ -166,6 +165,15 @@ public class AntimatterModelBuilder<T extends AntimatterModelBuilder<T>> impleme
     }
 
     public JModel build(){
-        return model.textures(textures).element(elements.toArray(new JElement[0]));
+        if (textures != null) {
+            model.textures(textures);
+        }
+        if (!elements.isEmpty()) {
+            model.element(elements.toArray(new JElement[0]));
+        }
+        if (customLoader != null){
+            model.loader(customLoader.toString());
+        }
+        return model;
     }
 }

@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.devtech.arrp.json.loot.JCondition;
 import net.devtech.arrp.json.models.JOverride;
+import net.devtech.arrp.json.models.JTextures;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import tesseract.FluidPlatformUtils;
@@ -60,7 +61,7 @@ public class AntimatterItemModelBuilder extends AntimatterModelBuilder<Antimatte
     public AntimatterItemModelBuilder tex(Consumer<Map<String, String>> texer) {
         Map<String, String> textureMap = new Object2ObjectArrayMap<>();
         texer.accept(textureMap);
-        textureMap.forEach((k, v) -> textures.var(k, v));
+        textureMap.forEach(this::texture);
         return this;
     }
 

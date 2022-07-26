@@ -25,15 +25,13 @@ import java.util.function.Consumer;
 public class AntimatterAdvancementProvider implements DataProvider, IAntimatterProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final DataGenerator gen;
     private final List<Consumer<Consumer<Advancement>>> advancements;
     private final String providerDomain, providerName;
 
     @SafeVarargs
-    public AntimatterAdvancementProvider(String providerDomain, String providerName, DataGenerator gen, Consumer<Consumer<Advancement>>... advancements) {
+    public AntimatterAdvancementProvider(String providerDomain, String providerName, Consumer<Consumer<Advancement>>... advancements) {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
-        this.gen = gen;
         if (advancements.length == 0)
             throw new IllegalArgumentException("AntimatterAdvancementProvider requires at least one Advancement class.");
         this.advancements = Arrays.asList(advancements);

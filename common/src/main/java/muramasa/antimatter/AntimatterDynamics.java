@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.datagen.providers.AntimatterLanguageProvider;
@@ -28,18 +29,20 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
 
+import java.io.File;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AntimatterDynamics {
-    private static final Object2ObjectOpenHashMap<String, List<Function<DataGenerator, IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
+    private static final Object2ObjectOpenHashMap<String, List<Supplier<IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void onProviderInit(String domain, DataGenerator gen, Side side) {
         if (side == Side.CLIENT) {
-            PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(f -> f.apply(gen))
+            PROVIDERS.getOrDefault(domain, Collections.emptyList()).stream().map(Supplier::get)
                     .filter(p -> p instanceof AntimatterLanguageProvider).forEach(gen::addProvider);
         }
     }
@@ -47,26 +50,28 @@ public class AntimatterDynamics {
     /**
      * Providers and Dynamic Resource Pack Section
      **/
-    public static void clientProvider(String domain, Function<DataGenerator, IAntimatterProvider> providerFunc) {
+    public static void clientProvider(String domain, Supplier<IAntimatterProvider> providerFunc) {
         PROVIDERS.computeIfAbsent(domain, k -> new ObjectArrayList<>()).add(providerFunc);
     }
 
     public static void runDataProvidersDynamically() {
-        DynamicResourcePack.clearServer();
-        ProvidersEvent ev = AntimatterPlatformUtils.postProviderEvent(Ref.BACKGROUND_GEN, Side.SERVER, Antimatter.INSTANCE);
+        //DynamicResourcePack.clearServer();
+        ProvidersEvent ev = AntimatterPlatformUtils.postProviderEvent(Side.SERVER, Antimatter.INSTANCE);
         Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
+        collectRecipes(rec -> AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addData(AntimatterRuntimeResourceGeneration.fix(rec.getId(), "recipes", "json"), AntimatterRuntimeResourceGeneration.serialize(rec)));
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
+
     }
 
     public static void runAssetProvidersDynamically() {
-        DynamicResourcePack.clearClient();
+        //DynamicResourcePack.clearClient();
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
-                .flatMap(v -> v.getValue().stream().map(f -> f.apply(Ref.BACKGROUND_GEN))).toList();
+                .flatMap(v -> v.getValue().stream().map(Supplier::get)).toList();
         //AntimatterProvidersEvent ev = new AntimatterProvidersEvent(Ref.BACKGROUND_GEN, Dist.CLIENT, Antimatter.INSTANCE);
         //MinecraftForge.EVENT_BUS.post(ev);
         //Collection<IAntimatterProvider> providers = ev.getProviders();
@@ -76,6 +81,7 @@ public class AntimatterDynamics {
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
         Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
+        AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.dump(new File("./dumped"));
     }
 
     /**
@@ -85,7 +91,7 @@ public class AntimatterDynamics {
      */
     public static void collectRecipes(Consumer<FinishedRecipe> rec) {
         Set<ResourceLocation> set = Sets.newHashSet();
-        AntimatterRecipeProvider provider = new AntimatterRecipeProvider(Ref.ID, "provider", Ref.BACKGROUND_GEN);
+        AntimatterRecipeProvider provider = new AntimatterRecipeProvider(Ref.ID, "provider");
 
         CraftingEvent ev = AntimatterPlatformUtils.postCraftingEvent(Antimatter.INSTANCE);
         for (ICraftingLoader loader : ev.getLoaders()) {
@@ -105,7 +111,7 @@ public class AntimatterDynamics {
                 if (!AntimatterAPI.isModLoaded(mod))
                     return;
             }
-            t.craftingRecipes(new AntimatterRecipeProvider("Antimatter", "Custom recipes", Ref.BACKGROUND_GEN));
+            t.craftingRecipes(new AntimatterRecipeProvider("Antimatter", "Custom recipes"));
         });
         Antimatter.LOGGER.info("Antimatter recipe manager done..");
     }
@@ -166,8 +172,8 @@ public class AntimatterDynamics {
      * Reloads dynamic assets during resource reload.
      */
     public static void onResourceReload(boolean runProviders, boolean serverEvent) {
-        if (runProviders)
-            runDataProvidersDynamically();
+        /*if (runProviders)
+            runDataProvidersDynamically();*/
 
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
