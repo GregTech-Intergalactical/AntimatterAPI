@@ -27,21 +27,7 @@ public class KubeJSBindings {
       return Items.AIR;
     if (t instanceof MaterialTypeItem) {
       if (t.allowGen(mat)) {
-        Item it = ((MaterialTypeItem) t).get(mat);
-        // TODO: Needed?
-        /*
-         * TagCollectionManager.getManager().getItemTags().getOwningTags(it).forEach(tt
-         * -> {
-         * if (tt.equals(t.getMaterialTag(mat).getName()) &&
-         * !DynamicResourcePack.hasTag(AntimatterItemTagProvider.getTagLoc("items",tt)))
-         * {
-         * DynamicResourcePack.forceAddTag(AntimatterItemTagProvider.getTagLoc("items",
-         * tt), ITag.Builder.create().addItemEntry(it.getRegistryName(),
-         * "Antimatter - Dynamic Data").serialize(), true);
-         * }
-         * });
-         */
-        return it;
+        return ((MaterialTypeItem) t).get(mat);
       }
     }
     return Items.AIR;

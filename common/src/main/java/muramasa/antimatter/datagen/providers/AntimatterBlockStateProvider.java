@@ -6,7 +6,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.client.AntimatterModelManager;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.IModelLocation;
@@ -93,11 +93,10 @@ public class AntimatterBlockStateProvider implements IAntimatterProvider {
     public void onCompletion() {
         models().buildAll();
         registeredBlocks.forEach((b, s) -> {
-            if (AntimatterPlatformUtils.getIdFromBlock(b) == null) {
+            if (AntimatterPlatformUtils.getIdFromBlock(b) == null) { //TODO ?
                 BlockBasic block = (BlockBasic) b;
-                //DynamicResourcePack.addState(new ResourceLocation(block.getDomain(), block.getId()), s);
             } else {
-                AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addBlockState(s.toState(), AntimatterPlatformUtils.getIdFromBlock(b));
+                AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addBlockState(s.toState(), AntimatterPlatformUtils.getIdFromBlock(b));
             }
         });
     }

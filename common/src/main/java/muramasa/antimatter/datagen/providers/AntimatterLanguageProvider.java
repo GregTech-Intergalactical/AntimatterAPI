@@ -9,9 +9,8 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemBasic;
@@ -19,8 +18,6 @@ import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.item.ItemMultiTextureBattery;
-import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
@@ -37,10 +34,8 @@ import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
 import net.devtech.arrp.json.lang.JLang;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -50,14 +45,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.*;
@@ -83,7 +72,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     public void onCompletion() {
         JLang lang = JLang.lang();
         data.forEach(lang::entry);
-        AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addLang(new ResourceLocation(providerDomain, locale), lang);
+        AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addLang(new ResourceLocation(providerDomain, locale), lang);
     }
 
     @Override

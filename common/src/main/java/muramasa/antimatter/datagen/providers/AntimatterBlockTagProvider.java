@@ -1,10 +1,5 @@
 package muramasa.antimatter.datagen.providers;
 
-import com.google.common.collect.Maps;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
@@ -13,30 +8,16 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
-import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.BlockItemPipe;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.util.TagUtils;
-import net.devtech.arrp.json.tags.JTag;
 import net.minecraft.core.Registry;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
-import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static muramasa.antimatter.util.TagUtils.getBlockTag;
 import static muramasa.antimatter.util.TagUtils.getForgelikeBlockTag;

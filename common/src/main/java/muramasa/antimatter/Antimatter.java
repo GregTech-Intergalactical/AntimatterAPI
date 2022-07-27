@@ -2,6 +2,7 @@ package muramasa.antimatter;
 
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
 import muramasa.antimatter.datagen.loaders.Pipes;
 import muramasa.antimatter.datagen.loaders.Tools;

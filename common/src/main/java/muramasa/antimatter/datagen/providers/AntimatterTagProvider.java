@@ -5,7 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import net.devtech.arrp.json.tags.JTag;
 import net.minecraft.core.Registry;
@@ -14,12 +14,9 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.block.Block;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
@@ -111,7 +108,7 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
         for (Map.Entry<ResourceLocation, JsonObject> entry : TAGS.entrySet()) {
             ResourceLocation k = entry.getKey();
             JsonObject v = entry.getValue();
-            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addTag(AntimatterRuntimeResourceGeneration.getTagLoc(prefix, k), fromJson(v));
+            AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addTag(AntimatterDynamics.getTagLoc(prefix, k), fromJson(v));
         }
     }
 }

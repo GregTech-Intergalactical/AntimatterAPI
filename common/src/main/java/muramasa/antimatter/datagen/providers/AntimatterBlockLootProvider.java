@@ -9,9 +9,8 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.ore.BlockOre;
@@ -20,7 +19,6 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.loot.BlockLoot;
@@ -96,7 +94,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     public void onCompletion() {
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
             LootTable table = e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build();
-            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addData(AntimatterRuntimeResourceGeneration.fix(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), "loot_tables/blocks", "json"), AntimatterRuntimeResourceGeneration.serialize(table));
+            AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addData(AntimatterDynamics.fix(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), "loot_tables/blocks", "json"), AntimatterDynamics.serialize(table));
         }
     }
 

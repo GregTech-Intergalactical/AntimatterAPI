@@ -1,15 +1,17 @@
-package muramasa.antimatter;
+package muramasa.antimatter.datagen;
 
 import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.JsonSerializer;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
-import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.ICraftingLoader;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
+import muramasa.antimatter.datagen.json.JAntimatterModel;
 import muramasa.antimatter.datagen.providers.AntimatterLanguageProvider;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
@@ -24,20 +26,37 @@ import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.vein.WorldGenVein;
+import net.devtech.arrp.api.RuntimeResourcePack;
+import net.devtech.arrp.json.loot.JCondition;
+import net.devtech.arrp.json.models.JTextures;
+import net.devtech.arrp.util.UnsafeByteArrayOutputStream;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.storage.loot.Deserializers;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AntimatterDynamics {
+    public static final RuntimeResourcePack DYNAMIC_RESOURCE_PACK = RuntimeResourcePack.create(new ResourceLocation(Ref.ID, "dynamic"));
+    public static final Gson GSON = Deserializers.createLootTableSerializer()
+            .setPrettyPrinting()
+            .disableHtmlEscaping()
+            .registerTypeAdapter(Advancement.Builder.class, (JsonSerializer<Advancement.Builder>) (src, typeOfSrc, context) -> src.serializeToJson())
+            .registerTypeAdapter(FinishedRecipe.class, (JsonSerializer<FinishedRecipe>) (src, typeOfSrc, context) -> src.serializeRecipe())
+            .registerTypeAdapter(JAntimatterModel.class, new JAntimatterModel.JAntimatterModelSerializer())
+            .registerTypeAdapter(JTextures.class, new JTextures.Serializer())
+            .registerTypeAdapter(JCondition.class, new JCondition.Serializer())
+            .create();
     private static final boolean exportPack = true;
 
     private static final Object2ObjectOpenHashMap<String, List<Supplier<IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
@@ -57,7 +76,6 @@ public class AntimatterDynamics {
     }
 
     public static void runDataProvidersDynamically() {
-        //DynamicResourcePack.clearServer();
         ProvidersEvent ev = AntimatterPlatformUtils.postProviderEvent(AntimatterPlatformUtils.getSide(), Antimatter.INSTANCE);
         Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
@@ -65,20 +83,16 @@ public class AntimatterDynamics {
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
-        collectRecipes(rec -> AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addData(AntimatterRuntimeResourceGeneration.fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
+        collectRecipes(rec -> DYNAMIC_RESOURCE_PACK.addData(fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
         if (!AntimatterPlatformUtils.isProduction() && exportPack) {
-            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.dump(new File("./dumped"));
+            DYNAMIC_RESOURCE_PACK.dump(new File("./dumped"));
         }
     }
 
     public static void runAssetProvidersDynamically() {
-        //DynamicResourcePack.clearClient();
         List<IAntimatterProvider> providers = PROVIDERS.object2ObjectEntrySet().stream()
                 .flatMap(v -> v.getValue().stream().map(Supplier::get)).toList();
-        //AntimatterProvidersEvent ev = new AntimatterProvidersEvent(Ref.BACKGROUND_GEN, Dist.CLIENT, Antimatter.INSTANCE);
-        //MinecraftForge.EVENT_BUS.post(ev);
-        //Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
@@ -174,10 +188,7 @@ public class AntimatterDynamics {
     /**
      * Reloads dynamic assets during resource reload.
      */
-    public static void onResourceReload(boolean runProviders, boolean serverEvent) {
-        /*if (runProviders)
-            runDataProvidersDynamically();*/
-
+    public static void onResourceReload(boolean serverEvent) {
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
@@ -220,17 +231,26 @@ public class AntimatterDynamics {
         });
 
         Antimatter.LOGGER.info("Amount of Antimatter Recipe Loaders registered: " + loaders.size());
-        /*if (server) {
-            TagUtils.getTags(Item.class).forEach((k, v) -> {
-                DynamicResourcePack.ensureTagAvailable("items", k); // builder.serialize(), false);
-            });
-            TagUtils.getTags(Fluid.class).forEach((k, v) -> {
-                DynamicResourcePack.ensureTagAvailable("fluids", k); // builder.serialize(), false);
-            });
-            TagUtils.getTags(Block.class).forEach((k, v) -> {
-                DynamicResourcePack.ensureTagAvailable("blocks", k); // builder.serialize(), false);
-            });
-        }*/
+    }
+
+    public static ResourceLocation getTagLoc(String identifier, ResourceLocation tagId) {
+        return new ResourceLocation(tagId.getNamespace(), String.join("", identifier, "/", tagId.getPath()));
+    }
+
+    public static byte[] serialize(Object object) {
+        UnsafeByteArrayOutputStream ubaos = new UnsafeByteArrayOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(ubaos);
+        GSON.toJson(object, writer);
+        try {
+            writer.close();
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
+        return ubaos.getBytes();
+    }
+
+    public static ResourceLocation fix(ResourceLocation identifier, String prefix, String append) {
+        return new ResourceLocation(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
     }
     /*
      * public static void runBackgroundProviders() {

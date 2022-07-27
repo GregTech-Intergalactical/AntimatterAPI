@@ -1,8 +1,12 @@
 package muramasa.antimatter.forge;
 
 
-import muramasa.antimatter.*;
-import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.datagen.AntimatterDynamics;
+import muramasa.antimatter.AntimatterMod;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
@@ -10,7 +14,6 @@ import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -94,7 +97,6 @@ public class AntimatterImpl {
         ServerHandler.setup();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         AntimatterDynamics.runDataProvidersDynamically();
-        MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
         e.enqueueWork(() -> AntimatterAPI.getServerDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
                 try {

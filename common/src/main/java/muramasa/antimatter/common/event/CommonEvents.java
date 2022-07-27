@@ -1,7 +1,7 @@
 package muramasa.antimatter.common.event;
 
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.AntimatterDynamics;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.pipe.BlockPipe;
@@ -111,7 +111,7 @@ public class CommonEvents {
      */
     public static void tagsEvent() {
         if (!ClientHandler.isLocal()) {
-            AntimatterDynamics.onResourceReload(false, false);
+            AntimatterDynamics.onResourceReload(false);
             AntimatterDynamics.onRecipeCompile(true, Minecraft.getInstance().getConnection().getRecipeManager());
         }
     }

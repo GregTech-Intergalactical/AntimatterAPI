@@ -4,11 +4,9 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.common.event.CommonEvents;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.devtech.arrp.api.RRPEvent;
@@ -28,8 +26,6 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.NULL;
 
@@ -131,7 +127,7 @@ public class ForgeCommonEvents {
 
     @SubscribeEvent
     public static void onResurcePackAddAfter(RRPEvent.AfterVanilla event){
-        event.addPack(AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK);
+        event.addPack(AntimatterDynamics.DYNAMIC_RESOURCE_PACK);
     }
 
 }

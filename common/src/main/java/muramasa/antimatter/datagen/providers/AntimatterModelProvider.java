@@ -2,7 +2,7 @@ package muramasa.antimatter.datagen.providers;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.builder.AntimatterModelBuilder;
 import net.minecraft.resources.ResourceLocation;
 
@@ -329,6 +329,6 @@ public abstract class AntimatterModelProvider<T extends AntimatterModelBuilder<T
     }
 
     public void buildAll(){
-        this.generatedModels.forEach((r, m) -> AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addAsset(AntimatterRuntimeResourceGeneration.fix(r, "models", "json"), AntimatterRuntimeResourceGeneration.serialize(m.build())));
+        this.generatedModels.forEach((r, m) -> AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addAsset(AntimatterDynamics.fix(r, "models", "json"), AntimatterDynamics.serialize(m.build())));
     }
 }

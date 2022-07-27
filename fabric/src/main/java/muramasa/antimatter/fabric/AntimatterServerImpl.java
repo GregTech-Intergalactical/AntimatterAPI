@@ -1,6 +1,6 @@
 package muramasa.antimatter.fabric;
 
-import muramasa.antimatter.AntimatterDynamics;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import net.fabricmc.api.DedicatedServerModInitializer;
 
 public class AntimatterServerImpl implements DedicatedServerModInitializer {

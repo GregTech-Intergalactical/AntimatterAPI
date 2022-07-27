@@ -1,6 +1,6 @@
 package muramasa.antimatter.integration.kubejs;
 
-import muramasa.antimatter.AntimatterDynamics;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.AntimatterMod;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.*;

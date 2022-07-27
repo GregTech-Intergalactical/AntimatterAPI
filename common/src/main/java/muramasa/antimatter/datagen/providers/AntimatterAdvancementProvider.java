@@ -1,12 +1,11 @@
 package muramasa.antimatter.datagen.providers;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -48,8 +47,7 @@ public class AntimatterAdvancementProvider implements DataProvider, IAntimatterP
         Consumer<Advancement> consumer = a -> {
             if (!locs.add(a.getId())) throw new IllegalStateException("Duplicate advancement " + a.getId());
             else {
-                AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addData(AntimatterRuntimeResourceGeneration.fix(a.getId(), "advancements", "json"), AntimatterRuntimeResourceGeneration.serialize(a.deconstruct()));
-                //DynamicResourcePack.addAdvancement(a.getId(), a.deconstruct().serializeToJson());
+                AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addData(AntimatterDynamics.fix(a.getId(), "advancements", "json"), AntimatterDynamics.serialize(a.deconstruct()));
             }
         };
         advancements.forEach(a -> a.accept(consumer));

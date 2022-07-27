@@ -9,13 +9,11 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.fabric.AntimatterCapsImpl;
 import muramasa.antimatter.common.event.CommonEvents;
-import muramasa.antimatter.datagen.AntimatterRuntimeResourceGeneration;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
-import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.fabric.AntimatterRegistration;
@@ -30,8 +28,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.fml.event.config.ModConfigEvent;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-
-import java.util.stream.Collectors;
 
 public class AntimatterImpl implements ModInitializer {
     @Override
@@ -57,7 +53,7 @@ public class AntimatterImpl implements ModInitializer {
             CommonEvents.placeBlock(placedOff, context.getPlayer(), context.getLevel(), context.getClickedPos(), context.getLevel().getBlockState(context.getClickedPos()));
             return InteractionResult.PASS;
         });
-        RRPCallback.AFTER_VANILLA.register(resources -> resources.add(AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK));
+        RRPCallback.AFTER_VANILLA.register(resources -> resources.add(AntimatterDynamics.DYNAMIC_RESOURCE_PACK));
     }
 
     private void providers(ProvidersEvent ev) {
