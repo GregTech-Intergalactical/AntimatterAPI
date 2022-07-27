@@ -2,7 +2,6 @@ package muramasa.antimatter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import muramasa.antimatter.datagen.BackgroundDataGenerator;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.XSTR;
 import net.minecraft.core.Direction;
@@ -18,9 +17,6 @@ public class Ref {
      **/
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     public static final XSTR RNG = new XSTR();
-    public static final BackgroundDataGenerator BACKGROUND_GEN = new BackgroundDataGenerator();
-    //public static final DynamicResourcePackFinder PACK_FINDER = new DynamicResourcePackFinder("antimatter_pack", "Antimatter - Dynamic Assets", "Dynamic Resource Pack", true);
-    //public static final DynamicDataPackFinder SERVER_PACK_FINDER = new DynamicDataPackFinder("antimatter_pack", "Antimatter - Dynamic Data");
 
     /**
      * Mod Data

@@ -47,7 +47,9 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
@@ -183,7 +185,7 @@ public class AntimatterPlatformUtilsImpl {
     public static CraftingEvent postCraftingEvent(IAntimatterRegistrar registrar){
         CraftingEvent event = new CraftingEvent();
         AntimatterCraftingEvent ev = new AntimatterCraftingEvent(registrar, event);
-        MinecraftForge.EVENT_BUS.post(ev);
+        ModLoader.get().postEvent(ev);
         return event;
     }
 
@@ -191,10 +193,11 @@ public class AntimatterPlatformUtilsImpl {
         MinecraftForge.EVENT_BUS.post(new AntimatterLoaderEvent(registrar, reg));
     }
 
-    public static ProvidersEvent postProviderEvent(DataGenerator generator, Side side, IAntimatterRegistrar registrar){
-        ProvidersEvent providerEvent = new ProvidersEvent(generator, side);
+    public static ProvidersEvent postProviderEvent(Side side, IAntimatterRegistrar registrar){
+        ProvidersEvent providerEvent = new ProvidersEvent(side);
         AntimatterProvidersEvent ev = new AntimatterProvidersEvent(providerEvent, registrar);
-        MinecraftForge.EVENT_BUS.post(ev);
+        ModLoader.get().postEvent(ev);
+        //boolean bool = MinecraftForge.EVENT_BUS.post(ev);
         return providerEvent;
     }
 

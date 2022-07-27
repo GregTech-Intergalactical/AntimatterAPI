@@ -1,16 +1,13 @@
 package muramasa.antimatter;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.event.MaterialEvent;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourceLocation;
 import tesseract.TesseractPlatformUtils;
 
-;import java.util.ArrayList;
-import java.util.List;
+;
 import java.util.Map;
 
 public abstract class AntimatterMod implements IAntimatterRegistrar {

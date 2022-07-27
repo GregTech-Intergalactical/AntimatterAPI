@@ -3,8 +3,6 @@ package muramasa.antimatter.item;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.fluid.FluidHandlerItemCell;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
-import net.minecraftforge.client.model.generators.ModelFile;
-import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
@@ -457,7 +455,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        ((AntimatterItemModelBuilder) prov.getAntimatterBuilder(item).bucketProperties(stack, true, false).parent(new ModelFile.UncheckedModelFile("antimatter:item/bucket"))).tex((map) -> {
+        prov.getAntimatterBuilder(item).bucketProperties(stack, true, false).parent(new ResourceLocation("antimatter:item/bucket")).tex((map) -> {
             map.put("base", getDomain() + ":item/basic/" + getId());
             map.put("cover", getDomain() + ":item/other/" + getId() + "_cover");
             map.put("fluid", getDomain() + ":item/other/" + getId() + "_fluid");

@@ -11,8 +11,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class AntimatterConfig {
 
-    //TODO add ResourceMethod enum values
-
     public static final Client CLIENT = new Client();
     public static final Data DATA = new Data();
     public static final Jei JEI = new Jei();

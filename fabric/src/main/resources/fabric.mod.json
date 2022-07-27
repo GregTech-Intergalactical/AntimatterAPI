@@ -36,6 +36,9 @@
     "client": [
       "muramasa.antimatter.client.fabric.AntimatterClientImpl"
     ],
+    "server": [
+      "muramasa.antimatter.fabric.AntimatterServerImpl"
+    ],
     "main": [
       "muramasa.antimatter.fabric.AntimatterImpl"
     ],

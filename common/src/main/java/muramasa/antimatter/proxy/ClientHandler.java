@@ -3,7 +3,7 @@ package muramasa.antimatter.proxy;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterDynamics;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.client.model.loader.AntimatterModelLoader;

@@ -1,8 +1,8 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
+import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
+import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder.VariantBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
@@ -54,12 +54,12 @@ public class BlockStoneStair extends StairBlock implements ISharedAntimatterObje
     }
 
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        BlockModelBuilder outer = prov.models().getBuilder(getId() + "_outer").parent(prov.existing("minecraft", "block/outer_stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
-        BlockModelBuilder inner = prov.models().getBuilder(getId() + "_inner").parent(prov.existing("minecraft", "block/inner_stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
-        BlockModelBuilder regular = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
+        AntimatterBlockModelBuilder outer = prov.models().getBuilder(getId() + "_outer").parent(prov.existing("minecraft", "block/outer_stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
+        AntimatterBlockModelBuilder inner = prov.models().getBuilder(getId() + "_inner").parent(prov.existing("minecraft", "block/inner_stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
+        AntimatterBlockModelBuilder regular = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
         prov.getVariantBuilder(block).forAllStates(s -> {
-            ConfiguredModel.Builder<?> builder = ConfiguredModel.builder();
-            BlockModelBuilder b = regular;
+            VariantBuilder builder = new VariantBuilder();
+            AntimatterBlockModelBuilder b = regular;
             StairsShape shape = s.getValue(SHAPE);
             Half half = s.getValue(HALF);
             Direction facing = s.getValue(FACING);
@@ -93,7 +93,7 @@ public class BlockStoneStair extends StairBlock implements ISharedAntimatterObje
                     builder.uvLock(true);
                 }
             }
-            return builder.build();
+            return builder;
         });
     }
 }

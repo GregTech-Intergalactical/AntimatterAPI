@@ -27,7 +27,6 @@
     "IngredientAccessor",
     "ItemStackMixin",
     "LeavesBlockMixin",
-    "RecipeManagerMixin",
     "RepairItemRecipeMixin",
     "ServerBlockUpdateMixin",
     "SimpleReloadInstanceMixin"

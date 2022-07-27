@@ -9,8 +9,8 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemBasic;
@@ -18,8 +18,6 @@ import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.item.ItemMultiTextureBattery;
-import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
@@ -35,10 +33,10 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.Utils;
-import net.minecraft.data.DataGenerator;
+import net.devtech.arrp.json.lang.JLang;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
-import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.CreativeModeTab;
@@ -47,14 +45,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Objects;
 import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.*;
@@ -64,10 +56,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
     private final String providerDomain, providerName, locale;
     private final Object2ObjectMap<String, String> data = new Object2ObjectRBTreeMap<>();
-    private final DataGenerator gen;
 
-    public AntimatterLanguageProvider(String providerDomain, String providerName, String locale, DataGenerator gen) {
-        this.gen = gen;
+    public AntimatterLanguageProvider(String providerDomain, String providerName, String locale) {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
         this.locale = locale;
@@ -80,29 +70,13 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
     @Override
     public void onCompletion() {
-        data.forEach((k, v) -> DynamicResourcePack.addLangLoc(providerDomain, locale, k, v));
+        JLang lang = JLang.lang();
+        data.forEach(lang::entry);
+        AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addLang(new ResourceLocation(providerDomain, locale), lang);
     }
 
     @Override
     public void run(HashCache cache) throws IOException {
-        addTranslations();
-        if (!data.isEmpty())
-            save(cache, data, this.gen.getOutputFolder().resolve(String.join("", "assets/", providerDomain, "/lang/", locale, ".json")));
-    }
-
-    // Forge implementation
-    @SuppressWarnings("all")
-    private void save(HashCache cache, Object object, Path target) throws IOException {
-        String data = Ref.GSON.toJson(object);
-        data = JavaUnicodeEscaper.outsideOf(0, 0x7f).translate(data); // Escape unicode after the fact so that it's not double escaped by GSON
-        String hash = SHA1.hashUnencodedChars(data).toString();
-        if (!Objects.equals(cache.getHash(target), hash) || !Files.exists(target)) {
-            Files.createDirectories(target.getParent());
-            try (BufferedWriter bufferedwriter = Files.newBufferedWriter(target)) {
-                bufferedwriter.write(data);
-            }
-        }
-        cache.putNew(target, hash);
     }
 
     protected void addTranslations() {

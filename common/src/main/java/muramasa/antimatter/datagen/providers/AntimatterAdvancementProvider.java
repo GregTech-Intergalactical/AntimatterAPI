@@ -1,12 +1,11 @@
 package muramasa.antimatter.datagen.providers;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -25,15 +24,13 @@ import java.util.function.Consumer;
 public class AntimatterAdvancementProvider implements DataProvider, IAntimatterProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private final DataGenerator gen;
     private final List<Consumer<Consumer<Advancement>>> advancements;
     private final String providerDomain, providerName;
 
     @SafeVarargs
-    public AntimatterAdvancementProvider(String providerDomain, String providerName, DataGenerator gen, Consumer<Consumer<Advancement>>... advancements) {
+    public AntimatterAdvancementProvider(String providerDomain, String providerName, Consumer<Consumer<Advancement>>... advancements) {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
-        this.gen = gen;
         if (advancements.length == 0)
             throw new IllegalArgumentException("AntimatterAdvancementProvider requires at least one Advancement class.");
         this.advancements = Arrays.asList(advancements);
@@ -49,7 +46,9 @@ public class AntimatterAdvancementProvider implements DataProvider, IAntimatterP
         Set<ResourceLocation> locs = new ObjectOpenHashSet<>();
         Consumer<Advancement> consumer = a -> {
             if (!locs.add(a.getId())) throw new IllegalStateException("Duplicate advancement " + a.getId());
-            else DynamicResourcePack.addAdvancement(a.getId(), a.deconstruct().serializeToJson());
+            else {
+                AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addData(AntimatterDynamics.fix(a.getId(), "advancements", "json"), AntimatterDynamics.serialize(a.deconstruct()));
+            }
         };
         advancements.forEach(a -> a.accept(consumer));
     }

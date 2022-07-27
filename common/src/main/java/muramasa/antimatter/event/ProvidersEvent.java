@@ -8,20 +8,19 @@ import net.minecraft.data.DataGenerator;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ProvidersEvent {
     private final List<IAntimatterProvider> providers = new ObjectArrayList<>(10);
 
-    public final DataGenerator generator;
     public final Side side;
 
-    public ProvidersEvent(DataGenerator generator, Side side) {
-        this.generator = generator;
+    public ProvidersEvent(Side side) {
         this.side = side;
     }
 
-    public void addProvider(String domain, Function<DataGenerator, IAntimatterProvider> provider) {
-        providers.add(provider.apply(generator));
+    public void addProvider(String domain, Supplier<IAntimatterProvider> provider) {
+        providers.add(provider.get());
     }
 
     public Collection<IAntimatterProvider> getProviders() {

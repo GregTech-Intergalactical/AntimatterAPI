@@ -2,6 +2,7 @@ package muramasa.antimatter;
 
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
 import muramasa.antimatter.datagen.loaders.Pipes;
 import muramasa.antimatter.datagen.loaders.Tools;
@@ -51,17 +52,17 @@ public class Antimatter extends AntimatterMod {
             new KubeJSRegistrar();
         }
         AntimatterDynamics.clientProvider(Ref.ID,
-                g -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates"), g));
+                () -> new AntimatterBlockStateProvider(Ref.ID, Ref.NAME.concat(" BlockStates")));
         AntimatterDynamics.clientProvider(Ref.ID,
-                g -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models"), g));
+                () -> new AntimatterItemModelProvider(Ref.ID, Ref.NAME.concat(" Item Models")));
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
-                g -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates", g));
+                () -> new AntimatterBlockStateProvider(Ref.SHARED_ID, "Antimatter Shared BlockStates"));
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
-                g -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models", g));
+                () -> new AntimatterItemModelProvider(Ref.SHARED_ID, "Antimatter Shared Item Models"));
         AntimatterDynamics.clientProvider(Ref.ID,
-                g -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us", g));
+                () -> new AntimatterLanguageProvider(Ref.ID, Ref.NAME.concat(" en_us Localization"), "en_us"));
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
-                g -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us", g));
+                () -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us"));
         AntimatterAPI.init();
     }
 
@@ -72,21 +73,17 @@ public class Antimatter extends AntimatterMod {
     }
 
     public void providers(ProvidersEvent ev) {
-        if (ev.getSide() == Side.CLIENT) {
-
-        } else {
-            final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
-            ev.addProvider(Ref.ID, g -> {
-                p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false, g);
-                return p[0];
-            });
-            ev.addProvider(Ref.SHARED_ID, g -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
-                    "Antimatter Shared Fluid Tags", false, g));
-            ev.addProvider(Ref.ID, g -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
-                    false, g, p[0]));
-            ev.addProvider(Ref.ID,
-                    g -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator"), g));
-        }
+        final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
+        ev.addProvider(Ref.ID, () -> {
+            p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false);
+            return p[0];
+        });
+        ev.addProvider(Ref.SHARED_ID, () -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
+                "Antimatter Shared Fluid Tags", false));
+        ev.addProvider(Ref.ID, () -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
+                false, p[0]));
+        ev.addProvider(Ref.ID,
+                () -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator")));
     }
 
     @Override

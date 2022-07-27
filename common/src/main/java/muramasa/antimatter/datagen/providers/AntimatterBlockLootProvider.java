@@ -9,8 +9,8 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
-import muramasa.antimatter.datagen.resources.DynamicResourcePack;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.material.MaterialTags;
@@ -21,7 +21,6 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.critereon.EnchantmentPredicate;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.loot.BlockLoot;
@@ -47,7 +46,6 @@ import static muramasa.antimatter.Data.*;
 
 public class AntimatterBlockLootProvider extends BlockLoot implements DataProvider, IAntimatterProvider {
     protected final String providerDomain, providerName;
-    protected final DataGenerator generator;
     protected final Map<Block, Function<Block, LootTable.Builder>> tables = new Object2ObjectOpenHashMap<>();
 
     public static final LootItemCondition.Builder BRANCH_CUTTER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Data.BRANCH_CUTTER.getToolStack(Data.NULL, Data.NULL).getItem()));
@@ -63,8 +61,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     //public static final ILootCondition.IBuilder BRANCH_CUTTER_SHEARS_SILK_TOUCH_INVERTED = BRANCH_CUTTER_SHEARS_SILK_TOUCH.inverted();
 
 
-    public AntimatterBlockLootProvider(String providerDomain, String providerName, DataGenerator gen) {
-        generator = gen;
+    public AntimatterBlockLootProvider(String providerDomain, String providerName) {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
     }
@@ -98,7 +95,8 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     @Override
     public void onCompletion() {
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
-            DynamicResourcePack.addLootEntry(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build());
+            LootTable table = e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build();
+            AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addData(AntimatterDynamics.fix(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), "loot_tables/blocks", "json"), AntimatterDynamics.serialize(table));
         }
     }
 

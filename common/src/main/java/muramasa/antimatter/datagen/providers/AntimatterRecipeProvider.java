@@ -35,8 +35,9 @@ public class AntimatterRecipeProvider extends RecipeProvider {
 
     protected final String providerDomain, providerName;
 
-    public AntimatterRecipeProvider(String providerDomain, String providerName, DataGenerator gen) {
-        super(gen);
+    @SuppressWarnings("ConstantConditions")
+    public AntimatterRecipeProvider(String providerDomain, String providerName) {
+        super(null);
         this.providerDomain = providerDomain;
         this.providerName = providerName;
     }

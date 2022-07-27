@@ -5,7 +5,7 @@ import io.github.fabricators_of_create.porting_lib.event.client.ColorHandlersCal
 import io.github.fabricators_of_create.porting_lib.event.client.ModelLoadCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.TextureStitchCallback;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterDynamics;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.SoundHelper;
@@ -23,6 +23,7 @@ public class AntimatterClientImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientHandler.setup();
+        AntimatterDynamics.runDataProvidersDynamically();
         TextureStitchCallback.PRE.register(AntimatterTextureStitcher::onTextureStitch);
         ColorHandlersCallback.BLOCK.register(ClientHandler::onBlockColorHandler);
         ColorHandlersCallback.ITEM.register((i, b) -> ClientHandler.onItemColorHandler(i));

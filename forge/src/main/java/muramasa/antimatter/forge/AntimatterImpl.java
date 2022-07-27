@@ -1,8 +1,12 @@
 package muramasa.antimatter.forge;
 
 
-import muramasa.antimatter.*;
-import muramasa.antimatter.datagen.resources.DynamicDataPackFinder;
+import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.datagen.AntimatterDynamics;
+import muramasa.antimatter.AntimatterMod;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
@@ -10,7 +14,6 @@ import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -43,8 +46,8 @@ public class AntimatterImpl {
         eventBus.addListener(this::loadComplete);
         eventBus.addListener(EventPriority.LOWEST, this::onGatherData);
 
-        MinecraftForge.EVENT_BUS.addListener(this::addCraftingLoaders);
-        MinecraftForge.EVENT_BUS.addListener(this::providers);
+        eventBus.addListener(this::addCraftingLoaders);
+        eventBus.addListener(this::providers);
     }
 
     private void addCraftingLoaders(AntimatterCraftingEvent ev) {
@@ -64,6 +67,7 @@ public class AntimatterImpl {
         ClientHandler.setup();
         // AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        AntimatterDynamics.runDataProvidersDynamically();
         e.enqueueWork(() -> AntimatterAPI.getClientDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
                 try {
@@ -92,7 +96,7 @@ public class AntimatterImpl {
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
         ServerHandler.setup();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
-        MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
+        AntimatterDynamics.runDataProvidersDynamically();
         e.enqueueWork(() -> AntimatterAPI.getServerDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
                 try {
