@@ -72,19 +72,17 @@ public class Antimatter extends AntimatterMod {
     }
 
     public void providers(ProvidersEvent ev) {
-        if (ev.getSide() == Side.SERVER) {
-            final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
-            ev.addProvider(Ref.ID, () -> {
-                p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false);
-                return p[0];
-            });
-            ev.addProvider(Ref.SHARED_ID, () -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
-                    "Antimatter Shared Fluid Tags", false));
-            ev.addProvider(Ref.ID, () -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
-                    false, p[0]));
-            ev.addProvider(Ref.ID,
-                    () -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator")));
-        }
+        final AntimatterBlockTagProvider[] p = new AntimatterBlockTagProvider[1];
+        ev.addProvider(Ref.ID, () -> {
+            p[0] = new AntimatterBlockTagProvider(Ref.ID, Ref.NAME.concat(" Block Tags"), false);
+            return p[0];
+        });
+        ev.addProvider(Ref.SHARED_ID, () -> new AntimatterFluidTagProvider(Ref.SHARED_ID,
+                "Antimatter Shared Fluid Tags", false));
+        ev.addProvider(Ref.ID, () -> new AntimatterItemTagProvider(Ref.ID, Ref.NAME.concat(" Item Tags"),
+                false, p[0]));
+        ev.addProvider(Ref.ID,
+                () -> new AntimatterBlockLootProvider(Ref.ID, Ref.NAME.concat(" Loot generator")));
     }
 
     @Override

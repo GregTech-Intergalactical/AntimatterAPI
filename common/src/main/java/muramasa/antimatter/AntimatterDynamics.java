@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class AntimatterDynamics {
+    private static final boolean exportPack = true;
+
     private static final Object2ObjectOpenHashMap<String, List<Supplier<IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void onProviderInit(String domain, DataGenerator gen, Side side) {
@@ -56,16 +58,18 @@ public class AntimatterDynamics {
 
     public static void runDataProvidersDynamically() {
         //DynamicResourcePack.clearServer();
-        ProvidersEvent ev = AntimatterPlatformUtils.postProviderEvent(Side.SERVER, Antimatter.INSTANCE);
+        ProvidersEvent ev = AntimatterPlatformUtils.postProviderEvent(AntimatterPlatformUtils.getSide(), Antimatter.INSTANCE);
         Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
-        collectRecipes(rec -> AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addData(AntimatterRuntimeResourceGeneration.fix(rec.getId(), "recipes", "json"), AntimatterRuntimeResourceGeneration.serialize(rec)));
+        collectRecipes(rec -> AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addData(AntimatterRuntimeResourceGeneration.fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
-
+        if (!AntimatterPlatformUtils.isProduction() && exportPack) {
+            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.dump(new File("./dumped"));
+        }
     }
 
     public static void runAssetProvidersDynamically() {
@@ -81,7 +85,6 @@ public class AntimatterDynamics {
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
         Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
-        AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.dump(new File("./dumped"));
     }
 
     /**

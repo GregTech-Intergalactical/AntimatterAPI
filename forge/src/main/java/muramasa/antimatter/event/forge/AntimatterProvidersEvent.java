@@ -5,12 +5,13 @@ import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class AntimatterProvidersEvent extends AntimatterEvent {
+public class AntimatterProvidersEvent extends AntimatterEvent implements IModBusEvent {
     public final ProvidersEvent event;
 
     public AntimatterProvidersEvent(ProvidersEvent event, IAntimatterRegistrar registrar) {

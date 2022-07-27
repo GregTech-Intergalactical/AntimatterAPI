@@ -81,9 +81,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
     @Override
     public void onCompletion() {
-        data.forEach((k, v) -> {
-            AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.mergeLang(new ResourceLocation(providerDomain, locale), JLang.lang().entry(k, v));
-        });
+        JLang lang = JLang.lang();
+        data.forEach(lang::entry);
+        AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addLang(new ResourceLocation(providerDomain, locale), lang);
     }
 
     @Override

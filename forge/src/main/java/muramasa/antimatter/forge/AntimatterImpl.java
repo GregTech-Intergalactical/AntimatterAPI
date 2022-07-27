@@ -43,8 +43,8 @@ public class AntimatterImpl {
         eventBus.addListener(this::loadComplete);
         eventBus.addListener(EventPriority.LOWEST, this::onGatherData);
 
-        MinecraftForge.EVENT_BUS.addListener(this::addCraftingLoaders);
-        MinecraftForge.EVENT_BUS.addListener(this::providers);
+        eventBus.addListener(this::addCraftingLoaders);
+        eventBus.addListener(this::providers);
     }
 
     private void addCraftingLoaders(AntimatterCraftingEvent ev) {
@@ -64,6 +64,7 @@ public class AntimatterImpl {
         ClientHandler.setup();
         // AntimatterAPI.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        AntimatterDynamics.runDataProvidersDynamically();
         e.enqueueWork(() -> AntimatterAPI.getClientDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
                 try {
@@ -92,6 +93,7 @@ public class AntimatterImpl {
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
         ServerHandler.setup();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        AntimatterDynamics.runDataProvidersDynamically();
         MinecraftForge.EVENT_BUS.register(DynamicDataPackFinder.class);
         e.enqueueWork(() -> AntimatterAPI.getServerDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {

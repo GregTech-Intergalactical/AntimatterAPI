@@ -3,10 +3,11 @@ package muramasa.antimatter.event.forge;
 import muramasa.antimatter.datagen.ICraftingLoader;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 import java.util.Collection;
 
-public class AntimatterCraftingEvent extends AntimatterEvent {
+public class AntimatterCraftingEvent extends AntimatterEvent implements IModBusEvent {
 
     private final CraftingEvent event;
 

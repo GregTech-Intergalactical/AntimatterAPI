@@ -78,10 +78,15 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
 
     public JTag fromJson(JsonObject obj){
         JTag tag = JTag.tag();
-        if (obj.getAsJsonObject("replace").getAsBoolean()) tag.replace();
+        if (obj.getAsJsonPrimitive("replace").getAsBoolean()) tag.replace();
         JsonArray array = obj.getAsJsonArray("values");
         array.forEach(e -> {
-            tag.add(new ResourceLocation(e.getAsString()));
+            String s = e.getAsString();
+            if (s.contains("#")){
+                tag.tag(new ResourceLocation(s.replace("#", "")));
+            } else {
+                tag.add(new ResourceLocation(s));
+            }
         });
         return tag;
     }
@@ -103,8 +108,10 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
 
     @Override
     public void onCompletion() {
-        TAGS.forEach((k, v) -> {
+        for (Map.Entry<ResourceLocation, JsonObject> entry : TAGS.entrySet()) {
+            ResourceLocation k = entry.getKey();
+            JsonObject v = entry.getValue();
             AntimatterRuntimeResourceGeneration.DYNAMIC_RESOURCE_PACK.addTag(AntimatterRuntimeResourceGeneration.getTagLoc(prefix, k), fromJson(v));
-        });
+        }
     }
 }
