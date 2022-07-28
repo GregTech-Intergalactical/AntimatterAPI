@@ -1,6 +1,7 @@
 package muramasa.antimatter.item;
 
 import com.google.gson.JsonObject;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
@@ -8,6 +9,7 @@ import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ItemLike;
 
@@ -17,9 +19,7 @@ import java.util.Map;
 public class ItemMultiTextureBattery extends ItemBattery {
     public ItemMultiTextureBattery(String domain, String id, Tier tier, long cap, boolean reusable) {
         super(domain, id, tier, cap, reusable);
-        if (AntimatterPlatformUtils.isClient()) {
-            RenderHelper.registerBatteryPropertyOverrides(this);
-        }
+        Utils.unsafeRunForDistVoid(() -> () -> RenderHelper.registerBatteryPropertyOverrides(this), () -> () -> {});
     }
 
     @Override

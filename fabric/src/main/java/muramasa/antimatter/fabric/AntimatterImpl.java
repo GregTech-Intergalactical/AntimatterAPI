@@ -16,12 +16,16 @@ import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.registration.fabric.AntimatterRegistration;
 import muramasa.antimatter.structure.StructureCache;
 import net.devtech.arrp.api.RRPCallback;
+import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
@@ -32,6 +36,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 public class AntimatterImpl implements ModInitializer {
     @Override
     public void onInitialize() {
+        AntimatterAPI.setSIDE(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? Side.CLIENT : Side.SERVER);
         EntrypointUtils.invoke("antimatter", IAntimatterRegistrarInitializer.class, IAntimatterRegistrarInitializer::onRegistrarInit);
         if (!AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
             AntimatterRegistration.onRegister();
@@ -54,6 +59,8 @@ public class AntimatterImpl implements ModInitializer {
             return InteractionResult.PASS;
         });
         RRPCallback.AFTER_VANILLA.register(resources -> resources.add(AntimatterDynamics.DYNAMIC_RESOURCE_PACK));
+        Antimatter.LOGGER.info("initializing");
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> Antimatter.LOGGER.info("server starting"));
     }
 
     private void providers(ProvidersEvent ev) {

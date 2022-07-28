@@ -76,7 +76,7 @@ public class AntimatterDynamics {
     }
 
     public static void runDataProvidersDynamically() {
-        ProvidersEvent ev = AntimatterPlatformUtils.postProviderEvent(AntimatterPlatformUtils.getSide(), Antimatter.INSTANCE);
+        ProvidersEvent ev = AntimatterPlatformUtils.postProviderEvent(AntimatterAPI.getSIDE(), Antimatter.INSTANCE);
         Collection<IAntimatterProvider> providers = ev.getProviders();
         long time = System.currentTimeMillis();
         Stream<IAntimatterProvider> async = providers.stream().filter(IAntimatterProvider::async).parallel();

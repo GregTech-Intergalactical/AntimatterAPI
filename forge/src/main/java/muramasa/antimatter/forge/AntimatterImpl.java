@@ -14,6 +14,7 @@ import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.registration.Side;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -25,6 +26,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 import static muramasa.antimatter.Antimatter.LOGGER;
@@ -32,6 +34,7 @@ import static muramasa.antimatter.Antimatter.LOGGER;
 @Mod(Ref.ID)
 public class AntimatterImpl {
     public AntimatterImpl(){
+        AntimatterAPI.setSIDE(FMLEnvironment.dist.isClient() ? Side.CLIENT : Side.SERVER);
         new Antimatter();
         Antimatter.PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to
         // change in new Forge

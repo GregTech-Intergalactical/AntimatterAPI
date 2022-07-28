@@ -33,7 +33,6 @@ import org.apache.logging.log4j.util.TriConsumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -51,6 +50,7 @@ public final class AntimatterAPI {
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<ResourceLocation, Supplier<Object>> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
     private static final Map<String, Map<String, Class<?>>> CLASS_LOOKUP = new Object2ObjectOpenHashMap<>();
+    public static Side SIDE;
 
     private static RegistrationEvent PHASE = null;
 
@@ -391,8 +391,7 @@ public final class AntimatterAPI {
         RegistrationEvent previous = PHASE;
         PHASE = event;
         Antimatter.LOGGER.info("Registration event " + event);
-        Side side = AntimatterPlatformUtils.isServer() ? Side.SERVER
-                : Side.CLIENT;
+        Side side = getSIDE();
         if (!REGISTRATION_EVENTS_HANDLED.add(event)) {
             if (AntimatterPlatformUtils.isForge() && AntimatterPlatformUtils.getActiveNamespace().equals(Ref.ID))
                 return;
@@ -532,6 +531,14 @@ public final class AntimatterAPI {
     public static void onNotifyBlockUpdate(Level world, BlockPos pos, BlockState oldState, BlockState newState,
                                            int flags) {
         BLOCK_UPDATE_HANDLERS.forEach(h -> h.onNotifyBlockUpdate(world, pos, oldState, newState, flags));
+    }
+
+    public static Side getSIDE() {
+        return SIDE;
+    }
+
+    public static void setSIDE(Side SIDE) {
+        AntimatterAPI.SIDE = SIDE;
     }
 
     public interface IBlockUpdateEvent {

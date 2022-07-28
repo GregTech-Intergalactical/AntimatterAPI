@@ -104,10 +104,10 @@ public class ClientEventsForge {
     public static void onGuiMouseScrollPre(ScreenEvent.MouseScrollEvent.Pre e) {
         ClientEvents.onGuiMouseScrollPre(e.getScrollDelta());
     }
-    /*@SubscribeEvent
+    @SubscribeEvent
     public static void onGuiMouseClickPre(ScreenEvent.MouseClickedEvent.Pre e) {
         ClientEvents.onGuiMouseClickPre(e.getButton());
-    }*/
+    }
 
     @SubscribeEvent
     public static void onGuiMouseReleasedPre(ScreenEvent.MouseReleasedEvent.Pre e) {

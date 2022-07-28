@@ -94,8 +94,8 @@ public class Antimatter extends AntimatterMod {
             SlotType.init();
             RecipeBuilders.init();
             MachineState.init();
-            ICover.init();
             Data.init(side);
+            ICover.init();
             SubTag.init();
             AntimatterWorldGenerator.preinit();
             GuiEvents.init();

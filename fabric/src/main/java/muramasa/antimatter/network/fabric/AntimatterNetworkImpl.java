@@ -1,6 +1,7 @@
 package muramasa.antimatter.network.fabric;
 
 import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
@@ -41,10 +42,12 @@ public class AntimatterNetworkImpl extends AntimatterNetwork {
             GuiSyncPacket packet = GuiSyncPacket.decode(buf);
             server.execute(() -> packet.handleClient(player));
         }));
-        ClientPlayNetworking.registerGlobalReceiver(AntimatterNetwork.GUI_SYNC_PACKET_ID, ((client, handler, buf, responseSender) -> {
-            GuiSyncPacket packet = GuiSyncPacket.decode(buf);
-            client.execute(packet::handleServer);
-        }));
+        if (AntimatterAPI.getSIDE().isClient()) {
+            ClientPlayNetworking.registerGlobalReceiver(AntimatterNetwork.GUI_SYNC_PACKET_ID, ((client, handler, buf, responseSender) -> {
+                GuiSyncPacket packet = GuiSyncPacket.decode(buf);
+                client.execute(packet::handleServer);
+            }));
+        }
     }
 
     public void sendToServer(ResourceLocation id, IAntimatterPacket msg) {

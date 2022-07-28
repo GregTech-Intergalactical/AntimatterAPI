@@ -2,7 +2,6 @@ package muramasa.antimatter.machine.types;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.widget.ProgressWidget;
@@ -73,7 +72,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
     }
     
     public final void setStructurePattern(Pattern... patterns) {
-        if (AntimatterPlatformUtils.isClient()) {
+        if (AntimatterAPI.getSIDE().isClient()) {
             if (patterns.length <= 0) return;
             AntimatterPlatformUtils.addMultiMachineInfo(this, Arrays.stream(patterns).collect(Collectors.toList()));
         }

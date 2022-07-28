@@ -7,9 +7,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
-import muramasa.antimatter.tool.IAbstractToolMethods;
 import muramasa.antimatter.tool.IAntimatterArmor;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -44,7 +42,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
         this.domain = domain;
         this.type = type;
         AntimatterAPI.register(IAntimatterArmor.class, this);
-        if (type.getSlot() == EquipmentSlot.HEAD && AntimatterPlatformUtils.isClient()) {
+        if (type.getSlot() == EquipmentSlot.HEAD && AntimatterAPI.getSIDE().isClient()) {
             RenderHelper.registerProbePropertyOverrides(this);
         }
     }

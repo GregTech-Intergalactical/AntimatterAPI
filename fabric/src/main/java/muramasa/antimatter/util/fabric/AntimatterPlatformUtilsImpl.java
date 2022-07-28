@@ -87,14 +87,6 @@ public class AntimatterPlatformUtilsImpl {
         return FuelRegistry.INSTANCE.get(stack.getItem());
     }
 
-    public static boolean isServer(){
-        return FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER;
-    }
-
-    public static boolean isClient(){
-        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
-    }
-
     public static boolean isProduction(){
         return !FabricLoader.getInstance().isDevelopmentEnvironment();
     }

@@ -11,8 +11,8 @@ import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.mixin.BlockAccessor;
@@ -624,15 +624,17 @@ public class Utils {
     }
 
     public static <T> T unsafeRunForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
-        switch (AntimatterPlatformUtils.getSide())
-        {
-            case CLIENT:
-                return clientTarget.get().get();
-            case SERVER:
-                return serverTarget.get().get();
-            default:
-                throw new IllegalArgumentException("UNSIDED?");
-        }
+        return switch (AntimatterAPI.getSIDE()) {
+            case CLIENT -> clientTarget.get().get();
+            case SERVER -> serverTarget.get().get();
+        };
+    }
+
+    public static void unsafeRunForDistVoid(Supplier<Runnable> clientTarget, Supplier<Runnable> serverTarget) {
+        switch (AntimatterAPI.getSIDE()) {
+            case CLIENT -> clientTarget.get().run();
+            case SERVER -> serverTarget.get().run();
+        };
     }
 
     /**

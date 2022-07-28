@@ -75,22 +75,8 @@ public class AntimatterPlatformUtils {
     }
 
     @ExpectPlatform
-    public static boolean isServer(){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
-    public static boolean isClient(){
-        throw new AssertionError();
-    }
-
-    @ExpectPlatform
     public static boolean isProduction(){
         throw new AssertionError();
-    }
-
-    public static Side getSide(){
-        return isClient() ? Side.CLIENT : Side.SERVER;
     }
 
     @ExpectPlatform
