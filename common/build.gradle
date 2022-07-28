@@ -32,6 +32,7 @@ dependencies{
     modImplementation("com.github.Trinsdar:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"){
         transitive = false
     }
+    modImplementation("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-datagen:${rootProject.fabricated_forge_hash}") { transitive false }
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api:${rootProject.rei_version}"
     modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
