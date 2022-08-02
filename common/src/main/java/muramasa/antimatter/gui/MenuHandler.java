@@ -2,6 +2,7 @@ package muramasa.antimatter.gui;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
@@ -66,10 +67,11 @@ public abstract class MenuHandler<T extends AbstractContainerMenu & IAntimatterC
 
     public abstract T onContainerCreate(int windowId, Inventory inv, FriendlyByteBuf data);
 
-    //This has to be Object or else the runtime dist cleaner murders antimatter. It should actually return
-    //the appropriate IScreenManager.IScreenFactory
-    @Environment(EnvType.CLIENT)
-    public Object screen() {
-        return (MenuScreens.ScreenConstructor) (a, b, c) -> new AntimatterContainerScreen(a, b, c);
+    public String screenID(){
+        return "default";
+    }
+
+    public String screenDomain(){
+        return Ref.ID;
     }
 }

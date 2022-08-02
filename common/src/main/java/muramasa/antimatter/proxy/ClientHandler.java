@@ -3,6 +3,7 @@ package muramasa.antimatter.proxy;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStorage;
@@ -90,12 +91,13 @@ public class ClientHandler implements IProxyHandler {
     public static void setup() {
         MaterialType.buildTooltips();
         /* Register screens. */
+        ClientData.init();
         AntimatterAPI.runLaterClient(() -> {
             Set<ResourceLocation> registered = new ObjectOpenHashSet<>();
             AntimatterAPI.all(MenuHandler.class, h -> {
                 if (!registered.contains(AntimatterPlatformUtils.getIdFromMenuType(h.getContainerType()))) {
                     registered.add(AntimatterPlatformUtils.getIdFromMenuType(h.getContainerType()));
-                    MenuScreens.register(h.getContainerType(), (MenuScreens.ScreenConstructor) h.screen());
+                    MenuScreens.register(h.getContainerType(), AntimatterAPI.get(MenuScreens.ScreenConstructor.class, h.screenID(), h.screenDomain()));
                 }
             });
         });

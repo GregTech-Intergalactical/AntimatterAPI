@@ -378,8 +378,8 @@ public class Data {
         }
 
         @Override
-        public Object screen() {
-            return ClientData.SCREEN_HATCH;
+        public String screenID() {
+            return "hatch";
         }
     };
 
