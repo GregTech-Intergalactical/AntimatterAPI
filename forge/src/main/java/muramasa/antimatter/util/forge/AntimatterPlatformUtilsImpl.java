@@ -74,10 +74,6 @@ public class AntimatterPlatformUtilsImpl {
         return LazyOptional.of(() -> new EnergyTileWrapper(be, storage));
     }
 
-    public static boolean tileHasFEOrTRE(BlockEntity entity, Direction side){
-        return entity.getCapability(CapabilityEnergy.ENERGY, side).isPresent();
-    }
-
     public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
         level.markAndNotifyBlock(arg, levelchunk, blockstate, arg2, j, k);
     }

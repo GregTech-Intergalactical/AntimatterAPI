@@ -5,10 +5,8 @@ import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
-import team.reborn.energy.api.EnergyStorage;
 import tesseract.api.fabric.TesseractCapsImpl;
+import tesseract.fabric.TesseractImpl;
 
 public class AntimatterAPIImpl {
     @SuppressWarnings("UnstableApiUsage")
@@ -16,7 +14,8 @@ public class AntimatterAPIImpl {
         FluidStorage.SIDED.registerForBlockEntity((be, direction) -> be.fluidHandler.side(direction).map(f -> f).orElse(null), type);
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(i -> i).orElse(null), type);
         TesseractCapsImpl.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
-        EnergyStorage.SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i instanceof EnergyStorage s ? s : null).orElse(null), type);
+        TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
+        TesseractImpl.registerMITile((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
     }
 
     public static boolean isModLoaded(String mod) {

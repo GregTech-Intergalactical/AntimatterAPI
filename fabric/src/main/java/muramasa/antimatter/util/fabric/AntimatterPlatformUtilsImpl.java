@@ -11,20 +11,17 @@ import muramasa.antimatter.event.fabric.CraftingEvents;
 import muramasa.antimatter.event.fabric.LoaderEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.event.fabric.WorldGenEvents;
-import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.fabric.LootTableExtension;
+import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.Pattern;
-import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,18 +33,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import team.reborn.energy.api.EnergyStorage;
-import tesseract.api.fabric.wrapper.EnergyTileWrapper;
-import tesseract.api.fabric.wrapper.IEnergyHandlerStorage;
-import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -56,24 +47,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AntimatterPlatformUtilsImpl {
-    //TODO cache this
-    public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
-        Level l = be.getLevel();
-        BlockPos pos = be.getBlockPos();
-        BlockState state = be.getBlockState();
-        EnergyStorage storage = EnergyStorage.SIDED.find(l, pos, state, be, side);
-        if (storage == null) return LazyOptional.empty();
-        if (storage instanceof IEnergyHandlerStorage handlerStorage) return LazyOptional.of(handlerStorage::getEnergyHandler);
-        return LazyOptional.of(() -> new EnergyTileWrapper(be, storage));
-    }
-
-    public static boolean tileHasFEOrTRE(BlockEntity be, Direction side){
-        Level l = be.getLevel();
-        BlockPos pos = be.getBlockPos();
-        BlockState state = be.getBlockState();
-        EnergyStorage storage = EnergyStorage.SIDED.find(l, pos, state, be, side);
-        return storage != null;
-    }
 
     public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
         LevelUtil.markAndNotifyBlock(level, arg, levelchunk, blockstate, arg2, j, k);
