@@ -50,7 +50,6 @@ public class AntimatterImpl implements ModInitializer {
         RegisterCapabilitiesEvent.REGISTER_CAPS.register(AntimatterCapsImpl::register);
         ItemCraftedCallback.EVENT.register(((player, crafted, container) -> CommonEvents.onItemCrafted(container, player)));
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> CommonEvents.tagsEvent());
-        RecipesUpdatedCallback.EVENT.register((CommonEvents::recipeEvent));
         //TODO figure out variables to insert
         BlockPlaceCallback.EVENT.register(context -> {
             BlockPos placedOffPos = context.getClickedPos().relative(context.getClickedFace().getOpposite());

@@ -38,7 +38,7 @@ public abstract class AntimatterNetwork {
         }
     }
 
-    protected abstract MinecraftServer getCurrentServer();
+    public abstract MinecraftServer getCurrentServer();
 
     public void sendToAllAround(ResourceLocation id, IAntimatterPacket msg, ServerLevel world, AABB alignedBB) {
         for (ServerPlayer player : world.getEntitiesOfClass(ServerPlayer.class, alignedBB)) {

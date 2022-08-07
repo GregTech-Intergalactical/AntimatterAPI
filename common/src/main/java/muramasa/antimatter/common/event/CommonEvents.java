@@ -1,11 +1,13 @@
 package muramasa.antimatter.common.event;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.proxy.ClientHandler;
+import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -110,7 +112,7 @@ public class CommonEvents {
      * Recipe event for online server, builds recipes.
      */
     public static void tagsEvent() {
-        if (!ClientHandler.isLocal()) {
+        if (AntimatterAPI.getSIDE() == Side.CLIENT && !ClientHandler.isLocal()) {
             AntimatterDynamics.onResourceReload(false);
             AntimatterDynamics.onRecipeCompile(true, Minecraft.getInstance().getConnection().getRecipeManager());
         }

@@ -50,7 +50,7 @@ public final class AntimatterAPI {
     private static final Int2ObjectMap<Deque<Runnable>> DEFERRED_QUEUE = new Int2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<ResourceLocation, Supplier<Object>> REPLACEMENTS = new Object2ObjectOpenHashMap<>();
     private static final Map<String, Map<String, Class<?>>> CLASS_LOOKUP = new Object2ObjectOpenHashMap<>();
-    public static Side SIDE;
+    private static Side SIDE;
 
     private static RegistrationEvent PHASE = null;
 

@@ -62,7 +62,7 @@ public class AntimatterNetworkImpl extends AntimatterNetwork {
         ServerPlayNetworking.send(player, id, buf);
     }
 
-    protected MinecraftServer getCurrentServer(){
+    public MinecraftServer getCurrentServer(){
         return ServerLifecycleHooks.getCurrentServer();
     }
 }

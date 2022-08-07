@@ -4,7 +4,9 @@ import io.github.fabricators_of_create.porting_lib.event.client.ClientWorldEvent
 import io.github.fabricators_of_create.porting_lib.event.client.ColorHandlersCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.ModelLoadCallback;
 import io.github.fabricators_of_create.porting_lib.event.client.TextureStitchCallback;
+import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
@@ -44,6 +46,7 @@ public class AntimatterClientImpl implements ClientModInitializer {
             //TODO is this needed?
             ClientEvents.onItemTooltip(context, lines);
         }));
+        RecipesUpdatedCallback.EVENT.register((CommonEvents::recipeEvent));
         //TODO fix this
         //WorldRenderEvents.BLOCK_OUTLINE.register(((worldRenderContext, blockOutlineContext) -> ClientEvents.onBlockHighlight(worldRenderContext.worldRenderer(), worldRenderContext.camera(), worldRenderContext, worldRenderContext, worldRenderContext.matrixStack(), worldRenderContext.consumers())));
         //TODO figure this out
