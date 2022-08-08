@@ -1,6 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.client.AntimatterModelManager;
+import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
@@ -103,8 +104,9 @@ public class Antimatter extends AntimatterMod {
             AntimatterWorldGenerator.init();
         } else if (event == RegistrationEvent.DATA_READY) {
             CauldronInteractions.init();
-        } else if (event == RegistrationEvent.CLIENT_DATA_INIT && side == Side.CLIENT){
+        } else if (event == RegistrationEvent.CLIENT_DATA_INIT){
             AntimatterModelManager.init();
+            ClientData.init();
         }
     }
 

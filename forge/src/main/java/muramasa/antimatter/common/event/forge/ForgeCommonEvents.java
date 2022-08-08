@@ -126,7 +126,7 @@ public class ForgeCommonEvents {
     }
 
     @SubscribeEvent
-    public static void onResurcePackAddAfter(RRPEvent.AfterVanilla event){
+    public static void onResourcePackAddAfter(RRPEvent.AfterVanilla event){
         event.addPack(AntimatterDynamics.DYNAMIC_RESOURCE_PACK);
     }
 

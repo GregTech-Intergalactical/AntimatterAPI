@@ -91,7 +91,6 @@ public class ClientHandler implements IProxyHandler {
     public static void setup() {
         MaterialType.buildTooltips();
         /* Register screens. */
-        ClientData.init();
         AntimatterAPI.runLaterClient(() -> {
             Set<ResourceLocation> registered = new ObjectOpenHashSet<>();
             AntimatterAPI.all(MenuHandler.class, h -> {
