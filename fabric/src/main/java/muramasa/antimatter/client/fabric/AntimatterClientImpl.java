@@ -36,9 +36,9 @@ public class AntimatterClientImpl implements ClientModInitializer {
         });
         ClientWorldEvents.UNLOAD.register(((client, world) -> SoundHelper.worldUnload(world)));
         AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
+        AntimatterDynamics.runAssetProvidersDynamically();
         ModelLoadCallback.EVENT.register(((manager, colors, profiler, mipLevel) -> {
             AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ClientHandler.registerLoader(l.getLoc(), l));
-            AntimatterDynamics.runAssetProvidersDynamically();
         }));
 
         ItemTooltipCallback.EVENT.register(((stack, context, lines) -> {
