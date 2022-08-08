@@ -8,6 +8,10 @@ import java.util.function.Consumer;
 
 public class AntimatterFluidUtils {
     @ExpectPlatform
+    public static boolean isSource(Fluid fluid){
+        throw new AssertionError();
+    }
+    @ExpectPlatform
     public static void createSourceAndFlowingFluid(AntimatterFluid fluid, Consumer<Fluid> source, Consumer<FlowingFluid> flowing){
         throw new AssertionError();
     }

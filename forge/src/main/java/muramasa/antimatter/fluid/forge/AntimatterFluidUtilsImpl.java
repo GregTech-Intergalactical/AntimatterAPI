@@ -10,6 +10,9 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 import java.util.function.Consumer;
 
 public class AntimatterFluidUtilsImpl {
+    public static boolean isSource(Fluid fluid){
+        return fluid instanceof ForgeFlowingFluid.Source;
+    }
 
     public static void createSourceAndFlowingFluid(AntimatterFluid fluid, Consumer<Fluid> source, Consumer<FlowingFluid> flowing){
         FluidAttributes.Builder builder = fromAntimatterBuilder(fluid.getAttributes());

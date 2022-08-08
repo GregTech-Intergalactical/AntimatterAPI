@@ -65,14 +65,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class AntimatterPlatformUtilsImpl {
-    //todo cache this
-    public static LazyOptional<IEnergyHandler> getWrappedHandler(BlockEntity be, @Nullable Direction side){
-        LazyOptional<IEnergyStorage> cap = be.getCapability(CapabilityEnergy.ENERGY, side);
-        if (!cap.isPresent()) return LazyOptional.empty();
-        IEnergyStorage storage = cap.orElse(null);
-        if (storage instanceof IEnergyHandlerStorage handlerStorage) return LazyOptional.of(handlerStorage::getEnergyHandler);
-        return LazyOptional.of(() -> new EnergyTileWrapper(be, storage));
-    }
 
     public static void markAndNotifyBlock(Level level, BlockPos arg, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState arg2, int j, int k){
         level.markAndNotifyBlock(arg, levelchunk, blockstate, arg2, j, k);

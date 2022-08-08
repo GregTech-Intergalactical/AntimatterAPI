@@ -10,6 +10,9 @@ import net.minecraft.world.level.material.Fluid;
 import java.util.function.Consumer;
 
 public class AntimatterFluidUtilsImpl {
+    public static boolean isSource(Fluid fluid){
+        return fluid instanceof SimpleFlowableFluid.Still;
+    }
     public static void createSourceAndFlowingFluid(AntimatterFluid fluid, Consumer<Fluid> source, Consumer<FlowingFluid> flowing){
         SimpleFlowableFluid.Properties properties = new SimpleFlowableFluid.Properties(fluid::getFluid, fluid::getFlowingFluid, fromAntimatterBuilder(fluid.getAttributes())).bucket(fluid::getContainerItem).block(fluid::getFluidBlock);
         source.accept(new SimpleFlowableFluid.Still(properties));
