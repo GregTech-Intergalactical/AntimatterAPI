@@ -48,7 +48,7 @@ public class RecipeBuilder {
      */
     public Recipe build(int duration, long power, int special, int amps) {
         if (itemsOutput != null && itemsOutput.size() > 0 && !Utils.areItemsValid(itemsOutput.toArray(new ItemStack[0]))) {
-            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!");
+            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID! Recipe map ID: " + recipeMap.getId());
             return Utils.getEmptyRecipe();
         }
         /*if (fluidsInput != null && fluidsInput.size() > 0) {
@@ -56,7 +56,7 @@ public class RecipeBuilder {
             return Utils.getEmptyRecipe();
         }*/
         if (fluidsOutput != null && fluidsOutput.size() > 0 && !Utils.areFluidsValid(fluidsOutput.toArray(new FluidStack[0]))) {
-            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!");
+            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID! Recipe map ID: " + recipeMap.getId());
             return Utils.getEmptyRecipe();
         }
 
