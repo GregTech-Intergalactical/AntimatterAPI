@@ -1,5 +1,6 @@
 package muramasa.antimatter.fabric;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -15,7 +16,9 @@ public class AntimatterAPIImpl {
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(i -> i).orElse(null), type);
         TesseractCapsImpl.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
         TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
-        TesseractImpl.registerMITile((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
+        if (AntimatterAPI.isModLoaded("modern_industrialization")) {
+            TesseractImpl.registerMITile((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
+        }
     }
 
     public static boolean isModLoaded(String mod) {
