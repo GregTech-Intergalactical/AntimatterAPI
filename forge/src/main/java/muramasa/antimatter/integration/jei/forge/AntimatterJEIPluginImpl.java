@@ -1,6 +1,6 @@
 package muramasa.antimatter.integration.jei.forge;
 
-import mezz.jei.api.forge.ForgeTypes;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.ITypedIngredient;
@@ -21,7 +21,7 @@ public class AntimatterJEIPluginImpl {
                 return new ITypedIngredient<>() {
                     @Override
                     public IIngredientType<FluidStack> getType() {
-                        return ForgeTypes.FLUID_STACK;
+                        return VanillaTypes.FLUID;
                     }
 
                     @Override
@@ -31,7 +31,7 @@ public class AntimatterJEIPluginImpl {
 
                     @Override
                     public <V> Optional<V> getIngredient(IIngredientType<V> ingredientType) {
-                        if (ingredientType == ForgeTypes.FLUID_STACK) return ((Optional<V>) Optional.of(v));
+                        if (ingredientType == VanillaTypes.FLUID) return ((Optional<V>) Optional.of(v));
                         return Optional.empty();
                     }
                 };
@@ -56,10 +56,10 @@ public class AntimatterJEIPluginImpl {
     }
 
     public static void addFluidIngredients(IRecipeSlotBuilder builder, List<FluidStack> stacks){
-        builder.addIngredients(ForgeTypes.FLUID_STACK, stacks);
+        builder.addIngredients(VanillaTypes.FLUID, stacks);
     }
 
     public static FluidStack getIngredient(ITypedIngredient<?> ingredient){
-        return ingredient.getIngredient(ForgeTypes.FLUID_STACK).get();
+        return ingredient.getIngredient(VanillaTypes.FLUID).get();
     }
 }

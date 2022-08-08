@@ -262,7 +262,7 @@ public class MultiMachineInfoPage {
     }
 
     public void setIngredients(IIngredients ingredients) {
-        ingredients.setOutput(VanillaTypes.ITEM_STACK, machine.getItem(machine.getFirstTier()).getDefaultInstance());
+        ingredients.setOutput(VanillaTypes.ITEM, machine.getItem(machine.getFirstTier()).getDefaultInstance());
     }
 
     public List<Component> getTooltipStrings(double mouseX, double mouseY) {

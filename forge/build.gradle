@@ -140,10 +140,10 @@ dependencies {
     if (System.getProperty('idea.sync.active') != 'true') {
         annotationProcessor 'org.spongepowered:mixin:0.8.5-SNAPSHOT:processor'
     }
-    modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
-    modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
+    //modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-common-api:${rootProject.jei_version}")
+    //modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
     //modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
-    modRuntimeOnly("mezz.jei:jei-1.18.2:9.5.0.132")
+    modImplementation("mezz.jei:jei-1.18.2:9.5.0.132")
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${rootProject.crafttweaker_version}")
     modImplementation(include("com.github.Reforged-Mods:ARRP-forge:0.5.5"))
     modRuntimeOnly("com.github.FeltMC.Fabricated-Forge-API:fluidhandler-extras:${rootProject.fabricated_forge_hash}")

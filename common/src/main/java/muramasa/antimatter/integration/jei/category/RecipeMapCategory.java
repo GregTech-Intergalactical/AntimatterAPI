@@ -68,17 +68,17 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack) {
-                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, (ItemStack) icon);
+                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, (ItemStack) icon);
             }
             if (icon instanceof ItemLike) {
-                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack((ItemLike) icon));
+                this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack((ItemLike) icon));
             }
             if (icon instanceof IDrawable) {
                 this.icon = (IDrawable) icon;
             }
         } else {
             Block block = AntimatterAPI.get(Block.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
-            this.icon = block == null ? guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(block.asItem(), 1));
+            this.icon = block == null ? guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(block.asItem(), 1));
         }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();
@@ -126,9 +126,9 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                         if (input.size() == 0) {
                             List<ItemStack> st = new ObjectArrayList<>(1);
                             st.add(new ItemStack(Data.DEBUG_SCANNER, 1));
-                            slot.addIngredients(VanillaTypes.ITEM_STACK, st);
+                            slot.addIngredients(VanillaTypes.ITEM, st);
                         } else {
-                            slot.addIngredients(VanillaTypes.ITEM_STACK, input);
+                            slot.addIngredients(VanillaTypes.ITEM, input);
                             final int ss = s;
                             slot.addTooltipCallback((ing, list) -> {
                                 if (recipe.getInputItems().get(ss) instanceof RecipeIngredient ri) {
@@ -157,7 +157,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                 slotCount = Math.min(slotCount, outputs.size());
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    slot.addIngredient(VanillaTypes.ITEM_STACK, outputs.get(s));
+                    slot.addIngredient(VanillaTypes.ITEM, outputs.get(s));
                     final int ss = s;
                     slot.addTooltipCallback((ing, list) -> {
                         if (recipe.hasChances()) {
@@ -179,7 +179,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
                     AntimatterJEIPlugin.addFluidIngredients(slot, Arrays.asList(fluids.get(s).getStacks()));
-                    slot.setFluidRenderer(fluids.get(s).getAmount(), true, 16, 16);
+                    slot.setFluidRenderer((int)fluids.get(s).getAmount(), true, 16, 16);
                     slot.addTooltipCallback((ing, list) -> {
                         if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
                             list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
@@ -196,7 +196,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
                     IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    slot.setFluidRenderer(fluids[s].getRealAmount(), true, 16, 16);
+                    slot.setFluidRenderer(fluids[s].getAmount(), true, 16, 16);
                     AntimatterJEIPlugin.addFluidIngredients(slot, Collections.singletonList(fluids[s]));
                 }
             }
