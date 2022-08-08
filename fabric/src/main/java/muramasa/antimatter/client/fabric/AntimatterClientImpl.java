@@ -25,7 +25,7 @@ public class AntimatterClientImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientHandler.setup();
-        //AntimatterDynamics.runDataProvidersDynamically();
+        AntimatterDynamics.runDataProvidersDynamically();
         TextureStitchCallback.PRE.register(AntimatterTextureStitcher::onTextureStitch);
         ColorHandlersCallback.BLOCK.register(ClientHandler::onBlockColorHandler);
         ColorHandlersCallback.ITEM.register((i, b) -> ClientHandler.onItemColorHandler(i));
