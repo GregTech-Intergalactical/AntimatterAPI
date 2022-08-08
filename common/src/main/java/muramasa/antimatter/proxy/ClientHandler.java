@@ -2,6 +2,7 @@ package muramasa.antimatter.proxy;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.datagen.AntimatterDynamics;
@@ -69,7 +70,6 @@ public class ClientHandler implements IProxyHandler {
     public static void preResourceRegistration() {
         AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
         AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> registerLoader(l.getLoc(), l));
-        AntimatterDynamics.runAssetProvidersDynamically();
     }
 
     @ExpectPlatform

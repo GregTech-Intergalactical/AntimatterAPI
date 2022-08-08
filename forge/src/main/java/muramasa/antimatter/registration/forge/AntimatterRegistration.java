@@ -5,6 +5,7 @@ import muramasa.antimatter.Data;
 import muramasa.antimatter.MaterialDataInit;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
@@ -68,6 +69,9 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
             AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
             list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistry()))));
+            if (e.getRegistry() == ForgeRegistries.TREE_DECORATOR_TYPES && AntimatterAPI.getSIDE().isClient()) {
+                AntimatterDynamics.runAssetProvidersDynamically();
+            }
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, (b, d, i) -> {
