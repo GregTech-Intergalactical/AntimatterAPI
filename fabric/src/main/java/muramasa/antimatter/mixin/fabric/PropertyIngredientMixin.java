@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.stream.Stream;
 
-@Mixin(value = PropertyIngredient.class, remap = false)
+@Mixin(PropertyIngredient.class)
 public class PropertyIngredientMixin extends Ingredient {
     public PropertyIngredientMixin(Stream<? extends Value> stream) {
         super(stream);

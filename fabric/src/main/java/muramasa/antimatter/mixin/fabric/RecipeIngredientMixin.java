@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.stream.Stream;
 
-@Mixin(value = RecipeIngredient.class, remap = false)
+@Mixin(RecipeIngredient.class)
 public class RecipeIngredientMixin extends Ingredient {
     public RecipeIngredientMixin(Stream<? extends Value> stream) {
         super(stream);

@@ -8,6 +8,6 @@ import io.github.feltmc.feltapi.api.item.extensions.ShareTagItem;
 import muramasa.antimatter.tool.MaterialTool;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(MaterialTool.class)
+@Mixin(value = MaterialTool.class, remap = false)
 public class MaterialToolMixin implements DamageableItem, EnchantabilityItem, ReequipAnimationItem, ShieldBlockItem, ShareTagItem {
 }

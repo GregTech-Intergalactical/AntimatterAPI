@@ -5,6 +5,6 @@ import io.github.feltmc.feltapi.api.item.extensions.EnchantabilityItem;
 import muramasa.antimatter.tool.MaterialSword;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(MaterialSword.class)
+@Mixin(value = MaterialSword.class, remap = false)
 public class MaterialSwordMixin implements EnchantabilityItem, DamageableItem {
 }

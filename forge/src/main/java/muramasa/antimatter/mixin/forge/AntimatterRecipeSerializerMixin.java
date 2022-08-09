@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(AntimatterRecipeSerializer.class)
+@Mixin(value = AntimatterRecipeSerializer.class, remap = false)
 public class AntimatterRecipeSerializerMixin implements IForgeRegistryEntry<AntimatterRecipeSerializer> {
     @Unique
     private ResourceLocation registryName = null;

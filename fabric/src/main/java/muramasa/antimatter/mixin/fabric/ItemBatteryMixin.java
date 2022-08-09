@@ -4,6 +4,6 @@ import io.github.feltmc.feltapi.api.item.extensions.ShareTagItem;
 import muramasa.antimatter.item.ItemBattery;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(ItemBattery.class)
+@Mixin(value = ItemBattery.class, remap = false)
 public class ItemBatteryMixin implements ShareTagItem {
 }
