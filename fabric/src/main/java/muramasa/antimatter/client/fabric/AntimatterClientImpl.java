@@ -21,6 +21,8 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.Minecraft;
 
+import static muramasa.antimatter.Antimatter.LOGGER;
+
 public class AntimatterClientImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
@@ -51,5 +53,23 @@ public class AntimatterClientImpl implements ClientModInitializer {
         //WorldRenderEvents.BLOCK_OUTLINE.register(((worldRenderContext, blockOutlineContext) -> ClientEvents.onBlockHighlight(worldRenderContext.worldRenderer(), worldRenderContext.camera(), worldRenderContext, worldRenderContext, worldRenderContext.matrixStack(), worldRenderContext.consumers())));
         //TODO figure this out
         //WorldRenderEvents.BEFORE_DEBUG_RENDER.register((context -> ClientEvents.onRenderDebugInfo(context.)));
+        AntimatterAPI.getCommonDeferredQueue().ifPresent(t -> {
+            for (Runnable r : t) {
+                try {
+                    r.run();
+                } catch (Exception ex) {
+                    LOGGER.warn("Caught error during common setup: " + ex.getMessage());
+                }
+            }
+        });
+        AntimatterAPI.getClientDeferredQueue().ifPresent(t -> {
+            for (Runnable r : t) {
+                try {
+                    r.run();
+                } catch (Exception ex) {
+                    LOGGER.warn("Caught error during client setup: " + ex.getMessage());
+                }
+            }
+        });
     }
 }
