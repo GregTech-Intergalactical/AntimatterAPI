@@ -109,9 +109,6 @@ public final class AntimatterRegistration {
             AntimatterAPI.all(IRegistryEntryProvider.class, domain, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
             AntimatterAPI.all(IRegistryEntryProvider.class, Ref.SHARED_ID, p -> p.onRegistryBuild(getRegistryType(e.getRegistry())));
             list.forEach(r -> AntimatterAPI.all(IRegistryEntryProvider.class, r.getDomain(), p -> p.onRegistryBuild(getRegistryType(e.getRegistry()))));
-            if (e.getRegistry() == ForgeRegistries.TREE_DECORATOR_TYPES && AntimatterAPI.getSIDE().isClient()) {
-                AntimatterDynamics.runAssetProvidersDynamically();
-            }
         }
         if (e.getRegistry() == ForgeRegistries.BLOCKS) {
             AntimatterAPI.all(Block.class, domain, (b, d, i) -> {

@@ -1,9 +1,13 @@
 package muramasa.antimatter.client.event.forge;
 
 import com.mojang.math.Transformation;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
+import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.proxy.ClientHandler;
+import muramasa.antimatter.registration.RegistrationEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
@@ -30,6 +34,8 @@ public class ClientEventsMod {
 
     @SubscribeEvent
     public static void preResourceRegistration(ParticleFactoryRegisterEvent ev) {
-        ClientHandler.preResourceRegistration();
+        AntimatterDynamics.runAssetProvidersDynamically();
+        AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
+        AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ClientHandler.registerLoader(l.getLoc(), l));
     }
 }

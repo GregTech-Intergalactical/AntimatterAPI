@@ -66,12 +66,6 @@ public class ClientHandler implements IProxyHandler {
         return listener.getConnection().isMemoryConnection();
     }
 
-    // Called before resource registration is performed.
-    public static void preResourceRegistration() {
-        AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
-        AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> registerLoader(l.getLoc(), l));
-    }
-
     @ExpectPlatform
     public static void registerLoader(ResourceLocation location, AntimatterModelLoader<?> loader){
         throw new AssertionError();
