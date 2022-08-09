@@ -89,7 +89,6 @@ public class AntimatterRegistration {
         });
         //TODO porting lib compat
         if (domain.equals(Ref.ID)) {
-            CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("antimatter", "material"), PropertyIngredient.Serializer.INSTANCE);
             CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), IngredientSerializer.INSTANCE);
             Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("antimatter", "material"), MaterialSerializer.INSTANCE);

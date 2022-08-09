@@ -9,7 +9,7 @@ import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
-import muramasa.antimatter.recipe.condition.ConfigCondition;
+import muramasa.antimatter.recipe.forge.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialSerializer;

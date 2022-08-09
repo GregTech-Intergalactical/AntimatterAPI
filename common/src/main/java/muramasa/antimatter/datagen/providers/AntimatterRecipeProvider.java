@@ -4,14 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
-import net.minecraftforge.common.crafting.ConditionalRecipe;
-import muramasa.antimatter.recipe.condition.ConfigCondition;
+import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.advancements.critereon.ItemPredicate;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -140,8 +138,11 @@ public class AntimatterRecipeProvider extends RecipeProvider {
         });*/
 
     public void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, Class configClass, String configFieldName, String recipeDomain, String recipeName) {
-        ConditionalRecipe.builder().addCondition(new ConfigCondition(configClass, configFieldName))
-                .addRecipe(builtRecipe::build).build(consumer, recipeDomain, recipeName);
+        RecipeUtil.addConditionalRecipe(consumer, builtRecipe, configClass, configFieldName, recipeDomain, recipeName);
+    }
+
+    public void addConditionalRecipe(Consumer<FinishedRecipe> consumer, AntimatterShapedRecipeBuilder builtRecipe, String config, String configField, String recipeDomain, String recipeName) {
+        RecipeUtil.addConditionalRecipe(consumer, builtRecipe, config, configField, recipeDomain, recipeName);
     }
 
     public AntimatterShapedRecipeBuilder getItemRecipe(String groupName, String criterionName, CriterionTriggerInstance criterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {

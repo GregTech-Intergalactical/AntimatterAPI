@@ -14,6 +14,7 @@ import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
+import muramasa.antimatter.recipe.fabric.RecipeConditions;
 import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
@@ -42,6 +43,7 @@ public class AntimatterImpl implements ModInitializer {
             AntimatterRegistration.onRegister();
             AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
         }
+        RecipeConditions.init();
         CraftingEvents.CRAFTING.register(Antimatter.INSTANCE::addCraftingLoaders);
         ProviderEvents.PROVIDERS.register(this::providers);
         ModConfigEvent.LOADING.register(AntimatterConfig::onModConfigEvent);
