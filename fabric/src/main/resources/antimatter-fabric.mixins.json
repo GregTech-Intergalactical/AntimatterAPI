@@ -9,7 +9,8 @@
     "LootTablesMixin",
     "MaterialArmorMixin",
     "MaterialSwordMixin",
-    "MaterialToolMixin"
+    "MaterialToolMixin",
+    "PropertyIngredientMixin"
   ],
   "minVersion": "0.8",
   "client": [

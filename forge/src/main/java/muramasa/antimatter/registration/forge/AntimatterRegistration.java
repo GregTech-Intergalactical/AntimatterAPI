@@ -61,6 +61,23 @@ public final class AntimatterRegistration {
         }
     };
 
+    public static final IIngredientSerializer<RecipeIngredient> RECIPE_SERIALIZER = new IIngredientSerializer<RecipeIngredient>() {
+        @Override
+        public RecipeIngredient parse(FriendlyByteBuf arg) {
+            return IngredientSerializer.INSTANCE.parse(arg);
+        }
+
+        @Override
+        public RecipeIngredient parse(JsonObject jsonObject) {
+            return IngredientSerializer.INSTANCE.parse(jsonObject);
+        }
+
+        @Override
+        public void write(FriendlyByteBuf arg, RecipeIngredient arg2) {
+            IngredientSerializer.INSTANCE.write(arg, arg2);
+        }
+    };
+
     @SubscribeEvent
     public static void onRegister(final RegistryEvent.Register<?> e) {
         final String domain = ModLoadingContext.get().getActiveNamespace();
@@ -140,22 +157,7 @@ public final class AntimatterRegistration {
                 CraftingHelper.register(ConfigCondition.Serializer.INSTANCE);
                 CraftingHelper.register(TomlConfigCondition.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "material"), PROPERTY_SERIALIZER);
-                CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), new IIngredientSerializer<RecipeIngredient>() {
-                    @Override
-                    public RecipeIngredient parse(FriendlyByteBuf arg) {
-                        return IngredientSerializer.INSTANCE.parse(arg);
-                    }
-
-                    @Override
-                    public RecipeIngredient parse(JsonObject jsonObject) {
-                        return IngredientSerializer.INSTANCE.parse(jsonObject);
-                    }
-
-                    @Override
-                    public void write(FriendlyByteBuf arg, RecipeIngredient arg2) {
-                        IngredientSerializer.INSTANCE.write(arg, arg2);
-                    }
-                });
+                CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), RECIPE_SERIALIZER);
                 ((IForgeRegistryEntry)MaterialSerializer.INSTANCE).setRegistryName(new ResourceLocation("antimatter", "material"));
                 ((IForgeRegistryEntry)AntimatterRecipeSerializer.INSTANCE).setRegistryName(new ResourceLocation("antimatter", "ingredient"));
                 ((IForgeRegistry) e.getRegistry()).register(AntimatterRecipeSerializer.INSTANCE);

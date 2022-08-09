@@ -1,5 +1,6 @@
 package muramasa.antimatter.recipe.ingredient;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
@@ -31,7 +32,17 @@ public class IngredientSerializer implements IAntimatterIngredientSerializer<Rec
 
     @Override
     public RecipeIngredient parse(JsonObject json) {
-        RecipeIngredient r = new RecipeIngredient(Ingredient.valueFromJson(json));
+        Ingredient.Value[] values;
+        if (json.has("values")){
+            JsonArray array = json.getAsJsonArray("values");
+            values = new Ingredient.Value[array.size()];
+            for (int i = 0; i < array.size(); i++){
+                values[i] = Ingredient.valueFromJson(array.get(i).getAsJsonObject());
+            }
+        } else {
+            values = new Ingredient.Value[]{Ingredient.valueFromJson(json)};
+        }
+        RecipeIngredient r = new RecipeIngredient(values);
         if (json.get("nbt").getAsBoolean()) r.setIgnoreNbt();
         if (json.get("noconsume").getAsBoolean()) r.setNoConsume();
         return r;

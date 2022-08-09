@@ -5,7 +5,9 @@
   "mixins": [
     "GameDataMixin",
     "MaterialSerializerMixin",
-    "AntimatterRecipeSerializerMixin"
+    "AntimatterRecipeSerializerMixin",
+    "RecipeIngredientMixin",
+    "PropertyIngredientMixin"
   ],
   "minVersion": "0.8"
 }

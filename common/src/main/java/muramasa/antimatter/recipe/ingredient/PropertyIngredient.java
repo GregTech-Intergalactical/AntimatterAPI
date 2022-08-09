@@ -132,15 +132,6 @@ public class PropertyIngredient extends Ingredient {
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer) {
-        if (AntimatterPlatformUtils.isForge()) {
-            super.toNetwork(buffer);
-            return;
-        }
-        Serializer.INSTANCE.write(buffer, this);
-    }
-
-    @Override
     public JsonElement toJson() {
         JsonObject obj = new JsonObject();
         JsonArray materialArr = new JsonArray();

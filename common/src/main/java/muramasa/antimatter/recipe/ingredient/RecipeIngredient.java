@@ -1,6 +1,7 @@
 package muramasa.antimatter.recipe.ingredient;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
@@ -147,17 +148,22 @@ public class RecipeIngredient extends Ingredient {
         return new RecipeIngredient(new Value(tagIn, count));
     }
 
-    private static void ensureRegisteredTag(ResourceLocation loc) {
-        TagUtils.getItemTag(loc);
+    @Override
+    public JsonElement toJson() {
+        JsonObject object = new JsonObject();
+        JsonElement element = super.toJson();
+        if (element instanceof JsonObject o){
+            object = o;
+        } else if (element instanceof JsonArray){
+            object.add("values", element);
+        }
+        object.addProperty("nbt", ignoreNbt);
+        object.addProperty("noconsume", nonConsume);
+        return object;
     }
 
-    @Override
-    public void toNetwork(FriendlyByteBuf buffer) {
-        if (AntimatterPlatformUtils.isForge()) {
-            super.toNetwork(buffer);
-            return;
-        }
-        IngredientSerializer.INSTANCE.write(buffer, this);
+    private static void ensureRegisteredTag(ResourceLocation loc) {
+        TagUtils.getItemTag(loc);
     }
 
     private static class MultiValue implements Ingredient.Value {
