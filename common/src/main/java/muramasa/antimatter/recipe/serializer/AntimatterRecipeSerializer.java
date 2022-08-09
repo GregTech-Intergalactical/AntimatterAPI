@@ -4,11 +4,13 @@ import com.google.common.collect.Streams;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -19,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
@@ -47,7 +48,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             }
             ItemStack[] outputs = null;
             if (json.has("item_out")) {
-                outputs = Streams.stream(json.getAsJsonArray("item_out")).map(t -> CraftingHelper.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
+                outputs = Streams.stream(json.getAsJsonArray("item_out")).map(t -> RecipeUtil.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
             }
             FluidStack[] fluidInputs = null;
             if (json.has("fluid_in")) {
@@ -192,7 +193,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
     public void toNetwork(FriendlyByteBuf buffer, Recipe recipe) {
         buffer.writeInt(!recipe.hasInputItems() ? 0 : recipe.getInputItems().size());
         if (recipe.hasInputItems()) {
-            recipe.getInputItems().forEach(t -> CraftingHelper.write(buffer, t));
+            recipe.getInputItems().forEach(t -> RecipeUtil.write(buffer, t));
         }
         buffer.writeInt(!recipe.hasOutputItems() ? 0 : recipe.getOutputItems().length);
         if (recipe.hasOutputItems()) {

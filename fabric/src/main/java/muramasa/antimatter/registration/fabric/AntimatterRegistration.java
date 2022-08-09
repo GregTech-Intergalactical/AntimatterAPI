@@ -2,6 +2,9 @@ package muramasa.antimatter.registration.fabric;
 
 
 
+import com.google.gson.JsonObject;
+import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
+import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.MaterialDataInit;
@@ -10,7 +13,6 @@ import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
-import muramasa.antimatter.recipe.condition.ConfigCondition;
 import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
@@ -27,13 +29,14 @@ import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.common.crafting.CraftingHelper;
 
 import java.util.List;
 
@@ -89,8 +92,28 @@ public class AntimatterRegistration {
         });
         //TODO porting lib compat
         if (domain.equals(Ref.ID)) {
-            CraftingHelper.register(new ResourceLocation("antimatter", "material"), PropertyIngredient.Serializer.INSTANCE);
-            CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), IngredientSerializer.INSTANCE);
+            CraftingHelper.register(new ResourceLocation("antimatter", "material"), new IngredientDeserializer() {
+                @Override
+                public Ingredient fromNetwork(FriendlyByteBuf buffer) {
+                    return PropertyIngredient.Serializer.INSTANCE.parse(buffer);
+                }
+
+                @Override
+                public Ingredient fromJson(JsonObject object) {
+                    return PropertyIngredient.Serializer.INSTANCE.parse(object);
+                }
+            });
+            CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), new IngredientDeserializer() {
+                @Override
+                public Ingredient fromNetwork(FriendlyByteBuf buffer) {
+                    return IngredientSerializer.INSTANCE.parse(buffer);
+                }
+
+                @Override
+                public Ingredient fromJson(JsonObject object) {
+                    return IngredientSerializer.INSTANCE.parse(object);
+                }
+            });
             Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("antimatter", "material"), MaterialSerializer.INSTANCE);
             Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("antimatter", "ingredient"), AntimatterRecipeSerializer.INSTANCE);
         }

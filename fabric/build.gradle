@@ -37,7 +37,6 @@ dependencies{
     common(project(path: ":tesseract-common", configuration: "namedElements")) { transitive false }
     implementation(project(path: ":tesseract-fabric", configuration: "namedElements")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-caps:${rootProject.fabricated_forge_hash}")) { transitive false }
-    modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-recipe-api:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.FeltMC.Fabricated-Forge-API:fabricated-forge-datagen:${rootProject.fabricated_forge_hash}")) { transitive false }
     modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:05a5fe1533")) { transitive false }

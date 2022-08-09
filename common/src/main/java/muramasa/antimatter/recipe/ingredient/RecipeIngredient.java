@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -148,6 +149,15 @@ public class RecipeIngredient extends Ingredient {
 
     private static void ensureRegisteredTag(ResourceLocation loc) {
         TagUtils.getItemTag(loc);
+    }
+
+    @Override
+    public void toNetwork(FriendlyByteBuf buffer) {
+        if (AntimatterPlatformUtils.isForge()) {
+            super.toNetwork(buffer);
+            return;
+        }
+        IngredientSerializer.INSTANCE.write(buffer, this);
     }
 
     private static class MultiValue implements Ingredient.Value {

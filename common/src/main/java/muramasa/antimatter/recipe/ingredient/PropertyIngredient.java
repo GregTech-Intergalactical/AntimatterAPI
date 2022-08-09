@@ -29,9 +29,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.IIngredientSerializer;
-import net.minecraftforge.common.crafting.MultiItemValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -134,8 +131,13 @@ public class PropertyIngredient extends Ingredient {
         return id;
     }
 
-    public IIngredientSerializer<? extends Ingredient> getSerializer() {
-        return Serializer.INSTANCE;
+    @Override
+    public void toNetwork(FriendlyByteBuf buffer) {
+        if (AntimatterPlatformUtils.isForge()) {
+            super.toNetwork(buffer);
+            return;
+        }
+        Serializer.INSTANCE.write(buffer, this);
     }
 
     @Override
@@ -157,7 +159,7 @@ public class PropertyIngredient extends Ingredient {
             if (name != null) materialArr.add(name.toString());
         }
         obj.add("items", materialArr);
-        obj.addProperty("type", CraftingHelper.getID(Serializer.INSTANCE).toString());
+        obj.addProperty("type", Serializer.ID.toString());
         obj.addProperty("id", id);
         obj.addProperty("inverse", inverse);
         if (tags.length > 0) {
@@ -213,9 +215,11 @@ public class PropertyIngredient extends Ingredient {
         return new Builder(id);
     }
 
-    public static class Serializer implements IIngredientSerializer<PropertyIngredient> {
+    public static class Serializer implements IAntimatterIngredientSerializer<PropertyIngredient> {
 
         public static Serializer INSTANCE = new Serializer();
+
+        public static final ResourceLocation ID = new ResourceLocation("antimatter", "material");
 
         @Override
         public PropertyIngredient parse(FriendlyByteBuf buffer) {

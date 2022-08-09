@@ -6,15 +6,14 @@ import muramasa.antimatter.Ref;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.crafting.IIngredientSerializer;
 
 
-public class IngredientSerializer implements IIngredientSerializer<RecipeIngredient> {
+public class IngredientSerializer implements IAntimatterIngredientSerializer<RecipeIngredient> {
 
     public static final IngredientSerializer INSTANCE = new IngredientSerializer();
 
     static {
-        AntimatterAPI.register(IIngredientSerializer.class, "ingredient", Ref.ID, INSTANCE);
+        AntimatterAPI.register(IAntimatterIngredientSerializer.class, "ingredient", Ref.ID, INSTANCE);
     }
     @Override
     public RecipeIngredient parse(FriendlyByteBuf buffer) {
