@@ -101,7 +101,7 @@ public class ClientHandler implements IProxyHandler {
             AntimatterAPI.all(BlockMultiMachine.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockOre.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockPipe.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
-            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME)
+            AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == Data.FRAME || b.getType() == Data.RAW_ORE_BLOCK)
                     .forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
                 ModelUtils.setRenderLayer(f.getFluid(), RenderType.translucent());
