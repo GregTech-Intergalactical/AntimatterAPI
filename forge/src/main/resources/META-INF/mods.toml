@@ -1,6 +1,6 @@
 modLoader="javafml"
 license="LGPLv3"
-loaderVersion="[31,)"
+loaderVersion="[40,)"
 issueTrackerURL="https://github.com/GregTech-Intergalactical/AntimatterAPI/issues"
 
 [[mods]]
@@ -15,7 +15,7 @@ description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
 [[dependencies.antimatter]]
     modId="forge"
     mandatory=true
-    versionRange="[36.1.0,)"
+    versionRange="[40.1.64,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.antimatter]]
@@ -27,7 +27,7 @@ description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
 [[dependencies.antimatter]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.5,)"
+    versionRange="[1.18.2,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.antimatter]]
