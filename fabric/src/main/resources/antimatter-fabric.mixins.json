@@ -10,7 +10,8 @@
     "MaterialArmorMixin",
     "MaterialSwordMixin",
     "MaterialToolMixin",
-    "PropertyIngredientMixin"
+    "PropertyIngredientMixin",
+    "RecipeIngredientMixin"
   ],
   "minVersion": "0.8",
   "client": [
