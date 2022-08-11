@@ -11,7 +11,6 @@ public class AntimatterServerImpl implements DedicatedServerModInitializer {
     @Override
     public void onInitializeServer() {
         Antimatter.LOGGER.info("server initializing");
-        AntimatterDynamics.runDataProvidersDynamically();
         AntimatterAPI.getCommonDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
                 try {

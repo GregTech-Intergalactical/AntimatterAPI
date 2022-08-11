@@ -59,7 +59,7 @@ public class AntimatterImpl implements ModInitializer {
             CommonEvents.placeBlock(placedOff, context.getPlayer(), context.getLevel(), context.getClickedPos(), context.getLevel().getBlockState(context.getClickedPos()));
             return InteractionResult.PASS;
         });
-        RRPCallback.AFTER_VANILLA.register(resources -> resources.add(AntimatterDynamics.DYNAMIC_RESOURCE_PACK));
+        RRPCallback.AFTER_VANILLA.register(resources -> AntimatterDynamics.addResourcePack(resources::add));
         Antimatter.LOGGER.info("initializing");
         ServerLifecycleEvents.SERVER_STARTING.register(server -> Antimatter.LOGGER.info("server starting"));
     }
