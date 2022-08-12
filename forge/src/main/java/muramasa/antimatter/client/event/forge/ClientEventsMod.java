@@ -34,7 +34,6 @@ public class ClientEventsMod {
 
     @SubscribeEvent
     public static void preResourceRegistration(ParticleFactoryRegisterEvent ev) {
-        AntimatterDynamics.runAssetProvidersDynamically();
         AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
         AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ClientHandler.registerLoader(l.getLoc(), l));
     }
