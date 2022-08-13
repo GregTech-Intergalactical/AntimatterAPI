@@ -18,6 +18,7 @@ import muramasa.antimatter.item.ItemBattery;
 import muramasa.antimatter.item.ItemCover;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.item.ItemMultiTextureBattery;
+import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
@@ -36,6 +37,7 @@ import muramasa.antimatter.util.Utils;
 import net.devtech.arrp.json.lang.JLang;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -47,6 +49,8 @@ import net.minecraft.world.level.block.Block;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.*;
@@ -99,7 +103,14 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         AntimatterAPI.all(ItemCover.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
         AntimatterAPI.all(ItemMultiTextureBattery.class, domain).forEach(i -> add(i, lowerUnderscoreToUpperSpaced(i.getId())));
-        AntimatterAPI.all(Machine.class, domain).forEach(i -> add("machine." + i.getId(), i.getLang(locale)));
+        AntimatterAPI.all(Machine.class, domain).forEach(i -> {
+            if (!i.hasTierSpecificLang()){
+                add("machine." + i.getId(), i.getLang(locale).concat(" (%s)"));
+                return;
+            }
+            Collection<Tier> tiers = i.getTiers();
+            tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), i.getLang(locale).concat(" (%s)")));
+        });
 
         AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
             if (t.getAntimatterToolType().isPowered()) {

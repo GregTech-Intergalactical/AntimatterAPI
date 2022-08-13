@@ -97,6 +97,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected IOverlayTexturer overlayTextures;
     protected IOverlayModeler overlayModels;
 
+    protected boolean tierSpecificLang = false;
+
     public SoundEvent machineNoise;
     public float soundVolume;
     /**
@@ -193,6 +195,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     public T setSound(SoundEvent loc, float volume) {
         this.soundVolume = volume;
         this.machineNoise = loc;
+        return (T) this;
+    }
+
+    public T setTierSpecificLang(){
+        this.tierSpecificLang = true;
         return (T) this;
     }
 
@@ -389,7 +396,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public Component getDisplayName(Tier tier) {
-        return new TranslatableComponent("machine." + id).append(" (").append(new TextComponent(tier.getId().toUpperCase(Locale.ROOT)).withStyle(tier.getRarityFormatting())).append(")");
+        String keyAddition = tierSpecificLang ? "." + tier.getId() : "";
+        return new TranslatableComponent("machine." + id + keyAddition, new TextComponent(tier.getId().toUpperCase(Locale.ROOT)).withStyle(tier.getRarityFormatting()));
     }
 
     public boolean canClientTick() {
@@ -523,11 +531,15 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return renderContainedLiquids;
     }
 
+    public boolean hasTierSpecificLang(){
+        return tierSpecificLang;
+    }
+
     /**
      * Whether or not this machine has the given machine flag.
      *
      * @param flag the flag.
-     * @return if it has it.
+     * @return if it has itreturn IAntimatterObject.super.getLang(lang);.
      */
     public boolean has(MachineFlag flag) {
         return flag.getTypes().contains(this);
@@ -634,5 +646,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             return TROLL_BASE_HANDLER;
         }
         return baseTexture;
+    }
+
+    @Override
+    public String getLang(String lang) {
+        return Utils.lowerUnderscoreToUpperSpaced(this.getId());
     }
 }
