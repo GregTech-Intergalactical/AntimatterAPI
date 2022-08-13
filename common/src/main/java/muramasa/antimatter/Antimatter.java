@@ -17,11 +17,14 @@ import muramasa.antimatter.item.interaction.CauldronInteractions;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.material.SubTag;
 import muramasa.antimatter.network.AntimatterNetwork;
+import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.IProxyHandler;
+import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeBuilders;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
+import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -49,6 +52,8 @@ public class Antimatter extends AntimatterMod {
         super.onRegistrarInit();
         LOGGER.info("Loading Antimatter");
         INSTANCE = this;
+        PROXY = Utils.unsafeRunForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to
+        // change in new Forge
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
             new KubeJSRegistrar();
         }

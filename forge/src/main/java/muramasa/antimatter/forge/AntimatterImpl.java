@@ -36,8 +36,6 @@ public class AntimatterImpl {
     public AntimatterImpl(){
         AntimatterAPI.setSIDE(FMLEnvironment.dist.isClient() ? Side.CLIENT : Side.SERVER);
         new Antimatter();
-        Antimatter.PROXY = DistExecutor.runForDist(() -> ClientHandler::new, () -> ServerHandler::new); // todo: scheduled to
-        // change in new Forge
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
 
