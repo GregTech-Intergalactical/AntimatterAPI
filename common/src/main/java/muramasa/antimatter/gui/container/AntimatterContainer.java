@@ -3,9 +3,11 @@ package muramasa.antimatter.gui.container;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
+import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.slot.IClickableSlot;
 import muramasa.antimatter.gui.slot.SlotFake;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -37,6 +39,10 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
         this.invSize = invSize;
         this.handler = new GuiInstance(handler, this, handler.isRemote());
         this.containerType = containerType;
+        //TODO move this to event
+        if (AntimatterPlatformUtils.isFabric()){
+            CommonEvents.onContainerOpen(playerInv.player, this);
+        }
     }
 
     @Override
