@@ -192,7 +192,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     }
 
     /**
-     * Returns a non copied list of chargeable items.
+     * Returns a non-copied list of chargeable items.
      **/
     public List<IEnergyHandler> getChargeableItems() {
         List<IEnergyHandler> list = new ObjectArrayList<>();
