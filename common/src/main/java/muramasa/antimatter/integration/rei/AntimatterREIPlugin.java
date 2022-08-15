@@ -47,12 +47,9 @@ public class AntimatterREIPlugin implements REIClientPlugin {
     @Override
     public void registerDisplays(DisplayRegistry registry) {
         // regular recipes
-        //registry.registerFiller(IRecipe.class, RecipeMapDisplay::new);
+        registry.registerFiller(IRecipe.class, RecipeMapDisplay::new);
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
-            tuple.map.getRecipes(true).forEach(object -> {
-                String mapId = object.mapId;
-                registry.add(new RecipeMapDisplay(object));
-            });
+            tuple.map.getRecipes(true).forEach(registry::add);
         });
     }
 

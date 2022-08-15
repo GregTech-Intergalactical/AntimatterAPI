@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jeirei.renderer.InfoRenderers;
@@ -40,6 +41,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     private static final FluidStack[] EMPTY_FLUID = new FluidStack[0];
 
     private final ResourceLocation loc;
+    //in case we have some use for this
+    private final String domainCreatedWith;
     private final B builder;
     private final Branch LOOKUP = new Branch();
     private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
@@ -62,7 +65,8 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     // Data allows you to set related data to the map, e.g. which tier the gui
     // displays.
     public RecipeMap(String domain, String categoryId, B builder) {
-        this.loc = new ResourceLocation(domain, categoryId);
+        this.loc = new ResourceLocation(Ref.SHARED_ID, categoryId);
+        this.domainCreatedWith = domain;
         this.builder = builder;
         this.builder.setMap(this);
         AntimatterAPI.register(IRecipeMap.class, this);
