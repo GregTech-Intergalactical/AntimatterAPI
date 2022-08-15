@@ -242,6 +242,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
                     ROOT_SPECIAL.add(ing);
             }));
         }
+        recipe.setMapId(this.loc.toString());
     }
 
     protected void buildFromFluids(List<List<AbstractMapIngredient>> builder, List<FluidIngredient> ingredients,

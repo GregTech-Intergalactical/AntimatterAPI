@@ -124,6 +124,11 @@ public class Recipe implements IRecipe {
         this.id = id;
     }
 
+    @Override
+    public void setMapId(String mapId) {
+        this.mapId = mapId;
+    }
+
     public void sortInputItems() {
         this.itemsInput.sort((a, b) -> {
             boolean a1 = RecipeMap.isIngredientSpecial(a);
@@ -233,6 +238,7 @@ public class Recipe implements IRecipe {
         return tags;
     }
 
+    //todo fix tis
     public Map<ItemStack, Double> getChancesWithStacks(){
         if (itemsWithChances == null) {
             if (itemsOutput != null){
@@ -321,6 +327,11 @@ public class Recipe implements IRecipe {
     @Override
     public ItemStack getResultItem() {
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public String getMapId() {
+        return mapId;
     }
 
     @Override

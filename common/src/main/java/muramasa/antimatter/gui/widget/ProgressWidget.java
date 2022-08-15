@@ -51,7 +51,7 @@ public class ProgressWidget extends Widget {
         int progressTime;
         int x = this.realX(), y = this.realY(), xLocation = uv.x, yLocation = uv.y, length = uv.z, width = uv.w;
         switch (direction) {
-            case TOP:
+            case TOP -> {
                 progressTime = (int) (uv.w * percent);
                 if (!barFill) {
                     progressTime = width - progressTime;
@@ -59,24 +59,24 @@ public class ProgressWidget extends Widget {
                 y = (y + width) - progressTime;
                 yLocation = (yLocation + width) - progressTime;
                 width = progressTime;
-                break;
-            case LEFT:
+            }
+            case LEFT -> {
                 progressTime = (int) (uv.z * percent);
                 if (barFill) {
                     length = progressTime;
                 } else {
                     length = length - progressTime;
                 }
-                break;
-            case BOTTOM:
+            }
+            case BOTTOM -> {
                 progressTime = (int) (uv.w * percent);
                 if (barFill) {
                     width = progressTime;
                 } else {
                     width = width - progressTime;
                 }
-                break;
-            default:
+            }
+            default -> {
                 progressTime = (int) (uv.z * percent);
                 if (!barFill) {
                     progressTime = length - progressTime;
@@ -84,7 +84,7 @@ public class ProgressWidget extends Widget {
                 x = (x + length) - progressTime;
                 xLocation = (xLocation + length) - progressTime;
                 length = progressTime;
-                break;
+            }
         }
         if (progress > 0) {
             drawTexture(matrixStack, gui.handler.getGuiTexture(), realX(), realY(), xLocation, yLocation, length, width);

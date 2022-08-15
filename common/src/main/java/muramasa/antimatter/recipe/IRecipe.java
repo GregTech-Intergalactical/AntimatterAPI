@@ -39,6 +39,8 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
 
     void setId(ResourceLocation id);
 
+    void setMapId(String map);
+
     void sortInputItems();
 
     List<Ingredient> getInputItems();
@@ -80,6 +82,8 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
     Set<RecipeTag> getTags();
 
     Map<ItemStack, Double> getChancesWithStacks();
+
+    String getMapId();
 
 
 }
