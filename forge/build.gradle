@@ -144,6 +144,7 @@ dependencies {
     //modCompileOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge-api:${rootProject.jei_version}")
     //modRuntimeOnly("mezz.jei:jei-${rootProject.minecraft_version}-forge:${rootProject.jei_version}")
     modImplementation("mezz.jei:jei-1.18.2:9.5.0.132")
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-forge:${rootProject.rei_version}"
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${rootProject.crafttweaker_version}")
     modImplementation(include("com.github.Reforged-Mods:ARRP-forge:362cae740e"))
     modRuntimeOnly("com.github.FeltMC.Fabricated-Forge-API:fluidhandler-extras:${rootProject.fabricated_forge_hash}")
