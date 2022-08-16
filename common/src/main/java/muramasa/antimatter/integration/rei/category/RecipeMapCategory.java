@@ -20,6 +20,7 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.gui.BarDir;
@@ -36,6 +37,7 @@ import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.util.int4;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -69,8 +71,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName();
         int4 progress = gui.dir.getUV();
-        //todo custom bar fill and gui dir for rei/jei
-        progressBar = new Parameters(gui.getTexture(guiTier, "machine"), gui.dir.getPos().x + 6, gui.dir.getPos().y + 6, progress.z, progress.w, progress.x, progress.y, gui.dir, true);
+        progressBar = new Parameters(gui.getTexture(guiTier, "machine"), gui.dir.getPos().x + 6, gui.dir.getPos().y + 6, progress.z, progress.w, progress.x, progress.y, gui.dir, gui.barFill);
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack stack) {
@@ -88,28 +89,44 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
     }
 
     @Override
+    public int getDisplayHeight() {
+        return gui.getArea().w + 4;
+    }
+
+    @Override
+    public int getDisplayWidth(RecipeMapDisplay display) {
+        return gui.getArea().z + 4;
+    }
+
+    @Override
     public List<Widget> setupDisplay(RecipeMapDisplay display, Rectangle bounds) {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(Widgets.createRecipeBase(bounds));
         widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-            drawTexture(matrices, gui.getTexture(guiTier, "machine"), gui.getArea().x, gui.getArea().y, 0, 0, gui.getArea().z, gui.getArea().w);
+            drawTexture(matrices, gui.getTexture(guiTier, "machine"), bounds.x + 3, bounds.y + 3, gui.getArea().x + 1, gui.getArea().y + 1, bounds.getWidth() - 6, bounds.getHeight() - 6);
         }));
-        widgets.addAll(setupSlots(display));
+        widgets.addAll(setupSlots(display, bounds));
         double recipeMillis = (double) display.getRecipe().getDuration() * 50;
+        if (recipeMillis < 250)
+            recipeMillis = 250;
+        double finalRecipeMillis = recipeMillis;
         widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-            renderProgress(matrices, progressBar,
-                    (float) (System.currentTimeMillis() / recipeMillis % 1.0));
+            renderProgress(matrices, bounds, progressBar,
+                    (float) (System.currentTimeMillis() / finalRecipeMillis % 1.0));
+        }));
+        widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
+            infoRenderer.render(matrices, display.getRecipe(), Minecraft.getInstance().font, bounds.x + 1, bounds.y + bounds.getHeight() - 3);
         }));
         return widgets;
     }
 
-    private List<Widget> setupSlots(RecipeMapDisplay display){
+    private List<Widget> setupSlots(RecipeMapDisplay display, Rectangle bounds){
         List<Widget> widgets = new ArrayList<>();
         List<List<ItemStack>> inputs = display.getRecipe().hasInputItems() ? display.getRecipe().getInputItems().stream().map(t -> Arrays.asList(t.getItems())).toList() : Collections.emptyList();
         List<ItemStack> outputs = display.getRecipe().hasOutputItems() ? Arrays.stream(display.getRecipe().getOutputItems()).toList() : Collections.emptyList();
         List<SlotData<?>> slots;
         int inputFluidOffset = 0, outputFluidOffset = 0, slotCount;
-        int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;
+        int offsetX = gui.getArea().x - 2, offsetY = gui.getArea().y - 2;
         int inputItems = 0, inputFluids = 0;
         if (display.getRecipe().hasInputItems()) {
             slots = gui.getSlots().getSlots(SlotType.IT_IN, guiTier);
@@ -120,8 +137,8 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                     slotCount = Math.min(slotCount, inputs.size());
                     inputFluidOffset = slotCount;
                     for (; s < slotCount; s++) {
-                        Point point = new Point(slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                        Slot slot = Widgets.createSlot(point);
+                        Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
+                        Slot slot = Widgets.createSlot(point).disableBackground();
                         List<ItemStack> input = inputs.get(s);
                         if (input.size() == 0) {
                             slot.entries(EntryIngredients.of(Data.DEBUG_SCANNER));
@@ -141,8 +158,8 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 slotCount = Math.min(slotCount, outputs.size());
                 outputFluidOffset = slotCount;
                 for (int s = 0; s < slotCount; s++) {
-                    Point point = new Point(slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    widgets.add(Widgets.createSlot(point).entries(getOutput(display, s)).markOutput());
+                    Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
+                    widgets.add(Widgets.createSlot(point).entries(getOutput(display, s)).disableBackground().markOutput());
                 }
             }
         }
@@ -154,8 +171,8 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 List<FluidIngredient> fluids = display.getRecipe().getInputFluids();
                 slotCount = Math.min(slotCount, fluids.size());
                 for (int s = 0; s < slotCount; s++) {
-                    Point point = new Point(slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    widgets.add(Widgets.createSlot(point).entries(getInput(display, s + inputFluidOffset)).markInput());
+                    Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
+                    widgets.add(Widgets.createSlot(point).entries(getInput(display, s + inputFluidOffset)).disableBackground().markInput());
                     /*slot.setFluidRenderer((int)fluids.get(s).getAmount(), true, 16, 16);
                     slot.addTooltipCallback((ing, list) -> {
                         if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
@@ -172,8 +189,8 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 FluidStack[] fluids = display.getRecipe().getOutputFluids();
                 slotCount = Math.min(slotCount, fluids.length);
                 for (int s = 0; s < slotCount; s++) {
-                    Point point = new Point(slots.get(s).getX() - (offsetX - 1), slots.get(s).getY() - (offsetY - 1));
-                    widgets.add(Widgets.createSlot(point).entries(getOutput(display, s + outputFluidOffset)).markOutput());
+                    Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
+                    widgets.add(Widgets.createSlot(point).entries(getOutput(display, s + outputFluidOffset)).disableBackground().markOutput());
                     //slot.setFluidRenderer(fluids[s].getAmount(), true, 16, 16);
                 }
             }
@@ -181,9 +198,10 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
         return widgets;
     }
 
-    public static void renderProgress(PoseStack matrices, Parameters params, float percent) {
+    public static void renderProgress(PoseStack matrices, Rectangle bounds, Parameters params, float percent) {
         int progressTime;
-        int x = params.x, y = params.y, xLocation = params.posX, yLocation = params.posY, length = params.length, width = params.width;
+        int realX = bounds.x + params.x - 1, realY = bounds.y + params.y - 1;
+        int x = realX, y = realY, xLocation = params.posX, yLocation = params.posY, length = params.length, width = params.width;
         switch (params.dir) {
             case TOP -> {
                 progressTime = (int) (params.width * percent);
@@ -221,7 +239,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
             }
         }
         if (percent > 0) {
-            drawTexture(matrices, params.texture, params.x, params.y, xLocation, yLocation, length, width);
+            drawTexture(matrices, params.texture, realX,  realY, xLocation, yLocation, length, width);
         }
     }
 

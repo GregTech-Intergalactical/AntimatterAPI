@@ -16,6 +16,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
@@ -64,7 +65,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         title = map.getDisplayName().getString();
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.dir.getUV();
         background = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
-        progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, IDrawableAnimated.StartDirection.LEFT, false);
+        progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, fromDir(gui.dir), !gui.barFill);
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack) {
@@ -82,6 +83,15 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();
+    }
+
+    private IDrawableAnimated.StartDirection fromDir(BarDir dir){
+        return switch (dir){
+            case TOP -> IDrawableAnimated.StartDirection.TOP;
+            case BOTTOM -> IDrawableAnimated.StartDirection.BOTTOM;
+            case LEFT -> IDrawableAnimated.StartDirection.LEFT;
+            case RIGHT -> IDrawableAnimated.StartDirection.RIGHT;
+        };
     }
 
     @Override
@@ -161,8 +171,8 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                     final int ss = s;
                     slot.addTooltipCallback((ing, list) -> {
                         if (recipe.hasChances()) {
-                            if (recipe.getChances()[ss] < 100) {
-                                list.add(new TextComponent("Chance: " + recipe.getChances()[ss] + "%").withStyle(ChatFormatting.WHITE));
+                            if (recipe.getChances()[ss] < 1.0) {
+                                list.add(new TextComponent("Chance: " + (recipe.getChances()[ss] * 100) + "%").withStyle(ChatFormatting.WHITE));
                             }
                         }
                     });
@@ -249,12 +259,12 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
             List<IRecipeSlotView> views = recipeSlotsView.getSlotViews(RecipeIngredientRole.OUTPUT);
             List<SlotData<?>> slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
             for (int i = 0; i < views.size(); i++) {
-                if (recipe.getChances()[i] < 100) {
+                if (recipe.getChances()[i] < 1.0) {
                     RenderSystem.disableBlend();
                     RenderSystem.disableDepthTest();
                     stack.pushPose();
                     stack.scale(0.5f, 0.5f, 1);
-                    String ch = recipe.getChances()[i] + "%";
+                    String ch = (recipe.getChances()[i] * 100) + "%";
                     Minecraft.getInstance().font.drawShadow(stack, ch, 2*((float)slots.get(i).getX() - (offsetX - 1)), 2*((float) slots.get(i).getY() - (offsetY - 1)), 0xFFFF00);
 
                     stack.popPose();

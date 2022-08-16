@@ -11,6 +11,7 @@ import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.client.dynamic.IDynamicModelProvider;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.MenuHandler;
@@ -485,6 +486,12 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         guiData = new GuiData(this, menuHandler);
         guiData.setSlots(this);
         registerJei();
+    }
+
+    public T setGuiProgressBarForJEI(BarDir dir, boolean barFill){
+        guiData.setDir(dir);
+        guiData.setBarFill(barFill);
+        return (T) this;
     }
 
     public T setGuiTiers(ImmutableMap.Builder<Tier, Tier> tiers) {

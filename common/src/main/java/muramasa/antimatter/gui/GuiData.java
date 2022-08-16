@@ -19,7 +19,8 @@ public class GuiData {
     protected boolean enablePlayerSlots = true;
     protected int4 area = new int4(3, 3, 170, 80);
     protected int4 padding = new int4(0, 55, 0, 0);
-    public BarDir dir = BarDir.RIGHT;
+    public BarDir dir = BarDir.LEFT;
+    public boolean barFill = true;
 
     private final int buttons = 0;
     private ISlotProvider<?> slots;
@@ -105,5 +106,13 @@ public class GuiData {
     public GuiData setOverrideLocation(ResourceLocation override) {
         this.override = override;
         return this;
+    }
+
+    public void setDir(BarDir dir) {
+        this.dir = dir;
+    }
+
+    public void setBarFill(boolean barFill) {
+        this.barFill = barFill;
     }
 }
