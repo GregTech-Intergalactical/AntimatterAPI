@@ -60,7 +60,7 @@ public class ClientEvents {
 
 
 
-    public static boolean onBlockHighlight(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource) throws IllegalAccessException {
+    public static boolean onBlockHighlight(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource) {
         Player player = MC.player;
         Level world = player.getCommandSenderWorld();
         ItemStack stack = player.getMainHandItem();

@@ -13,13 +13,17 @@ import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.event.ClientEvents;
 import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.mixin.fabric.client.MinecraftAccessor;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 
 import static muramasa.antimatter.Antimatter.LOGGER;
 
@@ -49,7 +53,15 @@ public class AntimatterClientImpl implements ClientModInitializer {
         }));
         RecipesUpdatedCallback.EVENT.register((CommonEvents::recipeEvent));
         //TODO fix this
-        //WorldRenderEvents.BLOCK_OUTLINE.register(((worldRenderContext, blockOutlineContext) -> ClientEvents.onBlockHighlight(worldRenderContext.worldRenderer(), worldRenderContext.camera(), worldRenderContext, worldRenderContext, worldRenderContext.matrixStack(), worldRenderContext.consumers())));
+        WorldRenderEvents.BLOCK_OUTLINE.register(((worldRenderContext, blockOutlineContext) -> {
+            Minecraft mc = Minecraft.getInstance();
+            HitResult result = mc.hitResult;
+            float partialTick = mc.isPaused() ? ((MinecraftAccessor)mc).getPausePartialTick() : ((MinecraftAccessor)mc).getTimer().partialTick;
+            if (result instanceof BlockHitResult blockHitResult){
+                return !ClientEvents.onBlockHighlight(worldRenderContext.worldRenderer(), worldRenderContext.camera(),  blockHitResult, partialTick, worldRenderContext.matrixStack(), worldRenderContext.consumers());
+            }
+            return true;
+        }));
         //TODO figure this out
         //WorldRenderEvents.BEFORE_DEBUG_RENDER.register((context -> ClientEvents.onRenderDebugInfo(context.)));
         AntimatterAPI.getCommonDeferredQueue().ifPresent(t -> {

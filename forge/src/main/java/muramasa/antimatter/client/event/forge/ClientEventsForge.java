@@ -66,7 +66,7 @@ import java.util.Map;
 public class ClientEventsForge {
 
     @SubscribeEvent
-    public static void onBlockHighlight(HighlightBlock event) throws IllegalAccessException {
+    public static void onBlockHighlight(HighlightBlock event) {
         if (ClientEvents.onBlockHighlight(event.getLevelRenderer(), event.getCamera(), event.getTarget(), event.getPartialTicks(), event.getPoseStack(), event.getMultiBufferSource()))
             event.setCanceled(true);
     }
