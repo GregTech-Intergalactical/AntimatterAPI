@@ -35,7 +35,6 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackResources;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.storage.loot.Deserializers;
 
@@ -44,7 +43,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -255,16 +253,6 @@ public class AntimatterDynamics {
 
     public static ResourceLocation fix(ResourceLocation identifier, String prefix, String append) {
         return new ResourceLocation(identifier.getNamespace(), prefix + '/' + identifier.getPath() + '.' + append);
-    }
-
-    private static boolean LOADED = false;
-
-    public static void addResourcePack(Consumer<PackResources> add){
-        if (!LOADED){
-            runDataProvidersDynamically();
-            LOADED = true;
-        }
-        add.accept(DYNAMIC_RESOURCE_PACK);
     }
     /*
      * public static void runBackgroundProviders() {

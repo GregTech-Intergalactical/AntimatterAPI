@@ -67,6 +67,7 @@ public class AntimatterImpl {
     private void clientSetup(final FMLClientSetupEvent e) {
         ClientHandler.setup();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        AntimatterDynamics.runDataProvidersDynamically();
         e.enqueueWork(() -> AntimatterAPI.getClientDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
                 try {
@@ -95,6 +96,7 @@ public class AntimatterImpl {
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
         ServerHandler.setup();
         AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+        AntimatterDynamics.runDataProvidersDynamically();
         e.enqueueWork(() -> AntimatterAPI.getServerDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {
                 try {
