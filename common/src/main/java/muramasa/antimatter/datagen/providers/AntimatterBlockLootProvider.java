@@ -66,6 +66,8 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
         this.providerName = providerName;
     }
 
+    public static void init(){}
+
     @Override
     public void run() {
         loot();
