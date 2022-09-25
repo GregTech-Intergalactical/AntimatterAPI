@@ -21,6 +21,7 @@ import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
+import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -31,6 +32,7 @@ public class AntimatterClientImpl implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientHandler.setup();
+        EntrypointUtils.invoke("antimatter_client", IAntimatterClientInitializer.class, IAntimatterClientInitializer::onInitializeClient);
         AntimatterDynamics.runDataProvidersDynamically();
         TextureStitchCallback.PRE.register(AntimatterTextureStitcher::onTextureStitch);
         ColorHandlersCallback.BLOCK.register(ClientHandler::onBlockColorHandler);
