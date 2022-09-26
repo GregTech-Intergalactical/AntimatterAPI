@@ -125,9 +125,4 @@ public class ForgeCommonEvents {
         StructureCache.onWorldUnload(event.getWorld());
     }
 
-    @SubscribeEvent
-    public static void onResourcePackAddAfter(RRPEvent.AfterVanilla event){
-        event.addPack(AntimatterDynamics.DYNAMIC_RESOURCE_PACK);
-    }
-
 }
