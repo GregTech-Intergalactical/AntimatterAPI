@@ -15,7 +15,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.mixin.BlockAccessor;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
@@ -895,8 +894,12 @@ public class Utils {
         boolean destroyed = world.removeBlock(pos, false);// world.destroyBlock(pos, !player.isCreative(), player);
         if (destroyed && canHarvestBlock(state, world, pos, player))
             state.getBlock().playerDestroy(world, player, pos, state, world.getBlockEntity(pos), stack);
-        if (exp > 0) ((BlockAccessor)state.getBlock()).popExperience((ServerLevel) world, pos, exp);
+        if (exp > 0) popExperience(state.getBlock(), (ServerLevel) world, pos, exp);
         return destroyed;
+    }
+
+    @ExpectPlatform
+    private static void popExperience(Block block, ServerLevel level, BlockPos pos, int exp){
     }
 
     @ExpectPlatform

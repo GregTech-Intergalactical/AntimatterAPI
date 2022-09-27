@@ -19,7 +19,6 @@
   "mixins": [
     "BiomeAccessor",
     "BiomeGenerationBuilderAccessor",
-    "BlockAccessor",
     "BlockLootTablesAccessor",
     "BucketItemAccessor",
     "GrindstoneContainerMixin",
