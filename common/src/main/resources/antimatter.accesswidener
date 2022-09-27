@@ -12,7 +12,7 @@ accessible method net/minecraft/world/item/crafting/Ingredient valueFromJson (Lc
 accessible field net/minecraft/world/level/biome/Biome$ClimateSettings temperature F
 accessible field net/minecraft/world/level/biome/Biome$ClimateSettings precipitation Lnet/minecraft/world/level/biome/Biome$Precipitation;
 accessible method net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacerType <init> (Lcom/mojang/serialization/Codec;)V
-accessible method net/minecraft/data/loot/BlockLoot applyExplosionDecay (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/functions/FunctionUserBuilder;)Lnet/minecraft/world/level/storage/loot/functions/FunctionUserBuilder;
+accessible method net/minecraft/data/loot/BlockLoot applyExplosionDecay (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/functions/FunctionUserBuilder;)Ljava/lang/Object;
 accessible method net/minecraft/data/loot/BlockLoot applyExplosionCondition (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/predicates/ConditionUserBuilder;)Ljava/lang/Object;
 accessible method net/minecraft/data/loot/BlockLoot createSingleItemTable (Lnet/minecraft/world/level/ItemLike;Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
 accessible method net/minecraft/data/loot/BlockLoot createSingleItemTable (Lnet/minecraft/world/level/ItemLike;)Lnet/minecraft/world/level/storage/loot/LootTable$Builder;
