@@ -136,6 +136,7 @@ public class MultiPartBlockStateBuilder implements IStateBuilder{
                 valueList.add(prop.getName(value));
             }
             when.add(prop.getName(), valueList.toArray(new String[0]));
+            multipart.when(when);
             return this;
         }
 
