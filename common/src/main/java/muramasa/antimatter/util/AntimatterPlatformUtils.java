@@ -34,6 +34,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -225,6 +226,11 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static boolean areCapsCompatible(ItemStack a, ItemStack b){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static Path getConfigDir(){
         throw new AssertionError();
     }
 }

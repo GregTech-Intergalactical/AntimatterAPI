@@ -41,6 +41,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -193,5 +194,9 @@ public class AntimatterPlatformUtilsImpl {
 
     public static boolean areCapsCompatible(ItemStack a, ItemStack b){
         return a.areCapsCompatible(b);
+    }
+
+    public static Path getConfigDir(){
+        return FabricLoader.getInstance().getConfigDir();
     }
 }

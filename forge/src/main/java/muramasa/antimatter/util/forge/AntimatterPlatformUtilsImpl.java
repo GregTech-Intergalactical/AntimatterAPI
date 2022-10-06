@@ -51,6 +51,7 @@ import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -59,6 +60,7 @@ import tesseract.api.forge.wrapper.IEnergyHandlerStorage;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
@@ -232,5 +234,9 @@ public class AntimatterPlatformUtilsImpl {
 
     public static boolean areCapsCompatible(ItemStack a, ItemStack b){
         return a.areCapsCompatible(b);
+    }
+
+    public static Path getConfigDir(){
+        return FMLPaths.CONFIGDIR.get();
     }
 }
