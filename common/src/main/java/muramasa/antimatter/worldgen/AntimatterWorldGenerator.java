@@ -6,6 +6,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.mixin.BiomeGenerationBuilderAccessor;
 import muramasa.antimatter.registration.RegistrationEvent;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
 import muramasa.antimatter.worldgen.feature.FeatureVein;
@@ -186,7 +187,9 @@ public class AntimatterWorldGenerator {
                 t.consumer.accept(name, climate, category, effects, gen, spawns);
             }
         });
-        handleFeatureRemoval(gen);
+        if (AntimatterPlatformUtils.isForge()) {
+            handleFeatureRemoval(gen);
+        }
     }
 
     private static void handleFeatureRemoval(BiomeGenerationSettings.Builder gen) {

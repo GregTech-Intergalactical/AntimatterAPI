@@ -14,21 +14,28 @@ import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
+import muramasa.antimatter.mixin.BiomeAccessor;
+import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.recipe.fabric.RecipeConditions;
 import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.registration.fabric.AntimatterRegistration;
 import muramasa.antimatter.structure.StructureCache;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.fabric.AntimatterFabricWorldgen;
 import net.devtech.arrp.api.RRPCallback;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
+import net.fabricmc.fabric.api.biome.v1.ModificationPhase;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.ModLoadingContext;
@@ -50,6 +57,8 @@ public class AntimatterImpl implements ModInitializer {
         if (!AntimatterAPI.isModLoaded(Ref.MOD_KJS)){
             AntimatterRegistration.onRegister();
             AntimatterAPI.onRegistration(RegistrationEvent.DATA_READY);
+            CommonHandler.setup();
+            AntimatterFabricWorldgen.init();
         }
         RecipeConditions.init();
         CraftingEvents.CRAFTING.register(Antimatter.INSTANCE::addCraftingLoaders);
