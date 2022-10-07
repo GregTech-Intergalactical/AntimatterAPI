@@ -51,6 +51,8 @@ public class AntimatterImpl implements ModInitializer {
     @Override
     public void onInitialize() {
         AntimatterAPI.setSIDE(FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? Side.CLIENT : Side.SERVER);
+        ModConfigEvent.LOADING.register(AntimatterConfig::onModConfigEvent);
+        ModConfigEvent.RELOADING.register(AntimatterConfig::onModConfigEvent);
         ModLoadingContext.registerConfig(ID, ModConfig.Type.COMMON, AntimatterConfig.COMMON_SPEC);
         ModLoadingContext.registerConfig(ID, ModConfig.Type.CLIENT, AntimatterConfig.CLIENT_SPEC);
         EntrypointUtils.invoke("antimatter", IAntimatterRegistrarInitializer.class, IAntimatterRegistrarInitializer::onRegistrarInit);
@@ -63,8 +65,6 @@ public class AntimatterImpl implements ModInitializer {
         RecipeConditions.init();
         CraftingEvents.CRAFTING.register(Antimatter.INSTANCE::addCraftingLoaders);
         ProviderEvents.PROVIDERS.register(this::providers);
-        ModConfigEvent.LOADING.register(AntimatterConfig::onModConfigEvent);
-        ModConfigEvent.RELOADING.register(AntimatterConfig::onModConfigEvent);
         ServerWorldEvents.UNLOAD.register((server, world) -> StructureCache.onWorldUnload(world));
         RegisterCapabilitiesEvent.REGISTER_CAPS.register(AntimatterCapsImpl::register);
         ItemCraftedCallback.EVENT.register(((player, crafted, container) -> CommonEvents.onItemCrafted(container, player)));
