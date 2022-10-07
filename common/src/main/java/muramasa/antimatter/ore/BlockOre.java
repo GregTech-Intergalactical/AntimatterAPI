@@ -1,6 +1,7 @@
 package muramasa.antimatter.ore;
 
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialType;
@@ -24,8 +25,10 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.ticks.ScheduledTick;
+import org.jetbrains.annotations.Nullable;
 ;
 ;
 
@@ -220,5 +223,22 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
             return MaterialTags.EXP_RANGE.getIntRange(material).sample(((ServerLevel) world).getRandom());
         }
         return 0;
+    }
+
+    @Override
+    public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
+        //TODO use tags for this instead?
+        if (i == 1 && material == Data.Iron){
+            return 0xe2c0aa;
+        }
+        return super.getBlockColor(state, world, pos, i);
+    }
+
+    @Override
+    public int getItemColor(ItemStack stack, @Nullable Block block, int i) {
+        if (i == 1 && material == Data.Iron){
+            return 0xe2c0aa;
+        }
+        return super.getItemColor(stack, block, i);
     }
 }
