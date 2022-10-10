@@ -1,3 +1,5 @@
+import org.gradle.api.publish.maven.MavenPublication
+
 archivesBaseName = "${rootProject.antimatter_archive_base_name}-fabric"
 version = "${rootProject.minecraft_version}-${project.mod_version}"
 
@@ -90,30 +92,30 @@ sourcesJar {
     from commonSources.archiveFile.map { zipTree(it) }
 }
 
-/*
 publishing {
-    tasks.publish.dependsOn "build", "reobfJar"
     publications {
         mavenJava(org.gradle.api.publish.maven.MavenPublication) {
-            //artifactId = archivesBaseName
-            artifact shadowJar
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+
+            afterEvaluate {
+                artifact remapJar
+            }
         }
     }
+
     repositories {
         if (rootProject.isCI && rootProject.isRELEASE) {
             maven {
-                name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/GregTech-Intergalactical/TesseractAPI"
+                url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
                 credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+                    username = System.getenv("MAVEN_USERNAME")
+                    password = System.getenv("MAVEN_PASSWORD")
                 }
             }
         } else {
             maven { url "file:///${project.projectDir}/mcmodsrepo"}
         }
     }
-    //repositories {
-    //    rootProject.configurePublishingRepositories(delegate)
-    //}
-}*/
+}

@@ -209,26 +209,25 @@ jar {
     }
 }
 publishing {
-    tasks.publish.dependsOn 'build', 'reobfJar'
     publications {
-        mavenJava(MavenPublication) {
-            artifact(remapJar) {
-                builtBy remapJar
-            }
+        mavenJava(org.gradle.api.publish.maven.MavenPublication) {
             artifact(sourcesJar) {
                 builtBy remapSourcesJar
+            }
+
+            afterEvaluate {
+                artifact remapJar
             }
         }
     }
 
     repositories {
-        if (isCI && isRELEASE) {
+        if (rootProject.isCI && rootProject.isRELEASE) {
             maven {
-                name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/GregTech-Intergalactical/AntimatterAPI"
+                url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
                 credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+                    username = System.getenv("MAVEN_USERNAME")
+                    password = System.getenv("MAVEN_PASSWORD")
                 }
             }
         } else {
