@@ -106,7 +106,9 @@ publishing {
     }
 
     repositories {
-        if (rootProject.isCI && rootProject.isRELEASE) {
+        def isCI = System.getenv("GITHUB_ACTION")
+        def isRELEASE = System.getenv("GITHUB_RELEASE")
+        if (isCI && isRELEASE) {
             maven {
                 url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
                 credentials {
