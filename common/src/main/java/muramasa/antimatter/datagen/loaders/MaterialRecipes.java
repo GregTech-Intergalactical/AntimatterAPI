@@ -13,6 +13,7 @@ import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -118,6 +119,12 @@ public class MaterialRecipes {
             AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1), new ItemStack(INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 200)
                     .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
                     .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot_smelting")));
+        });
+        DUST.all().forEach(m -> {
+            if (m.has(MaterialTags.NEEDS_BLAST_FURNACE) || m.has(MaterialTags.HAS_CUSTOM_SMELTING)) return;
+            if (!MaterialTags.DIRECT_SMELT_INTO.getMapping(m).has(INGOT)) return;
+            SimpleCookingRecipeBuilder.blasting(DUST.getMaterialIngredient(m, 1), INGOT.get(MaterialTags.DIRECT_SMELT_INTO.getMapping(m)), 0.5F, 100).unlockedBy("has_" + m.getId() + "_dust", provider.hasSafeItem(DUST.getMaterialTag(m))).save(consumer, Ref.SHARED_ID + ":" + m.getId() + "_dust_to_ingot_bl");
+            SimpleCookingRecipeBuilder.smelting(DUST.getMaterialIngredient(m, 1), INGOT.get(MaterialTags.DIRECT_SMELT_INTO.getMapping(m)), 0.5F, 200).unlockedBy("has_" + m.getId() + "_dust", provider.hasSafeItem(DUST.getMaterialTag(m))).save(consumer, Ref.SHARED_ID + ":" + m.getId() + "_dust_to_ingot");
         });
         /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
             Item dust = DUST.get(mat);

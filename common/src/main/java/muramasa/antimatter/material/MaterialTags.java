@@ -28,6 +28,7 @@ public class MaterialTags {
     public static final MaterialTag BRITTLEG = new MaterialTag("brittle_g"); //This is for Gems that cannot be used in recipes such as Gem > Rod in Lathe
     public static final MaterialTag RUBBERTOOLS = new MaterialTag("rubber_tools");
     public static final MaterialTag NEEDS_BLAST_FURNACE = new MaterialTag("needs_blast_furnace");
+    public static final MaterialTag HAS_CUSTOM_SMELTING = new MaterialTag("has_custom_smelting");
     public static final MaterialTag TRANSPARENT = new MaterialTag("transparent");
     public static final MaterialTag METAL = new MaterialTag("metal");
     public static final MaterialTag ELEMENTAL = new MaterialTag("elemental");
