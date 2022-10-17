@@ -35,6 +35,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -114,8 +115,9 @@ public class AntimatterRegistration {
                     return IngredientSerializer.INSTANCE.parse(object);
                 }
             });
-            Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("antimatter", "material"), MaterialSerializer.INSTANCE);
-            Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation("antimatter", "ingredient"), AntimatterRecipeSerializer.INSTANCE);
+            AntimatterAPI.all(RecipeSerializer.class, domain, (r, d, i) -> {
+                Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(d, i), r);
+            });
         }
         AntimatterAPI.all(IAntimatterFeature.class, domain,(t, d, i) -> {
             Registry.register(Registry.FEATURE, new ResourceLocation(d, i), t.asFeature());
