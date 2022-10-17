@@ -13,7 +13,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import tesseract.Tesseract;
+import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class BlockItemPipe<T extends ItemPipe<T>> extends BlockPipe<T> {
     @Override
     public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         if (world.isClientSide) return info;
-        ITickingController<?, ?, ?> controller = Tesseract.ITEM.getController(world, pos.asLong());
+        ITickingController<?, ?, ?> controller = TesseractGraphWrappers.ITEM.getController(world, pos.asLong());
         controller.getInfo(pos.asLong(), info);
         info.add("Capacity: " + getType().getCapacity(getSize()));
         return info;

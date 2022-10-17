@@ -23,8 +23,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.FluidPlatformUtils;
-import tesseract.Tesseract;
-import tesseract.TesseractPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
 import tesseract.api.fluid.FluidHolder;
@@ -54,18 +53,18 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        Tesseract.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        TesseractGraphWrappers.FLUID.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
 
     @Override
     protected void register() {
-        Tesseract.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        TesseractGraphWrappers.FLUID.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return Tesseract.FLUID.remove(getLevel(), getBlockPos().asLong());
+        return TesseractGraphWrappers.FLUID.remove(getLevel(), getBlockPos().asLong());
     }
 
 

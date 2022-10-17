@@ -1,37 +1,23 @@
 package muramasa.antimatter.material;
 
-import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
-import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraftforge.fluids.FluidStack;
-import tesseract.Tesseract;
+import tesseract.TesseractGraphWrappers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.MaterialTags.ARMOR;
-import static muramasa.antimatter.material.MaterialTags.HANDLE;
-import static muramasa.antimatter.material.MaterialTags.METAL;
 
 public class Material implements ISharedAntimatterObject {
 
@@ -227,15 +213,15 @@ public class Material implements ISharedAntimatterObject {
     }
 
     public FluidStack getLiquid(int mb) {
-        return this.getLiquid(mb * Tesseract.dropletMultiplier);
+        return this.getLiquid(mb * TesseractGraphWrappers.dropletMultiplier);
     }
 
     public FluidStack getGas(int mb) {
-        return this.getGas(mb * Tesseract.dropletMultiplier);
+        return this.getGas(mb * TesseractGraphWrappers.dropletMultiplier);
     }
 
     public FluidStack getPlasma(int mb) {
-        return this.getPlasma(mb * Tesseract.dropletMultiplier);
+        return this.getPlasma(mb * TesseractGraphWrappers.dropletMultiplier);
     }
 
     /**

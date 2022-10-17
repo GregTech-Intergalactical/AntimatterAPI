@@ -3,7 +3,6 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.DefaultHeatHandler;
 import muramasa.antimatter.pipe.types.HeatPipe;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,8 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.Tesseract;
-import tesseract.TesseractPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 import tesseract.api.TesseractCaps;
 import tesseract.api.heat.HeatTransaction;
 import tesseract.api.heat.IHeatHandler;
@@ -58,12 +56,12 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
 
     @Override
     protected void register() {
-        Tesseract.HEAT_CONTROLLER.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        TesseractGraphWrappers.HEAT_CONTROLLER.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return Tesseract.HEAT_CONTROLLER.remove(level, getBlockPos().asLong());
+        return TesseractGraphWrappers.HEAT_CONTROLLER.remove(level, getBlockPos().asLong());
     }
 
     @Override

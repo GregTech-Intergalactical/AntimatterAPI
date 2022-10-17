@@ -1,6 +1,5 @@
 package muramasa.antimatter.capability.fluid;
 
-import com.sun.jna.platform.win32.COM.IStream;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
@@ -11,7 +10,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import tesseract.Tesseract;
+import tesseract.TesseractGraphWrappers;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -19,9 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
-import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 /**
  * Array of multiple instances of FluidTank
@@ -39,25 +36,25 @@ public class FluidTanks implements IFluidHandler {
     public FluidTanks(int tanks, long tankAmountInMB) {
         this.tanks = new FluidTank[tanks];
         for (int i = 0; i < tanks; i++) {
-            this.tanks[i] = new FluidTank(tankAmountInMB * Tesseract.dropletMultiplier);
+            this.tanks[i] = new FluidTank(tankAmountInMB * TesseractGraphWrappers.dropletMultiplier);
         }
-        this.totalCapacity = tanks * tankAmountInMB * Tesseract.dropletMultiplier;
+        this.totalCapacity = tanks * tankAmountInMB * TesseractGraphWrappers.dropletMultiplier;
     }
 
     public FluidTanks(int tanks, long tankAmountInMB, Predicate<FluidStack> validator) {
         this.tanks = new FluidTank[tanks];
         for (int i = 0; i < tanks; i++) {
-            this.tanks[i] = new FluidTank(tankAmountInMB * Tesseract.dropletMultiplier, validator);
+            this.tanks[i] = new FluidTank(tankAmountInMB * TesseractGraphWrappers.dropletMultiplier, validator);
         }
-        this.totalCapacity = tanks * tankAmountInMB * Tesseract.dropletMultiplier;
+        this.totalCapacity = tanks * tankAmountInMB * TesseractGraphWrappers.dropletMultiplier;
     }
 
     public FluidTanks(long... tankAmountsInMB) {
         this.tanks = new FluidTank[tankAmountsInMB.length];
         for (int i = 0; i < this.tanks.length; i++) {
-            this.tanks[i] = new FluidTank(tankAmountsInMB[i] * Tesseract.dropletMultiplier);
+            this.tanks[i] = new FluidTank(tankAmountsInMB[i] * TesseractGraphWrappers.dropletMultiplier);
         }
-        this.totalCapacity = LongStream.of(tankAmountsInMB).sum() * Tesseract.dropletMultiplier;
+        this.totalCapacity = LongStream.of(tankAmountsInMB).sum() * TesseractGraphWrappers.dropletMultiplier;
     }
 
     public FluidTanks(Collection<FluidTank> tanks) {
@@ -115,7 +112,7 @@ public class FluidTanks implements IFluidHandler {
 
     @Override
     public int getTankCapacity(int tank) {
-        return (int) (getTankCapacityInDroplets(tank) / Tesseract.dropletMultiplier);
+        return (int) (getTankCapacityInDroplets(tank) / TesseractGraphWrappers.dropletMultiplier);
     }
 
     @Override
@@ -147,7 +144,7 @@ public class FluidTanks implements IFluidHandler {
 
     @Override
     public int fill(FluidStack stack, FluidAction action){
-        return (int) (fillDroplets(stack, action) / Tesseract.dropletMultiplier);
+        return (int) (fillDroplets(stack, action) / TesseractGraphWrappers.dropletMultiplier);
     }
 
     @Nonnull
@@ -195,7 +192,7 @@ public class FluidTanks implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
-        return drain((long) maxDrain * Tesseract.dropletMultiplier, action);
+        return drain((long) maxDrain * TesseractGraphWrappers.dropletMultiplier, action);
     }
 
     public static class Builder<T extends TileEntityBase & IMachineHandler> {

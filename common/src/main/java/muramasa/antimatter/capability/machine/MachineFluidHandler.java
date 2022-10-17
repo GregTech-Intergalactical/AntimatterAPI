@@ -24,8 +24,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import tesseract.Tesseract;
-import tesseract.TesseractPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -315,7 +314,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
             @Override
             public FluidStack drain(int amount, FluidAction action) {
-                return drain((long) amount * Tesseract.dropletMultiplier, action);
+                return drain((long) amount * TesseractGraphWrappers.dropletMultiplier, action);
             }
 
             @Nonnull

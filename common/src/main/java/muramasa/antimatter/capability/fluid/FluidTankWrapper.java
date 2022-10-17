@@ -9,7 +9,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import tesseract.Tesseract;
+import tesseract.TesseractGraphWrappers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,7 +68,7 @@ public class FluidTankWrapper implements IFluidHandler {
 
     @Override
     public int getTankCapacity(int tank) {
-        return (int)(getTankCapacityInDroplets(tank) / Tesseract.dropletMultiplier);
+        return (int)(getTankCapacityInDroplets(tank) / TesseractGraphWrappers.dropletMultiplier);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class FluidTankWrapper implements IFluidHandler {
 
     @Override
     public int fill(FluidStack stack, FluidAction action) {
-        return (int)(fillDroplets(stack, action) / Tesseract.dropletMultiplier);
+        return (int)(fillDroplets(stack, action) / TesseractGraphWrappers.dropletMultiplier);
     }
 
     @Nonnull
@@ -105,7 +105,7 @@ public class FluidTankWrapper implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(int amount, FluidAction action) {
-        return drain((long)amount * Tesseract.dropletMultiplier, action);
+        return drain((long)amount * TesseractGraphWrappers.dropletMultiplier, action);
     }
 
     public boolean isDirty() {

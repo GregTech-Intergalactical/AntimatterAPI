@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.FluidPlatformUtils;
-import tesseract.Tesseract;
+import tesseract.TesseractGraphWrappers;
 import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
@@ -117,7 +117,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     @Override
     public int getTankCapacity(int tank){
-        return (int) (getTankCapacityInDroplets(tank) / Tesseract.dropletMultiplier);
+        return (int) (getTankCapacityInDroplets(tank) / TesseractGraphWrappers.dropletMultiplier);
     }
 
     @Override
@@ -145,7 +145,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     @Override
     public int fill(FluidStack stack, FluidAction action){
-        return (int) (this.fillDroplets(stack, action) / Tesseract.dropletMultiplier);
+        return (int) (this.fillDroplets(stack, action) / TesseractGraphWrappers.dropletMultiplier);
     }
 
     protected boolean empty(FluidTanks tank) {
@@ -199,7 +199,7 @@ public abstract class FluidHandler<T extends TileEntityBase & IMachineHandler> i
 
     @Override
     public FluidStack drain(int amount, FluidAction action) {
-        return drain((long) amount * Tesseract.dropletMultiplier, action);
+        return drain((long) amount * TesseractGraphWrappers.dropletMultiplier, action);
     }
 
     protected boolean checkValidFluid(FluidStack fluid) {

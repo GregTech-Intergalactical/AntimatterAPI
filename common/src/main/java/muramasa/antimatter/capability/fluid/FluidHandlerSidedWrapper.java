@@ -6,7 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import tesseract.Tesseract;
+import tesseract.TesseractGraphWrappers;
 
 import javax.annotation.Nonnull;
 
@@ -60,7 +60,7 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action){
-        return (int) (fillDroplets(resource, action) / Tesseract.dropletMultiplier);
+        return (int) (fillDroplets(resource, action) / TesseractGraphWrappers.dropletMultiplier);
     }
 
     @Nonnull
@@ -86,6 +86,6 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     @Nonnull
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
-        return drain((long) maxDrain * Tesseract.dropletMultiplier, action);
+        return drain((long) maxDrain * TesseractGraphWrappers.dropletMultiplier, action);
     }
 }

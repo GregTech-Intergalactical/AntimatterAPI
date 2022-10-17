@@ -56,8 +56,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import tesseract.FluidPlatformUtils;
-import tesseract.Tesseract;
-import tesseract.TesseractPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
@@ -144,7 +143,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
     }
 
     public ItemStack fill(Fluid fluid, int amount){
-        return fill(fluid, amount * Tesseract.dropletMultiplier);
+        return fill(fluid, amount * TesseractGraphWrappers.dropletMultiplier);
     }
 
     public ItemStack fill(Fluid fluid) {

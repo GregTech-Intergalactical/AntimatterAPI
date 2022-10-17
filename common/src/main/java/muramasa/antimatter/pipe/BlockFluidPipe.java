@@ -18,7 +18,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import tesseract.FluidPlatformUtils;
-import tesseract.Tesseract;
+import tesseract.TesseractGraphWrappers;
 import tesseract.api.ITickingController;
 import tesseract.api.fluid.FluidHolder;
 
@@ -34,7 +34,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
     @Override
     public List<String> getInfo(List<String> info, Level world, BlockState state, BlockPos pos) {
         if (world.isClientSide) return info;
-        ITickingController<?, ?, ?> controller = Tesseract.FLUID.getController(world, pos.asLong());
+        ITickingController<?, ?, ?> controller = TesseractGraphWrappers.FLUID.getController(world, pos.asLong());
         controller.getInfo(pos.asLong(), info);
         info.add("Pressure: " + getType().getPressure(getSize()));
         info.add("Capacity: " + getType().getCapacity(getSize()));

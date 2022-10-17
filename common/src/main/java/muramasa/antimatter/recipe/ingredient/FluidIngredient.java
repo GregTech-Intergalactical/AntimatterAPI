@@ -5,24 +5,18 @@ import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.tags.TagManager;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import tesseract.Tesseract;
+import tesseract.TesseractGraphWrappers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 public class FluidIngredient {
     private FluidStack[] stacks = new FluidStack[0];
@@ -56,7 +50,7 @@ public class FluidIngredient {
     }
 
     public int getAmountInMB(){
-        return (int) (getAmount() / Tesseract.dropletMultiplier);
+        return (int) (getAmount() / TesseractGraphWrappers.dropletMultiplier);
     }
 
     public FluidIngredient copy(long droplets) {
@@ -73,7 +67,7 @@ public class FluidIngredient {
     }
 
     public FluidIngredient copyMB(int amount) {
-        return copy(amount * Tesseract.dropletMultiplier);
+        return copy(amount * TesseractGraphWrappers.dropletMultiplier);
     }
 
     public void write(FriendlyByteBuf buffer) {
@@ -109,11 +103,11 @@ public class FluidIngredient {
     }
 
     public static FluidIngredient ofMB(ResourceLocation loc, int amount) {
-        return of(loc, amount * Tesseract.dropletMultiplier);
+        return of(loc, amount * TesseractGraphWrappers.dropletMultiplier);
     }
 
     public static FluidIngredient ofMB(Material mat, int amount) {
-        return of(mat, amount * Tesseract.dropletMultiplier);
+        return of(mat, amount * TesseractGraphWrappers.dropletMultiplier);
     }
 
     public static FluidIngredient of(FluidStack stack) {
