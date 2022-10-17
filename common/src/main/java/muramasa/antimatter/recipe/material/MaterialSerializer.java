@@ -29,7 +29,7 @@ public class MaterialSerializer implements RecipeSerializer<MaterialRecipe> {
 
     public static final MaterialSerializer INSTANCE = new MaterialSerializer();
 
-    static {
+    public static void init(){
         AntimatterAPI.register(RecipeSerializer.class, "material", Ref.ID, INSTANCE);
     }
 

@@ -32,7 +32,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
 
     public static final AntimatterRecipeSerializer INSTANCE = new AntimatterRecipeSerializer();
 
-    static {
+    public static void init() {
         AntimatterAPI.register(RecipeSerializer.class, "machine", Ref.ID, INSTANCE);
     }
 

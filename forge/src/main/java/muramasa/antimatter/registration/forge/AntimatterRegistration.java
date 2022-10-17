@@ -29,6 +29,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -155,11 +156,13 @@ public final class AntimatterRegistration {
                 CraftingHelper.register(TomlConfigCondition.Serializer.INSTANCE);
                 CraftingHelper.register(new ResourceLocation("antimatter", "material"), PROPERTY_SERIALIZER);
                 CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), RECIPE_SERIALIZER);
-                ((IForgeRegistryEntry)MaterialSerializer.INSTANCE).setRegistryName(new ResourceLocation("antimatter", "material"));
-                ((IForgeRegistryEntry)AntimatterRecipeSerializer.INSTANCE).setRegistryName(new ResourceLocation("antimatter", "ingredient"));
-                ((IForgeRegistry) e.getRegistry()).register(AntimatterRecipeSerializer.INSTANCE);
-                ((IForgeRegistry) e.getRegistry()).register(MaterialSerializer.INSTANCE);
             }
+            AntimatterAPI.all(RecipeSerializer.class, domain, (r, d, i) -> {
+                if (r.getRegistryName() == null){
+                    r.setRegistryName(new ResourceLocation(d, i));
+                }
+                ((IForgeRegistry) e.getRegistry()).register(r);
+            });
         } else if (e.getRegistry() == ForgeRegistries.FEATURES) {
             AntimatterAPI.all(IAntimatterFeature.class, domain,(t, d, i) -> {
                 if (t.asFeature().getRegistryName() == null) t.asFeature().setRegistryName(d, i);
