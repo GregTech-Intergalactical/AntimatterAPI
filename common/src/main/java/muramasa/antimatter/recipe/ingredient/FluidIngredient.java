@@ -40,7 +40,7 @@ public class FluidIngredient {
                 FluidStack stack = new FluidStack(t.value(), this.getAmountInMB());
                 list.add(stack);
             });
-            return list.toArray(new FluidStack[0]);
+            this.stacks = list.toArray(new FluidStack[0]);
         }
         return stacks;
     }
