@@ -331,7 +331,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         return LazyOptional.empty();
     }
 
-    @Override
+    //@Override
     public boolean path() {
         return coverHandler.map(t -> Arrays.stream(t.getAll()).mapToInt(c -> c.ticks() ? 1 : 0).sum() > 0).orElse(false);
     }
