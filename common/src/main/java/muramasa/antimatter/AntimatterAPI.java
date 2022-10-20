@@ -91,27 +91,27 @@ public final class AntimatterAPI {
 
     @SuppressWarnings("unchecked")
     public static <T> T register(Class<?> c, String id, String domain, Object o) {
-        // synchronized (OBJECTS) {
-        if (!allowRegistration()) {
-            throw new IllegalStateException("Registering after DataDone in AntimatterAPI - badbad!");
-        }
-        if (o instanceof IAntimatterObject && !((IAntimatterObject) o).shouldRegister())
+        synchronized (OBJECTS) {
+            if (!allowRegistration()) {
+                throw new IllegalStateException("Registering after DataDone in AntimatterAPI - badbad!");
+            }
+            if (o instanceof IAntimatterObject && !((IAntimatterObject) o).shouldRegister())
+                return (T) o;
+            if (o instanceof ISharedAntimatterObject && getInternal((Class) c, id) != null) {
+                return (T) getInternal((Class) c, id);
+            }
+            registerInternal(c, id, o instanceof ISharedAntimatterObject ? null : domain, o);
+            if (o instanceof Block && notRegistered(Block.class, id, domain))
+                registerInternal(Block.class, id, domain, o);
+            else if (o instanceof Item && notRegistered(Item.class, id, domain))
+                registerInternal(Item.class, id, domain, o);
+            else if (o instanceof IRegistryEntryProvider) {
+                String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
+                if (notRegistered(IRegistryEntryProvider.class, changedId, domain))
+                    registerInternal(IRegistryEntryProvider.class, changedId, domain, o);
+            }
             return (T) o;
-        if (o instanceof ISharedAntimatterObject && getInternal((Class) c, id) != null) {
-            return (T) getInternal((Class) c, id);
         }
-        registerInternal(c, id, o instanceof ISharedAntimatterObject ? null : domain, o);
-        if (o instanceof Block && notRegistered(Block.class, id, domain))
-            registerInternal(Block.class, id, domain, o);
-        else if (o instanceof Item && notRegistered(Item.class, id, domain))
-            registerInternal(Item.class, id, domain, o);
-        else if (o instanceof IRegistryEntryProvider) {
-            String changedId = o instanceof Material ? "material_" + id : o instanceof StoneType ? "stone_" + id : id;
-            if (notRegistered(IRegistryEntryProvider.class, changedId, domain))
-                registerInternal(IRegistryEntryProvider.class, changedId, domain, o);
-        }
-        return (T) o;
-        // }
     }
 
     public static <T> T register(Class<T> c, IAntimatterObject o) {
@@ -162,11 +162,11 @@ public final class AntimatterAPI {
     }
 
     public static <T extends ISharedAntimatterObject> T get(Class<? extends T> c, String id) {
-        // if (!dataDone) {
-        // synchronized (OBJECTS) {
-        // return getInternal(c, id);
-        // }
-        // }
+        if (!allowRegistration()) {
+            synchronized (OBJECTS) {
+                return getInternal(c, id);
+            }
+        }
         return getInternal(c, id);
     }
 
@@ -243,24 +243,24 @@ public final class AntimatterAPI {
     }
 
     public static <T> List<T> all(Class<T> c) {
-        // if (!dataDone) {
-        // List<T> list;
-        // synchronized (OBJECTS) {
-        // list = allInternal(c).collect(Collectors.toList());
-        // }
-        // return list;
-        // }
+        if (!allowRegistration()) {
+            List<T> list;
+            synchronized (OBJECTS) {
+                list = allInternal(c).collect(Collectors.toList());
+            }
+            return list;
+        }
         return allInternal(c).collect(Collectors.toList());
     }
 
     public static <T> List<T> all(Class<T> c, String domain) {
-        // if (!dataDone) {
-        // List<T> list;
-        // synchronized (OBJECTS) {
-        // list = allInternal(c, domain).collect(Collectors.toList());
-        // }
-        // return list;
-        // }
+        if (!allowRegistration()) {
+            List<T> list;
+            synchronized (OBJECTS) {
+                list = allInternal(c, domain).collect(Collectors.toList());
+            }
+            return list;
+        }
         return allInternal(c, domain).collect(Collectors.toList());
     }
 
@@ -311,37 +311,37 @@ public final class AntimatterAPI {
     }
 
     public static <T> void all(Class<T> c, Consumer<T> consumer) {
-        // if (!dataDone) {
-        // synchronized (OBJECTS) {
-        // allInternal(c).forEach(consumer);
-        // }
-        // } else {
-        allInternal(c).forEach(consumer);
-        // }
+        if (!allowRegistration()) {
+            synchronized (OBJECTS) {
+                allInternal(c).forEach(consumer);
+            }
+        } else {
+            allInternal(c).forEach(consumer);
+        }
     }
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
-        // if (!dataDone) {
-        // synchronized (OBJECTS) {
-        // allInternal(c, domain).forEach(consumer);
-        // }
-        // } else {
-        allInternal(c, domain).forEach(consumer);
-        // }
+        if (!allowRegistration()) {
+            synchronized (OBJECTS) {
+                allInternal(c, domain).forEach(consumer);
+            }
+        } else {
+            allInternal(c, domain).forEach(consumer);
+        }
     }
 
     public static <T> void all(Class<T> c, String[] domains, Consumer<T> consumer) {
-        // if (!dataDone) {
-        // synchronized (OBJECTS) {
-        // for (String domain : domains) {
-        // allInternal(c, domain).forEach(consumer);
-        // }
-        // }
-        // } else {
-        for (String domain : domains) {
-            allInternal(c, domain).forEach(consumer);
-        }
-        // }
+         if (!allowRegistration()) {
+            synchronized (OBJECTS) {
+                for (String domain : domains) {
+                    allInternal(c, domain).forEach(consumer);
+                }
+            }
+         } else {
+            for (String domain : domains) {
+                allInternal(c, domain).forEach(consumer);
+            }
+         }
     }
 
     private static void runProvider(IAntimatterProvider provider) {
