@@ -41,16 +41,22 @@ jobs:
             ~/.gradle/wrapper
         key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle','**/gradle/wrapper/gradle-wrapper.properties','**/*.properties') }}
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
-      with:
-        arguments: build
+      run: ./gradlew build --stacktrace
     # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
     # the publishing section of your build.gradle
-    - name: Upload Artifact
+    - name: Upload Forge Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: Antimatter JAR
-        path: ./*/build/libs
+        name: Antimatter-forge-nightly-${{ steps.vars.outputs.sha_short }}
+        path: forge/build/libs
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Fabric Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Antimatter-fabric-nightly-${{ steps.vars.outputs.sha_short }}
+        path: fabric/build/libs
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
