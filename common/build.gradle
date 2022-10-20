@@ -1,5 +1,4 @@
 archivesBaseName = "${rootProject.antimatter_archive_base_name}-common"
-version = "${rootProject.minecraft_version}-${project.mod_version}"
 
 repositories {
     maven {
