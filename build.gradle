@@ -30,8 +30,6 @@ subprojects {
     apply plugin: "dev.architectury.loom"
     java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-    version = "${rootProject.minecraft_version}-${project.mod_version}"
-
     loom {
         silentMojangMappingsLicense()
     }
