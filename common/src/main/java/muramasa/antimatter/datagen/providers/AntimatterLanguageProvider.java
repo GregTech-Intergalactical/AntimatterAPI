@@ -314,8 +314,13 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     }
 
     public void add(String key, String value) {
-        if (data.put(key, value) != null) {
-            throw new IllegalStateException("Duplicate translation key " + key);
+        try {
+            if (data.containsKey(key)) {
+                throw new IllegalStateException("Duplicate translation key " + key + ", Name is " + value);
+            }
+            data.put(key, value);
+        } catch (IllegalStateException e){
+            e.printStackTrace();
         }
     }
 
