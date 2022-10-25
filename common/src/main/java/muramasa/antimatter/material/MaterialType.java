@@ -84,12 +84,19 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     }
 
     public Material getMaterialFromStack(ItemStack stack) {
-        if (stack.getItem() instanceof MaterialItem) {
-            MaterialItem item = (MaterialItem) stack.getItem();
+        if (stack.getItem() instanceof MaterialItem item) {
             if (item.getType() == this) return item.getMaterial();
             return null;
         }
-        return replacements.inverse().get(stack.getItem());
+        //TODO better fix
+        //return replacements.inverse().get(stack.getItem());
+        for (Map.Entry<Material, Supplier<Item>> entry : replacements.entrySet()) {
+            Item item = entry.getValue().get();
+            if (item == stack.getItem()){
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     public boolean hidden() {
