@@ -170,11 +170,12 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     @SuppressWarnings("NoTranslation")
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
+        //TODO change this to object %s system for other lang compat
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary").append(":").append(primary.getDisplayName().getString()));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary").append(": ").append(primary.getDisplayName().getString()));
         if (secondary != NULL)
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary").append(":").append(secondary.getDisplayName().getString()));
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary").append(": ").append(secondary.getDisplayName().getString()));
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(new TranslatableComponent("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
