@@ -226,14 +226,16 @@ public final class AntimatterAPI {
     }
 
     public static <T> void all(String className, String domain, Consumer<T> consumer) {
-        Map<String, Class<?>> map = CLASS_LOOKUP.get(domain);
-        if (map == null) return;
-        Class<? extends T> clazz = (Class<? extends T>) map.get(className);
-        if (clazz == null) return;
-        if (domain == null) {
-            allInternal(clazz).forEach(consumer);
-        } else {
-            allInternal(clazz, domain).forEach(consumer);
+        synchronized (OBJECTS){
+            Map<String, Class<?>> map = CLASS_LOOKUP.get(domain);
+            if (map == null) return;
+            Class<? extends T> clazz = (Class<? extends T>) map.get(className);
+            if (clazz == null) return;
+            if (domain == null) {
+                allInternal(clazz).forEach(consumer);
+            } else {
+                allInternal(clazz, domain).forEach(consumer);
+            }
         }
     }
 
@@ -277,36 +279,40 @@ public final class AntimatterAPI {
     }
 
     public static <T> void all(Class<T> c, TriConsumer<T, String, String> consumer){
-        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
-        if (map != null) {
-            map.forEach((d, e) -> {
-                if (e.left().isPresent()){
-                    e.left().ifPresent(o -> consumer.accept(c.cast(o), o.getDomain(), o.getId()));
-                } else {
-                    e.right().ifPresent(m -> m.forEach((i, o) -> {
-                        consumer.accept(c.cast(o), d, i);
-                    }));
-                }
-            });
+        synchronized (OBJECTS){
+            Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+            if (map != null) {
+                map.forEach((d, e) -> {
+                    if (e.left().isPresent()) {
+                        e.left().ifPresent(o -> consumer.accept(c.cast(o), o.getDomain(), o.getId()));
+                    } else {
+                        e.right().ifPresent(m -> m.forEach((i, o) -> {
+                            consumer.accept(c.cast(o), d, i);
+                        }));
+                    }
+                });
+            }
         }
     }
 
     public static <T> void all(Class<T> c, String domain, TriConsumer<T, String, String> consumer){
-        Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
-        if (map != null) {
-            map.forEach((d, e) -> {
-                if (e.left().isPresent()){
-                    if (domain.equals(Ref.SHARED_ID)) {
-                        e.left().ifPresent(o -> consumer.accept(c.cast(o), o.getDomain(), o.getId()));
-                    }
-                } else {
-                    e.right().ifPresent(m -> m.forEach((i, o) -> {
-                        if (d.equals(domain)) {
-                            consumer.accept(c.cast(o), d, i);
+        synchronized (OBJECTS){
+            Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
+            if (map != null) {
+                map.forEach((d, e) -> {
+                    if (e.left().isPresent()) {
+                        if (domain.equals(Ref.SHARED_ID)) {
+                            e.left().ifPresent(o -> consumer.accept(c.cast(o), o.getDomain(), o.getId()));
                         }
-                    }));
-                }
-            });
+                    } else {
+                        e.right().ifPresent(m -> m.forEach((i, o) -> {
+                            if (d.equals(domain)) {
+                                consumer.accept(c.cast(o), d, i);
+                            }
+                        }));
+                    }
+                });
+            }
         }
     }
 
