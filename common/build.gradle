@@ -26,7 +26,7 @@ dependencies{
     modImplementation("io.github.feltmc:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}"){
         transitive = false
     }
-    modImplementation("com.github.Trinsdar:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"){
+    modImplementation("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"){
         transitive = false
     }
     modImplementation("io.github.feltmc:fabricated-forge-tag-extensions:${rootProject.fabricated_forge_hash}") { transitive false }
