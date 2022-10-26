@@ -189,7 +189,7 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static ResourceLocation getLootTableID(LootTable table){
-        return ((LootTableExtension)table).getLootTableId();
+        return table.getLootTableId();
     }
 
     public static boolean areCapsCompatible(ItemStack a, ItemStack b){
