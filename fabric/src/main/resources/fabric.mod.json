@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "antimatter",
+  "version": "${version}",
+  "name": "Antimatter API",
+  "description": "Well-rounded API for Minecraft, primarily made for GregTech.",
+  "authors": [
+    "Muramasa",
+    "Rongmario"
+  ],
+  "credits": [
+    "mitchej123",
+    "e99999",
+    "qubka",
+    "Vliro(aka abbe)",
+    "repolainen",
+    "Trinsdar"
+  ],
+  "contact": {
+    "sources": "https://github.com/GregTech-Intergalactical/AntimatterAPI",
+    "issues": "https://github.com/GregTech-Intergalactical/AntimatterAPI/issues",
+    "discord": "https://discord.gg/9kM4bRj"
+  },
+  "license": "LGPL-3.0",
+  "mixins": [
+    "antimatter.mixins.json",
+    "antimatter-fabric.mixins.json"
+  ],
+  "accessWidener" : "antimatter2.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.14.0",
+    "fabric": "*",
+    "tesseractapi": ">=0.1"
+  },
+  "entrypoints": {
+    "client": [
+      "muramasa.antimatter.client.fabric.AntimatterClientImpl"
+    ],
+    "rei_plugins": [
+      "muramasa.antimatter.integration.rei.AntimatterREIPlugin"
+    ],
+    "server": [
+      "muramasa.antimatter.fabric.AntimatterServerImpl"
+    ],
+    "main": [
+      "muramasa.antimatter.fabric.AntimatterImpl"
+    ],
+    "antimatter": [
+      "muramasa.antimatter.Antimatter"
+    ]
+  }
+}

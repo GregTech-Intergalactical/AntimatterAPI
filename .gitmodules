@@ -1,0 +1,3 @@
+[submodule "TesseractAPI"]
+	path = TesseractAPI
+	url = https://github.com/GregTech-Intergalactical/TesseractAPI
