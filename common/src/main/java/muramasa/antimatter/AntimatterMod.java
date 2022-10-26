@@ -7,7 +7,6 @@ import muramasa.antimatter.registration.Side;
 import net.minecraft.data.DataGenerator;
 import tesseract.TesseractPlatformUtils;
 
-;
 import java.util.Map;
 
 public abstract class AntimatterMod implements IAntimatterRegistrar {

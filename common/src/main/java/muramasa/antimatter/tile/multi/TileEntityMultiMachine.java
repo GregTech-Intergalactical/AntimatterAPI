@@ -71,7 +71,12 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         this.fluidHandler.ifPresent(handle -> {
             ((MultiMachineFluidHandler<T>) handle).onStructureBuild();
         });
-        this.heatHandlers = this.result.components.get("components").stream().map(IComponentHandler::getHeatHandler).filter(LazyOptional::isPresent).map(t -> t.resolve().get()).toList();
+        var heats = this.result.components.get("components");
+        if (heats != null) {
+            this.heatHandlers = heats.stream().map(IComponentHandler::getHeatHandler).filter(LazyOptional::isPresent).map(t -> t.resolve().get()).toList();
+        } else {
+            this.heatHandlers = Collections.emptyList();
+        }
     }
 
     @Override

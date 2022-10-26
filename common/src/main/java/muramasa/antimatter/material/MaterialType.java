@@ -22,9 +22,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-;
-;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;

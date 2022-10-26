@@ -10,5 +10,5 @@ public interface ITrackedHandler extends IItemHandlerModifiable {
     ItemStack insertOutputItem(int slot, @Nonnull ItemStack stack, boolean simulate);
 
     @Nonnull
-    ItemStack extractFromInput(int slot, @Nonnull int amount, boolean simulate);
+    ItemStack extractFromInput(int slot, int amount, boolean simulate);
 }

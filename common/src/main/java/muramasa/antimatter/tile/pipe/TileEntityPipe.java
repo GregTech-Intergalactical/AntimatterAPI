@@ -376,7 +376,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         }*/
     }
 
-    @Nonnull
     @Override
     public void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);

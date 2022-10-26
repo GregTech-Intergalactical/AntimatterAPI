@@ -29,8 +29,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.ticks.ScheduledTick;
 import org.jetbrains.annotations.Nullable;
-;
-;
 
 import javax.annotation.Nonnull;
 import java.util.List;

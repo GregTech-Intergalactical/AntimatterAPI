@@ -21,8 +21,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-;
-;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
