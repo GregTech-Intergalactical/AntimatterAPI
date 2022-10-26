@@ -1,0 +1,7 @@
+{
+  "parent": "antimatter:item/default",
+  "textures": {
+    "base": "item/bucket",
+    "fluid": "antimatter:item/mask/bucket_fluid"
+  }
+}

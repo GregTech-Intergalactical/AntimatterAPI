@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "muramasa.antimatter.mixin.forge",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "GameDataMixin",
+    "MaterialSerializerMixin",
+    "AntimatterRecipeSerializerMixin",
+    "RecipeIngredientMixin",
+    "PropertyIngredientMixin"
+  ],
+  "minVersion": "0.8"
+}

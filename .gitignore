@@ -21,9 +21,7 @@ build
 eclipse
 run/
 *.db
-src/generated/
-
-TesseractAPI
+forge/src/generated/
 
 .vscode/
 mcmodsrepo/
