@@ -1,6 +1,6 @@
-package muramasa.antimatter.tool.behaviour;
+package muramasa.antimatter.tool.behaviour.fabric;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
+import muramasa.antimatter.tool.behaviour.BehaviourUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -8,14 +8,12 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BehaviourUtil {
-    @ExpectPlatform
+public class BehaviourUtilImpl {
     public static BlockState onToolUse(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, String action){
-        throw new AssertionError();
+        return originalState;
     }
 
-    @ExpectPlatform
     public static boolean onUseHoe(UseOnContext context){
-        throw new AssertionError();
+        return false;
     }
 }

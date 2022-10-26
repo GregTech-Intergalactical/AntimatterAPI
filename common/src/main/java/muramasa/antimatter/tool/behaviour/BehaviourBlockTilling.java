@@ -5,7 +5,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.behaviour.IItemUse;
 import muramasa.antimatter.tool.IAntimatterTool;
-import muramasa.antimatter.tool.behaviour.BehaviourUtil.BehaviourToolAction;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -40,7 +39,7 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
     @Override
     public InteractionResult onItemUse(IAntimatterTool instance, UseOnContext c) {
         if (c.getClickedFace() != Direction.DOWN && c.getLevel().isEmptyBlock(c.getClickedPos().above())) {
-            BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), BehaviourToolAction.HOE_DIG);
+            BlockState blockstate = getToolModifiedState(c.getLevel().getBlockState(c.getClickedPos()), c.getLevel(), c.getClickedPos(), c.getPlayer(), c.getItemInHand(), "hoe_dig");
             if (blockstate == null) return InteractionResult.PASS;
             if (BehaviourUtil.onUseHoe(c)) return InteractionResult.PASS;
             Utils.damageStack(c.getItemInHand(), c.getPlayer());
@@ -52,7 +51,7 @@ public class BehaviourBlockTilling implements IItemUse<IAntimatterTool> {
         return InteractionResult.PASS;
     }
 
-    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, BehaviourToolAction action) {
+    private BlockState getToolModifiedState(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, String action) {
         BlockState eventState = BehaviourUtil.onToolUse(originalState, world, pos, player, stack, action);
         return eventState != originalState ? eventState : TILLING_MAP.get(originalState);
     }
