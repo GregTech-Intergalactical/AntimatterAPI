@@ -18,6 +18,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import tesseract.FluidPlatformUtils;
+import tesseract.TesseractGraphWrappers;
 import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nullable;
@@ -105,7 +107,7 @@ public class CoverOutput extends CoverInput {
             return;
         adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    handler.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side).ifPresent(h -> FluidUtil.tryFluidTransfer(adjHandler, h, 1000, true));
+                    handler.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, 1000 * TesseractGraphWrappers.dropletMultiplier, true));
                 });
     }
 
