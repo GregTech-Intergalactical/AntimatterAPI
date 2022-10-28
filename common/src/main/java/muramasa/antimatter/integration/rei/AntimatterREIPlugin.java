@@ -6,12 +6,17 @@ import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.entry.EntryStack;
+import me.shedaniel.rei.api.common.plugins.PluginManager;
+import me.shedaniel.rei.api.common.registry.ReloadStage;
+import me.shedaniel.rei.plugin.common.BuiltinPlugin;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.rei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.rei.category.RecipeMapDisplay;
+import muramasa.antimatter.integration.rei.extension.REIMaterialRecipeExtension;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.IRecipe;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
@@ -51,6 +56,12 @@ public class AntimatterREIPlugin implements REIClientPlugin {
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
             tuple.map.getRecipes(true).forEach(registry::add);
         });
+    }
+
+    @Override
+    public void postStage(PluginManager<REIClientPlugin> manager, ReloadStage stage) {
+        if (stage != ReloadStage.END || !manager.equals(PluginManager.getClientInstance())) return;
+        CategoryRegistry.getInstance().get(BuiltinPlugin.CRAFTING).registerExtension(new REIMaterialRecipeExtension());
     }
 
     public static void showCategory(Machine<?>... types) {

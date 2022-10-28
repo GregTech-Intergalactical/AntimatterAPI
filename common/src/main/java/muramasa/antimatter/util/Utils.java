@@ -1276,4 +1276,8 @@ public class Utils {
         Antimatter.LOGGER.error(msg);
         Antimatter.LOGGER.error("====================================================");
     }
+
+    public static <T> T cast(Object o){
+        return (T) o;
+    }
 }
