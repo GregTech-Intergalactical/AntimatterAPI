@@ -22,6 +22,8 @@ import muramasa.antimatter.proxy.IProxyHandler;
 import muramasa.antimatter.proxy.ServerHandler;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeBuilders;
+import muramasa.antimatter.recipe.container.ContainerItemShapedRecipe;
+import muramasa.antimatter.recipe.container.ContainerItemShapelessRecipe;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.registration.RegistrationEvent;
@@ -122,6 +124,8 @@ public class Antimatter extends AntimatterMod {
             AntimatterWorldGenerator.preinit();
             GuiEvents.init();
             MaterialSerializer.init();
+            ContainerItemShapedRecipe.init();
+            ContainerItemShapelessRecipe.init();
             AntimatterRecipeSerializer.init();
         } else if (event == RegistrationEvent.WORLDGEN_INIT) {
             AntimatterWorldGenerator.init();

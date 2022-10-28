@@ -5,6 +5,7 @@
   "mixins": [
     "AnvilMenuMixin",
     "ItemBatteryMixin",
+    "BucketItemMixin",
     "LootTableMixin",
     "LootTablesMixin",
     "MaterialArmorMixin",

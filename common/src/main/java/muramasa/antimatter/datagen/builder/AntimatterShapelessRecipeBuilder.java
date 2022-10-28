@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.builder;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import muramasa.antimatter.recipe.container.ContainerItemShapelessRecipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
@@ -37,44 +38,44 @@ public class AntimatterShapelessRecipeBuilder {
     /**
      * Creates a new builder for a shapeless recipe.
      */
-    public static AntimatterShapelessRecipeBuilder shapelessRecipe(ItemLike result) {
+    public static AntimatterShapelessRecipeBuilder shapeless(ItemLike result) {
         return new AntimatterShapelessRecipeBuilder(new ItemStack(result, 1));
     }
 
     /**
      * Creates a new builder for a shapeless recipe.
      */
-    public static AntimatterShapelessRecipeBuilder shapelessRecipe(ItemLike result, int count) {
+    public static AntimatterShapelessRecipeBuilder shapeless(ItemLike result, int count) {
         return new AntimatterShapelessRecipeBuilder(new ItemStack(result, count));
     }
 
     /**
      * Creates a new builder for a shapeless recipe.
      */
-    public static AntimatterShapelessRecipeBuilder shapelessRecipe(ItemStack stack) {
+    public static AntimatterShapelessRecipeBuilder shapeless(ItemStack stack) {
         return new AntimatterShapelessRecipeBuilder(stack);
     }
 
     /**
      * Adds an ingredient that can be any item in the given tag.
      */
-    public AntimatterShapelessRecipeBuilder addIngredient(TagKey<Item> tagIn) {
-        return this.addIngredient(Ingredient.of(tagIn));
+    public AntimatterShapelessRecipeBuilder requires(TagKey<Item> tagIn) {
+        return this.requires(Ingredient.of(tagIn));
     }
 
     /**
      * Adds an ingredient of the given item.
      */
-    public AntimatterShapelessRecipeBuilder addIngredient(ItemLike itemIn) {
-        return this.addIngredient(itemIn, 1);
+    public AntimatterShapelessRecipeBuilder requires(ItemLike itemIn) {
+        return this.requires(itemIn, 1);
     }
 
     /**
      * Adds the given ingredient multiple times.
      */
-    public AntimatterShapelessRecipeBuilder addIngredient(ItemLike itemIn, int quantity) {
+    public AntimatterShapelessRecipeBuilder requires(ItemLike itemIn, int quantity) {
         for (int i = 0; i < quantity; ++i) {
-            this.addIngredient(Ingredient.of(itemIn));
+            this.requires(Ingredient.of(itemIn));
         }
         return this;
     }
@@ -82,14 +83,14 @@ public class AntimatterShapelessRecipeBuilder {
     /**
      * Adds an ingredient.
      */
-    public AntimatterShapelessRecipeBuilder addIngredient(Ingredient ingredientIn) {
-        return this.addIngredient(ingredientIn, 1);
+    public AntimatterShapelessRecipeBuilder requires(Ingredient ingredientIn) {
+        return this.requires(ingredientIn, 1);
     }
 
     /**
      * Adds an ingredient multiple times.
      */
-    public AntimatterShapelessRecipeBuilder addIngredient(Ingredient ingredientIn, int quantity) {
+    public AntimatterShapelessRecipeBuilder requires(Ingredient ingredientIn, int quantity) {
         for (int i = 0; i < quantity; ++i) {
             this.ingredients.add(ingredientIn);
         }
@@ -99,12 +100,12 @@ public class AntimatterShapelessRecipeBuilder {
     /**
      * Adds a criterion needed to unlock the recipe.
      */
-    public AntimatterShapelessRecipeBuilder addCriterion(String name, CriterionTriggerInstance criterionIn) {
+    public AntimatterShapelessRecipeBuilder unlockedBy(String name, CriterionTriggerInstance criterionIn) {
         this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
-    public AntimatterShapelessRecipeBuilder setGroup(String groupIn) {
+    public AntimatterShapelessRecipeBuilder group(String groupIn) {
         this.group = groupIn;
         return this;
     }
@@ -112,27 +113,27 @@ public class AntimatterShapelessRecipeBuilder {
     /**
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
-    public void build(Consumer<FinishedRecipe> consumerIn) {
-        this.build(consumerIn, AntimatterPlatformUtils.getIdFromItem(this.result.getItem()));
+    public void save(Consumer<FinishedRecipe> consumerIn) {
+        this.save(consumerIn, AntimatterPlatformUtils.getIdFromItem(this.result.getItem()));
     }
 
     /**
-     * Builds this recipe into an {@link IFinishedRecipe}. Use {@link #build(Consumer)} if save is the same as the ID for
+     * Builds this recipe into an {@link IFinishedRecipe}. Use {@link #save(Consumer)} if save is the same as the ID for
      * the result.
      */
-    public void build(Consumer<FinishedRecipe> consumerIn, String save) {
+    public void save(Consumer<FinishedRecipe> consumerIn, String save) {
         ResourceLocation resourcelocation = AntimatterPlatformUtils.getIdFromItem(this.result.getItem());
         if (new ResourceLocation(save).equals(resourcelocation)) {
             throw new IllegalStateException("Shapeless Recipe " + save + " should remove its 'save' argument");
         } else {
-            this.build(consumerIn, new ResourceLocation(save));
+            this.save(consumerIn, new ResourceLocation(save));
         }
     }
 
     /**
      * Builds this recipe into an {@link IFinishedRecipe}.
      */
-    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
+    public void save(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
         this.validate(id);
         this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", new RecipeUnlockedTrigger.TriggerInstance(EntityPredicate.Composite.ANY, id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
         consumerIn.accept(new Result(id, this.result, this.group == null ? "" : this.group, this.ingredients, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
@@ -185,7 +186,7 @@ public class AntimatterShapelessRecipeBuilder {
         }
 
         public RecipeSerializer<?> getType() {
-            return RecipeSerializer.SHAPELESS_RECIPE;
+            return ContainerItemShapelessRecipe.INSTANCE;
         }
 
         /**

@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.recipe.container.ContainerItemShapedRecipe;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 
 
-public class MaterialRecipe extends ShapedRecipe {
+public class MaterialRecipe extends ContainerItemShapedRecipe {
 
     private final static Map<Provider, ResourceLocation> IDS = new Object2ObjectOpenHashMap<>();
 

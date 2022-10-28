@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
+import muramasa.antimatter.datagen.builder.AntimatterShapelessRecipeBuilder;
 import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.util.TagUtils;
@@ -13,7 +14,6 @@ import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -169,7 +169,11 @@ public class AntimatterRecipeProvider extends RecipeProvider {
     }
 
     public void shapeless(Consumer<FinishedRecipe> consumer, String recipeID, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, Object... inputs) {
-        ShapelessRecipeBuilder builder = ShapelessRecipeBuilder.shapeless(output.getItem(), output.getCount()).unlockedBy(criterionName, criterion)
+        shapeless(consumer, Ref.ID, recipeID, groupName, criterionName, criterion, output, inputs);
+    }
+
+    public void shapeless(Consumer<FinishedRecipe> consumer, String domain, String recipeID, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemStack output, Object... inputs) {
+        AntimatterShapelessRecipeBuilder builder = AntimatterShapelessRecipeBuilder.shapeless(output.getItem(), output.getCount()).unlockedBy(criterionName, criterion)
                 .group(groupName);
         for (Object input : inputs) {
             try {
@@ -184,7 +188,7 @@ public class AntimatterRecipeProvider extends RecipeProvider {
                 throw new RuntimeException("ERROR PARSING SHAPELESS RECIPE" + ex.getMessage());
             }
         }
-        builder.save(consumer, new ResourceLocation(Ref.ID, output.getItem().toString() + "_" + recipeID));
+        builder.save(consumer, new ResourceLocation(domain, output.getItem().toString() + "_" + recipeID));
     }
 
     public void addItemRecipe(Consumer<FinishedRecipe> consumer, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {
