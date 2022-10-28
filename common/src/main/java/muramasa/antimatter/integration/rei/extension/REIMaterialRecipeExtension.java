@@ -9,6 +9,7 @@ import me.shedaniel.rei.api.client.registry.display.DisplayCategoryView;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
+import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.plugin.client.categories.crafting.DefaultCraftingCategory;
 import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
@@ -16,6 +17,7 @@ import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCustomShapedDispl
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.tool.IAntimatterArmor;
@@ -57,6 +59,7 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
                 EntryStack<ItemStack> entryStack = e.cast();
                 ItemStack stack = entryStack.getValue();
                 if (isOutput){
+                    boolean isNull = false;
                     Map<String, Object> m = recipe.builder.getFromResult(stack);
                     int i = 0;
 
@@ -67,7 +70,9 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
                         }
                         String id = ing.getId();
                         Object mat = m.get(id);
-                        if (mat == null) {
+                        ingredientList.set(i, EntryIngredients.ofIngredient(ingredient));
+                        if (mat == null || mat == Data.NULL) {
+                            isNull = true;
                             i++;
                             continue;
                         }
@@ -77,7 +82,11 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
                         }
                         i++;
                     }
-                    outputList.set(0, EntryIngredient.of(EntryStacks.of(stack)));
+                    if (!isNull) {
+                        outputList.set(0, EntryIngredient.of(EntryStacks.of(stack)));
+                    } else {
+                        outputList.set(0, EntryIngredients.of(outputs.get(0)));
+                    }
                     /*IRecipeSlotBuilder outputSlot = recipeLayout.addSlot(RecipeIngredientRole.OUTPUT, 95, 19);
                     outputSlot.addTooltipCallback((a, b) -> {
                         if (a.isEmpty()) return;
