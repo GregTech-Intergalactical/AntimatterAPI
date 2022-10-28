@@ -327,7 +327,7 @@ public final class AntimatterAPI {
     }
 
     public static <T> void all(Class<T> c, String domain, Consumer<T> consumer) {
-        if (!allowRegistration()) {
+        if (allowRegistration()) {
             synchronized (OBJECTS) {
                 allInternal(c, domain).forEach(consumer);
             }
@@ -337,7 +337,7 @@ public final class AntimatterAPI {
     }
 
     public static <T> void all(Class<T> c, String[] domains, Consumer<T> consumer) {
-         if (!allowRegistration()) {
+         if (allowRegistration()) {
             synchronized (OBJECTS) {
                 for (String domain : domains) {
                     allInternal(c, domain).forEach(consumer);
