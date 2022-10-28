@@ -62,12 +62,15 @@ public class PropertyIngredient extends Ingredient {
         Stream<Value> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new MultiItemValue(TagUtils.nc(t).getValues().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new MultiItemValue((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
             boolean ok = t.has(tags);
             boolean types = true;
-            if (tools.size() > 0 && t.has(MaterialTags.TOOLS)) {
-                Set<AntimatterToolType> set = new HashSet<>(MaterialTags.TOOLS.getToolData(t).toolTypes());
-                for (Object2BooleanMap.Entry<AntimatterToolType> entry : tools.object2BooleanEntrySet()) {
-                    types &= entry.getBooleanValue() == set.contains(entry.getKey());
+            if (tools.size() > 0)
+                if (t.has(MaterialTags.TOOLS)) {
+                    Set<AntimatterToolType> set = new HashSet<>(MaterialTags.TOOLS.getToolData(t).toolTypes());
+                    for (Object2BooleanMap.Entry<AntimatterToolType> entry : tools.object2BooleanEntrySet()) {
+                        types &= entry.getBooleanValue() == set.contains(entry.getKey());
+                    }
+                } else {
+                    types = false;
                 }
-            }
             if (inverse) {
                 return !ok && types;
             }
