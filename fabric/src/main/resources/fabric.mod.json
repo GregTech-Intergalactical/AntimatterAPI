@@ -24,6 +24,7 @@
   "license": "LGPL-3.0",
   "mixins": [
     "antimatter.mixins.json",
+    "antimatter.rei.mixins.json",
     "antimatter-fabric.mixins.json"
   ],
   "accessWidener" : "antimatter2.accesswidener",

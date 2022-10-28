@@ -46,8 +46,8 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
             Object r = optionalO.get();
             if (display.getOutputEntries().size() > 1) return lastView;
             if (r instanceof MaterialRecipe recipe){
-                List<EntryIngredient> ingredientList = new ArrayList<>(display.getInputEntries());
-                List<EntryIngredient> outputList = new ArrayList<>(display.getOutputEntries());
+                List<EntryIngredient> ingredientList = display.getInputEntries();
+                List<EntryIngredient> outputList = display.getOutputEntries();
                 List<ItemStack> outputs = recipe.outputs;
                 boolean isOutput = displayScreen.getIngredientsToNotice().isEmpty();
                 List<EntryStack<?>> list = isOutput ? displayScreen.getResultsToNotice() : displayScreen.getIngredientsToNotice();
@@ -146,7 +146,7 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
                         outputSlot.addIngredients(VanillaTypes.ITEM, outputs);
                     }*/
                 }
-                display = new DefaultCustomShapedDisplay(display.getDisplayLocation().orElse(null), recipe, ingredientList, outputList, display.getWidth(), display.getHeight());
+                //display = new DefaultCustomShapedDisplay(display.getDisplayLocation().orElse(null), recipe, ingredientList, outputList, display.getWidth(), display.getHeight());
             }
 
         }
