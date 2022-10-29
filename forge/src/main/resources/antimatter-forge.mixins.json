@@ -7,7 +7,9 @@
     "MaterialSerializerMixin",
     "AntimatterRecipeSerializerMixin",
     "RecipeIngredientMixin",
-    "PropertyIngredientMixin"
+    "PropertyIngredientMixin",
+    "ContainerShapedSerializerMixin",
+    "ContainerShapelessSerializerMixin"
   ],
   "minVersion": "0.8"
 }
