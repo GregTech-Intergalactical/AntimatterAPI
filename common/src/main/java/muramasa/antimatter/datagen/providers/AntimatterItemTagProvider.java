@@ -15,6 +15,7 @@ import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.Wire;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.data.tags.TagsProvider;
@@ -22,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -103,6 +105,12 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
                     this.tag(t.getTag()).add(((Supplier<Item>)i).get()).replace(replace);
                 });
             });
+            //TODO move this to a felt api module
+            if (AntimatterPlatformUtils.isFabric()){
+                for (DyeColor dyeColor : DyeColor.values()){
+                    this.tag(TagUtils.getForgelikeItemTag("dyes/" + dyeColor.getName())).add(Registry.ITEM.get(new ResourceLocation(dyeColor.getName() + "_dye")));
+                }
+            }
             processSubtags();
         }
 
