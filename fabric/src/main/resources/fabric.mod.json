@@ -27,7 +27,7 @@
     "antimatter.rei.mixins.json",
     "antimatter-fabric.mixins.json"
   ],
-  "accessWidener" : "antimatter2.accesswidener",
+  "accessWidener" : "antimatter.accesswidener",
   "depends": {
     "fabricloader": ">=0.14.0",
     "fabric": "*",

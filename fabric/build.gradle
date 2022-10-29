@@ -75,7 +75,7 @@ task copyAccessWidener(type: Copy) {
 }
 
 processResources {
-    //dependsOn copyAccessWidener
+    dependsOn copyAccessWidener
 
     def toReplace = [
             "version"             : project.version
@@ -87,9 +87,9 @@ processResources {
     }
 }
 sourcesJar {
-    def commonSources = project(":antimatter-common").sourcesJar
-    dependsOn commonSources
-    from commonSources.archiveFile.map { zipTree(it) }
+    from(project(':antimatter-common').sourceSets.main.allSource) {
+        exclude("antimatter.accesswidener") // duplicate on fabric, unneeded on forge
+    }
 }
 
 publishing {
