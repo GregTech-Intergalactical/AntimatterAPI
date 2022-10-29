@@ -48,6 +48,9 @@
     ],
     "antimatter": [
       "muramasa.antimatter.Antimatter"
+    ],
+    "preLaunch": [
+      "muramasa.antimatter.fabric.AntimatterPreInitializer"
     ]
   }
 }
