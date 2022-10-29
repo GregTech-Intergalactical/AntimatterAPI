@@ -13,6 +13,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialTypeItem;
@@ -180,30 +181,30 @@ public class PropertyIngredient extends Ingredient {
         return obj;
     }
 
-   /* @Override
-    public boolean test(@Nullable ItemStack p_test_1_) {
-        if (p_test_1_ == null || p_test_1_.isEmpty()) return false;
+    @Override
+    public boolean test(@Nullable ItemStack test) {
+        if (test == null || test.isEmpty()) return false;
         if (type.size() > 0) {
-            if (p_test_1_.getItem() instanceof MaterialItem) {
-                MaterialItem item = ((MaterialItem) p_test_1_.getItem());
+            if (test.getItem() instanceof MaterialItem) {
+                MaterialItem item = ((MaterialItem) test.getItem());
                 if (item.getType() instanceof MaterialTypeItem) {
                     return this.type.contains((MaterialTypeItem<?>)item.getType());
                 }
             }
             for (MaterialTypeItem<?> materialTypeItem : getTypes()) {
-                if (materialTypeItem.tryMaterialFromItem(p_test_1_) != null) {
+                if (materialTypeItem.getMaterialFromStack(test) != null) {
                     return true;
                 }
             }
         } else {
-            for (ITag.INamedTag<Item> itemTag : this.itemTags) {
-                if (itemTag.contains(p_test_1_.getItem())) {
+            for (TagKey<Item> itemTag : this.itemTags) {
+                if (test.is(itemTag)) {
                     return true;
                 }
             }
         }
         return false;
-    }*/
+    }
 
     public static Builder builder(String id) {
         return new Builder(id);
