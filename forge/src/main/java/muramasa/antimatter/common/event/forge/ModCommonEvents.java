@@ -5,6 +5,8 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import net.devtech.arrp.api.RRPEvent;
 import net.devtech.arrp.api.RRPInitEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -16,6 +18,7 @@ public class ModCommonEvents {
         AntimatterConfig.onModConfigEvent(e.getConfig());
     }
 
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onRRPInit(RRPInitEvent event){
         AntimatterDynamics.runAssetProvidersDynamically();

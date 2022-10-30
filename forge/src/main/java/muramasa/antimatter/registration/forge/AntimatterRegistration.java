@@ -1,6 +1,7 @@
 package muramasa.antimatter.registration.forge;
 
 import com.google.gson.JsonObject;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.MaterialDataInit;
@@ -36,13 +37,17 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.List;
 
+@Mod.EventBusSubscriber(modid = Ref.ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class AntimatterRegistration {
 
     public static final IIngredientSerializer<PropertyIngredient> PROPERTY_SERIALIZER = new IIngredientSerializer<>() {
@@ -82,16 +87,26 @@ public final class AntimatterRegistration {
     @SubscribeEvent
     public static void onRegister(final RegistryEvent.Register<?> e) {
         final String domain = ModLoadingContext.get().getActiveNamespace();
-        onRegister(domain, e);
-        if (domain.equals(Ref.ID)) {
-            onRegister(Ref.MOD_KJS, e);
-            onRegister(Ref.SHARED_ID, e);
+        List<IAntimatterRegistrar> list2 = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).toList();
+        if (list2.size() < 4) {
+            Antimatter.LOGGER.info("Mod ID: " + domain + " & event: " + e.getRegistry().getRegistryName());
         }
+        onRegister(domain, e);
+        onRegister(Ref.SHARED_ID, e);
+        List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).toList();
+        list.forEach(r -> {
+            onRegister(r.getId(), e);
+        });
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static void onRegister(final String domain, final RegistryEvent.Register<?> e) {
-
+        ModContainer previous = ModLoadingContext.get().getActiveContainer();
+        ModContainer newContainer = ModList.get().getModContainerById(domain).orElse(null);
+        if (newContainer == null) return;
+        if (!domain.equals(Ref.ID)){
+            ModLoadingContext.get().setActiveContainer(newContainer);
+        }
         if (domain.equals(Ref.ID)) {
             List<IAntimatterRegistrar> list = AntimatterAPI.all(IAntimatterRegistrar.class).stream().sorted((c1, c2) -> Integer.compare(c2.getPriority(), c1.getPriority())).toList();
             if (e.getRegistry() == ForgeRegistries.BLOCKS) {
@@ -168,6 +183,9 @@ public final class AntimatterRegistration {
                 if (t.asFeature().getRegistryName() == null) t.asFeature().setRegistryName(d, i);
                 ((IForgeRegistry) e.getRegistry()).register(t.asFeature());
             });
+        }
+        if (!domain.equals(Ref.ID)){
+            ModLoadingContext.get().setActiveContainer(previous);
         }
     }
 

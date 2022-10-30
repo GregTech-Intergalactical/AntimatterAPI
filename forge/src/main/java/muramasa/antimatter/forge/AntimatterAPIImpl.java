@@ -18,7 +18,7 @@ public class AntimatterAPIImpl {
     }
 
     public static void registerEventBus(){
-        FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
+        //FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
     }
 
     public static boolean isRegistryEntry(Object object, String domain){
