@@ -269,7 +269,7 @@ public final class AntimatterAPI {
     private static <T> Stream<T> allInternal(Class<T> c) {
         Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
         return map == null ? Stream.empty()
-                : map.values().stream().flatMap(t -> t.map(Stream::of, right -> right.values().stream())).map(c::cast);
+                : new Object2ObjectArrayMap<>(map).values().stream().flatMap(t -> t.map(Stream::of, right -> right.values().stream())).map(c::cast);
     }
 
     private static <T> Stream<T> allInternal(Class<T> c, @Nonnull String domain) {
@@ -282,7 +282,7 @@ public final class AntimatterAPI {
         synchronized (OBJECTS){
             Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
             if (map != null) {
-                map.forEach((d, e) -> {
+                new Object2ObjectArrayMap<>(map).forEach((d, e) -> {
                     if (e.left().isPresent()) {
                         e.left().ifPresent(o -> consumer.accept(c.cast(o), o.getDomain(), o.getId()));
                     } else {
@@ -299,7 +299,7 @@ public final class AntimatterAPI {
         synchronized (OBJECTS){
             Map<String, Either<ISharedAntimatterObject, Map<String, Object>>> map = OBJECTS.get(c);
             if (map != null) {
-                map.forEach((d, e) -> {
+                new Object2ObjectArrayMap<>(map).forEach((d, e) -> {
                     if (e.left().isPresent()) {
                         if (domain.equals(Ref.SHARED_ID)) {
                             e.left().ifPresent(o -> consumer.accept(c.cast(o), o.getDomain(), o.getId()));
