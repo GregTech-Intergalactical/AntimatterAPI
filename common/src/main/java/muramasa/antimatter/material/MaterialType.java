@@ -122,6 +122,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
 
     public MaterialType<T> unSplitName() {
         splitName = false;
+        this.tagMap.put(this, tagFromString(Utils.getConventionalMaterialType(this)));
         return this;
     }
 

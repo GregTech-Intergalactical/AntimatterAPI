@@ -446,7 +446,7 @@ public class Data {
         DRILLBIT.setHidden().unSplitName();
         CHAINSAWBIT.setHidden().unSplitName();
         WRENCHBIT.setHidden().unSplitName();
-        DRILLBIT.setHidden().unSplitName();
+        BUZZSAW_BLADE.setHidden().unSplitName();
 
         if (side == Side.CLIENT) {
             clientInit();
