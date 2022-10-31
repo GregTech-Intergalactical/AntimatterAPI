@@ -67,6 +67,9 @@ public class MaterialTags {
 
     public static final ListMaterialTag<Material> BYPRODUCTS = new ListMaterialTag<>("byproducts");
 
+    public static final ListMaterialTag<FluidProduct> DISTILL_INTO = new ListMaterialTag<>("distill_into");
+
+
     public static final BlockDropMaterialTag<BlockOre> CUSTOM_ORE_DROPS = new BlockDropMaterialTag<>("custom_ore_drops");
 
     public static final BlockDropMaterialTag<BlockOreStone> CUSTOM_ORE_STONE_DROPS = new BlockDropMaterialTag<>("custom_ore_stone_drops");

@@ -6,6 +6,7 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.material.ArmorMaterialTag;
+import muramasa.antimatter.material.FluidProduct;
 import muramasa.antimatter.material.HandleMaterialTag;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
@@ -28,6 +29,7 @@ import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTags.ARMOR;
+import static muramasa.antimatter.material.MaterialTags.DISTILL_INTO;
 import static muramasa.antimatter.material.MaterialTags.HANDLE;
 import static muramasa.antimatter.material.MaterialTags.METAL;
 
@@ -137,10 +139,15 @@ public class MaterialEvent {
         return asFluid(fuelPower, Math.max(meltingPoint, 295));
     }
 
-    public MaterialEvent asFluid(int fuelPower, int temp) {
+    public MaterialEvent asFluid(int fuelPower, int temp) {return asFluid(fuelPower, temp, false,null,0);}
+
+    public MaterialEvent asFluid(int fuelPower, int temp, boolean canDistill, FluidProduct[] distillationProducts, int distillationAmount) {
         flags(LIQUID);
         MaterialTags.FUEL_POWER.add(this.material, fuelPower);
         MaterialTags.LIQUID_TEMPERATURE.add(this.material, temp);
+        if (canDistill){
+            DISTILL_INTO.add(this.material, Arrays.stream(distillationProducts).toList());
+        }
         return this;
     }
 
@@ -153,10 +160,17 @@ public class MaterialEvent {
         return asGas(fuelPower, Math.max(meltingPoint, 295));
     }
 
-    public MaterialEvent asGas(int fuelPower, int temp) {
+    public MaterialEvent asGas(int fuelPower,int temp) {
+        return asGas(fuelPower, temp,false,null,0);
+    }
+
+    public MaterialEvent asGas(int fuelPower, int temp, boolean canDistill, FluidProduct[] distillationProducts, int distillationAmount) {
         flags(GAS);
         MaterialTags.FUEL_POWER.add(this.material, fuelPower);
         MaterialTags.GAS_TEMPERATURE.add(this.material, temp);
+        if (canDistill){
+            DISTILL_INTO.add(this.material, Arrays.stream(distillationProducts).toList());
+        }
         return this;
     }
 
@@ -165,9 +179,17 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asPlasma(int fuelPower) {
-        asGas(fuelPower);
+        int meltingPoint = this.has(MaterialTags.MELTING_POINT) ? MaterialTags.MELTING_POINT.getInt(this.material) : 295;
+        return asPlasma(fuelPower, meltingPoint);
+    }
+
+    public MaterialEvent asPlasma(int fuelPower,int temp) {
+        return asPlasma(fuelPower,temp,false,null,0);
+    }
+
+    public MaterialEvent asPlasma(int fuelPower, int temp, boolean canDistill, FluidProduct[] distillationProducts, int distillationAmount) {
         flags(PLASMA);
-        return this;
+        return asGas(fuelPower,temp,canDistill,distillationProducts,distillationAmount);
     }
 
     public MaterialEvent harvestLevel(int harvestLevel) {
