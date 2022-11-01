@@ -59,6 +59,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
+import tesseract.TesseractGraphWrappers;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 
@@ -447,7 +448,7 @@ public class Utils {
                         continue;
                     }
                     fluid = fluid.copy();
-                    long toDrain = Math.min(cap, fluid.getAmount());
+                    long toDrain = Math.min(cap * TesseractGraphWrappers.dropletMultiplier, fluid.getRealAmount());
                     fluid.setAmount(toDrain);
                     toInsert = from.drain(fluid, SIMULATE);
                 } else {
