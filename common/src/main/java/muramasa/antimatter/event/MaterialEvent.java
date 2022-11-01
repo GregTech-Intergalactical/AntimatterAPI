@@ -28,10 +28,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.MaterialTags.ARMOR;
-import static muramasa.antimatter.material.MaterialTags.DISTILL_INTO;
-import static muramasa.antimatter.material.MaterialTags.HANDLE;
-import static muramasa.antimatter.material.MaterialTags.METAL;
+import static muramasa.antimatter.material.MaterialTags.*;
 
 public class MaterialEvent {
     private Material material = Data.NULL;
@@ -146,6 +143,7 @@ public class MaterialEvent {
         MaterialTags.FUEL_POWER.add(this.material, fuelPower);
         MaterialTags.LIQUID_TEMPERATURE.add(this.material, temp);
         if (canDistill){
+            DISTILLATION_FLUID_INPUT_AMOUNT.add(this.material, distillationAmount);
             DISTILL_INTO.add(this.material, Arrays.stream(distillationProducts).toList());
         }
         return this;
@@ -169,6 +167,7 @@ public class MaterialEvent {
         MaterialTags.FUEL_POWER.add(this.material, fuelPower);
         MaterialTags.GAS_TEMPERATURE.add(this.material, temp);
         if (canDistill){
+            DISTILLATION_FLUID_INPUT_AMOUNT.add(this.material, distillationAmount);
             DISTILL_INTO.add(this.material, Arrays.stream(distillationProducts).toList());
         }
         return this;
