@@ -273,20 +273,9 @@ public abstract class Widget implements IGuiElement {
 
 
     @Environment(EnvType.CLIENT)
-    protected void drawHoverText(List<? extends FormattedText> textLines, int x, int y, Font font, PoseStack matrixStack) {
-        //TODO figure out how to covert FormattedText to Component
-        //this.gui.screen.renderComponentTooltip(matrixStack, textLines, x, y, ItemStack.EMPTY);
-       // renderTooltip(ItemStack.EMPTY, matrixStack, textLines, x, y, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight(), -1, font);
+    protected void drawHoverText(List<Component> textLines, int x, int y, Font font, PoseStack matrixStack) {
+        this.gui.screen.renderComponentTooltip(matrixStack, textLines, x, y);
     }
-
-    /*public void renderComponentTooltip(PoseStack poseStack, List<? extends FormattedText> tooltips, int mouseX, int mouseY, @Nullable Font font, ItemStack stack) {
-        this.tooltipFont = font;
-        this.tooltipStack = stack;
-        List<ClientTooltipComponent> components = ForgeHooksClient.gatherTooltipComponents(stack, tooltips, mouseX, this.width, this.height, this.tooltipFont, this.font);
-        this.renderTooltipInternal(poseStack, components, mouseX, mouseY);
-        this.tooltipFont = null;
-        this.tooltipStack = ItemStack.EMPTY;
-    }*/
 
     @Environment(EnvType.CLIENT)
     public int drawText(PoseStack matrixStack, Component text, float x, float y, int color) {
