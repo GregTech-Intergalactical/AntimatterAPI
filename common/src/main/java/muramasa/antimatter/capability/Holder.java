@@ -18,7 +18,6 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
     private final Dispatch dispatch;
     public final Capability<?> cap;
     private final LazyOptional[] sided;
-    private LazyOptional<T> opt = LazyOptional.empty();
     private List<Consumer<? super T>> consumers = new ObjectArrayList<>();
     private Supplier<? extends T> supplier;
     private T resolved;
@@ -85,11 +84,11 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         return resolved;
     }
 
-    public LazyOptional<? extends T> nullSide() {
-        if (!opt.isPresent()) {
-            opt = isPresent() ? LazyOptional.of(this::get) : LazyOptional.empty();
+    public LazyOptional<? extends V> nullSide() {
+        if (resolved == null) {
+            get();
         }
-        return opt;
+        return resolved.forNullSide();
     }
 
     public T orElse(T orElse) {
@@ -156,7 +155,6 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
     }
 
     public LazyOptional<? extends V> side(Direction side) {
-        if (side == null) return nullSide().cast();
         if (!isPresent()) {
             return LazyOptional.empty();
         }
@@ -166,7 +164,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         int index = side == null ? 6 : side.get3DDataValue();
         LazyOptional<? extends V> t = sided[index];
         if (!t.isPresent()) {
-            sided[index] = (t = (side == null ? resolved.forNullSide() : resolved.forSide(side)));
+            sided[index] = (t = (side == null ? nullSide() : resolved.forSide(side)));
         }
         return t;
     }
