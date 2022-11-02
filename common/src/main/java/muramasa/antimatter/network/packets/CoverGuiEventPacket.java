@@ -1,15 +1,19 @@
 package muramasa.antimatter.network.packets;
 
+import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.util.LazyOptional;
 
 public class CoverGuiEventPacket extends AbstractGuiEventPacket {
     Direction facing;
@@ -29,19 +33,6 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
         return new CoverGuiEventPacket(IGuiEvent.IGuiEventFactory.read(buf), buf.readBlockPos(), buf.readEnum(Direction.class));
     }
 
-    public static void handle(final CoverGuiEventPacket msg, ServerPlayer sender){
-        if (sender != null) {
-            BlockEntity tile = Utils.getTile(sender.getLevel(), msg.pos);
-            if (tile instanceof TileEntityMachine) {
-                if (msg.event.forward()) {
-                    ((TileEntityMachine<?>) tile).coverHandler.ifPresent(ch -> ch.get(msg.facing).onGuiEvent(msg.event, sender));
-                } else {
-                    msg.event.handle(sender, ((IAntimatterContainer) sender.containerMenu).source());
-                }
-            }
-        }
-    }
-
     @Override
     public void encode(FriendlyByteBuf buf) {
         encodeStatic(this, buf);
@@ -51,12 +42,11 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
     public void handleClient(ServerPlayer sender) {
         if (sender != null) {
             BlockEntity tile = Utils.getTile(sender.getLevel(), this.pos);
-            if (tile instanceof TileEntityMachine) {
-                if (this.event.forward()) {
-                    ((TileEntityMachine<?>) tile).coverHandler.ifPresent(ch -> ch.get(this.facing).onGuiEvent(this.event, sender));
-                } else {
-                    this.event.handle(sender, ((IAntimatterContainer) sender.containerMenu).source());
-                }
+            LazyOptional<ICoverHandler<?>> coverHandler = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), this.facing);
+            if (this.event.forward()) {
+                coverHandler.ifPresent(ch -> ch.get(this.facing).onGuiEvent(this.event, sender));
+            } else {
+                this.event.handle(sender, ((IAntimatterContainer) sender.containerMenu).source());
             }
         }
     }
