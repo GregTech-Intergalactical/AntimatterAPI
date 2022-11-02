@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CoverModeHandlerWidget  extends Widget {
+    ICoverMode coverMode;
     public CoverModeHandlerWidget(@NotNull GuiInstance gui, @Nullable IGuiElement parent) {
         super(gui, parent);
     }
@@ -19,16 +20,15 @@ public class CoverModeHandlerWidget  extends Widget {
     public void init() {
         super.init();
         if (gui.handler instanceof ICoverModeHandler coverModeHandler){
-            gui.syncInt(coverModeHandler::coverModeToInt, coverModeHandler::setCoverMode, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
+            gui.syncInt(coverModeHandler::coverModeToInt, i -> coverMode = coverModeHandler.getCoverMode(i), ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
         }
 
     }
 
     @Override
     public void render(PoseStack matrixStack, double mouseX, double mouseY, float partialTicks) {
-        if (gui.handler instanceof ICoverModeHandler coverModeHandler) {
-            ICoverMode mode = coverModeHandler.getCoverMode();
-            drawTexture(matrixStack, gui.handler.getGuiTexture(), realX() + mode.getX(), realY() + mode.getY(), coverModeHandler.getOverlayX(), coverModeHandler.getOverlayY(), 18, 18);
+        if (gui.handler instanceof ICoverModeHandler coverModeHandler && coverMode != null) {
+            drawTexture(matrixStack, gui.handler.getGuiTexture(), realX() + coverMode.getX(), realY() + coverMode.getY(), coverModeHandler.getOverlayX(), coverModeHandler.getOverlayY(), 18, 18);
         }
     }
 

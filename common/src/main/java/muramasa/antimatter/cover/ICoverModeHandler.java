@@ -4,7 +4,7 @@ public interface ICoverModeHandler {
     ICoverMode getCoverMode();
      int coverModeToInt();
 
-     void setCoverMode(int index);
+     ICoverMode getCoverMode(int index);
 
     default int getOverlayX() {
         return 176;
