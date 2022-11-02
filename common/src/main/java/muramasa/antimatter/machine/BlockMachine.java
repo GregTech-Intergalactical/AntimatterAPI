@@ -199,9 +199,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                             }
                         }
                     } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
-                        ICover instance = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(h -> h.get(hit.getDirection())).orElse(ICover.empty);
+                        ICover instance = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                         if (!player.isCrouching()) {
-                            if (!instance.isEmpty() && instance.openGui(player, hit.getDirection())) {
+                            if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {
                                 Utils.damageStack(stack,hand, player);
                                 return InteractionResult.SUCCESS;
                             }
