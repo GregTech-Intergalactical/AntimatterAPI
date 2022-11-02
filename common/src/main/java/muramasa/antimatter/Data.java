@@ -357,7 +357,7 @@ public class Data {
 
     public static MenuHandlerPipe<?> PIPE_MENU_HANDLER = new MenuHandlerPipe<>(Ref.ID, "container_pipe");
 
-    public static MenuHandlerCover<ContainerCover> COVER_MENU_HANDLER = new MenuHandlerCover<ContainerCover>(Ref.ID, "container_cover") {
+    public static MenuHandlerCover<ContainerCover> COVER_MENU_HANDLER = new MenuHandlerCover<>(Ref.ID, "container_cover") {
         @Override
         public ContainerCover getMenu(IGuiHandler tile, Inventory playerInv, int windowId) {
             return new ContainerCover((ICover) tile, playerInv, this, windowId);
@@ -368,6 +368,11 @@ public class Data {
         @Override
         public ContainerMultiMachine getMenu(IGuiHandler tile, Inventory playerInv, int windowId) {
             return tile instanceof TileEntityMultiMachine ? new ContainerMultiMachine((TileEntityMultiMachine<?>) tile, playerInv, this, windowId) : null;
+        }
+
+        @Override
+        public String screenID() {
+            return "multi";
         }
     };
 

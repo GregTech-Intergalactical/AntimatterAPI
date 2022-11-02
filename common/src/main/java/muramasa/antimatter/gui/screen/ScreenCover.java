@@ -3,6 +3,7 @@ package muramasa.antimatter.gui.screen;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.cover.ICoverMode;
 import muramasa.antimatter.cover.ICoverModeHandler;
+import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerCover;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
@@ -39,11 +40,17 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
 
     @Override
     protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY) {
-        drawTexture(stack, gui, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        this.renderBackground(stack);
+        for (Widget widget : menu.source().widgetsToRender()) {
+            if (!widget.isEnabled() || !widget.isVisible()) continue;
+            if (widget.depth() >= this.depth()) return;
+            widget.render(stack, mouseX, mouseY, Minecraft.getInstance().getFrameTime());
+        }
         if (container.getCover() instanceof ICoverModeHandler) {
             ICoverModeHandler coverModeHandler = (ICoverModeHandler) container.getCover();
             ICoverMode mode = coverModeHandler.getCoverMode();
             drawTexture(stack, gui, leftPos + mode.getX(), topPos + mode.getY(), coverModeHandler.getOverlayX(), coverModeHandler.getOverlayY(), 18, 18);
         }
+
     }
 }

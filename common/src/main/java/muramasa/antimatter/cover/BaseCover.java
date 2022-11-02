@@ -8,6 +8,8 @@ import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
+import muramasa.antimatter.gui.widget.CoverModeHandlerWidget;
+import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
@@ -64,8 +66,12 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         if (factory.hasGui()) {
             this.gui = new GuiData(this, factory.getMenuHandler());
             gui.setEnablePlayerSlots(true);
-            this.addGuiCallback(t -> t
-                    .addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight())));
+            this.addGuiCallback(t -> {
+                t.addWidget(BackgroundWidget.build(t.handler.getGuiTexture(), t.handler.guiSize(), t.handler.guiHeight()));
+                if (BaseCover.this instanceof ICoverModeHandler){
+                    t.addWidget(CoverModeHandlerWidget.build());
+                }
+            });
         } else {
             this.gui = null;
         }
