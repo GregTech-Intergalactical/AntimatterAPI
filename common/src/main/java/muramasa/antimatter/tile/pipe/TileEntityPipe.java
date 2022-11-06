@@ -248,6 +248,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
      * @return if the tile was updated.
      */
     public boolean onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, ICover old, ICover stack) {
+        //disable cover nodes for now
+        if (true) return true;
         if (stack.blocksCapability(getCapability(), side)) {
             this.clearConnection(side);
         }
