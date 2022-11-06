@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> extends MachineFluidHandler<T> {
@@ -39,7 +40,7 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
     }
 
     protected void cacheInputs() {
-        inputs = tile.getComponents("hatch_fluid_input").stream().map(IComponentHandler::getFluidHandler).filter(LazyOptional::isPresent).map(t -> (t.resolve().get())).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        inputs = tile.getComponents("hatch_fluid_input").stream().map(IComponentHandler::getFluidHandler).map(Optional::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         INPUT_TO_HANDLER.clear();
         INPUT_START.clear();
@@ -55,7 +56,7 @@ public class MultiMachineFluidHandler<T extends TileEntityMultiMachine<T>> exten
     }
 
     protected void cacheOutputs() {
-        outputs = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).filter(LazyOptional::isPresent).map(t -> (t.resolve().get())).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
+        outputs = tile.getComponents("hatch_fluid_output").stream().map(IComponentHandler::getFluidHandler).map(Optional::get).toArray(MachineFluidHandler<?>[]::new);//this::allocateExtraSize);
         // handlers[handlers.length-1] = this.inputWrapper;
         OUTPUT_TO_HANDLER.clear();
         OUTPUT_START.clear();

@@ -4,6 +4,8 @@ import muramasa.antimatter.capability.item.ITrackedHandler;
 import muramasa.antimatter.capability.item.MultiTrackedItemHandler;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import java.util.List;
@@ -42,13 +44,13 @@ public class MultiMachineItemHandler<T extends TileEntityMultiMachine<T>> extend
     }
 
     private ITrackedHandler calculateInputs() {
-        List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_input").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getInputHandler)).map(Optional::get).collect(Collectors.toList());//this::allocateExtraSize);
+        List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_input").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getInputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
         handlers.add(super.getInputHandler());
         return new MultiTrackedItemHandler(handlers.toArray(new IItemHandlerModifiable[0]));
     }
 
     private ITrackedHandler calculateOutputs() {
-        List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_output").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().map(MachineItemHandler::getOutputHandler)).map(Optional::get).collect(Collectors.toList());//this::allocateExtraSize);
+        List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_output").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getOutputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
         handlers.add(super.getOutputHandler());
         return new MultiTrackedItemHandler(handlers.toArray(new IItemHandlerModifiable[0]));
     }

@@ -9,9 +9,13 @@ import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 public class ComponentHandler<T extends TileEntityBase<T>> implements IComponentHandler {
@@ -40,20 +44,20 @@ public class ComponentHandler<T extends TileEntityBase<T>> implements IComponent
 
     @Nonnull
     @Override
-    public LazyOptional<MachineItemHandler<?>> getItemHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).itemHandler.nullSide() : LazyOptional.empty();
+    public Optional<MachineItemHandler<?>> getItemHandler() {
+        return componentTile instanceof TileEntityMachine ? Optional.of((((TileEntityMachine<?>) componentTile).itemHandler.get())) : Optional.empty();
     }
 
     @Nonnull
     @Override
-    public LazyOptional<MachineFluidHandler<?>> getFluidHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).fluidHandler.nullSide() : LazyOptional.empty();
+    public Optional<MachineFluidHandler<?>> getFluidHandler() {
+        return componentTile instanceof TileEntityMachine ? Optional.of((((TileEntityMachine<?>) componentTile).fluidHandler.get())) : Optional.empty();
     }
 
     @Nonnull
     @Override
-    public LazyOptional<MachineEnergyHandler<?>> getEnergyHandler() {
-        return componentTile instanceof TileEntityMachine ? ((TileEntityMachine) componentTile).energyHandler.nullSide() : LazyOptional.empty();
+    public Optional<MachineEnergyHandler<?>> getEnergyHandler() {
+        return componentTile instanceof TileEntityMachine ? Optional.of((((TileEntityMachine<?>) componentTile).energyHandler.get())) : Optional.empty();
     }
 
     @Override
