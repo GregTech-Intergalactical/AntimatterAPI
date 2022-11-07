@@ -91,7 +91,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     }
 
     public boolean isConnector() {
-        return !this.getBlockState().getValue(BlockPipe.TICKING);
+        //TODO: Disable this feature for now
+        return true;//!this.getBlockState().getValue(BlockPipe.TICKING);
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
@@ -248,16 +249,14 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
      * @return if the tile was updated.
      */
     public boolean onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, ICover old, ICover stack) {
-        //disable cover nodes for now
-        if (true) return true;
         if (stack.blocksCapability(getCapability(), side)) {
             this.clearConnection(side);
         }
-        if (!this.isConnector()) {
+        if (this.getBlockState().getValue(BlockPipe.TICKING)) {
             if (remove && !hasNonEmpty) {
                 CompoundTag nbt = this.saveWithFullMetadata();
                 level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.TICKING, false), 11);
-                TileEntityPipe pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
+                TileEntityPipe<?> pipe = (TileEntityPipe<?>) level.getBlockEntity(getBlockPos());
                 if (pipe != this) {
                     pipe.load(nbt);
                 }
@@ -267,7 +266,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
             //set this to be covered.
             CompoundTag nbt = this.saveWithFullMetadata();
             level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.TICKING, true), 11);
-            TileEntityPipe<?> pipe = (TileEntityPipe) level.getBlockEntity(getBlockPos());
+            TileEntityPipe<?> pipe = (TileEntityPipe<?>) level.getBlockEntity(getBlockPos());
             if (pipe != this) {
                 pipe.load(nbt);
             }
