@@ -324,7 +324,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         if (side == null) return LazyOptional.empty();
         //if (!this.connects(side)) return LazyOptional.empty();
         if (cap == getCapability()) {
-            return pipeCapHolder.side(null).cast();
+            return pipeCapHolder.side(side).cast();
         }
         if (TesseractPlatformUtils.isFeCap(cap) && this instanceof TileEntityCable<T>){
             return pipeCapHolder.side(side).cast();
