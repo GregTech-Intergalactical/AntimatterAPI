@@ -53,6 +53,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.properties.Property;
 
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -75,6 +76,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      **/
     protected BlockEntityType<? extends TileEntityMachine<?>> tileType;
     protected TileEntityBase.BlockEntitySupplier<TileEntityMachine<?>, T> tileFunc = TileEntityMachine::new;
+    protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
+    protected Function<Tier, Item> itemBlockFunc = tier -> BlockItem.BY_BLOCK.get(AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), getDomain()));
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
@@ -293,7 +296,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     protected Block getBlock(Machine<T> type, Tier tier) {
-        return new BlockMachine(type, tier);
+        return blockFunc.apply(type, tier);
     }
 
     public BlockMachine getBlockState(Tier tier) {
@@ -308,7 +311,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), getDomain()));
+        return itemBlockFunc.apply(tier);
     }
 
     /**
@@ -379,6 +382,16 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setTile(TileEntityBase.BlockEntitySupplier<TileEntityMachine<?>, T> func) {
         this.tileFunc = func;
+        return (T) this;
+    }
+
+    public T setBlock(BiFunction<Machine<T>, Tier, BlockMachine> function){
+        this.blockFunc = function;
+        return (T) this;
+    }
+
+    public T setItemBlock(Function<Tier, Item> function){
+        this.itemBlockFunc = function;
         return (T) this;
     }
 

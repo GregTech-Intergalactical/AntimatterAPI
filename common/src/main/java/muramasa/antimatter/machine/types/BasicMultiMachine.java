@@ -27,24 +27,17 @@ import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.MULTI;
 
 public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T> {
-    @Override
-    protected Block getBlock(Machine<T> type, Tier tier) {
-        return new BlockMultiMachine(type, tier);
-    }
 
     public BlockMachine getBlockState(Tier tier) {
         if (tileType == null) return null;
         return AntimatterAPI.get(BlockMultiMachine.class, this.getId() + "_" + tier.getId(), this.getDomain());
     }
 
-    @Override
-    public Item getItem(Tier tier) {
-        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(BlockMultiMachine.class, this.getId() + "_" + tier.getId(), this.getDomain()));
-    }
-
     public BasicMultiMachine(String domain, String name) {
         super(domain, name);
         setTile(TileEntityBasicMultiMachine::new);
+        setBlock(BlockMultiMachine::new);
+        setItemBlock(tier -> BlockItem.BY_BLOCK.get(AntimatterAPI.get(BlockMultiMachine.class, this.getId() + "_" + tier.getId(), this.getDomain())));
         addFlags(MULTI, COVERABLE);
         setClientTick();
         custom();
