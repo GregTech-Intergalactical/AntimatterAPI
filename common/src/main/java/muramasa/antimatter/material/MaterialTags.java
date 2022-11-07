@@ -33,6 +33,7 @@ public class MaterialTags {
     public static final MaterialTag METAL = new MaterialTag("metal");
     public static final MaterialTag ELEMENTAL = new MaterialTag("elemental");
     public static final MaterialTag FLINT = new MaterialTag("flint");
+    public static final MaterialTag MOLTEN = new MaterialTag("molten");
 
     public static final IntRangeMaterialTag EXP_RANGE = new IntRangeMaterialTag("exp_range");
     /**

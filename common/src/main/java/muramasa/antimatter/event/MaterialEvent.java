@@ -142,6 +142,9 @@ public class MaterialEvent {
         flags(LIQUID);
         MaterialTags.FUEL_POWER.add(this.material, fuelPower);
         MaterialTags.LIQUID_TEMPERATURE.add(this.material, temp);
+        if (temp >= 400){
+            flags(MOLTEN);
+        }
         if (canDistill){
             DISTILLATION_FLUID_INPUT_AMOUNT.add(this.material, distillationAmount);
             DISTILL_INTO.add(this.material, Arrays.stream(distillationProducts).toList());

@@ -55,7 +55,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000);
         } else {
-            return getDefaultAttributesBuilder(MaterialTags.LIQUID_TEMPERATURE.getInt(material) >= 400).color((155 << 24) | (material.getRGB() & 0x00ffffff))
+            return getDefaultAttributesBuilder(material.has(MaterialTags.MOLTEN)).color((155 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(1000).density(1000).temperature(MaterialTags.LIQUID_TEMPERATURE.getInt(material));
         }
@@ -69,11 +69,17 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     @Override
     public String getLang(String lang) {
         if (lang.equals(Language.DEFAULT)) {
-            if (this.getAttributes().isGaseous()) {
-                return Utils.lowerUnderscoreToUpperSpaced(material.getId()) + " Gas";
+            if (isGasType()) {
+                String gas = getType() == Data.PLASMA ? " Plasma" : " Gas";
+                return Utils.lowerUnderscoreToUpperSpaced(material.getId()) + gas;
             }
-            return "Liquid " + Utils.lowerUnderscoreToUpperSpaced(material.getId());
+            String liquid = material.has(MaterialTags.MOLTEN) ? "Molten " : "Liquid ";
+            return liquid + Utils.lowerUnderscoreToUpperSpaced(material.getId());
         }
         return super.getLang(lang);
+    }
+
+    private boolean isGasType(){
+        return type == Data.PLASMA || type == Data.GAS || this.getAttributes().isGaseous();
     }
 }
