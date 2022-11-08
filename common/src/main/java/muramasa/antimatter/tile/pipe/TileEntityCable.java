@@ -7,8 +7,10 @@ import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.IGuiElement;
 import muramasa.antimatter.gui.widget.InfoRenderWidget;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
+import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
+import muramasa.antimatter.pipe.types.Wire;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -69,6 +71,11 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public int getVoltage() {
         return ((Cable<?>) getPipeType()).getTier().getVoltage();
+    }
+
+    @Override
+    public boolean insulated() {
+        return ((BlockCable<?>) this.getBlockState().getBlock()).insulated;
     }
 
     @Override

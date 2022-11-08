@@ -32,7 +32,7 @@ import java.util.List;
 
 public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
 
-    protected boolean insulated;
+    public final boolean insulated;
 
     public BlockCable(T type, PipeSize size, boolean insulated) {
         super(type.getId(), type, size, 2);
