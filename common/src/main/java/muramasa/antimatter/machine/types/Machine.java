@@ -56,6 +56,7 @@ import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
@@ -77,7 +78,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected BlockEntityType<? extends TileEntityMachine<?>> tileType;
     protected TileEntityBase.BlockEntitySupplier<TileEntityMachine<?>, T> tileFunc = TileEntityMachine::new;
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
-    protected Function<Tier, Item> itemBlockFunc = tier -> BlockItem.BY_BLOCK.get(AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), getDomain()));
+
+    protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
@@ -311,7 +313,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return itemBlockFunc.apply(tier);
+        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getId() + "_" + tier.getId(), getDomain()));
     }
 
     /**
@@ -390,8 +392,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return (T) this;
     }
 
-    public T setItemBlock(Function<Tier, Item> function){
-        this.itemBlockFunc = function;
+    public T setItemBlockClass(Supplier<Class<? extends BlockMachine>> function){
+        this.itemClassSupplier = function;
         return (T) this;
     }
 

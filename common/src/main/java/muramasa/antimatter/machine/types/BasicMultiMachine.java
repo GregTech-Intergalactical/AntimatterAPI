@@ -37,7 +37,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         super(domain, name);
         setTile(TileEntityBasicMultiMachine::new);
         setBlock(BlockMultiMachine::new);
-        setItemBlock(tier -> BlockItem.BY_BLOCK.get(AntimatterAPI.get(BlockMultiMachine.class, this.getId() + "_" + tier.getId(), this.getDomain())));
+        setItemBlockClass(() -> BlockMultiMachine.class);
         addFlags(MULTI, COVERABLE);
         setClientTick();
         custom();
