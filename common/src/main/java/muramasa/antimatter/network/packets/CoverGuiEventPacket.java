@@ -42,6 +42,7 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
     public void handleClient(ServerPlayer sender) {
         if (sender != null) {
             BlockEntity tile = Utils.getTile(sender.getLevel(), this.pos);
+            if (tile == null) throw new RuntimeException("Somehow you got an incorrect packet, CoverGuiEventPacket::handleClient missing Entity!");
             LazyOptional<ICoverHandler<?>> coverHandler = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), this.facing);
             if (this.event.forward()) {
                 coverHandler.ifPresent(ch -> ch.get(this.facing).onGuiEvent(this.event, sender));

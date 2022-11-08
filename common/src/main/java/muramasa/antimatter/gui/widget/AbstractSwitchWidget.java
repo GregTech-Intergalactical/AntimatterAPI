@@ -19,7 +19,7 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
     protected final ISwitchable onSwitch;
 
     protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonBody on, ButtonBody off, ISwitchable onSwitch) {
-        super(instance, parent, res, on, off, null);
+        super(instance, parent, res, on, off, null, null);
         this.res = res;
         this.on = on;
         this.off = off;
@@ -28,7 +28,7 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
     }
 
     protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonOverlay body, ISwitchable onSwitch, boolean defaultState) {
-        super(instance, parent, res, null, body, null);
+        super(instance, parent, res, null, body, null, null);
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;
@@ -37,7 +37,7 @@ public abstract class AbstractSwitchWidget extends ButtonWidget {
     }
 
     protected AbstractSwitchWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, ButtonOverlay body, String text, ISwitchable onSwitch) {
-        super(instance, parent, res, null, body, null);
+        super(instance, parent, res, null, body, null, null);
         this.res = res;
         this.body = body;
         this.onSwitch = onSwitch;

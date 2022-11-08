@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class ButtonWidget extends Widget {
+
     protected final ResourceLocation res;
     @Nullable
     protected final ResourceLocation bodyLoc;
@@ -35,18 +36,21 @@ public class ButtonWidget extends Widget {
     @Nullable
     protected final ButtonBody body;
     @Nullable
-    protected final ButtonOverlay overlay;
+    protected final ButtonOverlay overlayOn;
+    @Nullable
+    protected final ButtonOverlay overlayOff;
     @Nullable
     protected String message;
     protected Function<ButtonWidget, Boolean> activeHandler;
     protected Consumer<ButtonWidget> onPress;
     protected boolean pressed = false;
 
-    public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ButtonBody body, @Nullable ButtonOverlay overlay, @Nullable Consumer<ButtonWidget> onPress) {
+    public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ButtonBody body, @Nullable ButtonOverlay overlayOn, @Nullable ButtonOverlay overlayOff, @Nullable Consumer<ButtonWidget> onPress) {
         super(instance, parent);
         this.res = res;
         this.body = body;
-        this.overlay = overlay;
+        this.overlayOff = overlayOff;
+        this.overlayOn = overlayOn;
         this.resLoc = null;
         this.bodyLoc = null;
         this.onPress = onPress;
@@ -105,6 +109,12 @@ public class ButtonWidget extends Widget {
         if (color < 1f) {
             RenderSystem.setShaderColor(color, color, color, 1);
         }
+        ButtonOverlay overlay;
+        if (isActive && overlayOn != null) {
+            overlay = overlayOn;
+        } else {
+            overlay = overlayOff;
+        }
         if (overlay != null) {
             ScreenWidget.blit(matrixStack, realX(), realY(), getW(), getH(), overlay.getX(), overlay.getY(), overlay.getW(), overlay.getH(), 256, 256);
         } else if (this.bodyLoc != null) {
@@ -119,30 +129,39 @@ public class ButtonWidget extends Widget {
         }
     }
 
-    public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ResourceLocation bodyLoc, @Nullable int4 loc, @Nullable ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
+    public ButtonWidget(GuiInstance instance, IGuiElement parent, ResourceLocation res, @Nullable ResourceLocation bodyLoc, @Nullable int4 loc, @Nullable ButtonOverlay overlayOn, @Nullable ButtonOverlay overlayOff, Consumer<ButtonWidget> onPress) {
         super(instance, parent);
         this.res = res;
         this.body = null;
-        this.overlay = overlay;
+        this.overlayOn = overlayOn;
+        this.overlayOff = overlayOff;
         this.resLoc = loc;
         this.bodyLoc = bodyLoc;
         this.onPress = onPress;
     }
 
     public static WidgetSupplier build(ResourceLocation res, ButtonBody body, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, body, overlay, onPress)).clientSide();
+        return builder((a, b) -> new ButtonWidget(a, b, res, body, overlay, null, onPress)).clientSide();
+    }
+
+    public static WidgetSupplier build(ResourceLocation res, ButtonBody body, ButtonOverlay overlayOn, ButtonOverlay overlayOff, Consumer<ButtonWidget> onPress) {
+        return builder((a, b) -> new ButtonWidget(a, b, res, body, overlayOn, overlayOff, onPress)).clientSide();
     }
 
     public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, Consumer<ButtonWidget> onPress) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, onPress)).clientSide();
+        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, null, onPress)).clientSide();
     }
 
     public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
+        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
+    }
+
+    public static WidgetSupplier build(ResourceLocation res, ResourceLocation bodyLoc, int4 loc, ButtonOverlay overlayOn, ButtonOverlay overlayOff, IGuiEvent.IGuiEventFactory ev, int id) {
+        return builder((a, b) -> new ButtonWidget(a, b, res, bodyLoc, loc, overlayOn, overlayOff, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id))))).clientSide();
     }
 
     public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id) {
-        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
+        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
     }
 
 }
