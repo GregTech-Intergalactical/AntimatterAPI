@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +32,15 @@ import java.util.function.Consumer;
 
 //The base Cover class. All cover classes extend from this.
 public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
+    @Nonnull
     public final CoverFactory factory;
+    @Nonnull
     public final ICoverHandler<?> handler;
     @Nullable
     public final Tier tier;
     @Nullable
     public final GuiData gui;
     public final Direction side;
-
     private final List<Consumer<GuiInstance>> guiCallbacks = new ObjectArrayList<>();
 
     @Override
@@ -58,7 +60,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
         return handler;
     }
 
-    public BaseCover(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
+    public BaseCover(@Nonnull ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
         this.factory = Objects.requireNonNull(factory, "Missing factory in BaseCover");
         this.handler = source;
         this.tier = tier;
@@ -78,7 +80,7 @@ public abstract class BaseCover implements ICover, IGuiHandler.IHaveWidgets {
     }
 
     @Override
-    public Tier getTier() {
+    public @Nullable Tier getTier() {
         return tier;
     }
 

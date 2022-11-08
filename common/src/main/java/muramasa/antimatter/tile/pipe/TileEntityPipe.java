@@ -91,18 +91,12 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     }
 
     public boolean isConnector() {
-        //TODO: Disable this feature for now
-        return true;//!this.getBlockState().getValue(BlockPipe.TICKING);
+        return !this.getBlockState().getValue(BlockPipe.TICKING);
     }
 
     public void onBlockUpdate(BlockPos neighbor) {
         Direction facing = Utils.getOffsetFacing(this.getBlockPos(), neighbor);
         coverHandler.ifPresent(h -> h.get(facing).onBlockUpdate());
-    }
-
-    public void ofState(BlockState state) {
-        this.size = getPipeSize(state);
-        this.type = getPipeType(state);
     }
 
     @Override
@@ -119,14 +113,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
             type = getPipeType(getBlockState());
         }
         return type;
-    }
-
-    public void modify(Direction incoming, Direction towards, Object object, boolean simulate) {
-        this.coverHandler.ifPresent(t -> t.onTransfer(object, incoming, towards, simulate));
-        /*if (object instanceof FluidStack && simulate) {
-            ((FluidStack)object).setAmount(1);
-        }
-        Antimatter.LOGGER.info("Modify txn: " + object.getClass().getSimpleName() + " simulate: " + simulate);*/
     }
 
     @SuppressWarnings("unchecked")
@@ -204,17 +190,16 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     public void refreshConnection() {
         sidedSync(true);
 
-        if (isServerSide()) {
-            if (deregisterTesseract() || !isConnector()) {
-                register();
-            }
+        if (isServerSide() && isConnector()) {
+            deregisterTesseract();
+            register();
         }
     }
 
     protected abstract void register();
     protected abstract boolean deregister();
 
-    private final boolean deregisterTesseract() {
+    private boolean deregisterTesseract() {
         byte old = this.connection;
         this.connection = 0;
         boolean ok = deregister();
@@ -232,7 +217,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     public boolean validate(Direction dir) {
         if (!connects(dir)) return false;
         BlockState state = level.getBlockState(worldPosition.relative(dir));
-        if (state.getBlock() instanceof BlockPipe /*&& !state.getValue(BlockPipe.TICKING)*/) {
+        if (state.getBlock() instanceof BlockPipe && !state.getValue(BlockPipe.TICKING)) {
             return false;
         }
         return !blocksSide(dir);
@@ -254,25 +239,30 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         }
         if (this.getBlockState().getValue(BlockPipe.TICKING)) {
             if (remove && !hasNonEmpty) {
-                CompoundTag nbt = this.saveWithFullMetadata();
-                level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.TICKING, false), 11);
-                TileEntityPipe<?> pipe = (TileEntityPipe<?>) level.getBlockEntity(getBlockPos());
-                if (pipe != this) {
-                    pipe.load(nbt);
-                }
+                toggleTickingState();
                 return true;
             }
         } else if (!remove && hasNonEmpty) {
-            //set this to be covered.
-            CompoundTag nbt = this.saveWithFullMetadata();
-            level.setBlock(getBlockPos(), getBlockState().setValue(BlockPipe.TICKING, true), 11);
-            TileEntityPipe<?> pipe = (TileEntityPipe<?>) level.getBlockEntity(getBlockPos());
-            if (pipe != this) {
-                pipe.load(nbt);
-            }
+            toggleTickingState();
             return true;
         }
         return false;
+    }
+
+    private void toggleTickingState() {
+        CompoundTag nbt = this.saveWithFullMetadata();
+        var old = getBlockState();
+        var new_s = getBlockState().setValue(BlockPipe.TICKING, !getBlockState().getValue(BlockPipe.TICKING));
+        //no block update here
+        level.setBlock(getBlockPos(), new_s, 10);
+        TileEntityPipe<?> pipe = (TileEntityPipe<?>) level.getBlockEntity(getBlockPos());
+        if (pipe != this && pipe != null) {
+            pipe.load(nbt);
+            if (pipe.isConnector()) {
+                pipe.register();
+            }
+            level.sendBlockUpdated(getBlockPos(), old, new_s, 3);
+        }
     }
 
     @Override
@@ -332,11 +322,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         return LazyOptional.empty();
     }
 
-    //@Override
-    public boolean path() {
-        return coverHandler.map(t -> Arrays.stream(t.getAll()).mapToInt(c -> c.ticks() ? 1 : 0).sum() > 0).orElse(false);
-    }
-
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
@@ -364,17 +349,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         } else if (level == null) {
             connection = tag.getByte(Ref.TAG_PIPE_TILE_CONNECTIVITY);
         }
-        //E.g. replaced with cover or created from a create contraption. 
-        //Make sure Tesseract is up to date.
-        /*if (interaction != oldInteract && world != null && isServerSide())  {
-            for (Direction dir : Ref.DIRS) {
-                boolean firstHas = Connectivity.has(interaction, dir.getIndex());
-                boolean secondHas = Connectivity.has(oldInteract, dir.getIndex());
-                if (firstHas != secondHas) {
-                    registerNode(pos.offset(dir), dir, !firstHas && secondHas);
-                }
-            }
-        }*/
     }
 
     @Override

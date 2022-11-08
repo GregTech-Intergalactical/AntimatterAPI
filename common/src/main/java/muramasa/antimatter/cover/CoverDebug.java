@@ -16,9 +16,9 @@ public class CoverDebug extends BaseCover {
     }
 
     @Override
-    public void onTransfer(Object object, boolean inputSide, boolean execute) {
+    public void onTransfer(Object object, boolean inputSide, boolean simulate) {
         if (this.handler.getTile().getLevel().isClientSide) return;
-        if (execute) {
+        if (!simulate) {
             String fmt = "";
             if (object instanceof FluidStack) {
                 fmt = String.format("Fluid: %s, amount: %d", FluidPlatformUtils.getFluidId(((FluidStack) object).getFluid()), ((FluidStack) object).getAmount());
