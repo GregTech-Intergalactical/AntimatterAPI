@@ -400,17 +400,15 @@ public class Utils {
     }
 
     public static boolean addEnergy(IEnergyHandler to, long eu) {
-        GTTransaction transaction = new GTTransaction(eu, a -> {
-        });
+        GTTransaction transaction = new GTTransaction(eu, Utils.sink());
         to.insert(transaction);
         transaction.commit();
-        return transaction.getData().size() > 0;
+        return transaction.commitSuccessfull();
     }
 
     public static boolean extractEnergy(IEnergyHandler from, long eu) {
         GTTransaction transaction = from.extract(GTTransaction.Mode.INTERNAL);
-        transaction.addData(eu, a -> {
-        });
+        transaction.addData(eu, Utils.sink());
         transaction.commit();
         return transaction.getData().get(0).getEu() > 0;
     }
