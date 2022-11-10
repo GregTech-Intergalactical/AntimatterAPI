@@ -1,5 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
@@ -19,6 +20,7 @@ import tesseract.TesseractPlatformUtils;
 import tesseract.api.TesseractCaps;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IGTNode;
 
 import java.util.List;
 
@@ -45,7 +47,15 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     @Override
     public void init() {
-        cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).orElse(cachedItems);
+        this.cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).map(ImmutableList::copyOf).get();
+    }
+
+    public List<IEnergyHandler> getCachedEnergyItems() {
+        return this.cachedItems;
+    }
+
+    public void onRemove() {
+
     }
 
     @Override
@@ -123,42 +133,15 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         }
     }
 
-    public void onRemove() {
-        if (tile.isServerSide()) {
-            // deregisterNet();
-        }
+    @Override
+    public long availableAmpsOutput() {
+        return super.availableAmpsOutput() + this.cachedItems.stream().mapToLong(IGTNode::availableAmpsOutput).sum();
     }
 
     @Override
-    public boolean insert(GTTransaction transaction) {
-        boolean ok = super.insert(transaction);
-        if (transaction.canContinue()) {
-            ok |= insertIntoItems(transaction);
-        }
-        return ok;
+    public long availableAmpsInput() {
+        return super.availableAmpsInput() + this.cachedItems.stream().mapToLong(IGTNode::availableAmpsInput).sum();
     }
-
-    @Override
-    public GTTransaction extract(GTTransaction.Mode mode) {
-        GTTransaction transaction = super.extract(mode);
-        extractFromItems(transaction);
-        return transaction;
-    }
-
-    protected void extractFromItems(GTTransaction transaction) {
-        for (IEnergyHandler cachedItem : this.cachedItems) {
-            transaction.addAmps(cachedItem.availableAmpsOutput());
-        }
-    }
-
-    protected boolean insertIntoItems(GTTransaction transaction) {
-        int count = transaction.getData().size();
-        for (IEnergyHandler cachedItem : this.cachedItems) {
-            transaction.addAmps(cachedItem.availableAmpsInput());
-        }
-        return transaction.getData().size() > count;
-    }
-
 
     @Override
     public boolean canInput(Direction direction) {

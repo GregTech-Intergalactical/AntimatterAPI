@@ -9,7 +9,9 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.BlockState;
+import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IGTNode;
 
 import java.util.List;
 
@@ -17,14 +19,8 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
 
     public TileEntityStorage(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
-        itemHandler.set(() -> new MachineItemHandler<T>((T) this) {
-            @Override
-            public void onMachineEvent(IMachineEvent event, Object... data) {
-                if (event == ContentEvent.ENERGY_SLOT_CHANGED)
-                    calculateAmperage();
-            }
-        });
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, (long) getMachineTier().getVoltage() * itemHandler.map(m -> m.getChargeHandler().getSlots()).orElse(1), getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1, 1) {
+
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, (long) getMachineTier().getVoltage() * itemHandler.map(m -> m.getChargeHandler().getSlots()).orElse(1), getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0,0) {
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.getFacing();
@@ -53,29 +49,14 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
     @Override
     public void onLoad() {
         super.onLoad();
-        calculateAmperage();
-    }
-
-    // calculateAmperage checks batteries and calculates the total available input/output amperage.
-    private void calculateAmperage() {
-        itemHandler.ifPresent(h -> {
-            energyHandler.ifPresent(e -> {
-                // Check all items that match the given voltage, and allow either input/output.
-                long out = h.getChargeableItems().stream().filter(item -> (item.getOutputVoltage() == 0 || item.getOutputVoltage() == e.getOutputVoltage())).mapToLong(IEnergyHandler::getOutputAmperage).sum();
-                long in = h.getChargeableItems().stream().filter(item -> (item.getInputVoltage() == 0 || item.getInputVoltage() == e.getInputVoltage())).mapToLong(IEnergyHandler::getInputAmperage).sum();
-                // 2 amps per battery input.
-                e.setInputAmperage(in);
-                e.setOutputAmperage(out);
-            });
-        });
     }
 
     @Override
     public List<String> getInfo() {
         List<String> info = super.getInfo();
         energyHandler.ifPresent(h -> {
-            info.add("Amperage In: " + h.getInputAmperage());
-            info.add("Amperage Out: " + h.getOutputAmperage());
+            info.add("Amperage In: " + h.availableAmpsInput());
+            info.add("Amperage Out: " + h.availableAmpsOutput());
         });
         return info;
     }
