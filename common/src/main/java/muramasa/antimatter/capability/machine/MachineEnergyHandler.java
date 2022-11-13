@@ -47,7 +47,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     @Override
     public void init() {
-        this.cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).map(ImmutableList::copyOf).get();
+        this.cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).map(ImmutableList::copyOf).orElse(ImmutableList.of());
     }
 
     public List<IEnergyHandler> getCachedEnergyItems() {
