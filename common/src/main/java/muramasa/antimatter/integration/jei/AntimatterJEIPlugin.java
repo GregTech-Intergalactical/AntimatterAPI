@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
+@SuppressWarnings("removal")
 @JeiPlugin
 public class AntimatterJEIPlugin implements IModPlugin {
     private static IJeiRuntime runtime;
@@ -61,6 +62,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @Override
     public void onRuntimeAvailable(@Nonnull IJeiRuntime jeiRuntime) {
+        if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         runtime = jeiRuntime;
         //Remove fluid "blocks".
         runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(AntimatterFluid.class).stream().map(t -> new ItemStack(Item.BY_BLOCK.get(t.getFluidBlock()))).collect(Collectors.toList()));
@@ -78,6 +80,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
+        if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         RecipeMapCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
         MultiMachineInfoCategory.setGuiHelper(registry.getJeiHelpers().getGuiHelper());
         if (helpers == null) helpers = registry.getJeiHelpers();
@@ -96,6 +99,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(@Nonnull IRecipeRegistration registration) {
+        if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         if (helpers == null) helpers = registration.getJeiHelpers();
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
             registration.addRecipes(tuple.map.getRecipes(true), id);
@@ -116,6 +120,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @Override
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+        if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         registration.getCraftingCategory().addCategoryExtension(MaterialRecipe.class, JEIMaterialRecipeExtension::new);
     }
 
@@ -146,6 +151,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(@Nonnull IRecipeCatalystRegistration registration) {
+        if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         AntimatterAPI.all(Machine.class, machine -> {
             IRecipeMap map = machine.getRecipeMap();
             if (map == null) return;
