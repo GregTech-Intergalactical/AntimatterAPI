@@ -181,7 +181,7 @@ public class PropertyIngredient extends Ingredient {
         return obj;
     }
 
-    @Override
+    /*@Override
     public boolean test(@Nullable ItemStack test) {
         if (test == null || test.isEmpty()) return false;
         if (type.size() > 0) {
@@ -204,7 +204,7 @@ public class PropertyIngredient extends Ingredient {
             }
         }
         return false;
-    }
+    }*/
 
     public static Builder builder(String id) {
         return new Builder(id);
