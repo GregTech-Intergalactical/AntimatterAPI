@@ -170,7 +170,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     }
 
     public AntimatterToolType getToolType() {
-        if (type.getMaterial() == Data.Wood) return Data.AXE;
+        //if (type.getMaterial() == Data.Wood) return Data.AXE;
         return Data.WRENCH;
     }
 

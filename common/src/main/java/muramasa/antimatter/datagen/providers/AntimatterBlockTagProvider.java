@@ -82,7 +82,7 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
             AntimatterAPI.all(BlockPipe.class, pipe -> {
                 this.tag(pipe.getToolType().getToolType()).add(pipe);
                 if (pipe.getType().getMaterial() == Data.Wood){
-                    this.tag(Data.WRENCH.getToolType()).add(pipe);
+                    this.tag(Data.AXE.getToolType()).add(pipe);
                 }
             });
             AntimatterAPI.all(BlockMachine.class, pipe -> {
