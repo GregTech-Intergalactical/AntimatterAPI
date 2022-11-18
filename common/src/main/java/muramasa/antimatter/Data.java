@@ -444,10 +444,13 @@ public class Data {
         ROTOR.dependents(PLATE, SCREW, RING);
         SCREW.dependents(BOLT);
         BOLT.dependents(ROD);
+        RING.dependents(ROD);
         CRUSHED.dependents(CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE);
         DUST_PURE.dependents(DUST);
         DUST_IMPURE.dependents(DUST_PURE);
         DUST.dependents(DUST_SMALL, DUST_TINY);
+        GEAR_SMALL.dependents(PLATE);
+        GEAR.dependents(PLATE, ROD);
 
         DUST_TINY.setHidden();
         DUST_SMALL.setHidden();
