@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Registry;
@@ -81,9 +82,13 @@ public class FluidIngredient {
 
     public JsonObject toJson(){
         JsonObject json = new JsonObject();
-        json.addProperty("fluidTag", true);
-        json.addProperty("tag", tag.location().toString());
-        json.addProperty("amount", amount);
+        if (tag != null){
+            json.addProperty("fluidTag", true);
+            json.addProperty("tag", tag.location().toString());
+            json.addProperty("amount", amount);
+        } else {
+            json = RecipeUtil.fluidstackToJson(stacks[0]);
+        }
         return json;
     }
 
