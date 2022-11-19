@@ -1,7 +1,10 @@
 package muramasa.antimatter.integration.rei.category;
 
 import com.google.common.collect.ImmutableList;
-import dev.architectury.fluid.FluidStack;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
@@ -9,11 +12,14 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import muramasa.antimatter.integration.rei.AntimatterREIPlugin;
+import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
+import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
@@ -36,7 +42,7 @@ public class RecipeMapDisplay implements Display {
     public RecipeMapDisplay(IRecipe recipe){
         this.id = CategoryIdentifier.of(recipe.getMapId());
         this.recipe = recipe;
-        List<EntryIngredient> fluidInputs = recipe.getInputFluids().stream().map(fluidIngredient -> Arrays.stream(fluidIngredient.getStacks()).map(AntimatterREIPlugin::toREIFLuidStack).toList()).map(l -> EntryIngredients.of(VanillaEntryTypes.FLUID, l)).toList();
+        List<EntryIngredient> fluidInputs = recipe.getInputFluids().stream().map(fluidIngredient -> Arrays.stream(fluidIngredient.getStacks()).map(REIUtils::toREIFLuidStack).toList()).map(l -> EntryIngredients.of(VanillaEntryTypes.FLUID, l)).toList();
         List<EntryIngredient> itemInputs = createInputEntries(recipe.getInputItems(), recipe);
         this.input = new ArrayList<>(itemInputs);
         input.addAll(fluidInputs);
@@ -45,7 +51,7 @@ public class RecipeMapDisplay implements Display {
             builder.addAll(createOutputEntries(Arrays.asList(recipe.getOutputItems(false)), recipe));
         }
         if (recipe.getOutputFluids() != null){
-            builder.addAll(Arrays.stream(recipe.getOutputFluids()).map(AntimatterREIPlugin::toREIFLuidStack).map(EntryIngredients::of).toList());
+            builder.addAll(Arrays.stream(recipe.getOutputFluids()).map(REIUtils::toREIFLuidStack).map(EntryIngredients::of).toList());
         }
 
         this.output = builder.build();
@@ -115,5 +121,18 @@ public class RecipeMapDisplay implements Display {
 
     public IRecipe getRecipe() {
         return recipe;
+    }
+
+    public CompoundTag toNbt(){
+        CompoundTag nbt = new CompoundTag();
+        nbt.putString("recipeID", getRecipe().getId().toString());
+        nbt.putString("recipe", getRecipe().toJson().toString());
+        return nbt;
+    }
+
+    public static RecipeMapDisplay fromNbt(CompoundTag tag){
+        ResourceLocation recipeId = new ResourceLocation(tag.getString("recipeID"));
+        String recipe = tag.getString("recipe");
+        return new RecipeMapDisplay(AntimatterRecipeSerializer.INSTANCE.fromJson(recipeId, (JsonObject) JsonParser.parseString(recipe)));
     }
 }

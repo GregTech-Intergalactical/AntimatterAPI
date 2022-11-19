@@ -6,7 +6,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
-import muramasa.antimatter.integration.rei.AntimatterREIPlugin;
+import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.map.IRecipeMap;
@@ -51,7 +51,7 @@ public class AntimatterJEIREIPlugin{
         if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) && !AntimatterAPI.isModLoaded(Ref.MOD_REI)){
             AntimatterJEIPlugin.showCategory(types);
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){
-            AntimatterREIPlugin.showCategory(types);
+            REIUtils.showCategory(types);
         }
     }
 
@@ -61,7 +61,7 @@ public class AntimatterJEIREIPlugin{
         if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) && !AntimatterAPI.isModLoaded(Ref.MOD_REI)){
             AntimatterJEIPlugin.uses(val, USE);
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){
-            AntimatterREIPlugin.uses(val, USE);
+            REIUtils.uses(val, USE);
         }
     }
 
@@ -69,7 +69,7 @@ public class AntimatterJEIREIPlugin{
         if (AntimatterAPI.isModLoaded(Ref.MOD_JEI) && !AntimatterAPI.isModLoaded(Ref.MOD_REI)){
             AntimatterJEIPlugin.addModDescriptor(tooltip, t);
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){
-            AntimatterREIPlugin.addModDescriptor(tooltip, t);
+            REIUtils.addModDescriptor(tooltip, t);
         }
     }
 }

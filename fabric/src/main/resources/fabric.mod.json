@@ -37,8 +37,8 @@
     "client": [
       "muramasa.antimatter.client.fabric.AntimatterClientImpl"
     ],
-    "rei_plugins": [
-      "muramasa.antimatter.integration.rei.AntimatterREIPlugin"
+    "rei_client": [
+      "muramasa.antimatter.integration.rei.AntimatterREIClientPlugin"
     ],
     "server": [
       "muramasa.antimatter.fabric.AntimatterServerImpl"
