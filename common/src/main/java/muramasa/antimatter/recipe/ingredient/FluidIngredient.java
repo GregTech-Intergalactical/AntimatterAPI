@@ -1,5 +1,6 @@
 package muramasa.antimatter.recipe.ingredient;
 
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.material.Material;
@@ -76,6 +77,14 @@ public class FluidIngredient {
         for (FluidStack stack : this.stacks) {
             AntimatterPlatformUtils.writeFluidStack(stack, buffer);
         }
+    }
+
+    public JsonObject toJson(){
+        JsonObject json = new JsonObject();
+        json.addProperty("fluidTag", true);
+        json.addProperty("tag", tag.location().toString());
+        json.addProperty("amount", amount);
+        return json;
     }
 
     public static FluidIngredient of(FriendlyByteBuf buf) {

@@ -8,6 +8,8 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraftforge.fluids.FluidStack;
+import tesseract.FluidPlatformUtils;
 
 import java.util.function.Consumer;
 
@@ -35,6 +37,21 @@ public class RecipeUtil {
     @ExpectPlatform
     public static ItemStack getItemStack(JsonObject object, boolean readNBT){
         throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static JsonObject itemstackToJson(ItemStack stack){
+        throw new AssertionError();
+    }
+
+    public static JsonObject fluidstackToJson(FluidStack stack){
+        JsonObject object = new JsonObject();
+        object.addProperty("fluid", FluidPlatformUtils.getFluidId(stack.getFluid()).toString());
+        object.addProperty("amount", stack.getRealAmount());
+        if (stack.hasTag()){
+            object.addProperty("tag", stack.getTag().toString());
+        }
+        return object;
     }
 
     @ExpectPlatform

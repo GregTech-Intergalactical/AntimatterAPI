@@ -1,5 +1,7 @@
 package muramasa.antimatter.recipe;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -85,5 +87,55 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
 
     String getMapId();
 
-
+    default JsonObject toJson() {
+        JsonObject json = new JsonObject();
+        JsonArray array = new JsonArray();
+        for (Ingredient ingredient : this.getInputItems()) {
+            array.add(ingredient.toJson());
+        }
+        if (!array.isEmpty()){
+            json.add("item_in", array);
+        }
+        array = new JsonArray();
+        if (this.getOutputItems(false) != null){
+            for (ItemStack stack : this.getOutputItems(false)){
+                array.add(RecipeUtil.itemstackToJson(stack));
+            }
+        }
+        if (!array.isEmpty()){
+            json.add("item_out", array);
+        }
+        array = new JsonArray();
+        for (FluidIngredient f : this.getInputFluids()) {
+            array.add(f.toJson());
+        }
+        if (!array.isEmpty()){
+            json.add("fluid_in", array);
+        }
+        array = new JsonArray();
+        if (this.getOutputFluids() != null){
+            for (FluidStack stack : this.getOutputFluids()){
+                array.add(RecipeUtil.fluidstackToJson(stack));
+            }
+        }
+        if (!array.isEmpty()){
+            json.add("fluid_out", array);
+        }
+        array = new JsonArray();
+        json.addProperty("eu", this.getPower());
+        json.addProperty("duration", this.getDuration());
+        json.addProperty("amps", this.getAmps());
+        json.addProperty("special", this.getSpecialValue());
+        if (this.hasChances()) {
+            for (double d : this.getChances()){
+                array.add(d);
+            }
+        }
+        if (!array.isEmpty()){
+            json.add("chances", array);
+        }
+        json.addProperty("recipeID", this.getId().toString());
+        json.addProperty("map", this.getMapId());
+        return json;
+    }
 }

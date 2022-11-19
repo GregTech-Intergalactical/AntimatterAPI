@@ -4,7 +4,9 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.recipe.forge.condition.ConfigCondition;
 import muramasa.antimatter.recipe.forge.condition.TomlConfigCondition;
+import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -12,6 +14,7 @@ import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.NBTIngredient;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.function.Consumer;
 
@@ -36,6 +39,23 @@ public class RecipeUtilImpl {
 
     public static ItemStack getItemStack(JsonObject object, boolean readNBT){
         return CraftingHelper.getItemStack(object, readNBT);
+    }
+
+    public static JsonObject itemstackToJson(ItemStack stack){
+        JsonObject resultObj = new JsonObject();
+        resultObj.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
+        if (stack.getCount() > 1) {
+            resultObj.addProperty("count", stack.getCount());
+        }
+        if (stack.hasTag()) {
+            CompoundTag nbt = stack.getTag();
+            resultObj.addProperty("nbt", nbt.toString());
+        }
+        return resultObj;
+    }
+
+    public static JsonObject fluidstackToJson(FluidStack stack){
+        throw new AssertionError();
     }
 
     public static <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient){

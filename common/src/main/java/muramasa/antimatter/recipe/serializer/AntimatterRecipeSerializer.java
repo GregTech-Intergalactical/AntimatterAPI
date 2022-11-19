@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
@@ -22,6 +23,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import tesseract.FluidPlatformUtils;
+import tesseract.TesseractGraphWrappers;
+import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -50,9 +54,12 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             if (json.has("item_out")) {
                 outputs = Streams.stream(json.getAsJsonArray("item_out")).map(t -> RecipeUtil.getItemStack(t.getAsJsonObject(), true)).toArray(ItemStack[]::new);
             }
-            FluidStack[] fluidInputs = null;
+            List<FluidIngredient> fluidInputs = new ObjectArrayList<>();
             if (json.has("fluid_in")) {
-                fluidInputs = Streams.stream(json.getAsJsonArray("fluid_in")).map(AntimatterRecipeSerializer::getStack).toArray(FluidStack[]::new);
+                JsonArray array = json.getAsJsonArray("fluid_in");
+                for (JsonElement element : array) {
+                    fluidInputs.add(getFluidIngredient(element));
+                }
             }
             FluidStack[] fluidOutputs = null;
             if (json.has("fluid_out")) {
@@ -62,7 +69,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             int duration = json.get("duration").getAsInt();
             int amps = json.has("amps") ? json.get("amps").getAsInt() : 1;
             int special = json.has("special") ? json.get("special").getAsInt() : 0;
-            Recipe r = new Recipe(list, outputs, fluidInputs == null ? Collections.emptyList() : Arrays.stream(fluidInputs).map(FluidIngredient::of).toList(), fluidOutputs, duration, eut, special, amps);
+            Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, special, amps);
             if (json.has("chances")) {
                 List<Double> chances = new ObjectArrayList<>();
                 for (JsonElement el : json.getAsJsonArray("chances")) {
@@ -88,7 +95,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             if (fluid == null) {
                 return FluidStack.EMPTY;
             }
-            FluidStack stack = new FluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsInt() : 1000);
+            FluidStack stack = FluidPlatformUtils.createFluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsLong() : 1000 * TesseractGraphWrappers.dropletMultiplier);
 
             if (obj.has("tag")) {
                 stack.setTag(TagParser.parseTag(obj.get("tag").getAsString()));
@@ -108,20 +115,10 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             JsonObject obj = (JsonObject) element;
             if (obj.has("fluidTag")) {
                 ResourceLocation tagType = new ResourceLocation(obj.get("tag").getAsString());
-                int amount = obj.has("amount") ? obj.get("amount").getAsInt() : 1000;
+                long amount = obj.has("amount") ? obj.get("amount").getAsLong() : 1000 * TesseractGraphWrappers.dropletMultiplier;
                 return FluidIngredient.of(tagType, amount);
             }
-            ResourceLocation fluidName = new ResourceLocation(obj.get("fluid").getAsString());
-            Fluid fluid = AntimatterPlatformUtils.getFluidFromID(fluidName);
-            if (fluid == null) {
-                return FluidIngredient.EMPTY;
-            }
-            FluidStack stack = new FluidStack(fluid, obj.has("amount") ? obj.get("amount").getAsInt() : 1000);
-
-            if (obj.has("tag")) {
-                stack.setTag(TagParser.parseTag(obj.get("tag").getAsString()));
-            }
-            return FluidIngredient.of(stack);
+            return FluidIngredient.of(getStack(element));
         } catch (Exception ex) {
             Antimatter.LOGGER.error(ex);
         }
