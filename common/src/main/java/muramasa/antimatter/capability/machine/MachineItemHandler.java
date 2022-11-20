@@ -14,7 +14,7 @@ import muramasa.antimatter.capability.item.SidedCombinedInvWrapper;
 import muramasa.antimatter.capability.item.TrackedItemHandler;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
-import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
@@ -266,7 +266,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
      * @param simulate whether to execute or just return items.
      * @return a list of consumed items, or an empty list if it failed during simulation.
      */
-    public List<ItemStack> consumeInputs(Recipe recipe, boolean simulate) {
+    public List<ItemStack> consumeInputs(IRecipe recipe, boolean simulate) {
         return consumeInputs(recipe.getInputItems(), simulate);
     }
 

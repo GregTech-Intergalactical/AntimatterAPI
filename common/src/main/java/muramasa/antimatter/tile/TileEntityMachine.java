@@ -31,7 +31,7 @@ import muramasa.antimatter.machine.types.BasicMultiMachine;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
 import muramasa.antimatter.network.packets.TileGuiEventPacket;
-import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -223,7 +223,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     //Called whenever a recipe is activated, might be the same as before (e.g. no new recipe).
-    public void onMachineStarted(Recipe r) {
+    public void onMachineStarted(IRecipe r) {
 
     }
 

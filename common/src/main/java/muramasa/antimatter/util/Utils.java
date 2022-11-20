@@ -16,6 +16,7 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -1237,11 +1238,11 @@ public class Utils {
     /**
      * @return an empty instance of Recipe
      */
-    public static Recipe getEmptyRecipe() {
+    public static IRecipe getEmptyRecipe() {
         return new Recipe(Collections.emptyList(), new ItemStack[0], Collections.emptyList(), new FluidStack[0], 1, 1, 0, 1);
     }
 
-    public static Recipe getEmptyPoweredRecipe(int duration, long euT, int amps) {
+    public static IRecipe getEmptyPoweredRecipe(int duration, long euT, int amps) {
         return new Recipe(Collections.emptyList(), new ItemStack[0], Collections.emptyList(), new FluidStack[0], duration, euT, 0, amps);
     }
 
@@ -1255,7 +1256,7 @@ public class Utils {
      * @param amps     amps outputted.
      * @return recipe.
      */
-    public static Recipe getFluidPoweredRecipe(List<FluidIngredient> input, FluidStack[] output, int duration, long euT, int amps) {
+    public static IRecipe getFluidPoweredRecipe(List<FluidIngredient> input, FluidStack[] output, int duration, long euT, int amps) {
         return new Recipe(Collections.emptyList(), new ItemStack[0], input, output, duration, euT, 0, amps);
     }
 

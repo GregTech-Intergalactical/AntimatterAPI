@@ -10,6 +10,7 @@ import com.blamejared.crafttweaker.api.recipe.handler.IRecipeHandler;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
@@ -26,22 +27,22 @@ import java.util.List;
 
 @ZenRegister
 @ZenCodeType.Name("mods.antimatter.RecipeManager")
-@IRecipeHandler.For(Recipe.class)
-public class RecipeManager implements IRecipeManager<Recipe>, IRecipeHandler<Recipe> {
+@IRecipeHandler.For(IRecipe.class)
+public class RecipeManager implements IRecipeManager<IRecipe>, IRecipeHandler<IRecipe> {
 
     @Override
-    public String dumpToCommandString(IRecipeManager iRecipeManager, Recipe recipe) {
+    public String dumpToCommandString(IRecipeManager iRecipeManager, IRecipe recipe) {
         return recipe.toString();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Recipe> getAllRecipes() {
+    public List<IRecipe> getAllRecipes() {
         return AntimatterAPI.all(IRecipeMap.class).stream().flatMap(t -> t.getRecipes(false).stream()).toList();
     }
 
     @Override
-    public RecipeType<Recipe> getRecipeType() {
+    public RecipeType<IRecipe> getRecipeType() {
         return Recipe.RECIPE_TYPE;
     }
     @ZenCodeType.Method

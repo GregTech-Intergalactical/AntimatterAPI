@@ -14,8 +14,10 @@ import muramasa.antimatter.integration.rei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.rei.category.RecipeMapDisplay;
 import muramasa.antimatter.integration.rei.extension.REIMaterialRecipeExtension;
 import muramasa.antimatter.recipe.IRecipe;
+import muramasa.antimatter.recipe.Recipe;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Objects;
 import java.util.Set;
 
 public class AntimatterREIClientPlugin implements REIClientPlugin {
@@ -41,10 +43,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
     @Override
     public void registerDisplays(DisplayRegistry registry) {
         // regular recipes
-        registry.registerFiller(IRecipe.class, RecipeMapDisplay::new);
-        AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
-            tuple.map.getRecipes(true).forEach(registry::add);
-        });
+        registry.registerRecipeFiller(IRecipe.class, type -> Objects.equals(Recipe.RECIPE_TYPE, type), r -> !r.isHidden(), RecipeMapDisplay::new);
     }
 
     @Override

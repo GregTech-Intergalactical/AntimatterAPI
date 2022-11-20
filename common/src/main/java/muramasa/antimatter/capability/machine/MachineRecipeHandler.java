@@ -7,14 +7,13 @@ import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.machine.MachineFlag;
 import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
-import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.IRecipe;
+import muramasa.antimatter.recipe.IRecipeValidator;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
-import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
@@ -38,13 +37,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     protected final T tile;
     protected final boolean generator;
-    protected Recipe lastRecipe = null;
+    protected IRecipe lastRecipe = null;
     /**
      * Indices:
      * 1 -> Progress of recipe
      */
 
-    protected Recipe activeRecipe;
+    protected IRecipe activeRecipe;
     protected boolean consumedResources;
     protected int currentProgress,
             maxProgress;
@@ -148,7 +147,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         tickingRecipe = false;
     }
 
-    public Recipe findRecipe() {
+    public IRecipe findRecipe() {
         if (lastRecipe != null) {
             activeRecipe = lastRecipe;
             if (canRecipeContinue()) {
@@ -161,13 +160,13 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return map != null ? map.find(tile.itemHandler, tile.fluidHandler, tile.getMachineTier(), this::validateRecipe) : null;
     }
 
-    protected Recipe cachedRecipe() {
+    protected IRecipe cachedRecipe() {
         if (lastRecipe != null) {
             if (!lastRecipe.isValid()) {
                 lastRecipe = null;
                 return null;
             }
-            Recipe old = activeRecipe;
+            IRecipe old = activeRecipe;
             activeRecipe = lastRecipe;
             if (canRecipeContinue()) {
                 activeRecipe = old;
@@ -347,11 +346,11 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return true;
     }
 
-    protected boolean validateRecipe(Recipe r) {
+    protected boolean validateRecipe(IRecipe r) {
         long voltage = this.generator ? tile.getMaxOutputVoltage() : tile.getMachineType().amps() * tile.getMaxInputVoltage();
         boolean ok = voltage >= r.getPower() / r.getAmps();
         List<ItemStack> consumed = this.tile.itemHandler.map(t -> t.consumeInputs(r, true)).orElse(Collections.emptyList());
-        for (Recipe.IRecipeValidator validator : r.validators) {
+        for (IRecipeValidator validator : r.getValidators()) {
             if (!validator.validate(r, tile)) {
                 return false;
             }
@@ -408,7 +407,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
     }
 
     @Nullable
-    public Recipe getActiveRecipe() {
+    public IRecipe getActiveRecipe() {
         return activeRecipe;
     }
 
@@ -496,7 +495,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return false;
     }
 
-    protected long calculateGeneratorConsumption(int volt, Recipe r) {
+    protected long calculateGeneratorConsumption(int volt, IRecipe r) {
         long power = r.getPower();
         long amount = r.getInputFluids().get(0).getAmount();
         if (currentProgress > 0 && amount == 1) {

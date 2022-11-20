@@ -138,4 +138,6 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
         json.addProperty("map", this.getMapId());
         return json;
     }
+
+    List<IRecipeValidator> getValidators();
 }

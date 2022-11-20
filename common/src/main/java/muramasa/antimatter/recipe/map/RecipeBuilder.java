@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
@@ -27,7 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class RecipeBuilder {
 
@@ -46,15 +46,14 @@ public class RecipeBuilder {
     protected Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     protected ResourceLocation id;
 
-    public Recipe add(Consumer<FinishedRecipe> consumer, String modid, String id) {
+    public IRecipe add(String modid, String id) {
         id(modid, id);
-        Recipe r = build(consumer);
         //addToMap(r);
-        return r;
+        return build();
     }
 
-    public Recipe add(Consumer<FinishedRecipe> consumer, String id) {
-        return add(consumer, recipeMap.getDomain(), id);
+    public IRecipe add(String id) {
+        return add(recipeMap.getDomain(), id);
     }
 
     public static void clearList(){
@@ -65,7 +64,7 @@ public class RecipeBuilder {
         return ID_MAP;
     }
 
-    protected void addToMap(Recipe r) {
+    protected void addToMap(IRecipe r) {
         recipeMap.add(r);
     }
 
@@ -74,7 +73,7 @@ public class RecipeBuilder {
      *
      * @return the recipe.
      */
-    public Recipe build(Consumer<FinishedRecipe> consumer) {
+    public IRecipe build() {
         if (itemsOutput != null && itemsOutput.size() > 0 && !Utils.areItemsValid(itemsOutput.toArray(new ItemStack[0]))) {
             String id = this.id == null ? "": " Recipe ID: " + this.id;
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!" + id + " Recipe map ID:" + recipeMap.getId());
@@ -97,7 +96,7 @@ public class RecipeBuilder {
         }*/
         if (this.amps < 1) this.amps = 1;
         Result result = new Result(this.id);
-        consumer.accept(result);
+        AntimatterDynamics.FINISHED_RECIPE_CONSUMER.accept(result);
         if (amps < 1) amps = 1;
         Recipe recipe = new Recipe(
                 ingredientInput,
@@ -155,24 +154,28 @@ public class RecipeBuilder {
         this.id = new ResourceLocation(id);
     }
 
-    public RecipeBuilder values(long duration, long power, long special) {
-        return values(duration, power, special, 1);
+    public IRecipe add(String id, long duration, long power, long special) {
+        return add(id, duration, power, special, 1);
     }
 
-    public RecipeBuilder values(long duration, long power, long special, int amps) {
+    public IRecipe add(String domain, String id, long duration, long power, long special, int amps) {
         this.duration = (int) duration;
         this.power = power;
         this.special = (int) special;
         this.amps = amps;
-        return this;
+        return add(domain, id);
     }
 
-    public RecipeBuilder values(long duration, long power) {
-        return values(duration, power, this.special);
+    public IRecipe add(String id, long duration, long power, long special, int amps) {
+        return add(recipeMap.getDomain(), id, duration, power, special, amps);
     }
 
-    public RecipeBuilder values(int duration) {
-        return values(duration, 0, this.special);
+    public IRecipe add(String id, long duration, long power) {
+        return add(id, duration, power, this.special);
+    }
+
+    public IRecipe add(String id, int duration) {
+        return add(id, duration, 0, this.special);
     }
 
     public RecipeBuilder ii(Ingredient... stacks) {
