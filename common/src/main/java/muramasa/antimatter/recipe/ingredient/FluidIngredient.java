@@ -47,6 +47,10 @@ public class FluidIngredient {
         return stacks;
     }
 
+    public TagKey<Fluid> getTag() {
+        return tag;
+    }
+
     public long getAmount() {
         return amount;
     }

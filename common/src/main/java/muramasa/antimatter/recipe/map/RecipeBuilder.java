@@ -5,19 +5,23 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 public class RecipeBuilder {
+
+    private static final List<String> ID_LIST = new ObjectArrayList<>();
 
     private RecipeMap<? extends RecipeBuilder> recipeMap;
     protected List<ItemStack> itemsOutput = new ObjectArrayList<>();
@@ -30,11 +34,16 @@ public class RecipeBuilder {
     protected int amps;
     protected boolean hidden;
     protected Set<RecipeTag> tags = new ObjectOpenHashSet<>();
+    protected ResourceLocation id;
 
     public Recipe add() {
         Recipe r = build(duration, power, special, amps);
         addToMap(r);
         return r;
+    }
+
+    public static void clearList(){
+        ID_LIST.clear();
     }
 
     protected void addToMap(Recipe r) {
@@ -48,7 +57,8 @@ public class RecipeBuilder {
      */
     public Recipe build(int duration, long power, int special, int amps) {
         if (itemsOutput != null && itemsOutput.size() > 0 && !Utils.areItemsValid(itemsOutput.toArray(new ItemStack[0]))) {
-            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID! Recipe map ID: " + recipeMap.getId());
+            String id = this.id == null ? "": " Recipe ID: " + this.id;
+            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!" + id + " Recipe map ID:" + recipeMap.getId());
             return Utils.getEmptyRecipe();
         }
         /*if (fluidsInput != null && fluidsInput.size() > 0) {
@@ -56,17 +66,43 @@ public class RecipeBuilder {
             return Utils.getEmptyRecipe();
         }*/
         if (fluidsOutput != null && fluidsOutput.size() > 0 && !Utils.areFluidsValid(fluidsOutput.toArray(new FluidStack[0]))) {
-            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID! Recipe map ID: " + recipeMap.getId());
+            String id = this.id == null ? "": " Recipe ID: " + this.id;
+            Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT FLUIDS INVALID!" + id + " Recipe map ID:" + recipeMap.getId());
             return Utils.getEmptyRecipe();
         }
-
+        if (ingredientInput == null) ingredientInput = Collections.emptyList();
+        if (id == null){
+            if (itemsOutput != null && itemsOutput.size() > 0){
+                String id = AntimatterPlatformUtils.getIdFromItem(itemsOutput.get(0).getItem()).toString() + "_recipe";
+                checkID(id);
+            } else if (fluidsOutput != null && fluidsOutput.size() > 0){
+                String id = AntimatterPlatformUtils.getIdFromFluid(fluidsOutput.get(0).getFluid()).toString() + "_recipe";
+                checkID(id);
+            } else if (!ingredientInput.isEmpty() && ingredientInput.get(0).getItems().length > 0){
+                ItemStack stack = ingredientInput.get(0).getItems()[0];
+                String id = AntimatterPlatformUtils.getIdFromItem(stack.getItem()).toString() + "_recipe";
+                checkID(id);
+            } else if (!fluidsInput.isEmpty()){
+                FluidIngredient ing = fluidsInput.get(0);
+                String id = null;
+                if (ing.getTag() != null){
+                    id = ing.getTag().location().toString() + "_recipe";
+                } else {
+                    List<FluidStack> list = Arrays.asList(ing.getStacks());
+                    if (!list.isEmpty()){
+                        id = AntimatterPlatformUtils.getIdFromFluid(list.get(0).getFluid()).toString() + "_recipe";
+                    }
+                }
+                if (id != null){
+                    checkID(id);
+                }
+            }
+        }
         /*if (itemsOutput != null) {
             for (int i = 0; i < itemsOutput.size(); i++) {
                 itemsOutput.add(i, Unifier.get(itemsOutput.get(i)));
             }
         }*/
-
-        if (ingredientInput == null) ingredientInput = Collections.emptyList();
         if (amps < 1) amps = 1;
         Recipe recipe = new Recipe(
                 ingredientInput,
@@ -78,8 +114,23 @@ public class RecipeBuilder {
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
         recipe.addTags(new ObjectOpenHashSet<>(tags));
-
+        if (this.id != null){
+            recipe.setId(this.id);
+        }
         return recipe;
+    }
+
+    private void checkID(String id) {
+        if (ID_LIST.contains(id)){
+            String newID;
+            int i = 1;
+            do {
+                newID = id + "_" + i;
+                i++;
+            } while (ID_LIST.contains(newID));
+            id = newID;
+        }
+        this.id = new ResourceLocation(id);
     }
 
     public Recipe add(long duration, long power, long special) {
@@ -150,6 +201,21 @@ public class RecipeBuilder {
 
     public RecipeBuilder fo(List<FluidStack> stacks) {
         fluidsOutput.addAll(stacks);
+        return this;
+    }
+
+    public RecipeBuilder id(ResourceLocation id){
+        this.id = id;
+        return this;
+    }
+
+    public RecipeBuilder id(String modid, String name){
+        this.id = new ResourceLocation(modid, name);
+        return this;
+    }
+
+    public RecipeBuilder id(String name){
+        this.id = new ResourceLocation(recipeMap.getDomain(), name);
         return this;
     }
 
