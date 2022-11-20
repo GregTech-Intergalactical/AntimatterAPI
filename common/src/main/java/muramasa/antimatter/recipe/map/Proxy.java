@@ -10,5 +10,5 @@ import java.util.function.BiFunction;
  * Static classes
  **/
 
-public record Proxy(RecipeType<?> loc, BiFunction<Recipe<?>, RecipeBuilder, IRecipe> handler) {
+public record Proxy(RecipeType loc, BiFunction<Recipe<?>, RecipeBuilder, IRecipe> handler) {
 }
