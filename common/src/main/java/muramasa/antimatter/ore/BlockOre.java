@@ -26,6 +26,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Fallable;
+import net.minecraft.world.level.block.SandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.ticks.ScheduledTick;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +36,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Random;
 
-public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider, ISharedAntimatterObject {
+public class BlockOre extends BlockMaterialStone implements ITextureProvider, IModelProvider, ISharedAntimatterObject, Fallable {
 
     private final MaterialType<?> oreType;
 
@@ -158,10 +160,9 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
     @Override
     public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand) {
         if (this.stoneType.getGravity()) {
-            if (worldIn.isEmptyBlock(pos.below()) || canFallThrough(worldIn.getBlockState(pos.below())) && pos.getY() >= 0) {
-                //FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double) pos.getX() + 0.5D, pos.getY(), (double) pos.getZ() + 0.5D, worldIn.getBlockState(pos));
-               // this.onStartFalling(fallingblockentity);
-              //  worldIn.addFreshEntity(fallingblockentity);
+            if (worldIn.isEmptyBlock(pos.below()) || canFallThrough(worldIn.getBlockState(pos.below())) && pos.getY() >= worldIn.getMinBuildHeight()) {
+                FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(worldIn, pos, state);
+                this.onStartFalling(fallingBlockEntity);
             }
         }
     }
