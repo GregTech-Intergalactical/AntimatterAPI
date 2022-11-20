@@ -50,6 +50,7 @@ import java.util.stream.Stream;
 
 public class AntimatterDynamics {
     public static final RuntimeResourcePack DYNAMIC_RESOURCE_PACK = RuntimeResourcePack.create(new ResourceLocation(Ref.ID, "dynamic"));
+    public static final RuntimeResourcePack DYNAMIC_RECIPES = RuntimeResourcePack.create(new ResourceLocation(Ref.ID, "recipes"));
     public static final Gson GSON = Deserializers.createLootTableSerializer()
             .setPrettyPrinting()
             .disableHtmlEscaping()
@@ -62,6 +63,11 @@ public class AntimatterDynamics {
     private static final boolean exportPack = true;
 
     private static final Object2ObjectOpenHashMap<String, List<Supplier<IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
+
+    public static void addResourcePacks(Consumer<RuntimeResourcePack> function){
+        function.accept(DYNAMIC_RESOURCE_PACK);
+        function.accept(DYNAMIC_RECIPES);
+    }
 
     public static void onProviderInit(String domain, DataGenerator gen, Side side) {
         if (side == Side.CLIENT) {
@@ -86,7 +92,6 @@ public class AntimatterDynamics {
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
-        collectRecipes(rec -> DYNAMIC_RESOURCE_PACK.addData(fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
         if (!AntimatterPlatformUtils.isProduction() && exportPack) {
             DYNAMIC_RESOURCE_PACK.dump(new File("./dumped"));
@@ -193,6 +198,7 @@ public class AntimatterDynamics {
      * Reloads dynamic assets during resource reload.
      */
     public static void onResourceReload(boolean serverEvent) {
+        collectRecipes(rec -> DYNAMIC_RECIPES.addData(fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
