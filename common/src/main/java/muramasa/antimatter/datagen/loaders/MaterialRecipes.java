@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen.loaders;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTags.GRINDABLE;
+import static muramasa.antimatter.material.MaterialTags.RUBBERTOOLS;
 import static muramasa.antimatter.recipe.RecipeBuilders.DUST_BUILDER;
 import static muramasa.antimatter.recipe.RecipeBuilders.DUST_TWO_BUILDER;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
@@ -32,24 +34,26 @@ import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 public class MaterialRecipes {
     public static void init(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {
         final CriterionTriggerInstance in = provider.hasSafeItem(WRENCH.getTag());
+        int craftingMultiplier = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? 1 : 2;
         DUST.all().forEach(m -> {
             provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_small", "antimatter_dusts", "has_wrench", in, DUST.get(m, 1), of('D', DUST_SMALL.getMaterialTag(m)), "DD", "DD");
             provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_tiny", "antimatter_dusts", "has_wrench", in, DUST.get(m, 1), of('D', DUST_TINY.getMaterialTag(m)), "DDD", "DDD", "DDD");
         });
         ROD.all().forEach(m -> {
             if (m.has(INGOT)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_rod", "antimatter_material", "has_wrench", in, ROD.get(m, 1), of('F', FILE.getTag(), 'I', INGOT.getMaterialTag(m)), "F", "I");
+                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_rod", "antimatter_material", "has_wrench", in, ROD.get(m, craftingMultiplier), of('F', FILE.getTag(), 'I', INGOT.getMaterialTag(m)), "F", "I");
             }
             if (m.has(BOLT)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_bolt", "antimatter_material", "has_wrench", in, BOLT.get(m, 2), of('F', SAW.getTag(), 'I', ROD.getMaterialTag(m)), "F ", " I");
+                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_bolt", "antimatter_material", "has_wrench", in, BOLT.get(m, 2 * craftingMultiplier), of('F', SAW.getTag(), 'I', ROD.getMaterialTag(m)), "F ", " I");
                 if (m.has(SCREW)) {
+                    String[] pattern = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? new String[]{"FI", "I "} : new String[]{"F", "I"};
                     provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_screw", "antimatter_material",
-                            "has_wrench", in, SCREW.get(m, 1), of('F', FILE.getTag(), 'I', BOLT.getMaterialTag(m)), "FI", "I ");
+                            "has_wrench", in, SCREW.get(m, 1), of('F', FILE.getTag(), 'I', BOLT.getMaterialTag(m)), pattern);
                 }
             }
             if (m.has(RING)) {
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_ring", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
-                        RING.get(m, 1), ImmutableMap.of('H', HAMMER.getTag(), 'W', ROD.getMaterialTag(m)), "H ", " W");
+                        RING.get(m, craftingMultiplier), ImmutableMap.of('H', HAMMER.getTag(), 'W', ROD.getMaterialTag(m)), "H ", " W");
             }
         });
         ROTOR.all().forEach(m -> {
@@ -65,13 +69,9 @@ public class MaterialRecipes {
                     "PHP", "WRF", "PSP");
         });
         PLATE.all().forEach(m -> {
-            if (m.has(INGOT)){
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_plate", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
-                        PLATE.get(m, 1), ImmutableMap.<Character, Object>builder()
-                                .put('H', HAMMER.getTag())
-                                .put('P', INGOT.getMaterialTag(m))
-                                .build(),
-                        "HP", "P ");
+            if (m.has(INGOT) && !m.has(RUBBERTOOLS)){
+                Object[] array = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? new Object[]{HAMMER.getTag(), INGOT.getMaterialTag(m), INGOT.getMaterialTag(m)} : new Object[]{HAMMER.getTag(), INGOT.getMaterialTag(m)};
+                provider.shapeless(consumer, m.getId() + "_plate", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()), PLATE.get(m, 1), array);
             }
             if (m.has(GEAR_SMALL)) {
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_gear_small", "antimatter_material", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),

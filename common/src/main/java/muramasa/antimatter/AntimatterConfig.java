@@ -81,7 +81,7 @@ public class AntimatterConfig {
 
         public int AXE_TIMBER_MAX;
 
-        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS;
+        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, LOSSY_PART_CRAFTING;
 
     }
 
@@ -139,7 +139,7 @@ public class AntimatterConfig {
                 ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
 
         public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS,
-                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
+                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, LOSSY_PART_CRAFTING, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
 
         public CommonConfig(Builder builder) {
 
@@ -255,6 +255,10 @@ public class AntimatterConfig {
                     .translation(Ref.ID + ".config.hardcore_pipes")
                     .define("HARDCORE_PIPES", false);
 
+            LOSSY_PART_CRAFTING = builder.comment("Enable crating recipes for things like rods and plates being lossy - Default: true", "Note: make sure to run /reload after changing this.")
+                    .translation(Ref.ID + ".config.lossy_part_crafting")
+                    .define("LOSSY_PART_CRAFTING", true);
+
             builder.push("Treefelling");
 
             SMARTER_TREE_DETECTION = builder.comment("Smart tree detection, instead of just going up in a column, it searches surrounding connected blocks too. Default: true")
@@ -323,6 +327,7 @@ public class AntimatterConfig {
         GAMEPLAY.SMARTER_TREE_DETECTION = COMMON_CONFIG.SMARTER_TREE_DETECTION.get();
         GAMEPLAY.AXE_TIMBER = COMMON_CONFIG.AXE_TIMBER.get();
         GAMEPLAY.AXE_TIMBER_MAX = COMMON_CONFIG.AXE_TIMBER_MAX.get();
+        GAMEPLAY.LOSSY_PART_CRAFTING = COMMON_CONFIG.LOSSY_PART_CRAFTING.get();
         GAMEPLAY.PLAY_CRAFTING_SOUNDS = COMMON_CONFIG.PLAY_CRAFTING_SOUNDS.get();
 
         MOD_COMPAT.ENABLE_ALL_REGISTRARS = COMMON_CONFIG.ENABLE_ALL_REGISTRARS.get();
