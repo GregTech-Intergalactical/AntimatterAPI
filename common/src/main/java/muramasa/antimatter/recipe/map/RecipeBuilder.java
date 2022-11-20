@@ -1,7 +1,9 @@
 package muramasa.antimatter.recipe.map;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
@@ -13,15 +15,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class RecipeBuilder {
 
-    private static final List<String> ID_LIST = new ObjectArrayList<>();
+    private static final Map<String, IRecipe> ID_MAP = new Object2ObjectArrayMap<>();
 
     private RecipeMap<? extends RecipeBuilder> recipeMap;
     protected List<ItemStack> itemsOutput = new ObjectArrayList<>();
@@ -43,7 +45,11 @@ public class RecipeBuilder {
     }
 
     public static void clearList(){
-        ID_LIST.clear();
+        ID_MAP.clear();
+    }
+
+    public static Map<String, IRecipe> getIdMap() {
+        return ID_MAP;
     }
 
     protected void addToMap(Recipe r) {
@@ -71,33 +77,6 @@ public class RecipeBuilder {
             return Utils.getEmptyRecipe();
         }
         if (ingredientInput == null) ingredientInput = Collections.emptyList();
-        if (id == null){
-            if (itemsOutput != null && itemsOutput.size() > 0){
-                String id = AntimatterPlatformUtils.getIdFromItem(itemsOutput.get(0).getItem()).toString() + "_recipe";
-                checkID(id);
-            } else if (fluidsOutput != null && fluidsOutput.size() > 0){
-                String id = AntimatterPlatformUtils.getIdFromFluid(fluidsOutput.get(0).getFluid()).toString() + "_recipe";
-                checkID(id);
-            } else if (!ingredientInput.isEmpty() && ingredientInput.get(0).getItems().length > 0){
-                ItemStack stack = ingredientInput.get(0).getItems()[0];
-                String id = AntimatterPlatformUtils.getIdFromItem(stack.getItem()).toString() + "_recipe";
-                checkID(id);
-            } else if (!fluidsInput.isEmpty()){
-                FluidIngredient ing = fluidsInput.get(0);
-                String id = null;
-                if (ing.getTag() != null){
-                    id = ing.getTag().location().toString() + "_recipe";
-                } else {
-                    List<FluidStack> list = Arrays.asList(ing.getStacks());
-                    if (!list.isEmpty()){
-                        id = AntimatterPlatformUtils.getIdFromFluid(list.get(0).getFluid()).toString() + "_recipe";
-                    }
-                }
-                if (id != null){
-                    checkID(id);
-                }
-            }
-        }
         /*if (itemsOutput != null) {
             for (int i = 0; i < itemsOutput.size(); i++) {
                 itemsOutput.add(i, Unifier.get(itemsOutput.get(i)));
@@ -114,20 +93,52 @@ public class RecipeBuilder {
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
         recipe.addTags(new ObjectOpenHashSet<>(tags));
+        getID();
         if (this.id != null){
             recipe.setId(this.id);
+            ID_MAP.put(this.id.toString(), recipe);
         }
         return recipe;
     }
 
+    public void getID(){
+        if (id == null){
+            if (itemsOutput != null && itemsOutput.size() > 0){
+                String id = AntimatterPlatformUtils.getIdFromItem(itemsOutput.get(0).getItem()).toString() + "_recipe";
+                checkID(id);
+            } else if (fluidsOutput != null && fluidsOutput.size() > 0){
+                String id = AntimatterPlatformUtils.getIdFromFluid(fluidsOutput.get(0).getFluid()).toString() + "_recipe";
+                checkID(id);
+            } else if (!ingredientInput.isEmpty() && ingredientInput.get(0).getItems().length > 0){
+                ItemStack stack = ingredientInput.get(0).getItems()[0];
+                String id = AntimatterPlatformUtils.getIdFromItem(stack.getItem()).toString() + "_recipe";
+                checkID(id);
+            } else if (!fluidsInput.isEmpty()){
+                FluidIngredient ing = fluidsInput.get(0);
+                String id;
+                if (ing.getTag() != null){
+                    id = ing.getTag().location().toString() + "_recipe";
+                } else {
+                    List<FluidStack> list = Arrays.asList(ing.getStacks());
+                    if (!list.isEmpty()){
+                        id = AntimatterPlatformUtils.getIdFromFluid(list.get(0).getFluid()).toString() + "_recipe";
+                    } else {
+                        id = "antimatter:unknown_in_" + recipeMap.getId();
+                    }
+                }
+                checkID(id);
+            }
+        }
+    }
+
     private void checkID(String id) {
-        if (ID_LIST.contains(id)){
+        if (ID_MAP.containsKey(id)){
             String newID;
             int i = 1;
             do {
                 newID = id + "_" + i;
                 i++;
-            } while (ID_LIST.contains(newID));
+            } while (ID_MAP.containsKey(newID));
             id = newID;
         }
         this.id = new ResourceLocation(id);

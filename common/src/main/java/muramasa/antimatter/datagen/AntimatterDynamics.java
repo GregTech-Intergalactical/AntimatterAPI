@@ -21,6 +21,7 @@ import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.IRecipeMap;
+import muramasa.antimatter.recipe.map.RecipeBuilder;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.ModRegistrar;
 import muramasa.antimatter.registration.Side;
@@ -136,6 +137,7 @@ public class AntimatterDynamics {
     }
 
     public static void onRecipeCompile(boolean server, RecipeManager manager) {
+        RecipeBuilder.clearList();
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
 
