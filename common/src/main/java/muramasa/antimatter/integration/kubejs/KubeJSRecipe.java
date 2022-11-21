@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
 import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
@@ -15,6 +16,7 @@ import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
 
 import java.util.List;
@@ -112,12 +114,17 @@ public class KubeJSRecipe extends RecipeJS {
         return obj;
     }
 
-    public static JsonElement serializeFluid(FluidIngredient stack) {
-        JsonArray obj = new JsonArray();
-        for (FluidStack fluidStack : stack.getStacks()) {
-            obj.add(serializeStack(fluidStack));
+    @Override
+    public @Nullable JsonElement serializeIngredientStack(IngredientStackJS in) {
+        JsonElement element =  in.ingredient.toJson();
+        if (element instanceof JsonObject object && in.getCount() > 1){
+            object.addProperty(in.countKey, in.getCount());
         }
-        return obj;
+        return element;
+    }
+
+    public static JsonElement serializeFluid(FluidIngredient stack) {
+        return stack.toJson();
     }
 
     @Override

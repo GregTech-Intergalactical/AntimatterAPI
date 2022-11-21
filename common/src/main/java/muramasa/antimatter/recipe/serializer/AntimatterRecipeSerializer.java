@@ -50,7 +50,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             if (json.has("item_in")) {
                 JsonArray array = json.getAsJsonArray("item_in");
                 for (JsonElement element : array) {
-                    list.add(Ingredient.fromJson(element));
+                    list.add(RecipeIngredient.fromJson(element));
                 }
             }
             ItemStack[] outputs = null;
@@ -144,7 +144,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         List<Ingredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                ings.add(Ingredient.fromNetwork(buffer));
+                ings.add(RecipeIngredient.fromNetwork(buffer));
             }
         }
         size = buffer.readInt();
