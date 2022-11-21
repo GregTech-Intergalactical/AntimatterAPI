@@ -190,7 +190,7 @@ public class RecipeIngredient extends Ingredient {
                 arr.add(value.serialize());
             }
             JsonObject obj = new JsonObject();
-            obj.add("values", obj);
+            obj.add("values", arr);
             return obj;
         }
     }
