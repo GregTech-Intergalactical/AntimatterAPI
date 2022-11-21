@@ -12,14 +12,18 @@ import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
 
 import java.util.List;
+
+import static muramasa.antimatter.recipe.ingredient.RecipeIngredient.valuesFromJson;
 
 public class KubeJSRecipe extends RecipeJS {
 
@@ -82,7 +86,7 @@ public class KubeJSRecipe extends RecipeJS {
     @Override
     public void deserialize() {
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_in", new JsonArray())) {
-            this.inputItems.add(IngredientJS.of(e));
+            this.inputItems.add(AMIngredientStackJS.fromJson(e));
         }
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_out", new JsonArray())) {
             this.outputItems.add(ItemStackJS.of(e));

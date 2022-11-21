@@ -19,9 +19,11 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -34,7 +36,11 @@ public class RecipeIngredient extends Ingredient {
     protected boolean ignoreNbt = false;
 
     public RecipeIngredient(Ingredient.Value... value) {
-        super(Stream.of(value));
+        this(Stream.of(value));
+    }
+
+    public RecipeIngredient(Stream<Ingredient.Value> value) {
+        super(value);
     }
 
     public int count() {
@@ -44,18 +50,20 @@ public class RecipeIngredient extends Ingredient {
         return 0;
     }
 
-    public static Ingredient fromJson(@Nullable JsonElement json) {
+    public static Stream<Ingredient.Value> valuesFromJson(@Nullable JsonElement json){
         if (json != null && !json.isJsonNull()) {
             if (json.isJsonObject()) {
-                return fromValues(Stream.of(valueFromJson(json.getAsJsonObject())));
+                return Stream.of(valueFromJson(json.getAsJsonObject()));
             } else if (json.isJsonArray()) {
                 JsonArray jsonArray = json.getAsJsonArray();
                 if (jsonArray.size() == 0) {
                     throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
                 } else {
-                    return fromValues(StreamSupport.stream(jsonArray.spliterator(), false).map((jsonElement) -> {
-                        return valueFromJson(GsonHelper.convertToJsonObject(jsonElement, "item"));
-                    }));
+                    List<Value> elements = new ArrayList<>();
+                    for (JsonElement e : jsonArray) {
+                        elements.addAll(valuesFromJson(e).toList());
+                    }
+                    return elements.stream();
                 }
             } else {
                 throw new JsonSyntaxException("Expected item to be object or array of objects");
@@ -65,24 +73,48 @@ public class RecipeIngredient extends Ingredient {
         }
     }
 
+    public static Ingredient fromJson(@Nullable JsonElement json) {
+        RecipeIngredient ingredient = new RecipeIngredient(valuesFromJson(json));
+        if (json instanceof JsonObject object){
+            if (object.has("nbt") && object.get("nbt").getAsBoolean()){
+                ingredient.setIgnoreNbt();
+            }
+            if (object.has("noconsume") && object.get("noconsume").getAsBoolean()){
+                ingredient.setNoConsume();
+            }
+        }
+        return ingredient;
+    }
+
     public static Ingredient.Value valueFromJson(JsonObject json) {
+        if (json.has("values") && json.get("values") instanceof JsonArray array) {
+            if (!array.isEmpty()) {
+                List<Ingredient.Value> list = new ArrayList<>();
+                for (JsonElement e : array) {
+                    list.addAll(valuesFromJson(e).toList());
+                }
+                return new MultiValue(list.stream());
+            } else {
+                throw new JsonParseException("A Ingredient entry array must not be empty");
+            }
+        }
         int count = json.has("count") ? json.get("count").getAsInt() : 1;
         if (json.has("item") && json.has("tag")) {
             throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
         } else if (json.has("item")) {
             Item item = ShapedRecipe.itemFromJson(json);
-            return new Value(new ItemStack(item, count));
+            return new RecipeValue(new ItemStack(item, count));
         } else if (json.has("tag")) {
             ResourceLocation resourceLocation = new ResourceLocation(GsonHelper.getAsString(json, "tag"));
             TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, resourceLocation);
-            return new Value(tagKey, count);
+            return new RecipeValue(tagKey, count);
         } else {
             throw new JsonParseException("An ingredient entry needs either a tag or an item");
         }
     }
 
     public static Ingredient fromNetwork(FriendlyByteBuf buffer) {
-        return fromValues(buffer.readList(FriendlyByteBuf::readItem).stream().map(Value::new));
+        return fromValues(buffer.readList(FriendlyByteBuf::readItem).stream().map(RecipeValue::new));
     }
 
     /*public RecipeIngredient(JsonElement element) {
@@ -156,29 +188,29 @@ public class RecipeIngredient extends Ingredient {
     }
 
     public static RecipeIngredient of(Ingredient ingredient, int count){
-        return new RecipeIngredient(new MultiValue(Arrays.stream(ingredient.getItems()).map(t -> new Value(t, count))));
+        return new RecipeIngredient(new MultiValue(Arrays.stream(ingredient.getItems()).map(t -> new RecipeValue(t, count))));
     }
 
 
     public static RecipeIngredient of(int count, ItemStack... provider) {
         if (provider.length == 1) {
-            return new RecipeIngredient(new Value(provider[0], count));
+            return new RecipeIngredient(new RecipeValue(provider[0], count));
         } else {
-            return new RecipeIngredient(new MultiValue(Arrays.stream(provider).map(t -> new Value(t, count))));
+            return new RecipeIngredient(new MultiValue(Arrays.stream(provider).map(t -> new RecipeValue(t, count))));
         }
     }
 
     public static RecipeIngredient of(ItemStack... provider) {
         if (provider.length == 1) {
-            return new RecipeIngredient(new Value(provider[0]));
+            return new RecipeIngredient(new RecipeValue(provider[0]));
         } else {
-            return new RecipeIngredient(new MultiValue(Arrays.stream(provider).map(Value::new)));
+            return new RecipeIngredient(new MultiValue(Arrays.stream(provider).map(RecipeValue::new)));
         }
     }
 
 
     public static RecipeIngredient of(ItemStack stack) {
-        return new RecipeIngredient(new Value(stack));
+        return new RecipeIngredient(new RecipeValue(stack));
     }
 
     public static RecipeIngredient of(ItemLike provider, int count) {
@@ -187,12 +219,12 @@ public class RecipeIngredient extends Ingredient {
 
     public static RecipeIngredient of(ResourceLocation tagIn, int count) {
         ensureRegisteredTag(tagIn);
-        return new RecipeIngredient(new Value(new TagKey<>(Registry.ITEM_REGISTRY, tagIn), count));
+        return new RecipeIngredient(new RecipeValue(new TagKey<>(Registry.ITEM_REGISTRY, tagIn), count));
     }
 
     public static RecipeIngredient of(TagKey<Item> tagIn, int count) {
         ensureRegisteredTag(tagIn.location());
-        return new RecipeIngredient(new Value(tagIn, count));
+        return new RecipeIngredient(new RecipeValue(tagIn, count));
     }
 
     @Override
@@ -213,7 +245,7 @@ public class RecipeIngredient extends Ingredient {
         TagUtils.getItemTag(loc);
     }
 
-    private static class MultiValue implements Ingredient.Value {
+    public static class MultiValue implements Ingredient.Value {
 
         private final Value[] values;
 
@@ -230,6 +262,10 @@ public class RecipeIngredient extends Ingredient {
             return Arrays.stream(values).flatMap(t -> t.getItems().stream()).collect(Collectors.toList());
         }
 
+        public Value[] getValues() {
+            return values;
+        }
+
         @Override
         public JsonObject serialize() {
             JsonArray arr = new JsonArray(values.length);
@@ -242,27 +278,27 @@ public class RecipeIngredient extends Ingredient {
         }
     }
 
-    private static class Value implements Ingredient.Value {
+    public static class RecipeValue implements Ingredient.Value {
         private TagKey<Item> tag;
         private ItemStack stack;
         private final int count;
 
-        Value(TagKey<Item> tag, int count) {
+        public RecipeValue(TagKey<Item> tag, int count) {
             this.tag = tag;
             this.count = count;
         }
 
-        Value(ItemLike tag, int count) {
+        public RecipeValue(ItemLike tag, int count) {
             this.stack = new ItemStack(tag);
             this.count = count;
         }
 
-        Value(ItemStack stack) {
+        public RecipeValue(ItemStack stack) {
             this.stack = stack;
             this.count = stack.getCount();
         }
 
-        Value(ItemStack stack, int count) {
+        public RecipeValue(ItemStack stack, int count) {
             this.stack = stack;
             stack.setCount(count);
             this.count = count;
@@ -274,6 +310,14 @@ public class RecipeIngredient extends Ingredient {
                 return TagUtils.nc(tag).getValues().stream().map(t -> new ItemStack(t, count)).toList();
             }
             return Collections.singletonList(stack);
+        }
+
+        public TagKey<Item> getTag() {
+            return tag;
+        }
+
+        public int getCount() {
+            return count;
         }
 
         @Override

@@ -81,6 +81,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             return r;
         } catch (Exception ex) {
             Antimatter.LOGGER.error(ex);
+            Antimatter.LOGGER.error(json.toString());
         }
         return null;
     }
