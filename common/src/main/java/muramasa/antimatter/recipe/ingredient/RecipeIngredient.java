@@ -3,22 +3,28 @@ package muramasa.antimatter.recipe.ingredient;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.ItemLike;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Small wrapper, to avoid typing lazyvalue.
@@ -36,6 +42,47 @@ public class RecipeIngredient extends Ingredient {
             return getItems()[0].getCount();
         }
         return 0;
+    }
+
+    public static Ingredient fromJson(@Nullable JsonElement json) {
+        if (json != null && !json.isJsonNull()) {
+            if (json.isJsonObject()) {
+                return fromValues(Stream.of(valueFromJson(json.getAsJsonObject())));
+            } else if (json.isJsonArray()) {
+                JsonArray jsonArray = json.getAsJsonArray();
+                if (jsonArray.size() == 0) {
+                    throw new JsonSyntaxException("Item array cannot be empty, at least one item must be defined");
+                } else {
+                    return fromValues(StreamSupport.stream(jsonArray.spliterator(), false).map((jsonElement) -> {
+                        return valueFromJson(GsonHelper.convertToJsonObject(jsonElement, "item"));
+                    }));
+                }
+            } else {
+                throw new JsonSyntaxException("Expected item to be object or array of objects");
+            }
+        } else {
+            throw new JsonSyntaxException("Item cannot be null");
+        }
+    }
+
+    public static Ingredient.Value valueFromJson(JsonObject json) {
+        int count = json.has("count") ? json.get("count").getAsInt() : 1;
+        if (json.has("item") && json.has("tag")) {
+            throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
+        } else if (json.has("item")) {
+            Item item = ShapedRecipe.itemFromJson(json);
+            return new Value(new ItemStack(item, count));
+        } else if (json.has("tag")) {
+            ResourceLocation resourceLocation = new ResourceLocation(GsonHelper.getAsString(json, "tag"));
+            TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, resourceLocation);
+            return new Value(tagKey, count);
+        } else {
+            throw new JsonParseException("An ingredient entry needs either a tag or an item");
+        }
+    }
+
+    public static Ingredient fromNetwork(FriendlyByteBuf buffer) {
+        return fromValues(buffer.readList(FriendlyByteBuf::readItem).stream().map(Value::new));
     }
 
     /*public RecipeIngredient(JsonElement element) {
