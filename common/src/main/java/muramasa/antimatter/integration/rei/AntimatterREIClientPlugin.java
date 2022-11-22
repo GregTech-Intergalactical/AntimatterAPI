@@ -8,6 +8,7 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.plugins.PluginManager;
 import me.shedaniel.rei.api.common.registry.ReloadStage;
 import me.shedaniel.rei.plugin.common.BuiltinPlugin;
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.rei.category.RecipeMapCategory;
@@ -15,6 +16,7 @@ import muramasa.antimatter.integration.rei.category.RecipeMapDisplay;
 import muramasa.antimatter.integration.rei.extension.REIMaterialRecipeExtension;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Objects;
@@ -44,6 +46,11 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
     public void registerDisplays(DisplayRegistry registry) {
         // regular recipes
         registry.registerRecipeFiller(IRecipe.class, type -> Objects.equals(Recipe.RECIPE_TYPE, type), r -> !r.isHidden(), RecipeMapDisplay::new);
+        AntimatterAPI.all(RecipeMap.class, m -> {
+            if (m.getProxy() != null){
+                registry.registerRecipeFiller(net.minecraft.world.item.crafting.Recipe.class, m.getProxy().loc(), r -> new RecipeMapDisplay(m.getProxy().handler().apply(r, m.RB())));
+            }
+        });
     }
 
     @Override

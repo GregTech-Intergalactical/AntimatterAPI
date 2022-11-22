@@ -150,7 +150,7 @@ public class AntimatterDynamics {
         for (RecipeMap m : AntimatterAPI.all(RecipeMap.class)) {
             if (m.getProxy() != null) {
                 List<net.minecraft.world.item.crafting.Recipe<?>> recipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) manager.getAllRecipesFor(m.getProxy().loc());
-                recipes.forEach(recipe -> m.getProxy().handler().apply(recipe, m.RB()));
+                recipes.forEach(recipe -> m.compileRecipe(m.getProxy().handler().apply(recipe, m.RB())));
             }
         }
 

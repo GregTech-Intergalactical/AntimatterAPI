@@ -45,6 +45,7 @@ public class RecipeBuilder {
     protected boolean hidden;
     protected Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     protected ResourceLocation id;
+    protected boolean recipeMapOnly = false;
 
     public IRecipe add(String modid, String id) {
         id(modid, id);
@@ -95,8 +96,9 @@ public class RecipeBuilder {
             }
         }*/
         if (this.amps < 1) this.amps = 1;
-        Result result = new Result(this.id);
-        AntimatterDynamics.FINISHED_RECIPE_CONSUMER.accept(result);
+        if (!recipeMapOnly){
+            AntimatterDynamics.FINISHED_RECIPE_CONSUMER.accept(new Result(this.id));
+        }
         if (amps < 1) amps = 1;
         Recipe recipe = new Recipe(
                 ingredientInput,
@@ -252,6 +254,11 @@ public class RecipeBuilder {
 
     public RecipeBuilder hide() {
         hidden = true;
+        return this;
+    }
+
+    public RecipeBuilder recipeMapOnly(){
+        recipeMapOnly = true;
         return this;
     }
 
