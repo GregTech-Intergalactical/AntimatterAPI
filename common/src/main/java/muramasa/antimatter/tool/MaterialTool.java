@@ -62,21 +62,27 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     protected final int energyTier;
     protected final long maxEnergy;
 
-    public MaterialTool(String domain, AntimatterToolType type, Properties properties) {
-        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), AntimatterItemTier.NULL, type.getToolType(), properties);
+    protected final Material primary, secondary;
+
+    public MaterialTool(String domain, AntimatterToolType type, Properties properties, Material primary, Material secondary) {
+        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), new AntimatterItemTier(primary, secondary), type.getToolType(), properties);
         this.domain = domain;
         this.type = type;
         this.energyTier = -1;
         this.maxEnergy = -1;
+        this.primary = primary;
+        this.secondary = secondary;
         AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
-    public MaterialTool(String domain, AntimatterToolType type, Properties properties, int energyTier) {
-        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), AntimatterItemTier.NULL, type.getToolType(), properties);
+    public MaterialTool(String domain, AntimatterToolType type, Properties properties, Material primary, Material secondary, int energyTier) {
+        super(type.getBaseAttackDamage(), type.getBaseAttackSpeed(), new AntimatterItemTier(primary, secondary), type.getToolType(), properties);
         this.domain = domain;
         this.type = type;
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier;
+        this.primary = primary;
+        this.secondary = secondary;
         AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
@@ -87,6 +93,15 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public String getId() {
+        String id = primary.getId();
+        if (secondary != NULL){
+            id = id + "_" + secondary.getId();
+        }
+        return id + "_" + getToolID();
+    }
+
+    @Override
+    public String getToolID() {
         return type.isPowered() ? String.join("_", type.getId(), Ref.VN[energyTier].toLowerCase(Locale.ENGLISH)) : type.getId();
     }
 
@@ -192,10 +207,10 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        if (getId().equals("branch_cutter")) {
-            return Math.round((float) getTier(stack).getUses() / 4);
+        if (getId().contains("branch_cutter")) {
+            return Math.round((float) getTier().getUses() / 4);
         }
-        return getTier(stack).getUses();
+        return getTier().getUses();
     }
 
     @Override
@@ -205,7 +220,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-        return isCorrectToolForDrops(stack, state) ? getTier(stack).getSpeed() : 1.0F;
+        return isCorrectToolForDrops(stack, state) ? getTier().getSpeed() : 1.0F;
     }
 
     @Override
@@ -232,10 +247,10 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
+    /*public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         if (slotType == EquipmentSlot.MAINHAND) {
-            modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", type.getBaseAttackDamage() + getTier(stack).getAttackDamageBonus(), AttributeModifier.Operation.ADDITION));
+            modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", type.getBaseAttackDamage() + getTier().getAttackDamageBonus(), AttributeModifier.Operation.ADDITION));
             modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
         }
         return modifiers;
@@ -244,7 +259,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     //fabric method
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slotType) {
         return this.getAttributeModifiers(slotType, stack);
-    }
+    }*/
 
 //    @Override
 //    public ActionResultType onItemUse(ItemUseContext ctx) {
@@ -291,18 +306,8 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     }
 
     @Override
-    public int getItemEnchantability(ItemStack stack) {
-        return getTier(stack).getEnchantmentValue();
-    }
-
-    public int getEnchantability(ItemStack stack)
-    {
-        return getItemEnchantability(stack);
-    }
-
-    @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return !type.isPowered() && getTier(toRepair).getRepairIngredient().test(repair);
+        return !type.isPowered() && getTier().getRepairIngredient().test(repair);
     }
 
     @Override

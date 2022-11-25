@@ -14,6 +14,7 @@ import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
+import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
@@ -57,7 +58,7 @@ import java.util.Set;
 
 import static muramasa.antimatter.Data.NULL;
 
-public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods {
+public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods {
 
     AntimatterToolType getAntimatterToolType();
 
@@ -77,6 +78,8 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     default Item getItem() {
         return (Item) this;
     }
+
+    String getToolID();
 
     default Set<TagKey<Block>> getActualTags() {
         return getAntimatterToolType().getActualTags();
@@ -253,10 +256,10 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
             empty = l >= stack.getMaxDamage();
         }
         if (empty) {
-            if (!getAntimatterToolType().getBrokenItems().containsKey(this.getId())) {
+            if (!getAntimatterToolType().getBrokenItems().containsKey(this.getToolID())) {
                 return ItemStack.EMPTY;
             }
-            ItemStack item = getAntimatterToolType().getBrokenItems().get(this.getId()).apply(oldStack);
+            ItemStack item = getAntimatterToolType().getBrokenItems().get(this.getToolID()).apply(oldStack);
             return item;
         }
         return stack;
@@ -330,6 +333,4 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player);
 
     boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker);
-
-    int getItemEnchantability(ItemStack stack);
 }
