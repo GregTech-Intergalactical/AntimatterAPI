@@ -62,13 +62,9 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
 
     AntimatterToolType getAntimatterToolType();
 
-    default Material getPrimaryMaterial(ItemStack stack) {
-        return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-    }
+    Material getPrimaryMaterial(ItemStack stack);
 
-    default Material getSecondaryMaterial(ItemStack stack) {
-        return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
-    }
+    Material getSecondaryMaterial(ItemStack stack);
 
     default Material[] getMaterials(ItemStack stack) {
         CompoundTag tag = getDataTag(stack);
@@ -97,8 +93,6 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return getEnergyTag(stack).getLong(Ref.KEY_ITEM_MAX_ENERGY);
     }
 
-    ItemStack asItemStack(Material primary, Material secondary);
-
     default CompoundTag getEnergyTag(ItemStack stack){
         CompoundTag dataTag = stack.getTagElement(Ref.TAG_ITEM_ENERGY_DATA);
         return dataTag != null ? dataTag : validateEnergyTag(stack, 0, 10000);
@@ -106,23 +100,14 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
 
     default CompoundTag getDataTag(ItemStack stack) {
         CompoundTag dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
-        return dataTag != null ? dataTag : validateTag(stack, NULL, NULL, 0, 10000);
+        return dataTag != null ? dataTag : stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
     }
 
-    default Tier getTier(ItemStack stack) {
-        CompoundTag dataTag = getDataTag(stack);
-        Optional<AntimatterItemTier> tier = AntimatterItemTier.get(dataTag.getInt(Ref.KEY_TOOL_DATA_TIER));
-        return tier.orElseGet(() -> resolveTierTag(dataTag));
-    }
-
-    default ItemStack resolveStack(Material primary, Material secondary, long startingEnergy, long maxEnergy) {
+    default ItemStack resolveStack(long startingEnergy, long maxEnergy) {
         Item item = (Item) this;
         ItemStack stack = new ItemStack(item);
-        validateTag(stack, primary, secondary, startingEnergy, maxEnergy);
-        if (!primary.has(MaterialTags.TOOLS) || (!secondary.has(MaterialTags.HANDLE) && secondary != NULL)){
-            return stack;
-        }
-        Map<Enchantment, Integer> mainEnchants = MaterialTags.TOOLS.getToolData(primary).toolEnchantment(), handleEnchants = MaterialTags.HANDLE.getHandleData(secondary).toolEnchantment();
+        validateEnergyTag(stack, startingEnergy, maxEnergy);
+        Map<Enchantment, Integer> mainEnchants = MaterialTags.TOOLS.getToolData(this.getPrimaryMaterial(stack)).toolEnchantment(), handleEnchants = MaterialTags.HANDLE.getHandleData(this.getSecondaryMaterial(stack)).toolEnchantment();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack)).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
             //return stack;
@@ -133,10 +118,8 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return stack;
     }
 
-    default CompoundTag validateTag(ItemStack stack, Material primary, Material secondary, long startingEnergy, long maxEnergy) {
+    default CompoundTag validateTag(ItemStack stack, long startingEnergy, long maxEnergy) {
         CompoundTag dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
-        dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
-        dataTag.putString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL, secondary.getId());
         if (!getAntimatterToolType().isPowered()) return dataTag;
         validateEnergyTag(stack, startingEnergy, maxEnergy);
         return dataTag;
@@ -151,16 +134,10 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
         return stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
     }
 
-    default AntimatterItemTier resolveTierTag(CompoundTag dataTag) {
-        AntimatterItemTier tier = AntimatterItemTier.getOrCreate(dataTag.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL), dataTag.getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
-        dataTag.putInt(Ref.KEY_TOOL_DATA_TIER, tier.hashCode());
-        return tier;
-    }
-
     default void onGenericFillItemGroup(CreativeModeTab group, NonNullList<ItemStack> list, long maxEnergy) {
         if (group != Ref.TAB_TOOLS) return;
         if (getAntimatterToolType().isPowered()) {
-            ItemStack stack = asItemStack(NULL, NULL);
+            ItemStack stack = new ItemStack(this.getItem());
             IEnergyHandler h = TesseractPlatformUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
             if (h != null){
                 list.add(stack.copy());
@@ -168,7 +145,7 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
                 h.setEnergy(maxEnergy);
                 list.add(stack);
             }
-        } else list.add(asItemStack(NULL, NULL));
+        } else list.add(new ItemStack(this.getItem()));
     }
 
     @SuppressWarnings("NoTranslation")

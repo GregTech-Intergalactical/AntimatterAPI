@@ -87,6 +87,16 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     }
 
     @Override
+    public Material getPrimaryMaterial(ItemStack stack) {
+        return primary;
+    }
+
+    @Override
+    public Material getSecondaryMaterial(ItemStack stack) {
+        return secondary;
+    }
+
+    @Override
     public String getDomain() {
         return domain;
     }
@@ -125,12 +135,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return energyTier;
     }
 
-    @Nonnull
-    @Override
-    public ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary) {
-        return resolveStack(primary, secondary, 0, maxEnergy);
-    }
-
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> list) {
         onGenericFillItemGroup(group, list, maxEnergy);
@@ -149,7 +153,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         if (type.getEffectiveBlocks().contains(state.getBlock())) {
             return true;
         }
-        return state.is(getAntimatterToolType().getToolType()) && ToolUtils.isCorrectTierForDrops(getTier(stack), state);
+        return state.is(getAntimatterToolType().getToolType()) && ToolUtils.isCorrectTierForDrops(getTier(), state);
     }
 
     //fabric method
@@ -246,20 +250,6 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     public boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker) {
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
-
-    /*public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
-        Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
-        if (slotType == EquipmentSlot.MAINHAND) {
-            modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Tool modifier", type.getBaseAttackDamage() + getTier().getAttackDamageBonus(), AttributeModifier.Operation.ADDITION));
-            modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Tool modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
-        }
-        return modifiers;
-    }
-
-    //fabric method
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slotType) {
-        return this.getAttributeModifiers(slotType, stack);
-    }*/
 
 //    @Override
 //    public ActionResultType onItemUse(ItemUseContext ctx) {

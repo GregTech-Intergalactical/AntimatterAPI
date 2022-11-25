@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
+import static muramasa.antimatter.Data.NULL;
+
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class MaterialSword extends SwordItem implements IAntimatterTool, IContainerItem {
@@ -49,21 +51,27 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     protected int energyTier;
     protected long maxEnergy;
 
-    public MaterialSword(String domain, AntimatterToolType type, Properties properties) {
-        super(AntimatterItemTier.NULL, 0, type.getBaseAttackSpeed(), properties);  // 0 as base attack as it adds
+    protected final Material primary, secondary;
+
+    public MaterialSword(String domain, AntimatterToolType type, Properties properties, Material primary, Material secondary) {
+        super(new AntimatterItemTier(primary, secondary), 0, type.getBaseAttackSpeed(), properties);  // 0 as base attack as it adds
         this.domain = domain;
         this.type = type;
         this.energyTier = -1;
         this.maxEnergy = -1;
+        this.primary = primary;
+        this.secondary = secondary;
         AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
-    public MaterialSword(String domain, AntimatterToolType type, Properties properties, int energyTier) {
-        super(AntimatterItemTier.NULL, (int) type.getBaseAttackDamage(), type.getBaseAttackSpeed(), properties);
+    public MaterialSword(String domain, AntimatterToolType type, Properties properties, Material primary, Material secondary, int energyTier) {
+        super(new AntimatterItemTier(primary, secondary), (int) type.getBaseAttackDamage(), type.getBaseAttackSpeed(), properties);
         this.domain = domain;
         this.type = type;
         this.energyTier = energyTier;
         this.maxEnergy = type.getBaseMaxEnergy() * energyTier;
+        this.primary = primary;
+        this.secondary = secondary;
         AntimatterAPI.register(IAntimatterTool.class, this);
     }
 
@@ -74,7 +82,26 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
 
     @Override
     public String getId() {
+        String id = primary.getId();
+        if (secondary != NULL){
+            id = id + "_" + secondary.getId();
+        }
+        return id + "_" + getToolID();
+    }
+
+    @Override
+    public String getToolID() {
         return type.isPowered() ? String.join("_", type.getId(), Ref.VN[energyTier].toLowerCase(Locale.ENGLISH)) : type.getId();
+    }
+
+    @Override
+    public Material getPrimaryMaterial(ItemStack stack) {
+        return primary;
+    }
+
+    @Override
+    public Material getSecondaryMaterial(ItemStack stack) {
+        return secondary;
     }
 
     @Nonnull
@@ -87,12 +114,6 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
      **/
     public int getEnergyTier() {
         return energyTier;
-    }
-
-    @Nonnull
-    @Override
-    public ItemStack asItemStack(@Nonnull Material primary, @Nonnull Material secondary) {
-        return resolveStack(primary, secondary, 0, maxEnergy);
     }
 
     @Override
@@ -140,7 +161,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        return getTier(stack).getUses();
+        return getTier().getUses();
     }
 
     @Override
@@ -151,7 +172,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
         if (state.getBlock() == Blocks.COBWEB) return 15.0F;
-        return Utils.isToolEffective(this, state) ? getTier(stack).getSpeed() : 1.0F;
+        return Utils.isToolEffective(this, state) ? getTier().getSpeed() : 1.0F;
     }
 
     @Override
@@ -174,38 +195,14 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
         return type.getActualTags().contains(BlockTags.MINEABLE_WITH_AXE);
     }
 
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
-        Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
-        if (slotType == EquipmentSlot.MAINHAND) {
-            modifiers.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", type.getBaseAttackDamage() + getTier(stack).getAttackDamageBonus(), AttributeModifier.Operation.ADDITION));
-            modifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", type.getBaseAttackSpeed(), AttributeModifier.Operation.ADDITION));
-        }
-        return modifiers;
-    }
-
-    //fabric method
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slotType) {
-        return this.getAttributeModifiers(slotType, stack);
-    }
-
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<T> onBroken) {
         return (entity instanceof Player && ((Player) entity).isCreative()) ? 0 : damage(stack, amount);
     }
 
     @Override
-    public int getItemEnchantability(ItemStack stack) {
-        return getTier(stack).getEnchantmentValue();
-    }
-
-    public int getEnchantability(ItemStack stack)
-    {
-        return getItemEnchantability(stack);
-    }
-
-    @Override
     public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return !type.isPowered() && getTier(toRepair).getRepairIngredient().test(repair);
+        return !type.isPowered() && getTier().getRepairIngredient().test(repair);
     }
 
     @Override

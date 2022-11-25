@@ -6,10 +6,12 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
@@ -27,6 +29,7 @@ import org.apache.commons.lang3.reflect.ConstructorUtils;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -57,7 +60,10 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     @Nullable
     private SoundEvent useSound;
     @Nullable
-    private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
+    protected IMaterialTag primaryMaterialRequirement;
+    @Nullable
+    protected IMaterialTag secondaryMaterialRequirement;
+    protected boolean hasSecondaryMaterial = true;
 
     /**
      * Instantiates a AntimatterToolType with its basic values
@@ -139,22 +145,28 @@ public class AntimatterToolType implements ISharedAntimatterObject {
      * Instantiates powered MaterialTools
      */
     public List<IAntimatterTool> instantiatePoweredTools(String domain) {
-        List<IAntimatterTool> poweredTools = new ObjectArrayList<>();
         Item.Properties properties = prepareInstantiation(domain);
-        boolean isSword = toolClass == MaterialSword.class;
-        for (int energyTier : energyTiers) {
-            if (isSword) poweredTools.add(new MaterialSword(domain, this, properties, energyTier));
-            else poweredTools.add(new MaterialTool(domain, this, properties, energyTier));
-        }
-        return poweredTools;
+        return instantiatePoweredTools(domain, () -> properties);
     }
 
     public List<IAntimatterTool> instantiatePoweredTools(String domain, Supplier<Item.Properties> properties) {
         List<IAntimatterTool> poweredTools = new ObjectArrayList<>();
         boolean isSword = toolClass == MaterialSword.class;
         for (int energyTier : energyTiers) {
-            if (isSword) poweredTools.add(new MaterialSword(domain, this, properties.get(), energyTier));
-            else poweredTools.add(new MaterialTool(domain, this, properties.get(), energyTier));
+            MaterialTags.TOOLS.all().forEach(t -> {
+                if (primaryMaterialRequirement != null && !t.has(primaryMaterialRequirement)) return;
+                if (hasSecondaryMaterial){
+                    MaterialTags.HANDLE.all().forEach(h ->{
+                        if (secondaryMaterialRequirement == null || h.has(secondaryMaterialRequirement)){
+                            if (isSword) poweredTools.add(new MaterialSword(domain, this, properties.get(), t, h, energyTier));
+                            else poweredTools.add(new MaterialTool(domain, this, properties.get(), t, h, energyTier));
+                        }
+                    });
+                }else {
+                    if (isSword) poweredTools.add(new MaterialSword(domain, this, properties.get(), t, Data.NULL, energyTier));
+                    else poweredTools.add(new MaterialTool(domain, this, properties.get(), t, Data.NULL, energyTier));
+                }
+            });
         }
         return poweredTools;
     }
@@ -162,14 +174,27 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     /**
      * Instantiates a MaterialTool
      */
-    public IAntimatterTool instantiateTools(String domain) {
-        if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, prepareInstantiation(domain));
-        return new MaterialTool(domain, this, prepareInstantiation(domain));
+    public List<IAntimatterTool> instantiateTools(String domain) {
+        return instantiateTools(domain, () -> prepareInstantiation(domain));
     }
 
-    public IAntimatterTool instantiateTools(String domain, Supplier<Item.Properties> properties) {
-        if (toolClass == MaterialSword.class) return new MaterialSword(domain, this, properties.get());
-        return new MaterialTool(domain, this, properties.get());
+    public List<IAntimatterTool> instantiateTools(String domain, Supplier<Item.Properties> properties) {
+        List<IAntimatterTool> tools = new ArrayList<>();
+        MaterialTags.TOOLS.all().forEach(t -> {
+            if (primaryMaterialRequirement != null && !t.has(primaryMaterialRequirement)) return;
+            if (hasSecondaryMaterial){
+                MaterialTags.HANDLE.all().forEach(h ->{
+                    if (secondaryMaterialRequirement == null || h.has(secondaryMaterialRequirement)){
+                        if (toolClass == MaterialSword.class) tools.add(new MaterialSword(domain, this, properties.get(), t, h));
+                        else tools.add(new MaterialTool(domain, this, properties.get(), t, h));
+                    }
+                });
+            }else {
+                if (toolClass == MaterialSword.class) tools.add(new MaterialSword(domain, this, properties.get(), t, Data.NULL));
+                else tools.add(new MaterialTool(domain, this, properties.get(), t, Data.NULL));
+            }
+        });
+        return tools;
     }
 
     protected Item.Properties prepareInstantiation(String domain) {
@@ -322,7 +347,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     /* GETTERS */
 
     public ItemStack getToolStack(Material primary, Material secondary) {
-        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, id, getDomain())).asItemStack(primary, secondary);
+        String tool = secondary == Data.NULL ? primary.getId() : primary.getId() + "_" + secondary.getId();
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, tool + "_" + id, getDomain())).resolveStack(0, 0);
     }
 
     public String getDomain() {
