@@ -25,8 +25,6 @@ public class EnergyInfoProvider implements IProbeInfoProvider {
         if (blockState.hasBlockEntity()) {
             BlockEntity tile = Utils.getTile(level, data.getPos());
 
-            if (tile == null) return;
-
             if (tile instanceof TileEntityMachine machine) {
                 if(!machine.energyHandler.isPresent()) {
                     return;

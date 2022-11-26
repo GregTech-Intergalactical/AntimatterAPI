@@ -28,8 +28,6 @@ public class RecipeInfoProvider implements IProbeInfoProvider {
         if (blockState.hasBlockEntity()) {
             BlockEntity tile = Utils.getTile(level, data.getPos());
 
-            if (tile == null) return;
-
             if (tile instanceof TileEntityMachine machine) {
                 if(!machine.recipeHandler.isPresent()) {
                     return;
