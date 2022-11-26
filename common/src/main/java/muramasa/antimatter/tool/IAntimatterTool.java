@@ -289,12 +289,12 @@ public interface IAntimatterTool extends ISharedAntimatterObject, IColorHandler,
     default Texture[] getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
         int layers = getAntimatterToolType().getOverlayLayers();
-        textures.add(new Texture(getDomain(), "item/tool/".concat(getAntimatterToolType().getId())));
+        textures.add(new Texture(getAntimatterToolType().getDomain(), "item/tool/".concat(getAntimatterToolType().getId())));
         if (layers == 1)
-            textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterToolType().getId())));
+            textures.add(new Texture(getAntimatterToolType().getDomain(), "item/tool/overlay/".concat(getAntimatterToolType().getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
-                textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getAntimatterToolType().getId(), "_", Integer.toString(i))));
+                textures.add(new Texture(getAntimatterToolType().getDomain(), String.join("", "item/tool/overlay/", getAntimatterToolType().getId(), "_", Integer.toString(i))));
             }
         }
         return textures.toArray(new Texture[textures.size()]);

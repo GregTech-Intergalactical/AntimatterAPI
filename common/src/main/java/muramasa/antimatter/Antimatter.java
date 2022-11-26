@@ -84,7 +84,7 @@ public class Antimatter extends AntimatterMod {
     public void addCraftingLoaders(CraftingEvent ev) {
         ev.addLoader(MaterialRecipes::init);
         ev.addLoader(Pipes::loadRecipes);
-        ev.addLoader(Tools::init);
+        //ev.addLoader(Tools::init);
     }
 
     public void providers(ProvidersEvent ev) {

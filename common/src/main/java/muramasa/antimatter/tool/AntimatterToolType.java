@@ -180,7 +180,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     public List<IAntimatterTool> instantiateTools(String domain, Supplier<Item.Properties> properties) {
         List<IAntimatterTool> tools = new ArrayList<>();
-        MaterialTags.TOOLS.all().forEach(t -> {
+        MaterialTags.TOOLS.getAll().forEach((t, d) -> {
+            if (!d.toolTypes().contains(this)) return;
             if (primaryMaterialRequirement != null && !t.has(primaryMaterialRequirement)) return;
             if (hasSecondaryMaterial){
                 MaterialTags.HANDLE.all().forEach(h ->{
@@ -236,7 +237,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         this.powered = true;
         this.baseMaxEnergy = baseMaxEnergy;
         this.energyTiers = energyTiers;
-        return this;
+        return setHasSecondaryMaterial(false);
     }
 
     public AntimatterToolType setHasContainer(boolean container) {
@@ -332,6 +333,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return this;
     }
 
+    public AntimatterToolType setHasSecondaryMaterial(boolean hasSecondaryMaterial) {
+        this.hasSecondaryMaterial = hasSecondaryMaterial;
+        return this;
+    }
+
     public void addBehaviour(IBehaviour<IAntimatterTool>... behaviours) {
         Arrays.stream(behaviours).forEach(b -> this.behaviours.put(b.getId(), b));
     }
@@ -348,7 +354,7 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     public ItemStack getToolStack(Material primary, Material secondary) {
         String tool = secondary == Data.NULL ? primary.getId() : primary.getId() + "_" + secondary.getId();
-        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, tool + "_" + id, getDomain())).resolveStack(0, 0);
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterTool.class, tool + "_" + id)).resolveStack(0, 0);
     }
 
     public String getDomain() {

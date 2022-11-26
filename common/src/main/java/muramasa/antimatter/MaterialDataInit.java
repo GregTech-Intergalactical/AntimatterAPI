@@ -51,7 +51,7 @@ public class MaterialDataInit {
         event.setMaterial(Glowstone).asDust();
         event.setMaterial(Sugar).asDust();
         event.setMaterial(Bone).addHandleStat(12, 0.0F);
-        event.setMaterial(Wood).asDust(PLATE).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), SOFT_HAMMER).addHandleStat(12, 0.0F);
+        event.setMaterial(Wood).asDust(PLATE, MaterialTags.RUBBERTOOLS).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), SOFT_HAMMER).addHandleStat(12, 0.0F);
         event.setMaterial(Blaze).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
 
         event.setMaterial(Flint).asDust(GEM, MaterialTags.FLINT).addTools(1.25F, Tiers.STONE.getSpeed(), 128, 1, of(Enchantments.FIRE_ASPECT, 1), PICKAXE, AXE, SHOVEL, SWORD, HOE, MORTAR, KNIFE);
