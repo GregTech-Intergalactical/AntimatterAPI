@@ -7,6 +7,7 @@ public class TheOneProbePlugin {
 	public static void init() {
 		ITheOneProbe oneProbe = TheOneProbe.theOneProbeImp;
         oneProbe.registerProvider(new EnergyInfoProvider());
+		oneProbe.registerProvider(new MultiblockInfoProvider());
         oneProbe.registerProvider(new RecipeInfoProvider());
 	}
 }
