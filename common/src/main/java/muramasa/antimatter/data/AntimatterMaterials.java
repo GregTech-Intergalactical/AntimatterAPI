@@ -53,5 +53,7 @@ public class AntimatterMaterials {
     public static Material Lava = AntimatterAPI.register(Material.class, new Material(Ref.ID, "lava", 0xff4000, NONE));
     public static Material Water = AntimatterAPI.register(Material.class, new Material(Ref.ID, "water", 0x0000ff, NONE));
 
-    public static void init(){}
+    public static void init(){
+        Material.init();
+    }
 }

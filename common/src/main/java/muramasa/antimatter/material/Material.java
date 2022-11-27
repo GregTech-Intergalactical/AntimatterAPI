@@ -64,6 +64,8 @@ public class Material implements ISharedAntimatterObject {
         enabled = true;
     }
 
+    public static void init(){}
+
     public String materialDomain() {
         return domain;
     }
