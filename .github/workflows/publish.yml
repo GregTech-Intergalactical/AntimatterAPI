@@ -11,10 +11,10 @@ jobs:
         os: [ubuntu-20.04]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout repository
+      - name: Checkout Antimatter
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          submodules: recursive
       - name: Fetch tags
         run: git fetch --tags
       - name: Validate Gradle wrapper
