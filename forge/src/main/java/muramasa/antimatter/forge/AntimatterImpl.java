@@ -9,6 +9,8 @@ import muramasa.antimatter.AntimatterMod;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.forge.AntimatterCraftingEvent;
 import muramasa.antimatter.event.forge.AntimatterProvidersEvent;
+import muramasa.antimatter.integration.Integrations;
+import muramasa.antimatter.integration.top.forge.TheOneProbePlugin;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.proxy.CommonHandler;
@@ -17,7 +19,6 @@ import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -91,6 +92,9 @@ public class AntimatterImpl {
                 }
             }
         }));
+
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(Integrations::enqueueIMC);
     }
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {

@@ -146,6 +146,7 @@ dependencies {
     modImplementation(include("com.github.Reforged-Mods:ARRP-forge:0.5.7.2"))
     modRuntimeOnly("io.github.feltmc:fluidhandler-extras:1.0.1")
     modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
+    modImplementation("curse.maven:the-one-probe-245211:${rootProject.top_forge_file}")
 }
 
 processResources {
