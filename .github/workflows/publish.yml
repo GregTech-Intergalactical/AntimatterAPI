@@ -26,8 +26,8 @@ jobs:
       - name: Make Gradle wrapper executable
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
-      - name: Build
-        run: ./gradlew build :forge:publish :fabric:publish :common:publish --stacktrace
+      - name: Build & Publish
+        run: ./gradlew build :antimatter-forge:publish :antimatter-fabric:publish :antimatter-common:publish --stacktrace
         env:
           GITHUB_RELEASE: true
       - name: Upload Forge Artifact
