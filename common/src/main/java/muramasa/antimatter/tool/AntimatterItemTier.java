@@ -45,21 +45,27 @@ public class AntimatterItemTier implements Tier {
 
     @Override
     public int getUses() {
-        return MaterialTags.TOOLS.getToolData(primary).toolDurability() + MaterialTags.HANDLE.getHandleData(secondary).durability();
+        if (primary == Data.NULL) return Integer.MAX_VALUE;
+        int secondaryUses = secondary.has(MaterialTags.HANDLE) ? MaterialTags.HANDLE.getHandleData(secondary).durability() : 0;
+        return MaterialTags.TOOLS.getToolData(primary).toolDurability() + secondaryUses;
     }
 
     @Override
     public float getSpeed() {
-        return MaterialTags.TOOLS.getToolData(primary).toolSpeed() + MaterialTags.HANDLE.getHandleData(secondary).speed();
+        if (primary == Data.NULL) return 5.0f;
+        float secondarySpeed = secondary.has(MaterialTags.HANDLE) ? MaterialTags.HANDLE.getHandleData(secondary).speed() : 0f;
+        return MaterialTags.TOOLS.getToolData(primary).toolSpeed() + secondarySpeed;
     }
 
     @Override
     public float getAttackDamageBonus() {
+        if (primary == Data.NULL) return 5.0f;
         return MaterialTags.TOOLS.getToolData(primary).toolDamage();
     }
 
     @Override
     public int getLevel() {
+        if (primary == Data.NULL) return 3;
         return MaterialTags.TOOLS.getToolData(primary).toolQuality();
     }
 
