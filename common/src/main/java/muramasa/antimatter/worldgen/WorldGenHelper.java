@@ -4,8 +4,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -115,7 +115,7 @@ public class WorldGenHelper {
    */
   public static boolean setRock(LevelAccessor world, BlockPos pos, Material material, @Nullable() BlockState fill) {
     StoneType stone = fill != null ? STONE_MAP.get(fill) : null;
-    BlockState rockState = AntimatterMaterialTypes.ROCK.get().get(material, stone != null ? stone : Data.STONE).asState();
+    BlockState rockState = AntimatterMaterialTypes.ROCK.get().get(material, stone != null ? stone : AntimatterStoneTypes.STONE).asState();
 
     final BlockState existingBelow = world.getBlockState(pos.below());
     if (existingBelow.isAir() || !existingBelow.getMaterial().isSolid())
