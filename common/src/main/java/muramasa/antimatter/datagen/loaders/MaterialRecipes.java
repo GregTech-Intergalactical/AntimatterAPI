@@ -5,6 +5,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
@@ -22,7 +23,6 @@ import net.minecraft.world.item.ItemStack;
 import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTags.RUBBERTOOLS;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
@@ -31,83 +31,83 @@ public class MaterialRecipes {
     public static void init(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {
         final CriterionTriggerInstance in = provider.hasSafeItem(AntimatterDefaultTools.WRENCH.getTag());
         int craftingMultiplier = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? 1 : 2;
-        DUST.all().forEach(m -> {
-            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_small", "antimatter_dusts", "has_wrench", in, DUST.get(m, 1), of('D', DUST_SMALL.getMaterialTag(m)), "DD", "DD");
-            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_tiny", "antimatter_dusts", "has_wrench", in, DUST.get(m, 1), of('D', DUST_TINY.getMaterialTag(m)), "DDD", "DDD", "DDD");
+        AntimatterMaterialTypes.DUST.all().forEach(m -> {
+            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_small", "antimatter_dusts", "has_wrench", in, AntimatterMaterialTypes.DUST.get(m, 1), of('D', AntimatterMaterialTypes.DUST_SMALL.getMaterialTag(m)), "DD", "DD");
+            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_tiny", "antimatter_dusts", "has_wrench", in, AntimatterMaterialTypes.DUST.get(m, 1), of('D', AntimatterMaterialTypes.DUST_TINY.getMaterialTag(m)), "DDD", "DDD", "DDD");
         });
-        ROD.all().forEach(m -> {
-            if (m.has(INGOT)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_rod", "antimatter_material", "has_wrench", in, ROD.get(m, craftingMultiplier), of('F', AntimatterDefaultTools.FILE.getTag(), 'I', INGOT.getMaterialTag(m)), "F", "I");
+        AntimatterMaterialTypes.ROD.all().forEach(m -> {
+            if (m.has(AntimatterMaterialTypes.INGOT)) {
+                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_rod", "antimatter_material", "has_wrench", in, AntimatterMaterialTypes.ROD.get(m, craftingMultiplier), of('F', AntimatterDefaultTools.FILE.getTag(), 'I', AntimatterMaterialTypes.INGOT.getMaterialTag(m)), "F", "I");
             }
-            if (m.has(BOLT)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_bolt", "antimatter_material", "has_wrench", in, BOLT.get(m, 2 * craftingMultiplier), of('F', AntimatterDefaultTools.SAW.getTag(), 'I', ROD.getMaterialTag(m)), "F ", " I");
-                if (m.has(SCREW)) {
+            if (m.has(AntimatterMaterialTypes.BOLT)) {
+                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_bolt", "antimatter_material", "has_wrench", in, AntimatterMaterialTypes.BOLT.get(m, 2 * craftingMultiplier), of('F', AntimatterDefaultTools.SAW.getTag(), 'I', AntimatterMaterialTypes.ROD.getMaterialTag(m)), "F ", " I");
+                if (m.has(AntimatterMaterialTypes.SCREW)) {
                     String[] pattern = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? new String[]{"FI", "I "} : new String[]{"F", "I"};
                     provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_screw", "antimatter_material",
-                            "has_wrench", in, SCREW.get(m, 1), of('F', AntimatterDefaultTools.FILE.getTag(), 'I', BOLT.getMaterialTag(m)), pattern);
+                            "has_wrench", in, AntimatterMaterialTypes.SCREW.get(m, 1), of('F', AntimatterDefaultTools.FILE.getTag(), 'I', AntimatterMaterialTypes.BOLT.getMaterialTag(m)), pattern);
                 }
             }
-            if (m.has(RING)) {
+            if (m.has(AntimatterMaterialTypes.RING)) {
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_ring", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                        RING.get(m, craftingMultiplier), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(), 'W', ROD.getMaterialTag(m)), "H ", " W");
+                        AntimatterMaterialTypes.RING.get(m, craftingMultiplier), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(), 'W', AntimatterMaterialTypes.ROD.getMaterialTag(m)), "H ", " W");
             }
         });
-        ROTOR.all().forEach(m -> {
+        AntimatterMaterialTypes.ROTOR.all().forEach(m -> {
             provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_rotors", "antimatter_material", "has_screwdriver", provider.hasSafeItem(AntimatterDefaultTools.SCREWDRIVER.getTag()),
-                    ROTOR.get(m, 1), ImmutableMap.<Character, Object>builder()
+                    AntimatterMaterialTypes.ROTOR.get(m, 1), ImmutableMap.<Character, Object>builder()
                             .put('S', AntimatterDefaultTools.SCREWDRIVER.getTag())
                             .put('F', AntimatterDefaultTools.FILE.getTag())
                             .put('H', AntimatterDefaultTools.HAMMER.getTag())
-                            .put('P', PLATE.getMaterialTag(m))
-                            .put('W', SCREW.getMaterialTag(m))
-                            .put('R', RING.getMaterialTag(m))
+                            .put('P', AntimatterMaterialTypes.PLATE.getMaterialTag(m))
+                            .put('W', AntimatterMaterialTypes.SCREW.getMaterialTag(m))
+                            .put('R', AntimatterMaterialTypes.RING.getMaterialTag(m))
                             .build(),
                     "PHP", "WRF", "PSP");
         });
-        PLATE.all().forEach(m -> {
-            if (m.has(INGOT) && !m.has(RUBBERTOOLS)){
-                Object[] array = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? new Object[]{AntimatterDefaultTools.HAMMER.getTag(), INGOT.getMaterialTag(m), INGOT.getMaterialTag(m)} : new Object[]{AntimatterDefaultTools.HAMMER.getTag(), INGOT.getMaterialTag(m)};
-                provider.shapeless(consumer, m.getId() + "_plate", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()), PLATE.get(m, 1), array);
+        AntimatterMaterialTypes.PLATE.all().forEach(m -> {
+            if (m.has(AntimatterMaterialTypes.INGOT) && !m.has(RUBBERTOOLS)){
+                Object[] array = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? new Object[]{AntimatterDefaultTools.HAMMER.getTag(), AntimatterMaterialTypes.INGOT.getMaterialTag(m), AntimatterMaterialTypes.INGOT.getMaterialTag(m)} : new Object[]{AntimatterDefaultTools.HAMMER.getTag(), AntimatterMaterialTypes.INGOT.getMaterialTag(m)};
+                provider.shapeless(consumer, m.getId() + "_plate", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()), AntimatterMaterialTypes.PLATE.get(m, 1), array);
             }
-            if (m.has(GEAR_SMALL)) {
+            if (m.has(AntimatterMaterialTypes.GEAR_SMALL)) {
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_gear_small", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                        GEAR_SMALL.get(m, 1), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(),'P', PLATE.getMaterialTag(m)), "P ", " H");
+                        AntimatterMaterialTypes.GEAR_SMALL.get(m, 1), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(),'P', AntimatterMaterialTypes.PLATE.getMaterialTag(m)), "P ", " H");
             }
-            if (m.has(GEAR)){
+            if (m.has(AntimatterMaterialTypes.GEAR)){
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_gear", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                        GEAR.get(m, 1), ImmutableMap.<Character, Object>builder()
+                        AntimatterMaterialTypes.GEAR.get(m, 1), ImmutableMap.<Character, Object>builder()
                                 .put('W', AntimatterDefaultTools.WRENCH.getTag())
-                                .put('P', PLATE.getMaterialTag(m))
-                                .put('R', ROD.getMaterialTag(m))
+                                .put('P', AntimatterMaterialTypes.PLATE.getMaterialTag(m))
+                                .put('R', AntimatterMaterialTypes.ROD.getMaterialTag(m))
                                 .build(),
                         "RPR", "PWP", "RPR");
             }
         });
 
-        DUST.all().forEach(m -> {
-            if (m.has(INGOT)) {
+        AntimatterMaterialTypes.DUST.all().forEach(m -> {
+            if (m.has(AntimatterMaterialTypes.INGOT)) {
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_ingot", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                        DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
+                        AntimatterMaterialTypes.DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
                                 .put('M', AntimatterDefaultTools.MORTAR.getTag())
-                                .put('I', INGOT.getMaterialTag(m))
+                                .put('I', AntimatterMaterialTypes.INGOT.getMaterialTag(m))
                                 .build(),
                         "MI");
             }
-            if (m.has(ROCK)) {
+            if (m.has(AntimatterMaterialTypes.ROCK)) {
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_rock", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                        DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
+                        AntimatterMaterialTypes.DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
                                 .put('M', AntimatterDefaultTools.MORTAR.getTag())
-                                .put('I', ROCK.getMaterialTag(m))
+                                .put('I', AntimatterMaterialTypes.ROCK.getMaterialTag(m))
                                 .build(),
                         "III", "III", "IIM");
             }
         });
 
         AntimatterAPI.all(BlockOre.class, o -> {
-            if (o.getOreType() != ORE) return;
-            if (!MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).has(INGOT)) return;
+            if (o.getOreType() != AntimatterMaterialTypes.ORE) return;
+            if (!MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).has(AntimatterMaterialTypes.INGOT)) return;
             if (o.getMaterial().has(MaterialTags.NEEDS_BLAST_FURNACE)) return;
-            Item ingot = INGOT.get(MaterialTags.SMELT_INTO.getMapping(o.getMaterial()));
+            Item ingot = AntimatterMaterialTypes.INGOT.get(MaterialTags.SMELT_INTO.getMapping(o.getMaterial()));
             TagKey<Item> oreTag = TagUtils.getForgelikeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
             TagKey<Item> ingotTag = TagUtils.getForgelikeItemTag("ingots/".concat(MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).getId()));
             AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(oreTag, 1), new ItemStack(ingot, MaterialTags.SMELTING_MULTI.getInt(o.getMaterial())), 2.0F, 100)
@@ -117,19 +117,19 @@ public class MaterialRecipes {
                     .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
                     .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot_smelting")));
         });
-        AntimatterAPI.all(Material.class).stream().filter(m -> m.has(RAW_ORE) && MaterialTags.SMELT_INTO.getMapping(m).has(INGOT) && !m.has(MaterialTags.NEEDS_BLAST_FURNACE)).forEach(m -> {
-            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1), new ItemStack(INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 100)
-                    .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
+        AntimatterAPI.all(Material.class).stream().filter(m -> m.has(AntimatterMaterialTypes.RAW_ORE) && MaterialTags.SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(MaterialTags.NEEDS_BLAST_FURNACE)).forEach(m -> {
+            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(AntimatterMaterialTypes.RAW_ORE.getMaterialTag(m), 1), new ItemStack(AntimatterMaterialTypes.INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 100)
+                    .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(AntimatterMaterialTypes.INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
                     .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot")));
-            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(RAW_ORE.getMaterialTag(m), 1), new ItemStack(INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 200)
-                    .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
+            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(AntimatterMaterialTypes.RAW_ORE.getMaterialTag(m), 1), new ItemStack(AntimatterMaterialTypes.INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 200)
+                    .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(AntimatterMaterialTypes.INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
                     .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot_smelting")));
         });
-        DUST.all().forEach(m -> {
+        AntimatterMaterialTypes.DUST.all().forEach(m -> {
             if (m.has(MaterialTags.NEEDS_BLAST_FURNACE) || m.has(MaterialTags.HAS_CUSTOM_SMELTING)) return;
-            if (!MaterialTags.DIRECT_SMELT_INTO.getMapping(m).has(INGOT)) return;
-            SimpleCookingRecipeBuilder.blasting(DUST.getMaterialIngredient(m, 1), INGOT.get(MaterialTags.DIRECT_SMELT_INTO.getMapping(m)), 0.5F, 100).unlockedBy("has_" + m.getId() + "_dust", provider.hasSafeItem(DUST.getMaterialTag(m))).save(consumer, Ref.SHARED_ID + ":" + m.getId() + "_dust_to_ingot_bl");
-            SimpleCookingRecipeBuilder.smelting(DUST.getMaterialIngredient(m, 1), INGOT.get(MaterialTags.DIRECT_SMELT_INTO.getMapping(m)), 0.5F, 200).unlockedBy("has_" + m.getId() + "_dust", provider.hasSafeItem(DUST.getMaterialTag(m))).save(consumer, Ref.SHARED_ID + ":" + m.getId() + "_dust_to_ingot");
+            if (!MaterialTags.DIRECT_SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT)) return;
+            SimpleCookingRecipeBuilder.blasting(AntimatterMaterialTypes.DUST.getMaterialIngredient(m, 1), AntimatterMaterialTypes.INGOT.get(MaterialTags.DIRECT_SMELT_INTO.getMapping(m)), 0.5F, 100).unlockedBy("has_" + m.getId() + "_dust", provider.hasSafeItem(AntimatterMaterialTypes.DUST.getMaterialTag(m))).save(consumer, Ref.SHARED_ID + ":" + m.getId() + "_dust_to_ingot_bl");
+            SimpleCookingRecipeBuilder.smelting(AntimatterMaterialTypes.DUST.getMaterialIngredient(m, 1), AntimatterMaterialTypes.INGOT.get(MaterialTags.DIRECT_SMELT_INTO.getMapping(m)), 0.5F, 200).unlockedBy("has_" + m.getId() + "_dust", provider.hasSafeItem(AntimatterMaterialTypes.DUST.getMaterialTag(m))).save(consumer, Ref.SHARED_ID + ":" + m.getId() + "_dust_to_ingot");
         });
         /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
             Item dust = DUST.get(mat);

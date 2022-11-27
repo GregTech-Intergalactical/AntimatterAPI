@@ -4,6 +4,7 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
@@ -122,7 +123,8 @@ public class Antimatter extends AntimatterMod {
             MachineState.init();
             AntimatterDefaultTools.init(side);
             AntimatterMaterials.init();
-            Data.init(side);
+            AntimatterMaterialTypes.init();
+            Data.init();
             ICover.init();
             SubTag.init();
             AntimatterWorldGenerator.preinit();

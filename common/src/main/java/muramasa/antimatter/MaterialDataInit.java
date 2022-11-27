@@ -1,6 +1,7 @@
 package muramasa.antimatter;
 
 import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.material.MaterialTags;
@@ -9,7 +10,6 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.*;
 import static net.minecraft.world.item.Tiers.GOLD;
 import static net.minecraft.world.item.Tiers.IRON;
 import static net.minecraft.world.item.Tiers.NETHERITE;
@@ -18,21 +18,21 @@ public class MaterialDataInit {
     public static void onMaterialEvent(MaterialEvent event){
         //why?
         //event.setMaterial(Data.NULL).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F);
-        event.setMaterial(AntimatterMaterials.Stone).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F);
-        event.setMaterial(AntimatterMaterials.Granite).asDust(ROCK);
-        event.setMaterial(AntimatterMaterials.Diorite).asDust(ROCK);
-        event.setMaterial(AntimatterMaterials.Andesite).asDust(ROCK);
-        event.setMaterial(AntimatterMaterials.Deepslate).asDust(ROCK);
-        event.setMaterial(AntimatterMaterials.Tuff).asDust(ROCK);
+        event.setMaterial(AntimatterMaterials.Stone).asDust(AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.GEAR).addHandleStat(-10, -0.5F);
+        event.setMaterial(AntimatterMaterials.Granite).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Diorite).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Andesite).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Deepslate).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Tuff).asDust(AntimatterMaterialTypes.ROCK);
 
-        event.setMaterial(AntimatterMaterials.Gravel).asDust(ROCK);
-        event.setMaterial(AntimatterMaterials.Dirt).asDust(ROCK);
-        event.setMaterial(AntimatterMaterials.Sand).asDust(ROCK);
-        event.setMaterial(AntimatterMaterials.RedSand).asDust(ROCK);
-        event.setMaterial(AntimatterMaterials.Sandstone).asDust(ROCK);
+        event.setMaterial(AntimatterMaterials.Gravel).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Dirt).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Sand).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.RedSand).asDust(AntimatterMaterialTypes.ROCK);
+        event.setMaterial(AntimatterMaterials.Sandstone).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Blackstone).asDust();
 
-        event.setMaterial(AntimatterMaterials.Basalt).asDust(ROCK);
+        event.setMaterial(AntimatterMaterials.Basalt).asDust(AntimatterMaterialTypes.ROCK);
         event.setMaterial(AntimatterMaterials.Endstone).asDust();
         event.setMaterial(AntimatterMaterials.Netherrack).asDust();
         event.setMaterial(AntimatterMaterials.Prismarine).asDust();
@@ -46,14 +46,14 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Glowstone).asDust();
         event.setMaterial(AntimatterMaterials.Sugar).asDust();
         event.setMaterial(AntimatterMaterials.Bone).addHandleStat(12, 0.0F);
-        event.setMaterial(AntimatterMaterials.Wood).asDust(PLATE).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), AntimatterDefaultTools.SOFT_HAMMER).addHandleStat(12, 0.0F);
+        event.setMaterial(AntimatterMaterials.Wood).asDust(AntimatterMaterialTypes.PLATE).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), AntimatterDefaultTools.SOFT_HAMMER).addHandleStat(12, 0.0F);
         event.setMaterial(AntimatterMaterials.Blaze).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
 
-        event.setMaterial(AntimatterMaterials.Flint).asDust(GEM, MaterialTags.FLINT).addTools(1.25F, Tiers.STONE.getSpeed(), 128, 1, of(Enchantments.FIRE_ASPECT, 1), AntimatterDefaultTools.PICKAXE, AntimatterDefaultTools.AXE, AntimatterDefaultTools.SHOVEL, AntimatterDefaultTools.SWORD, AntimatterDefaultTools.HOE, AntimatterDefaultTools.MORTAR, AntimatterDefaultTools.KNIFE);
+        event.setMaterial(AntimatterMaterials.Flint).asDust(AntimatterMaterialTypes.GEM, MaterialTags.FLINT).addTools(1.25F, Tiers.STONE.getSpeed(), 128, 1, of(Enchantments.FIRE_ASPECT, 1), AntimatterDefaultTools.PICKAXE, AntimatterDefaultTools.AXE, AntimatterDefaultTools.SHOVEL, AntimatterDefaultTools.SWORD, AntimatterDefaultTools.HOE, AntimatterDefaultTools.MORTAR, AntimatterDefaultTools.KNIFE);
 
-        event.setMaterial(AntimatterMaterials.Charcoal).asDust(BLOCK);
-        event.setMaterial(AntimatterMaterials.Coal).asGemBasic(false).asOre(0, 2, true, ORE_STONE);
-        MaterialTags.CUSTOM_ORE_STONE_DROPS.add(AntimatterMaterials.Coal, b -> BlockLoot.createOreDrop(b, GEM.get(AntimatterMaterials.Coal)));
+        event.setMaterial(AntimatterMaterials.Charcoal).asDust(AntimatterMaterialTypes.BLOCK);
+        event.setMaterial(AntimatterMaterials.Coal).asGemBasic(false).asOre(0, 2, true, AntimatterMaterialTypes.ORE_STONE);
+        MaterialTags.CUSTOM_ORE_STONE_DROPS.add(AntimatterMaterials.Coal, b -> BlockLoot.createOreDrop(b, AntimatterMaterialTypes.GEM.get(AntimatterMaterials.Coal)));
         event.setMaterial(AntimatterMaterials.Diamond).asGemBasic(false).asOre(3, 7, true).addTools(Tiers.DIAMOND.getAttackDamageBonus(), Tiers.DIAMOND.getSpeed(), Tiers.DIAMOND.getUses(), Tiers.DIAMOND.getLevel());
         event.setMaterial(AntimatterMaterials.Emerald).asGemBasic(false).asOre(3, 7, true).harvestLevel(2);
         event.setMaterial(AntimatterMaterials.EnderPearl).asGemBasic(false);
@@ -63,7 +63,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Quartz).asDust();
         event.setMaterial(AntimatterMaterials.Netherite).asMetal(2246, 1300).addTools(3.0F, 10, 500, NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3)).addArmor(new int[]{0, 1, 1, 0}, 0.5F, 0.1F, 20);
         event.setMaterial(AntimatterMaterials.NetherizedDiamond).asGemBasic(false).addTools(4.0F, 12, NETHERITE.getUses(), NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3, Enchantments.SHARPNESS, 4)).addArmor(new int[]{1, 1, 2, 1}, 3.0F, 0.1F, 37, of(Enchantments.ALL_DAMAGE_PROTECTION, 4));
-        event.setMaterial(AntimatterMaterials.NetheriteScrap).asDust(CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, RAW_ORE, DUST_IMPURE, DUST_PURE);
+        event.setMaterial(AntimatterMaterials.NetheriteScrap).asDust(AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_CENTRIFUGED, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
 
         event.setMaterial(AntimatterMaterials.Lava).asFluid(0, 1300);
         event.setMaterial(AntimatterMaterials.Water).asFluid();

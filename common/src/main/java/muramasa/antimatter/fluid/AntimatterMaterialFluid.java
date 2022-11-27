@@ -1,13 +1,11 @@
 package muramasa.antimatter.fluid;
 
-import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialType;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 
@@ -46,11 +44,11 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static AntimatterFluidAttributes.Builder prepareAttributes(String domain, Material material, MaterialType<?> type) {
-        if (type == Data.GAS) {
+        if (type == AntimatterMaterialTypes.GAS) {
             return AntimatterFluidAttributes.builder(GAS_TEXTURE, GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((70 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(200).density(-1000).gaseous().temperature(MaterialTags.GAS_TEMPERATURE.getInt(material));
-        } else if (type == Data.PLASMA) {
+        } else if (type == AntimatterMaterialTypes.PLASMA) {
             return AntimatterFluidAttributes.builder(PLASMA_TEXTURE, PLASMA_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((50 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
                     .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000);
@@ -62,7 +60,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private static Block.Properties prepareProperties(MaterialType<?> type) {
-        return getDefaultBlockProperties().lightLevel(s -> type == Data.PLASMA ? 15 : 0);
+        return getDefaultBlockProperties().lightLevel(s -> type == AntimatterMaterialTypes.PLASMA ? 15 : 0);
     }
 
 
@@ -70,7 +68,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     public String getLang(String lang) {
         if (lang.equals(Language.DEFAULT)) {
             if (isGasType()) {
-                String gas = getType() == Data.PLASMA ? " Plasma" : " Gas";
+                String gas = getType() == AntimatterMaterialTypes.PLASMA ? " Plasma" : " Gas";
                 return Utils.lowerUnderscoreToUpperSpaced(material.getId()) + gas;
             }
             String liquid = material.has(MaterialTags.MOLTEN) ? "Molten " : "Liquid ";
@@ -80,6 +78,6 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
     }
 
     private boolean isGasType(){
-        return type == Data.PLASMA || type == Data.GAS || this.getAttributes().isGaseous();
+        return type == AntimatterMaterialTypes.PLASMA || type == AntimatterMaterialTypes.GAS || this.getAttributes().isGaseous();
     }
 }

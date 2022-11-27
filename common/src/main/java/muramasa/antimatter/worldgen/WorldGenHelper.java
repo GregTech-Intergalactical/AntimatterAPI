@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
@@ -82,8 +83,8 @@ public class WorldGenHelper {
     StoneType stone = STONE_MAP.get(existing);
     if (stone == null)
       return false;
-    BlockState oreState = type == Data.ORE ? Data.ORE.get().get(material, stone).asState()
-        : Data.ORE_SMALL.get().get(material, stone).asState();
+    BlockState oreState = type == AntimatterMaterialTypes.ORE ? AntimatterMaterialTypes.ORE.get().get(material, stone).asState()
+        : AntimatterMaterialTypes.ORE_SMALL.get().get(material, stone).asState();
     if (!ORE_PREDICATE.test(existing))
       return false;
     return setState(world, pos, oreState);
@@ -99,8 +100,8 @@ public class WorldGenHelper {
     StoneType stone = STONE_MAP.get(existing);
     if (stone == null)
       return false;
-    BlockState oreState = type == Data.ORE ? Data.ORE.get().get(material, stone).asState()
-        : Data.ORE_SMALL.get().get(material, stone).asState();
+    BlockState oreState = type == AntimatterMaterialTypes.ORE ? AntimatterMaterialTypes.ORE.get().get(material, stone).asState()
+        : AntimatterMaterialTypes.ORE_SMALL.get().get(material, stone).asState();
     if (!ORE_PREDICATE.test(existing))
       return false;
     return setState(world, pos, oreState);
@@ -114,7 +115,7 @@ public class WorldGenHelper {
    */
   public static boolean setRock(LevelAccessor world, BlockPos pos, Material material, @Nullable() BlockState fill) {
     StoneType stone = fill != null ? STONE_MAP.get(fill) : null;
-    BlockState rockState = Data.ROCK.get().get(material, stone != null ? stone : Data.STONE).asState();
+    BlockState rockState = AntimatterMaterialTypes.ROCK.get().get(material, stone != null ? stone : Data.STONE).asState();
 
     final BlockState existingBelow = world.getBlockState(pos.below());
     if (existingBelow.isAir() || !existingBelow.getMaterial().isSolid())

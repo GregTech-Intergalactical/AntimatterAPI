@@ -1,8 +1,8 @@
 package muramasa.antimatter.tool;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -85,11 +85,11 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
         if (primary == null) {
             return Ingredient.EMPTY;
         }
-        if (primary.has(Data.GEM)) {
+        if (primary.has(AntimatterMaterialTypes.GEM)) {
             return Ingredient.of(TagUtils.getForgelikeItemTag("gems/".concat(primary.getId())));
-        } else if (primary.has(Data.INGOT)) {
+        } else if (primary.has(AntimatterMaterialTypes.INGOT)) {
             return Ingredient.of(TagUtils.getForgelikeItemTag("ingots/".concat(primary.getId())));
-        } else if (primary.has(Data.DUST)) {
+        } else if (primary.has(AntimatterMaterialTypes.DUST)) {
             return Ingredient.of(TagUtils.getForgelikeItemTag("dusts/".concat(primary.getId())));
         } //else if (ItemTags.getAllTags().getTag(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
          //   return Ingredient.of(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));

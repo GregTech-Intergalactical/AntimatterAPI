@@ -1,9 +1,9 @@
 package muramasa.antimatter.common.event.forge;
 
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.common.event.CommonEvents;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.structure.StructureCache;
@@ -67,7 +67,7 @@ public class ForgeCommonEvents {
             if (id.startsWith("block_")) {
                 Material mat = Material.get(id.replace("block_", ""));
                 if (mat != NULL) {
-                    map.remap(Data.BLOCK.get().get(mat).asBlock());
+                    map.remap(AntimatterMaterialTypes.BLOCK.get().get(mat).asBlock());
                     continue;
                 }
             }

@@ -2,7 +2,6 @@ package muramasa.antimatter.datagen.providers;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStoneSlab;
@@ -10,6 +9,7 @@ import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.machine.BlockMachine;
@@ -43,8 +43,6 @@ import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Function;
-
-import static muramasa.antimatter.Data.*;
 
 public class AntimatterBlockLootProvider extends BlockLoot implements DataProvider, IAntimatterProvider {
     protected final String providerDomain, providerName;
@@ -118,29 +116,29 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             tables.put(block, b -> MaterialTags.CUSTOM_ORE_DROPS.getBuilderFunction(block.getMaterial()).apply(block));
             return;
         }
-        if (block.getOreType() == Data.ORE_SMALL) {
-            if (!block.getMaterial().has(GEM) && !(block.getMaterial().has(RAW_ORE))) return;
-            Item item = block.getMaterial().has(GEM) ? GEM.get(block.getMaterial()) : null;
+        if (block.getOreType() == AntimatterMaterialTypes.ORE_SMALL) {
+            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE))) return;
+            Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : null;
             LootPool.Builder builder;
             if (item != null) {
                 builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(applyExplosionDecay(item, LootItem.lootTableItem(item)).setWeight(30));
             } else {
                 builder = LootPool.lootPool();
             }
-            if (block.getMaterial().has(CRUSHED)) {
-                Item crushed = CRUSHED.get(block.getMaterial());
+            if (block.getMaterial().has(AntimatterMaterialTypes.CRUSHED)) {
+                Item crushed = AntimatterMaterialTypes.CRUSHED.get(block.getMaterial());
                 //builder.addLootPool(withSurvivesExplosion(crushed, LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(crushed))));
                 builder.add(applyExplosionDecay(crushed, LootItem.lootTableItem(crushed).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f, 2.0f))).setWeight(40)));
             }
-            if (block.getMaterial().has(DUST_IMPURE)) {
-                Item dirty = DUST_IMPURE.get(block.getMaterial());
+            if (block.getMaterial().has(AntimatterMaterialTypes.DUST_IMPURE)) {
+                Item dirty = AntimatterMaterialTypes.DUST_IMPURE.get(block.getMaterial());
                 //builder.addLootPool(withSurvivesExplosion(dirty, LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(dirty))));
                 builder.add(applyExplosionDecay(dirty, LootItem.lootTableItem(dirty).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f, 2.0f)))).setWeight(60));
             }
             tables.put(block, b -> LootTable.lootTable().withPool(builder));
             return;
-        } else if ((block.getMaterial().has(Data.RAW_ORE) || block.getMaterial().has(GEM)) && block.getOreType() == Data.ORE) {
-            Item item = block.getMaterial().has(GEM) ? GEM.get(block.getMaterial()) : Data.RAW_ORE.get(block.getMaterial());
+        } else if ((block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE) || block.getMaterial().has(AntimatterMaterialTypes.GEM)) && block.getOreType() == AntimatterMaterialTypes.ORE) {
+            Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
             tables.put(block, b -> createOreDrop(b, item));
             return;
         }
