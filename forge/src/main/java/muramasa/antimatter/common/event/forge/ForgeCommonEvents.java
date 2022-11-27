@@ -4,12 +4,10 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.common.event.CommonEvents;
-import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import net.devtech.arrp.api.RRPEvent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -27,7 +25,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import static muramasa.antimatter.Data.NULL;
+import static muramasa.antimatter.material.Material.NULL;
 
 @Mod.EventBusSubscriber(modid = Ref.ID)
 public class ForgeCommonEvents {

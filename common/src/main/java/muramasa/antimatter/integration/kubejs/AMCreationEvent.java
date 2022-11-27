@@ -3,7 +3,6 @@ package muramasa.antimatter.integration.kubejs;
 import dev.latvian.mods.kubejs.event.EventJS;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Element;
 import muramasa.antimatter.material.IMaterialTag;
@@ -40,7 +39,7 @@ public class AMCreationEvent extends EventJS {
     }
 
     public void addFlagsToMaterial(String materialId, String... flags) {
-        if (Material.get(materialId) != Data.NULL) {
+        if (Material.get(materialId) != Material.NULL) {
             for (String flag : flags) {
                 IMaterialTag tag = AntimatterAPI.get(IMaterialTag.class, flag);
                 if (tag != null) {

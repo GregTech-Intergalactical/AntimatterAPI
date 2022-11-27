@@ -1,7 +1,6 @@
 package muramasa.antimatter.recipe;
 
 import com.google.common.collect.ImmutableMap;
-import dev.latvian.mods.kubejs.util.Tags;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.Material;
@@ -16,7 +15,6 @@ import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -30,7 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import static muramasa.antimatter.Data.NULL;
+import static muramasa.antimatter.material.Material.NULL;
 
 public class RecipeBuilders {
 

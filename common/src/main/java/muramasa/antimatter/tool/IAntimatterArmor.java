@@ -44,7 +44,7 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
 
     default CompoundTag getDataTag(ItemStack stack) {
         CompoundTag dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
-        return dataTag != null ? dataTag : validateTag(stack, Data.NULL);
+        return dataTag != null ? dataTag : validateTag(stack, Material.NULL);
     }
 
     default Item getItem() {
@@ -72,7 +72,7 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
 
     default void onGenericFillItemGroup(CreativeModeTab group, NonNullList<ItemStack> list) {
         if (group != Ref.TAB_TOOLS) return;
-        list.add(asItemStack(Data.NULL));
+        list.add(asItemStack(Material.NULL));
     }
 
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {

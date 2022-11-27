@@ -9,6 +9,7 @@ import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
@@ -82,7 +83,7 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
             });
             AntimatterAPI.all(BlockPipe.class, pipe -> {
                 this.tag(pipe.getToolType().getToolType()).add(pipe);
-                if (pipe.getType().getMaterial() == Data.Wood){
+                if (pipe.getType().getMaterial() == AntimatterMaterials.Wood){
                     this.tag(AntimatterDefaultTools.AXE.getToolType()).add(pipe);
                 }
             });

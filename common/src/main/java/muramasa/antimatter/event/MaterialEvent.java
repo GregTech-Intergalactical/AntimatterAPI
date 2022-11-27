@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.material.ArmorMaterialTag;
 import muramasa.antimatter.material.FluidProduct;
@@ -30,7 +29,7 @@ import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTags.*;
 
 public class MaterialEvent {
-    private Material material = Data.NULL;
+    private Material material = Material.NULL;
 
     public MaterialEvent setMaterial(Material material){
         this.material = material;

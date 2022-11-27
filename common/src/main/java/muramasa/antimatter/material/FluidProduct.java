@@ -1,6 +1,6 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterMaterials;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Objects;
@@ -14,7 +14,7 @@ public record FluidProduct(Material mat, String mattype, int amount){
         }else if(Objects.equals(mattype, "plasma")){
             return mat.getPlasma(amount);
         }else{
-            return Data.Water.getLiquid(1);
+            return AntimatterMaterials.Water.getLiquid(1);
         }
     }
 }

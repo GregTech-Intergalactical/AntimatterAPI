@@ -2,7 +2,6 @@ package muramasa.antimatter.material;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
@@ -18,9 +17,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.material.TextureSet.NONE;
 
 public class Material implements ISharedAntimatterObject {
 
+    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE));
     /**
      * Basic Members
      **/
@@ -257,7 +258,7 @@ public class Material implements ISharedAntimatterObject {
 
     public static Material get(String id) {
         Material material = AntimatterAPI.get(Material.class, id);
-        return material == null ? Data.NULL : material;
+        return material == null ? NULL : material;
     }
 
     @Override
