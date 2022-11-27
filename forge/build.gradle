@@ -225,7 +225,7 @@ publishing {
         if (isCI && isRELEASE) {
             maven {
                 name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/GregTech-Intergalactical/Packages"
+                url = "https://maven.pkg.github.com/GregTech-Intergalactical/AntimatterAPI"
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")
