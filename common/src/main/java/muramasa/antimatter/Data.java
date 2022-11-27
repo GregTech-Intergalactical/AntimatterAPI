@@ -458,6 +458,8 @@ public class Data {
         CHAINSAWBIT.setHidden().unSplitName();
         WRENCHBIT.setHidden().unSplitName();
         BUZZSAW_BLADE.setHidden().unSplitName();
+        RAW_ORE.unSplitName();
+        RAW_ORE_BLOCK.unSplitName();
 
         if (side == Side.CLIENT) {
             clientInit();
