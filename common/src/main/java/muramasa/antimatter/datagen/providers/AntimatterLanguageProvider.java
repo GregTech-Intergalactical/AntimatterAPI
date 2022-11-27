@@ -2,7 +2,10 @@ package muramasa.antimatter.datagen.providers;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
+import me.shedaniel.rei.api.common.entry.EntryStack;
+import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockStone;
 import muramasa.antimatter.block.BlockStoneSlab;
@@ -23,8 +26,12 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.material.MaterialTypeBlock;
+import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
+import muramasa.antimatter.ore.CobbleStoneType;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.FluidPipe;
@@ -38,6 +45,7 @@ import net.devtech.arrp.json.lang.JLang;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -50,6 +58,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
 
@@ -163,6 +172,36 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(block, String.join("","Block of Raw ", getLocalizedType(block.getMaterial())));
                 else {
                     add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType())));
+                }
+            });
+            AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeBlock<?> || t instanceof MaterialTypeItem<?>).forEach(t -> {
+                if (t.get() instanceof MaterialTypeBlock.IOreGetter){
+                    AntimatterAPI.all(StoneType.class, s -> {
+                        add(Ref.ID + ".rei.group." + t.getId() + "." + s.getId(), getLocalizedType(s) + " " + getLocalizedType(t) + "s");
+                    });
+                    if (t != ROCK){
+                        return;
+                    }
+                }
+                String[] split = getLocalizedMaterialType(t);
+                if (t == CRUSHED)
+                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Crushed Ores"));
+                else if (t == CRUSHED_PURIFIED)
+                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Purified Crushed Ores"));
+                else if (t == CRUSHED_CENTRIFUGED)
+                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Centrifuged Crushed Ores"));
+                else if (t == RAW_ORE_BLOCK)
+                    add(Ref.ID + ".rei.group." + t.getId(), "Raw Ore Blocks");
+                else if (split.length > 1) {
+                    if (t.isSplitName())
+                        add(Ref.ID + ".rei.group." + t.getId(), String.join("", split[0], " ", split[1], "s"));
+                    else
+                        add(Ref.ID + ".rei.group." + t.getId(), String.join("", split[1], " ", split[0], "s"));
+                } else add(Ref.ID + ".rei.group." + t.getId(), split[0] + "s");
+            });
+            AntimatterAPI.all(StoneType.class, s -> {
+                if (s instanceof CobbleStoneType){
+                    add(Ref.ID + ".rei.group." + s.getId(), getLocalizedType(s));
                 }
             });
             AntimatterAPI.all(MaterialItem.class).forEach(item -> {
