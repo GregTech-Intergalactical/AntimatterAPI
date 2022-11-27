@@ -3,6 +3,7 @@ package muramasa.antimatter;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.ClientData;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
 import muramasa.antimatter.datagen.loaders.Pipes;
@@ -118,6 +119,7 @@ public class Antimatter extends AntimatterMod {
             SlotType.init();
             RecipeBuilders.init();
             MachineState.init();
+            AntimatterDefaultTools.init();
             Data.init(side);
             ICover.init();
             SubTag.init();

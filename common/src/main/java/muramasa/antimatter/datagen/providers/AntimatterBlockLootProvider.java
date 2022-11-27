@@ -9,6 +9,7 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.machine.BlockMachine;
@@ -48,8 +49,8 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     protected final String providerDomain, providerName;
     protected final Map<Block, Function<Block, LootTable.Builder>> tables = new Object2ObjectOpenHashMap<>();
 
-    public static final LootItemCondition.Builder BRANCH_CUTTER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Data.BRANCH_CUTTER.getToolStack(Data.NULL, Data.NULL).getItem()));
-    public static final LootItemCondition.Builder SAW = MatchTool.toolMatches(ItemPredicate.Builder.item().of(Data.SAW.getToolStack(Data.NULL, Data.NULL).getItem()).hasEnchantment(new EnchantmentPredicate() {
+    public static final LootItemCondition.Builder BRANCH_CUTTER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.BRANCH_CUTTER.getToolStack(Data.NULL, Data.NULL).getItem()));
+    public static final LootItemCondition.Builder SAW = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.SAW.getToolStack(Data.NULL, Data.NULL).getItem()).hasEnchantment(new EnchantmentPredicate() {
         @Override
         public boolean containedIn(Map<Enchantment, Integer> enchantmentsIn) {
             return !enchantmentsIn.containsKey(Enchantments.SILK_TOUCH);

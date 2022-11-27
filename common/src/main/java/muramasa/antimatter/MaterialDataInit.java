@@ -1,21 +1,14 @@
 package muramasa.antimatter;
 
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.event.MaterialEvent;
-import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
-import muramasa.antimatter.material.TextureSet;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantments;
-import net.minecraft.world.level.storage.loot.LootTable;
 
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.*;
-import static muramasa.antimatter.material.Element.Au;
-import static muramasa.antimatter.material.Element.Cu;
-import static muramasa.antimatter.material.Element.Fe;
-import static muramasa.antimatter.material.TextureSet.*;
-import static muramasa.antimatter.material.TextureSet.NONE;
 import static net.minecraft.world.item.Tiers.GOLD;
 import static net.minecraft.world.item.Tiers.IRON;
 import static net.minecraft.world.item.Tiers.NETHERITE;
@@ -52,10 +45,10 @@ public class MaterialDataInit {
         event.setMaterial(Glowstone).asDust();
         event.setMaterial(Sugar).asDust();
         event.setMaterial(Bone).addHandleStat(12, 0.0F);
-        event.setMaterial(Wood).asDust(PLATE).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), SOFT_HAMMER).addHandleStat(12, 0.0F);
+        event.setMaterial(Wood).asDust(PLATE).addTools(Tiers.WOOD.getAttackDamageBonus(), Tiers.WOOD.getSpeed(), 16, Tiers.WOOD.getLevel(), of(), AntimatterDefaultTools.SOFT_HAMMER).addHandleStat(12, 0.0F);
         event.setMaterial(Blaze).asDust().addHandleStat(-10, -0.5F, of(Enchantments.FIRE_ASPECT, 1));
 
-        event.setMaterial(Flint).asDust(GEM, MaterialTags.FLINT).addTools(1.25F, Tiers.STONE.getSpeed(), 128, 1, of(Enchantments.FIRE_ASPECT, 1), PICKAXE, AXE, SHOVEL, SWORD, HOE, MORTAR, KNIFE);
+        event.setMaterial(Flint).asDust(GEM, MaterialTags.FLINT).addTools(1.25F, Tiers.STONE.getSpeed(), 128, 1, of(Enchantments.FIRE_ASPECT, 1), AntimatterDefaultTools.PICKAXE, AntimatterDefaultTools.AXE, AntimatterDefaultTools.SHOVEL, AntimatterDefaultTools.SWORD, AntimatterDefaultTools.HOE, AntimatterDefaultTools.MORTAR, AntimatterDefaultTools.KNIFE);
 
         event.setMaterial(Charcoal).asDust(BLOCK);
         event.setMaterial(Coal).asGemBasic(false).asOre(0, 2, true, ORE_STONE);

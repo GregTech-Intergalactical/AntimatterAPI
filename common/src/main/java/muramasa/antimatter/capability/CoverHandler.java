@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
-import static muramasa.antimatter.Data.WRENCH;
+import static muramasa.antimatter.data.AntimatterDefaultTools.ELECTRIC_WRENCH;
+import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH;
 
 public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
 

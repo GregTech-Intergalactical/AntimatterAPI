@@ -8,6 +8,7 @@ import muramasa.antimatter.block.BlockStoneSlab;
 import muramasa.antimatter.block.BlockStoneStair;
 import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
@@ -72,7 +73,7 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
             AntimatterAPI.all(BlockStorage.class, block -> {
                 this.tag(block.getType().getTag()).add(block).replace(replace);
                 String name = String.join("", block.getType().getTag().location().getPath(), "/", (block.getType().getId().equals("raw_ore_block") ? "raw_" : ""), block.getMaterial().getId());
-                this.tag(Data.WRENCH.getToolType()).add(block).replace(replace);
+                this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(block).replace(replace);
                 this.tag(getForgelikeBlockTag(name)).add(block);
                 // if (block.getType() == FRAME) add climbable tag in 1.16
             });
@@ -82,11 +83,11 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
             AntimatterAPI.all(BlockPipe.class, pipe -> {
                 this.tag(pipe.getToolType().getToolType()).add(pipe);
                 if (pipe.getType().getMaterial() == Data.Wood){
-                    this.tag(Data.AXE.getToolType()).add(pipe);
+                    this.tag(AntimatterDefaultTools.AXE.getToolType()).add(pipe);
                 }
             });
             AntimatterAPI.all(BlockMachine.class, pipe -> {
-                this.tag(Data.WRENCH.getToolType()).add(pipe);
+                this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(pipe);
             });
         }
     }

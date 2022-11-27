@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.material.ArmorMaterialTag;
 import muramasa.antimatter.material.FluidProduct;
 import muramasa.antimatter.material.HandleMaterialTag;
@@ -12,7 +13,6 @@ import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialStack;
 import muramasa.antimatter.material.MaterialTags;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.material.ToolMaterialTag;
@@ -20,7 +20,6 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
 import java.util.List;
@@ -210,10 +209,10 @@ public class MaterialEvent {
         List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
         MaterialTags.TOOLS.add(this.material, new ToolMaterialTag.ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, toolEnchantment, toolTypesList));
         MaterialTags.MINING_LEVEL.add(this.material, toolQuality - 1);
-        if (toolTypesList.contains(ELECTRIC_WRENCH)) flags(WRENCHBIT);
-        if (toolTypesList.contains(BUZZSAW)) flags(BUZZSAW_BLADE);
-        if (toolTypesList.contains(DRILL)) flags(DRILLBIT);
-        if (toolTypesList.contains(CHAINSAW)) flags(CHAINSAWBIT);
+        if (toolTypesList.contains(AntimatterDefaultTools.ELECTRIC_WRENCH)) flags(WRENCHBIT);
+        if (toolTypesList.contains(AntimatterDefaultTools.BUZZSAW)) flags(BUZZSAW_BLADE);
+        if (toolTypesList.contains(AntimatterDefaultTools.DRILL)) flags(DRILLBIT);
+        if (toolTypesList.contains(AntimatterDefaultTools.CHAINSAW)) flags(CHAINSAWBIT);
         return this;
     }
 

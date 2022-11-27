@@ -3,6 +3,7 @@ package muramasa.antimatter.datagen.loaders;
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
@@ -27,76 +28,76 @@ import static muramasa.antimatter.recipe.RecipeBuilders.*;
 
 public class Tools {
     public static void init(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {
-        final CriterionTriggerInstance in = provider.hasSafeItem(WRENCH.getTag());
+        final CriterionTriggerInstance in = provider.hasSafeItem(AntimatterDefaultTools.WRENCH.getTag());
 
         if (AntimatterAPI.isModLoaded(Ref.MOD_TOP)) {
-            provider.addToolRecipe(PROBE_BUILDER.get(HELMET.getId()), consumer, Ref.ID, "helmet_with_probe", "antimatter_armor",
-                    "has_helmet", provider.hasSafeItem(HELMET.getToolStack(NULL).getItem()), Collections.singletonList(HELMET.getToolStack(NULL)), of('H', PropertyIngredient.builder("helmet").itemStacks(HELMET.getToolStack(NULL).getItem()).build(), 'P', AntimatterPlatformUtils.getItemFromID(Ref.MOD_TOP, "probe")), "HP");
+            provider.addToolRecipe(PROBE_BUILDER.get(AntimatterDefaultTools.HELMET.getId()), consumer, Ref.ID, "helmet_with_probe", "antimatter_armor",
+                    "has_helmet", provider.hasSafeItem(AntimatterDefaultTools.HELMET.getToolStack(NULL).getItem()), Collections.singletonList(AntimatterDefaultTools.HELMET.getToolStack(NULL)), of('H', PropertyIngredient.builder("helmet").itemStacks(AntimatterDefaultTools.HELMET.getToolStack(NULL).getItem()).build(), 'P', AntimatterPlatformUtils.getItemFromID(Ref.MOD_TOP, "probe")), "HP");
         }
 
-        provider.addToolRecipe(TOOL_BUILDER.get(HAMMER.getId()), consumer, Ref.ID, HAMMER.getId() + "_" + "recipe", "antimatter_tools",
-                "has_wrench", in, Collections.singletonList(HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(HAMMER, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
-        provider.addToolRecipe(TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_" + "recipe", "antimatter_tools",
-                "has_wrench", in, Collections.singletonList(SOFT_HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(SOFT_HAMMER, true).tags(RUBBERTOOLS).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
-        if (Material.get("wood") != NULL && Material.get("wood").has(MaterialTags.TOOLS) && MaterialTags.TOOLS.getToolData(Material.get("wood")).toolTypes().contains(SOFT_HAMMER)) {
-            provider.addToolRecipe(WOOD_TOOL_BUILDER.get(SOFT_HAMMER.getId()), consumer, Ref.ID, SOFT_HAMMER.getId() + "_wood_" + "recipe", "antimatter_tools",
-                    "has_wrench", in, Collections.singletonList(SOFT_HAMMER.getToolStack(Material.get("wood"), NULL)), of('I', ItemTags.PLANKS, 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.HAMMER.getId()), consumer, Ref.ID, AntimatterDefaultTools.HAMMER.getId() + "_" + "recipe", "antimatter_tools",
+                "has_wrench", in, Collections.singletonList(AntimatterDefaultTools.HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(AntimatterDefaultTools.HAMMER, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.SOFT_HAMMER.getId()), consumer, Ref.ID, AntimatterDefaultTools.SOFT_HAMMER.getId() + "_" + "recipe", "antimatter_tools",
+                "has_wrench", in, Collections.singletonList(AntimatterDefaultTools.SOFT_HAMMER.getToolStack(NULL, NULL)), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(AntimatterDefaultTools.SOFT_HAMMER, true).tags(RUBBERTOOLS).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
+        if (Material.get("wood") != NULL && Material.get("wood").has(MaterialTags.TOOLS) && MaterialTags.TOOLS.getToolData(Material.get("wood")).toolTypes().contains(AntimatterDefaultTools.SOFT_HAMMER)) {
+            provider.addToolRecipe(WOOD_TOOL_BUILDER.get(AntimatterDefaultTools.SOFT_HAMMER.getId()), consumer, Ref.ID, AntimatterDefaultTools.SOFT_HAMMER.getId() + "_wood_" + "recipe", "antimatter_tools",
+                    "has_wrench", in, Collections.singletonList(AntimatterDefaultTools.SOFT_HAMMER.getToolStack(Material.get("wood"), NULL)), of('I', ItemTags.PLANKS, 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II ", "IIR", "II ");
         }
 
-        provider.addToolRecipe(ARMOR_BUILDER.get(HELMET.getId()), consumer, Ref.ID, HELMET.getId() + "_recipe", "antimatter_helmets",
-                "has_wrench", in, Collections.singletonList(HELMET.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI");
-        provider.addToolRecipe(ARMOR_BUILDER.get(CHESTPLATE.getId()), consumer, Ref.ID, CHESTPLATE.getId() + "_recipe", "antimatter_chestplates",
-                "has_wrench", in, Collections.singletonList(CHESTPLATE.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', HAMMER.getTag()), "IHI", "III", "III");
-        provider.addToolRecipe(ARMOR_BUILDER.get(LEGGINGS.getId()), consumer, Ref.ID, LEGGINGS.getId() + "_recipe", "antimatter_leggings",
-                "has_wrench", in, Collections.singletonList(LEGGINGS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', HAMMER.getTag()), "III", "IHI", "I I");
-        provider.addToolRecipe(ARMOR_BUILDER.get(BOOTS.getId()), consumer, Ref.ID, BOOTS.getId() + "_recipe", "antimatter_boots",
-                "has_wrench", in, Collections.singletonList(BOOTS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', HAMMER.getTag()), "I I", "IHI");
+        provider.addToolRecipe(ARMOR_BUILDER.get(AntimatterDefaultTools.HELMET.getId()), consumer, Ref.ID, AntimatterDefaultTools.HELMET.getId() + "_recipe", "antimatter_helmets",
+                "has_wrench", in, Collections.singletonList(AntimatterDefaultTools.HELMET.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "III", "IHI");
+        provider.addToolRecipe(ARMOR_BUILDER.get(AntimatterDefaultTools.CHESTPLATE.getId()), consumer, Ref.ID, AntimatterDefaultTools.CHESTPLATE.getId() + "_recipe", "antimatter_chestplates",
+                "has_wrench", in, Collections.singletonList(AntimatterDefaultTools.CHESTPLATE.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "IHI", "III", "III");
+        provider.addToolRecipe(ARMOR_BUILDER.get(AntimatterDefaultTools.LEGGINGS.getId()), consumer, Ref.ID, AntimatterDefaultTools.LEGGINGS.getId() + "_recipe", "antimatter_leggings",
+                "has_wrench", in, Collections.singletonList(AntimatterDefaultTools.LEGGINGS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "III", "IHI", "I I");
+        provider.addToolRecipe(ARMOR_BUILDER.get(AntimatterDefaultTools.BOOTS.getId()), consumer, Ref.ID, AntimatterDefaultTools.BOOTS.getId() + "_recipe", "antimatter_boots",
+                "has_wrench", in, Collections.singletonList(AntimatterDefaultTools.BOOTS.getToolStack(NULL)), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(MaterialTags.ARMOR).build(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "I I", "IHI");
 
             /*addToolRecipe(TOOL_BUILDER.get(PLUNGER.getId()), consumer, muramasa.antimatter.Ref.ID, PLUNGER.getId() + "_recipe", "antimatter_plungers",
                     "has_wrench", in, Collections.singletonList(PLUNGER.getToolStack(NULL, NULL)),
                     of('W', WIRE_CUTTER.getTag(), 'I',  PropertyIngredient.of(INGOT, "primary"), 'S', Tags.Items.SLIMEBALLS, 'R', PropertyIngredient.builder("secondary").types(ROD).tags(RUBBERTOOLS).build(), 'F', FILE.getTag()), "WIS", " RI", "R F");*/
 
-        provider.addToolRecipe(TOOL_BUILDER.get(WRENCH.getId()), consumer, Ref.ID, WRENCH.getId() + "_recipe", "antimatter_wrenches",
-                "has_wrench", in, WRENCH.getToolStack(NULL, NULL), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(WRENCH, true).build(), 'H', HAMMER.getTag()), "IHI", "III", " I ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.WRENCH.getId()), consumer, Ref.ID, AntimatterDefaultTools.WRENCH.getId() + "_recipe", "antimatter_wrenches",
+                "has_wrench", in, AntimatterDefaultTools.WRENCH.getToolStack(NULL, NULL), of('I', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(AntimatterDefaultTools.WRENCH, true).build(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "IHI", "III", " I ");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(MORTAR.getId()), consumer, Ref.ID, MORTAR.getId() + "_recipe", "antimatter_mortars",
-                "has_wrench", in, MORTAR.getToolStack(NULL, NULL), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(MORTAR, true).build(), 'S', TagUtils.getForgelikeItemTag("stone")), " I ", "SIS", "SSS");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.MORTAR.getId()), consumer, Ref.ID, AntimatterDefaultTools.MORTAR.getId() + "_recipe", "antimatter_mortars",
+                "has_wrench", in, AntimatterDefaultTools.MORTAR.getToolStack(NULL, NULL), of('I', PropertyIngredient.builder("primary").types(INGOT, GEM).tool(AntimatterDefaultTools.MORTAR, true).build(), 'S', TagUtils.getForgelikeItemTag("stone")), " I ", "SIS", "SSS");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(FILE.getId()), consumer, Ref.ID, FILE.getId() + "_recipe", "antimatter_files",
-                "has_wrench", in, FILE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(FILE, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "P", "P", "R");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.FILE.getId()), consumer, Ref.ID, AntimatterDefaultTools.FILE.getId() + "_recipe", "antimatter_files",
+                "has_wrench", in, AntimatterDefaultTools.FILE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(AntimatterDefaultTools.FILE, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "P", "P", "R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(SCREWDRIVER.getId()), consumer, Ref.ID, SCREWDRIVER.getId() + "_recipe", "antimatter_screwdrivers",
-                "has_wrench", in, SCREWDRIVER.getToolStack(NULL, NULL),
-                of('M', PropertyIngredient.builder("primary").types(ROD).tool(SCREWDRIVER, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), " FM", " MH", "R  ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.SCREWDRIVER.getId()), consumer, Ref.ID, AntimatterDefaultTools.SCREWDRIVER.getId() + "_recipe", "antimatter_screwdrivers",
+                "has_wrench", in, AntimatterDefaultTools.SCREWDRIVER.getToolStack(NULL, NULL),
+                of('M', PropertyIngredient.builder("primary").types(ROD).tool(AntimatterDefaultTools.SCREWDRIVER, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), " FM", " MH", "R  ");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(SAW.getId()), consumer, Ref.ID, SAW.getId() + "_recipe", "antimatter_saws",
-                "has_wrench", in, SAW.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(SAW, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "PPR", "FH ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.SAW.getId()), consumer, Ref.ID, AntimatterDefaultTools.SAW.getId() + "_recipe", "antimatter_saws",
+                "has_wrench", in, AntimatterDefaultTools.SAW.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tool(AntimatterDefaultTools.SAW, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "PPR", "FH ");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
-                "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
-                        b.put('P', PropertyIngredient.builder("primary").inverse().tool(SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
-                                .put('S', SCREWDRIVER.getTag())
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.WIRE_CUTTER.getId()), consumer, Ref.ID, AntimatterDefaultTools.WIRE_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
+                "has_wrench", in, AntimatterDefaultTools.WIRE_CUTTER.getToolStack(NULL, NULL), b ->
+                        b.put('P', PropertyIngredient.builder("primary").inverse().tool(AntimatterDefaultTools.SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', AntimatterDefaultTools.FILE.getTag()).put('H', AntimatterDefaultTools.HAMMER.getTag())
+                                .put('S', AntimatterDefaultTools.SCREWDRIVER.getTag())
                 , "PFP", "HPS", "R R");
-        provider.addToolRecipe(TOOL_BUILDER.get(WIRE_CUTTER.getId()), consumer, Ref.ID, WIRE_CUTTER.getId() + "_recipe_screw", "antimatter_files",
-                "has_wrench", in, WIRE_CUTTER.getToolStack(NULL, NULL), b ->
-                        b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).tool(SCREWDRIVER, true).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag()).put('H', HAMMER.getTag())
-                                .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.WIRE_CUTTER.getId()), consumer, Ref.ID, AntimatterDefaultTools.WIRE_CUTTER.getId() + "_recipe_screw", "antimatter_files",
+                "has_wrench", in, AntimatterDefaultTools.WIRE_CUTTER.getToolStack(NULL, NULL), b ->
+                        b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).tool(AntimatterDefaultTools.SCREWDRIVER, true).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', AntimatterDefaultTools.FILE.getTag()).put('H', AntimatterDefaultTools.HAMMER.getTag())
+                                .put('S', AntimatterDefaultTools.SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
                 , "PFP", "HPS", "RWR");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(BRANCH_CUTTER.getId()), consumer, Ref.ID, BRANCH_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
-                "has_wrench", in, BRANCH_CUTTER.getToolStack(NULL, NULL), b ->
-                        b.put('P', PropertyIngredient.builder("primary").inverse().tool(SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag())
-                                .put('S', SCREWDRIVER.getTag())
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.BRANCH_CUTTER.getId()), consumer, Ref.ID, AntimatterDefaultTools.BRANCH_CUTTER.getId() + "_recipe_noscrew", "antimatter_files",
+                "has_wrench", in, AntimatterDefaultTools.BRANCH_CUTTER.getToolStack(NULL, NULL), b ->
+                        b.put('P', PropertyIngredient.builder("primary").inverse().tool(AntimatterDefaultTools.SCREWDRIVER, true).types(PLATE, GEM).tags(SCREW).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', AntimatterDefaultTools.FILE.getTag())
+                                .put('S', AntimatterDefaultTools.SCREWDRIVER.getTag())
                 , "PFP", "PSP", "R R");
-        provider.addToolRecipe(TOOL_BUILDER.get(BRANCH_CUTTER.getId()), consumer, Ref.ID, BRANCH_CUTTER.getId() + "_recipe_screw", "antimatter_files",
-                "has_wrench", in, BRANCH_CUTTER.getToolStack(NULL, NULL), b ->
-                        b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).tool(SCREWDRIVER, true).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', FILE.getTag())
-                                .put('S', SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.BRANCH_CUTTER.getId()), consumer, Ref.ID, AntimatterDefaultTools.BRANCH_CUTTER.getId() + "_recipe_screw", "antimatter_files",
+                "has_wrench", in, AntimatterDefaultTools.BRANCH_CUTTER.getToolStack(NULL, NULL), b ->
+                        b.put('P', PropertyIngredient.builder("primary").types(PLATE, GEM).tags(SCREW).tool(AntimatterDefaultTools.SCREWDRIVER, true).build()).put('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()).put('F', AntimatterDefaultTools.FILE.getTag())
+                                .put('S', AntimatterDefaultTools.SCREWDRIVER.getTag()).put('W', PropertyIngredient.of(SCREW, "primary"))
                 , "PFP", "PSP", "RWR");
 
-        Function<AntimatterToolType, ImmutableMap<Character, Object>> map1 = type -> of('I', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(INGOT, GEM).tool(type, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(type, true).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag());
+        Function<AntimatterToolType, ImmutableMap<Character, Object>> map1 = type -> of('I', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(INGOT, GEM).tool(type, true).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(type, true).build(), 'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag());
 
-        Function<AntimatterToolType, ImmutableMap<Character, Object>> map2 = type -> of('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(type, true).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag());
+        Function<AntimatterToolType, ImmutableMap<Character, Object>> map2 = type -> of('R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(type, true).build(), 'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag());
 
         String[] strings1 = new String[]{"PII", "FRH", " R "};
         String[] strings3 = new String[]{" P ", "FPH", " R "};
@@ -104,50 +105,50 @@ public class Tools {
         String[] strings2 = new String[]{"FPH", " R ", " R "};
         String[] strings2Gem = new String[]{"FGH", " R ", " R "};
 
-        provider.addToolRecipe(TOOL_BUILDER.get(PICKAXE.getId()), consumer, Ref.ID, PICKAXE.getId() + "_with", "antimatter_pickaxes",
-                "has_wrench", in, PICKAXE.getToolStack(NULL, NULL), map1.apply(PICKAXE), strings1);
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.PICKAXE.getId()), consumer, Ref.ID, AntimatterDefaultTools.PICKAXE.getId() + "_with", "antimatter_pickaxes",
+                "has_wrench", in, AntimatterDefaultTools.PICKAXE.getToolStack(NULL, NULL), map1.apply(AntimatterDefaultTools.PICKAXE), strings1);
 
-        provider.addToolRecipe(TOOL_BUILDER.get(SHOVEL.getId()), consumer, Ref.ID, SHOVEL.getId() + "_with", "antimatter_shovels",
-                "has_wrench", in, SHOVEL.getToolStack(NULL, NULL), map2.apply(SHOVEL), strings2);
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.SHOVEL.getId()), consumer, Ref.ID, AntimatterDefaultTools.SHOVEL.getId() + "_with", "antimatter_shovels",
+                "has_wrench", in, AntimatterDefaultTools.SHOVEL.getToolStack(NULL, NULL), map2.apply(AntimatterDefaultTools.SHOVEL), strings2);
 
-        provider.addToolRecipe(TOOL_BUILDER.get(AXE.getId()), consumer, Ref.ID, AXE.getId() + "_with", "antimatter_axes",
-                "has_wrench", in, AXE.getToolStack(NULL, NULL), map1.apply(AXE), "PIH", "PR ", "FR ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.AXE.getId()), consumer, Ref.ID, AntimatterDefaultTools.AXE.getId() + "_with", "antimatter_axes",
+                "has_wrench", in, AntimatterDefaultTools.AXE.getToolStack(NULL, NULL), map1.apply(AntimatterDefaultTools.AXE), "PIH", "PR ", "FR ");
 
 
-        provider.addToolRecipe(TOOL_BUILDER.get(SWORD.getId()), consumer, Ref.ID, SWORD.getId() + "_with", "antimatter_swords",
-                "has_wrench", in, SWORD.getToolStack(NULL, NULL), map2.apply(SWORD), " P ", "FPH", " R ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.SWORD.getId()), consumer, Ref.ID, AntimatterDefaultTools.SWORD.getId() + "_with", "antimatter_swords",
+                "has_wrench", in, AntimatterDefaultTools.SWORD.getToolStack(NULL, NULL), map2.apply(AntimatterDefaultTools.SWORD), " P ", "FPH", " R ");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(HOE.getId()), consumer, Ref.ID, HOE.getId() + "_with", "antimatter_swords",
-                "has_wrench", in, HOE.getToolStack(NULL, NULL), map1.apply(HOE), "PIH", "FR ", " R ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.HOE.getId()), consumer, Ref.ID, AntimatterDefaultTools.HOE.getId() + "_with", "antimatter_swords",
+                "has_wrench", in, AntimatterDefaultTools.HOE.getToolStack(NULL, NULL), map1.apply(AntimatterDefaultTools.HOE), "PIH", "FR ", " R ");
 
-        provider.addToolRecipe(CROWBAR_BUILDER.get(CROWBAR.getId()), consumer, Ref.ID, CROWBAR.getId() + "_recipe", "antimatter_crowbars",
-                "has_wrench", in, CROWBAR.getToolStack(NULL, NULL), of('H', HAMMER.getTag(), 'C', PropertyIngredient.builder("secondary").itemTags(TagUtils.getForgelikeItemTag("dyes")).build(), 'R', PropertyIngredient.builder("primary").types(ROD).tool(CROWBAR, true).build(), 'F', FILE.getTag()), "HCR", "CRC", "RCF");
+        provider.addToolRecipe(CROWBAR_BUILDER.get(AntimatterDefaultTools.CROWBAR.getId()), consumer, Ref.ID, AntimatterDefaultTools.CROWBAR.getId() + "_recipe", "antimatter_crowbars",
+                "has_wrench", in, AntimatterDefaultTools.CROWBAR.getToolStack(NULL, NULL), of('H', AntimatterDefaultTools.HAMMER.getTag(), 'C', PropertyIngredient.builder("secondary").itemTags(TagUtils.getForgelikeItemTag("dyes")).build(), 'R', PropertyIngredient.builder("primary").types(ROD).tool(AntimatterDefaultTools.CROWBAR, true).build(), 'F', AntimatterDefaultTools.FILE.getTag()), "HCR", "CRC", "RCF");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID, KNIFE.getId() + "_with", "antimatter_knives",
-                "has_wrench", in, KNIFE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(KNIFE, true).build(), 'S', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', FILE.getTag(), 'H', HAMMER.getTag()), "FP", "HS");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.KNIFE.getId()), consumer, Ref.ID, AntimatterDefaultTools.KNIFE.getId() + "_with", "antimatter_knives",
+                "has_wrench", in, AntimatterDefaultTools.KNIFE.getToolStack(NULL, NULL), of('P', PropertyIngredient.builder("primary").inverse().tags(FLINT).types(PLATE, GEM).tool(AntimatterDefaultTools.KNIFE, true).build(), 'S', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build(), 'F', AntimatterDefaultTools.FILE.getTag(), 'H', AntimatterDefaultTools.HAMMER.getTag()), "FP", "HS");
 
         // List<Material> handleMats = AntimatterAPI.all(Material.class).stream().filter(m -> (m.getDomain().equals(providerDomain) && m.has(HANDLE))).collect(Collectors.toList());
 
-        provider.addToolRecipe(TOOL_BUILDER.get(PLUNGER.getId()), consumer, Ref.ID, PLUNGER.getId() + "_", "antimatter_plungers",
-                "has_wrench", in, PLUNGER.getToolStack(NULL, NULL),
-                of('W', WIRE_CUTTER.getTag(), 'R', PropertyIngredient.builder("primary").tool(PLUNGER, true).types(ROD).build(), 'I', PropertyIngredient.builder("secondary").types(PLATE).tags(HANDLE, RUBBERTOOLS).build(), 'F', FILE.getTag()), "WII", " RI", "R F");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.PLUNGER.getId()), consumer, Ref.ID, AntimatterDefaultTools.PLUNGER.getId() + "_", "antimatter_plungers",
+                "has_wrench", in, AntimatterDefaultTools.PLUNGER.getToolStack(NULL, NULL),
+                of('W', AntimatterDefaultTools.WIRE_CUTTER.getTag(), 'R', PropertyIngredient.builder("primary").tool(AntimatterDefaultTools.PLUNGER, true).types(ROD).build(), 'I', PropertyIngredient.builder("secondary").types(PLATE).tags(HANDLE, RUBBERTOOLS).build(), 'F', AntimatterDefaultTools.FILE.getTag()), "WII", " RI", "R F");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(PICKAXE.getId()), consumer, Ref.ID, "flint_" + PICKAXE.getId() + "_" + "recipe", "antimatter_tools",
-                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), PICKAXE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "III", " R ", " R ");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.PICKAXE.getId()), consumer, Ref.ID, "flint_" + AntimatterDefaultTools.PICKAXE.getId() + "_" + "recipe", "antimatter_tools",
+                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), AntimatterDefaultTools.PICKAXE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "III", " R ", " R ");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(AXE.getId()), consumer, Ref.ID, "flint_" + AXE.getId() + "_" + "recipe", "antimatter_tools",
-                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), AXE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II", "IR", " R");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.AXE.getId()), consumer, Ref.ID, "flint_" + AntimatterDefaultTools.AXE.getId() + "_" + "recipe", "antimatter_tools",
+                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), AntimatterDefaultTools.AXE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II", "IR", " R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(SWORD.getId()), consumer, Ref.ID, "flint_" + SWORD.getId() + "_" + "recipe", "antimatter_tools",
-                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), SWORD.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "I", "I", "R");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.SWORD.getId()), consumer, Ref.ID, "flint_" + AntimatterDefaultTools.SWORD.getId() + "_" + "recipe", "antimatter_tools",
+                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), AntimatterDefaultTools.SWORD.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "I", "I", "R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(SHOVEL.getId()), consumer, Ref.ID, "flint_" + SHOVEL.getId() + "_" + "recipe", "antimatter_tools",
-                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), SHOVEL.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "I", "R", "R");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.SHOVEL.getId()), consumer, Ref.ID, "flint_" + AntimatterDefaultTools.SHOVEL.getId() + "_" + "recipe", "antimatter_tools",
+                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), AntimatterDefaultTools.SHOVEL.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "I", "R", "R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(HOE.getId()), consumer, Ref.ID, "flint_" + HOE.getId() + "_" + "recipe", "antimatter_tools",
-                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), HOE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II", " R", " R");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.HOE.getId()), consumer, Ref.ID, "flint_" + AntimatterDefaultTools.HOE.getId() + "_" + "recipe", "antimatter_tools",
+                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), AntimatterDefaultTools.HOE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "II", " R", " R");
 
-        provider.addToolRecipe(TOOL_BUILDER.get(KNIFE.getId()), consumer, Ref.ID, "flint_" + KNIFE.getId() + "_" + "recipe", "antimatter_tools",
-                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), KNIFE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "RI");
+        provider.addToolRecipe(TOOL_BUILDER.get(AntimatterDefaultTools.KNIFE.getId()), consumer, Ref.ID, "flint_" + AntimatterDefaultTools.KNIFE.getId() + "_" + "recipe", "antimatter_tools",
+                "has_flint", provider.hasSafeItem(GEM.getMaterialTag(Flint)), AntimatterDefaultTools.KNIFE.getToolStack(Flint, NULL), of('I', PropertyIngredient.builder("primary").types(GEM).tags(FLINT).build(), 'R', PropertyIngredient.builder("secondary").types(ROD).tags(HANDLE).build()), "RI");
     }
 }

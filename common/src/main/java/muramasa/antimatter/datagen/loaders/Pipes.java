@@ -4,26 +4,19 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.pipe.PipeItemBlock;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.FluidPipe;
 import muramasa.antimatter.pipe.types.ItemPipe;
-import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import net.minecraft.advancements.CriterionTriggerInstance;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 
-import java.nio.channels.Pipe;
-import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.HAMMER;
+import static muramasa.antimatter.data.AntimatterDefaultTools.HAMMER;
 import static muramasa.antimatter.Data.PLATE;
-import static muramasa.antimatter.Data.WRENCH;
-import static muramasa.antimatter.recipe.RecipeBuilders.FLUID_PIPE_BUILDER;
-import static muramasa.antimatter.recipe.RecipeBuilders.ITEM_PIPE_BUILDER;
+import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH;
 
 public class Pipes {
     public static void loadRecipes(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {

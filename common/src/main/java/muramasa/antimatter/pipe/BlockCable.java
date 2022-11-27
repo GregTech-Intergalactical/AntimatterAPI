@@ -1,7 +1,7 @@
 package muramasa.antimatter.pipe;
 
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
@@ -59,7 +59,7 @@ public class BlockCable<T extends Cable<T>> extends BlockPipe<T> {
 
     @Override
     public AntimatterToolType getToolType() {
-        return Data.WIRE_CUTTER;
+        return AntimatterDefaultTools.WIRE_CUTTER;
     }
 
     public boolean isFireSource(BlockState state, LevelReader world, BlockPos pos, Direction side) {
