@@ -6,6 +6,7 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterMaterials;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.loaders.MaterialRecipes;
 import muramasa.antimatter.datagen.loaders.Pipes;
@@ -124,6 +125,7 @@ public class Antimatter extends AntimatterMod {
             AntimatterDefaultTools.init(side);
             AntimatterMaterials.init();
             AntimatterMaterialTypes.init();
+            AntimatterStoneTypes.init();
             Data.init();
             ICover.init();
             SubTag.init();
