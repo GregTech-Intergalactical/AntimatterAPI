@@ -59,4 +59,8 @@ public class CobbleStoneType extends StoneType {
     public Block getBlock(String name) {
         return blocks.get(name);
     }
+
+    public Map<String, Block> getBlocks() {
+        return blocks;
+    }
 }
