@@ -194,7 +194,6 @@ public class Data {
     static {
         StructureBuilder.addGlobalElement("A", BlockStateElement.AIR);
         StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
-        NULL.remove(ROD);
 
         ROCK.set((m, s) -> {
             if (m == null || s == null || !ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(ROCK, m, s);
