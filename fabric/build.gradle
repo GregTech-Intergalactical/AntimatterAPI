@@ -111,7 +111,7 @@ publishing {
         if (isCI && isRELEASE) {
             maven {
                 name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/GregTech-Intergalactical"
+                url = "https://maven.pkg.github.com/GregTech-Intergalactical/Packages"
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")
