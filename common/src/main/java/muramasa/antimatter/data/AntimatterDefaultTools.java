@@ -1,17 +1,14 @@
 package muramasa.antimatter.data;
 
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.material.MaterialTags;
+import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.MaterialSword;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
-import muramasa.antimatter.tool.behaviour.BehaviourAOEBreak;
-import muramasa.antimatter.tool.behaviour.BehaviourLogStripping;
-import muramasa.antimatter.tool.behaviour.BehaviourPumpkinCarving;
-import muramasa.antimatter.tool.behaviour.BehaviourTorchPlacing;
-import muramasa.antimatter.tool.behaviour.BehaviourTreeFelling;
-import muramasa.antimatter.tool.behaviour.BehaviourWaterlogToggle;
+import muramasa.antimatter.tool.behaviour.*;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.UseAnim;
@@ -48,7 +45,7 @@ public class AntimatterDefaultTools {
     public static final AntimatterArmorType LEGGINGS = new AntimatterArmorType(Ref.ID, "leggings", 40, 0, 0.0F, 0.0F, EquipmentSlot.LEGS);
     public static final AntimatterArmorType BOOTS = new AntimatterArmorType(Ref.ID, "boots", 40, 0, 0.0F, 0.0F, EquipmentSlot.FEET);
 
-    public static void init(){
+    public static void init(Side side){
         AXE.addBehaviour(BehaviourLogStripping.INSTANCE, BehaviourTreeFelling.INSTANCE);
         PICKAXE.addBehaviour(BehaviourTorchPlacing.INSTANCE);
         CHAINSAW.addBehaviour(BehaviourTreeFelling.INSTANCE, BehaviourLogStripping.INSTANCE, new BehaviourAOEBreak(1, 1, 1));
@@ -56,5 +53,16 @@ public class AntimatterDefaultTools {
         JACKHAMMER.addBehaviour(new BehaviourAOEBreak(1, 0, 2));
         PLUNGER.addBehaviour(BehaviourWaterlogToggle.INSTANCE);
         KNIFE.addBehaviour(BehaviourPumpkinCarving.INSTANCE);
+        if (side == Side.CLIENT) {
+            clientInit();
+        }
     }
+    private static void clientInit() {
+        AntimatterDefaultTools.WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.builtInRegistryHolder().is(AntimatterDefaultTools.WRENCH.getToolType())), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        AntimatterDefaultTools.SCREWDRIVER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
+        AntimatterDefaultTools.ELECTRIC_WRENCH.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || (b instanceof BlockPipe && b.builtInRegistryHolder().is(AntimatterDefaultTools.WRENCH.getToolType())), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        AntimatterDefaultTools.WIRE_CUTTER.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockPipe && b.builtInRegistryHolder().is(AntimatterDefaultTools.WIRE_CUTTER.getToolType()), BehaviourExtendedHighlight.PIPE_FUNCTION));
+        AntimatterDefaultTools.CROWBAR.addBehaviour(new BehaviourExtendedHighlight(b -> b instanceof BlockMachine || b instanceof BlockPipe, BehaviourExtendedHighlight.COVER_FUNCTION));
+    }
+
 }
