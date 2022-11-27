@@ -146,6 +146,7 @@ dependencies {
     modImplementation(include("com.github.Reforged-Mods:ARRP-forge:0.5.7.2"))
     modRuntimeOnly("io.github.feltmc:fluidhandler-extras:1.0.1")
     modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
+    modImplementation("curse.maven:the-one-probe-245211:${rootProject.top_forge_file}")
 }
 
 processResources {
@@ -223,10 +224,11 @@ publishing {
         def isRELEASE = System.getenv("GITHUB_RELEASE")
         if (isCI && isRELEASE) {
             maven {
-                url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/GregTech-Intergalactical"
                 credentials {
-                    username = System.getenv("MAVEN_USERNAME")
-                    password = System.getenv("MAVEN_PASSWORD")
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
                 }
             }
         } else {

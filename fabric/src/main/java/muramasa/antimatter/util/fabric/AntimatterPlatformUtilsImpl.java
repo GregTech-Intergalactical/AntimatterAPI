@@ -58,7 +58,8 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType) {
-        return FuelRegistry.INSTANCE.get(stack.getItem());
+        Integer burn = FuelRegistry.INSTANCE.get(stack.getItem());
+        return burn == null ? 0 : burn;
     }
 
     public static boolean isProduction(){

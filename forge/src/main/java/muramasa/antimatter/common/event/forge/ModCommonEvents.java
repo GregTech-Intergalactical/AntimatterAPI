@@ -7,6 +7,7 @@ import net.devtech.arrp.api.RRPEvent;
 import net.devtech.arrp.api.RRPInitEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
@@ -24,7 +25,7 @@ public class ModCommonEvents {
         AntimatterDynamics.runAssetProvidersDynamically();
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onResourcePackAddAfter(RRPEvent.AfterVanilla event){
         AntimatterDynamics.addResourcePacks(event::addPack);
     }

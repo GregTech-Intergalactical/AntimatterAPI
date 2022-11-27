@@ -22,7 +22,8 @@ import static net.minecraft.world.item.Tiers.NETHERITE;
 
 public class MaterialDataInit {
     public static void onMaterialEvent(MaterialEvent event){
-        event.setMaterial(Data.NULL).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F);
+        //why?
+        //event.setMaterial(Data.NULL).addTools(5.0F, 5, Integer.MAX_VALUE, 3/*, ImmutableMap.of(Enchantments.BLOCK_FORTUNE, 3)*/).addHandleStat(0, 0.0F);
         event.setMaterial(Data.Stone).asDust(DUST_IMPURE, GEAR).addHandleStat(-10, -0.5F);
         event.setMaterial(Granite).asDust(ROCK);
         event.setMaterial(Diorite).asDust(ROCK);

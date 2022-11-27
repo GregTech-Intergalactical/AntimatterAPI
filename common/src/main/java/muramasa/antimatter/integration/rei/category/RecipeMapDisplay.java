@@ -122,17 +122,4 @@ public class RecipeMapDisplay implements Display {
     public IRecipe getRecipe() {
         return recipe;
     }
-
-    public CompoundTag toNbt(){
-        CompoundTag nbt = new CompoundTag();
-        nbt.putString("recipeID", getRecipe().getId().toString());
-        nbt.putString("recipe", getRecipe().toJson().toString());
-        return nbt;
-    }
-
-    public static RecipeMapDisplay fromNbt(CompoundTag tag){
-        ResourceLocation recipeId = new ResourceLocation(tag.getString("recipeID"));
-        String recipe = tag.getString("recipe");
-        return new RecipeMapDisplay(AntimatterRecipeSerializer.INSTANCE.fromJson(recipeId, (JsonObject) JsonParser.parseString(recipe)));
-    }
 }
