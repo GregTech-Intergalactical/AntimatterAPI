@@ -38,7 +38,9 @@ public class EnergyInfoProvider implements IProbeInfoProvider {
                 long maxCapacity = energyHandler.getCapacity();
                 if (maxCapacity == 0) return;
 
-                probeInfo.progress(energyHandler.getEnergy(), maxCapacity, probeInfo.defaultProgressStyle()
+                IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
+                horizontalPane.text("Energy: ");
+                horizontalPane.progress(energyHandler.getEnergy(), maxCapacity, probeInfo.defaultProgressStyle()
                         .suffix(" / " + maxCapacity + " EU")
                         .filledColor(0xFFEEE600)
                         .alternateFilledColor(0xFFEEE600)

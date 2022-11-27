@@ -24,10 +24,11 @@ public class MultiblockInfoProvider implements IProbeInfoProvider {
 
             if (tile instanceof TileEntityMultiMachine machine) {
 
+                IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
                 if (machine.isStructureValid()) {
-                    probeInfo.text(TextStyleClass.OK + "Structure Formed");
+                    horizontalPane.text(TextStyleClass.OK + "Structure Formed");
                 } else {
-                    probeInfo.text(ChatFormatting.RED + "Structure Incomplete");
+                    horizontalPane.text(ChatFormatting.RED + "Structure Incomplete");
                 }
 
             }

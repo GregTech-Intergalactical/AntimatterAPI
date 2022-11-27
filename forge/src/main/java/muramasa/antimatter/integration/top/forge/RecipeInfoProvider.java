@@ -1,9 +1,6 @@
 package muramasa.antimatter.integration.top.forge;
 
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.IProbeInfoProvider;
-import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.*;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.machine.MachineState;
@@ -49,7 +46,9 @@ public class RecipeInfoProvider implements IProbeInfoProvider {
                 }
 
                 if(recipeHandler.getMaxProgress() > 0 && machine.getMachineState() == MachineState.ACTIVE) {
-                    probeInfo.progress(currentProgress, maxProgress, probeInfo.defaultProgressStyle()
+                    IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
+                    horizontalPane.text("Progress: ");
+                    horizontalPane.progress(currentProgress, maxProgress, probeInfo.defaultProgressStyle()
                             .suffix(text)
                             .filledColor(0xFF4CBB17)
                             .alternateFilledColor(0xFF4CBB17)

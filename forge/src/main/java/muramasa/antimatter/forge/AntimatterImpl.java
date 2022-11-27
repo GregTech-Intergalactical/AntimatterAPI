@@ -93,7 +93,8 @@ public class AntimatterImpl {
             }
         }));
 
-        Integrations.setupIntegrations();
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(Integrations::enqueueIMC);
     }
 
     private void serverSetup(final FMLDedicatedServerSetupEvent e) {
