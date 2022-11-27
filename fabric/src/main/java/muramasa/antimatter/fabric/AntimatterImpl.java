@@ -13,7 +13,6 @@ import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
-import muramasa.antimatter.integration.Integrations;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.mixin.BiomeAccessor;
 import muramasa.antimatter.proxy.CommonHandler;
@@ -82,7 +81,6 @@ public class AntimatterImpl implements ModInitializer {
             RRPCallback.AFTER_VANILLA.register(resources -> AntimatterDynamics.addResourcePacks(resources::add));
             Antimatter.LOGGER.info("initializing");
             ServerLifecycleEvents.SERVER_STARTING.register(server -> Antimatter.LOGGER.info("server starting"));
-            Integrations.setupIntegrations();
         }
     }
 
