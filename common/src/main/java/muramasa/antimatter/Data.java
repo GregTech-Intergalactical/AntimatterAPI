@@ -289,11 +289,6 @@ public class Data {
     };
 
     public static void init(Side side) {
-        for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
-            if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_SHOVEL)) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
-            if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_HOE)) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
-            if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
-        }
 
         NUGGET.replacement(AntimatterMaterials.Iron, () -> Items.IRON_NUGGET);
         NUGGET.replacement(AntimatterMaterials.Gold, () -> Items.GOLD_NUGGET);

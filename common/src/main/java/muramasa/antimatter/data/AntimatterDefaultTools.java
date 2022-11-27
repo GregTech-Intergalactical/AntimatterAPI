@@ -1,5 +1,6 @@
 package muramasa.antimatter.data;
 
+import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.material.MaterialTags;
@@ -10,6 +11,7 @@ import muramasa.antimatter.tool.MaterialSword;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.tool.behaviour.*;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.block.Blocks;
@@ -46,6 +48,11 @@ public class AntimatterDefaultTools {
     public static final AntimatterArmorType BOOTS = new AntimatterArmorType(Ref.ID, "boots", 40, 0, 0.0F, 0.0F, EquipmentSlot.FEET);
 
     public static void init(Side side){
+        for (AntimatterToolType type : AntimatterAPI.all(AntimatterToolType.class)) {
+            if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_SHOVEL)) type.addBehaviour(BehaviourVanillaShovel.INSTANCE);
+            if (type.getActualTags().contains(BlockTags.MINEABLE_WITH_HOE)) type.addBehaviour(BehaviourBlockTilling.INSTANCE);
+            if (type.isPowered()) type.addBehaviour(BehaviourPoweredDebug.INSTANCE);
+        }
         AXE.addBehaviour(BehaviourLogStripping.INSTANCE, BehaviourTreeFelling.INSTANCE);
         PICKAXE.addBehaviour(BehaviourTorchPlacing.INSTANCE);
         CHAINSAW.addBehaviour(BehaviourTreeFelling.INSTANCE, BehaviourLogStripping.INSTANCE, new BehaviourAOEBreak(1, 1, 1));
