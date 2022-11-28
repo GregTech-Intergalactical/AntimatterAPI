@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.datagen.AntimatterDynamics;
+import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
@@ -14,6 +15,11 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -46,6 +52,8 @@ public class RecipeBuilder {
     protected Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     protected ResourceLocation id;
     protected boolean recipeMapOnly = false;
+
+    private Advancement.Builder advancementBuilder = null;
 
     public IRecipe add(String modid, String id) {
         id(modid, id);
@@ -97,7 +105,11 @@ public class RecipeBuilder {
         }*/
         if (this.amps < 1) this.amps = 1;
         if (!recipeMapOnly){
-            AntimatterDynamics.FINISHED_RECIPE_CONSUMER.accept(new Result(this.id));
+            ResourceLocation advancementID = advancementBuilder != null ? new ResourceLocation(id.getNamespace(), "recipes/" + id.getPath()) : null;
+            if (advancementBuilder != null){
+                this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
+            }
+            AntimatterDynamics.FINISHED_RECIPE_CONSUMER.accept(new Result(this.id, advancementID));
         }
         if (amps < 1) amps = 1;
         Recipe recipe = new Recipe(
@@ -267,6 +279,12 @@ public class RecipeBuilder {
         return this;
     }
 
+    public RecipeBuilder addCriterion(String name, CriterionTriggerInstance criterionIn) {
+        if (this.advancementBuilder == null) advancementBuilder = Advancement.Builder.advancement();
+        this.advancementBuilder.addCriterion(name, criterionIn);
+        return this;
+    }
+
     public void clear() {
         itemsOutput = new ObjectArrayList<>();
         ingredientInput = new ObjectArrayList<>();
@@ -289,10 +307,15 @@ public class RecipeBuilder {
 
     private class Result implements FinishedRecipe{
         ResourceLocation id;
+        ResourceLocation advancementID = null;
         public Result(ResourceLocation id){
             this.id = id;
         }
 
+        public Result(ResourceLocation id, ResourceLocation advancementID){
+            this.id = id;
+            this.advancementID = advancementID;
+        }
         @Override
         public void serializeRecipeData(JsonObject json) {
             JsonArray array = new JsonArray();
@@ -360,13 +383,16 @@ public class RecipeBuilder {
         @Nullable
         @Override
         public JsonObject serializeAdvancement() {
+            if (advancementBuilder != null){
+                return advancementBuilder.serializeToJson();
+            }
             return null;
         }
 
         @Nullable
         @Override
         public ResourceLocation getAdvancementId() {
-            return null;
+            return advancementID;
         }
     }
 }
