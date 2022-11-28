@@ -133,7 +133,7 @@ public class AntimatterDynamics {
     public static void collectRecipes(AntimatterRecipeProvider provider, Consumer<FinishedRecipe> rec) {
         CraftingEvent ev = AntimatterPlatformUtils.postCraftingEvent(Antimatter.INSTANCE);
         for (ICraftingLoader loader : ev.getLoaders()) {
-            loader.loadRecipes(FINISHED_RECIPE_CONSUMER, provider);
+            loader.loadRecipes(rec, provider);
         }
     }
 
