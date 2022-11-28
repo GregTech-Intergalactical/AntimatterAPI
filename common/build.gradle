@@ -14,11 +14,6 @@ loom {
 boolean hasTesseract = findProject(':tesseract-common') != null
 
 
-repositories {
-    maven { // TOP
-        url "https://maven.wispforest.io"
-    }
-}
 
 dependencies{
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
@@ -46,7 +41,7 @@ dependencies{
     modImplementation("com.github.FeltMC:forgeconfigapiport-fabric:c1486f80f7"){
         transitive = false
     }
-    modCompileOnly "mcjty.theoneprobe:theoneprobe-fabric:${top_fabric_version}"
+    modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
 }
 
 architectury {
