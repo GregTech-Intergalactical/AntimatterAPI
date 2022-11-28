@@ -63,7 +63,7 @@ publishing {
         def isRELEASE = System.getenv("GITHUB_RELEASE")
         if (isCI && isRELEASE) {
             maven {
-                name = "GT Maven"
+                name = "GTMaven"
                 url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
                 credentials {
                     username = System.getenv("MAVEN_USERNAME")
