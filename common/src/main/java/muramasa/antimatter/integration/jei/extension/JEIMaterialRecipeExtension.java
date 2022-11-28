@@ -11,7 +11,7 @@ import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
-import muramasa.antimatter.Data;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.network.chat.TextComponent;
@@ -56,7 +56,7 @@ public record JEIMaterialRecipeExtension(MaterialRecipe recipe) implements ICraf
                     }
                     String id = ing.getId();
                     Object mat = m.get(id);
-                    if (mat == null || mat == Data.NULL) {
+                    if (mat == null || mat == Material.NULL) {
                         i++;
                         continue;
                     }

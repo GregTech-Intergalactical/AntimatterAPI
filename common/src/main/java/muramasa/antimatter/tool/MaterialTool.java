@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.item.IContainerItem;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
@@ -41,7 +42,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,8 +49,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
-
-import static muramasa.antimatter.Data.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -123,7 +121,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
-        return Utils.doesStackHaveToolTypes(stack, WRENCH, ELECTRIC_WRENCH, SCREWDRIVER, ELECTRIC_SCREWDRIVER, CROWBAR, WIRE_CUTTER); // ???
+        return Utils.doesStackHaveToolTypes(stack, AntimatterDefaultTools.WRENCH, AntimatterDefaultTools.ELECTRIC_WRENCH, AntimatterDefaultTools.SCREWDRIVER, AntimatterDefaultTools.ELECTRIC_SCREWDRIVER, AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.WIRE_CUTTER); // ???
     }
 
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {

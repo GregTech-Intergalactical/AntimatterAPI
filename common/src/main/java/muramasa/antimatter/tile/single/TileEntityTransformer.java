@@ -19,7 +19,7 @@ import tesseract.api.TesseractCaps;
 import java.util.List;
 import java.util.function.IntToLongFunction;
 
-import static muramasa.antimatter.Data.SOFT_HAMMER;
+import static muramasa.antimatter.data.AntimatterDefaultTools.SOFT_HAMMER;
 
 public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends TileEntityMachine<T> {
 

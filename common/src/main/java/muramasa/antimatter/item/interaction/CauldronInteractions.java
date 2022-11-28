@@ -5,8 +5,8 @@ import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.material.MaterialItem;
 import net.minecraft.core.cauldron.CauldronInteraction;
 
-import static muramasa.antimatter.Data.DUST;
-import static muramasa.antimatter.Data.DUST_IMPURE;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST_IMPURE;
 
 /**
  * All antimatter cauldron interactions.

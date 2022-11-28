@@ -1,7 +1,7 @@
 package muramasa.antimatter.material;
 
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.item.ItemBasic;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
@@ -37,9 +37,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import static muramasa.antimatter.Data.CRUSHED_PURIFIED;
-import static muramasa.antimatter.Data.DUST;
-import static muramasa.antimatter.Data.DUST_TINY;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.CRUSHED_PURIFIED;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST_TINY;
 
 public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider {
 
@@ -73,7 +73,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         //Here only add specific types, events are handled below.
-        if (type == Data.ROCK) {
+        if (type == AntimatterMaterialTypes.ROCK) {
             tooltip.add(new TranslatableComponent("antimatter.tooltip.occurrence").append(new TextComponent(material.getDisplayName().getString()).withStyle(ChatFormatting.YELLOW)));
         }
     }
@@ -99,7 +99,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
             int level = state.getValue(LayeredCauldronBlock.LEVEL);
             if (level > 0){
                 Material material = ((MaterialItem) stack.getItem()).getMaterial();
-                if (type == Data.DUST_IMPURE) {
+                if (type == AntimatterMaterialTypes.DUST_IMPURE) {
                     if (material.has(DUST)) {
                         stack.shrink(1);
                         if (!player.addItem(DUST.get(material, 1))) {
@@ -109,7 +109,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                         world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                         return InteractionResult.SUCCESS;
                     }
-                } else if (type == Data.CRUSHED) {
+                } else if (type == AntimatterMaterialTypes.CRUSHED) {
                     if (material.has(CRUSHED_PURIFIED)) {
                         stack.shrink(1);
                         if (!player.addItem(CRUSHED_PURIFIED.get(material, 1))) {
@@ -156,7 +156,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     }
 
     public static boolean doesShowExtendedHighlight(ItemStack stack) {
-        return hasType(stack, Data.PLATE);
+        return hasType(stack, AntimatterMaterialTypes.PLATE);
     }
 
     @Override

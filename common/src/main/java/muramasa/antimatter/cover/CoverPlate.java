@@ -1,9 +1,9 @@
 package muramasa.antimatter.cover;
 
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.RenderHelper;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -59,7 +59,7 @@ public class CoverPlate extends CoverMaterial {
 
     @Override
     public ItemStack getDroppedStack() {
-        return Data.PLATE.get(material, 1);
+        return AntimatterMaterialTypes.PLATE.get(material, 1);
     }
 
     /*
@@ -70,7 +70,7 @@ public class CoverPlate extends CoverMaterial {
 
     @Override
     public void setTextures(BiConsumer<String, Texture> texer) {
-        Texture[] tex = material.getSet().getTextures(Data.BLOCK);
+        Texture[] tex = material.getSet().getTextures(AntimatterMaterialTypes.BLOCK);
         texer.accept("overlay", tex[0]);
     }
 
@@ -82,6 +82,6 @@ public class CoverPlate extends CoverMaterial {
 
     @Override
     public Texture[] getTextures() {
-        return new Texture[]{material.getSet().getTextures(Data.BLOCK)[0]};
+        return new Texture[]{material.getSet().getTextures(AntimatterMaterialTypes.BLOCK)[0]};
     }
 }

@@ -1,6 +1,6 @@
 package muramasa.antimatter.mixin;
 
-import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +30,7 @@ public abstract class LeavesBlockMixin extends Block {
         ItemStack stack = builder.getOptionalParameter(LootContextParams.TOOL);
         if (stack != null && !stack.isEmpty() && stack.getItem() instanceof IAntimatterTool) {
             IAntimatterTool tool = (IAntimatterTool) stack.getItem();
-            if (tool.getAntimatterToolType() == Data.BRANCH_CUTTER) {
+            if (tool.getAntimatterToolType() == AntimatterDefaultTools.BRANCH_CUTTER) {
                 ResourceLocation resourcelocation = this.getLootTable();
                 if (resourcelocation == BuiltInLootTables.EMPTY) {
                     return Collections.emptyList();

@@ -34,8 +34,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static muramasa.antimatter.Data.BLOCK;
-import static muramasa.antimatter.Data.FRAME;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.BLOCK;
+import static muramasa.antimatter.data.AntimatterMaterialTypes.FRAME;
 import static muramasa.antimatter.material.MaterialTags.WIRE;
 import static muramasa.antimatter.util.TagUtils.*;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
