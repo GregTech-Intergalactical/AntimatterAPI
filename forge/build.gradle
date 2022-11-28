@@ -173,6 +173,7 @@ shadowJar {
     exclude 'muramasa/antimatter/client/model/loader/MachineModelLoader$CoverModelLoader.class'
     exclude "muramasa/antimatter/client/model/loader/DefaultModelLoader.class"
     exclude "muramasa/antimatter/client/model/loader/MachineModelLoader.class"
+    exclude("architectury.common.json")
     relocate "muramasa.antimatter.client.model.loader.forge", "muramasa.antimatter.client.model.loader"
 }
 
