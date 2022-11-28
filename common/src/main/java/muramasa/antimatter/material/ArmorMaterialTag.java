@@ -2,6 +2,7 @@ package muramasa.antimatter.material;
 
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import muramasa.antimatter.Data;
 import net.minecraft.world.item.enchantment.Enchantment;
 
 import java.util.Map;
@@ -25,6 +26,7 @@ public class ArmorMaterialTag extends MaterialTag {
     }
 
     public ArmorData getArmorData(Material mat){
+        if (mat == Data.NULL) return mapping.computeIfAbsent(mat, m -> new ArmorData(new int[]{1, 1, 1, 1}, 0.0f, 0.0f, 23, ImmutableMap.of()));
         return mapping.get(mat);
     }
     public record ArmorData(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment){}

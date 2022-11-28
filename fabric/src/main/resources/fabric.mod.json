@@ -51,6 +51,9 @@
     ],
     "preLaunch": [
       "muramasa.antimatter.fabric.AntimatterPreInitializer"
+    ],
+    "top_plugin": [
+      "muramasa.antimatter.integration.top.fabric.TheOneProbePluginFabric"
     ]
   }
 }

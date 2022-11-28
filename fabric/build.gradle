@@ -63,6 +63,7 @@ dependencies{
     modImplementation("com.github.FeltMC:forgeconfigapiport-fabric:c1486f80f7"){
         transitive = false
     }
+    modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
 }
 
 architectury {
@@ -110,6 +111,7 @@ publishing {
         def isRELEASE = System.getenv("GITHUB_RELEASE")
         if (isCI && isRELEASE) {
             maven {
+                name = "GTMaven"
                 url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
                 credentials {
                     username = System.getenv("MAVEN_USERNAME")
