@@ -26,7 +26,7 @@ public class HandleMaterialTag extends MaterialTag {
     }
 
     public HandleData getHandleData(Material mat){
-        if (mat == Data.NULL) return mapping.computeIfAbsent(mat, m -> new HandleData(0, 0, ImmutableMap.of()));
+        if (mat == Material.NULL) return mapping.computeIfAbsent(mat, m -> new HandleData(0, 0, ImmutableMap.of()));
         return mapping.get(mat);
     }
     public record HandleData(int durability, float speed, ImmutableMap<Enchantment, Integer> toolEnchantment){}

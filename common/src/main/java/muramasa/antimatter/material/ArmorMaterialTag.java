@@ -26,7 +26,7 @@ public class ArmorMaterialTag extends MaterialTag {
     }
 
     public ArmorData getArmorData(Material mat){
-        if (mat == Data.NULL) return mapping.computeIfAbsent(mat, m -> new ArmorData(new int[]{1, 1, 1, 1}, 0.0f, 0.0f, 23, ImmutableMap.of()));
+        if (mat == Material.NULL) return mapping.computeIfAbsent(mat, m -> new ArmorData(new int[]{1, 1, 1, 1}, 0.0f, 0.0f, 23, ImmutableMap.of()));
         return mapping.get(mat);
     }
     public record ArmorData(int[] armor, float toughness, float knockbackResistance, int armorDurabilityFactor, ImmutableMap<Enchantment, Integer> toolEnchantment){}

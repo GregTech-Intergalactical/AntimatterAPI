@@ -29,7 +29,7 @@ public class ToolMaterialTag extends MaterialTag {
     }
 
     public ToolData getToolData(Material mat){
-        if (mat == Data.NULL) return mapping.computeIfAbsent(mat, m -> new ToolData(5.0f, 5.0f, Integer.MAX_VALUE, 3, ImmutableMap.of(), List.of()));
+        if (mat == Material.NULL) return mapping.computeIfAbsent(mat, m -> new ToolData(5.0f, 5.0f, Integer.MAX_VALUE, 3, ImmutableMap.of(), List.of()));
         return mapping.get(mat);
     }
     public record ToolData(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, List<AntimatterToolType> toolTypes){}
