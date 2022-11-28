@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -67,6 +68,12 @@ public class AntimatterDynamics {
 
     public static final Consumer<FinishedRecipe> FINISHED_RECIPE_CONSUMER = f -> {
         if (RECIPE_IDS.add(f.getId())){
+            if (f.getAdvancementId() != null){
+                JsonObject advancement = f.serializeAdvancement();
+                if (advancement != null){
+                    DYNAMIC_RECIPES.addData(fix(f.getAdvancementId(), "advancements", "json"), advancement.toString().getBytes());
+                }
+            }
             DYNAMIC_RECIPES.addData(fix(f.getId(), "recipes", "json"), f.serializeRecipe().toString().getBytes());
         }
     };
