@@ -202,7 +202,7 @@ public class AntimatterDynamics {
     public static void onResourceReload(boolean serverEvent) {
         AntimatterRecipeProvider provider = new AntimatterRecipeProvider(Ref.ID, "provider");
         RECIPE_IDS.clear();
-        collectRecipes(provider , rec -> DYNAMIC_RECIPES.addData(fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
+        collectRecipes(provider , FINISHED_RECIPE_CONSUMER);
         List<RecipeMap> list = AntimatterAPI.all(RecipeMap.class);
         list.forEach(RecipeMap::reset);
         final Set<ResourceLocation> filter;
