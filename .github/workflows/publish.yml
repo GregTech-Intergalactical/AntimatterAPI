@@ -29,8 +29,8 @@ jobs:
       - name: Build & Publish
         run: ./gradlew build :antimatter-forge:publish :antimatter-fabric:publish :antimatter-common:publish --stacktrace
         env:
-          GITHUB_ACTOR: ${{ github.actor }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
           GITHUB_RELEASE: true
       - name: Upload Forge Artifact
         uses: actions/upload-artifact@v2

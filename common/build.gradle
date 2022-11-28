@@ -63,11 +63,11 @@ publishing {
         def isRELEASE = System.getenv("GITHUB_RELEASE")
         if (isCI && isRELEASE) {
             maven {
-                name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/GregTech-Intergalactical/AntimatterAPI"
+                name = "GT Maven"
+                url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
                 credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+                    username = System.getenv("MAVEN_USERNAME")
+                    password = System.getenv("MAVEN_PASSWORD")
                 }
             }
         } else {
