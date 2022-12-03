@@ -67,6 +67,7 @@ public class AntimatterDynamics {
     public static void addResourcePacks(Consumer<RuntimeResourcePack> function){
         function.accept(DYNAMIC_RESOURCE_PACK);
         function.accept(DYNAMIC_RECIPES);
+        Antimatter.LOGGER.info("resource pacs added");
     }
 
     public static void onProviderInit(String domain, DataGenerator gen, Side side) {
