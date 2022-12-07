@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class Dispatch {
 
-    private final Map<Capability<?>, Holder<?, ?>> capabilityHolderMap = new Object2ObjectOpenHashMap<>();
+    private final Map<Class<?>, Holder<?, ?>> capabilityHolderMap = new Object2ObjectOpenHashMap<>();
 
     public Dispatch() {
 

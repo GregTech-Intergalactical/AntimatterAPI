@@ -55,6 +55,11 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
+    public Class<?> getCapClass() {
+        return IHeatHandler.class;
+    }
+
+    @Override
     protected void register() {
         TesseractGraphWrappers.HEAT_CONTROLLER.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }

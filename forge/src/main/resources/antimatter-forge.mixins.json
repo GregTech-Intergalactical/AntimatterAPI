@@ -9,7 +9,8 @@
     "RecipeIngredientMixin",
     "PropertyIngredientMixin",
     "ContainerShapedSerializerMixin",
-    "ContainerShapelessSerializerMixin"
+    "ContainerShapelessSerializerMixin",
+    "CapabilityManagerMixin"
   ],
   "minVersion": "0.8"
 }

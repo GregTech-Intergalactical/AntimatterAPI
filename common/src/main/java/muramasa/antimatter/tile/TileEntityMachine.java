@@ -113,11 +113,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public LazyOptional<MachineRecipeHandler<U>> recipeHandler;
     public LazyOptional<MachineCoverHandler<TileEntityMachine>> coverHandler;*/
 
-    public Holder<IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>(ITEM_HANDLER_CAPABILITY, dispatch);
-    public Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>(FLUID_HANDLER_CAPABILITY, dispatch);
-    public Holder<ICoverHandler<?>, MachineCoverHandler<T>> coverHandler = new Holder<>(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), dispatch);
-    public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dispatch);
-    public Holder<MachineRecipeHandler<?>, MachineRecipeHandler<T>> recipeHandler = new Holder<>(AntimatterCaps.getRECIPE_HANDLER_CAPABILITY(), dispatch);
+    public Holder<IItemHandler, MachineItemHandler<T>> itemHandler = new Holder<>(IItemHandler.class, dispatch);
+    public Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>(IFluidHandler.class, dispatch);
+    public Holder<ICoverHandler<?>, MachineCoverHandler<T>> coverHandler = new Holder<>(ICoverHandler.class, dispatch, null);
+    public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(IEnergyHandler.class, dispatch);
+    public Holder<MachineRecipeHandler<?>, MachineRecipeHandler<T>> recipeHandler = new Holder<>(MachineRecipeHandler.class, dispatch, null);
 
     /**
      * Client related fields.
@@ -553,21 +553,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     public <V> boolean blocksCapability(@Nonnull Capability<V> cap, Direction side) {
         return coverHandler.map(t -> t.blocksCapability(cap, side)).orElse(false);
-    }
-
-    @Nonnull
-    @Override
-    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
-        if (cap == AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY() && coverHandler.isPresent()) return coverHandler.side(side).cast();
-        if (side == getFacing() && !allowsFrontIO()) return LazyOptional.empty();
-        if (blocksCapability(cap, side)) return LazyOptional.empty();
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent()) return itemHandler.side(side).cast();
-        if (cap == AntimatterCaps.getRECIPE_HANDLER_CAPABILITY() && recipeHandler.isPresent()) return recipeHandler.side(side).cast();
-
-        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent()) return fluidHandler.side(side).cast();
-        else if ((cap == TesseractCaps.getENERGY_HANDLER_CAPABILITY() || TesseractPlatformUtils.isFeCap(cap)) && energyHandler.isPresent())
-            return energyHandler.side(side).cast();
-        return super.getCapability(cap, side);
     }
 
     public final boolean allowsFrontIO() {

@@ -9,7 +9,10 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
+import org.jetbrains.annotations.NotNull;
 import tesseract.api.TesseractCaps;
+import tesseract.api.context.TesseractItemContext;
+import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
 
@@ -17,14 +20,17 @@ import tesseract.api.gt.IEnergyHandlerItem;
  * ItemEnergyHandler represents the Antimatter Energy capability implementation for items.
  * It wraps an item and provides the ability to charge it & remove it, depending on if the item supports it.
  */
-public class ItemEnergyHandler extends EnergyHandler {
+public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerItem {
 
     protected boolean discharge = true;
     protected long maxEnergy;
 
-    public ItemEnergyHandler(long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
+    protected TesseractItemContext context;
+
+    public ItemEnergyHandler(TesseractItemContext context, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         super(0, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.maxEnergy = capacity;
+        this.context = context;
     }
 
     @Override
@@ -43,17 +49,49 @@ public class ItemEnergyHandler extends EnergyHandler {
 
     public boolean chargeModeSwitch() {
         discharge = !discharge;
+        CompoundTag energyTag = getContainer().getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
+        energyTag.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, discharge);
         return discharge;
-    }
-
-    @Override
-    public void setCapacity(long capacity) {
-        this.maxEnergy = capacity;
     }
 
     @Override
     public void setEnergy(long energy) {
         this.energy = energy;
+        CompoundTag energyTag = getContainer().getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
+        energyTag.putLong(Ref.KEY_ITEM_ENERGY, energy);
+    }
+
+    @Override
+    public void setCapacity(long capacity) {
+        super.setCapacity(capacity);
+        this.maxEnergy = capacity;
+        CompoundTag energyTag = getContainer().getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
+        energyTag.putLong(Ref.KEY_ITEM_MAX_ENERGY, capacity);
+    }
+
+    @Override
+    public boolean addEnergy(GTTransaction.TransferData data) {
+        if (super.addEnergy(data)){
+            CompoundTag energyTag = getContainer().getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
+            energyTag.putLong(Ref.KEY_ITEM_ENERGY, energy);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean extractEnergy(GTTransaction.TransferData data) {
+        if (super.extractEnergy(data)){
+            CompoundTag energyTag = getContainer().getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
+            energyTag.putLong(Ref.KEY_ITEM_ENERGY, energy);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public @NotNull TesseractItemContext getContainer() {
+        return context;
     }
 
     @Override
@@ -62,6 +100,7 @@ public class ItemEnergyHandler extends EnergyHandler {
         nbt.putLong(Ref.KEY_ITEM_ENERGY, this.energy);
         nbt.putLong(Ref.KEY_ITEM_MAX_ENERGY, this.maxEnergy);
         nbt.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, this.discharge);
+        context.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA).merge(nbt);
         return nbt;
     }
 
@@ -78,27 +117,4 @@ public class ItemEnergyHandler extends EnergyHandler {
     }
 
 
-    public static class Provider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
-        private final LazyOptional<IEnergyHandler> energy;
-
-        public Provider(NonNullSupplier<IEnergyHandler> cap) {
-            this.energy = LazyOptional.of(cap);
-        }
-
-        @Override
-        public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-            return cap == TesseractCaps.getENERGY_HANDLER_CAPABILITY() ? energy.cast() : LazyOptional.empty();
-        }
-
-        @Override
-        public CompoundTag serializeNBT() {
-            return energy.map(INBTSerializable::serializeNBT).orElse(new CompoundTag());
-        }
-
-        @Override
-        public void deserializeNBT(CompoundTag nbt) {
-            energy.ifPresent(t -> t.deserializeNBT(nbt));
-        }
-
-    }
 }

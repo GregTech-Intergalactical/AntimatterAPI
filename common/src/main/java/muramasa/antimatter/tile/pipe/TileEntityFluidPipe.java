@@ -145,6 +145,11 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
+    public Class<?> getCapClass() {
+        return IFluidHandler.class;
+    }
+
+    @Override
     public LazyOptional<? extends IFluidHandler> forSide(Direction side) {
         if (FluidController.SLOOSH) {
             if (fluidHandler == null) {

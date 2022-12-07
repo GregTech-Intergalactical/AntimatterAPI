@@ -74,6 +74,11 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
+    public Class<?> getCapClass() {
+        return IItemHandler.class;
+    }
+
+    @Override
     public LazyOptional<IItemHandler> forSide(Direction side) {
         return LazyOptional.of(() -> new TesseractItemCapability<>(this, side, !isConnector(), (stack, in, out,
                 simulate) -> this.coverHandler.ifPresent(t -> t.onTransfer(stack, in, out, simulate))));

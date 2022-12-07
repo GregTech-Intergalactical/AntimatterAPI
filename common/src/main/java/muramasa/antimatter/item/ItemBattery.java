@@ -15,17 +15,19 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractPlatformUtils;
+import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyHandlerItem;
+import tesseract.api.gt.IEnergyItem;
 import tesseract.api.gt.IGTNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemBattery extends ItemBasic<ItemBattery> {
+public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
     protected Tier tier;
     protected final long cap;
@@ -68,11 +70,6 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
             t.setEnergy(t.getCapacity());
         });
         return stack;
-    }
-
-    @Nullable
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag tag) {
-        return new ItemEnergyHandler.Provider(() -> new ItemEnergyHandler(cap, isReusable() ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1));
     }
 
     @Override
@@ -143,5 +140,10 @@ public class ItemBattery extends ItemBasic<ItemBattery> {
         if (nbt != null) {
             getCastedHandler(stack).ifPresent(t -> t.deserializeNBT(nbt.getCompound("E")));
         }
+    }
+
+    @Override
+    public IEnergyHandlerItem createEnergyHandler(TesseractItemContext context) {
+        return new ItemEnergyHandler(context, cap, isReusable() ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);
     }
 }

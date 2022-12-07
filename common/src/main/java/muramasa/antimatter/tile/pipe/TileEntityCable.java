@@ -63,6 +63,11 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
+    public Class<?> getCapClass() {
+        return IEnergyHandler.class;
+    }
+
+    @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
         Tesseract.getGT_ENERGY().blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());

@@ -75,7 +75,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         this.size = getPipeSize(state);
         this.type = getPipeType(state);
         this.coverHandler = LazyOptional.of(() -> new PipeCoverHandler<>(this));
-        this.pipeCapHolder = new Holder<>(getCapability(), this.dispatch);
+        this.pipeCapHolder = new Holder<>(getCapClass(), this.dispatch);
     }
 
     @Override
@@ -88,6 +88,10 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         if (isServerSide()) {
             register();
         }
+    }
+
+    public Holder getPipeCapHolder() {
+        return pipeCapHolder;
     }
 
     public boolean isConnector() {
@@ -139,7 +143,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         BlockEntity tile = getLevel().getBlockEntity(side);
         if (!(tile instanceof TileEntityPipe)) return null;
         TileEntityPipe<?> pipe = (TileEntityPipe<?>) tile;
-        return pipe.getCapability() == this.getCapability() ?  pipe : null;
+        return pipe.getCapClass() == this.getCapClass() ?  pipe : null;
     }
 
     public void toggleConnection(Direction side) {
@@ -185,6 +189,8 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     }
 
     protected abstract Capability<?> getCapability();
+
+    public abstract Class<?> getCapClass();
 
     @SuppressWarnings("unchecked")
     public void refreshConnection() {
@@ -291,21 +297,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
 
     public boolean blocksSide(Direction side) {
         return coverHandler.map(t -> t.blocksCapability(getCapability(), side)).orElse(false);
-    }
-
-    @Nonnull
-    @Override
-    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
-        if (side == null) return LazyOptional.empty();
-        if (cap == AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY() && coverHandler.isPresent()) return coverHandler.cast();
-        if (!this.connects(side)) return LazyOptional.empty();
-        if (cap == getCapability()) {
-            return pipeCapHolder.side(side).cast();
-        }
-        if (TesseractPlatformUtils.isFeCap(cap) && this instanceof TileEntityCable<T>){
-            return pipeCapHolder.side(side).cast();
-        }
-        return LazyOptional.empty();
     }
 
     //For covers

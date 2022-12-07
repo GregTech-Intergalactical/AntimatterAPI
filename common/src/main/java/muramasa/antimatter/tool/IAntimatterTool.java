@@ -47,7 +47,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import tesseract.TesseractPlatformUtils;
+import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyItem;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -57,7 +59,7 @@ import java.util.Set;
 
 import static muramasa.antimatter.material.Material.NULL;
 
-public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods {
+public interface IAntimatterTool extends IAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods, IEnergyItem {
 
     AntimatterToolType getAntimatterToolType();
 
@@ -92,6 +94,11 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default long getMaxEnergy(ItemStack stack) {
         return getEnergyTag(stack).getLong(Ref.KEY_ITEM_MAX_ENERGY);
+    }
+
+    @Override
+    default boolean canCreate(TesseractItemContext context) {
+        return getAntimatterToolType().isPowered();
     }
 
     ItemStack asItemStack(Material primary, Material secondary);
