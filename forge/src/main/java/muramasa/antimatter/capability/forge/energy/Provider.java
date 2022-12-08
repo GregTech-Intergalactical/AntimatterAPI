@@ -7,7 +7,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
-import tesseract.api.TesseractCaps;
+import tesseract.api.forge.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
 public class Provider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
@@ -19,7 +19,7 @@ public class Provider implements ICapabilityProvider, INBTSerializable<CompoundT
 
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        return cap == TesseractCaps.getENERGY_HANDLER_CAPABILITY() ? energy.cast() : LazyOptional.empty();
+        return cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY ? energy.cast() : LazyOptional.empty();
     }
 
     @Override

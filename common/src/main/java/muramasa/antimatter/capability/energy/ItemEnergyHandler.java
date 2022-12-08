@@ -3,18 +3,10 @@ package muramasa.antimatter.capability.energy;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.NonNullSupplier;
 import org.jetbrains.annotations.NotNull;
-import tesseract.api.TesseractCaps;
 import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.GTTransaction;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
 
 /**

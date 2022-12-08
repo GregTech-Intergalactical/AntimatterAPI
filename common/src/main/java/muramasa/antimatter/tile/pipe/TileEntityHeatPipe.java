@@ -9,10 +9,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
-import tesseract.api.TesseractCaps;
 import tesseract.api.heat.HeatTransaction;
 import tesseract.api.heat.IHeatHandler;
 import tesseract.api.heat.IHeatPipe;
@@ -38,7 +37,7 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
                                 mutPos = mutPos.offset(1,dir);
                                 BlockEntity ent = level.getBlockEntity(mutPos);
                                 if (ent == null) continue;
-                                ent.getCapability(TesseractCaps.getHEAT_CAPABILITY(), dir.getOpposite()).ifPresent(t -> t.insert(tx));
+                                TesseractCapUtils.getHeatHandler(ent, dir.getOpposite()).ifPresent(t -> t.insert(tx));
                             }
                         }
                         tx.commit();

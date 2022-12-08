@@ -46,7 +46,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import tesseract.TesseractPlatformUtils;
+import tesseract.TesseractCapUtils;
 import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyItem;
@@ -147,7 +147,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default CompoundTag validateEnergyTag(ItemStack stack, long startingEnergy, long maxEnergy){
-        IEnergyHandler h = TesseractPlatformUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
+        IEnergyHandler h = TesseractCapUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
         if (h != null){
             h.setEnergy(startingEnergy);
             h.setCapacity(maxEnergy);
@@ -165,7 +165,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (group != Ref.TAB_TOOLS) return;
         if (getAntimatterToolType().isPowered()) {
             ItemStack stack = asItemStack(NULL, NULL);
-            IEnergyHandler h = TesseractPlatformUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
+            IEnergyHandler h = TesseractCapUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
             if (h != null){
                 list.add(stack.copy());
                 h.setCapacity(maxEnergy);
@@ -271,7 +271,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default int damage(ItemStack stack, int amount) {
         if (!getAntimatterToolType().isPowered()) return amount;
-        IEnergyHandler h = TesseractPlatformUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
+        IEnergyHandler h = TesseractCapUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
         if (!(h instanceof ItemEnergyHandler)) {
             return amount;
         }

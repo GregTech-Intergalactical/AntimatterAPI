@@ -40,7 +40,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.TesseractPlatformUtils;
+import tesseract.TesseractCapUtils;
 import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyHandlerItem;
 
@@ -49,6 +49,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 @ParametersAreNonnullByDefault
@@ -355,8 +356,8 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return new ItemEnergyHandler(context, maxEnergy, 8 * (int) Math.pow(4, this.energyTier), 8 * (int) Math.pow(4, this.energyTier), 1, 1);
     }
 
-    private LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
-        return TesseractPlatformUtils.getEnergyHandlerItem(stack).cast();
+    private Optional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
+        return TesseractCapUtils.getEnergyHandlerItem(stack).map(e -> (ItemEnergyHandler) e);
     }
 
     @Nullable

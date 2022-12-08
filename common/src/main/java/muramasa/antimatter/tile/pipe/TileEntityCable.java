@@ -10,18 +10,15 @@ import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.pipe.BlockCable;
 import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.PipeType;
-import muramasa.antimatter.pipe.types.Wire;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.Tesseract;
-import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
+import tesseract.TesseractCapUtils;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTHolder;
 import tesseract.api.gt.IEnergyHandler;
@@ -108,7 +105,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
         if (!super.validate(dir)) return false;
         BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
         if (tile == null) return false;
-        return tile.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite()).isPresent() || TesseractPlatformUtils.tileHasFEOrTRE(tile, dir);
+        return TesseractCapUtils.getEnergyHandler(tile, dir.getOpposite()).isPresent();
     }
 
     @Override

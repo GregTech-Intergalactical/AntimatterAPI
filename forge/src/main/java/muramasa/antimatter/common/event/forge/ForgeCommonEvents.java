@@ -42,7 +42,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.api.context.TesseractItemContext;
-import tesseract.api.forge.TesseractCapsImpl;
+import tesseract.api.forge.TesseractCaps;
 import tesseract.api.forge.wrapper.ItemStackWrapper;
 import tesseract.api.gt.IEnergyItem;
 
@@ -150,7 +150,7 @@ public class ForgeCommonEvents {
                     if (cap == AntimatterCapsImpl.RECIPE_HANDLER_CAPABILITY && machine.recipeHandler.isPresent()) return machine.recipeHandler.side(side).cast();
 
                     else if (cap == FLUID_HANDLER_CAPABILITY && machine.fluidHandler.isPresent()) return machine.fluidHandler.side(side).cast();
-                    else if ((cap == TesseractCapsImpl.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) && machine.energyHandler.isPresent())
+                    else if ((cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) && machine.energyHandler.isPresent())
                         return machine.energyHandler.side(side).cast();
                     return LazyOptional.empty();
                 }

@@ -26,8 +26,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
+import tesseract.TesseractCapUtils;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
@@ -201,7 +200,7 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
             for (int i = 0; i < chargeables.getSlots(); i++) {
                 ItemStack item = chargeables.getStackInSlot(i);
                 if (!item.isEmpty()) {
-                    TesseractPlatformUtils.getEnergyHandlerItem(item).ifPresent(list::add);
+                    TesseractCapUtils.getEnergyHandlerItem(item).ifPresent(list::add);
                 }
             }
         }
