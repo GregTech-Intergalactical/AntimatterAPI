@@ -42,11 +42,11 @@ dependencies{
     modImplementation(include("io.github.feltmc:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}"))
     modImplementation(include("io.github.feltmc:fabricated-forge-tag-extensions:${rootProject.fabricated_forge_hash}"))
     modImplementation(include("com.github.FeltMC.Felt-API:felt-recipe-api:2a689af1cb"))
-    modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:9695183f48")) { transitive false }
+    modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:038244ff5b")) { transitive false }
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
     modImplementation(include("net.devtech:arrp:0.5.7"))
-    modImplementation(include("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")){
+    modCompileOnly(include("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")){
         transitive = false
     }
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
