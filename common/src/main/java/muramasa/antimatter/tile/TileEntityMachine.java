@@ -4,8 +4,16 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.*;
-import muramasa.antimatter.capability.machine.*;
+import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.capability.Holder;
+import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.capability.IGuiHandler;
+import muramasa.antimatter.capability.IMachineHandler;
+import muramasa.antimatter.capability.machine.MachineCoverHandler;
+import muramasa.antimatter.capability.machine.MachineEnergyHandler;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
+import muramasa.antimatter.capability.machine.MachineRecipeHandler;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
@@ -36,7 +44,6 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.tool.AntimatterToolType;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Cache;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
@@ -63,12 +70,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
 import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
@@ -80,8 +83,6 @@ import static muramasa.antimatter.gui.event.GuiEvents.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvents.ITEM_EJECT;
 import static muramasa.antimatter.machine.MachineFlag.*;
 import static net.minecraft.world.level.block.Blocks.AIR;
-import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntityTickable<T> implements MenuProvider, IMachineHandler, IGuiHandler {
 
@@ -545,13 +546,13 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
     }
 
-    public void invalidateCap(Capability<?> cap) {
+    public void invalidateCap(Class<?> cap) {
         if (isServerSide()) {
             dispatch.invalidate(cap);
         }
     }
 
-    public <V> boolean blocksCapability(@Nonnull Capability<V> cap, Direction side) {
+    public <V> boolean blocksCapability(@Nonnull Class<V> cap, Direction side) {
         return coverHandler.map(t -> t.blocksCapability(cap, side)).orElse(false);
     }
 

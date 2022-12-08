@@ -6,7 +6,7 @@ import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
-import tesseract.api.TesseractCaps;
+import tesseract.api.heat.IHeatHandler;
 
 public class CoverHeat extends BaseCover{
     public CoverHeat(ICoverHandler<?> source, @Nullable Tier tier, Direction side, CoverFactory factory) {
@@ -28,6 +28,6 @@ public class CoverHeat extends BaseCover{
     @Override
     public void onPlace() {
         super.onPlace();
-        ((TileEntityMachine<?>) handler.getTile()).invalidateCap(TesseractCaps.getHEAT_CAPABILITY());
+        ((TileEntityMachine<?>) handler.getTile()).invalidateCap(IHeatHandler.class);
     }
 }

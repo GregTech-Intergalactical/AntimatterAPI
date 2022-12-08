@@ -3,7 +3,6 @@ package muramasa.antimatter.tile.pipe;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.CoverHandler;
 import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.ICoverHandler;
@@ -21,7 +20,6 @@ import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.PipeType;
 import muramasa.antimatter.tile.TileEntityTickable;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,7 +42,6 @@ import tesseract.graph.Connectivity;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTickable<TileEntityPipe<T>> implements IMachineHandler, MenuProvider, IGuiHandler, IConnectable {
@@ -188,8 +185,6 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
         return Connectivity.has(connection, side);
     }
 
-    protected abstract Capability<?> getCapability();
-
     public abstract Class<?> getCapClass();
 
     @SuppressWarnings("unchecked")
@@ -240,7 +235,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
      * @return if the tile was updated.
      */
     public boolean onCoverUpdate(boolean remove, boolean hasNonEmpty, Direction side, ICover old, ICover stack) {
-        if (stack.blocksCapability(getCapability(), side)) {
+        if (stack.blocksCapability(getCapClass(), side)) {
             this.clearConnection(side);
         }
         if (this.getBlockState().getValue(BlockPipe.TICKING)) {
@@ -280,7 +275,7 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     public CoverFactory[] getValidCovers() {
         return AntimatterAPI.all(CoverFactory.class).stream().filter(t -> {
             try {
-                return !t.get().get(ICoverHandler.empty(this), t.getValidTier(), Direction.SOUTH, t).blocksCapability(getCapability(), null);
+                return !t.get().get(ICoverHandler.empty(this), t.getValidTier(), Direction.SOUTH, t).blocksCapability(getCapClass(), null);
             } catch (Exception ex) {
                 return false;
             }
@@ -296,15 +291,15 @@ public abstract class TileEntityPipe<T extends PipeType<T>> extends TileEntityTi
     }
 
     public boolean blocksSide(Direction side) {
-        return coverHandler.map(t -> t.blocksCapability(getCapability(), side)).orElse(false);
+        return coverHandler.map(t -> t.blocksCapability(getCapClass(), side)).orElse(false);
     }
 
     //For covers
     @Nonnull
-    public <U> LazyOptional<U> getCoverCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
+    public <U> LazyOptional<U> getCoverCapability(@Nonnull Class<U> cap, @Nullable Direction side) {
         if (side == null) return LazyOptional.empty();
         //if (!this.connects(side)) return LazyOptional.empty();
-        if (cap == getCapability()) {
+        if (cap == getCapClass()) {
             return pipeCapHolder.side(side).cast();
         }
         if (TesseractPlatformUtils.isFeCap(cap) && this instanceof TileEntityCable<T>){

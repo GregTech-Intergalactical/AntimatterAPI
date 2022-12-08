@@ -265,7 +265,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
      * @param side side to check
      * @return a boolean whether or not capability was blocked.
      */
-    public <U> boolean blocksCapability(Capability<U> capability, Direction side) {
+    public <U> boolean blocksCapability(Class<U> capability, Direction side) {
         ICover stack = get(side);
         if (stack == null)
             return false;

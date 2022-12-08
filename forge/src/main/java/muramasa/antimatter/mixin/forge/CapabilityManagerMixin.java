@@ -20,7 +20,11 @@ public class CapabilityManagerMixin {
     @Shadow @Final private IdentityHashMap<String, Capability<?>> providers;
 
     @Inject(method = "get(Ljava/lang/String;Z)Lnet/minecraftforge/common/capabilities/Capability;", at = @At(value = "INVOKE", target = "Ljava/util/IdentityHashMap;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;", shift = At.Shift.AFTER), remap = false)
-    private void injectCaps(String realName, boolean registering, CallbackInfoReturnable<Capability> info){
-        AntimatterCapsImpl.CAP_MAP.putIfAbsent(realName, providers.get(realName));
+    private void injectCaps(String realName, boolean registering, CallbackInfoReturnable<Capability<?>> info){
+        try {
+            AntimatterCapsImpl.CAP_MAP.putIfAbsent(Class.forName(realName.replace("/", ".")), providers.get(realName));
+        } catch (ClassNotFoundException e){
+            e.printStackTrace();
+        }
     }
 }

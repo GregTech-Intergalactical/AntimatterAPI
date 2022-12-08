@@ -140,11 +140,6 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    protected Capability<?> getCapability() {
-        return CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
-    }
-
-    @Override
     public Class<?> getCapClass() {
         return IFluidHandler.class;
     }

@@ -2,7 +2,6 @@ package muramasa.antimatter.capability;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.Map;
@@ -34,17 +33,17 @@ public class Dispatch {
         return this;
     }
 
-    public Dispatch invalidate(Capability<?> cap) {
+    public Dispatch invalidate(Class<?> cap) {
         capabilityHolderMap.get(cap).invalidate();
         return this;
     }
 
-    public Dispatch invalidate(Capability<?> cap, Direction side) {
+    public Dispatch invalidate(Class<?> cap, Direction side) {
         capabilityHolderMap.get(cap).invalidate(side);
         return this;
     }
 
-    public Holder<?, ?> getHolder(Capability<?> cap) {
+    public Holder<?, ?> getHolder(Class<?> cap) {
         return capabilityHolderMap.get(cap);
     }
 

@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import tesseract.api.TesseractCaps;
+import tesseract.api.gt.IEnergyHandler;
 
 import java.util.List;
 import java.util.function.IntToLongFunction;
@@ -81,7 +81,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
                 temp = h.getOutputVoltage();
                 h.setOutputVoltage(h.getInputVoltage());
                 h.setInputVoltage(temp);
-                this.invalidateCap(TesseractCaps.getENERGY_HANDLER_CAPABILITY());
+                this.invalidateCap(IEnergyHandler.class);
                 player.sendMessage(new TextComponent((isDefaultMachineState() ? "Step Down, In: " : "Step Up, In") + h.getInputVoltage() + "V@" + h.getInputAmperage() + "Amp, Out: " + h.getOutputVoltage() + "V@" + h.getOutputAmperage() + "Amp"), player.getUUID());
             });
             return InteractionResult.SUCCESS;

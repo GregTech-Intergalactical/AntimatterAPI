@@ -5,7 +5,6 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import net.minecraft.core.Direction;
-import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nullable;
 
@@ -21,7 +20,7 @@ public abstract class CoverMaterial extends BaseCover {
     public abstract Material getMaterial();
 
     @Override
-    public <T> boolean blocksCapability(Capability<T> cap, Direction side) {
+    public <T> boolean blocksCapability(Class<T> cap, Direction side) {
         return side != null;
     }
 }

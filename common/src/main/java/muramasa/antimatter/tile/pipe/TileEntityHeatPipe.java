@@ -50,11 +50,6 @@ public class TileEntityHeatPipe<T extends HeatPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
-    protected Capability<?> getCapability() {
-        return TesseractCaps.getHEAT_CAPABILITY();
-    }
-
-    @Override
     public Class<?> getCapClass() {
         return IHeatHandler.class;
     }
