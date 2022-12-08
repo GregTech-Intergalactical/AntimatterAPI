@@ -1,0 +1,21 @@
+{
+	"name": "Java",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": {
+			"VARIANT": "17",
+			"INSTALL_MAVEN": "false",
+			"INSTALL_GRADLE": "false",
+			"INSTALL_NODE": "false",
+			"NODE_VERSION": "lts/*"
+		}
+	},
+	"settings": {
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"java.home": "/docker-java-home",
+	},
+	"extensions": [
+		"vscjava.vscode-java-pack"
+	],
+	"remoteUser": "vscode"
+}
