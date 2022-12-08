@@ -17,6 +17,7 @@ import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.registration.*;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.AntimatterPreLaunchUtil;
 import muramasa.antimatter.util.NonNullSupplier;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.BlockPos;
@@ -413,9 +414,8 @@ public final class AntimatterAPI {
             PHASE = previous;
     }
 
-    @ExpectPlatform
     public static boolean isModLoaded(String mod) {
-        throw new AssertionError();
+        return AntimatterPreLaunchUtil.isModLoaded(mod);
     }
 
     public static void runOnEvent(RegistrationEvent event, Runnable runnable) {

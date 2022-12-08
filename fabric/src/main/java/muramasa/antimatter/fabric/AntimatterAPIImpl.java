@@ -30,10 +30,6 @@ public class AntimatterAPIImpl {
         }
     }
 
-    public static boolean isModLoaded(String mod) {
-        return FabricLoader.getInstance().isModLoaded(mod);
-    }
-
     public static void registerEventBus(){
     }
 

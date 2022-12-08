@@ -10,12 +10,6 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public class AntimatterAPIImpl {
     public static void registerTransferApi(BlockEntityType<?> type){}
-    public static boolean isModLoaded(String mod) {
-        if (ModList.get() == null) {
-            return LoadingModList.get().getMods().stream().map(ModInfo::getModId).anyMatch(mod::equals);
-        }
-        return ModList.get().isLoaded(mod);
-    }
 
     public static void registerEventBus(){
         //FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
