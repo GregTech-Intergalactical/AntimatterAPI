@@ -2,7 +2,6 @@ package muramasa.antimatter.integration.kubejs;
 
 import dev.latvian.mods.kubejs.event.EventJS;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
@@ -25,7 +24,7 @@ public class AMMaterialEvent extends EventJS {
 
     public void setReplacement(String material, String item, MaterialType type){
         Material material1 = Material.get(material);
-        if (material1 == Data.NULL){
+        if (material1 == Material.NULL){
             return;
         }
         if (!AntimatterPlatformUtils.itemExists(new ResourceLocation(item))){

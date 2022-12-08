@@ -11,8 +11,8 @@ import me.shedaniel.rei.api.common.plugins.PluginManager;
 import me.shedaniel.rei.api.common.registry.ReloadStage;
 import me.shedaniel.rei.plugin.common.BuiltinPlugin;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.rei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.rei.category.RecipeMapDisplay;
@@ -28,7 +28,6 @@ import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
@@ -50,7 +49,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                     List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, getter.get((Material) m, s).asStack())).toList();
                     registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId() + "_" + s.getId()), new TranslatableComponent(Ref.ID + ".rei.group." + t.getId() + "." + s.getId()), entries);
                 });
-                if (t != Data.ROCK){
+                if (t != AntimatterMaterialTypes.ROCK){
                     return;
                 }
             }

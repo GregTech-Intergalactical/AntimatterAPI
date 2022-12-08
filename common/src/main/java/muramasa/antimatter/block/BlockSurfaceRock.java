@@ -1,7 +1,7 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.dynamic.BlockDynamic;
@@ -68,7 +68,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
 
     @Override
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
-        if (Data.ROCK.isVisible()) items.add(new ItemStack(this));
+        if (AntimatterMaterialTypes.ROCK.isVisible()) items.add(new ItemStack(this));
     }
 
     @Override
@@ -115,8 +115,8 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         playerDestroy(world, player, pos, state, world.getBlockEntity(pos), player.getItemInHand(hand));
         dropResources(state, world, pos, null,player, ItemStack.EMPTY);
        // if (dropResources(state, world, pos, null,player, true, null)) {
-        if (!player.addItem(Data.ROCK.get(material, 1))) {
-            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, Data.ROCK.get(material, 1)));
+        if (!player.addItem(AntimatterMaterialTypes.ROCK.get(material, 1))) {
+            Containers.dropContents(world, pos, NonNullList.of(ItemStack.EMPTY, AntimatterMaterialTypes.ROCK.get(material, 1)));
         }
         world.removeBlock(pos, true);
         return InteractionResult.SUCCESS;

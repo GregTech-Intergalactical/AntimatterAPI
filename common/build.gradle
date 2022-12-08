@@ -13,6 +13,8 @@ loom {
 
 boolean hasTesseract = findProject(':tesseract-common') != null
 
+
+
 dependencies{
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
     compileOnly("com.blamejared.crafttweaker:CraftTweaker-common-1.18.2:${rootProject.crafttweaker_version}")
@@ -36,9 +38,8 @@ dependencies{
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     modCompileOnly("net.devtech:arrp:0.5.7")
-    modImplementation("com.github.FeltMC:forgeconfigapiport-fabric:c1486f80f7"){
-        transitive = false
-    }
+    modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
+    modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
 }
 
 architectury {
@@ -63,6 +64,7 @@ publishing {
         def isRELEASE = System.getenv("GITHUB_RELEASE")
         if (isCI && isRELEASE) {
             maven {
+                name = "GTMaven"
                 url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
                 credentials {
                     username = System.getenv("MAVEN_USERNAME")

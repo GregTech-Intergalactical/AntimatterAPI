@@ -27,16 +27,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.api.TesseractCaps;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
-import static net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
 
 /**
  * Allows a MultiMachine to handle GUI recipes, instead of using Hatches
@@ -177,13 +176,13 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             result.tick(this);
     }
 
-    public <T> LazyOptional<T> getCapabilityFromFake(Capability<T> cap, BlockPos pos, Direction side,
+    public <T> LazyOptional<T> getCapabilityFromFake(Class<T> cap, BlockPos pos, Direction side,
                                                      ICover coverPresent) {
-        if (cap == ITEM_HANDLER_CAPABILITY && itemHandler.isPresent() && (coverPresent instanceof CoverInput))
+        if (cap == IItemHandler.class && itemHandler.isPresent() && (coverPresent instanceof CoverInput))
             return itemHandler.side(side).cast();
-        else if (cap == FLUID_HANDLER_CAPABILITY && fluidHandler.isPresent() && (coverPresent instanceof CoverInput))
+        else if (cap == IFluidHandler.class && fluidHandler.isPresent() && (coverPresent instanceof CoverInput))
             return fluidHandler.side(side).cast();
-        else if (cap == TesseractCaps.getENERGY_HANDLER_CAPABILITY() && energyHandler.isPresent()
+        else if (cap == IEnergyHandler.class && energyHandler.isPresent()
                 && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
             return energyHandler.side(side).cast();
         return LazyOptional.empty();

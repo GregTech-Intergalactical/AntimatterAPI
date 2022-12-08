@@ -1,7 +1,6 @@
 package muramasa.antimatter.integration.rei.extension;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.shedaniel.rei.api.client.gui.screen.DisplayScreen;
 import me.shedaniel.rei.api.client.registry.category.extension.CategoryExtensionProvider;
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
@@ -11,23 +10,15 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import me.shedaniel.rei.plugin.client.categories.crafting.DefaultCraftingCategory;
 import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
-import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCustomShapedDisplay;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.recipe.RecipeIngredientRole;
-import muramasa.antimatter.Data;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
-import muramasa.antimatter.tool.IAntimatterArmor;
-import muramasa.antimatter.tool.IAntimatterTool;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -71,7 +62,7 @@ public class REIMaterialRecipeExtension implements CategoryExtensionProvider<Def
                         String id = ing.getId();
                         Object mat = m.get(id);
                         ingredientList.set(i, EntryIngredients.ofIngredient(ingredient));
-                        if (mat == null || mat == Data.NULL) {
+                        if (mat == null || mat == Material.NULL) {
                             isNull = true;
                             i++;
                             continue;

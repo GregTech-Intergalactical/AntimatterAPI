@@ -9,6 +9,8 @@ import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
+import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -78,7 +80,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public static final BooleanProperty TICKING = BooleanProperty.create("ticking");
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId) {
-        this(prefix, type, size, modelId, type.getMaterial() == Data.Wood ? Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(1.0f, 3.0f).noOcclusion() : Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
+        this(prefix, type, size, modelId, type.getMaterial() == AntimatterMaterials.Wood ? Properties.of(Material.WOOD).sound(SoundType.WOOD).strength(1.0f, 3.0f).noOcclusion() : Properties.of(Data.WRENCH_MATERIAL).strength(1.0f, 3.0f).noOcclusion().requiresCorrectToolForDrops());
     }
 
     public BlockPipe(String prefix, T type, PipeSize size, int modelId, Properties properties) {
@@ -171,7 +173,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     public AntimatterToolType getToolType() {
         //if (type.getMaterial() == Data.Wood) return Data.AXE;
-        return Data.WRENCH;
+        return AntimatterDefaultTools.WRENCH;
     }
 
     @Override // Used to set connection for sides where neighbor has pre-set connection
@@ -246,7 +248,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (type == null) {
                 return InteractionResult.PASS;
             }
-            if (type == Data.CROWBAR) {
+            if (type == AntimatterDefaultTools.CROWBAR) {
                 if (!player.isCrouching()) {
                     if (tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                         Utils.damageStack(stack, hand, player);
@@ -260,7 +262,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                     }
                     return InteractionResult.PASS;
                 }
-            } else if (type == Data.SCREWDRIVER || type == Data.ELECTRIC_SCREWDRIVER) {
+            } else if (type == AntimatterDefaultTools.SCREWDRIVER || type == AntimatterDefaultTools.ELECTRIC_SCREWDRIVER) {
                 if (player.isCrouching()) {
                     AntimatterPlatformUtils.openGui((ServerPlayer) player, tile, extra -> extra.writeBlockPos(pos));
                     Utils.damageStack(stack, hand, player);
@@ -290,7 +292,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         if (context instanceof EntityCollisionContext cont) {
             Player player = (Player) cont.getEntity();
-            if (player != null && Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(), Data.CROWBAR, Data.SCREWDRIVER)) {
+            if (player != null && Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(), AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.SCREWDRIVER)) {
                 return Shapes.block();
             }
             if (player != null && !player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {

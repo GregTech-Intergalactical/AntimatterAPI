@@ -5,12 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.block.IInfoProvider;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.cover.IHaveCover;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.mixin.client.LevelRendererAccessor;
 import muramasa.antimatter.mixin.client.MultiPlayerGameModeAccessor;
@@ -73,7 +73,7 @@ public class ClientEvents {
         }
         IAntimatterTool item = (IAntimatterTool) stack.getItem();
         AntimatterToolType type = item.getAntimatterToolType();
-        if (player.isCrouching() && type != Data.WRENCH && type != Data.ELECTRIC_WRENCH && type != Data.CROWBAR && type != Data.WIRE_CUTTER)
+        if (player.isCrouching() && type != AntimatterDefaultTools.WRENCH && type != AntimatterDefaultTools.ELECTRIC_WRENCH && type != AntimatterDefaultTools.CROWBAR && type != AntimatterDefaultTools.WIRE_CUTTER)
             return false;
         //Perform highlight of wrench
         InteractionResult res = item.onGenericHighlight(player, levelRenderer, camera, target, partialTick, poseStack, bufferSource);

@@ -32,7 +32,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.common.capabilities.Capability;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -146,15 +145,15 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
     ItemStack getItem();
 
     // Stack is not guaranteed to contain a real tile and side is nullable.
-    default <T> boolean blocksCapability(Capability<T> cap, @Nullable Direction side) {
+    default <T> boolean blocksCapability(Class<T> cap, @Nullable Direction side) {
         return false;
     }
 
-    default <T> boolean blocksInput(Capability<T> cap, @Nullable Direction side) {
+    default <T> boolean blocksInput(Class<T> cap, @Nullable Direction side) {
         return false;
     }
 
-    default <T> boolean blocksOutput(Capability<T> cap, @Nullable Direction side) {
+    default <T> boolean blocksOutput(Class<T> cap, @Nullable Direction side) {
         return false;
     }
 

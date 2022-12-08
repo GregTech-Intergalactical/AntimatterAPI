@@ -42,11 +42,11 @@ dependencies{
     modImplementation(include("io.github.feltmc:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}"))
     modImplementation(include("io.github.feltmc:fabricated-forge-tag-extensions:${rootProject.fabricated_forge_hash}"))
     modImplementation(include("com.github.FeltMC.Felt-API:felt-recipe-api:2a689af1cb"))
-    modImplementation(include("com.github.FeltMC.Felt-API:felt-item-api:05a5fe1533")) { transitive false }
+    modImplementation(include("com.github.Trinsdar.Felt-API:felt-item-api:038244ff5b")) { transitive false }
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
     modImplementation(include("net.devtech:arrp:0.5.7"))
-    modImplementation(include("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")){
+    modCompileOnly(include("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")){
         transitive = false
     }
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rootProject.rei_version}"
@@ -60,9 +60,8 @@ dependencies{
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
-    modImplementation("com.github.FeltMC:forgeconfigapiport-fabric:c1486f80f7"){
-        transitive = false
-    }
+    modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
+    modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
 }
 
 architectury {
@@ -110,11 +109,11 @@ publishing {
         def isRELEASE = System.getenv("GITHUB_RELEASE")
         if (isCI && isRELEASE) {
             maven {
-                name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/GregTech-Intergalactical"
+                name = "GTMaven"
+                url = "https://repo.repsy.io/mvn/trinsdar/gregtech-intergalactical/"
                 credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+                    username = System.getenv("MAVEN_USERNAME")
+                    password = System.getenv("MAVEN_PASSWORD")
                 }
             }
         } else {

@@ -1,4 +1,4 @@
-package muramasa.antimatter.integration.top.forge;
+package muramasa.antimatter.integration.top;
 
 import mcjty.theoneprobe.api.*;
 import mcjty.theoneprobe.config.Config;

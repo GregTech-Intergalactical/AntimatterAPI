@@ -1,8 +1,13 @@
-package muramasa.antimatter.integration.top.forge;
+package muramasa.antimatter.integration.top;
 
-import mcjty.theoneprobe.api.*;
+import mcjty.theoneprobe.api.ElementAlignment;
+import mcjty.theoneprobe.api.IProbeHitData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.IProbeInfoProvider;
+import mcjty.theoneprobe.api.ProbeMode;
+import mcjty.theoneprobe.api.TextStyleClass;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
@@ -22,11 +27,11 @@ public class MultiblockInfoProvider implements IProbeInfoProvider {
         if (blockState.hasBlockEntity()) {
             BlockEntity tile = Utils.getTile(level, data.getPos());
 
-            if (tile instanceof TileEntityMultiMachine machine) {
+            if (tile instanceof TileEntityBasicMultiMachine machine) {
 
                 IProbeInfo horizontalPane = probeInfo.horizontal(probeInfo.defaultLayoutStyle().alignment(ElementAlignment.ALIGN_CENTER));
                 if (machine.isStructureValid()) {
-                    horizontalPane.text(TextStyleClass.OK + "Structure Formed");
+                    horizontalPane.text(ChatFormatting.GREEN + "Structure Formed");
                 } else {
                     horizontalPane.text(ChatFormatting.RED + "Structure Incomplete");
                 }

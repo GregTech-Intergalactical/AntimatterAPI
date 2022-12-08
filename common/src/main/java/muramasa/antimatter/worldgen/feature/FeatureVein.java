@@ -1,7 +1,7 @@
 package muramasa.antimatter.worldgen.feature;
 
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
@@ -176,7 +176,7 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
                 if (validMaterials.size() > 0) {
                   final WorldGenVeinVariantMaterial material = validMaterials
                       .get(random.nextInt(validMaterials.size()));
-                  if (WorldGenHelper.setOre(world, pos, material.material, spawnSmallOre ? Data.ORE_SMALL : Data.ORE)) {
+                  if (WorldGenHelper.setOre(world, pos, material.material, spawnSmallOre ? AntimatterMaterialTypes.ORE_SMALL : AntimatterMaterialTypes.ORE)) {
                     placed = true;
                   }
 
@@ -222,7 +222,7 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
           if (random.nextFloat() <= chance) {
             final BlockPos pos = new BlockPos(x, y, z);
             WorldGenVeinVariantMaterial material = materials.get(random.nextInt(materials.size()));
-            WorldGenHelper.setOre(world, pos, material.material, Data.ORE_SMALL);
+            WorldGenHelper.setOre(world, pos, material.material, AntimatterMaterialTypes.ORE_SMALL);
           }
         }
       }

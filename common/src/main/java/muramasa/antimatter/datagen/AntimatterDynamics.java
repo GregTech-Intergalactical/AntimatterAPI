@@ -83,6 +83,7 @@ public class AntimatterDynamics {
     public static void addResourcePacks(Consumer<RuntimeResourcePack> function){
         function.accept(DYNAMIC_RESOURCE_PACK);
         function.accept(DYNAMIC_RECIPES);
+        Antimatter.LOGGER.info("resource pacs added");
     }
 
     public static void onProviderInit(String domain, DataGenerator gen, Side side) {
@@ -108,6 +109,8 @@ public class AntimatterDynamics {
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
+        //TODO fix poroperly
+        collectRecipes(rec -> DYNAMIC_RECIPES.addData(fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
         if (!AntimatterPlatformUtils.isProduction() && exportPack) {
             DYNAMIC_RESOURCE_PACK.dump(new File("./dumped"));

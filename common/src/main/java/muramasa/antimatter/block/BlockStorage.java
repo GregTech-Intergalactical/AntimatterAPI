@@ -1,6 +1,6 @@
 package muramasa.antimatter.block;
 
-import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialType;
@@ -18,7 +18,6 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.PushReaction;
@@ -48,7 +47,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 BlockPos actualPos = ctx.getClickedPos().relative(ctx.getClickedFace().getOpposite());
                 BlockState state = ctx.getLevel().getBlockState(actualPos);
                 // if (!(currentBlock instanceof BlockStorage) || ((BlockStorage) currentBlock).getType() != MaterialType.FRAME) return ctx; // Change to Block#isIn
-                if (!state.is(Data.FRAME.getTag())) return ctx;
+                if (!state.is(AntimatterMaterialTypes.FRAME.getTag())) return ctx;
                 BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(actualPos.getX(), actualPos.getY(), actualPos.getZ());
                 while (ctx.getLevel().getMaxBuildHeight() > mutablePos.getY()) {
                     if (ctx.getLevel().getBlockState(mutablePos.move(Direction.UP)).canBeReplaced(ctx)) {
@@ -68,7 +67,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     @Override
     public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
         if (!(entity instanceof LivingEntity)) return;
-        if (type == Data.BLOCK) return;
+        if (type == AntimatterMaterialTypes.BLOCK) return;
         entity.setDeltaMovement(Mth.clamp(entity.getDeltaMovement().x, -0.15, 0.15), entity.getDeltaMovement().y, Mth.clamp(entity.getDeltaMovement().z, -0.15, 0.15));
         entity.fallDistance = 0.0F;
         if (entity.isCrouching() && entity instanceof Player) {
@@ -85,7 +84,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         if (context != CollisionContext.empty()) return super.getShape(state, world, pos, context);
-        return type == Data.FRAME ? FRAME_SHAPE : super.getShape(state, world, pos, context);
+        return type == AntimatterMaterialTypes.FRAME ? FRAME_SHAPE : super.getShape(state, world, pos, context);
     }
 
     // @Override
@@ -114,12 +113,12 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
     }*/
     //todo in felt
     public boolean isLadder(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity) {
-        return type == Data.FRAME;
+        return type == AntimatterMaterialTypes.FRAME;
     }
 
     @Override
     public PushReaction getPistonPushReaction(BlockState state) {
-        return type == Data.FRAME ? PushReaction.DESTROY : PushReaction.NORMAL;
+        return type == AntimatterMaterialTypes.FRAME ? PushReaction.DESTROY : PushReaction.NORMAL;
     }
 
     //    @Override

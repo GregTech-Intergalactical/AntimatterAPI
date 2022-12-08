@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.Data.ELECTRIC_WRENCH;
-import static muramasa.antimatter.Data.WRENCH;
+import static muramasa.antimatter.data.AntimatterDefaultTools.ELECTRIC_WRENCH;
+import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH;
 
 public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
 
@@ -265,7 +265,7 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
      * @param side side to check
      * @return a boolean whether or not capability was blocked.
      */
-    public <U> boolean blocksCapability(Capability<U> capability, Direction side) {
+    public <U> boolean blocksCapability(Class<U> capability, Direction side) {
         ICover stack = get(side);
         if (stack == null)
             return false;

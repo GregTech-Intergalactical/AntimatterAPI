@@ -27,8 +27,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,12 +40,12 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     private BlockState state = Blocks.AIR.defaultBlockState();
 
     public final Set<TileEntityBasicMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
-    private Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
+    public Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
     public Direction facing;
 
     public final Map<Direction, DynamicTexturer<ICover, ICover.DynamicKey>> coverTexturer;
 
-    private List<BlockPos> controllerPos; 
+    public List<BlockPos> controllerPos;
 
     public TileEntityFakeBlock(BlockProxy proxy, BlockPos pos, BlockState state) {
         super(proxy.TYPE, pos, state);
@@ -110,21 +108,6 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     public DynamicTexturer<ICover, ICover.DynamicKey> getTexturer(Direction side) {
         return coverTexturer.computeIfAbsent(side,
                 dir -> new DynamicTexturer<>(DynamicTexturers.COVER_DYNAMIC_TEXTURER));
-    }
-
-    @Nonnull
-    @Override
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (controllerPos != null) {
-            controllerPos.forEach(t -> controllers.add((TileEntityBasicMultiMachine<?>) level.getBlockEntity(t)));
-            controllerPos = null;
-        }
-        for (TileEntityBasicMultiMachine<?> controller : controllers) {
-            LazyOptional<T> opt = controller.getCapabilityFromFake(cap, getBlockPos(), side, covers.get(side));
-            if (opt.isPresent())
-                return opt;
-        }
-        return LazyOptional.empty();
     }
 
     @Nullable

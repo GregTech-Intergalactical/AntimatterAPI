@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.item.IContainerItem;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
@@ -38,10 +39,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
+import tesseract.api.context.TesseractItemContext;
+import tesseract.api.gt.IEnergyHandlerItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,8 +50,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
-
-import static muramasa.antimatter.Data.*;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -123,7 +122,7 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
 
     @Override
     public boolean doesSneakBypassUse(ItemStack stack, LevelReader world, BlockPos pos, Player player) {
-        return Utils.doesStackHaveToolTypes(stack, WRENCH, ELECTRIC_WRENCH, SCREWDRIVER, ELECTRIC_SCREWDRIVER, CROWBAR, WIRE_CUTTER); // ???
+        return Utils.doesStackHaveToolTypes(stack, AntimatterDefaultTools.WRENCH, AntimatterDefaultTools.ELECTRIC_WRENCH, AntimatterDefaultTools.SCREWDRIVER, AntimatterDefaultTools.ELECTRIC_SCREWDRIVER, AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.WIRE_CUTTER); // ???
     }
 
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
@@ -351,16 +350,12 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
         return super.isBarVisible(stack);
     }
 
-    @Nullable
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable CompoundTag nbt) {
-        if (type.isPowered()) {
-            //TODO: not lv
-            return new ItemEnergyHandler.Provider(() -> new ToolEnergyHandler(stack, maxEnergy, 8 * (int) Math.pow(4, this.energyTier), 8 * (int) Math.pow(4, this.energyTier), 1, 1));
-        }
-        return null;
+    @Override
+    public IEnergyHandlerItem createEnergyHandler(TesseractItemContext context) {
+        return new ItemEnergyHandler(context, maxEnergy, 8 * (int) Math.pow(4, this.energyTier), 8 * (int) Math.pow(4, this.energyTier), 1, 1);
     }
 
-    private LazyOptional<ToolEnergyHandler> getCastedHandler(ItemStack stack) {
+    private LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
         return TesseractPlatformUtils.getEnergyHandlerItem(stack).cast();
     }
 

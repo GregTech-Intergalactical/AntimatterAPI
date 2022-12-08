@@ -69,8 +69,8 @@ public class TileEntityItemPipe<T extends ItemPipe<T>> extends TileEntityPipe<T>
     }
 
     @Override
-    protected Capability<?> getCapability() {
-        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
+    public Class<?> getCapClass() {
+        return IItemHandler.class;
     }
 
     @Override

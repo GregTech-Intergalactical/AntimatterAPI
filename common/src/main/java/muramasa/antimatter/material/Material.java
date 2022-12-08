@@ -2,8 +2,8 @@ package muramasa.antimatter.material;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.Utils;
@@ -17,10 +17,11 @@ import tesseract.TesseractGraphWrappers;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.material.TextureSet.NONE;
 
 public class Material implements ISharedAntimatterObject {
 
+    public static final Material NULL = AntimatterAPI.register(Material.class, new Material(Ref.ID, "null", 0xffffff, NONE));
     /**
      * Basic Members
      **/
@@ -62,6 +63,8 @@ public class Material implements ISharedAntimatterObject {
         }
         enabled = true;
     }
+
+    public static void init(){}
 
     public String materialDomain() {
         return domain;
@@ -189,27 +192,27 @@ public class Material implements ISharedAntimatterObject {
      * Fluid/Gas/Plasma Getters
      **/
     public Fluid getLiquid() {
-        return LIQUID.get().get(this, 1).getFluid();
+        return AntimatterMaterialTypes.LIQUID.get().get(this, 1).getFluid();
     }
 
     public Fluid getGas() {
-        return GAS.get().get(this, 1).getFluid();
+        return AntimatterMaterialTypes.GAS.get().get(this, 1).getFluid();
     }
 
     public Fluid getPlasma() {
-        return PLASMA.get().get(this, 1).getFluid();
+        return AntimatterMaterialTypes.PLASMA.get().get(this, 1).getFluid();
     }
 
     public FluidStack getLiquid(long droplets) {
-        return LIQUID.get().get(this, droplets);
+        return AntimatterMaterialTypes.LIQUID.get().get(this, droplets);
     }
 
     public FluidStack getGas(long droplets) {
-        return GAS.get().get(this, droplets);
+        return AntimatterMaterialTypes.GAS.get().get(this, droplets);
     }
 
     public FluidStack getPlasma(long droplets) {
-        return PLASMA.get().get(this, droplets);
+        return AntimatterMaterialTypes.PLASMA.get().get(this, droplets);
     }
 
     public FluidStack getLiquid(int mb) {
@@ -257,7 +260,7 @@ public class Material implements ISharedAntimatterObject {
 
     public static Material get(String id) {
         Material material = AntimatterAPI.get(Material.class, id);
-        return material == null ? Data.NULL : material;
+        return material == null ? NULL : material;
     }
 
     @Override

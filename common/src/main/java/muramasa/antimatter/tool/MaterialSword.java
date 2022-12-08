@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.item.IContainerItem;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.Utils;
@@ -31,6 +32,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import tesseract.api.context.TesseractItemContext;
+import tesseract.api.gt.IEnergyHandlerItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -225,6 +228,11 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     @Override
     public ItemStack getContainerItem(ItemStack oldStack) {
         return getGenericContainerItem(oldStack);
+    }
+
+    @Override
+    public IEnergyHandlerItem createEnergyHandler(TesseractItemContext context) {
+        return new ItemEnergyHandler(context, maxEnergy, 8 * (int) Math.pow(4, this.energyTier), 8 * (int) Math.pow(4, this.energyTier), 1, 1);
     }
 
 }

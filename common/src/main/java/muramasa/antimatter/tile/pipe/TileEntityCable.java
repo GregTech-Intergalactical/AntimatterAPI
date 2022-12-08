@@ -58,8 +58,8 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     }
 
     @Override
-    protected Capability<?> getCapability() {
-        return TesseractCaps.getENERGY_HANDLER_CAPABILITY();
+    public Class<?> getCapClass() {
+        return IEnergyHandler.class;
     }
 
     @Override

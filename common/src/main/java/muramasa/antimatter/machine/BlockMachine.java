@@ -1,7 +1,5 @@
 package muramasa.antimatter.machine;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
 import muramasa.antimatter.capability.AntimatterCaps;
@@ -10,6 +8,7 @@ import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
+import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.json.JLoaderModel;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
@@ -172,12 +171,12 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         }
                     }
                     //Handle tool types.
-                    if (type == WRENCH || type == ELECTRIC_WRENCH) {
+                    if (type == AntimatterDefaultTools.WRENCH || type == AntimatterDefaultTools.ELECTRIC_WRENCH) {
                         if (tile.wrenchMachine(player, hit, player.isCrouching())) {
                             Utils.damageStack(stack, hand, player);
                             return InteractionResult.SUCCESS;
                         }
-                    } else if (type == SOFT_HAMMER) {
+                    } else if (type == AntimatterDefaultTools.SOFT_HAMMER) {
                         tile.toggleMachine();
                         if (tile.getMachineState() == MachineState.DISABLED) {
                             player.sendMessage(new TextComponent("Disabled machine."), player.getUUID());
@@ -186,7 +185,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         }
                         Utils.damageStack(stack, player);
                         return InteractionResult.SUCCESS;
-                    } else if (type == CROWBAR) {
+                    } else if (type == AntimatterDefaultTools.CROWBAR) {
                         if (!player.isCrouching()) {
                             if (tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                                 Utils.damageStack(stack,hand, player);
@@ -198,7 +197,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                                 return InteractionResult.SUCCESS;
                             }
                         }
-                    } else if (type == SCREWDRIVER || type == ELECTRIC_SCREWDRIVER) {
+                    } else if (type == AntimatterDefaultTools.SCREWDRIVER || type == AntimatterDefaultTools.ELECTRIC_SCREWDRIVER) {
                         ICover instance = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                         if (!player.isCrouching()) {
                             if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {

@@ -4,7 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.ArmorMaterialTag;
 import muramasa.antimatter.material.FluidProduct;
 import muramasa.antimatter.material.HandleMaterialTag;
@@ -12,7 +13,6 @@ import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialStack;
 import muramasa.antimatter.material.MaterialTags;
-import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.material.ToolMaterialTag;
@@ -20,18 +20,16 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.block.Block;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static muramasa.antimatter.Data.*;
 import static muramasa.antimatter.material.MaterialTags.*;
 
 public class MaterialEvent {
-    private Material material = Data.NULL;
+    private Material material = Material.NULL;
 
     public MaterialEvent setMaterial(Material material){
         this.material = material;
@@ -47,7 +45,7 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asDust(int meltingPoint, IMaterialTag... tags) {
-        flags(DUST, DUST_SMALL, DUST_TINY);
+        flags(AntimatterMaterialTypes.DUST, AntimatterMaterialTypes.DUST_SMALL, AntimatterMaterialTypes.DUST_TINY);
         flags(tags);
         MaterialTags.MELTING_POINT.add(material, meltingPoint);
         if (meltingPoint > 295) {
@@ -62,13 +60,13 @@ public class MaterialEvent {
 
     public MaterialEvent asSolid(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
         asDust(meltingPoint, tags);
-        flags(INGOT, NUGGET, BLOCK).asFluid(); //TODO: Shall we generate blocks for every solid?
+        flags(AntimatterMaterialTypes.INGOT, AntimatterMaterialTypes.NUGGET, AntimatterMaterialTypes.BLOCK).asFluid(); //TODO: Shall we generate blocks for every solid?
         MaterialTags.BLAST_FURNACE_TEMP.add(material, blastFurnaceTemp);
         if (blastFurnaceTemp >= 1000){
             flags(MaterialTags.NEEDS_BLAST_FURNACE);
         }
         if (blastFurnaceTemp > 1750) {
-            flags(INGOT_HOT);
+            flags(AntimatterMaterialTypes.INGOT_HOT);
         }
         return this;
     }
@@ -93,37 +91,37 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asOre(boolean small, IMaterialTag... tags) {
-        asDust(ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE, RAW_ORE, RAW_ORE_BLOCK);
-        if (small) flags(ORE_SMALL);
+        asDust(AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_CENTRIFUGED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.RAW_ORE_BLOCK);
+        if (small) flags(AntimatterMaterialTypes.ORE_SMALL);
         flags(tags);
         return this;
     }
 
     public MaterialEvent asOreStone(int minXp, int maxXp, IMaterialTag... tags) {
         asOre(minXp, maxXp, false, tags);
-        flags(ORE_STONE);
+        flags(AntimatterMaterialTypes.ORE_STONE);
         return this;
     }
 
     public MaterialEvent asOreStone(IMaterialTag... tags) {
         asOre(tags);
-        asDust(ORE_STONE, ORE, ROCK, CRUSHED, CRUSHED_PURIFIED, CRUSHED_CENTRIFUGED, DUST_IMPURE, DUST_PURE);
+        asDust(AntimatterMaterialTypes.ORE_STONE, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_CENTRIFUGED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
         flags(tags);
         return this;
     }
 
     public MaterialEvent asGemBasic(boolean transparent, IMaterialTag... tags) {
         asDust(tags);
-        flags(GEM, BLOCK);
+        flags(AntimatterMaterialTypes.GEM, AntimatterMaterialTypes.BLOCK);
         if (transparent) {
-            flags(MaterialTags.TRANSPARENT, PLATE, LENS, GEM_BRITTLE, GEM_POLISHED);
+            flags(MaterialTags.TRANSPARENT, AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.LENS, AntimatterMaterialTypes.GEM_BRITTLE, AntimatterMaterialTypes.GEM_POLISHED);
         }
         return this;
     }
 
     public MaterialEvent asGem(boolean transparent, IMaterialTag... tags) {
         asGemBasic(transparent, tags);
-        if (!transparent) flags(GEM_BRITTLE, GEM_POLISHED);
+        if (!transparent) flags(AntimatterMaterialTypes.GEM_BRITTLE, AntimatterMaterialTypes.GEM_POLISHED);
         return this;
     }
 
@@ -139,7 +137,7 @@ public class MaterialEvent {
     public MaterialEvent asFluid(int fuelPower, int temp) {return asFluid(fuelPower, temp, false,null,0);}
 
     public MaterialEvent asFluid(int fuelPower, int temp, boolean canDistill, FluidProduct[] distillationProducts, int distillationAmount) {
-        flags(LIQUID);
+        flags(AntimatterMaterialTypes.LIQUID);
         MaterialTags.FUEL_POWER.add(this.material, fuelPower);
         MaterialTags.LIQUID_TEMPERATURE.add(this.material, temp);
         if (temp >= 400){
@@ -166,7 +164,7 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asGas(int fuelPower, int temp, boolean canDistill, FluidProduct[] distillationProducts, int distillationAmount) {
-        flags(GAS);
+        flags(AntimatterMaterialTypes.GAS);
         MaterialTags.FUEL_POWER.add(this.material, fuelPower);
         MaterialTags.GAS_TEMPERATURE.add(this.material, temp);
         if (canDistill){
@@ -190,7 +188,7 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asPlasma(int fuelPower, int temp, boolean canDistill, FluidProduct[] distillationProducts, int distillationAmount) {
-        flags(PLASMA);
+        flags(AntimatterMaterialTypes.PLASMA);
         return asGas(fuelPower,temp,canDistill,distillationProducts,distillationAmount);
     }
 
@@ -204,16 +202,16 @@ public class MaterialEvent {
     }
 
     public MaterialEvent addTools(float toolDamage, float toolSpeed, int toolDurability, int toolQuality, ImmutableMap<Enchantment, Integer> toolEnchantment, AntimatterToolType... toolTypes) {
-        if (has(INGOT))
-            flags(PLATE, ROD, SCREW, BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
-        else flags(ROD);
+        if (has(AntimatterMaterialTypes.INGOT))
+            flags(AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.ROD, AntimatterMaterialTypes.SCREW, AntimatterMaterialTypes.BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
+        else flags(AntimatterMaterialTypes.ROD);
         List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
         MaterialTags.TOOLS.add(this.material, new ToolMaterialTag.ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, toolEnchantment, toolTypesList));
         MaterialTags.MINING_LEVEL.add(this.material, toolQuality - 1);
-        if (toolTypesList.contains(ELECTRIC_WRENCH)) flags(WRENCHBIT);
-        if (toolTypesList.contains(BUZZSAW)) flags(BUZZSAW_BLADE);
-        if (toolTypesList.contains(DRILL)) flags(DRILLBIT);
-        if (toolTypesList.contains(CHAINSAW)) flags(CHAINSAWBIT);
+        if (toolTypesList.contains(AntimatterDefaultTools.ELECTRIC_WRENCH)) flags(AntimatterMaterialTypes.WRENCHBIT);
+        if (toolTypesList.contains(AntimatterDefaultTools.BUZZSAW)) flags(AntimatterMaterialTypes.BUZZSAW_BLADE);
+        if (toolTypesList.contains(AntimatterDefaultTools.DRILL)) flags(AntimatterMaterialTypes.DRILLBIT);
+        if (toolTypesList.contains(AntimatterDefaultTools.CHAINSAW)) flags(AntimatterMaterialTypes.CHAINSAWBIT);
         return this;
     }
 
@@ -244,7 +242,7 @@ public class MaterialEvent {
             Antimatter.LOGGER.info("Material " + this.material.getId() + " unable to add armor, protection array must have exactly 4 values");
             return this;
         }
-        if (has(INGOT)) flags(PLATE);
+        if (has(AntimatterMaterialTypes.INGOT)) flags(AntimatterMaterialTypes.PLATE);
         MaterialTags.ARMOR.add(this.material, new ArmorMaterialTag.ArmorData(armor, toughness, knockbackResistance, armorDurabilityFactor, toolEnchantment));
         return this;
     }
@@ -266,7 +264,7 @@ public class MaterialEvent {
     }
 
     public MaterialEvent addHandleStat(int durability, float speed, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        if (!has(ROD)) flags(ROD);
+        if (!has(AntimatterMaterialTypes.ROD)) flags(AntimatterMaterialTypes.ROD);
         HANDLE.add(this.material, new HandleMaterialTag.HandleData(durability, speed, toolEnchantment));
         return this;
     }

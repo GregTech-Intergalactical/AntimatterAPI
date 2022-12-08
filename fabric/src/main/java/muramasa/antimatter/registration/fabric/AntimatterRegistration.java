@@ -11,6 +11,7 @@ import muramasa.antimatter.MaterialDataInit;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
 import muramasa.antimatter.event.MaterialEvent;
+import muramasa.antimatter.fabric.AntimatterAPIImpl;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
 import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
@@ -76,6 +77,7 @@ public class AntimatterRegistration {
         });
         AntimatterAPI.all(Item.class, domain, (i, d, id) -> {
             Registry.register(Registry.ITEM, new ResourceLocation(d, id), i);
+            AntimatterAPIImpl.registerItemTransferAPI(i);
         });
         registerTools(domain);
         AntimatterAPI.all(BlockEntityType.class, domain, (t, d, i) -> {

@@ -1,6 +1,6 @@
 package muramasa.antimatter.worldgen.vein;
 
-import muramasa.antimatter.Data;
+import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
 import net.minecraft.resources.ResourceKey;
@@ -115,7 +115,7 @@ public class WorldGenVeinBuilder {
   }
 
   public final WorldGenVeinBuilder withFill(Material material) {
-    return this.withFill(Data.ORE_STONE.get().get(material).asState());
+    return this.withFill(AntimatterMaterialTypes.ORE_STONE.get().get(material).asState());
   }
 
   public final WorldGenVeinBuilder inDimension(ResourceKey<Level> dimension) {

@@ -11,10 +11,10 @@ jobs:
         os: [ubuntu-20.04]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout repository
+      - name: Checkout Antimatter
         uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          submodules: recursive
       - name: Fetch tags
         run: git fetch --tags
       - name: Validate Gradle wrapper
@@ -26,9 +26,11 @@ jobs:
       - name: Make Gradle wrapper executable
         if: ${{ runner.os != 'Windows' }}
         run: chmod +x ./gradlew
-      - name: Build
-        run: ./gradlew build :forge:publish :fabric:publish :common:publish --stacktrace
+      - name: Build & Publish
+        run: ./gradlew build :antimatter-forge:publish :antimatter-fabric:publish :antimatter-common:publish --stacktrace
         env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
           GITHUB_RELEASE: true
       - name: Upload Forge Artifact
         uses: actions/upload-artifact@v2

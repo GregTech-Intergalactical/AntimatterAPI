@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
 
-import static muramasa.antimatter.Data.SAW;
+import static muramasa.antimatter.data.AntimatterDefaultTools.SAW;
 
 @Mixin(IceBlock.class)
 public class IceBlockMixin extends HalfTransparentBlock {

@@ -16,14 +16,14 @@ import java.util.function.Supplier;
 
 public class Holder<V, T extends Dispatch.Sided<V>> {
     private final Dispatch dispatch;
-    public final Capability<?> cap;
+    public final Class<?> cap;
     private final LazyOptional[] sided;
     private List<Consumer<? super T>> consumers = new ObjectArrayList<>();
     private Supplier<? extends T> supplier;
     private T resolved;
     private boolean flag;
 
-    public Holder(Capability<?> cap, Dispatch dispatch, Supplier<T> source) {
+    public Holder(Class<?> cap, Dispatch dispatch, Supplier<T> source) {
         this.dispatch = dispatch;
         this.cap = cap;
         //7th side is null side
@@ -37,7 +37,7 @@ public class Holder<V, T extends Dispatch.Sided<V>> {
         dispatch.registerHolder(this);
     }
 
-    public Holder(Capability<V> cap, Dispatch dispatch) {
+    public Holder(Class<V> cap, Dispatch dispatch) {
         this(cap, dispatch, null);
     }
 

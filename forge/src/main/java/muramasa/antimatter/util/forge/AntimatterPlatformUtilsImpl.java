@@ -55,9 +55,6 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
-import tesseract.api.forge.wrapper.EnergyTileWrapper;
-import tesseract.api.forge.wrapper.IEnergyHandlerStorage;
-import tesseract.api.gt.IEnergyHandler;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
