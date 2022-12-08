@@ -2,6 +2,7 @@ package muramasa.antimatter.capability.energy;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.EnergyHandler;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.common.capabilities.Capability;
@@ -31,6 +32,16 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
         super(0, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
         this.maxEnergy = capacity;
         this.context = context;
+        if (AntimatterPlatformUtils.isFabric()) readFromContextOnFabric();
+    }
+
+    private void readFromContextOnFabric(){
+        CompoundTag nbt = this.context.getTag();
+        if (!nbt.contains(Ref.TAG_ITEM_ENERGY_DATA)) return;
+        CompoundTag energyTag = nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA);
+        if (energyTag.contains(Ref.KEY_ITEM_ENERGY)) this.energy = energyTag.getLong(Ref.KEY_ITEM_ENERGY);
+        if (energyTag.contains(Ref.KEY_ITEM_MAX_ENERGY)) this.energy = energyTag.getLong(Ref.KEY_ITEM_MAX_ENERGY);
+        if (energyTag.contains(Ref.KEY_ITEM_DISCHARGE_MODE)) this.discharge = energyTag.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
     }
 
     @Override
