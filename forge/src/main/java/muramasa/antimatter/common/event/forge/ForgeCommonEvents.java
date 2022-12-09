@@ -2,7 +2,7 @@ package muramasa.antimatter.common.event.forge;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.forge.AntimatterCapsImpl;
+import muramasa.antimatter.capability.forge.AntimatterCaps;
 import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
@@ -41,10 +41,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import tesseract.api.context.TesseractItemContext;
 import tesseract.api.forge.TesseractCaps;
-import tesseract.api.forge.wrapper.ItemStackWrapper;
-import tesseract.api.gt.IEnergyItem;
 
 import static muramasa.antimatter.material.Material.NULL;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
@@ -130,7 +127,7 @@ public class ForgeCommonEvents {
                         fakeBlock.controllerPos = null;
                     }
                     for (TileEntityBasicMultiMachine<?> controller : fakeBlock.controllers) {
-                        LazyOptional<T> opt = controller.getCapabilityFromFake((Class<T>) AntimatterCapsImpl.CAP_MAP.inverse().get(capability), fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
+                        LazyOptional<T> opt = controller.getCapabilityFromFake((Class<T>) AntimatterCaps.CAP_MAP.inverse().get(capability), fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
                         if (opt.isPresent())
                             return opt;
                     }
@@ -144,20 +141,20 @@ public class ForgeCommonEvents {
                 @Override
                 public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
                     if (machine instanceof TileEntityBasicMultiMachine<?> multiMachine) {
-                        if (cap == AntimatterCapsImpl.COMPONENT_HANDLER_CAPABILITY && multiMachine.componentHandler.isPresent()) {
+                        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && multiMachine.componentHandler.isPresent()) {
                             return multiMachine.componentHandler.cast();
                         }
                     }
                     if (machine instanceof TileEntityHatch<?> hatch) {
-                        if (cap == AntimatterCapsImpl.COMPONENT_HANDLER_CAPABILITY && hatch.componentHandler.isPresent()) {
+                        if (cap == AntimatterCaps.COMPONENT_HANDLER_CAPABILITY && hatch.componentHandler.isPresent()) {
                             return hatch.componentHandler.cast();
                         }
                     }
-                    if (cap == AntimatterCapsImpl.COVERABLE_HANDLER_CAPABILITY && machine.coverHandler.isPresent()) return machine.coverHandler.side(side).cast();
+                    if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && machine.coverHandler.isPresent()) return machine.coverHandler.side(side).cast();
                     if (side == machine.getFacing() && !machine.allowsFrontIO()) return LazyOptional.empty();
-                    if (machine.blocksCapability(AntimatterCapsImpl.CAP_MAP.inverse().get(cap), side)) return LazyOptional.empty();
+                    if (machine.blocksCapability(AntimatterCaps.CAP_MAP.inverse().get(cap), side)) return LazyOptional.empty();
                     if (cap == ITEM_HANDLER_CAPABILITY && machine.itemHandler.isPresent()) return machine.itemHandler.side(side).cast();
-                    if (cap == AntimatterCapsImpl.RECIPE_HANDLER_CAPABILITY && machine.recipeHandler.isPresent()) return machine.recipeHandler.side(side).cast();
+                    if (cap == AntimatterCaps.RECIPE_HANDLER_CAPABILITY && machine.recipeHandler.isPresent()) return machine.recipeHandler.side(side).cast();
 
                     else if (cap == FLUID_HANDLER_CAPABILITY && machine.fluidHandler.isPresent()) return machine.fluidHandler.side(side).cast();
                     else if ((cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) && machine.energyHandler.isPresent())
@@ -172,10 +169,10 @@ public class ForgeCommonEvents {
                 @Override
                 public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
                     if (side == null) return LazyOptional.empty();
-                    if (capability == AntimatterCapsImpl.COVERABLE_HANDLER_CAPABILITY && pipe.coverHandler.isPresent()) return pipe.coverHandler.cast();
+                    if (capability == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && pipe.coverHandler.isPresent()) return pipe.coverHandler.cast();
                     if (!pipe.connects(side)) return LazyOptional.empty();
                     try {
-                        if (capability == AntimatterCapsImpl.CAP_MAP.get(pipe.getCapClass())){
+                        if (capability == AntimatterCaps.CAP_MAP.get(pipe.getCapClass())){
                             return pipe.getPipeCapHolder().side(side).cast();
                         }
                     } catch (Exception e){

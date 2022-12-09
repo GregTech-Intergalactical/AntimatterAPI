@@ -9,18 +9,13 @@ import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import tesseract.FluidPlatformUtils;
+import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
-import tesseract.TesseractPlatformUtils;
 
 import javax.annotation.Nullable;
 
@@ -95,9 +90,9 @@ public class CoverOutput extends CoverInput {
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
-        adjTile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side.getOpposite())
+        TesseractCapUtils.getItemHandler(adjTile, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    handler.getTile().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
+                    TesseractCapUtils.getItemHandler(handler.getTile(), this.side).ifPresent(h -> Utils.transferItems(h, adjHandler, false));
                 });
     }
 
@@ -105,9 +100,9 @@ public class CoverOutput extends CoverInput {
         BlockEntity adjTile = Utils.getTile(handler.getTile().getLevel(), handler.getTile().getBlockPos().relative(this.side));
         if (adjTile == null)
             return;
-        adjTile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side.getOpposite())
+        TesseractCapUtils.getFluidHandler(adjTile, this.side.getOpposite())
                 .ifPresent(adjHandler -> {
-                    handler.getTile().getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, 1000 * TesseractGraphWrappers.dropletMultiplier, true));
+                    TesseractCapUtils.getFluidHandler(handler.getTile(), this.side).ifPresent(h -> FluidPlatformUtils.tryFluidTransfer(adjHandler, h, 1000 * TesseractGraphWrappers.dropletMultiplier, true));
                 });
     }
 

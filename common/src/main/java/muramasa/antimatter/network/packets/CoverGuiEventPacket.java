@@ -1,19 +1,18 @@
 package muramasa.antimatter.network.packets;
 
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.network.AntimatterNetwork;
-import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.tile.pipe.TileEntityPipe;
+import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.LazyOptional;
+
+import java.util.Optional;
 
 public class CoverGuiEventPacket extends AbstractGuiEventPacket {
     Direction facing;
@@ -43,7 +42,7 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
         if (sender != null) {
             BlockEntity tile = Utils.getTile(sender.getLevel(), this.pos);
             if (tile == null) throw new RuntimeException("Somehow you got an incorrect packet, CoverGuiEventPacket::handleClient missing Entity!");
-            LazyOptional<ICoverHandler<?>> coverHandler = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), this.facing);
+            Optional<ICoverHandler<?>> coverHandler = AntimatterCapUtils.getCoverHandler(tile, this.facing);
             if (this.event.forward()) {
                 coverHandler.ifPresent(ch -> ch.get(this.facing).onGuiEvent(this.event, sender));
             } else {

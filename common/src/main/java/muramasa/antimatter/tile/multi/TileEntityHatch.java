@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.multi;
 
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;

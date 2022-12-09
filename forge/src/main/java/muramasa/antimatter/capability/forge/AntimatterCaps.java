@@ -10,30 +10,18 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Mod.EventBusSubscriber(modid = Ref.ID)
-public class AntimatterCapsImpl {
+public class AntimatterCaps {
     public static final BiMap<Class<?>, Capability<?>> CAP_MAP = HashBiMap.create();
     public static final Capability<ICoverHandler<?>> COVERABLE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
     public static final Capability<IComponentHandler> COMPONENT_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
     public static final Capability<MachineRecipeHandler<?>> RECIPE_HANDLER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 
-    public static Capability<ICoverHandler<?>> getCOVERABLE_HANDLER_CAPABILITY(){
-        return COVERABLE_HANDLER_CAPABILITY;
-    }
-
-    public static Capability<IComponentHandler> getCOMPONENT_HANDLER_CAPABILITY(){
-        return COMPONENT_HANDLER_CAPABILITY;
-    }
-
-    public static Capability<MachineRecipeHandler<?>> getRECIPE_HANDLER_CAPABILITY(){
-        return RECIPE_HANDLER_CAPABILITY;
-    }
+    @SubscribeEvent
     public static void register(RegisterCapabilitiesEvent ev) {
         ev.register(ICoverHandler.class);
         ev.register(IComponentHandler.class);

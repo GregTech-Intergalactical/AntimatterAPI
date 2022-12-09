@@ -2,16 +2,16 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.BlockBasic;
-import muramasa.antimatter.capability.AntimatterCaps;
+import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
+import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.json.JLoaderModel;
-import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.machine.types.Machine;
@@ -20,6 +20,7 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.ChatFormatting;
@@ -55,7 +56,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import tesseract.TesseractCapUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -63,7 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.Data.*;
+import static muramasa.antimatter.Data.WRENCH_MATERIAL;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
 
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
@@ -165,7 +166,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     if (player.getItemInHand(hand).getItem() instanceof IHaveCover) {
                         CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
                         Direction dir = Utils.getInteractSide(hit);
-                        boolean ok = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
+                        boolean ok = AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
                         if (ok) {
                             return InteractionResult.SUCCESS;
                         }
@@ -187,18 +188,18 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                         return InteractionResult.SUCCESS;
                     } else if (type == AntimatterDefaultTools.CROWBAR) {
                         if (!player.isCrouching()) {
-                            if (tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
+                            if (AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                                 Utils.damageStack(stack,hand, player);
                                 return InteractionResult.SUCCESS;
                             }
                         } else {
-                            if (tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
+                            if (AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
                                 Utils.damageStack(stack,hand, player);
                                 return InteractionResult.SUCCESS;
                             }
                         }
                     } else if (type == AntimatterDefaultTools.SCREWDRIVER || type == AntimatterDefaultTools.ELECTRIC_SCREWDRIVER) {
-                        ICover instance = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
+                        ICover instance = AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                         if (!player.isCrouching()) {
                             if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {
                                 Utils.damageStack(stack,hand, player);
@@ -206,11 +207,11 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                             }
                         }
                     }
-                    boolean coverInteract = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), hit.getDirection()).map(h -> h.onInteract(player, hand, hit.getDirection(), Utils.getToolType(player))).orElse(false);
+                    boolean coverInteract = AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.onInteract(player, hand, hit.getDirection(), Utils.getToolType(player))).orElse(false);
                     if (coverInteract) return InteractionResult.SUCCESS;
                     //Has gui?
-                    if (tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, hit.getDirection()).map(fh -> {
-                        fh = tile.fluidHandler.map(t -> t.getGuiHandler()).orElse(fh);
+                    if (TesseractCapUtils.getFluidHandler(tile, hit.getDirection()).map(fh -> {
+                        fh = tile.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(fh);
                         FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true);
                         if (res.isSuccess() && !player.isCreative()) {
                             boolean single = stack.getCount() == 1;

@@ -1,16 +1,15 @@
 package muramasa.antimatter.gui;
 
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.gui.container.ContainerCover;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.LazyOptional;
-import tesseract.TesseractPlatformUtils;
+
+import java.util.Optional;
 
 public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHandler<T> {
 
@@ -23,7 +22,7 @@ public abstract class MenuHandlerCover<T extends ContainerCover> extends MenuHan
         BlockEntity tile = Utils.getTileFromBuf(data);
         if (tile != null) {
             Direction dir = Direction.from3DDataValue(data.readInt());
-            LazyOptional<ICoverHandler<?>> coverHandler = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), dir);
+            Optional<ICoverHandler<?>> coverHandler = AntimatterCapUtils.getCoverHandler(tile, dir);
             return menu(coverHandler.map(ch -> ch.get(dir)).orElse(null), inv, windowId);
         }
         return null;

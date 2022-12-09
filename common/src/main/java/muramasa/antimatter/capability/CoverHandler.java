@@ -22,24 +22,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.data.AntimatterDefaultTools.ELECTRIC_WRENCH;
 import static muramasa.antimatter.data.AntimatterDefaultTools.WRENCH;
 
 public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
-
-    private final LazyOptional<ICoverHandler<T>> handler = LazyOptional.of(() -> this);
 
     private final T tile;
     protected final Object2ObjectMap<Direction, ICover> covers = new Object2ObjectOpenHashMap<>(6);
@@ -232,12 +224,6 @@ public class CoverHandler<T extends BlockEntity> implements ICoverHandler<T> {
         if (w != null && w.isClientSide) {
             Utils.markTileForRenderUpdate(this.tile);
         }
-    }
-
-    @Nonnull
-    @Override
-    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, @Nullable Direction side) {
-        return handler.cast();
     }
 
     @Override
