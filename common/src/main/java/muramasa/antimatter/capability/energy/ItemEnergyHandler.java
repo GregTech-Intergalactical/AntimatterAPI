@@ -66,7 +66,6 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
 
     @Override
     public void setCapacity(long capacity) {
-        super.setCapacity(capacity);
         this.maxEnergy = capacity;
         CompoundTag energyTag = getContainer().getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
         energyTag.putLong(Ref.KEY_ITEM_MAX_ENERGY, capacity);

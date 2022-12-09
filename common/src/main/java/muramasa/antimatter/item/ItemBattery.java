@@ -56,11 +56,11 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         if (this.allowdedIn(group)) {
             ItemStack stack = new ItemStack(this);
+            items.add(stack.copy());
             getCastedHandler(stack).ifPresent(e -> {
                 e.setEnergy(e.getCapacity());
+                items.add(e.getContainer().getItemStack());
             });
-            items.add(new ItemStack(this));
-            items.add(stack);
         }
     }
 
@@ -100,7 +100,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
     }
 
     private static Optional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
-        Optional<IEnergyHandler> itemHandler = TesseractCapUtils.getEnergyHandlerItem(stack);
+        Optional<IEnergyHandlerItem> itemHandler = TesseractCapUtils.getEnergyHandlerItem(stack);
         return itemHandler.map(e -> (ItemEnergyHandler)e);
     }
 

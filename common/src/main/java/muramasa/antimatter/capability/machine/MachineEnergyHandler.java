@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import tesseract.TesseractCapUtils;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.gt.IGTNode;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     protected final T tile;
 
-    protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
+    protected List<IEnergyHandlerItem> cachedItems = new ObjectArrayList<>();
     protected int offsetInsert = 0;
     protected int offsetExtract = 0;
 
@@ -49,7 +50,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         this.cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).map(ImmutableList::copyOf).orElse(ImmutableList.of());
     }
 
-    public List<IEnergyHandler> getCachedEnergyItems() {
+    public List<IEnergyHandlerItem> getCachedEnergyItems() {
         return this.cachedItems;
     }
 

@@ -26,6 +26,7 @@ public class BehaviourPoweredDebug implements IItemUse<IAntimatterTool> {
                 if (i.getCapacity() - i.getEnergy() <= 50000)
                     i.setEnergy(i.getCapacity());
                 else i.setEnergy(i.getEnergy() + 50000);
+                c.getPlayer().setItemInHand(c.getHand(), i.getContainer().getItemStack());
             });
             return InteractionResult.SUCCESS;
         }

@@ -25,7 +25,6 @@ public class AntimatterAPIImpl {
 
     public static void registerItemTransferAPI(Item item){
         if (item instanceof IEnergyItem energyItem){
-            TesseractLookups.ENERGY_HANDLER_ITEM.registerForItems((s, c) -> energyItem.createEnergyHandler(new ContainerItemContextWrapper(c)), item);
             TesseractImpl.registerTREItem((s, c) -> energyItem.createEnergyHandler(new ContainerItemContextWrapper(c)), item);
         }
     }

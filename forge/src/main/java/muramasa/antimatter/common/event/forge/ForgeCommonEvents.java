@@ -12,6 +12,7 @@ import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.pipe.TileEntityCable;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
@@ -143,6 +144,16 @@ public class ForgeCommonEvents {
                 @NotNull
                 @Override
                 public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+                    if (machine instanceof TileEntityBasicMultiMachine<?> multiMachine) {
+                        if (cap == AntimatterCapsImpl.COMPONENT_HANDLER_CAPABILITY && multiMachine.componentHandler.isPresent()) {
+                            return multiMachine.componentHandler.cast();
+                        }
+                    }
+                    if (machine instanceof TileEntityHatch<?> hatch) {
+                        if (cap == AntimatterCapsImpl.COMPONENT_HANDLER_CAPABILITY && hatch.componentHandler.isPresent()) {
+                            return hatch.componentHandler.cast();
+                        }
+                    }
                     if (cap == AntimatterCapsImpl.COVERABLE_HANDLER_CAPABILITY && machine.coverHandler.isPresent()) return machine.coverHandler.side(side).cast();
                     if (side == machine.getFacing() && !machine.allowsFrontIO()) return LazyOptional.empty();
                     if (machine.blocksCapability(AntimatterCapsImpl.CAP_MAP.inverse().get(cap), side)) return LazyOptional.empty();
@@ -178,14 +189,6 @@ public class ForgeCommonEvents {
                     return LazyOptional.empty();
                 }
             });
-        }
-    }
-
-    @SubscribeEvent
-    public static void onAttachCapabilitiesEventItemStack(AttachCapabilitiesEvent<ItemStack> event){
-        if (event.getObject().getItem() instanceof IEnergyItem energyItem){
-            TesseractItemContext context = new ItemStackWrapper(event.getObject());
-            event.addCapability(new ResourceLocation(Ref.ID, "energy_items"), new Provider(energyItem.canCreate(context) ? () -> energyItem.createEnergyHandler(context) : null));
         }
     }
 

@@ -28,6 +28,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import tesseract.TesseractCapUtils;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyHandlerItem;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -193,8 +194,8 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     /**
      * Returns a non-copied list of chargeable items.
      **/
-    public List<IEnergyHandler> getChargeableItems() {
-        List<IEnergyHandler> list = new ObjectArrayList<>();
+    public List<IEnergyHandlerItem> getChargeableItems() {
+        List<IEnergyHandlerItem> list = new ObjectArrayList<>();
         if (tile.isServerSide()) {
             IItemHandlerModifiable chargeables = getChargeHandler();
             for (int i = 0; i < chargeables.getSlots(); i++) {

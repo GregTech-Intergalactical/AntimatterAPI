@@ -49,6 +49,7 @@ import net.minecraft.world.phys.HitResult;
 import tesseract.TesseractCapUtils;
 import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.gt.IEnergyItem;
 
 import javax.annotation.Nullable;
@@ -147,10 +148,11 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default CompoundTag validateEnergyTag(ItemStack stack, long startingEnergy, long maxEnergy){
-        IEnergyHandler h = TesseractCapUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
+        IEnergyHandlerItem h = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
         if (h != null){
             h.setEnergy(startingEnergy);
             h.setCapacity(maxEnergy);
+            stack.setTag(h.getContainer().getTag());
         }
         return stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
     }
@@ -165,11 +167,12 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (group != Ref.TAB_TOOLS) return;
         if (getAntimatterToolType().isPowered()) {
             ItemStack stack = asItemStack(NULL, NULL);
-            IEnergyHandler h = TesseractCapUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
+            IEnergyHandlerItem h = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
             if (h != null){
                 list.add(stack.copy());
                 h.setCapacity(maxEnergy);
                 h.setEnergy(maxEnergy);
+                stack.setTag(h.getContainer().getTag());
                 list.add(stack);
             }
         } else list.add(asItemStack(NULL, NULL));
@@ -271,7 +274,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default int damage(ItemStack stack, int amount) {
         if (!getAntimatterToolType().isPowered()) return amount;
-        IEnergyHandler h = TesseractCapUtils.getEnergyHandlerItem(stack).map(t -> t).orElse(null);
+        IEnergyHandlerItem h = TesseractCapUtils.getEnergyHandlerItem(stack).orElse(null);
         if (!(h instanceof ItemEnergyHandler)) {
             return amount;
         }
@@ -280,11 +283,13 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (Ref.RNG.nextInt(20) == 0) return amount; // 1/20 chance of taking durability off the tool
         else if (currentEnergy >= multipliedDamage) {
             Utils.extractEnergy(h, multipliedDamage);
+            stack.setTag(h.getContainer().getTag());
             //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, currentEnergy - multipliedDamage); // Otherwise take energy off of tool if energy is larger than multiplied damage
             return 0; // Nothing is taken away from main durability
         } else { // Lastly, set energy to 0 and take leftovers off of tool durability itself
             int leftOver = (int) (multipliedDamage - currentEnergy);
             Utils.extractEnergy(h, currentEnergy);
+            stack.setTag(h.getContainer().getTag());
             //tag.putLong(Ref.KEY_TOOL_DATA_ENERGY, 0);
             return Math.max(1, leftOver / 100);
         }

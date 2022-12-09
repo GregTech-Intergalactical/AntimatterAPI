@@ -53,6 +53,7 @@ import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.graph.Connectivity;
 
 import javax.annotation.Nullable;
@@ -96,7 +97,7 @@ public class RenderHelper {
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
         registerProperty(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living, some_int) -> {
-            Optional<IEnergyHandler> handler = TesseractCapUtils.getEnergyHandlerItem(stack);
+            Optional<IEnergyHandlerItem> handler = TesseractCapUtils.getEnergyHandlerItem(stack);
             return handler.map(h -> ((float) h.getEnergy() / (float) h.getCapacity())).orElse(1.0F);
         });
     }

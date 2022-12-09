@@ -62,7 +62,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     public BlockState oldState;
     private Direction facingOverride;
 
-    protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional
+    public final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional
             .of(() -> new ControllerComponentHandler(this));
 
     public TileEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
@@ -327,15 +327,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public LazyOptional<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
-    }
-
-    @Nonnull
-    @Override
-    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
-        if (cap == AntimatterCaps.getCOMPONENT_HANDLER_CAPABILITY() && componentHandler.isPresent()) {
-            return componentHandler.cast();
-        }
-        return super.getCapability(cap, side);
     }
 
     @Override
