@@ -10,6 +10,7 @@ import javax.annotation.Nullable;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+//TODO is this even needed?
 public class CapabilityIngredient extends Ingredient {
 
     private final LazyLoadedValue<Capability<?>> cap;

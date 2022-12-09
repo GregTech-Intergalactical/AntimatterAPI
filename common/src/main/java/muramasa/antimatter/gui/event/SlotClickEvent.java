@@ -11,7 +11,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
@@ -19,7 +19,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import tesseract.TesseractPlatformUtils;
+import tesseract.TesseractCapUtils;
 
 import java.util.function.BiFunction;
 
@@ -61,8 +61,8 @@ public class SlotClickEvent implements IGuiEvent {
             TileEntityMachine<?> machine = (TileEntityMachine<?>) handler;
             return machine.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(null);
         }
-        if (handler instanceof ICapabilityProvider) {
-            return ((ICapabilityProvider) handler).getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY).orElse(null);
+        if (handler instanceof BlockEntity be) {
+            return TesseractCapUtils.getFluidHandler(be, null).orElse(null);
         }
         return null;
     }
