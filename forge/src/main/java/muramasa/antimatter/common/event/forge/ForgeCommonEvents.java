@@ -2,7 +2,6 @@ package muramasa.antimatter.common.event.forge;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.capability.forge.energy.Provider;
 import muramasa.antimatter.capability.forge.AntimatterCapsImpl;
 import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
