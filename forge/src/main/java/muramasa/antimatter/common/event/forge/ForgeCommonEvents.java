@@ -5,6 +5,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
 import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.item.IFluidItem;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.structure.StructureCache;
@@ -38,9 +39,11 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import tesseract.api.forge.Provider;
 import tesseract.api.forge.TesseractCaps;
 
 import static muramasa.antimatter.material.Material.NULL;
@@ -185,6 +188,13 @@ public class ForgeCommonEvents {
                     return LazyOptional.empty();
                 }
             });
+        }
+    }
+
+    @SubscribeEvent
+    public static void onAttachCapabilitiesEventItem(AttachCapabilitiesEvent<ItemStack> event){
+        if (event.getObject().getItem() instanceof IFluidItem fluidItem){
+            event.addCapability(new ResourceLocation(Ref.ID, "fluid_item"), new Provider<>(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, () -> fluidItem.getFluidHandlerItem(event.getObject())));
         }
     }
 

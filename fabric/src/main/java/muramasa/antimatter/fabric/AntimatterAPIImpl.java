@@ -2,6 +2,7 @@ package muramasa.antimatter.fabric;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.fabric.AntimatterLookups;
+import muramasa.antimatter.item.IFluidItem;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.*;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
@@ -64,6 +65,9 @@ public class AntimatterAPIImpl {
     public static void registerItemTransferAPI(Item item){
         if (item instanceof IEnergyItem energyItem){
             TesseractImpl.registerTREItem((s, c) -> energyItem.createEnergyHandler(new ContainerItemContextWrapper(c)), item);
+        }
+        if (item instanceof IFluidItem fluidItem){
+            FluidStorage.ITEM.registerForItems((s, c) -> fluidItem.getFluidHandlerItem(s), item);
         }
     }
 
