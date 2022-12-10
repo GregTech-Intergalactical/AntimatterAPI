@@ -20,7 +20,7 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
     public TileEntityStorage(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
 
-        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, (long) getMachineTier().getVoltage() * itemHandler.map(m -> m.getChargeHandler().getSlots()).orElse(1), getMachineTier().getVoltage(), getMachineTier().getVoltage(), 0,0) {
+        energyHandler.set(() -> new MachineEnergyHandler<T>((T) this, 0L, (long) getMachineTier().getVoltage() * itemHandler.map(m -> m.getChargeHandler().getSlots()).orElse(1), getMachineTier().getVoltage(), getMachineTier().getVoltage(), 1,0) {
             @Override
             public boolean canOutput(Direction direction) {
                 Direction dir = tile.getFacing();
