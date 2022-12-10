@@ -11,6 +11,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 public class AntimatterAPIImpl {
     public static void registerTransferApi(BlockEntityType<?> type){}
 
+    public static void registerTransferApiPipe(BlockEntityType<?> type){}
+
     public static void registerEventBus(){
         //FMLJavaModLoadingContext.get().getModEventBus().register(AntimatterRegistration.class);
     }
