@@ -134,9 +134,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 if (isServerSide()) {
                     if (onStructureFormed()) {
                         afterStructureFormed();
-                        if (this.hadFirstTick()) {
-                            setMachineState(MachineState.IDLE);
-                        }// Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
+                        setMachineState(MachineState.IDLE);
+                        // Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
                         this.recipeHandler.ifPresent(
                                 t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
                         sidedSync(true);
