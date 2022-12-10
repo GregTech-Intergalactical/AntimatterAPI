@@ -111,7 +111,11 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
      * @param stack the stack to switch.
      */
     private boolean chargeModeSwitch(ItemStack stack) {
-        return getCastedHandler(stack).map(ItemEnergyHandler::chargeModeSwitch).orElse(true);
+        return getCastedHandler(stack).map(itemEnergyHandler -> {
+            boolean switchMode = itemEnergyHandler.chargeModeSwitch();
+            stack.setTag(itemEnergyHandler.getContainer().getTag());
+            return switchMode;
+        }).orElse(true);
     }
 
     @Override

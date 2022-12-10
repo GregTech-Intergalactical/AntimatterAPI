@@ -1,10 +1,12 @@
 package muramasa.antimatter.capability.machine;
 
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectObjectImmutablePair;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.item.FakeTrackedItemHandler;
@@ -194,14 +196,14 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
     /**
      * Returns a non-copied list of chargeable items.
      **/
-    public List<IEnergyHandlerItem> getChargeableItems() {
-        List<IEnergyHandlerItem> list = new ObjectArrayList<>();
+    public List<Pair<ItemStack, IEnergyHandlerItem>> getChargeableItems() {
+        List<Pair<ItemStack, IEnergyHandlerItem>> list = new ObjectArrayList<>();
         if (tile.isServerSide()) {
             IItemHandlerModifiable chargeables = getChargeHandler();
             for (int i = 0; i < chargeables.getSlots(); i++) {
                 ItemStack item = chargeables.getStackInSlot(i);
                 if (!item.isEmpty()) {
-                    TesseractCapUtils.getEnergyHandlerItem(item).ifPresent(list::add);
+                    TesseractCapUtils.getEnergyHandlerItem(item).ifPresent(e -> list.add(new ObjectObjectImmutablePair<>(item, e)));
                 }
             }
         }
