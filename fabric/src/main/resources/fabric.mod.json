@@ -29,6 +29,7 @@
   ],
   "accessWidener" : "antimatter.accesswidener",
   "depends": {
+    "minecraft": "1.18.2",
     "fabricloader": ">=0.14.0",
     "fabric": "*",
     "tesseractapi": ">=0.1"
@@ -55,5 +56,10 @@
     "top_plugin": [
       "muramasa.antimatter.integration.top.fabric.TheOneProbePluginFabric"
     ]
+  },
+  "custom": {
+    "mc-publish": {
+      "curseforge": 462713
+    }
   }
 }
