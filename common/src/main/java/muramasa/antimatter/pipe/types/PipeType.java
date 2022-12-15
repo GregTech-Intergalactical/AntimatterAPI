@@ -28,7 +28,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
     public final String domain;
     protected Material material;
     protected ImmutableSet<PipeSize> sizes = ImmutableSet.of();
-    protected BlockEntityType<?> tileType;
+    protected BlockEntityType<? extends TileEntityPipe<?>> tileType;
     protected Map<PipeSize, Block> registeredBlocks;
 
     private final TileEntityBase.BlockEntitySupplier<TileEntityPipe<?>, T> tileFunc;
@@ -49,6 +49,7 @@ public abstract class PipeType<T extends PipeType<T>> implements IRegistryEntryP
         registeredBlocks = blocks.stream().map(t -> new Pair<>(((BlockPipe<?>) t).getSize(),t))
                 .collect(Collectors.toMap(Pair::getFirst, Pair::getSecond));
         tileType = new BlockEntityType<>((pos,state) -> tileFunc.create((T) this, pos, state), blocks, null);
+        AntimatterAPI.registerTransferApiPipe(tileType);
         AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), getTileType());
     }
 

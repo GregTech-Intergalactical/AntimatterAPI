@@ -17,9 +17,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import tesseract.TesseractCapUtils;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -51,9 +51,11 @@ public class FluidSlotWidget extends Widget {
     @Override
     public void init() {
         super.init();
-        ICapabilityProvider provider = (ICapabilityProvider) this.gui.handler;
-        this.gui.syncFluidStack(() -> provider.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-                .map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack, SERVER_TO_CLIENT);
+        if (this.gui.handler instanceof BlockEntity blockEntity){
+            this.gui.syncFluidStack(() -> TesseractCapUtils.getFluidHandler(blockEntity, null)
+                    .map(t -> t.getFluidInTank(slot)).orElse(FluidStack.EMPTY), stack -> this.stack = stack, SERVER_TO_CLIENT);
+        }
+
     }
 
     @Override

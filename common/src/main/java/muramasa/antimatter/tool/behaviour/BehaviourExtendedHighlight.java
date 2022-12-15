@@ -2,12 +2,12 @@ package muramasa.antimatter.tool.behaviour;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.behaviour.IItemHighlight;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.util.AntimatterCapUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
@@ -31,9 +31,8 @@ public class BehaviourExtendedHighlight implements IItemHighlight<IAntimatterToo
     protected BiFunction<Direction, BlockEntity, Boolean> function;
 
     public final static BiFunction<Direction, BlockEntity, Boolean> COVER_FUNCTION = (dir, tile) -> {
-        if (tile instanceof TileEntityBase) {
-            TileEntityBase<?> machine = (TileEntityBase) tile;
-            return machine.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), dir).map(t -> !t.get(dir).isEmpty()).orElse(false);
+        if (tile instanceof TileEntityBase<?> base) {
+            return AntimatterCapUtils.getCoverHandler(base, dir).map(t -> !t.get(dir).isEmpty()).orElse(false);
         }
         return false;
     };

@@ -8,14 +8,11 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nullable;
 
-public interface ICoverHandler<T extends BlockEntity> extends ICapabilityProvider, INBTSerializable<CompoundTag> {
+public interface ICoverHandler<T extends BlockEntity> extends INBTSerializable<CompoundTag> {
 
     /**
      * Getters/Setters
@@ -72,11 +69,6 @@ public interface ICoverHandler<T extends BlockEntity> extends ICapabilityProvide
 
         EmptyHandler(BlockEntity tile) {
             this.tile = tile;
-        }
-
-        @Override
-        public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-            return LazyOptional.empty();
         }
 
         @Override

@@ -1,6 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
 import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
@@ -10,25 +11,26 @@ import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
-import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
+import tesseract.TesseractCapUtils;
 import tesseract.api.gt.GTTransaction;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.gt.IGTNode;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends EnergyHandler implements IMachineHandler, Dispatch.Sided<IEnergyHandler> {
 
     protected final T tile;
 
-    protected List<IEnergyHandler> cachedItems = new ObjectArrayList<>();
+    protected List<Pair<ItemStack, IEnergyHandlerItem>> cachedItems = new ObjectArrayList<>();
     protected int offsetInsert = 0;
     protected int offsetExtract = 0;
 
@@ -50,7 +52,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         this.cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).map(ImmutableList::copyOf).orElse(ImmutableList.of());
     }
 
-    public List<IEnergyHandler> getCachedEnergyItems() {
+    public List<Pair<ItemStack, IEnergyHandlerItem>> getCachedEnergyItems() {
         return this.cachedItems;
     }
 
@@ -69,7 +71,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public long getCapacity() {
         if (canChargeItem()) {
-            return super.getCapacity() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getCapacity).sum() : 0);
+            return super.getCapacity() + (cachedItems != null ? cachedItems.stream().map(Pair::right).mapToLong(IEnergyHandler::getCapacity).sum() : 0);
         }
         return super.getCapacity();
     }
@@ -79,8 +81,9 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         int j = 0;
         boolean ok = super.addEnergy(data);
         for (int i = offsetInsert; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
-            IEnergyHandler handler = cachedItems.get(i);
+            IEnergyHandlerItem handler = cachedItems.get(i).right();
             if (handler.addEnergy(data)) {
+                cachedItems.get(i).left().setTag(handler.getContainer().getTag());
                 offsetInsert = (offsetInsert + 1) % cachedItems.size();
                 ok = true;
             }
@@ -96,8 +99,9 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
         boolean ok = super.extractEnergy(data);
         int j = 0;
         for (int i = offsetExtract; j < cachedItems.size(); j++, i = (i == cachedItems.size() - 1 ? 0 : (i + 1))) {
-            IEnergyHandler handler = cachedItems.get(i);
+            IEnergyHandlerItem handler = cachedItems.get(i).right();
             if (handler.extractEnergy(data)) {
+                cachedItems.get(i).left().setTag(handler.getContainer().getTag());
                 offsetExtract = (offsetExtract + 1) % cachedItems.size();
                 ok = true;
             }
@@ -111,7 +115,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public long getEnergy() {
         if (canChargeItem()) {
-            return super.getEnergy() + (cachedItems != null ? cachedItems.stream().mapToLong(IEnergyHandler::getEnergy).sum() : 0);
+            return super.getEnergy() + (cachedItems != null ? cachedItems.stream().map(Pair::right).mapToLong(IEnergyHandler::getEnergy).sum() : 0);
         }
         return super.getEnergy();
     }
@@ -119,15 +123,12 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public void onUpdate() {
         super.onUpdate();
-        cachedItems.forEach(t -> t.getState().onTick());
+        cachedItems.forEach(t -> t.right().getState().onTick());
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
                 BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
                 if (tile == null) continue;
-                LazyOptional<IEnergyHandler> handle = tile.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY(), dir.getOpposite());
-                if (!handle.isPresent()) {
-                    handle = TesseractPlatformUtils.getWrappedHandler(tile, dir.getOpposite());
-                }
+                Optional<IEnergyHandler> handle = TesseractCapUtils.getEnergyHandler(tile, dir.getOpposite());
                 handle.ifPresent(eh -> Utils.transferEnergy(this, eh));
             }
         }
@@ -135,12 +136,12 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     @Override
     public long availableAmpsOutput() {
-        return super.availableAmpsOutput() + this.cachedItems.stream().mapToLong(IGTNode::availableAmpsOutput).sum();
+        return super.availableAmpsOutput() + this.cachedItems.stream().map(Pair::right).mapToLong(IGTNode::availableAmpsOutput).sum();
     }
 
     @Override
     public long availableAmpsInput() {
-        return super.availableAmpsInput() + this.cachedItems.stream().mapToLong(IGTNode::availableAmpsInput).sum();
+        return super.availableAmpsInput() + this.cachedItems.stream().map(Pair::right).mapToLong(IGTNode::availableAmpsInput).sum();
     }
 
     @Override

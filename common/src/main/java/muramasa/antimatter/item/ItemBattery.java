@@ -15,8 +15,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.LazyOptional;
-import tesseract.TesseractPlatformUtils;
+import tesseract.TesseractCapUtils;
 import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
@@ -26,6 +25,7 @@ import tesseract.api.gt.IGTNode;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
@@ -56,11 +56,11 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
     public void fillItemCategory(CreativeModeTab group, NonNullList<ItemStack> items) {
         if (this.allowdedIn(group)) {
             ItemStack stack = new ItemStack(this);
+            items.add(stack.copy());
             getCastedHandler(stack).ifPresent(e -> {
                 e.setEnergy(e.getCapacity());
+                items.add(e.getContainer().getItemStack());
             });
-            items.add(new ItemStack(this));
-            items.add(stack);
         }
     }
 
@@ -74,7 +74,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return TesseractPlatformUtils.getEnergyHandlerItem(stack).map(IEnergyHandler::getEnergy).filter(l -> l <= 0).map(l -> super.getBarColor(stack)).orElse(0x00BFFF);
+        return TesseractCapUtils.getEnergyHandlerItem(stack).map(IEnergyHandler::getEnergy).filter(l -> l <= 0).map(l -> super.getBarColor(stack)).orElse(0x00BFFF);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return (int)(13.0f* (TesseractPlatformUtils.getEnergyHandlerItem(stack).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap));
+        return (int)(13.0f* (TesseractCapUtils.getEnergyHandlerItem(stack).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap));
     }
 
     @Nonnull
@@ -99,8 +99,9 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         return InteractionResultHolder.pass(stack);
     }
 
-    private static LazyOptional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
-        return TesseractPlatformUtils.getEnergyHandlerItem(stack).cast();
+    private static Optional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
+        Optional<IEnergyHandlerItem> itemHandler = TesseractCapUtils.getEnergyHandlerItem(stack);
+        return itemHandler.map(e -> (ItemEnergyHandler)e);
     }
 
     /**
@@ -110,7 +111,11 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
      * @param stack the stack to switch.
      */
     private boolean chargeModeSwitch(ItemStack stack) {
-        return getCastedHandler(stack).map(ItemEnergyHandler::chargeModeSwitch).orElse(true);
+        return getCastedHandler(stack).map(itemEnergyHandler -> {
+            boolean switchMode = itemEnergyHandler.chargeModeSwitch();
+            stack.setTag(itemEnergyHandler.getContainer().getTag());
+            return switchMode;
+        }).orElse(true);
     }
 
     @Override
@@ -119,7 +124,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         if (reusable) {
             tooltip.add(new TranslatableComponent("item.reusable"));
         }
-        long energy = TesseractPlatformUtils.getEnergyHandlerItem(stack).map(IGTNode::getEnergy).orElse(0L);
+        long energy = TesseractCapUtils.getEnergyHandlerItem(stack).map(IGTNode::getEnergy).orElse(0L);
         tooltip.add(new TranslatableComponent("item.charge").append(": ").append(new TextComponent(energy + "/" + cap).withStyle(energy == 0 ? ChatFormatting.RED : ChatFormatting.GREEN)).append(" (" + tier.getId().toUpperCase() + ")"));
         super.appendHoverText(stack, worldIn, tooltip, flag);
     }

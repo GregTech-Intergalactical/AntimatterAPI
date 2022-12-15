@@ -188,7 +188,11 @@ public class AntimatterRecipeProvider extends RecipeProvider {
                 throw new RuntimeException("ERROR PARSING SHAPELESS RECIPE" + ex.getMessage());
             }
         }
-        builder.save(consumer, new ResourceLocation(domain, output.getItem().toString() + "_" + recipeID));
+        if (recipeID.isEmpty())builder.save(consumer);
+        else {
+            if (domain.isEmpty()) builder.save(consumer, recipeID);
+            else builder.save(consumer, fixLoc(domain, recipeID));
+        }
     }
 
     public void addItemRecipe(Consumer<FinishedRecipe> consumer, String groupName, String criterionName, CriterionTriggerInstance criterion, ItemLike output, ImmutableMap<Character, Object> inputs, String... inputPattern) {

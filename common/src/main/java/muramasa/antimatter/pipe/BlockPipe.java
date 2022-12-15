@@ -4,15 +4,14 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.block.AntimatterItemBlock;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.client.AntimatterModelManager;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterials;
-import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
+import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.dynamic.BlockDynamic;
@@ -25,6 +24,7 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityTickable;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import muramasa.antimatter.tool.AntimatterToolType;
+import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -37,11 +37,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -239,7 +235,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             if (stack.getItem() instanceof IHaveCover) {
                 CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
                 Direction dir = Utils.getInteractSide(hit);
-                boolean ok = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
+                boolean ok = AntimatterCapUtils.getCoverHandler(tile, Utils.getInteractSide(hit)).map(i -> i.placeCover(player, Utils.getInteractSide(hit), stack, factory.get().get(i, ((IHaveCover) stack.getItem()).getTier(), dir, factory))).orElse(false);
                 if (ok) {
                     return InteractionResult.SUCCESS;
                 }
@@ -250,13 +246,13 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
             }
             if (type == AntimatterDefaultTools.CROWBAR) {
                 if (!player.isCrouching()) {
-                    if (tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
+                    if (AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.removeCover(player, Utils.getInteractSide(hit), false)).orElse(false)) {
                         Utils.damageStack(stack, hand, player);
                         return InteractionResult.SUCCESS;
                     }
                     return InteractionResult.PASS;
                 } else {
-                    if (tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), hit.getDirection()).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
+                    if (AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.moveCover(player, hit.getDirection(), Utils.getInteractSide(hit))).orElse(false)) {
                         Utils.damageStack(stack, player);
                         return InteractionResult.SUCCESS;
                     }
@@ -268,7 +264,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
                     Utils.damageStack(stack, hand, player);
                     return InteractionResult.SUCCESS;
                 }
-                ICover instance = tile.getCapability(AntimatterCaps.getCOVERABLE_HANDLER_CAPABILITY(), hit.getDirection()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
+                ICover instance = AntimatterCapUtils.getCoverHandler(tile, hit.getDirection()).map(h -> h.get(Utils.getInteractSide(hit))).orElse(ICover.empty);
                 if (!player.isCrouching()) {
                     if (!instance.isEmpty() && instance.openGui(player, Utils.getInteractSide(hit))) {
                         Utils.damageStack(stack, hand, player);

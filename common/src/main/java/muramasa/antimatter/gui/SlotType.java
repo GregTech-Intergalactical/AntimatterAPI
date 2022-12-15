@@ -3,24 +3,16 @@ package muramasa.antimatter.gui;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.machine.MachineFluidHandler;
-import muramasa.antimatter.gui.slot.AbstractSlot;
-import muramasa.antimatter.gui.slot.SlotCell;
-import muramasa.antimatter.gui.slot.SlotEnergy;
-import muramasa.antimatter.gui.slot.SlotFake;
-import muramasa.antimatter.gui.slot.SlotFakeFluid;
-import muramasa.antimatter.gui.slot.SlotInput;
-import muramasa.antimatter.gui.slot.SlotOutput;
+import muramasa.antimatter.gui.slot.*;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.EmptyHandler;
-import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
+import tesseract.TesseractCapUtils;
 
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -36,11 +28,11 @@ public class SlotType<T extends Slot> implements IAntimatterObject {
     public static SlotType<SlotFakeFluid> FL_IN = new SlotType<>("fluid_in", (type, gui, inv, i, d) -> new SlotFakeFluid(type, gui, MachineFluidHandler.FluidDirection.INPUT, i, d.getX(), d.getY()), (t, i) -> false, ContentEvent.FLUID_INPUT_CHANGED, false, false);
     //Cheat using same ID to get working counter.
     public static SlotType<SlotFakeFluid> FL_OUT = new SlotType<>("fluid_out", (type, gui, inv, i, d) -> new SlotFakeFluid(type, gui, MachineFluidHandler.FluidDirection.OUTPUT, i, d.getX(), d.getY()), (t, i) -> false, ContentEvent.FLUID_OUTPUT_CHANGED, false, false);
-    public static SlotType<SlotCell> CELL_IN = new SlotType<>("cell_in", (type, gui, inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> i.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED, true, false);
-    public static SlotType<SlotCell> CELL_OUT = new SlotType<>("cell_out", (type, gui, inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> i.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent(), ContentEvent.ITEM_CELL_CHANGED, false, true);
+    public static SlotType<SlotCell> CELL_IN = new SlotType<>("cell_in", (type, gui, inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> TesseractCapUtils.getFluidHandlerItem(i).isPresent(), ContentEvent.ITEM_CELL_CHANGED, true, false);
+    public static SlotType<SlotCell> CELL_OUT = new SlotType<>("cell_out", (type, gui, inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> TesseractCapUtils.getFluidHandlerItem(i).isPresent(), ContentEvent.ITEM_CELL_CHANGED, false, true);
     public static SlotType<SlotEnergy> ENERGY = new SlotType<>("energy", (type, gui, inv, i, d) -> new SlotEnergy(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> {
-        if (t instanceof ICapabilityProvider tile) {
-            return tile.getCapability(TesseractCaps.getENERGY_HANDLER_CAPABILITY()).map(eh -> TesseractPlatformUtils.getEnergyHandlerItem(i).map(inner -> ((inner.getInputVoltage() | inner.getOutputVoltage()) == (eh.getInputVoltage() | eh.getOutputVoltage()))).orElse(false)).orElse(false);
+        if (t instanceof BlockEntity tile) {
+            return TesseractCapUtils.getEnergyHandler(tile, null) .map(eh -> TesseractCapUtils.getEnergyHandlerItem(i).map(inner -> ((inner.getInputVoltage() | inner.getOutputVoltage()) == (eh.getInputVoltage() | eh.getOutputVoltage()))).orElse(false)).orElse(false);
         }
         return true;
     }, ContentEvent.ENERGY_SLOT_CHANGED, true, false);

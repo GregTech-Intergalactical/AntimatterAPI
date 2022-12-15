@@ -20,18 +20,14 @@ import muramasa.antimatter.mixin.client.LevelRendererAccessor;
 import muramasa.antimatter.mixin.client.VertexFormatAccessor;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.tool.armor.MaterialArmor;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
@@ -39,11 +35,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -55,16 +49,16 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
-import tesseract.TesseractPlatformUtils;
-import tesseract.api.TesseractCaps;
+import tesseract.TesseractCapUtils;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.graph.Connectivity;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -103,7 +97,7 @@ public class RenderHelper {
 
     public static void registerBatteryPropertyOverrides(ItemBattery battery) {
         registerProperty(battery, new ResourceLocation(Ref.ID, "battery"), (stack, world, living, some_int) -> {
-            LazyOptional<IEnergyHandler> handler = TesseractPlatformUtils.getEnergyHandlerItem(stack);
+            Optional<IEnergyHandlerItem> handler = TesseractCapUtils.getEnergyHandlerItem(stack);
             return handler.map(h -> ((float) h.getEnergy() / (float) h.getCapacity())).orElse(1.0F);
         });
     }

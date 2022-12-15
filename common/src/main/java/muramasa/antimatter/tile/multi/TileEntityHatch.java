@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile.multi;
 
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.ComponentHandler;
 import muramasa.antimatter.capability.machine.HatchComponentHandler;
 import muramasa.antimatter.capability.machine.MachineCoverHandler;
@@ -33,7 +32,7 @@ import static muramasa.antimatter.machine.MachineFlag.*;
 
 public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMachine<T> implements IComponent {
 
-    private final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional
+    public final LazyOptional<HatchComponentHandler<T>> componentHandler = LazyOptional
             .of(() -> new HatchComponentHandler<>((T)this));
 
     public TileEntityHatch(Machine<?> type, BlockPos pos, BlockState state) {
@@ -126,13 +125,5 @@ public class TileEntityHatch<T extends TileEntityHatch<T>> extends TileEntityMac
     @Override
     public ResourceLocation getGuiTexture() {
         return new ResourceLocation(getMachineType().getDomain(), "textures/gui/machine/hatch.png");
-    }
-
-    @Nonnull
-    @Override
-    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
-        if (cap == AntimatterCaps.getCOMPONENT_HANDLER_CAPABILITY())
-            return componentHandler.cast();
-        return super.getCapability(cap, side);
     }
 }

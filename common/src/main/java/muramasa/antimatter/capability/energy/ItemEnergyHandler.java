@@ -3,18 +3,10 @@ package muramasa.antimatter.capability.energy;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.EnergyHandler;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.NonNullSupplier;
 import org.jetbrains.annotations.NotNull;
-import tesseract.api.TesseractCaps;
 import tesseract.api.context.TesseractItemContext;
 import tesseract.api.gt.GTTransaction;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
 
 /**
@@ -74,7 +66,6 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
 
     @Override
     public void setCapacity(long capacity) {
-        super.setCapacity(capacity);
         this.maxEnergy = capacity;
         CompoundTag energyTag = getContainer().getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA);
         energyTag.putLong(Ref.KEY_ITEM_MAX_ENERGY, capacity);

@@ -2,7 +2,6 @@ package muramasa.antimatter.tile.multi;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.capability.AntimatterCaps;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.client.scene.TrackedDummyWorld;
@@ -62,7 +61,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     public BlockState oldState;
     private Direction facingOverride;
 
-    protected final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional
+    public final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional
             .of(() -> new ControllerComponentHandler(this));
 
     public TileEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
@@ -135,9 +134,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 if (isServerSide()) {
                     if (onStructureFormed()) {
                         afterStructureFormed();
-                        if (this.hadFirstTick()) {
-                            setMachineState(MachineState.IDLE);
-                        }// Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
+                        setMachineState(MachineState.IDLE);
+                        // Antimatter.LOGGER.info("[Structure Debug] Valid Structure");
                         this.recipeHandler.ifPresent(
                                 t -> t.onMultiBlockStateChange(true, AntimatterConfig.COMMON_CONFIG.INPUT_RESET_MULTIBLOCK.get()));
                         sidedSync(true);
@@ -327,15 +325,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public LazyOptional<ControllerComponentHandler> getComponentHandler() {
         return componentHandler;
-    }
-
-    @Nonnull
-    @Override
-    public <U> LazyOptional<U> getCapability(@Nonnull Capability<U> cap, Direction side) {
-        if (cap == AntimatterCaps.getCOMPONENT_HANDLER_CAPABILITY() && componentHandler.isPresent()) {
-            return componentHandler.cast();
-        }
-        return super.getCapability(cap, side);
     }
 
     @Override
