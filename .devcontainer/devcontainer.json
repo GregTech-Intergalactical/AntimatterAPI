@@ -12,7 +12,7 @@
 	},
 	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
-		"java.home": "/docker-java-home",
+		"java.home": "/docker-java-home"
 	},
 	"extensions": [
 		"vscjava.vscode-java-pack"

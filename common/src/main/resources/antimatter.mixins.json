@@ -26,6 +26,7 @@
     "IngredientAccessor",
     "ItemStackMixin",
     "LeavesBlockMixin",
+    "MinecraftServerMixin",
     "RepairItemRecipeMixin",
     "ServerBlockUpdateMixin",
     "SimpleReloadInstanceMixin"
