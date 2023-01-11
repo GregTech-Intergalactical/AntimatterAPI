@@ -66,7 +66,7 @@ public class AntimatterDynamics {
 
     public static void addResourcePacks(Consumer<RuntimeResourcePack> function){
         function.accept(DYNAMIC_RESOURCE_PACK);
-        function.accept(DYNAMIC_RECIPES);
+        //function.accept(DYNAMIC_RECIPES);
         Antimatter.LOGGER.info("resource pacs added");
     }
 
@@ -199,7 +199,7 @@ public class AntimatterDynamics {
      * Reloads dynamic assets during resource reload.
      */
     public static void onResourceReload(boolean serverEvent) {
-        collectRecipes(rec -> DYNAMIC_RECIPES.addData(fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
+        //collectRecipes(rec -> DYNAMIC_RECIPES.addData(fix(rec.getId(), "recipes", "json"), rec.serializeRecipe().toString().getBytes()));
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
