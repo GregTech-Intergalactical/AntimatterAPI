@@ -28,7 +28,7 @@ public class DynamicDataPack implements PackResources {
     protected static final ObjectSet<String> SERVER_DOMAINS = new ObjectOpenHashSet<>();
     protected static final Map<ResourceLocation, JsonObject> DATA = new HashMap<>();
 
-    private String name = null;
+    private final String name;
 
     static {
         SERVER_DOMAINS.addAll(Sets.newHashSet(Ref.ID, Ref.SHARED_ID, "minecraft", "forge", "c"));
