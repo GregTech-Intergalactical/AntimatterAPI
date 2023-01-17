@@ -20,12 +20,14 @@ import muramasa.antimatter.registration.fabric.AntimatterRegistration;
 import muramasa.antimatter.structure.StructureCache;
 import muramasa.antimatter.worldgen.fabric.AntimatterFabricWorldgen;
 import net.devtech.arrp.api.RRPCallback;
+import net.devtech.arrp.api.SidedRRPCallback;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.ModLoadingContext;
@@ -64,7 +66,12 @@ public class AntimatterImpl implements ModInitializer {
                 CommonEvents.placeBlock(placedOff, context.getPlayer(), context.getLevel(), context.getClickedPos(), context.getLevel().getBlockState(context.getClickedPos()));
                 return InteractionResult.PASS;
             });
-            RRPCallback.AFTER_VANILLA.register(resources -> AntimatterDynamics.addResourcePacks(resources::add));
+            SidedRRPCallback.BEFORE_VANILLA.register((type, list) -> {
+                if (type == PackType.SERVER_DATA){
+                    AntimatterDynamics.onResourceReload(AntimatterAPI.getSIDE().isServer());
+                }
+            });
+            RRPCallback.BEFORE_USER.register(resources -> AntimatterDynamics.addResourcePacks(resources::add));
             Antimatter.LOGGER.info("initializing");
             ServerLifecycleEvents.SERVER_STARTING.register(server -> Antimatter.LOGGER.info("server starting"));
         }
