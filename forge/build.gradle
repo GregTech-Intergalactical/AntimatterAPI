@@ -143,7 +143,7 @@ dependencies {
     modImplementation("mezz.jei:jei-1.18.2:9.5.0.132")
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-forge:${rootProject.rei_version}"
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${rootProject.crafttweaker_version}")
-    modImplementation(include("com.github.Reforged-Mods:ARRP-forge:0.5.7.2"))
+    modImplementation(include("com.github.Reforged-Mods:ARRP-forge:0.6.7-1.18.2"))
     modRuntimeOnly("io.github.feltmc:fluidhandler-extras:1.0.1")
     modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
     modImplementation("curse.maven:the-one-probe-245211:${rootProject.top_forge_file}")

@@ -20,7 +20,7 @@ import java.util.concurrent.CompletionStage;
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
 
-    @Inject(method = {"method_29437", "lambda$reloadResources$18", "m_212917_"}, at = @At(value = "HEAD"))
+    //@Inject(method = {"method_29437", "lambda$reloadResources$18", "m_212917_"}, at = @At(value = "HEAD"))
     private void injectIntoReload(RegistryAccess.Frozen frozen, ImmutableList reloadableResources, CallbackInfoReturnable<CompletionStage<?>> ci){
         AntimatterDynamics.onResourceReload(AntimatterAPI.getSIDE().isServer());
     }

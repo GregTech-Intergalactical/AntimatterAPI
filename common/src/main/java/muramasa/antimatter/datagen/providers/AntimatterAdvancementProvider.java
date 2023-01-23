@@ -47,7 +47,7 @@ public class AntimatterAdvancementProvider implements DataProvider, IAntimatterP
         Consumer<Advancement> consumer = a -> {
             if (!locs.add(a.getId())) throw new IllegalStateException("Duplicate advancement " + a.getId());
             else {
-                AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addData(AntimatterDynamics.fix(a.getId(), "advancements", "json"), AntimatterDynamics.serialize(a.deconstruct()));
+                AntimatterDynamics.RUNTIME_DATA_PACK.addData(AntimatterDynamics.fix(a.getId(), "advancements", "json"), AntimatterDynamics.serialize(a.deconstruct()));
             }
         };
         advancements.forEach(a -> a.accept(consumer));

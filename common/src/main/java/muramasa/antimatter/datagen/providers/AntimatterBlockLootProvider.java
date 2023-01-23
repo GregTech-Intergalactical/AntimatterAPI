@@ -98,7 +98,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     public void onCompletion() {
         for (Map.Entry<Block, Function<Block, LootTable.Builder>> e : tables.entrySet()) {
             LootTable table = e.getValue().apply(e.getKey()).setParamSet(LootContextParamSets.BLOCK).build();
-            AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addData(AntimatterDynamics.fix(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), "loot_tables/blocks", "json"), AntimatterDynamics.serialize(table));
+            AntimatterDynamics.RUNTIME_DATA_PACK.addData(AntimatterDynamics.fix(AntimatterPlatformUtils.getIdFromBlock(e.getKey()), "loot_tables/blocks", "json"), AntimatterDynamics.serialize(table));
         }
     }
 

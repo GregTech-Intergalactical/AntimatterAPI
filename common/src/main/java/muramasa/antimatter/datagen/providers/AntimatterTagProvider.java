@@ -108,7 +108,7 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
         for (Map.Entry<ResourceLocation, JsonObject> entry : TAGS.entrySet()) {
             ResourceLocation k = entry.getKey();
             JsonObject v = entry.getValue();
-            AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addTag(AntimatterDynamics.getTagLoc(prefix, k), fromJson(v));
+            AntimatterDynamics.RUNTIME_DATA_PACK.addTag(AntimatterDynamics.getTagLoc(prefix, k), fromJson(v));
         }
     }
 }
