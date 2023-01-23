@@ -52,6 +52,7 @@ import java.util.stream.Stream;
 
 public class AntimatterDynamics {
     public static final RuntimeResourcePack DYNAMIC_RESOURCE_PACK = RuntimeResourcePack.create(new ResourceLocation(Ref.ID, "dynamic"));
+    public static final RuntimeResourcePack RUNTIME_DATA_PACK = RuntimeResourcePack.create(new ResourceLocation(Ref.ID, "data"), 8);
     public static final Gson GSON = Deserializers.createLootTableSerializer()
             .setPrettyPrinting()
             .disableHtmlEscaping()
@@ -67,8 +68,12 @@ public class AntimatterDynamics {
 
     public static void addResourcePacks(Consumer<PackResources> function){
         function.accept(DYNAMIC_RESOURCE_PACK);
-        function.accept(new DynamicDataPack("Antimatter - Dynamic Recipes", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
-        Antimatter.LOGGER.info("resource pacs added");
+    }
+
+    public static void addDataPacks(Consumer<PackResources> function){
+        function.accept(RUNTIME_DATA_PACK);
+        function.accept(new DynamicDataPack("antimatter:recipes", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
+
     }
 
     public static void onProviderInit(String domain, DataGenerator gen, Side side) {

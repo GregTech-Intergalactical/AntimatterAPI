@@ -71,7 +71,8 @@ public class AntimatterImpl implements ModInitializer {
                     AntimatterDynamics.onResourceReload(AntimatterAPI.getSIDE().isServer());
                 }
             });
-            RRPCallback.BEFORE_USER.register(resources -> AntimatterDynamics.addResourcePacks(resources::add));
+            RRPCallback.AFTER_VANILLA.register(resources -> AntimatterDynamics.addResourcePacks(resources::add));
+            RRPCallback.BEFORE_USER.register(resources -> AntimatterDynamics.addDataPacks(resources::add));
             Antimatter.LOGGER.info("initializing");
             ServerLifecycleEvents.SERVER_STARTING.register(server -> Antimatter.LOGGER.info("server starting"));
         }
