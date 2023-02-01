@@ -81,6 +81,7 @@ public class AntimatterDynamics {
     }
 
     public static void addDataPacks(Consumer<PackResources> function){
+        AntimatterDynamics.onResourceReload(AntimatterAPI.getSIDE().isServer());
         function.accept(RUNTIME_DATA_PACK);
         function.accept(new DynamicDataPack("antimatter:recipes", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
 

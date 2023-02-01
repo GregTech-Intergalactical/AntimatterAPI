@@ -28,13 +28,6 @@ public class ModCommonEvents {
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onResourcePackBeforeVanilla(RRPEvent.BeforeVanilla event){
-        if (event.getType() == PackType.SERVER_DATA) {
-            AntimatterDynamics.onResourceReload(FMLEnvironment.dist.isDedicatedServer());
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onResourcePackAfterVanilla(RRPEvent.AfterVanilla event){
         AntimatterDynamics.addResourcePacks(event::addPack);
     }
