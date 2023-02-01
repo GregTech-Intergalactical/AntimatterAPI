@@ -24,10 +24,13 @@ import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.IRecipe;
+import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -90,9 +93,11 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
     @Override
     public void registerDisplays(DisplayRegistry registry) {
         // regular recipes
-        registry.registerFiller(IRecipe.class, RecipeMapDisplay::new);
-        AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
-            tuple.map.getRecipes(true).forEach(registry::add);
+        registry.registerRecipeFiller(IRecipe.class, type -> Objects.equals(Recipe.RECIPE_TYPE, type), r -> !r.isHidden(), RecipeMapDisplay::new);
+        AntimatterAPI.all(RecipeMap.class, m -> {
+            if (m.getProxy() != null){
+                registry.registerRecipeFiller(net.minecraft.world.item.crafting.Recipe.class, m.getProxy().loc(), r -> new RecipeMapDisplay(m.getProxy().handler().apply(r, m.RB())));
+            }
         });
     }
 

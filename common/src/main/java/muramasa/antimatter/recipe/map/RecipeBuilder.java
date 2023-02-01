@@ -1,19 +1,33 @@
 package muramasa.antimatter.recipe.map;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.datagen.AntimatterDynamics;
+import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.RecipeTag;
+import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
+import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,11 +51,18 @@ public class RecipeBuilder {
     protected boolean hidden;
     protected Set<RecipeTag> tags = new ObjectOpenHashSet<>();
     protected ResourceLocation id;
+    protected boolean recipeMapOnly = false;
 
-    public Recipe add() {
-        Recipe r = build(duration, power, special, amps);
-        addToMap(r);
-        return r;
+    private Advancement.Builder advancementBuilder = null;
+
+    public IRecipe add(String modid, String id) {
+        id(modid, id);
+        //addToMap(r);
+        return build();
+    }
+
+    public IRecipe add(String id) {
+        return add(recipeMap.getDomain(), id);
     }
 
     public static void clearList(){
@@ -52,7 +73,7 @@ public class RecipeBuilder {
         return ID_MAP;
     }
 
-    protected void addToMap(Recipe r) {
+    protected void addToMap(IRecipe r) {
         recipeMap.add(r);
     }
 
@@ -61,7 +82,7 @@ public class RecipeBuilder {
      *
      * @return the recipe.
      */
-    public Recipe build(int duration, long power, int special, int amps) {
+    public IRecipe build() {
         if (itemsOutput != null && itemsOutput.size() > 0 && !Utils.areItemsValid(itemsOutput.toArray(new ItemStack[0]))) {
             String id = this.id == null ? "": " Recipe ID: " + this.id;
             Utils.onInvalidData("RECIPE BUILDER ERROR - OUTPUT ITEMS INVALID!" + id + " Recipe map ID:" + recipeMap.getId());
@@ -82,6 +103,14 @@ public class RecipeBuilder {
                 itemsOutput.add(i, Unifier.get(itemsOutput.get(i)));
             }
         }*/
+        if (this.amps < 1) this.amps = 1;
+        if (!recipeMapOnly){
+            ResourceLocation advancementID = advancementBuilder != null ? new ResourceLocation(id.getNamespace(), "recipes/" + id.getPath()) : null;
+            if (advancementBuilder != null){
+                this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
+            }
+            AntimatterDynamics.FINISHED_RECIPE_CONSUMER.accept(new Result(this.id, advancementID));
+        }
         if (amps < 1) amps = 1;
         Recipe recipe = new Recipe(
                 ingredientInput,
@@ -93,11 +122,6 @@ public class RecipeBuilder {
         if (chances != null) recipe.addChances(chances);
         recipe.setHidden(hidden);
         recipe.addTags(new ObjectOpenHashSet<>(tags));
-        getID();
-        if (this.id != null){
-            recipe.setId(this.id);
-            ID_MAP.put(this.id.toString(), recipe);
-        }
         return recipe;
     }
 
@@ -144,24 +168,28 @@ public class RecipeBuilder {
         this.id = new ResourceLocation(id);
     }
 
-    public Recipe add(long duration, long power, long special) {
-        return add(duration, power, special, 1);
+    public IRecipe add(String id, long duration, long power, long special) {
+        return add(id, duration, power, special, 1);
     }
 
-    public Recipe add(long duration, long power, long special, int amps) {
+    public IRecipe add(String domain, String id, long duration, long power, long special, int amps) {
         this.duration = (int) duration;
         this.power = power;
         this.special = (int) special;
         this.amps = amps;
-        return add();
+        return add(domain, id);
     }
 
-    public Recipe add(long duration, long power) {
-        return add(duration, power, this.special);
+    public IRecipe add(String id, long duration, long power, long special, int amps) {
+        return add(recipeMap.getDomain(), id, duration, power, special, amps);
     }
 
-    public Recipe add(int duration) {
-        return add(duration, 0, this.special);
+    public IRecipe add(String id, long duration, long power) {
+        return add(id, duration, power, this.special);
+    }
+
+    public IRecipe add(String id, int duration) {
+        return add(id, duration, 0, this.special);
     }
 
     public RecipeBuilder ii(Ingredient... stacks) {
@@ -221,13 +249,11 @@ public class RecipeBuilder {
     }
 
     public RecipeBuilder id(String modid, String name){
-        this.id = new ResourceLocation(modid, name);
-        return this;
+        return id(new ResourceLocation(modid, recipeMap.getId() + "/" + name));
     }
 
     public RecipeBuilder id(String name){
-        this.id = new ResourceLocation(recipeMap.getDomain(), name);
-        return this;
+        return id(recipeMap.getDomain(), name);
     }
 
     /**
@@ -243,8 +269,19 @@ public class RecipeBuilder {
         return this;
     }
 
+    public RecipeBuilder recipeMapOnly(){
+        recipeMapOnly = true;
+        return this;
+    }
+
     public RecipeBuilder tags(RecipeTag... tags) {
         this.tags = new ObjectOpenHashSet<>(tags);
+        return this;
+    }
+
+    public RecipeBuilder addCriterion(String name, CriterionTriggerInstance criterionIn) {
+        if (this.advancementBuilder == null) advancementBuilder = Advancement.Builder.advancement();
+        this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
@@ -266,5 +303,96 @@ public class RecipeBuilder {
 
     public void setMap(RecipeMap<?> recipeMap) {
         this.recipeMap = recipeMap;
+    }
+
+    private class Result implements FinishedRecipe{
+        ResourceLocation id;
+        ResourceLocation advancementID = null;
+        public Result(ResourceLocation id){
+            this.id = id;
+        }
+
+        public Result(ResourceLocation id, ResourceLocation advancementID){
+            this.id = id;
+            this.advancementID = advancementID;
+        }
+        @Override
+        public void serializeRecipeData(JsonObject json) {
+            JsonArray array = new JsonArray();
+            for (Ingredient ingredient : ingredientInput) {
+                array.add(ingredient.toJson());
+            }
+            if (!array.isEmpty()){
+                json.add("item_in", array);
+            }
+            array = new JsonArray();
+            for (ItemStack stack : itemsOutput){
+                array.add(RecipeUtil.itemstackToJson(stack));
+            }
+            if (!array.isEmpty()){
+                json.add("item_out", array);
+            }
+            array = new JsonArray();
+            for (FluidIngredient f : fluidsInput) {
+                array.add(f.toJson());
+            }
+            if (!array.isEmpty()){
+                json.add("fluid_in", array);
+            }
+            array = new JsonArray();
+            for (FluidStack stack : fluidsOutput){
+                array.add(RecipeUtil.fluidstackToJson(stack));
+            }
+            if (!array.isEmpty()){
+                json.add("fluid_out", array);
+            }
+            array = new JsonArray();
+            json.addProperty("eu", power);
+            json.addProperty("duration", duration);
+            json.addProperty("amps", amps);
+            json.addProperty("special", special);
+            if (chances != null) {
+                for (double d : chances){
+                    array.add(d);
+                }
+            }
+            if (!array.isEmpty()){
+                json.add("chances", array);
+            }
+            json.addProperty("hidden", hidden);
+            array = new JsonArray();
+            for (RecipeTag tag : tags){
+                array.add(tag.getLoc().toString());
+            }
+            if (!array.isEmpty()){
+                json.add("tags", array);
+            }
+            json.addProperty("map", recipeMap.getId());
+        }
+
+        @Override
+        public ResourceLocation getId() {
+            return id;
+        }
+
+        @Override
+        public RecipeSerializer<?> getType() {
+            return AntimatterRecipeSerializer.INSTANCE;
+        }
+
+        @Nullable
+        @Override
+        public JsonObject serializeAdvancement() {
+            if (advancementBuilder != null){
+                return advancementBuilder.serializeToJson();
+            }
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public ResourceLocation getAdvancementId() {
+            return advancementID;
+        }
     }
 }

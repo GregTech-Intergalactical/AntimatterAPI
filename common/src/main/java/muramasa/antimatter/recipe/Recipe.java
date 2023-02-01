@@ -9,7 +9,6 @@ import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
-import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -53,7 +52,7 @@ public class Recipe implements IRecipe {
         
     }
 
-    public static final RecipeType<Recipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
+    public static final RecipeType<IRecipe> RECIPE_TYPE = RecipeType.register("antimatter_machine");
 
     public Recipe(@Nonnull List<Ingredient> stacksInput, ItemStack[] stacksOutput, @Nonnull List<FluidIngredient> fluidsInput, FluidStack[] fluidsOutput, int duration, long power, int special, int amps) {
         this.itemsInput = ImmutableList.copyOf(stacksInput);
@@ -355,12 +354,9 @@ public class Recipe implements IRecipe {
         return true;
     }
 
-    @FunctionalInterface
-    public interface IRecipeValidator {
-        boolean validate(Recipe recipe, TileEntityMachine<?> machine);
-
-        default boolean tick(Recipe recipe, TileEntityMachine<?> machine) {
-            return true;
-        }
+    @Override
+    public List<IRecipeValidator> getValidators() {
+        return validators;
     }
+
 }

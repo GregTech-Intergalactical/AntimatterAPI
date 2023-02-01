@@ -11,6 +11,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.RecipeTag;
 import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
@@ -31,6 +32,8 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
 
@@ -76,6 +79,15 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
                     chances.add(el.getAsDouble());
                 }
                 r.addChances(chances.stream().mapToDouble(i -> i).toArray());
+            }
+            r.setHidden(json.get("hidden").getAsBoolean());
+            if (json.has("tags")){
+                JsonArray array = json.getAsJsonArray("tags");
+                Set<RecipeTag> tags = Streams.stream(array).map(e -> {
+                    String[] strings = e.getAsString().split(":", 1);
+                    return AntimatterAPI.get(RecipeTag.class, strings[1], strings[0]);
+                }).collect(Collectors.toSet());
+                r.addTags(tags);
             }
             r.setIds(recipeId, json.get("map").getAsString());
             return r;

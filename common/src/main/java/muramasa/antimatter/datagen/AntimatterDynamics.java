@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -18,6 +19,7 @@ import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.integration.kubejs.AMWorldEvent;
 import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.IRecipeMap;
@@ -63,6 +65,14 @@ public class AntimatterDynamics {
             .registerTypeAdapter(JCondition.class, new JCondition.Serializer())
             .create();
     private static final boolean exportPack = true;
+
+    public static final Set<ResourceLocation> RECIPE_IDS = Sets.newHashSet();
+
+    public static final Consumer<FinishedRecipe> FINISHED_RECIPE_CONSUMER = f -> {
+        if (RECIPE_IDS.add(f.getId())){
+            DynamicDataPack.addRecipe(f);
+        }
+    };
 
     private static final Object2ObjectOpenHashMap<String, List<Supplier<IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
@@ -121,23 +131,16 @@ public class AntimatterDynamics {
      *
      * @param rec consumer for IFinishedRecipe.
      */
-    public static void collectRecipes(Consumer<FinishedRecipe> rec) {
-        Set<ResourceLocation> set = Sets.newHashSet();
-        AntimatterRecipeProvider provider = new AntimatterRecipeProvider(Ref.ID, "provider");
-
+    public static void collectRecipes(AntimatterRecipeProvider provider, Consumer<FinishedRecipe> rec) {
         CraftingEvent ev = AntimatterPlatformUtils.postCraftingEvent(Antimatter.INSTANCE);
         for (ICraftingLoader loader : ev.getLoaders()) {
-            loader.loadRecipes(t -> {
-                if (set.add(t.getId())) {
-                    rec.accept(t);
-                }
-            }, provider);
+            loader.loadRecipes(rec, provider);
         }
     }
 
     public static void onRecipeManagerBuild(Consumer<FinishedRecipe> objectIn) {
         Antimatter.LOGGER.info("Antimatter recipe manager running..");
-        collectRecipes(objectIn);
+        collectRecipes(new AntimatterRecipeProvider(Ref.ID, "provider"), objectIn);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
                 if (!AntimatterAPI.isModLoaded(mod))
@@ -149,30 +152,20 @@ public class AntimatterDynamics {
     }
 
     public static void onRecipeCompile(boolean server, RecipeManager manager) {
-        RecipeBuilder.clearList();
         Antimatter.LOGGER.info("Compiling GT recipes");
         long time = System.nanoTime();
 
-        final Set<ResourceLocation> filter;
-        // Fire KubeJS event to cancel possible maps.
-        if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
-            RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(server);
-            filter = ev.forMachines;
-        } else {
-            filter = Collections.emptySet();
-        }
-        AntimatterAPI.all(IRecipeMap.class, rm -> {
-            if (filter.contains(rm.getLoc())) {
-                rm.resetCompiled();
-                return;
+        for (RecipeMap m : AntimatterAPI.all(RecipeMap.class)) {
+            if (m.getProxy() != null) {
+                List<net.minecraft.world.item.crafting.Recipe<?>> recipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) manager.getAllRecipesFor(m.getProxy().loc());
+                recipes.forEach(recipe -> m.compileRecipe(m.getProxy().handler().apply(recipe, m.RB())));
             }
-            rm.compile(manager);
-        });
+        }
 
-        List<Recipe> recipes = manager.getAllRecipesFor(Recipe.RECIPE_TYPE);
-        Map<String, List<Recipe>> map = recipes.stream().collect(Collectors.groupingBy(recipe -> recipe.mapId));
+        List<IRecipe> recipes = manager.getAllRecipesFor(Recipe.RECIPE_TYPE);
+        Map<String, List<IRecipe>> map = recipes.stream().collect(Collectors.groupingBy(IRecipe::getMapId));
 
-        for (Map.Entry<String, List<Recipe>> entry : map.entrySet()) {
+        for (Map.Entry<String, List<IRecipe>> entry : map.entrySet()) {
             String[] split = entry.getKey().split(":");
             String name;
             if (split.length == 2) {
@@ -183,8 +176,11 @@ public class AntimatterDynamics {
                 continue;
             }
             IRecipeMap rmap = AntimatterAPI.get(IRecipeMap.class, name);
-            if (rmap != null)
+            if (rmap != null){
                 entry.getValue().forEach(rmap::compileRecipe);
+                //entry.getValue().forEach(rmap::add);
+                //rmap.compile(manager);
+            }
         }
         time = System.nanoTime() - time;
         int size = AntimatterAPI.all(IRecipeMap.class).stream().mapToInt(t -> t.getRecipes(false).size()).sum();
@@ -205,8 +201,10 @@ public class AntimatterDynamics {
      * Reloads dynamic assets during resource reload.
      */
     public static void onResourceReload(boolean serverEvent) {
+        AntimatterRecipeProvider provider = new AntimatterRecipeProvider(Ref.ID, "provider");
         DynamicDataPack.clearServer();
-        collectRecipes(DynamicDataPack::addRecipe);
+        RECIPE_IDS.clear();
+        collectRecipes(provider , FINISHED_RECIPE_CONSUMER);
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {

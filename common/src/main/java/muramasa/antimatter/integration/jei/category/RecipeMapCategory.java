@@ -13,6 +13,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
@@ -24,6 +25,7 @@ import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.IRecipe;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
@@ -92,6 +94,11 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
             case LEFT -> IDrawableAnimated.StartDirection.LEFT;
             case RIGHT -> IDrawableAnimated.StartDirection.RIGHT;
         };
+    }
+
+    @Override
+    public RecipeType<IRecipe> getRecipeType() {
+        return new RecipeType<>(loc, IRecipe.class);
     }
 
     @Override

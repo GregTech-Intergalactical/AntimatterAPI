@@ -11,7 +11,7 @@ import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jeirei.renderer.InfoRenderers;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.machine.types.Machine;
-import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.RecipeUtil;
 import muramasa.antimatter.recipe.ingredient.*;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
@@ -24,13 +24,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -45,7 +43,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     private final String domainCreatedWith;
     private final B builder;
     private final Branch LOOKUP = new Branch();
-    private final List<Recipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
+    private final List<IRecipe> RECIPES_TO_COMPILE = new ObjectArrayList<>();
     private final Set<AbstractMapIngredient> ROOT = new ObjectOpenHashSet<>();
     private final List<AbstractMapIngredient> ROOT_SPECIAL = new ObjectArrayList<>();
 
@@ -181,17 +179,17 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      * @param filterHidden whether or not to filter hidden recipes.
      * @return collection of recipes.
      */
-    public Collection<Recipe> getRecipes(boolean filterHidden) {
+    public Collection<IRecipe> getRecipes(boolean filterHidden) {
         // Collectors.toSet is very important since there are duplicate recipes but they
         // point to the same memory location
         // so == works to remove them.
         // Or maybe not, I'm not sure but let's make a set anyways
-        return LOOKUP.getRecipes(filterHidden).sorted(Comparator.comparingLong(Recipe::getPower))
+        return LOOKUP.getRecipes(filterHidden).sorted(Comparator.comparingLong(IRecipe::getPower))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
-    public void add(Recipe recipe) {
+    public void add(IRecipe recipe) {
         RECIPES_TO_COMPILE.add(recipe);
     }
 
@@ -202,7 +200,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      *
      * @param recipe the recipe to add.
      */
-    public void compileRecipe(Recipe recipe) {
+    public void compileRecipe(IRecipe recipe) {
         if (recipe == null)
             return;
 
@@ -267,7 +265,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         }
     }
 
-    protected List<List<AbstractMapIngredient>> fromRecipe(Recipe r, boolean insideMap) {
+    protected List<List<AbstractMapIngredient>> fromRecipe(IRecipe r, boolean insideMap) {
         List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(
                 (r.hasInputItems() ? r.getInputItems().size() : 0)
                         + (r.hasInputFluids() ? r.getInputFluids().size() : 0));
@@ -326,7 +324,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      * @param index       where in the ingredients list we are.
      * @param count       how many added already.
      */
-    boolean recurseItemTreeAdd(@Nonnull Recipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients,
+    boolean recurseItemTreeAdd(@Nonnull IRecipe recipe, @Nonnull List<List<AbstractMapIngredient>> ingredients,
             @Nonnull Branch map, int index, int count) {
         if (count >= ingredients.size())
             return true;
@@ -335,7 +333,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         }
         // Loop through NUMBER_OF_INGREDIENTS times.
         List<AbstractMapIngredient> current = ingredients.get(index);
-        Either<List<Recipe>, Branch> r;
+        Either<List<IRecipe>, Branch> r;
         for (AbstractMapIngredient obj : current) {
             if (!obj.isSpecial()) {
                 // Either add the recipe or create a branch.
@@ -393,11 +391,11 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      * @param map   the root branch to search from.
      * @return a recipe
      */
-    Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-            @Nonnull Predicate<Recipe> canHandle) {
+    IRecipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
+            @Nonnull Predicate<IRecipe> canHandle) {
         // Try each ingredient as a starting point, adding it to the skiplist.
         for (int i = 0; i < items.size(); i++) {
-            Recipe r = recurseItemTreeFind(items, map, canHandle, i, 0, (1L << i));
+            IRecipe r = recurseItemTreeFind(items, map, canHandle, i, 0, (1L << i));
             if (r != null)
                 return r;
         }
@@ -416,18 +414,18 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
      *                  recursion.
      * @return a recipe
      */
-    Recipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-            @Nonnull Predicate<Recipe> canHandle, int index, int count, long skip) {
+    IRecipe recurseItemTreeFind(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
+            @Nonnull Predicate<IRecipe> canHandle, int index, int count, long skip) {
         if (count == items.size())
             return null;
         List<AbstractMapIngredient> wr = items.get(index);
         // Iterate over current level of nodes.
         for (AbstractMapIngredient t : wr) {
-            Either<List<Recipe>, Branch> result = map.NODES.get(t);
+            Either<List<IRecipe>, Branch> result = map.NODES.get(t);
             if (result != null) {
                 // Either return recipe or continue branch.
-                Recipe r = result.map(left -> {
-                    for (Recipe recipe : left) {
+                IRecipe r = result.map(left -> {
+                    for (IRecipe recipe : left) {
                         if (canHandle.test(recipe)) {
                             return recipe;
                         }
@@ -439,7 +437,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
             }
             if (map.SPECIAL_NODES.size() > 0) {
                 // Iterate over special nodes.
-                for (Tuple<AbstractMapIngredient, Either<Recipe, Branch>> tuple : map.SPECIAL_NODES) {
+                for (Tuple<AbstractMapIngredient, Either<IRecipe, Branch>> tuple : map.SPECIAL_NODES) {
                     AbstractMapIngredient special = tuple.getA();
                     if (special.equals(t)) {
                         return tuple.getB().map(r -> canHandle.test(r) ? r : null,
@@ -451,15 +449,15 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         return null;
     }
 
-    private Recipe callback(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
-            Predicate<Recipe> canHandle, int index, int count, long skip) {
+    private IRecipe callback(@Nonnull List<List<AbstractMapIngredient>> items, @Nonnull Branch map,
+            Predicate<IRecipe> canHandle, int index, int count, long skip) {
         // We loop around items.size() if we reach the end.
         int counter = (index + 1) % items.size();
         while (counter != index) {
             // Have we already used this ingredient? If so, skip this one.
             if (((skip & (1L << counter)) == 0)) {
                 // Recursive call.
-                Recipe found = recurseItemTreeFind(items, map, canHandle, counter, count + 1, skip | (1L << counter));
+                IRecipe found = recurseItemTreeFind(items, map, canHandle, counter, count + 1, skip | (1L << counter));
                 if (found != null)
                     return found;
             }
@@ -470,7 +468,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
 
     @Nullable
     @Override
-    public Recipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, Tier tier, @Nonnull Predicate<Recipe> canHandle) {
+    public IRecipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, Tier tier, @Nonnull Predicate<IRecipe> canHandle) {
         // First, check if items and fluids are valid.
         if (items.length + fluids.length > Long.SIZE) {
             Utils.onInvalidData(
@@ -499,11 +497,16 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
             return null;
         // Find recipe.
         // long current = System.nanoTime();
-        Recipe r = recurseItemTreeFind(list, LOOKUP, canHandle);
+        IRecipe r = recurseItemTreeFind(list, LOOKUP, canHandle);
         // Antimatter.LOGGER.info("Time to lookup (µs): " + ((System.nanoTime() -
         // current) / 1000));
 
         return r;
+    }
+
+    @Override
+    public Proxy getProxy() {
+        return PROXY;
     }
 
     public void reset() {
@@ -511,7 +514,7 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
     }
 
     public void resetCompiled() {
-        this.getRecipes(false).forEach(Recipe::invalidate);
+        this.getRecipes(false).forEach(IRecipe::invalidate);
         this.LOOKUP.clear();
         this.ROOT.clear();
         this.ROOT_SPECIAL.clear();
@@ -522,9 +525,9 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         if (RECIPES_TO_COMPILE.size() > 0) {
             // Recipes with special ingredients have to be compiled first as you cannot
             // verify that a special recipe collides with a regular, but the opposite works.
-            List<Recipe> regular = new ObjectArrayList<>(RECIPES_TO_COMPILE.size());
-            List<Recipe> special = new ObjectArrayList<>();
-            for (Recipe recipe : RECIPES_TO_COMPILE) {
+            List<IRecipe> regular = new ObjectArrayList<>(RECIPES_TO_COMPILE.size());
+            List<IRecipe> special = new ObjectArrayList<>();
+            for (IRecipe recipe : RECIPES_TO_COMPILE) {
                 if (recipe.hasSpecialIngredients()) {
                     special.add(recipe);
                 } else {
@@ -533,14 +536,6 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
             }
             special.forEach(this::compileRecipe);
             regular.forEach(this::compileRecipe);
-        }
-        if (PROXY != null) {
-            List<net.minecraft.world.item.crafting.Recipe<?>> recipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) reg.getAllRecipesFor(PROXY.loc);
-            recipes.forEach(recipe -> {
-                Recipe r = PROXY.handler.apply(recipe, RB());
-                if (r != null)
-                    compileRecipe(r);
-            });
         }
 
         this.LOOKUP.finish();
@@ -587,28 +582,14 @@ public class RecipeMap<B extends RecipeBuilder> implements ISharedAntimatterObje
         && !RecipeUtil.isCompoundIngredient(clazz));
     }
 
-    /**
-     * Static classes
-     **/
-
-    public static class Proxy {
-        public final RecipeType loc;
-        public final BiFunction<net.minecraft.world.item.crafting.Recipe<?>, RecipeBuilder, Recipe> handler;
-
-        public Proxy(RecipeType<?> loc, BiFunction<net.minecraft.world.item.crafting.Recipe<?>, RecipeBuilder, Recipe> handler) {
-            this.loc = loc;
-            this.handler = handler;
-        }
-    }
-
     protected static class Branch {
 
-        private Map<AbstractMapIngredient, Either<List<Recipe>, Branch>> NODES = new Object2ObjectOpenHashMap<>();
+        private Map<AbstractMapIngredient, Either<List<IRecipe>, Branch>> NODES = new Object2ObjectOpenHashMap<>();
 
-        private final List<Tuple<AbstractMapIngredient, Either<Recipe, Branch>>> SPECIAL_NODES = new ObjectArrayList<>();
+        private final List<Tuple<AbstractMapIngredient, Either<IRecipe, Branch>>> SPECIAL_NODES = new ObjectArrayList<>();
 
-        public Stream<Recipe> getRecipes(boolean filterHidden) {
-            Stream<Recipe> stream = NODES.values().stream()
+        public Stream<IRecipe> getRecipes(boolean filterHidden) {
+            Stream<IRecipe> stream = NODES.values().stream()
                     .flatMap(t -> t.map(Collection::stream, branch -> branch.getRecipes(filterHidden)));
             if (SPECIAL_NODES.size() > 0) {
                 stream = Stream.concat(stream, SPECIAL_NODES.stream()

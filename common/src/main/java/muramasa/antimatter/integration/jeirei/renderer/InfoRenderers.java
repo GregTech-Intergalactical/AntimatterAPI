@@ -3,7 +3,6 @@ package muramasa.antimatter.integration.jeirei.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.recipe.IRecipe;
-import muramasa.antimatter.recipe.Recipe;
 import net.minecraft.client.gui.Font;
 
 import java.util.Objects;

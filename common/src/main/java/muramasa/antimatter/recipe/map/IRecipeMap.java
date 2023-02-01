@@ -8,7 +8,7 @@ import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.integration.jeirei.renderer.InfoRenderers;
 import muramasa.antimatter.machine.Tier;
-import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.fabricmc.api.EnvType;
@@ -31,12 +31,12 @@ public interface IRecipeMap extends ISharedAntimatterObject {
     ItemStack[] EMPTY_ITEM = new ItemStack[0];
     FluidStack[] EMPTY_FLUID = new FluidStack[0];
 
-    Recipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, Tier tier, @Nonnull Predicate<Recipe> canHandle);
-    void add(Recipe recipe);
-    void compileRecipe(Recipe recipe);
+    IRecipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, Tier tier, @Nonnull Predicate<IRecipe> canHandle);
+    void add(IRecipe recipe);
+    void compileRecipe(IRecipe recipe);
     void compile(RecipeManager manager);
     void resetCompiled();
-    Collection<Recipe> getRecipes(boolean filterHidden);
+    Collection<IRecipe> getRecipes(boolean filterHidden);
     boolean acceptsItem(ItemStack item);
     boolean acceptsFluid(FluidStack fluid);
 
@@ -49,18 +49,22 @@ public interface IRecipeMap extends ISharedAntimatterObject {
         return null;
     }
 
-    default <T extends TileEntityMachine<T>> Recipe find(Holder<IItemHandler, MachineItemHandler<T>> itemHandler, Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler, Tier tier, Predicate<Recipe> validateRecipe) {
+    default <T extends TileEntityMachine<T>> IRecipe find(Holder<IItemHandler, MachineItemHandler<T>> itemHandler, Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler, Tier tier, Predicate<IRecipe> validateRecipe) {
         return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
                 fluidHandler.map(FluidHandler::getInputs).orElse(EMPTY_FLUID), tier, validateRecipe);
     }
 
-    default Recipe find(@Nonnull LazyOptional<MachineItemHandler<?>> itemHandler,
-                        @Nonnull LazyOptional<MachineFluidHandler<?>> fluidHandler, Tier tier, Predicate<Recipe> validator) {
+    default IRecipe find(@Nonnull LazyOptional<MachineItemHandler<?>> itemHandler,
+                        @Nonnull LazyOptional<MachineFluidHandler<?>> fluidHandler, Tier tier, Predicate<IRecipe> validator) {
         return find(itemHandler.map(MachineItemHandler::getInputs).orElse(EMPTY_ITEM),
                 fluidHandler.map(MachineFluidHandler::getInputs).orElse(EMPTY_FLUID), tier, validator);
     }
     @Nullable
     default GuiData getGui() {
+        return null;
+    }
+
+    default Proxy getProxy(){
         return null;
     }
 
