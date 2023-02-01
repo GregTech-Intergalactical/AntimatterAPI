@@ -17,6 +17,7 @@ import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.rei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.rei.category.RecipeMapDisplay;
 import muramasa.antimatter.integration.rei.extension.REIMaterialRecipeExtension;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
@@ -84,7 +85,14 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
             if (!registeredMachineCats.contains(tuple.map.getLoc())) {
                 RecipeMapCategory category = new RecipeMapCategory(tuple.map, tuple.gui, tuple.tier, tuple.model);
                 registry.add(category);
-                registry.addWorkstations(category.getCategoryIdentifier(), (EntryStack<?>) category.getIcon());
+                Machine<?> machine = AntimatterAPI.get(Machine.class, tuple.model.getPath(), tuple.model.getNamespace());
+                if (machine != null){
+                    machine.getTiers().forEach(t -> {
+                        registry.addWorkstations(category.getCategoryIdentifier(), EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(machine.getItem(t))));
+                    });
+                } else {
+                    registry.addWorkstations(category.getCategoryIdentifier(), (EntryStack<?>) category.getIcon());
+                }
                 registeredMachineCats.add(tuple.map.getLoc());
             }
         });
