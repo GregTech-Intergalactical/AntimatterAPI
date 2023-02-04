@@ -71,6 +71,9 @@ public class AntimatterDynamics {
     public static final Consumer<FinishedRecipe> FINISHED_RECIPE_CONSUMER = f -> {
         if (RECIPE_IDS.add(f.getId())){
             DynamicDataPack.addRecipe(f);
+        } else {
+            Antimatter.LOGGER.info("Recipe duplicated: " + f.getId());
+            Antimatter.LOGGER.info("Recipe json: " + f.serializeRecipe());
         }
     };
 
