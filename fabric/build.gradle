@@ -52,7 +52,7 @@ dependencies{
     modImplementation(include("com.github.Trinsdar.Felt-API:felt-enchanting-api:c372f99be1")) { transitive false }
     common(project(path: ":antimatter-common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":antimatter-common", configuration: "transformProductionFabric")) { transitive false }
-    modImplementation(include("com.github.Trinsdar:ARRP:0.6.7"))
+    modImplementation(include("com.github.Trinsdar:ARRP:0.6.7-hotfix"))
     modCompileOnly(include("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}")){
         transitive = false
     }
