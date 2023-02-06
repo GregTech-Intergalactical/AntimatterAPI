@@ -31,6 +31,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +45,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
 
     @Override
     public void registerCollapsibleEntries(CollapsibleEntryRegistry registry) {
+
         AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeItem<?> || t instanceof MaterialTypeBlock<?>).forEach(t -> {
             if (t.get() instanceof MaterialTypeBlock.IOreGetter getter){
                 AntimatterAPI.all(StoneType.class, s -> {
@@ -85,7 +87,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
             if (!registeredMachineCats.contains(tuple.map.getLoc())) {
                 RecipeMapCategory category = new RecipeMapCategory(tuple.map, tuple.gui, tuple.tier, tuple.model);
                 registry.add(category);
-                Machine<?> machine = AntimatterAPI.get(Machine.class, tuple.model.getPath(), tuple.model.getNamespace());
+                Machine<?> machine = tuple.model == null ? null : AntimatterAPI.get(Machine.class, tuple.model.getPath(), tuple.model.getNamespace());
                 if (machine != null){
                     machine.getTiers().forEach(t -> {
                         registry.addWorkstations(category.getCategoryIdentifier(), EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(machine.getItem(t))));
