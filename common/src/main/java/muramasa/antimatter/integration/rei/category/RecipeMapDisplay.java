@@ -12,6 +12,7 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
@@ -40,7 +41,7 @@ public class RecipeMapDisplay implements Display {
     private final IRecipe recipe;
 
     public RecipeMapDisplay(IRecipe recipe){
-        this.id = CategoryIdentifier.of(recipe.getMapId());
+        this.id = CategoryIdentifier.of(Ref.SHARED_ID, recipe.getMapId());
         this.recipe = recipe;
         List<EntryIngredient> fluidInputs = recipe.getInputFluids().stream().map(fluidIngredient -> Arrays.stream(fluidIngredient.getStacks()).map(REIUtils::toREIFLuidStack).toList()).map(l -> EntryIngredients.of(VanillaEntryTypes.FLUID, l)).toList();
         List<EntryIngredient> itemInputs = createInputEntries(recipe.getInputItems(), recipe);
