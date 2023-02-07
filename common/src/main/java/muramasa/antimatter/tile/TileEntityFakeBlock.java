@@ -119,7 +119,11 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     public void load(CompoundTag nbt) {
         super.load(nbt);
         this.state = NbtUtils.readBlockState(nbt.getCompound("B"));
-        this.facing = Direction.from3DDataValue(nbt.getInt("F"));
+        if (nbt.contains("F")) {
+            this.facing = Direction.from3DDataValue(nbt.getInt("F"));
+        } else {
+            this.facing = Direction.NORTH;
+        }
         if (level != null && level.isClientSide) {
             Utils.markTileForRenderUpdate(this);
         }
@@ -159,7 +163,9 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
 
     private void writeTag(CompoundTag compound, boolean send) {
         compound.put("B", NbtUtils.writeBlockState(state));
-        compound.putInt("F", facing.ordinal());
+        if (facing != null) {
+            compound.putInt("F", facing.ordinal());
+        }
         CompoundTag n = new CompoundTag();
         this.covers.forEach((k, v) -> CoverFactory.writeCover(n, v));
         compound.put("C", n);
