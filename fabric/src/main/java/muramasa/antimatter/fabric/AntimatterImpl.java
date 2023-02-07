@@ -70,6 +70,7 @@ public class AntimatterImpl implements ModInitializer {
             RRPCallback.BEFORE_USER.register(resources -> AntimatterDynamics.addDataPacks(resources::add));
             Antimatter.LOGGER.info("initializing");
             ServerLifecycleEvents.SERVER_STARTING.register(server -> Antimatter.LOGGER.info("server starting"));
+            AntimatterDynamics.setInitialized();
         }
     }
 

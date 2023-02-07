@@ -66,6 +66,8 @@ public class AntimatterDynamics {
             .create();
     private static final boolean exportPack = true;
 
+    private static boolean initialized = false;
+
     public static final Set<ResourceLocation> RECIPE_IDS = Sets.newHashSet();
 
     public static final Consumer<FinishedRecipe> FINISHED_RECIPE_CONSUMER = f -> {
@@ -83,8 +85,14 @@ public class AntimatterDynamics {
         function.accept(DYNAMIC_RESOURCE_PACK);
     }
 
+    public static void setInitialized(){
+        initialized = true;
+    }
+
     public static void addDataPacks(Consumer<PackResources> function){
-        AntimatterDynamics.onResourceReload(AntimatterAPI.getSIDE().isServer());
+        if (initialized) {
+            AntimatterDynamics.onResourceReload(AntimatterAPI.getSIDE().isServer());
+        }
         function.accept(RUNTIME_DATA_PACK);
         function.accept(new DynamicDataPack("antimatter:recipes", AntimatterAPI.all(IAntimatterRegistrar.class).stream().map(IAntimatterRegistrar::getDomain).collect(Collectors.toSet())));
 

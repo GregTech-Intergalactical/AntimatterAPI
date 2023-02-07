@@ -81,6 +81,7 @@ public class AntimatterImpl {
 
     private void commonSetup(final FMLCommonSetupEvent e) {
         CommonHandler.setup();
+        AntimatterDynamics.setInitialized();
         LOGGER.info("AntimatterAPI Data Processing has Finished. All Data Objects can now be Modified!");
         e.enqueueWork(() -> AntimatterAPI.getCommonDeferredQueue().ifPresent(t -> {
             for (Runnable r : t) {

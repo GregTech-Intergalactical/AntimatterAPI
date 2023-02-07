@@ -113,7 +113,7 @@ public class CommonEvents {
      */
     public static void tagsEvent() {
         if (AntimatterAPI.getSIDE() == Side.CLIENT && !ClientHandler.isLocal()) {
-            AntimatterDynamics.onResourceReload(false);
+            //AntimatterDynamics.onResourceReload(false);
             AntimatterDynamics.onRecipeCompile(true, Minecraft.getInstance().getConnection().getRecipeManager());
         }
     }
