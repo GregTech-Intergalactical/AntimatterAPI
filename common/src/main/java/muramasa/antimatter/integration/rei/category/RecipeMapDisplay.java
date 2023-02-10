@@ -49,8 +49,9 @@ public class RecipeMapDisplay implements Display {
         this.input = new ArrayList<>(itemInputs);
         input.addAll(fluidInputs);
         ImmutableList.Builder<EntryIngredient> builder = ImmutableList.builder();
-        if (recipe.getOutputItems(false) != null){
-            builder.addAll(createOutputEntries(Arrays.asList(recipe.getOutputItems(false)), recipe));
+        ItemStack[] stacks = recipe.getOutputItems(false);
+        if (stacks != null){
+            builder.addAll(createOutputEntries(Arrays.asList(stacks), recipe));
         }
         if (recipe.getOutputFluids() != null){
             builder.addAll(Arrays.stream(recipe.getOutputFluids()).map(REIUtils::toREIFLuidStack).map(EntryIngredients::of).toList());

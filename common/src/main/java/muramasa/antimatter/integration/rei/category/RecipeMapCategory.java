@@ -123,7 +123,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
     private List<Widget> setupSlots(RecipeMapDisplay display, Rectangle bounds){
         List<Widget> widgets = new ArrayList<>();
         List<List<ItemStack>> inputs = display.getRecipe().hasInputItems() ? display.getRecipe().getInputItems().stream().map(t -> Arrays.asList(t.getItems())).toList() : Collections.emptyList();
-        List<ItemStack> outputs = display.getRecipe().hasOutputItems() ? Arrays.stream(display.getRecipe().getOutputItems()).toList() : Collections.emptyList();
+        List<ItemStack> outputs = display.getRecipe().hasOutputItems() ? Arrays.stream(display.getRecipe().getOutputItems(false)).toList() : Collections.emptyList();
         List<SlotData<?>> slots;
         int inputFluidOffset = 0, outputFluidOffset = 0, slotCount;
         int offsetX = gui.getArea().x - 2, offsetY = gui.getArea().y - 2;
