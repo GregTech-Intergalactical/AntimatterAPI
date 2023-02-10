@@ -34,7 +34,7 @@ public class KubeJSRecipe extends RecipeJS {
     private int special;
     private long power;
     private int amps;
-    private final List<Integer> chances = new ObjectArrayList<>();
+    private final List<Double> chances = new ObjectArrayList<>();
     private String map;
 
     @Override
@@ -71,7 +71,7 @@ public class KubeJSRecipe extends RecipeJS {
             special = ((Number) listJS.get(8)).intValue();
             if (listJS.size() > 9) {
                 for (Object chance : ListJS.orSelf(listJS.get(9))) {
-                    this.chances.add(((Number) chance).intValue());
+                    this.chances.add(((Number) chance).doubleValue());
                 }
             }
         } else {
@@ -104,7 +104,7 @@ public class KubeJSRecipe extends RecipeJS {
         this.map = GsonHelper.getAsString(json, "map");
 
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "chances", new JsonArray())) {
-            this.chances.add(e.getAsInt());
+            this.chances.add(e.getAsDouble());
         }
     }
 

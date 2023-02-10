@@ -32,6 +32,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
@@ -60,7 +61,7 @@ public class RecipeMapDisplay implements Display {
     public static List<EntryIngredient> createOutputEntries(List<ItemStack> input, IRecipe recipe) {
         AtomicInteger atomicInteger = new AtomicInteger(0);
         return input.stream().map(i -> {
-            double chance = recipe.hasChances() ? recipe.getChances()[atomicInteger.getAndIncrement()] : 1.0;
+            double chance = recipe.hasChances() ? Objects.requireNonNull(recipe.getChances())[atomicInteger.getAndIncrement()] : 1.0;
             return EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getProbabilitySetting(chance));
         }).map(EntryIngredient::of).toList();
     }
