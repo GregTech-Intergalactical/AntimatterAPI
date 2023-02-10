@@ -72,6 +72,22 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
                 String forgeName = String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId());
                 this.copy(getForgelikeBlockTag(forgeName), getForgelikeItemTag(forgeName));
             });
+            this.tag(TagUtils.getForgelikeItemTag("stone_ores/coal")).add(Items.COAL_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("deepslate_ores/coal")).add(Items.DEEPSLATE_COAL_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("stone_ores/iron")).add(Items.IRON_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("deepslate_ores/iron")).add(Items.DEEPSLATE_IRON_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("stone_ores/copper")).add(Items.COPPER_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("deepslate_ores/copper")).add(Items.DEEPSLATE_COPPER_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("stone_ores/gold")).add(Items.GOLD_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("deepslate_ores/gold")).add(Items.DEEPSLATE_GOLD_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("stone_ores/redstone")).add(Items.REDSTONE_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("deepslate_ores/redstone")).add(Items.DEEPSLATE_REDSTONE_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("stone_ores/emerald")).add(Items.EMERALD_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("deepslate_ores/emerald")).add(Items.DEEPSLATE_EMERALD_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("stone_ores/lapis")).add(Items.LAPIS_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("deepslate_ores/lapis")).add(Items.DEEPSLATE_LAPIS_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("stone_ores/diamond")).add(Items.DIAMOND_ORE);
+            this.tag(TagUtils.getForgelikeItemTag("deepslate_ores/diamond")).add(Items.DEEPSLATE_DIAMOND_ORE);
             AntimatterAPI.all(BlockStone.class, s -> {
                 String id = "blocks/".concat(s.getId());
                 if (s.getSuffix().isEmpty()) {
