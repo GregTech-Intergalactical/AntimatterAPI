@@ -98,6 +98,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                 registeredMachineCats.add(tuple.map.getLoc());
             }
         });
+        REIUtils.EXTRA_CATEGORIES.forEach(c -> c.accept(registry));
     }
 
     @Override
@@ -109,6 +110,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                 registry.registerRecipeFiller(net.minecraft.world.item.crafting.Recipe.class, m.getProxy().loc(), r -> new RecipeMapDisplay(m.getProxy().handler().apply(r, m.RB())));
             }
         });
+        REIUtils.EXTRA_DISPLAYS.forEach(c -> c.accept(registry));
     }
 
     @Override
