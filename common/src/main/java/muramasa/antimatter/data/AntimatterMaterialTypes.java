@@ -47,6 +47,10 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> GEM = new MaterialTypeItem<>("gem", 2, true, Ref.U);
     public static MaterialTypeItem<?> GEM_BRITTLE = new MaterialTypeItem<>("gem_brittle", 2, true, Ref.U);
     public static MaterialTypeItem<?> GEM_POLISHED = new MaterialTypeItem<>("gem_polished", 2, true, Ref.U);
+    public static MaterialTypeItem<?> GEM_EXQUISITE = new MaterialTypeItem<>("gem_exquisite", 2, true, Ref.U);
+    public static MaterialTypeItem<?> GEM_FLAWLESS = new MaterialTypeItem<>("gem_flawless", 2, true, Ref.U);
+    public static MaterialTypeItem<?> GEM_FLAWED = new MaterialTypeItem<>("gem_flawed", 2, true, Ref.U);
+    public static MaterialTypeItem<?> GEM_CHIPPED = new MaterialTypeItem<>("gem_chipped", 2, true, Ref.U);
     public static MaterialTypeItem<?> LENS = new MaterialTypeItem<>("lens", 2, true, Ref.U * 3 / 4);
     public static MaterialTypeItem<?> PLATE = new MaterialTypeItem<>("plate", 2, true, Ref.U, (a, b, c) -> CoverFactory.builder((u, v, t, w) -> new CoverPlate(u, v, t, w, b, c)).item((u, v) -> new CoverMaterialItem(u.getDomain(), b, u, c)).build(Ref.ID, "plate_" + c.getId()));
     public static MaterialTypeItem<?> PLATE_DENSE = new MaterialTypeItem<>("plate_dense", 2, true, Ref.U * 9);
