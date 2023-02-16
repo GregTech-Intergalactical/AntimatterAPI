@@ -114,14 +114,14 @@ public class MaterialEvent {
         asDust(tags);
         flags(AntimatterMaterialTypes.GEM, AntimatterMaterialTypes.BLOCK);
         if (transparent) {
-            flags(MaterialTags.TRANSPARENT, AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.LENS, AntimatterMaterialTypes.GEM_BRITTLE, AntimatterMaterialTypes.GEM_POLISHED);
+            flags(MaterialTags.TRANSPARENT, AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.LENS, AntimatterMaterialTypes.GEM_BRITTLE, AntimatterMaterialTypes.GEM_POLISHED, AntimatterMaterialTypes.GEM_FLAWED, AntimatterMaterialTypes.GEM_FLAWLESS, AntimatterMaterialTypes.GEM_EXQUISITE);
         }
         return this;
     }
 
     public MaterialEvent asGem(boolean transparent, IMaterialTag... tags) {
         asGemBasic(transparent, tags);
-        if (!transparent) flags(AntimatterMaterialTypes.GEM_BRITTLE, AntimatterMaterialTypes.GEM_POLISHED);
+        if (!transparent) flags(AntimatterMaterialTypes.GEM_BRITTLE, AntimatterMaterialTypes.GEM_POLISHED, AntimatterMaterialTypes.GEM_FLAWED, AntimatterMaterialTypes.GEM_FLAWLESS, AntimatterMaterialTypes.GEM_EXQUISITE);
         return this;
     }
 
