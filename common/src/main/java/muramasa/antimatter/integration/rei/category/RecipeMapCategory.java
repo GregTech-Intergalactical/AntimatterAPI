@@ -23,6 +23,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.BarDir;
 import muramasa.antimatter.gui.GuiData;
 import muramasa.antimatter.gui.SlotData;
@@ -90,7 +91,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
 
     @Override
     public int getDisplayHeight() {
-        return gui.getArea().w + 4;
+        return gui.getArea().w + 4 + (10 * infoRenderer.getRows());
     }
 
     @Override
@@ -102,9 +103,9 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
     public List<Widget> setupDisplay(RecipeMapDisplay display, Rectangle bounds) {
         List<Widget> widgets = new ArrayList<>();
         widgets.add(Widgets.createRecipeBase(bounds));
-        widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
+        /*widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
             drawTexture(matrices, gui.getTexture(guiTier, "machine"), bounds.x + 3, bounds.y + 3, gui.getArea().x + 1, gui.getArea().y + 1, bounds.getWidth() - 6, bounds.getHeight() - 6);
-        }));
+        }));*/
         widgets.addAll(setupSlots(display, bounds));
         double recipeMillis = (double) display.getRecipe().getDuration() * 50;
         if (recipeMillis < 250)
@@ -115,12 +116,13 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                     (float) (System.currentTimeMillis() / finalRecipeMillis % 1.0));
         }));
         widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-            infoRenderer.render(matrices, display.getRecipe(), Minecraft.getInstance().font, bounds.x + 1, bounds.y + bounds.getHeight() - 3);
+            infoRenderer.render(matrices, display.getRecipe(), Minecraft.getInstance().font, bounds.x + 1, bounds.y + bounds.getHeight() - 3 -(infoRenderer.getRows() * 10));
         }));
         return widgets;
     }
 
     private List<Widget> setupSlots(RecipeMapDisplay display, Rectangle bounds){
+        ResourceLocation slotTextures = new ResourceLocation(Ref.ID, "textures/gui/gui_parts.png");
         List<Widget> widgets = new ArrayList<>();
         List<List<ItemStack>> inputs = display.getRecipe().hasInputItems() ? display.getRecipe().getInputItems().stream().map(t -> Arrays.asList(t.getItems())).toList() : Collections.emptyList();
         List<ItemStack> outputs = display.getRecipe().hasOutputItems() ? Arrays.stream(display.getRecipe().getOutputItems(false)).toList() : Collections.emptyList();
@@ -128,70 +130,105 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
         int inputFluidOffset = 0, outputFluidOffset = 0, slotCount;
         int offsetX = gui.getArea().x - 2, offsetY = gui.getArea().y - 2;
         int inputItems = 0, inputFluids = 0;
-        if (display.getRecipe().hasInputItems()) {
+        {
             slots = gui.getSlots().getSlots(SlotType.IT_IN, guiTier);
             slotCount = slots.size();
+            List<SlotData<?>> finalSlots = slots;
             if (slotCount > 0) {
-                int s = 0;
-                if (inputs.size() > 0) {
-                    slotCount = Math.min(slotCount, inputs.size());
-                    inputFluidOffset = slotCount;
-                    for (; s < slotCount; s++) {
-                        Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
-                        Slot slot = Widgets.createSlot(point).disableBackground();
-                        List<ItemStack> input = inputs.get(s);
-                        if (input.size() == 0) {
-                            slot.entries(EntryIngredients.of(Data.DEBUG_SCANNER));
-                        } else {
-                            slot.entries(getInput(display, s));
-                            inputItems++;
+                for (int s = 0; s < slotCount; s++){
+                    int finalSlot = s;
+                    widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
+                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 0, 18, 18);
+                    }));
+                    if (inputs.size() > 0){
+                        if (s < inputs.size()){
+                            Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
+                            Slot slot = Widgets.createSlot(point).disableBackground();
+                            List<ItemStack> input = inputs.get(s);
+                            if (input.size() == 0) {
+                                slot.entries(EntryIngredients.of(Data.DEBUG_SCANNER));
+                            } else {
+                                slot.entries(getInput(display, s));
+                                inputItems++;
+                            }
+                            widgets.add(slot.markInput());
                         }
-                        widgets.add(slot.markInput());
+                    }
+                }
+                inputFluidOffset = Math.min(slotCount, inputs.size());
+            }
+        }
+        {
+            slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
+            slotCount = slots.size();
+            List<SlotData<?>> finalSlots = slots;
+            if (slotCount > 0) {
+                for (int s = 0; s < slotCount; s++){
+                    int finalSlot = s;
+                    widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
+                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 0, 18, 18);
+                    }));
+                    if (outputs.size() > 0){
+                        if (s < outputs.size()){
+                            Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
+                            widgets.add(Widgets.createSlot(point).entries(getOutput(display, s)).disableBackground().markOutput());
+                        }
+                    }
+                }
+                outputFluidOffset = Math.min(slotCount, outputs.size());
+            }
+        }
+
+        {
+            slots = gui.getSlots().getSlots(SlotType.FL_IN, guiTier);
+            List<SlotData<?>> finalSlots = slots;
+            slotCount = slots.size();
+            if (slotCount > 0) {
+                List<FluidIngredient> fluids = display.getRecipe().hasInputFluids() ? display.getRecipe().getInputFluids() : List.of();
+                for (int s = 0; s < slotCount; s++){
+                    int finalSlot = s;
+                    widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
+                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 18, 0, 18, 18);
+                    }));
+                    if (fluids.size() > 0){
+                        if (s < fluids.size()){
+                            Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
+                            widgets.add(Widgets.createSlot(point).entries(getInput(display, s + inputFluidOffset)).disableBackground().markInput());
+                            /*slot.setFluidRenderer((int)fluids.get(s).getAmount(), true, 16, 16);
+                            slot.addTooltipCallback((ing, list) -> {
+                            if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
+                                list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
+                            });*/
+                            inputFluids++;
+                        }
                     }
                 }
             }
         }
-        if (display.getRecipe().hasOutputItems()) {
-            slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
-            slotCount = slots.size();
-            if (slotCount > 0) {
-                slotCount = Math.min(slotCount, outputs.size());
-                outputFluidOffset = slotCount;
-                for (int s = 0; s < slotCount; s++) {
-                    Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
-                    widgets.add(Widgets.createSlot(point).entries(getOutput(display, s)).disableBackground().markOutput());
-                }
-            }
-        }
 
-        if (display.getRecipe().hasInputFluids()) {
-            slots = gui.getSlots().getSlots(SlotType.FL_IN, guiTier);
-            slotCount = slots.size();
-            if (slotCount > 0) {
-                List<FluidIngredient> fluids = display.getRecipe().getInputFluids();
-                slotCount = Math.min(slotCount, fluids.size());
-                for (int s = 0; s < slotCount; s++) {
-                    Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
-                    widgets.add(Widgets.createSlot(point).entries(getInput(display, s + inputFluidOffset)).disableBackground().markInput());
-                    /*slot.setFluidRenderer((int)fluids.get(s).getAmount(), true, 16, 16);
-                    slot.addTooltipCallback((ing, list) -> {
-                        if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
-                            list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
-                    });*/
-                    inputFluids++;
-                }
-            }
-        }
-        if (display.getRecipe().hasOutputFluids()) {
+        {
             slots = gui.getSlots().getSlots(SlotType.FL_OUT, guiTier);
+            List<SlotData<?>> finalSlots = slots;
             slotCount = slots.size();
             if (slotCount > 0) {
-                FluidStack[] fluids = display.getRecipe().getOutputFluids();
-                slotCount = Math.min(slotCount, fluids.length);
-                for (int s = 0; s < slotCount; s++) {
-                    Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
-                    widgets.add(Widgets.createSlot(point).entries(getOutput(display, s + outputFluidOffset)).disableBackground().markOutput());
-                    //slot.setFluidRenderer(fluids[s].getAmount(), true, 16, 16);
+                FluidStack[] fluids = display.getRecipe().hasOutputFluids() ? display.getRecipe().getOutputFluids() : null;
+                for (int s = 0; s < slotCount; s++){
+                    int finalSlot = s;
+                    widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
+                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 36, 0, 18, 18);
+                    }));
+                    if (fluids != null && fluids.length > 0){
+                        if (s < fluids.length){
+                            Point point = new Point(slots.get(s).getX() - (offsetX) + bounds.x, slots.get(s).getY() - (offsetY) + bounds.y);
+                            widgets.add(Widgets.createSlot(point).entries(getOutput(display, s + outputFluidOffset)).disableBackground().markOutput());
+                            /*slot.setFluidRenderer((int)fluids.get(s).getAmount(), true, 16, 16);
+                            slot.addTooltipCallback((ing, list) -> {
+                            if (Utils.hasNoConsumeTag(AntimatterJEIPlugin.getIngredient(ing.getDisplayedIngredient().get())))
+                                list.add(new TextComponent("Does not get consumed in the process").withStyle(ChatFormatting.WHITE));
+                            });*/
+                            inputFluids++;
+                        }
+                    }
                 }
             }
         }
@@ -238,6 +275,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 length = progressTime;
             }
         }
+        drawTexture(matrices, params.texture, realX,  realY, params.x(), params.y(), params.length, params.width);
         if (percent > 0) {
             drawTexture(matrices, params.texture, realX,  realY, xLocation, yLocation, length, width);
         }

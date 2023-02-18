@@ -7,6 +7,10 @@ import net.minecraft.client.gui.Font;
 public interface IRecipeInfoRenderer {
     void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY);
 
+    default int getRows(){
+        return 0;
+    }
+
     default void renderString(PoseStack stack, String string, Font render, float x, float y, int guiOffsetX, int guiOffsetY) {
         renderString(stack, string, render, x, y, 0xFFFFFF, guiOffsetX, guiOffsetY);
     }

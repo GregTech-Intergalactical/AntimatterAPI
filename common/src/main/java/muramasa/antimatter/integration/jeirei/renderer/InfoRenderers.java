@@ -28,6 +28,11 @@ public class InfoRenderers {
             renderString(stack, temperature, fontRenderer, 5, 20, guiOffsetX, guiOffsetY);
             renderString(stack, total, fontRenderer, 5, 30, guiOffsetX, guiOffsetY);
         }
+
+        @Override
+        public int getRows() {
+            return 5;
+        }
     };
     public static final IRecipeInfoRenderer EMPTY_RENDERER = (stack, recipe, fontRenderer, guiOffsetX, guiOffsetY) -> {
 
@@ -48,6 +53,11 @@ public class InfoRenderers {
             renderString(stack, amps, fontRenderer, 5, 20, guiOffsetX, guiOffsetY);
             renderString(stack, total, fontRenderer, 5, 30, guiOffsetX, guiOffsetY);
         }
+
+        @Override
+        public int getRows() {
+            return 5;
+        }
     };
 
     public static final IRecipeInfoRenderer FUEL_RENDERER = new IRecipeInfoRenderer() {
@@ -57,6 +67,11 @@ public class InfoRenderers {
             String fuelPerB = "Fuel content(bb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids()).get(0).getAmount()) * 1000;
             renderString(stack, fuelPerMb, fontRenderer, 5, 5, guiOffsetX, guiOffsetY);
             renderString(stack, fuelPerB, fontRenderer, 5, 15, guiOffsetX, guiOffsetY);
+        }
+
+        @Override
+        public int getRows() {
+            return 2;
         }
     };
 
@@ -69,6 +84,11 @@ public class InfoRenderers {
             renderString(stack, power, fontRenderer, 5, 5, guiOffsetX, guiOffsetY);
             renderString(stack, euT + recipe.getPower() + "mb/t", fontRenderer, 5, 15, guiOffsetX, guiOffsetY);
             renderString(stack, total, fontRenderer, 5, 25, guiOffsetX, guiOffsetY);
+        }
+
+        @Override
+        public int getRows() {
+            return 3;
         }
     };
 }
