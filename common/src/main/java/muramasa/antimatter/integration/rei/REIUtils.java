@@ -2,14 +2,21 @@ package muramasa.antimatter.integration.rei;
 
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
+import me.shedaniel.rei.api.client.view.ViewSearchBuilder;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 public class REIUtils {
     static List<Consumer<CategoryRegistry>> EXTRA_CATEGORIES = new ArrayList<>();
@@ -42,6 +49,11 @@ public class REIUtils {
     }
 
     public static void showCategory(Machine<?>... types) {
-
+        List<CategoryIdentifier<?>> list = new LinkedList<>();
+        for (int i = 0; i < types.length; i++) {
+            if (!types[i].has(RECIPE)) continue;
+            list.add(CategoryIdentifier.of(types[i].getRecipeMap().getLoc()));
+        }
+        ViewSearchBuilder.builder().addCategories(list).open();
     }
 }
