@@ -4,6 +4,8 @@ import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
+import me.shedaniel.rei.api.common.entry.EntryStack;
+import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -45,7 +47,9 @@ public class REIUtils {
     }
 
     public static void uses(FluidStack val, boolean USE) {
-
+        EntryStack<?> stack = EntryStack.of(VanillaEntryTypes.FLUID, toREIFLuidStack(val));
+        if (USE) ViewSearchBuilder.builder().addUsagesFor(stack).open();
+        else ViewSearchBuilder.builder().addRecipesFor(stack).open();
     }
 
     public static void showCategory(Machine<?>... types) {
