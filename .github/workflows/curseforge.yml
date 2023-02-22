@@ -14,7 +14,7 @@ jobs:
       with:
           # You don't need this section if you don't want to publish
           # your assets to CurseForge
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          curseforge-token: ${{ secrets.CURSEFORGE_API_TOKEN }}
           version-type: beta
           changelog-file: CHANGELOG.md
           files-primary: forge/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar
@@ -24,7 +24,7 @@ jobs:
       with:
         # You don't need this section if you don't want to publish
         # your assets to CurseForge
-        curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+        curseforge-token: ${{ secrets.CURSEFORGE_API_TOKEN }}
         version-type: beta
         changelog-file: CHANGELOG.md
         files-primary: fabric/build/libs/!(*-@(dev-shadow|sources|javadoc)).jar
