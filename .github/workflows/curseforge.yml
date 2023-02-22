@@ -37,6 +37,7 @@ jobs:
         with:
           # You don't need this section if you don't want to publish
           # your assets to CurseForge
+          curseforge-id: 462713
           curseforge-token: ${{ secrets.CURSEFORGE_API_TOKEN }}
           version-type: beta
           changelog-file: CHANGELOG.md
@@ -47,6 +48,7 @@ jobs:
         with:
           # You don't need this section if you don't want to publish
           # your assets to CurseForge
+          curseforge-id: 462713
           curseforge-token: ${{ secrets.CURSEFORGE_API_TOKEN }}
           version-type: beta
           changelog-file: CHANGELOG.md

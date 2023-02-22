@@ -12,8 +12,6 @@ displayURL="https://github.com/GregTech-Intergalactical/AntimatterAPI"
 credits="mitchej123, e99999, qubka, Vliro, repolainen, Trinsdar for general implementations/fixes"
 authors="Muramasa, Rongmario"
 description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
-[custom.mc-publish]
-curseforge=462713
 [[dependencies.antimatter]]
     modId="forge"
     mandatory=true
@@ -26,9 +24,6 @@ curseforge=462713
     versionRange="[0.0.4,)"
     ordering="AFTER"
     side="BOTH"
-    [dependencies.antimatter.custom.mc-publish]
-        ignore=false
-        curseforge="tesseractapi"
 [[dependencies.antimatter]]
     modId="minecraft"
     mandatory=true

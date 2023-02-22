@@ -56,10 +56,5 @@
     "top_plugin": [
       "muramasa.antimatter.integration.top.fabric.TheOneProbePluginFabric"
     ]
-  },
-  "custom": {
-    "mc-publish": {
-      "curseforge": 462713
-    }
   }
 }
