@@ -16,7 +16,7 @@ public class MaterialStack {
     public String toString() {
         String string = "";
         if (m.getChemicalFormula() == null || m.getChemicalFormula().isEmpty()) {
-            string += m.getDisplayName() == null ? "|?|" : " |" + m.getDisplayName() + "| ";
+            string += m.getDisplayName() == null ? "|?|" : " |" + m.getDisplayName().getString() + "| ";
         } else if (m.getProcessInto().size() > 1) {
             string += '(' + m.getChemicalFormula() + ')';
         } else {
