@@ -19,6 +19,7 @@ import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.integration.kubejs.AMWorldEvent;
 import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
@@ -82,6 +83,9 @@ public class AntimatterDynamics {
     private static final Object2ObjectOpenHashMap<String, List<Supplier<IAntimatterProvider>>> PROVIDERS = new Object2ObjectOpenHashMap<>();
 
     public static void addResourcePacks(Consumer<PackResources> function){
+        if (initialized){
+            AntimatterAPI.all(Material.class, Material::setChemicalFormula);
+        }
         function.accept(DYNAMIC_RESOURCE_PACK);
     }
 

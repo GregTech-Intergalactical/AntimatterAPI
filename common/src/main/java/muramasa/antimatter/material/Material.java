@@ -117,7 +117,7 @@ public class Material implements ISharedAntimatterObject {
 
     public void setChemicalFormula() {
         if (!enabled) return;
-        if (chemicalFormula != null) return;
+        if (chemicalFormula != null && element != null) return;
         if (element != null) chemicalFormula = element.getElement();
         else if (!MaterialTags.PROCESS_INTO.getList(this).isEmpty()) {
             MaterialTags.PROCESS_INTO.getList(this).forEach(t -> t.m.setChemicalFormula());
