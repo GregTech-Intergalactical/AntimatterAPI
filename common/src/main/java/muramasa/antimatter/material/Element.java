@@ -140,7 +140,7 @@ public class Element implements IAntimatterObject {
     public static Element Pa232 = new Element(91, 141, 0, -1,1,15370, null, "protactinium_232", "Pa232", true);
     public static Element Pa233 = new Element(91, 142, 0, -1,1,15370, null, "protactinium_233", "Pa233", true);
     public static Element Pa234 = new Element(91, 143, 0, -1,1,15370, null, "protactinium_234", "Pa234", true);
-    public static Element U237 = new Element(92, 237, 0, -1,275,19160, null, "uranium_237", "U237", true);
+    public static Element U237 = new Element(92, 145, 0, -1,275,19160, null, "uranium_237", "U237", true);
     public static Element U238 = new Element(92, 146, 0, -1,275,19160, null, "uranium_238", "U238", true);
     public static Element U239 = new Element(92, 147, 0, -1,275,19160, null, "uranium_239", "U239", true);
     public static Element Np236 = new Element(93, 143, 0, -1,1,20450, null, "neptunium_236", "Np236", true);
