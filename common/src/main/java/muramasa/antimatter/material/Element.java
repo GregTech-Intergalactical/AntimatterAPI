@@ -223,8 +223,8 @@ public class Element implements IAntimatterObject {
     public static Element Fm258 = new Element(100, 158, 0,1,1,"fermium_258", "Fm258",1,"Cf254",null,null,true);
     public static Element Fm259 = new Element(100, 159, 0,1,1,"fermium_259", "Fm259",2,"Cf255",null,null,true);
     public static Element Fm260 = new Element(100, 160, 0,1,1,"fermium_260", "Fm260",1,null,null,"Md260",true);
-    public static Element Md259 = new Element(101, 156, 0,1,1,"mendelevium_259", "Md259",5760,"Es255",null,null,true);
-    public static Element Md260 = new Element(101, 157, 0,1,1,"mendelevium_260", "Md260",2419200,"Es256",null,null,true);
+    public static Element Md259 = new Element(101, 158, 0,1,1,"mendelevium_259", "Md259",5760,"Es255",null,null,true);
+    public static Element Md260 = new Element(101, 159, 0,1,1,"mendelevium_260", "Md260",2419200,"Es256",null,null,true);
     public final int protons, neutrons, additionalMass, hardness, density;
     public final long halfLifeSeconds;
     public final String id, element, decayIntoA, decayIntoBP, decayIntoBM;
