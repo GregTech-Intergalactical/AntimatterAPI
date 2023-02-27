@@ -91,7 +91,7 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asOre(boolean small, IMaterialTag... tags) {
-        asDust(AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_CENTRIFUGED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.RAW_ORE_BLOCK);
+        asDust(AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.RAW_ORE_BLOCK);
         if (small) flags(AntimatterMaterialTypes.ORE_SMALL);
         flags(tags);
         return this;
@@ -105,7 +105,7 @@ public class MaterialEvent {
 
     public MaterialEvent asOreStone(IMaterialTag... tags) {
         asOre(tags);
-        asDust(AntimatterMaterialTypes.ORE_STONE, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_CENTRIFUGED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
+        asDust(AntimatterMaterialTypes.ORE_STONE, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
         flags(tags);
         return this;
     }

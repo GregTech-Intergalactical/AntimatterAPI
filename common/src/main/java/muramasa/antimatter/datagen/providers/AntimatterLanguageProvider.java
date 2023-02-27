@@ -180,9 +180,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (t == AntimatterMaterialTypes.CRUSHED)
                     add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Crushed Ores"));
                 else if (t == AntimatterMaterialTypes.CRUSHED_PURIFIED)
-                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Purified Crushed Ores"));
-                else if (t == AntimatterMaterialTypes.CRUSHED_CENTRIFUGED)
-                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Centrifuged Crushed Ores"));
+                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Purified Ores"));
+                else if (t == AntimatterMaterialTypes.CRUSHED_REFINED)
+                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Refined Ores"));
                 else if (t == AntimatterMaterialTypes.RAW_ORE_BLOCK)
                     add(Ref.ID + ".rei.group." + t.getId(), "Raw Ore Blocks");
                 else if (split.length > 1) {
@@ -203,9 +203,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 else if (type == AntimatterMaterialTypes.CRUSHED)
                     add(item, String.join("", "Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == AntimatterMaterialTypes.CRUSHED_PURIFIED)
-                    add(item, String.join("", "Purified Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
-                else if (type == AntimatterMaterialTypes.CRUSHED_CENTRIFUGED)
-                    add(item, String.join("", "Centrifuged Crushed ", getLocalizedType(item.getMaterial()), " Ore"));
+                    add(item, String.join("", "Purified ", getLocalizedType(item.getMaterial()), " Ore"));
+                else if (type == AntimatterMaterialTypes.CRUSHED_REFINED)
+                    add(item, String.join("", "Refined ", getLocalizedType(item.getMaterial()), " Ore"));
                 else if (type == AntimatterMaterialTypes.DUST_TINY)
                     add(item, String.join("", "Tiny ", getLocalizedType(item.getMaterial()), " Dust"));
                 else if (type == AntimatterMaterialTypes.DUST_SMALL)

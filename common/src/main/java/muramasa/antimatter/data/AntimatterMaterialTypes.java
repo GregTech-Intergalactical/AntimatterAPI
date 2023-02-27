@@ -14,10 +14,6 @@ import muramasa.antimatter.material.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.registration.Side;
-import muramasa.antimatter.structure.BlockStateElement;
-import muramasa.antimatter.structure.StructureBuilder;
-import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -38,7 +34,7 @@ public class AntimatterMaterialTypes {
         new MaterialItem(domain, type, mat);
     });
     public static MaterialTypeItem<?> CRUSHED = new MaterialTypeItem<>("crushed", 2, true, Ref.U);
-    public static MaterialTypeItem<?> CRUSHED_CENTRIFUGED = new MaterialTypeItem<>("crushed_centrifuged", 2, true, Ref.U);
+    public static MaterialTypeItem<?> CRUSHED_REFINED = new MaterialTypeItem<>("crushed_refined", 2, true, Ref.U);
     public static MaterialTypeItem<?> CRUSHED_PURIFIED = new MaterialTypeItem<>("crushed_purified", 2, true, Ref.U);
     public static MaterialTypeItem<?> RAW_ORE = new MaterialTypeItem<>("raw_ore", 2, true, -1);
     public static MaterialTypeItem<?> INGOT = new MaterialTypeItem<>("ingot", 2, true, Ref.U);
@@ -205,7 +201,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.SCREW.dependents(AntimatterMaterialTypes.BOLT);
         AntimatterMaterialTypes.BOLT.dependents(AntimatterMaterialTypes.ROD);
         AntimatterMaterialTypes.RING.dependents(AntimatterMaterialTypes.ROD);
-        AntimatterMaterialTypes.CRUSHED.dependents(AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_CENTRIFUGED, AntimatterMaterialTypes.DUST_IMPURE);
+        AntimatterMaterialTypes.CRUSHED.dependents(AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE);
         AntimatterMaterialTypes.DUST_PURE.dependents(AntimatterMaterialTypes.DUST);
         AntimatterMaterialTypes.DUST_IMPURE.dependents(AntimatterMaterialTypes.DUST_PURE);
         AntimatterMaterialTypes.DUST.dependents(AntimatterMaterialTypes.DUST_SMALL, AntimatterMaterialTypes.DUST_TINY);
