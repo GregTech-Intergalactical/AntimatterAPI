@@ -116,6 +116,16 @@ public class ForgeCommonEvents {
                 map.remap(replacement);
             }
         }
+
+        for (RegistryEvent.MissingMappings.Mapping<Item> map : event.getMappings(Ref.SHARED_ID)) {
+            String id = map.key.getPath();
+            if (id.contains("crushed_centrifuged")){
+                Item replacement = AntimatterAPI.get(Item.class, id.replace("centrifuged", "refined"), Ref.SHARED_ID);
+                if (replacement != null) {
+                    map.remap(replacement);
+                }
+            }
+        }
     }
 
     @SubscribeEvent
