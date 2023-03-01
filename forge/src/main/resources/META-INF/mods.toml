@@ -15,13 +15,13 @@ description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
 [[dependencies.antimatter]]
     modId="forge"
     mandatory=true
-    versionRange="[40.1.64,)"
+    versionRange="[40.1.73,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.antimatter]]
     modId="tesseractapi"
     mandatory=true
-    versionRange="[0.0.4,)"
+    versionRange="[0.2,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.antimatter]]
