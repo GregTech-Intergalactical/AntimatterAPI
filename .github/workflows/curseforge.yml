@@ -1,4 +1,4 @@
-name: Publish Artifacts
+name: Publish To Curseforge
 on:
   workflow_dispatch:
 jobs:
@@ -11,7 +11,7 @@ jobs:
         os: [ubuntu-20.04]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout Antimatter
+      - name: Checkout Tesseract
         uses: actions/checkout@v2
         with:
           submodules: recursive
