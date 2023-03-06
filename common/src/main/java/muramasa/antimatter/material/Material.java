@@ -204,14 +204,23 @@ public class Material implements ISharedAntimatterObject {
     }
 
     public FluidStack getLiquid(long droplets) {
+        if (!this.has(AntimatterMaterialTypes.LIQUID)){
+            throw new RuntimeException("Material: " + this.getId() + " does not have liquid");
+        }
         return AntimatterMaterialTypes.LIQUID.get().get(this, droplets);
     }
 
     public FluidStack getGas(long droplets) {
+        if (!this.has(AntimatterMaterialTypes.GAS)){
+            throw new RuntimeException("Material: " + this.getId() + " does not have gas");
+        }
         return AntimatterMaterialTypes.GAS.get().get(this, droplets);
     }
 
     public FluidStack getPlasma(long droplets) {
+        if (!this.has(AntimatterMaterialTypes.PLASMA)){
+            throw new RuntimeException("Material: " + this.getId() + " does not have plasma");
+        }
         return AntimatterMaterialTypes.PLASMA.get().get(this, droplets);
     }
 
