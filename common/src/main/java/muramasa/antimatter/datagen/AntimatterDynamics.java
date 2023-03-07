@@ -75,8 +75,7 @@ public class AntimatterDynamics {
         if (RECIPE_IDS.add(f.getId())){
             DynamicDataPack.addRecipe(f);
         } else {
-            Antimatter.LOGGER.info("Recipe duplicated: " + f.getId());
-            Antimatter.LOGGER.info("Recipe json: " + f.serializeRecipe());
+            Antimatter.LOGGER.catching(new RuntimeException("Recipe duplicated: " + f.getId()));
         }
     };
 
