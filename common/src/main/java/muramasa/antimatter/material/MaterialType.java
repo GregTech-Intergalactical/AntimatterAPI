@@ -41,6 +41,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     protected final Set<IMaterialTag> dependents = new ObjectLinkedOpenHashSet<>();
     //since we have two instances stored in antimatter.
     protected boolean hasRegistered;
+    protected boolean ignoreTextureSets = false;
 
     public MaterialType(String id, int layers, boolean visible, int unitValue) {
         this.id = id;
@@ -102,6 +103,15 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
 
     public MaterialType<T> setHidden() {
         this.hidden = true;
+        return this;
+    }
+
+    public boolean ignoreTextureSets(){
+        return ignoreTextureSets;
+    }
+
+    public MaterialType<T> setIgnoreTextureSets() {
+        ignoreTextureSets = true;
         return this;
     }
 
