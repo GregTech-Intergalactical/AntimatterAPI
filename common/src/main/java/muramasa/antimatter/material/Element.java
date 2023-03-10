@@ -295,4 +295,37 @@ public class Element implements IAntimatterObject {
     public static Element getFromElementId(String element) {
         return ELEMENTS.get(element);
     }
+
+    public static Element getFromNeutrons(int neutrons, boolean include_isotopes){
+        Element element = H;
+        for (Element e : ELEMENTS.values()) {
+            if(e.getNeutrons() == neutrons && (include_isotopes || !e.isIsotope)){
+                element = e;
+                break;
+            }
+        }
+        return element;
+    }
+
+    public static Element getFromProtons(int protons, boolean include_isotopes){
+        Element element = H;
+        for (Element e : ELEMENTS.values()) {
+            if(e.getProtons() == protons && (include_isotopes || !e.isIsotope)){
+                element = e;
+                break;
+            }
+        }
+        return element;
+    }
+
+    public static Element getFromProtonsAndNeutrons(int protons, int neutrons, boolean include_isotopes){
+        Element element = H;
+        for (Element e : ELEMENTS.values()) {
+            if(e.getProtons() == protons && e.getNeutrons() == neutrons && (include_isotopes || !e.isIsotope)){
+                element = e;
+                break;
+            }
+        }
+        return element;
+    }
 }
