@@ -67,6 +67,7 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> WRENCHBIT = new MaterialTypeItem<>("wrench_bit", 2, true, Ref.U * 4);
     public static MaterialTypeItem<?> BUZZSAW_BLADE = new MaterialTypeItem<>("buzzsaw_blade", 2, true, Ref.U * 4);
     public static MaterialTypeItem<?> FISSILE_FUEL = new MaterialTypeItem<>("fissile_fuel", 2, true, Ref.U);
+    public static MaterialTypeItem<?> DEPLETED_FISSILE_FUEL = new MaterialTypeItem<>("depleted_fissile_fuel", 2, true, Ref.U);
     //Block Types
     public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE = new MaterialTypeBlock<>("ore", 1, true, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, mat, s, type)));
     public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE_SMALL = new MaterialTypeBlock<>("ore_small", 1, false, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, mat, s, type)));
@@ -216,6 +217,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.WRENCHBIT.setHidden().unSplitName().setIgnoreTextureSets();
         AntimatterMaterialTypes.BUZZSAW_BLADE.setHidden().unSplitName().setIgnoreTextureSets();
         FISSILE_FUEL.setIgnoreTextureSets();
+        DEPLETED_FISSILE_FUEL.setIgnoreTextureSets();
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
         AntimatterMaterialTypes.RAW_ORE_BLOCK.unSplitName();
     }
