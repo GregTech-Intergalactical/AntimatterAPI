@@ -1172,7 +1172,7 @@ public class Utils {
     public static String[] getLocalizedMaterialType(MaterialType<?> type) {
         String id = type.getId();
         int index = id.indexOf("_");
-        if (index != -1) {
+        if (index != -1 && type.isSplitName()) {
             String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
             return lowerUnderscoreToUpperSpaced(joined).split(" ");
         }
@@ -1183,9 +1183,8 @@ public class Utils {
         String id = type.getId();
         int index = id.indexOf("_");
         if (index != -1) {
-            if (type instanceof MaterialType) {
-                String joined = String.join("", id.substring(index + 1), "_", id.substring(0, index));
-                return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(joined), '_', ' ');
+            if (type instanceof MaterialType<?> matType) {
+                return StringUtils.join(getLocalizedMaterialType(matType));
             }
             return StringUtils.replaceChars(lowerUnderscoreToUpperSpaced(id), '_', ' ');
         }
