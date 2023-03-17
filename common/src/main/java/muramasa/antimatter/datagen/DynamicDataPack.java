@@ -68,8 +68,9 @@ public class DynamicDataPack implements PackResources {
         try {
             Path file = parent.resolve(id.getNamespace()).resolve(subdir).resolve(id.getPath() + ".json");
             Files.createDirectories(file.getParent());
-            FileWriter writer = new FileWriter(file.toFile());
-            writer.write(json.toString());
+            try(OutputStream output = Files.newOutputStream(file)) {
+                output.write(json.toString().getBytes());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
