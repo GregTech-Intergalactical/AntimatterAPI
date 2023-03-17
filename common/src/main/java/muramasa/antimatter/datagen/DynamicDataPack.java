@@ -1,23 +1,27 @@
 package muramasa.antimatter.datagen;
 
 import com.google.common.collect.Sets;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.mojang.realmsclient.util.JsonUtils;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import net.minecraft.util.GsonHelper;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -44,9 +48,31 @@ public class DynamicDataPack implements PackResources {
     }
 
     public static void addRecipe(FinishedRecipe recipe) {
-        DATA.put(getRecipeLog(recipe.getId()), recipe.serializeRecipe());
-        if (recipe.serializeAdvancement() != null)
-            DATA.put(getAdvancementLoc(Objects.requireNonNull(recipe.getAdvancementId())), recipe.serializeAdvancement());
+        JsonObject recipeJson = recipe.serializeRecipe();
+        Path parent = AntimatterPlatformUtils.getConfigDir().getParent()
+                .resolve("dumped/amtimatter-dynamic-data/data");
+        if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES){
+            writeJson(recipe.getId(), "recipes", parent, recipeJson);
+        }
+        DATA.put(getRecipeLog(recipe.getId()), recipeJson);
+        if (recipe.serializeAdvancement() != null) {
+            JsonObject advancement = recipe.serializeAdvancement();
+            if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES){
+                writeJson(recipe.getAdvancementId(), "advancements", parent, advancement);
+            }
+            DATA.put(getAdvancementLoc(Objects.requireNonNull(recipe.getAdvancementId())), advancement);
+        }
+    }
+
+    private static void writeJson(ResourceLocation id, String subdir, Path parent, JsonObject json){
+        try {
+            Path file = parent.resolve(id.getNamespace()).resolve(subdir).resolve(id.getPath() + ".json");
+            Files.createDirectories(file.getParent());
+            FileWriter writer = new FileWriter(file.toFile());
+            writer.write(json.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void addAdvancement(ResourceLocation loc, JsonObject obj) {
