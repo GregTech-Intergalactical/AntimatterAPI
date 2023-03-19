@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.json.JAntimatterModel;
 import muramasa.antimatter.datagen.providers.AntimatterBlockLootProvider;
@@ -125,8 +126,8 @@ public class AntimatterDynamics {
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
-        if (!AntimatterPlatformUtils.isProduction() && exportPack) {
-            DYNAMIC_RESOURCE_PACK.dump(new File("./dumped"));
+        if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES) {
+            RUNTIME_DATA_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));
         }
     }
 
@@ -139,6 +140,9 @@ public class AntimatterDynamics {
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
         Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
+        if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES) {
+            DYNAMIC_RESOURCE_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));
+        }
     }
 
     /**
