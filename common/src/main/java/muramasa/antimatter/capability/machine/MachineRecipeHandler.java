@@ -12,6 +12,7 @@ import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.IRecipeValidator;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.tile.TileEntityMachine;
@@ -19,6 +20,7 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
@@ -355,7 +357,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 return false;
             }
         }
-        return ok && (consumed.size() > 0 || !r.hasInputItems());
+        return ok && (consumed.size() > 0 || !r.hasInputItems() || consumedResources);
     }
 
     protected boolean hasLoadedInput() {
@@ -614,6 +616,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         nbt.put("F", fluid);
         nbt.putInt("P", currentProgress);
         nbt.putBoolean("C", consumedResources);
+        /*if (activeRecipe != null){
+            nbt.putString("AR", activeRecipe.getId().toString());
+        }
+        if (lastRecipe != null){
+            nbt.putString("LR", lastRecipe.getId().toString());
+        }*/
         return nbt;
     }
 
@@ -625,6 +633,8 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
         this.consumedResources = nbt.getBoolean("C");
+        /*this.activeRecipe = this.tile.getLevel().getRecipeManager().byKey(new ResourceLocation(nbt.getString("AR"))).map(r -> r instanceof IRecipe r2 ? r2 : null).orElse(null);
+        this.lastRecipe = this.tile.getLevel().getRecipeManager().byKey(new ResourceLocation(nbt.getString("LR"))).map(r -> r instanceof IRecipe r2 ? r2 : null).orElse(null);*/
     }
 
     @Override
