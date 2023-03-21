@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.IContainerItem;
+import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.NonNullList;
@@ -15,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -51,6 +53,18 @@ public class ContainerItemShapedRecipe extends ShapedRecipe {
     @Override
     public RecipeSerializer<?> getSerializer() {
         return INSTANCE;
+    }
+
+    @Override
+    public boolean matches(CraftingContainer inv, Level level) {
+        for(int i = 0; i <= inv.getWidth() - this.getWidth(); ++i) {
+            for(int j = 0; j <= inv.getHeight() - this.getHeight(); ++j) {
+                if (this.matches(inv, i, j, false)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static class Serializer implements RecipeSerializer<ContainerItemShapedRecipe> {
