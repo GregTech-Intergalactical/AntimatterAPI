@@ -13,7 +13,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialItem;
 import muramasa.antimatter.material.MaterialTag;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialTypeItem;
@@ -21,8 +20,6 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -65,7 +62,7 @@ public class PropertyIngredient extends Ingredient {
             boolean types = true;
             if (tools.size() > 0)
                 if (t.has(MaterialTags.TOOLS)) {
-                    Set<AntimatterToolType> set = new HashSet<>(MaterialTags.TOOLS.getToolData(t).toolTypes());
+                    Set<AntimatterToolType> set = new HashSet<>(MaterialTags.TOOLS.get(t).toolTypes());
                     for (Object2BooleanMap.Entry<AntimatterToolType> entry : tools.object2BooleanEntrySet()) {
                         types &= entry.getBooleanValue() == set.contains(entry.getKey());
                     }

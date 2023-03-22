@@ -1,7 +1,9 @@
-package muramasa.antimatter.material;
+package muramasa.antimatter.material.tags;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTag;
 
 import java.util.List;
 import java.util.Map;

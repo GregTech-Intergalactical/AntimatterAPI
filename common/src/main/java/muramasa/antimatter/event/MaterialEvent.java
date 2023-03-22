@@ -6,16 +6,16 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
-import muramasa.antimatter.material.ArmorMaterialTag;
-import muramasa.antimatter.material.FluidProduct;
-import muramasa.antimatter.material.HandleMaterialTag;
+import muramasa.antimatter.material.data.ArmorData;
+import muramasa.antimatter.material.data.FluidProduct;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialStack;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.material.MaterialTypeBlock;
 import muramasa.antimatter.material.MaterialTypeItem;
-import muramasa.antimatter.material.ToolMaterialTag;
+import muramasa.antimatter.material.data.HandleData;
+import muramasa.antimatter.material.data.ToolData;
 import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.Item;
@@ -206,7 +206,7 @@ public class MaterialEvent {
             flags(AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.ROD, AntimatterMaterialTypes.SCREW, AntimatterMaterialTypes.BOLT); //TODO: We need to add bolt for now since screws depends on bolt, need to find time to change it
         else flags(AntimatterMaterialTypes.ROD);
         List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
-        MaterialTags.TOOLS.add(this.material, new ToolMaterialTag.ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, toolEnchantment, toolTypesList));
+        MaterialTags.TOOLS.add(this.material, new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, toolEnchantment, toolTypesList));
         MaterialTags.MINING_LEVEL.add(this.material, toolQuality - 1);
         if (toolTypesList.contains(AntimatterDefaultTools.ELECTRIC_WRENCH)) flags(AntimatterMaterialTypes.WRENCHBIT);
         if (toolTypesList.contains(AntimatterDefaultTools.BUZZSAW)) flags(AntimatterMaterialTypes.BUZZSAW_BLADE);
@@ -216,20 +216,20 @@ public class MaterialEvent {
     }
 
     public MaterialEvent addTools(Material derivedMaterial, ImmutableMap<Enchantment, Integer> toolEnchantment) {
-        ToolMaterialTag.ToolData data = MaterialTags.TOOLS.getToolData(derivedMaterial);
+        ToolData data = MaterialTags.TOOLS.get(derivedMaterial);
         return addTools(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality(), toolEnchantment);
     }
 
     public MaterialEvent addTools(Material derivedMaterial) {
-        ToolMaterialTag.ToolData data = MaterialTags.TOOLS.getToolData(derivedMaterial);
+        ToolData data = MaterialTags.TOOLS.get(derivedMaterial);
         return addTools(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality());
     }
 
     public MaterialEvent setAllowedTypes(AntimatterToolType... toolTypes) {
         if (!has(MaterialTags.TOOLS)) return this;
-        ToolMaterialTag.ToolData data = MaterialTags.TOOLS.getToolData(this.material);
+        ToolData data = MaterialTags.TOOLS.get(this.material);
         List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
-        MaterialTags.TOOLS.add(this.material, new ToolMaterialTag.ToolData(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality(), data.toolEnchantment(), toolTypesList));
+        MaterialTags.TOOLS.add(this.material, new ToolData(data.toolDamage(), data.toolSpeed(), data.toolDurability(), data.toolQuality(), data.toolEnchantment(), toolTypesList));
         return this;
     }
 
@@ -243,19 +243,19 @@ public class MaterialEvent {
             return this;
         }
         if (has(AntimatterMaterialTypes.INGOT)) flags(AntimatterMaterialTypes.PLATE);
-        MaterialTags.ARMOR.add(this.material, new ArmorMaterialTag.ArmorData(armor, toughness, knockbackResistance, armorDurabilityFactor, toolEnchantment));
+        MaterialTags.ARMOR.add(this.material, new ArmorData(armor, toughness, knockbackResistance, armorDurabilityFactor, toolEnchantment));
         return this;
     }
 
     public MaterialEvent addArmor(Material material, ImmutableMap<Enchantment, Integer> toolEnchantment) {
         if (!material.has(ARMOR)) return this;
-        ArmorMaterialTag.ArmorData data = ARMOR.getArmorData(material);
+        ArmorData data = ARMOR.get(material);
         return addArmor(data.armor(), data.toughness(), data.knockbackResistance(), data.armorDurabilityFactor(), toolEnchantment);
     }
 
     public MaterialEvent addArmor(Material material) {
         if (!material.has(ARMOR)) return this;
-        ArmorMaterialTag.ArmorData data = ARMOR.getArmorData(material);
+        ArmorData data = ARMOR.get(material);
         return addArmor(data.armor(), data.toughness(), data.knockbackResistance(), data.armorDurabilityFactor());
     }
 
@@ -265,7 +265,7 @@ public class MaterialEvent {
 
     public MaterialEvent addHandleStat(int durability, float speed, ImmutableMap<Enchantment, Integer> toolEnchantment) {
         if (!has(AntimatterMaterialTypes.ROD)) flags(AntimatterMaterialTypes.ROD);
-        HANDLE.add(this.material, new HandleMaterialTag.HandleData(durability, speed, toolEnchantment));
+        HANDLE.add(this.material, new HandleData(durability, speed, toolEnchantment));
         return this;
     }
 

@@ -75,7 +75,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
     @Override
     public int getMaxDamage(ItemStack stack) {
         if (getMaterial(stack) == null || !getMaterial(stack).has(MaterialTags.ARMOR)) return stack.getItem().getMaxDamage();
-        return MAX_DAMAGE_ARRAY[slot.getIndex()] * MaterialTags.ARMOR.getArmorData(getMaterial(stack)).armorDurabilityFactor();
+        return MAX_DAMAGE_ARRAY[slot.getIndex()] * MaterialTags.ARMOR.get(getMaterial(stack)).armorDurabilityFactor();
     }
 
     @Override
@@ -88,9 +88,9 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
         if (mat == null || mat == NULL || !mat.has(MaterialTags.ARMOR) || slotType != this.slot) return super.getDefaultAttributeModifiers(slotType);
         Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
         UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
-        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", MaterialTags.ARMOR.getArmorData(mat).armor()[slot.getIndex()] + material.getDefenseForSlot(slot), AttributeModifier.Operation.ADDITION));
-        modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + MaterialTags.ARMOR.getArmorData(mat).toughness(), AttributeModifier.Operation.ADDITION));
-        modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", MaterialTags.ARMOR.getArmorData(mat).knockbackResistance(), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", MaterialTags.ARMOR.get(mat).armor()[slot.getIndex()] + material.getDefenseForSlot(slot), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + MaterialTags.ARMOR.get(mat).toughness(), AttributeModifier.Operation.ADDITION));
+        modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", MaterialTags.ARMOR.get(mat).knockbackResistance(), AttributeModifier.Operation.ADDITION));
         return modifiers;
     }
 

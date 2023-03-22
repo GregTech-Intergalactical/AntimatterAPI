@@ -56,7 +56,7 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
         ItemStack stack = new ItemStack(item);
         validateTag(stack, primary);
         if (!primary.has(MaterialTags.ARMOR)) return stack;
-        Map<Enchantment, Integer> mainEnchants = MaterialTags.ARMOR.getArmorData(primary).toolEnchantment();
+        Map<Enchantment, Integer> mainEnchants = MaterialTags.ARMOR.get(primary).toolEnchantment();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack)).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
             return stack;

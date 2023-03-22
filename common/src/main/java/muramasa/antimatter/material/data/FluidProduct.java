@@ -1,6 +1,7 @@
-package muramasa.antimatter.material;
+package muramasa.antimatter.material.data;
 
 import muramasa.antimatter.data.AntimatterMaterials;
+import muramasa.antimatter.material.Material;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Objects;

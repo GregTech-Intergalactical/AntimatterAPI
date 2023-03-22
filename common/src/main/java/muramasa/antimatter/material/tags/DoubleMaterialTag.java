@@ -1,8 +1,7 @@
-package muramasa.antimatter.material;
+package muramasa.antimatter.material.tags;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-
-import java.util.Map;
+import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.tags.TypeMaterialTag;
 
 public class DoubleMaterialTag extends TypeMaterialTag<Material> {
 

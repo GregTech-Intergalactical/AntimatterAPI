@@ -1,8 +1,6 @@
-package muramasa.antimatter.material;
+package muramasa.antimatter.material.tags;
 
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
-
-import java.util.Map;
+import muramasa.antimatter.material.Material;
 
 public class NumberMaterialTag extends TypeMaterialTag<Integer> {
     public NumberMaterialTag(String id) {

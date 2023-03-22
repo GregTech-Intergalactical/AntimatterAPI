@@ -75,7 +75,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 entity.setDeltaMovement(entity.getDeltaMovement().x, 0.02D, entity.getDeltaMovement().z);
             else entity.setDeltaMovement(entity.getDeltaMovement().x, 0.08D, entity.getDeltaMovement().z);
         } else if (entity.horizontalCollision) {
-            float toolSpeed = material.has(MaterialTags.TOOLS) ? MaterialTags.TOOLS.getToolData(material).toolSpeed() : 0;
+            float toolSpeed = material.has(MaterialTags.TOOLS) ? MaterialTags.TOOLS.get(material).toolSpeed() : 0;
             entity.setDeltaMovement(entity.getDeltaMovement().x, 0.22D + (toolSpeed / 75), entity.getDeltaMovement().z);
         } else
             entity.setDeltaMovement(entity.getDeltaMovement().x, Math.max(entity.getDeltaMovement().y, -0.2D), entity.getDeltaMovement().z);

@@ -1,12 +1,16 @@
 package muramasa.antimatter.material;
 
+import com.google.common.collect.ImmutableMap;
+import muramasa.antimatter.material.data.ArmorData;
+import muramasa.antimatter.material.data.FluidProduct;
+import muramasa.antimatter.material.data.HandleData;
+import muramasa.antimatter.material.data.ToolData;
+import muramasa.antimatter.material.tags.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.level.block.OreBlock;
 
-import java.util.Map;
+import java.util.List;
 
 public class MaterialTags {
 
@@ -44,7 +48,13 @@ public class MaterialTags {
     /**
      * ETC
      **/
-    public static final HandleMaterialTag HANDLE = new HandleMaterialTag();
+    public static final TypeMaterialTag<HandleData> HANDLE = new TypeMaterialTag<>("handle"){
+        @Override
+        public HandleData get(Material mat) {
+            if (mat == Material.NULL) return mapping.computeIfAbsent(mat, m -> new HandleData(0, 0, ImmutableMap.of()));
+            return super.get(mat);
+        }
+    };
     /**
      * PIPES
      **/
@@ -84,6 +94,18 @@ public class MaterialTags {
     public static final MapMaterialTag<MaterialType<?>, Integer> FURNACE_FUELS = new MapMaterialTag<>("furnace_fuels");
 
     //Dummy Types
-    public static ToolMaterialTag TOOLS = new ToolMaterialTag();
-    public static ArmorMaterialTag ARMOR = new ArmorMaterialTag();
+    public static TypeMaterialTag<ToolData> TOOLS = new TypeMaterialTag<>("tools"){
+        @Override
+        public ToolData get(Material mat) {
+            if (mat == Material.NULL) return mapping.computeIfAbsent(mat, m -> new ToolData(5.0f, 5.0f, Integer.MAX_VALUE, 3, ImmutableMap.of(), List.of()));
+            return super.get(mat);
+        }
+    };
+    public static TypeMaterialTag<ArmorData> ARMOR = new TypeMaterialTag<>("armor"){
+        @Override
+        public ArmorData get(Material mat) {
+            if (mat == Material.NULL) return mapping.computeIfAbsent(mat, m -> new ArmorData(new int[]{1, 1, 1, 1}, 0.0f, 0.0f, 23, ImmutableMap.of()));
+            return super.get(mat);
+        }
+    };
 }

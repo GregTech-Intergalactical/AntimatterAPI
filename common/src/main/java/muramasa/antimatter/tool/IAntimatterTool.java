@@ -48,7 +48,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import tesseract.TesseractCapUtils;
 import tesseract.api.context.TesseractItemContext;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.gt.IEnergyItem;
 
@@ -127,7 +126,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (!primary.has(MaterialTags.TOOLS) || (!secondary.has(MaterialTags.HANDLE) && secondary != NULL)){
             return stack;
         }
-        Map<Enchantment, Integer> mainEnchants = MaterialTags.TOOLS.getToolData(primary).toolEnchantment(), handleEnchants = MaterialTags.HANDLE.getHandleData(secondary).toolEnchantment();
+        Map<Enchantment, Integer> mainEnchants = MaterialTags.TOOLS.get(primary).toolEnchantment(), handleEnchants = MaterialTags.HANDLE.get(secondary).toolEnchantment();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack)).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
             //return stack;
