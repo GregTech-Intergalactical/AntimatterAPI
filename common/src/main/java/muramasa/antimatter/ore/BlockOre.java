@@ -218,7 +218,7 @@ public class BlockOre extends BlockMaterialStone implements ITextureProvider, IM
             if (self.stream().anyMatch(i -> i.getItem() == this.asItem())) {
                 return 0;
             }
-            return MaterialTags.EXP_RANGE.getIntRange(material).sample(((ServerLevel) world).getRandom());
+            return MaterialTags.EXP_RANGE.get(material).sample(((ServerLevel) world).getRandom());
         }
         return 0;
     }

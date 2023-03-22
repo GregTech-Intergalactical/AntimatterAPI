@@ -12,6 +12,7 @@ import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
+import muramasa.antimatter.material.*;
 import muramasa.antimatter.proxy.CommonHandler;
 import muramasa.antimatter.recipe.fabric.RecipeConditions;
 import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
@@ -25,6 +26,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.packs.PackType;
@@ -33,6 +35,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.ModLoadingContext;
 import net.minecraftforge.api.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
+
+import java.util.Map;
 
 import static muramasa.antimatter.Ref.ID;
 
@@ -54,6 +58,19 @@ public class AntimatterImpl implements ModInitializer {
             CommonHandler.setup();
             AntimatterFabricWorldgen.init();
             RecipeConditions.init();
+            AntimatterAPI.all(Material.class).forEach(m -> {
+                Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
+                if (map != null){
+                    map.forEach((t, i) -> {
+                        if (t instanceof MaterialTypeItem<?> typeItem){
+                            FuelRegistry.INSTANCE.add(typeItem.get(m), i);
+                        } else if (t instanceof MaterialTypeBlock<?> typeBlock && typeBlock.get() instanceof MaterialTypeBlock.IBlockGetter blockGetter){
+                            FuelRegistry.INSTANCE.add(blockGetter.get(m).asItem(), i);
+                        }
+                    });
+                }
+
+            });
             CraftingEvents.CRAFTING.register(Antimatter.INSTANCE::addCraftingLoaders);
             ProviderEvents.PROVIDERS.register(this::providers);
             ServerWorldEvents.UNLOAD.register((server, world) -> StructureCache.onWorldUnload(world));

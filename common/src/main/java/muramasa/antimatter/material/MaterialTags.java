@@ -2,7 +2,11 @@ package muramasa.antimatter.material;
 
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.OreBlock;
+
+import java.util.Map;
 
 public class MaterialTags {
 
@@ -36,7 +40,7 @@ public class MaterialTags {
     public static final MaterialTag DECAYABLE = new MaterialTag("decayable");
     public static final MaterialTag MOLTEN = new MaterialTag("molten");
 
-    public static final IntRangeMaterialTag EXP_RANGE = new IntRangeMaterialTag("exp_range");
+    public static final TypeMaterialTag<UniformInt> EXP_RANGE = new TypeMaterialTag<>("exp_range");
     /**
      * ETC
      **/
@@ -76,6 +80,8 @@ public class MaterialTags {
     public static final BlockDropMaterialTag<BlockOre> CUSTOM_ORE_DROPS = new BlockDropMaterialTag<>("custom_ore_drops");
 
     public static final BlockDropMaterialTag<BlockOreStone> CUSTOM_ORE_STONE_DROPS = new BlockDropMaterialTag<>("custom_ore_stone_drops");
+
+    public static final MapMaterialTag<MaterialType<?>, Integer> FURNACE_FUELS = new MapMaterialTag<>("furnace_fuels");
 
     //Dummy Types
     public static ToolMaterialTag TOOLS = new ToolMaterialTag();

@@ -28,6 +28,7 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.Block;
@@ -36,6 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Map;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.CRUSHED_PURIFIED;
 import static muramasa.antimatter.data.AntimatterMaterialTypes.DUST;
@@ -167,5 +169,15 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     @Override
     public Texture[] getTextures() {
         return getMaterial().getSet().getTextures(getType());
+    }
+
+    //Forge method
+    public int getBurnTime(@org.jetbrains.annotations.Nullable RecipeType<?> recipeType){
+        Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(material);
+        if (map != null){
+            Integer burnTime = map.get(type);
+            if (burnTime != null) return burnTime;
+        }
+        return -1;
     }
 }
