@@ -111,7 +111,7 @@ public class KubeJSRecipe extends RecipeJS {
     public static JsonElement serializeStack(FluidStack stack) {
         JsonObject obj = new JsonObject();
         obj.addProperty("fluid", FluidPlatformUtils.getFluidId(stack.getFluid()).toString());
-        obj.addProperty("amount", stack.getAmount());
+        obj.addProperty("amount", stack.getRealAmount());
         if (stack.hasTag()) {
             obj.add("tag", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, stack.getTag()));
         }
