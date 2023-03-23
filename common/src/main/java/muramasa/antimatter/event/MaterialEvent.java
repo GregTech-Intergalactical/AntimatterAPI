@@ -121,7 +121,7 @@ public class MaterialEvent {
 
     public MaterialEvent asGem(boolean transparent, IMaterialTag... tags) {
         asGemBasic(transparent, tags);
-        if (!transparent) flags(AntimatterMaterialTypes.GEM_BRITTLE, AntimatterMaterialTypes.GEM_POLISHED, AntimatterMaterialTypes.GEM_FLAWED, AntimatterMaterialTypes.GEM_FLAWLESS, AntimatterMaterialTypes.GEM_EXQUISITE);
+        if (!transparent) flags(AntimatterMaterialTypes.GEM_BRITTLE, AntimatterMaterialTypes.GEM_CHIPPED, AntimatterMaterialTypes.GEM_POLISHED, AntimatterMaterialTypes.GEM_FLAWED, AntimatterMaterialTypes.GEM_FLAWLESS, AntimatterMaterialTypes.GEM_EXQUISITE);
         return this;
     }
 
