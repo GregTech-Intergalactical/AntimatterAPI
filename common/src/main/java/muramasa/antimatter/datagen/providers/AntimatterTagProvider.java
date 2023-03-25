@@ -24,6 +24,7 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
     protected final Map<ResourceLocation, Tag.Builder> builders;
     protected final Registry<T> registry;
     public Object2ObjectMap<ResourceLocation, JsonObject> TAGS = new Object2ObjectOpenHashMap<>();
+    public static Object2ObjectOpenHashMap<ResourceLocation, JsonObject> TAGS_GLOBAL = new Object2ObjectOpenHashMap<>();
 
     public AntimatterTagProvider(Registry<T> registry, String providerDomain, String providerName, String prefix) {
         this.builders = Maps.newLinkedHashMap();
@@ -73,7 +74,7 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
         TAGS.put(loc, obj);
     }
 
-    public JTag fromJson(JsonObject obj){
+    public static JTag fromJson(JsonObject obj){
         JTag tag = JTag.tag();
         if (obj.getAsJsonPrimitive("replace").getAsBoolean()) tag.replace();
         JsonArray array = obj.getAsJsonArray("values");
@@ -105,10 +106,19 @@ public abstract class AntimatterTagProvider<T> implements IAntimatterProvider {
 
     @Override
     public void onCompletion() {
-        for (Map.Entry<ResourceLocation, JsonObject> entry : TAGS.entrySet()) {
-            ResourceLocation k = entry.getKey();
-            JsonObject v = entry.getValue();
-            AntimatterDynamics.RUNTIME_DATA_PACK.addTag(AntimatterDynamics.getTagLoc(prefix, k), fromJson(v));
-        }
+        TAGS.forEach((k, v) -> {
+            ResourceLocation fixed = AntimatterDynamics.getTagLoc(prefix, k);
+            JsonObject json = TAGS_GLOBAL.get(fixed);
+            if (json != null) {
+                JsonArray local = v.getAsJsonArray("values");
+                JsonArray global = json.getAsJsonArray("values");
+                global.forEach(local::add);
+            }
+            TAGS_GLOBAL.put(fixed, v);
+        });
+    }
+
+    public static void afterCompletion(){
+        TAGS_GLOBAL.forEach((k, v) -> AntimatterDynamics.RUNTIME_DATA_PACK.addTag(k, fromJson(v)));
     }
 }
