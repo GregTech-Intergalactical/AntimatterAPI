@@ -131,11 +131,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 if (s.getType() instanceof Cable) {
                     str = s.getSize().getCableThickness() + "x";
                 }
-                String strd = s.getType().getId().split("_")[0];
-                if (s.getType() instanceof FluidPipe || s.getType() instanceof ItemPipe) {
-                    strd = s.getType().getType() + " Pipe";
-                }
-                add(s, StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1), " ", lowerUnderscoreToUpperSpaced(s.getType().getMaterial().getId()), " ", strd.substring(0, 1).toUpperCase() + strd.substring(1)));
+                //String strd = s.getType().getId().split("_")[0];
+                add(s, StringUtils.join(str.substring(0, 1).toUpperCase() + str.substring(1), " ", lowerUnderscoreToUpperSpaced(s.getType().getMaterial().getId()), " ", Utils.lowerUnderscoreToUpperSpaced(s.getType().getType())));
             });
             AntimatterAPI.all(Material.class).forEach(m -> add("material.".concat(m.getId()), getLocalizedType(m)));
             AntimatterAPI.all(BlockOre.class, o -> {

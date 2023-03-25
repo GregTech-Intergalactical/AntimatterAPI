@@ -22,12 +22,12 @@ public class ItemPipe<T extends ItemPipe<T>> extends PipeType<T> {
 
     @Override
     public String getType() {
-        return "item";
+        return "item_pipe";
     }
 
     @Override
     public String getTypeName() {
-        return "item";
+        return "item_pipe";
     }
 
     @Override

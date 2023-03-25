@@ -84,48 +84,76 @@ public class ForgeCommonEvents {
 
     @SubscribeEvent
     public static void remapMissingBlocks(final RegistryEvent.MissingMappings<Block> event) {
-        for (RegistryEvent.MissingMappings.Mapping<Block> map : event.getMappings(Ref.MOD_KJS)) {
+        event.getMappings(Ref.MOD_KJS).forEach(map -> {
             String domain = map.key.getNamespace();
             String id = map.key.getPath();
             if (id.startsWith("block_")) {
                 Material mat = Material.get(id.replace("block_", ""));
                 if (mat != NULL) {
                     map.remap(AntimatterMaterialTypes.BLOCK.get().get(mat).asBlock());
-                    continue;
+                    return;
                 }
             }
             if (id.startsWith("ore_")) {
                 Block replacement = AntimatterAPI.get(BlockOre.class, id);
                 if (replacement != null) {
                     map.remap(replacement);
-                    continue;
+                    return;
                 }
             }
             Block replacement = AntimatterAPI.get(Block.class, id, Ref.SHARED_ID);
             if (replacement != null) {
                 map.remap(replacement);
             }
-        }
+        });
+        event.getMappings(Ref.SHARED_ID).forEach(map -> {
+            String id = map.key.getPath();
+            String replacement = "";
+            if (id.startsWith("fluid_")){
+                replacement = id.replace("fluid_", "fluid_pipe_");
+            } else if (id.startsWith("item_")){
+                replacement = id.replace("item_", "item_pipe_");
+            }
+            if (!replacement.isEmpty()) {
+                Block replacementBlock = AntimatterAPI.get(Block.class, replacement, Ref.SHARED_ID);
+                if (replacementBlock != null){
+                    map.remap(replacementBlock);
+                }
+            }
+        });
     }
 
     @SubscribeEvent
     public static void remapMissingItems(final RegistryEvent.MissingMappings<Item> event) {
-        for (RegistryEvent.MissingMappings.Mapping<Item> map : event.getMappings(Ref.ID)) {
+        event.getMappings(Ref.ID).forEach(map -> {
             Item replacement = AntimatterAPI.get(Item.class, map.key.getPath(), Ref.SHARED_ID);
             if (replacement != null) {
                 map.remap(replacement);
             }
-        }
+        });
 
-        for (RegistryEvent.MissingMappings.Mapping<Item> map : event.getMappings(Ref.SHARED_ID)) {
+        event.getMappings(Ref.SHARED_ID).forEach(map -> {
             String id = map.key.getPath();
             if (id.contains("crushed_centrifuged")){
                 Item replacement = AntimatterAPI.get(Item.class, id.replace("centrifuged", "refined"), Ref.SHARED_ID);
                 if (replacement != null) {
                     map.remap(replacement);
+                    return;
                 }
             }
-        }
+            String replacement = "";
+            if (id.startsWith("fluid_")){
+                replacement = id.replace("fluid_", "fluid_pipe_");
+            } else if (id.startsWith("item_")){
+                replacement = id.replace("item_", "item_pipe_");
+            }
+            if (!replacement.isEmpty()) {
+                Item replacementBlock = AntimatterAPI.get(Item.class, replacement, Ref.SHARED_ID);
+                if (replacementBlock != null){
+                    map.remap(replacementBlock);
+                }
+            }
+        });
     }
 
     @SubscribeEvent

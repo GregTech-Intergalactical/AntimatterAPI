@@ -27,11 +27,11 @@ public class HeatPipe<T extends HeatPipe<T>> extends PipeType<T> {
 
     @Override
     public String getType() {
-        return "heat";
+        return "heat_pipe";
     }
 
     @Override
     public String getTypeName() {
-        return "heat";
+        return "heat_pipe";
     }
 }
