@@ -12,17 +12,25 @@ import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.event.ClientEvents;
+import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.fluid.fabric.FluidAttributesVariantWrapper;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.mixin.fabric.client.MinecraftAccessor;
 import muramasa.antimatter.proxy.ClientHandler;
 import muramasa.antimatter.registration.RegistrationEvent;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
+import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
@@ -65,6 +73,12 @@ public class AntimatterClientImpl implements ClientModInitializer {
             }
             return true;
         }));
+        AntimatterAPI.all(AntimatterFluid.class, f -> {
+            Fluid source = f.getFluid();
+            Fluid flowing = f.getFlowingFluid();
+            FluidRenderHandlerRegistry.INSTANCE.register(source, flowing, new SimpleFluidRenderHandler(f.getAttributes().getStillTexture(), f.getAttributes().getFlowingTexture(), f.getAttributes().getColor()));
+            BlockRenderLayerMap.INSTANCE.putFluids(RenderType.translucent(), source, flowing);
+        });
         //TODO figure this out
         //WorldRenderEvents.BEFORE_DEBUG_RENDER.register((context -> ClientEvents.onRenderDebugInfo(context.)));
         AntimatterAPI.getCommonDeferredQueue().ifPresent(t -> {

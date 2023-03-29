@@ -11,6 +11,8 @@ import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.fabric.CraftingEvents;
 import muramasa.antimatter.event.fabric.ProviderEvents;
+import muramasa.antimatter.fluid.AntimatterFluid;
+import muramasa.antimatter.fluid.fabric.FluidAttributesVariantWrapper;
 import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.material.*;
 import muramasa.antimatter.proxy.CommonHandler;
@@ -27,11 +29,13 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.ModLoadingContext;
 import net.minecraftforge.api.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.config.ModConfig;
@@ -88,6 +92,12 @@ public class AntimatterImpl implements ModInitializer {
             Antimatter.LOGGER.info("initializing");
             ServerLifecycleEvents.SERVER_STARTING.register(server -> Antimatter.LOGGER.info("server starting"));
             AntimatterDynamics.setInitialized();
+            AntimatterAPI.all(AntimatterFluid.class, f -> {
+                Fluid source = f.getFluid();
+                Fluid flowing = f.getFlowingFluid();
+                FluidVariantAttributes.register(source, new FluidAttributesVariantWrapper(f.getAttributes()));
+                FluidVariantAttributes.register(flowing, new FluidAttributesVariantWrapper(f.getAttributes()));
+            });
         }
     }
 
