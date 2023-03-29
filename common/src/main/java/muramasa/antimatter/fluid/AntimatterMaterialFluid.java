@@ -7,6 +7,7 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.locale.Language;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.Block;
 
 /**
@@ -47,11 +48,11 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
         if (type == AntimatterMaterialTypes.GAS) {
             return AntimatterFluidAttributes.builder(GAS_TEXTURE, GAS_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((70 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
-                    .viscosity(200).density(-1000).gaseous().temperature(MaterialTags.GAS_TEMPERATURE.getInt(material));
+                    .viscosity(200).density(-1000).gaseous().temperature(MaterialTags.GAS_TEMPERATURE.getInt(material)).sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
         } else if (type == AntimatterMaterialTypes.PLASMA) {
             return AntimatterFluidAttributes.builder(PLASMA_TEXTURE, PLASMA_FLOW_TEXTURE).overlay(OVERLAY_TEXTURE).color((50 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
-                    .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000);
+                    .viscosity(10).density(-55536).luminosity(15).gaseous().temperature(10000).sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
         } else {
             return getDefaultAttributesBuilder(material.has(MaterialTags.MOLTEN)).color((155 << 24) | (material.getRGB() & 0x00ffffff))
                     .translationKey(String.join("", "block.", domain, type.getId(), ".", material.getId()))
