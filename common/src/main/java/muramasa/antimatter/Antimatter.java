@@ -126,7 +126,7 @@ public class Antimatter extends AntimatterMod {
             AntimatterMaterials.init();
             AntimatterMaterialTypes.init();
             AntimatterStoneTypes.init();
-            Data.init();
+            Data.init(side);
             ICover.init();
             SubTag.init();
             AntimatterWorldGenerator.preinit();

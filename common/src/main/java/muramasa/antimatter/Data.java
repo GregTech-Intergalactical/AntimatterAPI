@@ -22,6 +22,8 @@ import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.container.ContainerMultiMachine;
 import muramasa.antimatter.item.DebugScannerItem;
 import muramasa.antimatter.item.ItemCover;
+import muramasa.antimatter.machine.types.BasicMachine;
+import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.structure.BlockStateElement;
 import muramasa.antimatter.structure.StructureBuilder;
 import muramasa.antimatter.structure.StructureElement;
@@ -29,6 +31,7 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.tile.multi.TileEntityHatch;
 import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
+import muramasa.antimatter.tile.single.TileEntityInfiniteStorage;
 import net.minecraft.ChatFormatting;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -37,7 +40,11 @@ import net.minecraft.world.level.material.PushReaction;
 
 import javax.annotation.Nullable;
 
-;
+;import static muramasa.antimatter.gui.ButtonBody.*;
+import static muramasa.antimatter.gui.ButtonBody.APAD_RIGHT;
+import static muramasa.antimatter.machine.MachineFlag.ENERGY;
+import static muramasa.antimatter.machine.MachineFlag.GUI;
+import static muramasa.antimatter.machine.Tier.MAX;
 
 public class Data {
 
@@ -107,7 +114,30 @@ public class Data {
         }
     };
 
-    public static void init() {
+    public static final BasicMachine CREATIVE_GENERATOR = new BasicMachine(Ref.ID, "creative_generator").addFlags(ENERGY, GUI).setTiers(MAX).setAllowVerticalFacing(true).allowFrontIO().setTile(TileEntityInfiniteStorage::new)
+            .noCovers();
+
+    public static void init(Side side) {
+        if (side.isClient()){
+            CREATIVE_GENERATOR.addGuiCallback(t -> {
+                t.addButton(10, 18, 14, 14, APAD_LEFT)
+                        .addButton(25, 18, 14, 14, PAD_LEFT)
+                        .addButton(10, 33, 14, 14, APAD_LEFT)
+                        .addButton(25, 33, 14, 14, PAD_LEFT)
+                        .addButton(10, 48, 14, 14, APAD_LEFT)
+                        .addButton(25, 48, 14, 14, PAD_LEFT)
+                        .addButton(10, 63, 14, 14, APAD_LEFT)
+                        .addButton(25, 63, 14, 14, PAD_LEFT)
+                        .addButton(137, 18, 14, 14, PAD_RIGHT)
+                        .addButton(152, 18, 14, 14, APAD_RIGHT)
+                        .addButton(137, 33, 14, 14, PAD_RIGHT)
+                        .addButton(152, 33, 14, 14, APAD_RIGHT)
+                        .addButton(137, 48, 14, 14, PAD_RIGHT)
+                        .addButton(152, 48, 14, 14, APAD_RIGHT)
+                        .addButton(137, 63, 14, 14, PAD_RIGHT)
+                        .addButton(152, 63, 14, 14, APAD_RIGHT);
+            });
+        }
     }
 
     public static void postInit() {
