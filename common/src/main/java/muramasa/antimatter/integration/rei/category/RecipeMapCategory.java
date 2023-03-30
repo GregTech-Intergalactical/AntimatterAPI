@@ -123,7 +123,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
     }
 
     private List<Widget> setupSlots(RecipeMapDisplay display, Rectangle bounds){
-        ResourceLocation slotTextures = new ResourceLocation(Ref.ID, "textures/gui/gui_parts.png");
+        ResourceLocation slotTextures = new ResourceLocation(Ref.ID, "textures/gui/button/gui_slots.png");
         List<Widget> widgets = new ArrayList<>();
         List<List<ItemStack>> inputs = display.getRecipe().hasInputItems() ? display.getRecipe().getInputItems().stream().map(t -> Arrays.asList(t.getItems())).toList() : Collections.emptyList();
         List<ItemStack> outputs = display.getRecipe().hasOutputItems() ? Arrays.stream(display.getRecipe().getOutputItems(false)).toList() : Collections.emptyList();
@@ -139,7 +139,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 0, 18, 18);
+                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 18, 0, 18, 18);
                     }));
                     if (inputs.size() > 0){
                         if (s < inputs.size()){
@@ -167,7 +167,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 0, 18, 18);
+                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 18, 0, 18, 18);
                     }));
                     if (outputs.size() > 0){
                         if (s < outputs.size()){
@@ -189,7 +189,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 18, 0, 18, 18);
+                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 0, 36, 18, 18);
                     }));
                     if (fluids.size() > 0){
                         if (s < fluids.size()){
@@ -216,7 +216,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 for (int s = 0; s < slotCount; s++){
                     int finalSlot = s;
                     widgets.add(Widgets.createDrawableWidget((helper, matrices, mouseX, mouseY, delta) -> {
-                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 36, 0, 18, 18);
+                        drawTexture(matrices, slotTextures, finalSlots.get(finalSlot).getX() - (offsetX) + bounds.x - 1, finalSlots.get(finalSlot).getY() - (offsetY) + bounds.y - 1, 18, 36, 18, 18);
                     }));
                     if (fluids != null && fluids.length > 0){
                         if (s < fluids.length){
