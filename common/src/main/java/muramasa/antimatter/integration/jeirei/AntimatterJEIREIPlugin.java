@@ -2,6 +2,7 @@ package muramasa.antimatter.integration.jeirei;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.GuiData;
@@ -35,12 +36,22 @@ public class AntimatterJEIREIPlugin{
 
     public static void registerCategory(IRecipeMap map, GuiData gui, Tier tier, ResourceLocation model, boolean override) {
         if (REGISTRY.containsKey(new ResourceLocation(map.getDomain(), map.getId())) && !override) {
-            //    Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
-            RegistryValue value = REGISTRY.get(map.getLoc());
-            if (value.model == null) value.model = model;
+            Antimatter.LOGGER.info("Attempted duplicate category registration: " + map.getId());
             return;
         }
         REGISTRY.put(new ResourceLocation(map.getDomain(), map.getId()), new RegistryValue(map, map.getGui() == null ? gui : map.getGui(), tier, model));//new Tuple<>(map, new Tuple<>(gui, tier)));
+    }
+
+    public static void registerCategoryModel(IRecipeMap map, ResourceLocation model, Tier tier){
+        RegistryValue value = REGISTRY.get(map.getLoc());
+        if (value != null) {
+            if (value.model == null) {
+                value.model = model;
+            }
+            if (value.tier != tier){
+                value.tier = tier;
+            }
+        }
     }
 
     public static Object2ObjectMap<ResourceLocation, RegistryValue> getREGISTRY() {

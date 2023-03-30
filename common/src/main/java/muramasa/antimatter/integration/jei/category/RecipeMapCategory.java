@@ -24,6 +24,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
@@ -80,8 +81,8 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                 this.icon = (IDrawable) icon;
             }
         } else {
-            Block block = AntimatterAPI.get(Block.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
-            this.icon = block == null ? guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(block.asItem(), 1));
+            Machine<?> machine = blockItemModel == null ? null : AntimatterAPI.get(Machine.class, blockItemModel.getPath(), blockItemModel.getNamespace());
+            this.icon = machine == null || !machine.getTiers().contains(defaultTier) ? guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Data.DEBUG_SCANNER, 1)) : guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(machine.getItem(defaultTier), 1));
         }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();

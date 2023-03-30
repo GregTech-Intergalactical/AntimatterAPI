@@ -5,6 +5,7 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.plugins.PluginManager;
@@ -26,6 +27,7 @@ import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
+import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -87,16 +89,26 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
             if (!registeredMachineCats.contains(tuple.map.getLoc())) {
                 RecipeMapCategory category = new RecipeMapCategory(tuple.map, tuple.gui, tuple.tier, tuple.model);
                 registry.add(category);
-                Machine<?> machine = tuple.model == null ? null : AntimatterAPI.get(Machine.class, tuple.model.getPath(), tuple.model.getNamespace());
+                /*Machine<?> machine = tuple.model == null ? null : AntimatterAPI.get(Machine.class, tuple.model.getPath(), tuple.model.getNamespace());
                 if (machine != null){
                     machine.getTiers().forEach(t -> {
                         registry.addWorkstations(category.getCategoryIdentifier(), EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(machine.getItem(t))));
                     });
                 } else {
                     registry.addWorkstations(category.getCategoryIdentifier(), (EntryStack<?>) category.getIcon());
-                }
+                }*/
                 registeredMachineCats.add(tuple.map.getLoc());
             }
+        });
+        AntimatterAPI.all(Machine.class, machine -> {
+            IRecipeMap map = machine.getRecipeMap();
+            if (map == null) return;
+            ((Machine<?>)machine).getTiers().forEach(t -> {
+                ItemStack stack = new ItemStack(machine.getItem(t));
+                if (!stack.isEmpty()) {
+                    registry.addWorkstations(CategoryIdentifier.of(map.getLoc()), EntryStack.of(VanillaEntryTypes.ITEM, stack));
+                }
+            });
         });
         REIUtils.EXTRA_CATEGORIES.forEach(c -> c.accept(registry));
     }

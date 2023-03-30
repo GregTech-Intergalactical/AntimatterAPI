@@ -480,6 +480,13 @@ public final class AntimatterAPI {
         }
     }
 
+    public static void registerJEICategoryModel(IRecipeMap map, Machine<?> machine) {
+        if (isModLoaded(Ref.MOD_JEI) || isModLoaded(Ref.MOD_REI)) {
+            AntimatterJEIREIPlugin.registerCategoryModel(map,
+                    new ResourceLocation(machine.getDomain(), machine.getId()), machine.getFirstTier());
+        }
+    }
+
     public static void registerJEICategory(IRecipeMap map, GuiData gui) {
         registerJEICategory(map, gui, Tier.LV, null, true);
     }

@@ -31,6 +31,7 @@ import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.integration.jei.AntimatterJEIPlugin;
 import muramasa.antimatter.integration.jeirei.renderer.IRecipeInfoRenderer;
 import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.IRecipeMap;
@@ -82,8 +83,8 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 this.icon = EntryStacks.of(itemLike);
             }
         } else {
-            Block block = AntimatterAPI.get(Block.class, blockItemModel == null ? "" : blockItemModel.getPath() + "_" + defaultTier.getId(), blockItemModel == null ? "" : blockItemModel.getNamespace());
-            this.icon = block == null ? EntryStacks.of(Data.DEBUG_SCANNER) : EntryStacks.of(block.asItem());
+            Machine<?> machine = blockItemModel == null ? null : AntimatterAPI.get(Machine.class, blockItemModel.getPath(), blockItemModel.getNamespace());
+            this.icon = machine == null || !machine.getTiers().contains(defaultTier) ? EntryStacks.of(Data.DEBUG_SCANNER) : EntryStacks.of(machine.getItem(defaultTier));
         }
         this.gui = gui;
         this.infoRenderer = map.getInfoRenderer();
