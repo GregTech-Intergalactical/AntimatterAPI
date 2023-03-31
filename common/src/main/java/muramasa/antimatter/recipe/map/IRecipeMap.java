@@ -15,6 +15,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.common.util.LazyOptional;
@@ -32,6 +33,10 @@ public interface IRecipeMap extends ISharedAntimatterObject {
     FluidStack[] EMPTY_FLUID = new FluidStack[0];
 
     IRecipe find(@Nonnull ItemStack[] items, @Nonnull FluidStack[] fluids, Tier tier, @Nonnull Predicate<IRecipe> canHandle);
+
+    default IRecipe findByID(ResourceLocation id){
+        return getRecipes(false).stream().filter(r -> r.getId().equals(id)).findFirst().orElse(null);
+    }
     void add(IRecipe recipe);
     void compileRecipe(IRecipe recipe);
     void compile(RecipeManager manager);

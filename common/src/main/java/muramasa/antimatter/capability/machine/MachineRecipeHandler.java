@@ -274,7 +274,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             System.out.println("Check Recipe when active recipe is null");
             return tile.getMachineState();
         }
-        if (this.currentProgress == this.maxProgress) {
+        if (this.currentProgress >= this.maxProgress) {
             if (!canOutput()) {
                 tickTimer += WAIT_TIME_OUTPUT_FULL;
                 return OUTPUT_FULL;
@@ -616,12 +616,12 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         nbt.put("F", fluid);
         nbt.putInt("P", currentProgress);
         nbt.putBoolean("C", consumedResources);
-        /*if (activeRecipe != null){
+        if (activeRecipe != null){
             nbt.putString("AR", activeRecipe.getId().toString());
         }
         if (lastRecipe != null){
             nbt.putString("LR", lastRecipe.getId().toString());
-        }*/
+        }
         return nbt;
     }
 
@@ -633,8 +633,9 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         this.currentProgress = nbt.getInt("P");
         this.tickTimer = nbt.getInt("T");
         this.consumedResources = nbt.getBoolean("C");
-        /*this.activeRecipe = this.tile.getLevel().getRecipeManager().byKey(new ResourceLocation(nbt.getString("AR"))).map(r -> r instanceof IRecipe r2 ? r2 : null).orElse(null);
-        this.lastRecipe = this.tile.getLevel().getRecipeManager().byKey(new ResourceLocation(nbt.getString("LR"))).map(r -> r instanceof IRecipe r2 ? r2 : null).orElse(null);*/
+        this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap().findByID(new ResourceLocation(nbt.getString("AR"))) : null;
+        this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap().findByID(new ResourceLocation(nbt.getString("LR"))) : null;
+        calculateDurations();
     }
 
     @Override
