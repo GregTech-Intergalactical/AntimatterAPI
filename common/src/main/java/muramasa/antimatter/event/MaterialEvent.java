@@ -76,8 +76,8 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asMetal(int meltingPoint, int blastFurnaceTemp, IMaterialTag... tags) {
-        asSolid(meltingPoint, blastFurnaceTemp, tags);
         flags(METAL);
+        asSolid(meltingPoint, blastFurnaceTemp, tags);
         return this;
     }
 
@@ -140,7 +140,7 @@ public class MaterialEvent {
         flags(AntimatterMaterialTypes.LIQUID);
         MaterialTags.FUEL_POWER.add(this.material, fuelPower);
         MaterialTags.LIQUID_TEMPERATURE.add(this.material, temp);
-        if (temp >= 400){
+        if (temp >= 400 && material.has(METAL)){
             flags(MOLTEN);
         }
         if (canDistill){
