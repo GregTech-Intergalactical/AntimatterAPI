@@ -2,11 +2,12 @@ package muramasa.antimatter.capability.fluid;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStackSimple;
 
 import javax.annotation.Nonnull;
 
-public class FluidHandlerItemCell extends FluidHandlerItemStackSimple {
+public class FluidHandlerItemCell extends FluidHandlerItemStack {
 
     protected int maxTemp;
 

@@ -14,6 +14,7 @@ import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
 import muramasa.antimatter.datagen.json.JLoaderModel;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
+import muramasa.antimatter.item.ItemFluidCell;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IItemBlockProvider;
 import muramasa.antimatter.texture.Texture;
@@ -211,8 +212,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                     if (coverInteract) return InteractionResult.SUCCESS;
                     //Has gui?
                     if (TesseractCapUtils.getFluidHandler(tile, hit.getDirection()).map(fh -> {
+                        int capacity = stack.getItem() instanceof ItemFluidCell cell ? cell.getCapacity() : 1000;
                         fh = tile.fluidHandler.map(MachineFluidHandler::getGuiHandler).orElse(fh);
-                        FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, 1000, player, true);
+                        FluidActionResult res = FluidUtil.tryEmptyContainer(stack, fh, capacity, player, true);
                         if (res.isSuccess() && !player.isCreative()) {
                             boolean single = stack.getCount() == 1;
                             stack.shrink(1);
@@ -226,7 +228,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
                         }
                         if (!res.isSuccess()) {
-                            res = FluidUtil.tryFillContainer(stack, fh, 1000, player, true);
+                            res = FluidUtil.tryFillContainer(stack, fh, capacity, player, true);
                             if (res.isSuccess() && !player.isCreative()) {
                                 boolean single = stack.getCount() == 1;
                                 stack.shrink(1);
