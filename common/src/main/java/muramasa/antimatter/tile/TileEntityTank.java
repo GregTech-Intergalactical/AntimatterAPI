@@ -44,9 +44,34 @@ public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMa
         renderer.draw(stack, instance.stack.getDisplayName().getString(), left, top, 16448255);
         StringBuilder fluidAmount = new StringBuilder().append(instance.stack.getAmount());
         if (AntimatterPlatformUtils.isFabric()){
-            fluidAmount.append(" ").append(instance.stack.getRealAmount() % 81L).append("/81");
+            fluidAmount.append(" ").append(intToSuperScript((int) (instance.stack.getRealAmount() % 81L))).append("/₈₁");
         }
         renderer.draw(stack, fluidAmount.toString() + " mb", left, top + 8, 16448255);
         return 16;
+    }
+
+    private String intToSuperScript(int i){
+        String intString = String.valueOf(i);
+        StringBuilder builder = new StringBuilder();
+        for (char c : intString.toCharArray()) {
+            builder.append(charToSuperScript(c));
+        }
+        return builder.toString();
+    }
+
+    private String charToSuperScript(char c){
+        return switch (c){
+            case '0' -> "⁰";
+            case '1' -> "¹";
+            case '2' -> "²";
+            case '3' -> "³";
+            case '4' -> "⁴";
+            case '5' -> "⁵";
+            case '6' -> "⁶";
+            case '7' -> "⁷";
+            case '8' -> "⁸";
+            case '9' -> "⁹";
+            default -> String.valueOf(c);
+        };
     }
 }
