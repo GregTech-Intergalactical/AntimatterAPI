@@ -99,37 +99,6 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                     }
                 }
                 return false;
-                /*ItemStack toActOn = cell.copy();
-                toActOn.setCount(1);
-                return TesseractCapUtils.getFluidHandlerItem(toActOn).map(cfh -> {
-                    final long actualMax = maxFill == -1 ? cfh.getTankCapacityInDroplets(0) : maxFill;
-                    ItemStack checkContainer = TesseractCapUtils.getFluidHandlerItem(toActOn).map(t -> {
-                        if (t.getFluidInTank(0).isEmpty()) {
-                            t.fillDroplets(FluidPlatformUtils.tryFluidTransfer(t, this.getCellAccessibleTanks(), actualMax, false), EXECUTE);
-                        } else {
-                            t.drain(actualMax, EXECUTE);
-                        }
-                        return t.getContainer();
-                    }).orElse(null*//* throw exception *//*);
-                    if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, checkContainer, true).isEmpty())
-                        return false;
-
-                    FluidStack stack;
-                    if (cfh.getFluidInTank(0).isEmpty()) {
-                        stack = FluidPlatformUtils.tryFluidTransfer(cfh, this.getCellAccessibleTanks(), actualMax, true);
-                    } else {
-                        stack = FluidPlatformUtils.tryFluidTransfer(this.getCellAccessibleTanks(), cfh, actualMax, true);
-                    }
-                    if (!stack.isEmpty()) {
-                        ItemStack insert = cfh.getContainer();
-                        insert.setCount(1);
-                        MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, insert, false);
-                        MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
-                        lastCellSlot = cellSlot;
-                        return true;
-                    }
-                    return false;
-                }).orElse(false);*/
             }).orElse(false);
         } else {
             filledLastTick = false;
