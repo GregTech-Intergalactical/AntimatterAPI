@@ -12,7 +12,7 @@ public class AntimatterFluidUtils {
         throw new AssertionError();
     }
     @ExpectPlatform
-    public static void createSourceAndFlowingFluid(AntimatterFluid fluid, Consumer<Fluid> source, Consumer<FlowingFluid> flowing){
+    public static void createSourceAndFlowingFluid(AntimatterFluid fluid, Consumer<FlowingFluid> source, Consumer<FlowingFluid> flowing){
         throw new AssertionError();
     }
 }

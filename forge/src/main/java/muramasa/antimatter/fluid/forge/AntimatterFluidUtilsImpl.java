@@ -14,7 +14,7 @@ public class AntimatterFluidUtilsImpl {
         return fluid instanceof ForgeFlowingFluid.Source;
     }
 
-    public static void createSourceAndFlowingFluid(AntimatterFluid fluid, Consumer<Fluid> source, Consumer<FlowingFluid> flowing){
+    public static void createSourceAndFlowingFluid(AntimatterFluid fluid, Consumer<FlowingFluid> source, Consumer<FlowingFluid> flowing){
         FluidAttributes.Builder builder = fromAntimatterBuilder(fluid.getAttributes());
         ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(fluid::getFluid, fluid::getFlowingFluid, builder).bucket(fluid::getContainerItem).block(fluid::getFluidBlock);
         source.accept(new ForgeFlowingFluid.Source(properties));

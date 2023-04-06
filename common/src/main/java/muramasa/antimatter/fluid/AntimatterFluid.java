@@ -39,7 +39,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
     public static final ResourceLocation PLASMA_FLOW_TEXTURE = new ResourceLocation(Ref.ID, "block/liquid/plasma"); // _flow
 
     private final String domain, id;
-    protected Fluid source;
+    protected FlowingFluid source;
     protected FlowingFluid flowing;
     protected Block.Properties blockProperties;
     protected AntimatterFluidAttributes attributes;
@@ -75,7 +75,8 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
             AntimatterAPI.register(Item.class, getId() + "_bucket", getDomain(), containerItem = new BucketItem(this.getFluid(), new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET).tab(CreativeModeTab.TAB_MISC)));
         } else if (registry == RegistryType.BLOCKS) {
             AntimatterFluidUtils.createSourceAndFlowingFluid(this, s -> this.source = s, f -> this.flowing = f);
-            this.fluidBlock = new LiquidBlock(getFlowingFluid(), blockProperties);
+            int color = this instanceof AntimatterMaterialFluid m ? m.getMaterial().getRGB() : -1;
+            this.fluidBlock = new AntimatterLiquidBlock(getFluid(), blockProperties, color);
             AntimatterAPI.register(Block.class, "block_fluid_".concat(getId()), getDomain(), fluidBlock);
         } else if (registry == RegistryType.FLUIDS) {
             AntimatterAPI.register(Fluid.class, getId(), getDomain(), source);
@@ -83,7 +84,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
         }
     }
 
-    public AntimatterFluid source(Fluid source) {
+    public AntimatterFluid source(FlowingFluid source) {
         this.source = source;
         return this;
     }
@@ -116,7 +117,7 @@ public class AntimatterFluid implements ISharedAntimatterObject, IRegistryEntryP
         return attributes;
     }
 
-    public Fluid getFluid() {
+    public FlowingFluid getFluid() {
         return source;
     }
 
