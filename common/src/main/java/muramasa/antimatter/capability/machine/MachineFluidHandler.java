@@ -20,6 +20,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.FluidPlatformUtils;
@@ -74,26 +75,50 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                 if (cell.isEmpty()) {
                     return false;
                 }
-                ItemStack toActOn = cell.copy();
+                FluidActionResult result = FluidPlatformUtils.tryFillContainer(cell, this.getCellAccessibleTanks(), maxFill, null, false);
+                if (result.isSuccess()){
+                    ItemStack insert = result.getResult();
+                    if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, insert, true).isEmpty())
+                        return false;
+                    FluidPlatformUtils.tryFillContainer(cell, this.getCellAccessibleTanks(), maxFill, null, true);
+                    MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, insert, false);
+                    MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
+                    lastCellSlot = cellSlot;
+                    return true;
+                } else {
+                    result = FluidPlatformUtils.tryEmptyContainer(cell, this.getCellAccessibleTanks(), maxFill, null, false);
+                    if (result.isSuccess()){
+                        ItemStack insert = result.getResult();
+                        if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, insert, true).isEmpty())
+                            return false;
+                        FluidPlatformUtils.tryEmptyContainer(cell, this.getCellAccessibleTanks(), maxFill, null, true);
+                        MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, insert, false);
+                        MachineItemHandler.extractFromInput(ih.getCellInputHandler(), cellSlot, 1, false);
+                        lastCellSlot = cellSlot;
+                        return true;
+                    }
+                }
+                return false;
+                /*ItemStack toActOn = cell.copy();
                 toActOn.setCount(1);
                 return TesseractCapUtils.getFluidHandlerItem(toActOn).map(cfh -> {
                     final long actualMax = maxFill == -1 ? cfh.getTankCapacityInDroplets(0) : maxFill;
                     ItemStack checkContainer = TesseractCapUtils.getFluidHandlerItem(toActOn).map(t -> {
                         if (t.getFluidInTank(0).isEmpty()) {
-                            t.fillDroplets(FluidPlatformUtils.tryFluidTransfer(t, this.getCellAccessibleTanks(), (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), false), EXECUTE);
+                            t.fillDroplets(FluidPlatformUtils.tryFluidTransfer(t, this.getCellAccessibleTanks(), actualMax, false), EXECUTE);
                         } else {
                             t.drain(actualMax, EXECUTE);
                         }
                         return t.getContainer();
-                    }).orElse(null/* throw exception */);
+                    }).orElse(null*//* throw exception *//*);
                     if (!MachineItemHandler.insertIntoOutput(ih.getCellOutputHandler(), cellSlot, checkContainer, true).isEmpty())
                         return false;
 
                     FluidStack stack;
                     if (cfh.getFluidInTank(0).isEmpty()) {
-                        stack = FluidPlatformUtils.tryFluidTransfer(cfh, this.getCellAccessibleTanks(), (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), true);
+                        stack = FluidPlatformUtils.tryFluidTransfer(cfh, this.getCellAccessibleTanks(), actualMax, true);
                     } else {
-                        stack = FluidPlatformUtils.tryFluidTransfer(this.getCellAccessibleTanks(), cfh, (AntimatterPlatformUtils.isFabric() ? actualMax : (int) actualMax), true);
+                        stack = FluidPlatformUtils.tryFluidTransfer(this.getCellAccessibleTanks(), cfh, actualMax, true);
                     }
                     if (!stack.isEmpty()) {
                         ItemStack insert = cfh.getContainer();
@@ -104,7 +129,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
                         return true;
                     }
                     return false;
-                }).orElse(false);
+                }).orElse(false);*/
             }).orElse(false);
         } else {
             filledLastTick = false;
