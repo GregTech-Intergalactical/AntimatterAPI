@@ -216,7 +216,7 @@ public class ItemFluidCell extends ItemBasic<ItemFluidCell> implements IContaine
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         FluidStack fluid = this.getFluid(stack);
-        BlockHitResult trace = getPlayerPOVHitResult(world, player, fluid.isEmpty() ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
+        BlockHitResult trace = getPlayerPOVHitResult(world, player, fluid.getAmount() + 1000 <= capacity ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
 
         // fire Forge event for bucket use
         InteractionResultHolder<ItemStack> ret = AntimatterPlatformUtils.postBucketUseEvent(player, world, stack, trace);
