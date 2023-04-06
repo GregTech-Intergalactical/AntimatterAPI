@@ -10,6 +10,7 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.texture.Texture;
+import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -45,9 +46,10 @@ public class PipeBakedModel extends DynamicBakedModel {
     public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data) {
         if (!data.hasProperty(AntimatterProperties.TILE_PROPERTY))
             return super.getBlockQuads(state, side, rand, data);
-        TileEntityPipe<?> pipe = (TileEntityPipe<?>) data.getData(AntimatterProperties.TILE_PROPERTY);
-        PipeCoverHandler<?> covers = pipe.coverHandler.orElse(null);
         List<BakedQuad> quads = super.getBlockQuads(state, side, rand, data);
+        TileEntityBase<?> base = data.getData(AntimatterProperties.TILE_PROPERTY);
+        if (!(base instanceof TileEntityPipe<?> pipe)) return quads;
+        PipeCoverHandler<?> covers = pipe.coverHandler.orElse(null);
         List<BakedQuad> coverQuads = new LinkedList<>();
         if (covers == null)
             return quads;
