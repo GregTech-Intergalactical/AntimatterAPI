@@ -635,7 +635,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         this.consumedResources = nbt.getBoolean("C");
         this.activeRecipe = nbt.contains("AR") ? this.tile.getMachineType().getRecipeMap().findByID(new ResourceLocation(nbt.getString("AR"))) : null;
         this.lastRecipe = nbt.contains("LR") ? this.tile.getMachineType().getRecipeMap().findByID(new ResourceLocation(nbt.getString("LR"))) : null;
-        calculateDurations();
+        if (this.activeRecipe != null) calculateDurations();
     }
 
     @Override
