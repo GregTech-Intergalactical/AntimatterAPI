@@ -6,6 +6,7 @@ import muramasa.antimatter.capability.machine.MachineFluidHandler;
 import muramasa.antimatter.integration.jeirei.renderer.IInfoRenderer;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.machine.types.TankMachine;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,7 +42,11 @@ public class TileEntityTank<T extends TileEntityMachine<T>> extends TileEntityMa
         left = left + 55;
         top = top + 24;
         renderer.draw(stack, instance.stack.getDisplayName().getString(), left, top, 16448255);
-        renderer.draw(stack, instance.stack.getAmount() + " mb", left, top + 8, 16448255);
+        StringBuilder fluidAmount = new StringBuilder().append(instance.stack.getAmount());
+        if (AntimatterPlatformUtils.isFabric()){
+            fluidAmount.append(" ").append(instance.stack.getRealAmount() % 81L).append("/81");
+        }
+        renderer.draw(stack, fluidAmount.toString() + " mb", left, top + 8, 16448255);
         return 16;
     }
 }
