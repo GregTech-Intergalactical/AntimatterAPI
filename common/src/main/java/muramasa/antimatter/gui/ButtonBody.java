@@ -2,6 +2,7 @@ package muramasa.antimatter.gui;
 
 public class ButtonBody extends ButtonOverlay {
 
+    public static ButtonBody NO_OVERLAY = new ButtonBody("no_overlay", 96, 0, 0, 0, 16, 16);
     public static ButtonBody GREY = new ButtonBody("grey", 0, 0, 16, 0, 16, 16);
     public static ButtonBody BLUE = new ButtonBody("blue", 32, 0, 16, 0, 16, 16);
     public static ButtonBody NO_HOVER = new ButtonBody("no_hover", 64, 0, 0, 0, 16, 16);
