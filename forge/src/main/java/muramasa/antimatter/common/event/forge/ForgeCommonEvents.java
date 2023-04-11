@@ -22,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -116,6 +117,25 @@ public class ForgeCommonEvents {
             }
             if (!replacement.isEmpty()) {
                 Block replacementBlock = AntimatterAPI.get(Block.class, replacement, Ref.SHARED_ID);
+                if (replacementBlock != null){
+                    map.remap(replacementBlock);
+                }
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void remapMissingBlockEntities(final RegistryEvent.MissingMappings<BlockEntityType<?>> event) {
+        event.getMappings(Ref.SHARED_ID).forEach(map -> {
+            String id = map.key.getPath();
+            String replacement = "";
+            if (id.startsWith("fluid_")){
+                replacement = id.replace("fluid_", "fluid_pipe_");
+            } else if (id.startsWith("item_")){
+                replacement = id.replace("item_", "item_pipe_");
+            }
+            if (!replacement.isEmpty()) {
+                BlockEntityType<?> replacementBlock = AntimatterAPI.get(BlockEntityType.class, replacement, Ref.SHARED_ID);
                 if (replacementBlock != null){
                     map.remap(replacementBlock);
                 }
