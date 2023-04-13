@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import dev.architectury.fluid.FluidStack;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
@@ -18,6 +19,7 @@ import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -44,7 +46,7 @@ public class RecipeMapDisplay implements Display {
     public RecipeMapDisplay(IRecipe recipe){
         this.id = CategoryIdentifier.of(Ref.SHARED_ID, recipe.getMapId());
         this.recipe = recipe;
-        List<EntryIngredient> fluidInputs = recipe.getInputFluids().stream().map(fluidIngredient -> Arrays.stream(fluidIngredient.getStacks()).map(REIUtils::toREIFLuidStack).toList()).map(l -> EntryIngredients.of(VanillaEntryTypes.FLUID, l)).toList();
+        List<EntryIngredient> fluidInputs = createFluidInputEntries(recipe.getInputFluids().stream().map(fluidIngredient -> Arrays.stream(fluidIngredient.getStacks()).map(REIUtils::toREIFLuidStack).toList()).toList());
         List<EntryIngredient> itemInputs = createInputEntries(recipe.getInputItems(), recipe);
         this.input = new ArrayList<>(itemInputs);
         input.addAll(fluidInputs);
@@ -54,7 +56,7 @@ public class RecipeMapDisplay implements Display {
             builder.addAll(createOutputEntries(Arrays.asList(stacks), recipe));
         }
         if (recipe.getOutputFluids() != null){
-            builder.addAll(Arrays.stream(recipe.getOutputFluids()).map(REIUtils::toREIFLuidStack).map(EntryIngredients::of).toList());
+            builder.addAll(createFluidOutputEntries(Arrays.stream(recipe.getOutputFluids()).map(REIUtils::toREIFLuidStack).toList()));
         }
 
         this.output = builder.build();
@@ -64,6 +66,28 @@ public class RecipeMapDisplay implements Display {
         return input.stream().map(i -> {
             double chance = recipe.hasChances() ? Objects.requireNonNull(recipe.getChances())[atomicInteger.getAndIncrement()] : 1.0;
             return EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getProbabilitySetting(chance));
+        }).map(EntryIngredient::of).toList();
+    }
+
+    public static List<EntryIngredient> createFluidOutputEntries(List<FluidStack> input) {
+        return input.stream().map(i -> {
+            EntryStack<FluidStack> fluidStackEntryStack = EntryStacks.of(i);
+            if (AntimatterPlatformUtils.isFabric()){
+                fluidStackEntryStack.setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getFluidSetting(i));
+            }
+            return fluidStackEntryStack;
+        }).map(EntryIngredient::of).toList();
+    }
+
+    public static List<EntryIngredient> createFluidInputEntries(List<List<FluidStack>> input) {
+        return input.stream().map(i -> {
+            List<EntryStack<FluidStack>> fluidStackEntryStack = i.stream().map(EntryStacks::of).toList();
+            if (AntimatterPlatformUtils.isFabric()){
+                fluidStackEntryStack.stream().forEach(e -> {
+                    e.setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getFluidSetting(e.getValue()));
+                });
+            }
+            return fluidStackEntryStack;
         }).map(EntryIngredient::of).toList();
     }
 
@@ -105,6 +129,37 @@ public class RecipeMapDisplay implements Display {
         @Nullable
         Component tooltip = getProbabilityTooltip(probability);
         return es -> tooltip == null ? List.of() : List.of(tooltip);
+    }
+
+    private static Function<EntryStack<?>, List<Component>> getFluidSetting(FluidStack fluidStack) {
+        @Nullable
+        Component tooltip = new TextComponent((fluidStack.getAmount() / 81L) + " " + intToSuperScript(fluidStack.getAmount() % 81L) + "/₈₁ mb");
+        return es -> List.of(tooltip);
+    }
+
+    private static String intToSuperScript(long i){
+        String intString = String.valueOf(i);
+        StringBuilder builder = new StringBuilder();
+        for (char c : intString.toCharArray()) {
+            builder.append(charToSuperScript(c));
+        }
+        return builder.toString();
+    }
+
+    private static String charToSuperScript(char c){
+        return switch (c){
+            case '0' -> "⁰";
+            case '1' -> "¹";
+            case '2' -> "²";
+            case '3' -> "³";
+            case '4' -> "⁴";
+            case '5' -> "⁵";
+            case '6' -> "⁶";
+            case '7' -> "⁷";
+            case '8' -> "⁸";
+            case '9' -> "⁹";
+            default -> String.valueOf(c);
+        };
     }
 
     @Override
