@@ -11,16 +11,16 @@ public class Tier implements ISharedAntimatterObject {
     /**
      * Electricity Tiers
      **/
-    public static Tier ULV = new Tier(Ref.ID, "ulv", 8, ChatFormatting.WHITE); //Tier 1
-    public static Tier LV = new Tier(Ref.ID, "lv", 32, ChatFormatting.WHITE); //Tier 2
-    public static Tier MV = new Tier(Ref.ID, "mv", 128, ChatFormatting.WHITE); //Tier 3
-    public static Tier HV = new Tier(Ref.ID, "hv", 512, ChatFormatting.YELLOW); //Tier 4
-    public static Tier EV = new Tier(Ref.ID, "ev", 2048, ChatFormatting.AQUA); //Tier 5
-    public static Tier IV = new Tier(Ref.ID, "iv", 8192, ChatFormatting.LIGHT_PURPLE); //Tier 6
-    public static Tier LUV = new Tier(Ref.ID, "luv", 32768, ChatFormatting.LIGHT_PURPLE); //Tier 7
-    public static Tier ZPM = new Tier(Ref.ID, "zpm", 131072, ChatFormatting.LIGHT_PURPLE); //Tier 8
-    public static Tier UV = new Tier(Ref.ID, "uv", 524288, ChatFormatting.LIGHT_PURPLE); //Tier 9
-    public static Tier MAX = new Tier(Ref.ID, "max", 2147483647, ChatFormatting.LIGHT_PURPLE); //Tier 15
+    public static Tier ULV = new Tier(Ref.ID, "ulv", 8, ChatFormatting.WHITE, 0); //Tier 1
+    public static Tier LV = new Tier(Ref.ID, "lv", 32, ChatFormatting.WHITE, 1); //Tier 2
+    public static Tier MV = new Tier(Ref.ID, "mv", 128, ChatFormatting.WHITE, 2); //Tier 3
+    public static Tier HV = new Tier(Ref.ID, "hv", 512, ChatFormatting.YELLOW, 3); //Tier 4
+    public static Tier EV = new Tier(Ref.ID, "ev", 2048, ChatFormatting.AQUA, 4); //Tier 5
+    public static Tier IV = new Tier(Ref.ID, "iv", 8192, ChatFormatting.LIGHT_PURPLE, 5); //Tier 6
+    public static Tier LUV = new Tier(Ref.ID, "luv", 32768, ChatFormatting.LIGHT_PURPLE, 6); //Tier 7
+    public static Tier ZPM = new Tier(Ref.ID, "zpm", 131072, ChatFormatting.LIGHT_PURPLE, 7); //Tier 8
+    public static Tier UV = new Tier(Ref.ID, "uv", 524288, ChatFormatting.LIGHT_PURPLE, 8); //Tier 9
+    public static Tier MAX = new Tier(Ref.ID, "max", 2147483647, ChatFormatting.LIGHT_PURPLE, 14); //Tier 15
 
     /**
      * Special Tiers
@@ -30,16 +30,23 @@ public class Tier implements ISharedAntimatterObject {
     public static Tier STEEL = new Tier(Ref.ID, "steel", 0, ChatFormatting.WHITE);
 
     private final String domain, id;
-    private final int voltage;
+    private final long voltage;
+
+    private final int tierNumber;
     private final ChatFormatting rarityColor;
     private final String baseTexture;
 
-    public Tier(String domain, String id, int voltage, ChatFormatting rarityColor) {
+    public Tier(String domain, String id, long voltage, ChatFormatting rarityColor){
+        this(domain, id, voltage, rarityColor, 1);
+    }
+
+    public Tier(String domain, String id, long voltage, ChatFormatting rarityColor, int tierNumber) {
         this.domain = domain;
         this.id = id;
         this.voltage = voltage;
         this.rarityColor = rarityColor;
         this.baseTexture = "block/machine/base/" + id;
+        this.tierNumber = tierNumber;
         AntimatterAPI.register(Tier.class, this);
     }
 
@@ -49,25 +56,10 @@ public class Tier implements ISharedAntimatterObject {
     }
 
     public int getIntegerId() {
-        switch (this.getId()) {
-            case "ulv":
-                return 0;
-            case "lv":
-                return 1;
-            case "mv":
-                return 2;
-            case "hv":
-                return 3;
-            case "ev":
-                return 4;
-            case "iv":
-                return 5;
-            default:
-                return 1;
-        }
+        return tierNumber;
     }
 
-    public int getVoltage() {
+    public long getVoltage() {
         return voltage;
     }
 
