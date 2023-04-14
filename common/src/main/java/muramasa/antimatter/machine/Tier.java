@@ -30,17 +30,17 @@ public class Tier implements ISharedAntimatterObject {
     public static Tier STEEL = new Tier(Ref.ID, "steel", 0, ChatFormatting.WHITE);
 
     private final String domain, id;
-    private final long voltage;
+    private final int voltage;
 
     private final int tierNumber;
     private final ChatFormatting rarityColor;
     private final String baseTexture;
 
-    public Tier(String domain, String id, long voltage, ChatFormatting rarityColor){
+    public Tier(String domain, String id, int voltage, ChatFormatting rarityColor){
         this(domain, id, voltage, rarityColor, 1);
     }
 
-    public Tier(String domain, String id, long voltage, ChatFormatting rarityColor, int tierNumber) {
+    public Tier(String domain, String id, int voltage, ChatFormatting rarityColor, int tierNumber) {
         this.domain = domain;
         this.id = id;
         this.voltage = voltage;
@@ -59,7 +59,7 @@ public class Tier implements ISharedAntimatterObject {
         return tierNumber;
     }
 
-    public long getVoltage() {
+    public int getVoltage() {
         return voltage;
     }
 
