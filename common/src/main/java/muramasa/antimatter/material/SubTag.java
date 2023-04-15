@@ -9,7 +9,7 @@ public class SubTag implements IAntimatterObject {
     public static final SubTag BAD_SOLDER = new SubTag("solder_bad");
     public static final SubTag COPPER_WIRE = new SubTag("copper_wire");
 
-    public static final SubTag COPPER_CABLE = new SubTag("copper_wire");
+    public static final SubTag COPPER_CABLE = new SubTag("copper_cable");
 
     public final String id;
 
