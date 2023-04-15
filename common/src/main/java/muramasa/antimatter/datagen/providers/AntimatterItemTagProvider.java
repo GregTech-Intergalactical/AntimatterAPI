@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 
 import static muramasa.antimatter.data.AntimatterMaterialTypes.BLOCK;
 import static muramasa.antimatter.data.AntimatterMaterialTypes.FRAME;
+import static muramasa.antimatter.material.MaterialTags.CABLE;
 import static muramasa.antimatter.material.MaterialTags.WIRE;
 import static muramasa.antimatter.util.TagUtils.*;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
@@ -144,6 +145,11 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
             if (mats.size() > 0) {
                 this.tag(TagUtils.getItemTag(new ResourceLocation(Ref.ID, SubTag.COPPER_WIRE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
                         AntimatterAPI.get(Wire.class, "wire_" + t.getId())).filter(Objects::nonNull).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
+            }
+            mats = CABLE.allSub(SubTag.COPPER_CABLE);
+            if (mats.size() > 0) {
+                this.tag(TagUtils.getItemTag(new ResourceLocation(Ref.ID, SubTag.COPPER_CABLE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
+                        AntimatterAPI.get(Wire.class, "cable_" + t.getId())).filter(Objects::nonNull).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
             }
         }
     }
