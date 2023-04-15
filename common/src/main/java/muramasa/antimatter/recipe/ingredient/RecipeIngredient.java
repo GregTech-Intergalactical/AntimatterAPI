@@ -227,6 +227,19 @@ public class RecipeIngredient extends Ingredient {
         return new RecipeIngredient(new RecipeValue(tagIn, count));
     }
 
+    public static RecipeIngredient ofObject(Object object, int amount){
+        if (object instanceof TagKey tag){
+            return of(tag, amount);
+        }
+        if (object instanceof ItemLike item){
+            return of(item, amount);
+        }
+        if (object instanceof ResourceLocation location){
+            return of(location, amount);
+        }
+        return RecipeIngredient.of(RecipeIngredient.EMPTY, 1);
+    }
+
     @Override
     public JsonElement toJson() {
         JsonObject object = new JsonObject();
