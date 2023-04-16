@@ -1,5 +1,7 @@
 package muramasa.antimatter.integration.kubejs;
 
+import dev.latvian.mods.kubejs.KubeJSPaths;
+import dev.latvian.mods.kubejs.server.ServerScriptManager;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.AntimatterMod;
 import muramasa.antimatter.Ref;
@@ -9,7 +11,8 @@ import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 
-;
+;import java.nio.file.Files;
+import java.nio.file.LinkOption;
 
 public class KubeJSRegistrar extends AntimatterMod {
     public KubeJSRegistrar() {
@@ -52,5 +55,19 @@ public class KubeJSRegistrar extends AntimatterMod {
     @Override
     public int getPriority() {
         return Integer.MIN_VALUE;
+    }
+
+    public static void checkKubeJSServerScriptManager(){
+        if (ServerScriptManager.instance == null){
+            ServerScriptManager.instance = new ServerScriptManager();
+            try {
+                if (Files.notExists(KubeJSPaths.DATA, new LinkOption[0])) {
+                    Files.createDirectories(KubeJSPaths.DATA);
+                }
+
+            } catch (Throwable var3) {
+                throw new RuntimeException("KubeJS failed to register it's script loader!", var3);
+            }
+        }
     }
 }

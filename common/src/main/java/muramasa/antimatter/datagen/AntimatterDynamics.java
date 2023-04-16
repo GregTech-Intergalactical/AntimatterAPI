@@ -20,6 +20,7 @@ import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
 import muramasa.antimatter.event.WorldGenEvent;
 import muramasa.antimatter.integration.kubejs.AMWorldEvent;
+import muramasa.antimatter.integration.kubejs.KubeJSRegistrar;
 import muramasa.antimatter.integration.kubejs.RecipeLoaderEventKubeJS;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.recipe.IRecipe;
@@ -229,6 +230,7 @@ public class AntimatterDynamics {
         AntimatterAPI.all(RecipeMap.class, RecipeMap::reset);
         final Set<ResourceLocation> filter;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS)) {
+            if (serverEvent) KubeJSRegistrar.checkKubeJSServerScriptManager();
             RecipeLoaderEventKubeJS ev = RecipeLoaderEventKubeJS.createAndPost(serverEvent);
             filter = ev.forLoaders;
         } else {
