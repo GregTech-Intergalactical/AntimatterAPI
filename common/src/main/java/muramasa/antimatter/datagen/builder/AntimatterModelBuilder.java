@@ -3,7 +3,6 @@ package muramasa.antimatter.datagen.builder;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonArray;
 import com.mojang.math.Vector3f;
-import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.datagen.json.JAntimatterModel;
 import muramasa.antimatter.datagen.json.JModel;
 import muramasa.antimatter.texture.Texture;
@@ -31,10 +30,6 @@ public class AntimatterModelBuilder<T extends AntimatterModelBuilder<T>> impleme
     public T loader(ResourceLocation customLoader){
         this.customLoader = customLoader;
         return self();
-    }
-
-    public T loader(AntimatterModelLoader<?> customLoader){
-        return this.loader(customLoader.getLoc());
     }
 
     /**

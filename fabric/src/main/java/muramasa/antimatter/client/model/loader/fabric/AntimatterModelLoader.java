@@ -1,4 +1,4 @@
-package muramasa.antimatter.client.model.loader;
+package muramasa.antimatter.client.model.loader.fabric;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -8,7 +8,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.IAntimatterModel;
 import muramasa.antimatter.client.baked.PipeBakedModel;
 import muramasa.antimatter.client.model.AntimatterGroupedModel;
@@ -171,6 +170,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
         }
 
         @Override
+
         public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
             return new DynamicModel(super.read(context, json)) {
                 @Override

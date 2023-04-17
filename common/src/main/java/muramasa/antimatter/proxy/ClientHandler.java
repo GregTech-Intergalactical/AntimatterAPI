@@ -6,7 +6,6 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStorage;
-import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.tesr.MachineTESR;
@@ -61,11 +60,6 @@ public class ClientHandler implements IProxyHandler {
         ClientPacketListener listener =  mc.getConnection();
         if (listener == null) return true;
         return listener.getConnection().isMemoryConnection();
-    }
-
-    @ExpectPlatform
-    public static void registerLoader(ResourceLocation location, AntimatterModelLoader<?> loader){
-        throw new AssertionError();
     }
 
     @ExpectPlatform

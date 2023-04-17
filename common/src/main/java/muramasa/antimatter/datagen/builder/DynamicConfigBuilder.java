@@ -1,7 +1,6 @@
 package muramasa.antimatter.datagen.builder;
 
 import com.google.common.collect.ImmutableMap;
-import muramasa.antimatter.client.model.loader.AntimatterModelLoader;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -65,8 +64,8 @@ public class DynamicConfigBuilder {
         return this;
     }
 
-    public DynamicConfigBuilder loader(AntimatterModelLoader<?> loader) {
-        this.loader = loader.getLoc();
+    public DynamicConfigBuilder loader(ResourceLocation loader) {
+        this.loader = loader;
         return this;
     }
 

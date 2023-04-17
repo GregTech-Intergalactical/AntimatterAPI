@@ -1,4 +1,4 @@
-package muramasa.antimatter.client.model.loader;
+package muramasa.antimatter.client.model.loader.fabric;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -38,8 +38,7 @@ public class MachineModelLoader extends AntimatterModelLoader<MachineModel> {
         return new MachineModel(m, particle);
     }
 
-
-    public static class SideModelLoader extends BlockBenchLoader{
+    public static class SideModelLoader extends BlockBenchLoader {
         public SideModelLoader(ResourceLocation loc) {
             super(loc);
         }
@@ -62,4 +61,5 @@ public class MachineModelLoader extends AntimatterModelLoader<MachineModel> {
             return new AntimatterGroupedModel.CoverModel(model);
         }
     }
+    
 }
