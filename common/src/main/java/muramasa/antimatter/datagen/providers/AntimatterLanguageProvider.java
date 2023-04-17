@@ -226,6 +226,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             AntimatterAPI.all(IAntimatterArmor.class, domain, t -> {
                 add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
             });
+            customTranslations();
+            pipeTranslations();
         }
 
 
@@ -233,8 +235,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             String id = "jei.category." + t.getId();
             add(id, Utils.lowerUnderscoreToUpperSpaced(t.getId().replace('.', '_'), 0));
         });
-        customTranslations();
-        pipeTranslations();
+
+
     }
 
     protected void customTranslations() {
@@ -264,6 +266,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.heat_capacity", "Heat capacity");
         add("antimatter.tooltip.heat_capacity_total", "Heat capacity (total)");
         add("antimatter.tooltip.material_modid", "Added by: %s");
+        add("antimatter.tooltip.occurrence", "Indicates occurrence of %s");
     }
 
     private final void pipeTranslations() {
