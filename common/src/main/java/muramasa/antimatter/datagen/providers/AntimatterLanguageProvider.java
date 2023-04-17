@@ -4,11 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectRBTreeMap;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockStone;
-import muramasa.antimatter.block.BlockStoneSlab;
-import muramasa.antimatter.block.BlockStoneStair;
-import muramasa.antimatter.block.BlockStoneWall;
-import muramasa.antimatter.block.BlockStorage;
+import muramasa.antimatter.block.*;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
@@ -163,6 +159,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 else {
                     add(block, String.join("", getLocalizedType(block.getMaterial()), " ", getLocalizedType(block.getType())));
                 }
+            });
+            AntimatterAPI.all(BlockSurfaceRock.class).forEach(b -> {
+                add(b, String.join("", getLocalizeStoneType(b.getStoneType()) + " ", getLocalizedType(b.getMaterial()), " Surface Rock"));
             });
             AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeBlock<?> || t instanceof MaterialTypeItem<?>).forEach(t -> {
                 if (t.get() instanceof MaterialTypeBlock.IOreGetter){

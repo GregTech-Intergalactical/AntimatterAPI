@@ -150,4 +150,12 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         info.add("StoneType: " + stoneType.getId());
         return info;
     }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public StoneType getStoneType() {
+        return stoneType;
+    }
 }

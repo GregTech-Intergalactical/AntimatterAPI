@@ -3,6 +3,7 @@ package muramasa.antimatter.proxy;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.block.BlockStorage;
@@ -94,6 +95,7 @@ public class ClientHandler implements IProxyHandler {
             AntimatterAPI.all(BlockPipe.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockStorage.class).stream().filter(b -> b.getType() == AntimatterMaterialTypes.FRAME || b.getType() == AntimatterMaterialTypes.RAW_ORE_BLOCK)
                     .forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockSurfaceRock.class).stream().forEach(b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(AntimatterFluid.class).forEach(f -> {
                 ModelUtils.setRenderLayer(f.getFluid(), RenderType.translucent());
                 ModelUtils.setRenderLayer(f.getFlowingFluid(), RenderType.translucent());
