@@ -14,6 +14,7 @@ import muramasa.antimatter.event.MaterialEvent;
 import muramasa.antimatter.fabric.AntimatterAPIImpl;
 import muramasa.antimatter.fluid.AntimatterFluid;
 import muramasa.antimatter.integration.kubejs.AntimatterKubeJS;
+import muramasa.antimatter.recipe.ingredient.IAntimatterIngredientSerializer;
 import muramasa.antimatter.recipe.ingredient.IngredientSerializer;
 import muramasa.antimatter.recipe.ingredient.PropertyIngredient;
 import muramasa.antimatter.recipe.material.MaterialSerializer;
@@ -94,33 +95,22 @@ public class AntimatterRegistration {
             Registry.register(Registry.SOUND_EVENT, new ResourceLocation(d, i), t);
         });
         //TODO porting lib compat
-        if (domain.equals(Ref.ID)) {
-            CraftingHelper.register(new ResourceLocation("antimatter", "material"), new IngredientDeserializer() {
+        AntimatterAPI.all(IAntimatterIngredientSerializer.class, domain, (s, d, i) -> {
+            CraftingHelper.register(new ResourceLocation(d, i), new IngredientDeserializer() {
                 @Override
                 public Ingredient fromNetwork(FriendlyByteBuf buffer) {
-                    return PropertyIngredient.Serializer.INSTANCE.parse(buffer);
+                    return s.parse(buffer);
                 }
 
                 @Override
                 public Ingredient fromJson(JsonObject object) {
-                    return PropertyIngredient.Serializer.INSTANCE.parse(object);
+                    return s.parse(object);
                 }
             });
-            CraftingHelper.register(new ResourceLocation("antimatter", "ingredient"), new IngredientDeserializer() {
-                @Override
-                public Ingredient fromNetwork(FriendlyByteBuf buffer) {
-                    return IngredientSerializer.INSTANCE.parse(buffer);
-                }
-
-                @Override
-                public Ingredient fromJson(JsonObject object) {
-                    return IngredientSerializer.INSTANCE.parse(object);
-                }
-            });
-            AntimatterAPI.all(RecipeSerializer.class, domain, (r, d, i) -> {
-                Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(d, i), r);
-            });
-        }
+        });
+        AntimatterAPI.all(RecipeSerializer.class, domain, (r, d, i) -> {
+            Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(d, i), r);
+        });
         AntimatterAPI.all(IAntimatterFeature.class, domain,(t, d, i) -> {
             Registry.register(Registry.FEATURE, new ResourceLocation(d, i), t.asFeature());
         });

@@ -13,7 +13,7 @@ public class IngredientSerializer implements IAntimatterIngredientSerializer<Rec
 
     public static final IngredientSerializer INSTANCE = new IngredientSerializer();
 
-    static {
+    public static void init() {
         AntimatterAPI.register(IAntimatterIngredientSerializer.class, "ingredient", Ref.ID, INSTANCE);
     }
     @Override

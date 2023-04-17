@@ -11,6 +11,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTag;
@@ -212,6 +213,10 @@ public class PropertyIngredient extends Ingredient {
         public static Serializer INSTANCE = new Serializer();
 
         public static final ResourceLocation ID = new ResourceLocation("antimatter", "material");
+
+        public static void init(){
+            AntimatterAPI.register(IAntimatterIngredientSerializer.class, "material", Ref.ID, INSTANCE);
+        }
 
         @Override
         public PropertyIngredient parse(FriendlyByteBuf buffer) {
