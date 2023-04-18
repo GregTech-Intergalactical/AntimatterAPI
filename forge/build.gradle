@@ -153,11 +153,16 @@ processResources {
     def toReplace = [
             "version"             : project.mod_version
     ]
-    exclude("architectury.common.json")
     inputs.properties toReplace
     filesMatching("META-INF/mods.toml") {
         expand toReplace
     }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowCommon]
+    classifier "dev-shadow"
+    exclude("architectury.common.json")
 }
 
 // Example configuration to allow publishing using the maven-publish task
