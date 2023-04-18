@@ -53,7 +53,6 @@ public class MaterialDataInit {
 
         event.setMaterial(AntimatterMaterials.Charcoal).asDust(AntimatterMaterialTypes.BLOCK);
         event.setMaterial(AntimatterMaterials.Coal).asGemBasic(false).asOre(0, 2, true, AntimatterMaterialTypes.ORE_STONE);
-        MaterialTags.CUSTOM_ORE_STONE_DROPS.add(AntimatterMaterials.Coal, b -> BlockLoot.createOreDrop(b, AntimatterMaterialTypes.GEM.get(AntimatterMaterials.Coal)));
         event.setMaterial(AntimatterMaterials.Diamond).asGemBasic(false).asOre(3, 7, true).addTools(Tiers.DIAMOND.getAttackDamageBonus(), Tiers.DIAMOND.getSpeed(), Tiers.DIAMOND.getUses(), Tiers.DIAMOND.getLevel());
         event.setMaterial(AntimatterMaterials.Emerald).asGemBasic(false).asOre(3, 7, true).harvestLevel(2);
         event.setMaterial(AntimatterMaterials.EnderPearl).asGemBasic(false);
