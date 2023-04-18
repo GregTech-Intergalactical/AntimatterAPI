@@ -85,15 +85,15 @@ public class WorldGenVeinVariantBuilder {
     }
 
     final public WorldGenVeinVariantBuilder withThinChance() {
-        return this.withChance(0.05f, 0.1f, 0.001f, 0.001f);
+        return this.withChance(0.05f, 0.1f, 0.001f, 0.01f);
     }
 
     final public WorldGenVeinVariantBuilder withNormalChance() {
-        return this.withChance(0.1f, 0.05f, 0.0025f, 0.005f);
+        return this.withChance(0.1f, 0.05f, 0.0025f, 0.05f);
     }
 
     final public WorldGenVeinVariantBuilder withDenseChance() {
-        return this.withChance(0.25f, 0.0f, 0.005f, 0.01f);
+        return this.withChance(0.25f, 0.0f, 0.005f, 0.1f);
     }
 
     final public WorldGenVeinVariantMaterialBuilder withMaterial() {
