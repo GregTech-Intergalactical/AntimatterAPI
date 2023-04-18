@@ -49,6 +49,7 @@ public class Material implements ISharedAntimatterObject {
         MaterialTags.BY_PRODUCT_MULTI.add(this, 1);
         MaterialTags.SMELT_INTO.add(this, this);
         MaterialTags.DIRECT_SMELT_INTO.add(this, this);
+        MaterialTags.BLAST_INTO.add(this, this);
         MaterialTags.ARC_SMELT_INTO.add(this, this);
         MaterialTags.MACERATE_INTO.add(this, this);
         MaterialTags.PROCESS_INTO.add(this, new ObjectArrayList<>());

@@ -6,14 +6,9 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.material.*;
 import muramasa.antimatter.material.data.ArmorData;
 import muramasa.antimatter.material.data.FluidProduct;
-import muramasa.antimatter.material.IMaterialTag;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialStack;
-import muramasa.antimatter.material.MaterialTags;
-import muramasa.antimatter.material.MaterialTypeBlock;
-import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.material.data.HandleData;
 import muramasa.antimatter.material.data.ToolData;
 import muramasa.antimatter.tool.AntimatterToolType;
@@ -334,12 +329,20 @@ public class MaterialEvent {
     }
 
     public MaterialEvent setSmeltInto(Material m) {
-        MaterialTags.SMELT_INTO.add(this.material, m);
+        return this.setSmeltInto(m, AntimatterMaterialTypes.INGOT, 1);
+    }
+
+    public MaterialEvent setSmeltInto(Material m, MaterialTypeItem<?> type, int count) {
+        MaterialTags.SMELT_INTO_2.add(this.material, () -> type.get(m, count));
         return this;
     }
 
     public MaterialEvent setDirectSmeltInto(Material m) {
-        MaterialTags.DIRECT_SMELT_INTO.add(this.material, m);
+        return this.setDirectSmeltInto(m, AntimatterMaterialTypes.INGOT, 1);
+    }
+
+    public MaterialEvent setDirectSmeltInto(Material m, MaterialTypeItem<?> type, int count) {
+        MaterialTags.DIRECT_SMELT_INTO_2.add(this.material, () -> type.get(m, count));
         return this;
     }
 
