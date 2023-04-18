@@ -9,10 +9,8 @@ import muramasa.antimatter.material.tags.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class MaterialTags {
 
@@ -67,13 +65,9 @@ public class MaterialTags {
 
     public static final DoubleMaterialTag CHEMBATH_MERCURY = new DoubleMaterialTag("chembath_mercury");
     public static final DoubleMaterialTag CHEMBATH_PERSULFATE = new DoubleMaterialTag("chembath_persulfate");
-
-    public static final TypeMaterialTag<Supplier<ItemStack>> SMELT_INTO_2 = new TypeMaterialTag<>("smelt_into_2");
-    public static final TypeMaterialTag<Supplier<ItemStack>> DIRECT_SMELT_INTO_2 = new TypeMaterialTag<>("direct_smelt_into_2");
     public static final DoubleMaterialTag SMELT_INTO = new DoubleMaterialTag("smelt_into");
     public static final DoubleMaterialTag DIRECT_SMELT_INTO = new DoubleMaterialTag("direct_smelt_into");
     public static final DoubleMaterialTag ARC_SMELT_INTO = new DoubleMaterialTag("arc_smelt_into");
-    public static final DoubleMaterialTag BLAST_INTO = new DoubleMaterialTag("blast_into");
     public static final DoubleMaterialTag MACERATE_INTO = new DoubleMaterialTag("macerate_into");
     public static final NumberMaterialTag MELTING_POINT = new NumberMaterialTag("melting_point");
     public static final NumberMaterialTag BLAST_FURNACE_TEMP = new NumberMaterialTag("blast_furnace_temp");
