@@ -38,10 +38,10 @@ public class AntimatterCraftTweaker {
     @ZenCodeType.Method
     public static IIngredient ingredient(Material mat, MaterialType type, int count) {
         if (mat == null || type == null || count == 0) return null;
-        if (type instanceof MaterialTypeItem<?> i) {
+        if (type instanceof MaterialTypeItem i) {
             return IIngredient.fromIngredient(Ingredient.of(i.getMaterialTag(mat)));
         }
-        if (type instanceof MaterialTypeBlock<?> b) {
+        if (type instanceof MaterialTypeBlock b) {
             return IIngredient.fromIngredient(Ingredient.of(b.getMaterialTag(mat)));
         }
         return null;
