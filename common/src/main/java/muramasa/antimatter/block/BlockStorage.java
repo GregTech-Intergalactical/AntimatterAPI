@@ -49,7 +49,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                 // if (!(currentBlock instanceof BlockStorage) || ((BlockStorage) currentBlock).getType() != MaterialType.FRAME) return ctx; // Change to Block#isIn
                 if (!state.is(AntimatterMaterialTypes.FRAME.getTag())) return ctx;
                 BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(actualPos.getX(), actualPos.getY(), actualPos.getZ());
-                while (ctx.getLevel().getMaxBuildHeight() > mutablePos.getY()) {
+                while (ctx.getLevel().getMaxBuildHeight() > mutablePos.getY() + 1) {
                     if (ctx.getLevel().getBlockState(mutablePos.move(Direction.UP)).canBeReplaced(ctx)) {
                         ctx.getPlayer().swing(ctx.getHand());
                         ctx.getLevel().setBlockAndUpdate(mutablePos, ((BlockItem) ctx.getItemInHand().getItem()).getBlock().defaultBlockState());

@@ -51,7 +51,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     protected StoneType stoneType;
 
     public BlockSurfaceRock(String domain, Material material, StoneType stoneType) {
-        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Properties.of(Data.ROCK_MATERIAL).strength(1.0f, 10.0f).sound(SoundType.STONE).noCollission().noOcclusion());
+        super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Properties.of(net.minecraft.world.level.material.Material.DECORATION).strength(1.0f, 1.0f).sound(SoundType.STONE).noCollission());
         this.material = material;
         this.stoneType = stoneType;
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false));

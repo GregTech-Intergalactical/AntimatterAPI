@@ -50,8 +50,6 @@ import static muramasa.antimatter.machine.Tier.MAX;
 public class Data {
 
     public static final Material WRENCH_MATERIAL = new Material(MaterialColor.METAL, false, true, true, true, false, false, PushReaction.NORMAL);
-    public static final Material ROCK_MATERIAL = new Material(MaterialColor.STONE, false, false, false, false, false, false, PushReaction.DESTROY);
-
 
     static {
         StructureBuilder.addGlobalElement("A", BlockStateElement.AIR);
