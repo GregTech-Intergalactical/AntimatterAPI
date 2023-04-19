@@ -35,18 +35,16 @@ public class WorldGenSmallOreMaterialBuilder {
         if (this.dimensions.isEmpty()) {
             this.dimensions.add(new ResourceLocation("overworld"));
         }
-        Stream<WorldGenSmallOreMaterial> smallOreMaterial = IntStream.range(0, weight).mapToObj(i -> new WorldGenSmallOreMaterial(
-                this.material.getId() + "_" + i,
+        WorldGenSmallOreMaterial smallOreMaterial = new WorldGenSmallOreMaterial(
                 this.material,
                 this.minY != null ? this.minY : Integer.MIN_VALUE,
                 this.maxY != null ? this.maxY : Integer.MAX_VALUE,
-                1,
+                weight,
                 this.dimensions,
-                this.dimensionBlacklist,
                 this.biomes,
                 this.biomeBlacklist
-        ));
-        return smallOreMaterial.toList();
+        );
+        return List.of(smallOreMaterial);
     }
 
     final public WorldGenSmallOreMaterialBuilder withMaterial(Material material) {
@@ -72,11 +70,6 @@ public class WorldGenSmallOreMaterialBuilder {
 
     final public WorldGenSmallOreMaterialBuilder withDimensions(ResourceLocation... dimensions) {
         Collections.addAll(this.dimensions, dimensions);
-        return this;
-    }
-
-    final public WorldGenSmallOreMaterialBuilder setDimensionBlacklist(boolean blacklist) {
-        this.dimensionBlacklist = blacklist;
         return this;
     }
 
