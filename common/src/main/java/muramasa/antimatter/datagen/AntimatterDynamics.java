@@ -2,7 +2,6 @@ package muramasa.antimatter.datagen;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializer;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -27,13 +26,13 @@ import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.IRecipeMap;
-import muramasa.antimatter.recipe.map.RecipeBuilder;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.ModRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.smallore.WorldGenSmallOreMaterial;
 import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.loot.JCondition;
@@ -47,7 +46,6 @@ import net.minecraft.server.packs.PackResources;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.storage.loot.Deserializers;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.*;
@@ -245,6 +243,7 @@ public class AntimatterDynamics {
             }
         });
         List<WorldGenVein> veins = new ObjectArrayList<>();
+        List<WorldGenSmallOreMaterial> smallOres = new ObjectArrayList<>();
         boolean runRegular = true;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && serverEvent) {
             AMWorldEvent ev = new AMWorldEvent();
@@ -255,10 +254,14 @@ public class AntimatterDynamics {
         if (runRegular) {
             WorldGenEvent ev = AntimatterPlatformUtils.postWorldEvent(Antimatter.INSTANCE);
             veins.addAll(ev.VEINS);
+            smallOres.addAll(ev.SMALL_ORES);
         }
         AntimatterWorldGenerator.clear();
         for (WorldGenVein vein : veins) {
             AntimatterWorldGenerator.register(vein.toRegister, vein);
+        }
+        for (WorldGenSmallOreMaterial smallOre : smallOres){
+            AntimatterWorldGenerator.register(smallOre.toRegister, smallOre);
         }
         loaders.values().forEach(IRecipeRegistrate.IRecipeLoader::init);
         AntimatterAPI.all(ModRegistrar.class, t -> {

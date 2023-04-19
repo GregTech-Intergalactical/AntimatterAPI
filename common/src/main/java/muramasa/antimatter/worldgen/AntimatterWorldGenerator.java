@@ -9,6 +9,7 @@ import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.AntimatterFeature;
+import muramasa.antimatter.worldgen.feature.FeatureSmallOres;
 import muramasa.antimatter.worldgen.feature.FeatureVein;
 import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 public class AntimatterWorldGenerator {
 
     static final AntimatterFeature<NoneFeatureConfiguration> VEIN = new FeatureVein();
+    static final AntimatterFeature<NoneFeatureConfiguration> SMALL_ORE = new FeatureSmallOres();
 
     protected record GenHandler(BiomeLoadEvent consumer,
                                 Predicate<Biome.BiomeCategory> validator) {

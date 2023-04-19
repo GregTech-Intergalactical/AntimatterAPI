@@ -17,6 +17,7 @@ import java.util.Collections;
 public class AntimatterConfiguredFeatures {
     
     public static final Holder<PlacedFeature> VEIN = register("vein", FeatureUtils.register("vein", AntimatterWorldGenerator.VEIN, NoneFeatureConfiguration.NONE));
+    public static final Holder<PlacedFeature> SMALL_ORES = register("small_ores", FeatureUtils.register("small_ores", AntimatterWorldGenerator.SMALL_ORE, NoneFeatureConfiguration.NONE));
 
     @SuppressWarnings("unchecked")
     public static <T extends FeatureConfiguration> Holder<PlacedFeature> register(String id, Holder<ConfiguredFeature<T, ?>> feature) {
