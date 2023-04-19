@@ -179,6 +179,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.GEM.replacement(AntimatterMaterials.Diamond, () -> Items.DIAMOND);
         AntimatterMaterialTypes.GEM.replacement(AntimatterMaterials.Emerald, () -> Items.EMERALD);
         AntimatterMaterialTypes.GEM.replacement(AntimatterMaterials.Lapis, () -> Items.LAPIS_LAZULI);
+        AntimatterMaterialTypes.GEM.replacement(AntimatterMaterials.Quartz, () -> Items.QUARTZ);
         AntimatterMaterialTypes.GEM.replacement(AntimatterMaterials.Coal, () -> Items.COAL);
         AntimatterMaterialTypes.GEM.replacement(AntimatterMaterials.Charcoal, () -> Items.CHARCOAL);
         AntimatterMaterialTypes.GEM.replacement(AntimatterMaterials.EnderEye, () -> Items.ENDER_EYE);
