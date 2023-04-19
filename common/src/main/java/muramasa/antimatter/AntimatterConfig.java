@@ -93,7 +93,9 @@ public class AntimatterConfig {
 
         public boolean VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS, ORE_VEIN_SPECTATOR_DEBUG;
 
-        public int ORE_VEIN_ROCK_CHANCE, STONE_LAYER_ROCK_CHANCE, ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS, ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+        public int ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS, ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+
+        public double THIN_ORE_CHANCE, THIN_SMALL_ORE_CHANCE, THIN_MARKER_ORE_CHANCE, THIN_SURFACE_STONE_CHANCE, NORMAL_ORE_CHANCE, NORMAL_SMALL_ORE_CHANCE, NORMAL_MARKER_ORE_CHANCE, NORMAL_SURFACE_STONE_CHANCE, DENSE_ORE_CHANCE, DENSE_SMALL_ORE_CHANCE, DENSE_MARKER_ORE_CHANCE, DENSE_SURFACE_STONE_CHANCE;
 
     }
 
@@ -135,12 +137,14 @@ public class AntimatterConfig {
 
         public final DoubleValue PIPE_LEAK;
 
-        public final IntValue AXE_TIMBER_MAX, ORE_VEIN_ROCK_CHANCE, STONE_LAYER_ROCK_CHANCE, ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS,
+        public final IntValue AXE_TIMBER_MAX, ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS,
                 ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
 
         public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS,
                 ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, LOSSY_PART_CRAFTING, AXE_TIMBER, SMARTER_TREE_DETECTION, EXPORT_DEFAULT_RECIPES, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
 
+
+        public final DoubleValue THIN_ORE_CHANCE, THIN_SMALL_ORE_CHANCE, THIN_MARKER_ORE_CHANCE, THIN_SURFACE_STONE_CHANCE, NORMAL_ORE_CHANCE, NORMAL_SMALL_ORE_CHANCE, NORMAL_MARKER_ORE_CHANCE, NORMAL_SURFACE_STONE_CHANCE, DENSE_ORE_CHANCE, DENSE_SMALL_ORE_CHANCE, DENSE_MARKER_ORE_CHANCE, DENSE_SURFACE_STONE_CHANCE;
         public CommonConfig(Builder builder) {
 
             builder.push("Data");
@@ -171,7 +175,7 @@ public class AntimatterConfig {
                     .translation(Ref.ID + ".config.surface_rocks")
                     .define("SURFACE_ROCKS", true);
 
-            builder.push("Ore Veins");
+            builder.push("Ore_Veins");
 
             ORE_VEINS = builder.comment("Enable ore veins - Default: true")
                     .translation(Ref.ID + ".config.ore_veins")
@@ -186,10 +190,6 @@ public class AntimatterConfig {
                     .translation(Ref.ID + ".config.ore_vein_chance")
                     .worldRestart()
                     .defineInRange("ORE_VEIN_CHANCE", 100, 1, Integer.MAX_VALUE);
-
-            ORE_VEIN_ROCK_CHANCE = builder.comment("Chance of ore veins having surface rocks - Default: 256")
-                    .translation(Ref.ID + ".config.ore_vein_rock_chance")
-                    .defineInRange("ORE_VEIN_ROCK_CHANCE", 256, 1, Integer.MAX_VALUE);
 
             ORE_VEIN_FIND_ATTEMPTS = builder.comment("Control number of attempts to find a valid ore vein,",
                     "Generally this maximum limit isn't hit, as selecting a vein is performant - Default : 64")
@@ -213,9 +213,81 @@ public class AntimatterConfig {
                     .worldRestart()
                     .defineInRange("ORE_VEIN_SMALL_ORE_MARKERS_MULTI", 2, 1, Integer.MAX_VALUE);
 
+            builder.push("Thin_Veins");
+
+            THIN_ORE_CHANCE = builder.comment("Chance for standard ores in thin veins - Default : 0.05(5%)")
+                    .translation(Ref.ID + ".config.thin_ore_chance")
+                    .worldRestart()
+                    .defineInRange("ORE_CHANCE", 0.05, 0.00, 1.0);
+
+            THIN_SMALL_ORE_CHANCE = builder.comment("Chance for small ores in thin veins - Default : 0.1(10%)")
+                    .translation(Ref.ID + ".config.thin_small_ore_chance")
+                    .worldRestart()
+                    .defineInRange("SMALL_ORE_CHANCE", 0.1, 0.00, 1.0);
+
+            THIN_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around thin veins - Default : 0.001(0.1%)")
+                    .translation(Ref.ID + ".config.thin_marker_ore_chance")
+                    .worldRestart()
+                    .defineInRange("MARKER_ORE_CHANCE", 0.001, 0.00, 1.0);
+
+            THIN_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above thin veins - Default : 0.01(1%)")
+                    .translation(Ref.ID + ".config.thin_surface_stone_chance")
+                    .worldRestart()
+                    .defineInRange("SURFACE_STONE_CHANCE", 0.01, 0.00, 1.0);
+
             builder.pop();
 
-            builder.push("Stone Layers");
+            builder.push("Normal_Veins");
+
+            NORMAL_ORE_CHANCE = builder.comment("Chance for standard ores in normal veins - Default : 0.1(10%)")
+                    .translation(Ref.ID + ".config.normal_ore_chance")
+                    .worldRestart()
+                    .defineInRange("ORE_CHANCE", 0.1, 0.00, 1.0);
+
+            NORMAL_SMALL_ORE_CHANCE = builder.comment("Chance for small ores in normal veins - Default : 0.05(5%)")
+                    .translation(Ref.ID + ".config.normal_small_ore_chance")
+                    .worldRestart()
+                    .defineInRange("SMALL_ORE_CHANCE", 0.05, 0.00, 1.0);
+
+            NORMAL_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around normal veins - Default : 0.0025(0.25%)")
+                    .translation(Ref.ID + ".config.normal_marker_ore_chance")
+                    .worldRestart()
+                    .defineInRange("MARKER_ORE_CHANCE", 0.0025, 0.00, 1.0);
+
+            NORMAL_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above normal veins - Default : 0.05(5%)")
+                    .translation(Ref.ID + ".config.normal_surface_stone_chance")
+                    .worldRestart()
+                    .defineInRange("SURFACE_STONE_CHANCE", 0.05, 0.00, 1.0);
+
+            builder.pop();
+
+            builder.push("Dense_Veins");
+
+            DENSE_ORE_CHANCE = builder.comment("Chance for standard ores in dense veins - Default : 0.25(25%)")
+                    .translation(Ref.ID + ".config.dense_ore_chance")
+                    .worldRestart()
+                    .defineInRange("ORE_CHANCE", 0.25, 0.00, 1.0);
+
+            DENSE_SMALL_ORE_CHANCE = builder.comment("Chance for small ores in dense veins - Default : 0.0(0%)")
+                    .translation(Ref.ID + ".config.dense_small_ore_chance")
+                    .worldRestart()
+                    .defineInRange("SMALL_ORE_CHANCE", 0.0, 0.00, 1.0);
+
+            DENSE_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around dense veins - Default : 0.005(0.5%)")
+                    .translation(Ref.ID + ".config.dense_marker_ore_chance")
+                    .worldRestart()
+                    .defineInRange("MARKER_ORE_CHANCE", 0.005, 0.00, 1.0);
+
+            DENSE_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above dense veins - Default : 0.1(10%)")
+                    .translation(Ref.ID + ".config.dense_surface_stone_chance")
+                    .worldRestart()
+                    .defineInRange("SURFACE_STONE_CHANCE", 0.1, 0.00, 1.0);
+
+            builder.pop();
+
+            builder.pop();
+
+            builder.push("Stone_Layers");
 
             STONE_LAYERS = builder.comment("Enable stone layers - Default: false")
                     .translation(Ref.ID + ".config.stone_layers")
@@ -224,10 +296,6 @@ public class AntimatterConfig {
             STONE_LAYER_ORES = builder.comment("Enable stone layers having ores - Default: false")
                     .translation(Ref.ID + ".config.stone_layers_ores")
                     .define("STONE_LAYER_ORES", false);
-
-            STONE_LAYER_ROCK_CHANCE = builder.comment("Chance of stone layers having surface rocks - Default: 128")
-                    .translation(Ref.ID + ".config.stone_layer_rock_chance")
-                    .defineInRange("STONE_LAYER_ROCK_CHANCE", 128, 1, Integer.MAX_VALUE);
 
             builder.pop();
 
@@ -285,7 +353,7 @@ public class AntimatterConfig {
 
             builder.pop();
 
-            builder.push("Mod Compatibility");
+            builder.push("Mod_Compatibility");
 
             //@Comment("Enable all mod support registrars - Default: true")
             ENABLE_ALL_REGISTRARS = builder.comment("Enable all mod support registrars - Default: true")
@@ -315,14 +383,24 @@ public class AntimatterConfig {
         WORLD.ORE_VEINS = COMMON_CONFIG.ORE_VEINS.get();
         WORLD.ORE_VEIN_MAX_SIZE = COMMON_CONFIG.ORE_VEIN_MAX_SIZE.get();
         WORLD.ORE_VEIN_CHANCE = COMMON_CONFIG.ORE_VEIN_CHANCE.get();
-        WORLD.ORE_VEIN_ROCK_CHANCE = COMMON_CONFIG.ORE_VEIN_ROCK_CHANCE.get();
         WORLD.ORE_VEIN_FIND_ATTEMPTS = COMMON_CONFIG.ORE_VEIN_FIND_ATTEMPTS.get();
         WORLD.ORE_VEIN_PLACE_ATTEMPTS = COMMON_CONFIG.ORE_VEIN_PLACE_ATTEMPTS.get();
         WORLD.ORE_VEIN_SMALL_ORE_MARKERS = COMMON_CONFIG.ORE_VEIN_SMALL_ORE_MARKERS.get();
         WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI = COMMON_CONFIG.ORE_VEIN_SMALL_ORE_MARKERS_MULTI.get();
+        WORLD.THIN_ORE_CHANCE = COMMON_CONFIG.THIN_ORE_CHANCE.get();
+        WORLD.THIN_SMALL_ORE_CHANCE = COMMON_CONFIG.THIN_SMALL_ORE_CHANCE.get();
+        WORLD.THIN_MARKER_ORE_CHANCE = COMMON_CONFIG.THIN_MARKER_ORE_CHANCE.get();
+        WORLD.THIN_SURFACE_STONE_CHANCE = COMMON_CONFIG.THIN_SURFACE_STONE_CHANCE.get();
+        WORLD.NORMAL_ORE_CHANCE = COMMON_CONFIG.NORMAL_ORE_CHANCE.get();
+        WORLD.NORMAL_SMALL_ORE_CHANCE = COMMON_CONFIG.NORMAL_SMALL_ORE_CHANCE.get();
+        WORLD.NORMAL_MARKER_ORE_CHANCE = COMMON_CONFIG.NORMAL_MARKER_ORE_CHANCE.get();
+        WORLD.NORMAL_SURFACE_STONE_CHANCE = COMMON_CONFIG.NORMAL_SURFACE_STONE_CHANCE.get();
+        WORLD.DENSE_ORE_CHANCE = COMMON_CONFIG.DENSE_ORE_CHANCE.get();
+        WORLD.DENSE_SMALL_ORE_CHANCE = COMMON_CONFIG.DENSE_SMALL_ORE_CHANCE.get();
+        WORLD.DENSE_MARKER_ORE_CHANCE = COMMON_CONFIG.DENSE_MARKER_ORE_CHANCE.get();
+        WORLD.DENSE_SURFACE_STONE_CHANCE = COMMON_CONFIG.DENSE_SURFACE_STONE_CHANCE.get();
         WORLD.STONE_LAYERS = COMMON_CONFIG.STONE_LAYERS.get();
         WORLD.STONE_LAYER_ORES = COMMON_CONFIG.STONE_LAYER_ORES.get();
-        WORLD.STONE_LAYER_ROCK_CHANCE = COMMON_CONFIG.STONE_LAYER_ROCK_CHANCE.get();
         WORLD.ORE_VEIN_SPECTATOR_DEBUG = COMMON_CONFIG.ORE_VEIN_SPECTATOR_DEBUG.get();
 
         GAMEPLAY.PIPE_LEAK = COMMON_CONFIG.PIPE_LEAK.get();
