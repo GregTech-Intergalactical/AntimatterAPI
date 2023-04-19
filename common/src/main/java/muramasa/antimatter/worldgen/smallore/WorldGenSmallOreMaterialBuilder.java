@@ -37,8 +37,8 @@ public class WorldGenSmallOreMaterialBuilder {
         }
         WorldGenSmallOreMaterial smallOreMaterial = new WorldGenSmallOreMaterial(
                 this.material,
-                this.minY != null ? this.minY : Integer.MIN_VALUE,
-                this.maxY != null ? this.maxY : Integer.MAX_VALUE,
+                this.minY != null ? this.minY : -64,
+                this.maxY != null ? this.maxY : 320,
                 weight,
                 this.dimensions,
                 this.biomes,
