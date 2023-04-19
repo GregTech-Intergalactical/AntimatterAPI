@@ -82,7 +82,7 @@ public class MaterialEvent {
     }
 
     public MaterialEvent asOre(int minXp, int maxXp, boolean small, IMaterialTag... tags) {
-        //this.expRange = IntRange.range(minXp, maxXp);
+        EXP_RANGE.add(material, UniformInt.of(minXp, maxXp));
         return asOre(small, tags);
     }
 

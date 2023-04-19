@@ -5,7 +5,7 @@ import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import muramasa.antimatter.worldgen.WorldGenHelper;
-import muramasa.antimatter.worldgen.smallore.WorldGenSmallOreMaterial;
+import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +25,7 @@ import static muramasa.antimatter.data.AntimatterMaterialTypes.ORE_SMALL;
 
 public class FeatureSmallOres extends AntimatterFeature<NoneFeatureConfiguration> {
     public FeatureSmallOres() {
-        super(NoneFeatureConfiguration.CODEC, WorldGenSmallOreMaterial.class);
+        super(NoneFeatureConfiguration.CODEC, WorldGenSmallOre.class);
     }
 
     @Override
@@ -56,16 +56,19 @@ public class FeatureSmallOres extends AntimatterFeature<NoneFeatureConfiguration
 
         final int chunkX = placer.origin().getX() >> 4;
         final int chunkZ = placer.origin().getZ() >> 4;
+        final int chunkCornerX = chunkX * 16;
+        final int chunkCornerZ = chunkZ * 16;
         final int worldMinY = world.dimensionType().minY();
         final int worldMaxY = world.dimensionType().minY() + world.dimensionType().height();
-        List<WorldGenSmallOreMaterial> smallOres = AntimatterWorldGenerator.all(WorldGenSmallOreMaterial.class, world.getLevel().dimension());
+        List<WorldGenSmallOre> smallOres = AntimatterWorldGenerator.all(WorldGenSmallOre.class, world.getLevel().dimension());
         int spawned = 0;
-        for (WorldGenSmallOreMaterial smallOre : smallOres) {
+        for (WorldGenSmallOre smallOre : smallOres) {
             if (!smallOre.material.has(ORE_SMALL)) continue;
-            if (smallOre.minY < worldMinY || smallOre.maxY > worldMaxY) continue;
+            int minY = Math.max(worldMinY, smallOre.minY);
+            int maxY = Math.min(worldMaxY, smallOre.maxY);
             int i = 0;
-            for (int j = Math.max(1, smallOre.weight / 2 + random.nextInt(smallOre.weight) / 2); i < j; i++) {
-                boolean spawn = setOreBlock(world, chunkX + random.nextInt(16), smallOre.minY + random.nextInt(Math.max(1, smallOre.maxY - smallOre.minY)), chunkZ + random.nextInt(16), smallOre);
+            for (int j = Math.max(1, smallOre.amountPerChunk / 2 + random.nextInt(smallOre.amountPerChunk) / 2); i < j; i++) {
+                boolean spawn = setOreBlock(world, chunkCornerX + random.nextInt(16), minY + random.nextInt(Math.max(1, maxY - minY)), chunkCornerZ + random.nextInt(16), smallOre);
                 if (spawn) spawned++;
             }
         }
@@ -74,7 +77,7 @@ public class FeatureSmallOres extends AntimatterFeature<NoneFeatureConfiguration
         return spawned > 0;
     }
 
-    private boolean setOreBlock(WorldGenLevel level, int x, int y, int z, WorldGenSmallOreMaterial smallOre){
+    private boolean setOreBlock(WorldGenLevel level, int x, int y, int z, WorldGenSmallOre smallOre){
         BlockPos pos = new BlockPos(x, y, z);
         Holder<Biome> biome = level.getBiome(pos);
         ResourceLocation biomeKey = biome.unwrapKey().get().location();

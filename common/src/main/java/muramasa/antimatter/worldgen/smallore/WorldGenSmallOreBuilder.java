@@ -7,26 +7,25 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-public class WorldGenSmallOreMaterialBuilder {
+public class WorldGenSmallOreBuilder {
     @Nullable
     private Material material;
     @Nullable
-    private Integer weight;
+    private Integer amountPerChunk;
     @Nullable
     private Integer maxY;
     @Nullable
     private Integer minY;
+    @Nullable String id;
     List<ResourceLocation> dimensions = new ArrayList<>(), biomes = new ArrayList<>();
     boolean dimensionBlacklist = false, biomeBlacklist = true;
 
-    public WorldGenSmallOreMaterialBuilder() {
+    public WorldGenSmallOreBuilder() {
     }
 
-    final public List<WorldGenSmallOreMaterial> buildMaterial() {
-        if (this.weight == null) {
+    final public List<WorldGenSmallOre> buildMaterial() {
+        if (this.amountPerChunk == null) {
             throw new RuntimeException("weight is required");
         }
         if (this.material == null) {
@@ -35,11 +34,12 @@ public class WorldGenSmallOreMaterialBuilder {
         if (this.dimensions.isEmpty()) {
             this.dimensions.add(new ResourceLocation("overworld"));
         }
-        WorldGenSmallOreMaterial smallOreMaterial = new WorldGenSmallOreMaterial(
+        WorldGenSmallOre smallOreMaterial = new WorldGenSmallOre(
+                id != null ? id : material.getId(),
                 this.material,
                 this.minY != null ? this.minY : -64,
                 this.maxY != null ? this.maxY : 320,
-                weight,
+                amountPerChunk,
                 this.dimensions,
                 this.biomes,
                 this.biomeBlacklist
@@ -47,33 +47,38 @@ public class WorldGenSmallOreMaterialBuilder {
         return List.of(smallOreMaterial);
     }
 
-    final public WorldGenSmallOreMaterialBuilder withMaterial(Material material) {
+    final public WorldGenSmallOreBuilder withMaterial(Material material) {
         this.material = material;
         return this;
     }
 
-    final public WorldGenSmallOreMaterialBuilder withWeight(int weight) {
-        this.weight = weight;
+    final public WorldGenSmallOreBuilder withAmountPerChunk(int amountPerChunk) {
+        this.amountPerChunk = amountPerChunk;
         return this;
     }
 
-    final public WorldGenSmallOreMaterialBuilder atHeight(int minY, int maxY) {
+    final public WorldGenSmallOreBuilder atHeight(int minY, int maxY) {
         this.minY = minY;
         this.maxY = maxY;
         return this;
     }
 
-    final public WorldGenSmallOreMaterialBuilder withBiomes(ResourceLocation... biomes) {
+    final public WorldGenSmallOreBuilder withCustomId(String id){
+        this.id = id;
+        return this;
+    }
+
+    final public WorldGenSmallOreBuilder withBiomes(ResourceLocation... biomes) {
         Collections.addAll(this.biomes, biomes);
         return this;
     }
 
-    final public WorldGenSmallOreMaterialBuilder withDimensions(ResourceLocation... dimensions) {
+    final public WorldGenSmallOreBuilder withDimensions(ResourceLocation... dimensions) {
         Collections.addAll(this.dimensions, dimensions);
         return this;
     }
 
-    final public WorldGenSmallOreMaterialBuilder setBiomeBlacklist(boolean blacklist) {
+    final public WorldGenSmallOreBuilder setBiomeBlacklist(boolean blacklist) {
         this.biomeBlacklist = blacklist;
         return this;
     }

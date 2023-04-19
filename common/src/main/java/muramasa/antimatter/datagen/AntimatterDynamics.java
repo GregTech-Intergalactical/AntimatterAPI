@@ -32,7 +32,7 @@ import muramasa.antimatter.registration.ModRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.smallore.WorldGenSmallOreMaterial;
+import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import net.devtech.arrp.api.RuntimeResourcePack;
 import net.devtech.arrp.json.loot.JCondition;
@@ -243,7 +243,7 @@ public class AntimatterDynamics {
             }
         });
         List<WorldGenVein> veins = new ObjectArrayList<>();
-        List<WorldGenSmallOreMaterial> smallOres = new ObjectArrayList<>();
+        List<WorldGenSmallOre> smallOres = new ObjectArrayList<>();
         boolean runRegular = true;
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && serverEvent) {
             AMWorldEvent ev = new AMWorldEvent();
@@ -260,7 +260,7 @@ public class AntimatterDynamics {
         for (WorldGenVein vein : veins) {
             AntimatterWorldGenerator.register(vein.toRegister, vein);
         }
-        for (WorldGenSmallOreMaterial smallOre : smallOres){
+        for (WorldGenSmallOre smallOre : smallOres){
             AntimatterWorldGenerator.register(smallOre.toRegister, smallOre);
         }
         loaders.values().forEach(IRecipeRegistrate.IRecipeLoader::init);
