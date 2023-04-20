@@ -1,5 +1,6 @@
 package muramasa.antimatter.worldgen.vein;
 
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
@@ -137,26 +138,26 @@ public class WorldGenVeinBuilder {
   public final WorldGenVeinBuilder asOreVein(int minY, int maxY, int weight, int density, int size, Material primary,
       Material secondary, Material between, Material sporadic, ResourceKey<Level>... dimensions) {
     this.asVein(weight, minY, maxY, dimensions).withSize(size, size * 2, 0.75f)
-        .withVariant(10)
+        .withVariant(AntimatterConfig.WORLD.NORMAL_VEIN_WEIGHT)
         .withNormalChance()
-        .withMaterial(primary, 5)
-        .withMaterial(secondary, 3)
-        .withMaterial(between, 2)
-        .withMaterial(sporadic, 1)
+        .withMaterial(primary, AntimatterConfig.WORLD.PRIMARY_MATERIAL_WEIGHT)
+        .withMaterial(secondary, AntimatterConfig.WORLD.SECONDARY_MATERIAL_WEIGHT)
+        .withMaterial(between, AntimatterConfig.WORLD.BETWEEN_MATERIAL_WEIGHT)
+        .withMaterial(sporadic, AntimatterConfig.WORLD.SPORADIC_MATERIAL_WEIGHT)
         .buildVariant()
-        .withVariant(5)
+        .withVariant(AntimatterConfig.WORLD.THIN_VEIN_WEIGHT)
         .withThinChance()
-        .withMaterial(primary, 5)
-        .withMaterial(secondary, 3)
-        .withMaterial(between, 2)
-        .withMaterial(sporadic, 1)
+        .withMaterial(primary, AntimatterConfig.WORLD.PRIMARY_MATERIAL_WEIGHT)
+        .withMaterial(secondary, AntimatterConfig.WORLD.SECONDARY_MATERIAL_WEIGHT)
+        .withMaterial(between, AntimatterConfig.WORLD.BETWEEN_MATERIAL_WEIGHT)
+        .withMaterial(sporadic, AntimatterConfig.WORLD.SPORADIC_MATERIAL_WEIGHT)
         .buildVariant()
-        .withVariant(2)
+        .withVariant(AntimatterConfig.WORLD.DENSE_VEIN_WEIGHT)
         .withDenseChance()
-        .withMaterial(primary, 5)
-        .withMaterial(secondary, 3)
-        .withMaterial(between, 2)
-        .withMaterial(sporadic, 1)
+        .withMaterial(primary, AntimatterConfig.WORLD.PRIMARY_MATERIAL_WEIGHT)
+        .withMaterial(secondary, AntimatterConfig.WORLD.SECONDARY_MATERIAL_WEIGHT)
+        .withMaterial(between, AntimatterConfig.WORLD.BETWEEN_MATERIAL_WEIGHT)
+        .withMaterial(sporadic, AntimatterConfig.WORLD.SPORADIC_MATERIAL_WEIGHT)
         .buildVariant();
     return this;
   }

@@ -93,7 +93,8 @@ public class AntimatterConfig {
 
         public boolean VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS, ORE_VEIN_SPECTATOR_DEBUG;
 
-        public int ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS, ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+        public int ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS, ORE_VEIN_SMALL_ORE_MARKERS_MULTI, THIN_VEIN_WEIGHT, NORMAL_VEIN_WEIGHT, DENSE_VEIN_WEIGHT, PRIMARY_MATERIAL_WEIGHT,
+                SECONDARY_MATERIAL_WEIGHT, BETWEEN_MATERIAL_WEIGHT, SPORADIC_MATERIAL_WEIGHT;
 
         public double THIN_ORE_CHANCE, THIN_SMALL_ORE_CHANCE, THIN_MARKER_ORE_CHANCE, THIN_SURFACE_STONE_CHANCE, NORMAL_ORE_CHANCE, NORMAL_SMALL_ORE_CHANCE, NORMAL_MARKER_ORE_CHANCE, NORMAL_SURFACE_STONE_CHANCE, DENSE_ORE_CHANCE, DENSE_SMALL_ORE_CHANCE, DENSE_MARKER_ORE_CHANCE, DENSE_SURFACE_STONE_CHANCE;
 
@@ -138,7 +139,8 @@ public class AntimatterConfig {
         public final DoubleValue PIPE_LEAK;
 
         public final IntValue AXE_TIMBER_MAX, ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS,
-                ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
+                ORE_VEIN_SMALL_ORE_MARKERS_MULTI, THIN_VEIN_WEIGHT, NORMAL_VEIN_WEIGHT, DENSE_VEIN_WEIGHT, PRIMARY_MATERIAL_WEIGHT,
+                SECONDARY_MATERIAL_WEIGHT, BETWEEN_MATERIAL_WEIGHT, SPORADIC_MATERIAL_WEIGHT;
 
         public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS,
                 ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, LOSSY_PART_CRAFTING, AXE_TIMBER, SMARTER_TREE_DETECTION, EXPORT_DEFAULT_RECIPES, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
@@ -213,6 +215,26 @@ public class AntimatterConfig {
                     .worldRestart()
                     .defineInRange("ORE_VEIN_SMALL_ORE_MARKERS_MULTI", 2, 1, Integer.MAX_VALUE);
 
+            PRIMARY_MATERIAL_WEIGHT = builder.comment("Weight of the primary ore in veins - Default : 5")
+                    .translation(Ref.ID +".config.primary_material_weight")
+                    .worldRestart()
+                    .defineInRange("PRIMARY_MATERIAL_WEIGHT", 5, 1, Integer.MAX_VALUE);
+
+            SECONDARY_MATERIAL_WEIGHT = builder.comment("Weight of the secondary ore in veins - Default : 3")
+                    .translation(Ref.ID +".config.secondary_material_weight")
+                    .worldRestart()
+                    .defineInRange("SECONDARY_MATERIAL_WEIGHT", 3, 1, Integer.MAX_VALUE);
+
+            BETWEEN_MATERIAL_WEIGHT = builder.comment("Weight of the between ore in veins - Default : 2")
+                    .translation(Ref.ID +".config.between_material_weight")
+                    .worldRestart()
+                    .defineInRange("BETWEEN_MATERIAL_WEIGHT", 2, 1, Integer.MAX_VALUE);
+
+            SPORADIC_MATERIAL_WEIGHT = builder.comment("Weight of the sporadic ore in veins - Default : 1")
+                    .translation(Ref.ID +".config.sporadic_material_weight")
+                    .worldRestart()
+                    .defineInRange("SPORADIC_MATERIAL_WEIGHT", 1, 1, Integer.MAX_VALUE);
+
             builder.push("Thin_Veins");
 
             THIN_ORE_CHANCE = builder.comment("Chance for standard ores in thin veins - Default : 0.05(5%)")
@@ -234,6 +256,11 @@ public class AntimatterConfig {
                     .translation(Ref.ID + ".config.thin_surface_stone_chance")
                     .worldRestart()
                     .defineInRange("SURFACE_STONE_CHANCE", 0.01, 0.00, 1.0);
+
+            THIN_VEIN_WEIGHT = builder.comment("Weight for thin variants of veins - Default: 5")
+                    .translation(Ref.ID + ".config.thin_vein_weight")
+                    .worldRestart()
+                    .defineInRange("VEIN_WEIGHT", 5, 1, Integer.MAX_VALUE);
 
             builder.pop();
 
@@ -259,6 +286,11 @@ public class AntimatterConfig {
                     .worldRestart()
                     .defineInRange("SURFACE_STONE_CHANCE", 0.05, 0.00, 1.0);
 
+            NORMAL_VEIN_WEIGHT = builder.comment("Weight for normal variants of veins - Default: 10")
+                    .translation(Ref.ID + ".config.normal_vein_weight")
+                    .worldRestart()
+                    .defineInRange("VEIN_WEIGHT", 10, 1, Integer.MAX_VALUE);
+
             builder.pop();
 
             builder.push("Dense_Veins");
@@ -282,6 +314,11 @@ public class AntimatterConfig {
                     .translation(Ref.ID + ".config.dense_surface_stone_chance")
                     .worldRestart()
                     .defineInRange("SURFACE_STONE_CHANCE", 0.1, 0.00, 1.0);
+
+            DENSE_VEIN_WEIGHT = builder.comment("Weight for dense variants of veins - Default: 2")
+                    .translation(Ref.ID + ".config.dense_vein_weight")
+                    .worldRestart()
+                    .defineInRange("VEIN_WEIGHT", 2, 1, Integer.MAX_VALUE);
 
             builder.pop();
 
@@ -387,18 +424,25 @@ public class AntimatterConfig {
         WORLD.ORE_VEIN_PLACE_ATTEMPTS = COMMON_CONFIG.ORE_VEIN_PLACE_ATTEMPTS.get();
         WORLD.ORE_VEIN_SMALL_ORE_MARKERS = COMMON_CONFIG.ORE_VEIN_SMALL_ORE_MARKERS.get();
         WORLD.ORE_VEIN_SMALL_ORE_MARKERS_MULTI = COMMON_CONFIG.ORE_VEIN_SMALL_ORE_MARKERS_MULTI.get();
+        WORLD.PRIMARY_MATERIAL_WEIGHT = COMMON_CONFIG.PRIMARY_MATERIAL_WEIGHT.get();
+        WORLD.SECONDARY_MATERIAL_WEIGHT = COMMON_CONFIG.SECONDARY_MATERIAL_WEIGHT.get();
+        WORLD.BETWEEN_MATERIAL_WEIGHT = COMMON_CONFIG.BETWEEN_MATERIAL_WEIGHT.get();
+        WORLD.SPORADIC_MATERIAL_WEIGHT = COMMON_CONFIG.SPORADIC_MATERIAL_WEIGHT.get();
         WORLD.THIN_ORE_CHANCE = COMMON_CONFIG.THIN_ORE_CHANCE.get();
         WORLD.THIN_SMALL_ORE_CHANCE = COMMON_CONFIG.THIN_SMALL_ORE_CHANCE.get();
         WORLD.THIN_MARKER_ORE_CHANCE = COMMON_CONFIG.THIN_MARKER_ORE_CHANCE.get();
         WORLD.THIN_SURFACE_STONE_CHANCE = COMMON_CONFIG.THIN_SURFACE_STONE_CHANCE.get();
+        WORLD.THIN_VEIN_WEIGHT = COMMON_CONFIG.THIN_VEIN_WEIGHT.get();
         WORLD.NORMAL_ORE_CHANCE = COMMON_CONFIG.NORMAL_ORE_CHANCE.get();
         WORLD.NORMAL_SMALL_ORE_CHANCE = COMMON_CONFIG.NORMAL_SMALL_ORE_CHANCE.get();
         WORLD.NORMAL_MARKER_ORE_CHANCE = COMMON_CONFIG.NORMAL_MARKER_ORE_CHANCE.get();
         WORLD.NORMAL_SURFACE_STONE_CHANCE = COMMON_CONFIG.NORMAL_SURFACE_STONE_CHANCE.get();
+        WORLD.NORMAL_VEIN_WEIGHT = COMMON_CONFIG.NORMAL_VEIN_WEIGHT.get();
         WORLD.DENSE_ORE_CHANCE = COMMON_CONFIG.DENSE_ORE_CHANCE.get();
         WORLD.DENSE_SMALL_ORE_CHANCE = COMMON_CONFIG.DENSE_SMALL_ORE_CHANCE.get();
         WORLD.DENSE_MARKER_ORE_CHANCE = COMMON_CONFIG.DENSE_MARKER_ORE_CHANCE.get();
         WORLD.DENSE_SURFACE_STONE_CHANCE = COMMON_CONFIG.DENSE_SURFACE_STONE_CHANCE.get();
+        WORLD.DENSE_VEIN_WEIGHT = COMMON_CONFIG.DENSE_VEIN_WEIGHT.get();
         WORLD.STONE_LAYERS = COMMON_CONFIG.STONE_LAYERS.get();
         WORLD.STONE_LAYER_ORES = COMMON_CONFIG.STONE_LAYER_ORES.get();
         WORLD.ORE_VEIN_SPECTATOR_DEBUG = COMMON_CONFIG.ORE_VEIN_SPECTATOR_DEBUG.get();
