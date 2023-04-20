@@ -20,7 +20,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
@@ -109,6 +111,10 @@ public class ForgeCommonEvents {
         });
         event.getMappings(Ref.SHARED_ID).forEach(map -> {
             String id = map.key.getPath();
+            if (id.equals("basalt")){
+                map.remap(Blocks.BASALT);
+                return;
+            }
             String replacement = "";
             if (id.startsWith("fluid_")){
                 replacement = id.replace("fluid_", "fluid_pipe_");
@@ -135,8 +141,6 @@ public class ForgeCommonEvents {
                 replacement = id.replace("fluid_", "fluid_pipe_");
             } else if (id.startsWith("item_")){
                 replacement = id.replace("item_", "item_pipe_");
-            } else if (id.contains("vanilla_basalt")){
-                replacement = id.replace("vanilla_basalt", "basalt");
             }
             if (!replacement.isEmpty()) {
                 BlockEntityType<?> replacementBlock = AntimatterAPI.get(BlockEntityType.class, replacement, Ref.SHARED_ID);
@@ -158,6 +162,10 @@ public class ForgeCommonEvents {
 
         event.getMappings(Ref.SHARED_ID).forEach(map -> {
             String id = map.key.getPath();
+            if (id.equals("basalt")){
+                map.remap(Items.BASALT);
+                return;
+            }
             if (id.contains("crushed_centrifuged")){
                 Item replacement = AntimatterAPI.get(Item.class, id.replace("centrifuged", "refined"), Ref.SHARED_ID);
                 if (replacement != null) {
@@ -170,6 +178,8 @@ public class ForgeCommonEvents {
                 replacement = id.replace("fluid_", "fluid_pipe_");
             } else if (id.startsWith("item_")){
                 replacement = id.replace("item_", "item_pipe_");
+            } else if (id.contains("vanilla_basalt")){
+                replacement = id.replace("vanilla_basalt", "basalt");
             }
             if (!replacement.isEmpty()) {
                 Item replacementBlock = AntimatterAPI.get(Item.class, replacement, Ref.SHARED_ID);
