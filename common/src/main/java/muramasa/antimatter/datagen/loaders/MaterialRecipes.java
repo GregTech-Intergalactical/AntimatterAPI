@@ -6,10 +6,13 @@ import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
+import muramasa.antimatter.material.MaterialType;
+import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.util.TagUtils;
@@ -23,7 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.function.Consumer;
 
 import static com.google.common.collect.ImmutableMap.of;
-import static muramasa.antimatter.material.MaterialTags.RUBBERTOOLS;
+import static muramasa.antimatter.material.MaterialTags.*;
 import static muramasa.antimatter.util.Utils.getConventionalMaterialType;
 import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 
@@ -105,7 +108,7 @@ public class MaterialRecipes {
             }
         });
 
-        AntimatterAPI.all(BlockOre.class, o -> {
+        /*AntimatterAPI.all(BlockOre.class, o -> {
             if (o.getOreType() != AntimatterMaterialTypes.ORE) return;
             if (!MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).has(AntimatterMaterialTypes.INGOT)) return;
             if (o.getMaterial().has(MaterialTags.NEEDS_BLAST_FURNACE)) return;
@@ -118,20 +121,30 @@ public class MaterialRecipes {
             AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(oreTag, 1), new ItemStack(ingot, MaterialTags.SMELTING_MULTI.getInt(o.getMaterial())), 2.0F, 200)
                     .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
                     .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot_smelting")));
+        });*/
+        AntimatterMaterialTypes.RAW_ORE.all().stream().filter(m -> !m.has(NEEDS_BLAST_FURNACE) && m.has(AntimatterMaterialTypes.INGOT) && !m.has(HAS_CUSTOM_SMELTING)).forEach(m -> {
+            if (m != AntimatterMaterials.Iron && m != AntimatterMaterials.Copper && m != AntimatterMaterials.Gold) {
+                addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.INGOT, 1, m);
+            }
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.INGOT, 1, m);
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.NUGGET, 12, m);
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.NUGGET, 12, m);
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.NUGGET, 11, m);
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.NUGGET, 11, m);
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.NUGGET, 10, m);
         });
-        AntimatterAPI.all(Material.class).stream().filter(m -> m.has(AntimatterMaterialTypes.RAW_ORE) && MaterialTags.SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(MaterialTags.NEEDS_BLAST_FURNACE)).forEach(m -> {
+        /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(AntimatterMaterialTypes.RAW_ORE) && MaterialTags.SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(MaterialTags.NEEDS_BLAST_FURNACE)).forEach(m -> {
             AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(AntimatterMaterialTypes.RAW_ORE.getMaterialTag(m), 1), new ItemStack(AntimatterMaterialTypes.INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 100)
                     .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(AntimatterMaterialTypes.INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
                     .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot")));
             AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(AntimatterMaterialTypes.RAW_ORE.getMaterialTag(m), 1), new ItemStack(AntimatterMaterialTypes.INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 200)
                     .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(AntimatterMaterialTypes.INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
                     .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot_smelting")));
-        });
+        });*/
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
             if (m.has(MaterialTags.NEEDS_BLAST_FURNACE) || m.has(MaterialTags.HAS_CUSTOM_SMELTING)) return;
-            if (!MaterialTags.DIRECT_SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT)) return;
-            SimpleCookingRecipeBuilder.blasting(AntimatterMaterialTypes.DUST.getMaterialIngredient(m, 1), AntimatterMaterialTypes.INGOT.get(MaterialTags.DIRECT_SMELT_INTO.getMapping(m)), 0.5F, 100).unlockedBy("has_" + m.getId() + "_dust", provider.hasSafeItem(AntimatterMaterialTypes.DUST.getMaterialTag(m))).save(consumer, Ref.SHARED_ID + ":" + m.getId() + "_dust_to_ingot_bl");
-            SimpleCookingRecipeBuilder.smelting(AntimatterMaterialTypes.DUST.getMaterialIngredient(m, 1), AntimatterMaterialTypes.INGOT.get(MaterialTags.DIRECT_SMELT_INTO.getMapping(m)), 0.5F, 200).unlockedBy("has_" + m.getId() + "_dust", provider.hasSafeItem(AntimatterMaterialTypes.DUST.getMaterialTag(m))).save(consumer, Ref.SHARED_ID + ":" + m.getId() + "_dust_to_ingot");
+            //if (!MaterialTags.DIRECT_SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT)) return;
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST, AntimatterMaterialTypes.INGOT, 1, m);
         });
         /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
             Item dust = DUST.get(mat);
@@ -153,5 +166,14 @@ public class MaterialRecipes {
                         .setGroup("rocks_grind_to_small_dust").build(consumer, provider.fixLoc(Ref.ID, rock.getRegistryName().getPath() + "_grind_to_" + smallDust.getRegistryName().getPath()));
             }
         });*/
+    }
+
+    private static void addSmeltingRecipe(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider, MaterialType<?> input, MaterialTypeItem<?> output, int amount, Material m){
+        AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(input.getMaterialTag(m), 1), new ItemStack(output.get(m), MaterialTags.SMELTING_MULTI.getInt(m) * amount), 2.0F, 100)
+                .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(output.getMaterialTag(m)))
+                .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_" + input.getId() + "_to_" + output.getId())));
+        AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(input.getMaterialTag(m), 1), new ItemStack(output.get(m), MaterialTags.SMELTING_MULTI.getInt(m) * amount), 2.0F, 200)
+                .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(output.getMaterialTag(m)))
+                .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_" + input.getId() + "_to_" + output.getId() + "_smelting")));
     }
 }
