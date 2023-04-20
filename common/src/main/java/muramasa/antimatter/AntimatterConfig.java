@@ -13,7 +13,6 @@ public class AntimatterConfig {
 
     public static final Client CLIENT = new Client();
     public static final Data DATA = new Data();
-    public static final Jei JEI = new Jei();
     public static final Gameplay GAMEPLAY = new Gameplay();
     public static final World WORLD = new World();
     public static final ModCompatibility MOD_COMPAT = new ModCompatibility();
@@ -47,17 +46,7 @@ public class AntimatterConfig {
          * @see ClientConfig
          **/
 
-        public boolean BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS;
-
-    }
-
-    public static class Jei {
-
-        /**
-         * @see ClientConfig
-         **/
-
-        public boolean SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS;
+        public boolean BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS, ADD_REI_GROUPS;
 
     }
 
@@ -111,7 +100,7 @@ public class AntimatterConfig {
 
     public static class ClientConfig {
 
-        public final BooleanValue BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS;
+        public final BooleanValue BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS, ADD_REI_GROUPS;
 
         public ClientConfig(Builder builder) {
 
@@ -129,6 +118,10 @@ public class AntimatterConfig {
             SHOW_ALL_FLUID_CELLS = builder.comment("Show all fluid cells in JEI - Default: false")
                     .translation(Ref.ID + ".config.show_all_fluid_cells")
                     .define("SHOW_ALL_FLUID_CELLS", false);
+
+            ADD_REI_GROUPS = builder.comment("Add collapsable groups for various antimatter material items to rei - Default: true")
+                    .translation(Ref.ID + ".config.add_rei_groups")
+                    .define("ADD_REI_GROUPS", true);
 
         }
 
@@ -408,6 +401,7 @@ public class AntimatterConfig {
         CLIENT.BASIC_MACHINE_MODELS = CLIENT_CONFIG.BASIC_MACHINE_MODELS.get();
         CLIENT.SHOW_ALL_MATERIAL_ITEMS = CLIENT_CONFIG.SHOW_ALL_MATERIAL_ITEMS.get();
         CLIENT.SHOW_ALL_FLUID_CELLS = CLIENT_CONFIG.SHOW_ALL_FLUID_CELLS.get();
+        CLIENT.ADD_REI_GROUPS = CLIENT_CONFIG.ADD_REI_GROUPS.get();
 
     }
 

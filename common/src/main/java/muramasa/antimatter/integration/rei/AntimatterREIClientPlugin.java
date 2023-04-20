@@ -12,6 +12,7 @@ import me.shedaniel.rei.api.common.plugins.PluginManager;
 import me.shedaniel.rei.api.common.registry.ReloadStage;
 import me.shedaniel.rei.plugin.common.BuiltinPlugin;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
@@ -47,6 +48,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
 
     @Override
     public void registerCollapsibleEntries(CollapsibleEntryRegistry registry) {
+        if (!AntimatterConfig.CLIENT.ADD_REI_GROUPS) return;
 
         AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeItem<?> || t instanceof MaterialTypeBlock<?>).forEach(t -> {
             if (t.get() instanceof MaterialTypeBlock.IOreGetter getter){
