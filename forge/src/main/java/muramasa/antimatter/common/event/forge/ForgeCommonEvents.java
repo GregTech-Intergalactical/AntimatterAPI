@@ -114,6 +114,8 @@ public class ForgeCommonEvents {
                 replacement = id.replace("fluid_", "fluid_pipe_");
             } else if (id.startsWith("item_")){
                 replacement = id.replace("item_", "item_pipe_");
+            } else if (id.contains("vanilla_basalt")){
+                replacement = id.replace("vanilla_basalt", "basalt");
             }
             if (!replacement.isEmpty()) {
                 Block replacementBlock = AntimatterAPI.get(Block.class, replacement, Ref.SHARED_ID);
@@ -133,6 +135,8 @@ public class ForgeCommonEvents {
                 replacement = id.replace("fluid_", "fluid_pipe_");
             } else if (id.startsWith("item_")){
                 replacement = id.replace("item_", "item_pipe_");
+            } else if (id.contains("vanilla_basalt")){
+                replacement = id.replace("vanilla_basalt", "basalt");
             }
             if (!replacement.isEmpty()) {
                 BlockEntityType<?> replacementBlock = AntimatterAPI.get(BlockEntityType.class, replacement, Ref.SHARED_ID);
