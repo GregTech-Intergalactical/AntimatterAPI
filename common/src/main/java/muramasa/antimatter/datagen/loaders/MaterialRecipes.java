@@ -94,12 +94,14 @@ public class MaterialRecipes {
                         "MI");
             }
             if (m.has(AntimatterMaterialTypes.ROCK)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_rock", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
+                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_grind_rock", "antimatter_material", "has_mortar", provider.hasSafeItem(AntimatterDefaultTools.MORTAR.getTag()),
                         AntimatterMaterialTypes.DUST.get(m, 1), ImmutableMap.<Character, Object>builder()
                                 .put('M', AntimatterDefaultTools.MORTAR.getTag())
                                 .put('I', AntimatterMaterialTypes.ROCK.getMaterialTag(m))
                                 .build(),
-                        "III", "III", "IIM");
+                        "II", "IIM");
+                provider.shapeless(consumer, m.getId() + "_grind_rock_2", "antimatter_material", "has_mortar", provider.hasSafeItem(AntimatterDefaultTools.MORTAR.getTag()), AntimatterMaterialTypes.DUST_SMALL.get(m, 1),
+                        AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.ROCK.getMaterialTag(m));
             }
         });
 
