@@ -9,12 +9,12 @@ import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.texture.Texture;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Supplier;
@@ -26,7 +26,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     private boolean gravity, requiresTool;
     public boolean generateBlock = false;
     private final Material material;
-    private final Texture texture;
+    private Texture[] textures;
     private final SoundType soundType;
     private BlockState state;
     private Supplier<BlockState> stateSupplier;
@@ -39,7 +39,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         this.domain = domain;
         this.id = id;
         this.material = material;
-        this.texture = texture;
+        this.textures = new Texture[]{texture};
         this.soundType = soundType;
         this.generateBlock = generateBlock;
         this.gravity = false;
@@ -94,6 +94,11 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         return this;
     }
 
+    public StoneType setTextures(Texture... textures){
+        this.textures = textures;
+        return this;
+    }
+
     @Override
     public void onRegistryBuild(RegistryType registry) {
         if (generateBlock && registry == RegistryType.BLOCKS) setState(new BlockStone(this));
@@ -117,7 +122,11 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     }
 
     public Texture getTexture() {
-        return texture;
+        return textures[0];
+    }
+
+    public Texture[] getTextures() {
+        return textures;
     }
 
     public SoundType getSoundType() {
@@ -175,10 +184,10 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
         return gravity;
     }
 
-    public static Collection<Texture> getAllTextures() {
-        List<Texture> textures = new ObjectArrayList<>();
+    public static Collection<Collection<Texture>> getAllTextures() {
+        List<Collection<Texture>> textures = new ObjectArrayList<>();
         for (StoneType type : getAllGeneratingBlock()) {
-            textures.add(type.getTexture());
+            textures.add(Arrays.asList(type.getTextures()));
         }
         return textures;
     }

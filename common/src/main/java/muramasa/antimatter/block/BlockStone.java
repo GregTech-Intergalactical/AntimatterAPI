@@ -1,5 +1,6 @@
 package muramasa.antimatter.block;
 
+import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
@@ -44,6 +45,6 @@ public class BlockStone extends BlockBasic implements ISharedAntimatterObject {
         if (type instanceof CobbleStoneType c && !suffix.isEmpty()) {
             return new Texture[]{new Texture(type.getDomain(), c.getBeginningPath() + type.getId() + "/" + suffix)};
         }
-        return new Texture[]{type.getTexture()};
+        return type.getTextures();
     }
 }

@@ -266,11 +266,15 @@ public class AntimatterBlockStateProvider implements IAntimatterProvider {
     }
 
     public void horizontalBlock(Block block, Function<BlockState, IModelLocation> modelFunc, int angleOffset) {
-        getVariantBuilder(block)
-                .forAllStates(state -> new VariantBuilder()
-                        .modelFile(modelFunc.apply(state))
-                        .rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) % 360)
-                );
+        if (block.defaultBlockState().hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+            getVariantBuilder(block)
+                    .forAllStates(state -> new VariantBuilder()
+                            .modelFile(modelFunc.apply(state))
+                            .rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) % 360)
+                    );
+        } else {
+            getVariantBuilder(block).wildcard(new VariantBuilder().modelFile(modelFunc.apply(block.defaultBlockState())));
+        }
     }
 
     public void horizontalFaceBlock(Block block, IModelLocation model) {
