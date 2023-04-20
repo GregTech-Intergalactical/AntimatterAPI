@@ -49,7 +49,7 @@ public class AntimatterJEIPluginImpl {
 
             @Override
             public Mode getMode() {
-                return null;
+                return USE ? Mode.INPUT : Mode.OUTPUT;
             }
 
         });
