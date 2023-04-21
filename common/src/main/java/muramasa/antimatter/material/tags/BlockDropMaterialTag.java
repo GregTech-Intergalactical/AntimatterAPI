@@ -17,6 +17,7 @@ public class BlockDropMaterialTag<T extends Block> extends MaterialTag {
     }
 
     public BlockDropMaterialTag<T> add(Material mat, Function<T, LootTable.Builder> map) {
+        if (!mat.enabled) return this;
         if (!mapping.containsKey(mat)){
             super.add(mat);
         }

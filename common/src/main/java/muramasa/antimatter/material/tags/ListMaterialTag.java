@@ -15,6 +15,7 @@ public class ListMaterialTag<T> extends MaterialTag {
     }
 
     public ListMaterialTag <T> add(Material mat, List<T> map) {
+        if (!mat.enabled) return this;
         if (!mapping.containsKey(mat)){
             super.add(mat);
         }
@@ -23,6 +24,7 @@ public class ListMaterialTag<T> extends MaterialTag {
     }
 
     public ListMaterialTag <T> add(Material mat, T map) {
+        if (!mat.enabled) return this;
         if (!mapping.containsKey(mat)){
             super.add(mat);
             mapping.put(mat, new ObjectArrayList<>());

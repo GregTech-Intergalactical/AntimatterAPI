@@ -13,6 +13,7 @@ public class MapMaterialTag<K, V> extends MaterialTag {
     }
 
     public MapMaterialTag<K, V> add(Material mat, Map<K, V> map) {
+        if (!mat.enabled) return this;
         if (!mapping.containsKey(mat)){
             super.add(mat);
         }
@@ -21,6 +22,7 @@ public class MapMaterialTag<K, V> extends MaterialTag {
     }
 
     public MapMaterialTag<K, V> add(Material mat, K key, V value) {
+        if (!mat.enabled) return this;
         if (!mapping.containsKey(mat)){
             super.add(mat);
             mapping.put(mat, new Object2ObjectArrayMap<>());

@@ -14,6 +14,7 @@ public class TypeMaterialTag<T> extends MaterialTag {
     }
 
     public TypeMaterialTag <T> add(Material mat, T map) {
+        if (!mat.enabled) return this;
         if (!mapping.containsKey(mat)){
             super.add(mat);
         }

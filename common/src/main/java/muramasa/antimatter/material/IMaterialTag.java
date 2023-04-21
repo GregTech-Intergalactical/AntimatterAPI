@@ -20,7 +20,8 @@ public interface IMaterialTag extends ISharedAntimatterObject {
 
     default void add(Material... m) {
         for (int i = 0; i < m.length; i++) {
-            all().add(m[i]);
+            Material m2 = m[i];
+            if (m2.enabled) all().add(m2);
         }
     }
 
