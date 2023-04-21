@@ -143,8 +143,8 @@ public class MaterialRecipes {
         });*/
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
             if (m.has(MaterialTags.NEEDS_BLAST_FURNACE) || m.has(MaterialTags.HAS_CUSTOM_SMELTING)) return;
-            if (!m.has(AntimatterMaterialTypes.INGOT)) return;
-            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST, AntimatterMaterialTypes.INGOT, 1, m);
+            if (!DIRECT_SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT)) return;
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST, AntimatterMaterialTypes.INGOT, 1, m, DIRECT_SMELT_INTO.getMapping(m));
         });
         /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
             Item dust = DUST.get(mat);
@@ -168,12 +168,16 @@ public class MaterialRecipes {
         });*/
     }
 
-    private static void addSmeltingRecipe(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider, MaterialType<?> input, MaterialTypeItem<?> output, int amount, Material m){
-        AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(input.getMaterialTag(m), 1), new ItemStack(output.get(m), MaterialTags.SMELTING_MULTI.getInt(m) * amount), 2.0F, 100)
-                .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(output.getMaterialTag(m)))
-                .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_" + input.getId() + "_to_" + output.getId())));
-        AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(input.getMaterialTag(m), 1), new ItemStack(output.get(m), MaterialTags.SMELTING_MULTI.getInt(m) * amount), 2.0F, 200)
-                .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(output.getMaterialTag(m)))
-                .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_" + input.getId() + "_to_" + output.getId() + "_smelting")));
+    private static void addSmeltingRecipe(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider, MaterialType<?> input, MaterialTypeItem<?> output, int amount, Material in){
+        addSmeltingRecipe(consumer, provider, input, output, amount, in, in);
+    }
+
+    private static void addSmeltingRecipe(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider, MaterialType<?> input, MaterialTypeItem<?> output, int amount, Material in, Material out){
+        AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(input.getMaterialTag(in), 1), new ItemStack(output.get(out), MaterialTags.SMELTING_MULTI.getInt(in) * amount), 2.0F, 100)
+                .addCriterion("has_material_" + in.getId(), provider.hasSafeItem(output.getMaterialTag(out)))
+                .build(consumer, provider.fixLoc(Ref.ID, in.getId().concat("_" + input.getId() + "_to_" + output.getId())));
+        AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(input.getMaterialTag(in), 1), new ItemStack(output.get(out), MaterialTags.SMELTING_MULTI.getInt(in) * amount), 2.0F, 200)
+                .addCriterion("has_material_" + in.getId(), provider.hasSafeItem(output.getMaterialTag(out)))
+                .build(consumer, provider.fixLoc(Ref.ID, in.getId().concat("_" + input.getId() + "_to_" + output.getId() + "_smelting")));
     }
 }
