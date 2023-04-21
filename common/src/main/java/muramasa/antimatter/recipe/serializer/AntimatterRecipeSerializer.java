@@ -145,7 +145,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         List<Ingredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                ings.add(RecipeIngredient.fromNetwork(buffer));
+                ings.add(RecipeUtil.fromNetwork(buffer));
             }
         }
         size = buffer.readInt();

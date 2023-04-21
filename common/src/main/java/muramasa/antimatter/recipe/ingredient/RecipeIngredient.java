@@ -114,6 +114,9 @@ public class RecipeIngredient extends Ingredient {
     }
 
     public static Ingredient fromNetwork(FriendlyByteBuf buffer) {
+        if (AntimatterPlatformUtils.isForge()){
+            return Ingredient.fromNetwork(buffer);
+        }
         return fromValues(buffer.readList(FriendlyByteBuf::readItem).stream().map(RecipeValue::new));
     }
 

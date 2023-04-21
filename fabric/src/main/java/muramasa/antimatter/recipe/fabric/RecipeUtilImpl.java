@@ -4,7 +4,10 @@ import com.google.gson.JsonObject;
 import io.github.fabricators_of_create.porting_lib.crafting.CraftingHelper;
 import io.github.fabricators_of_create.porting_lib.crafting.NBTIngredient;
 import io.github.fabricators_of_create.porting_lib.data.ConditionalRecipe;
+import io.github.tropheusj.serialization_hooks.ingredient.IngredientDeserializer;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
@@ -58,5 +61,9 @@ public class RecipeUtilImpl {
 
     public static <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient){
         ingredient.toNetwork(buffer);
+    }
+
+    public static Ingredient fromNetwork(FriendlyByteBuf buffer) {
+        return IngredientDeserializer.tryDeserializeNetwork(buffer);
     }
 }

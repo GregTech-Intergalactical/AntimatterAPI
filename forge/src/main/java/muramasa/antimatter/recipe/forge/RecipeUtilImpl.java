@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import muramasa.antimatter.datagen.builder.AntimatterShapedRecipeBuilder;
 import muramasa.antimatter.recipe.forge.condition.ConfigCondition;
 import muramasa.antimatter.recipe.forge.condition.TomlConfigCondition;
+import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.nbt.CompoundTag;
@@ -60,6 +62,10 @@ public class RecipeUtilImpl {
 
     public static <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient){
         CraftingHelper.write(buffer, ingredient);
+    }
+
+    public static Ingredient fromNetwork(FriendlyByteBuf buffer) {
+        return Ingredient.fromNetwork(buffer);
     }
 
 }
