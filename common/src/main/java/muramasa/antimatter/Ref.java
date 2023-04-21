@@ -144,7 +144,7 @@ public class Ref {
     public static final String MOD_FR = "forestry";
     public static final String MOD_IC2 = "ic2";
     public static final String MOD_IC2C = "ic2-classic-spmod";
-    public static final String MOD_AE = "appliedenergistics2";
+    public static final String MOD_AE = "ae2";
     public static final String MOD_GC = "GalacticraftCore";
     public static final String MOD_GC_PLANETS = "GalacticraftPlanets";
     public static final String MOD_TE = "thermalexpansion";

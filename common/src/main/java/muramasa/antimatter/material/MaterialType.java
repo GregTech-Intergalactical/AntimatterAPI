@@ -76,6 +76,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
      * Forces these tags to not generate, assuming they have a replacement.
      */
     public void replacement(Material mat, Supplier<Item> replacement) {
+        if (!mat.enabled) return;
         replacements.put(mat, replacement);
         this.add(mat);
         AntimatterAPI.addReplacement(getMaterialTag(mat), replacement);
