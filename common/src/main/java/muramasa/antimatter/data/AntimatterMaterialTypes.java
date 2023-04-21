@@ -210,6 +210,7 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.DUST.dependents(AntimatterMaterialTypes.DUST_SMALL, AntimatterMaterialTypes.DUST_TINY);
         AntimatterMaterialTypes.GEAR_SMALL.dependents(AntimatterMaterialTypes.PLATE);
         AntimatterMaterialTypes.GEAR.dependents(AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.ROD);
+        AntimatterMaterialTypes.GEM_EXQUISITE.dependents(GEM_FLAWLESS, GEM_FLAWED, GEM_CHIPPED, GEM_POLISHED, GEM_BRITTLE, GEM);
 
         AntimatterMaterialTypes.DUST_TINY.setHidden();
         AntimatterMaterialTypes.DUST_SMALL.setHidden();
