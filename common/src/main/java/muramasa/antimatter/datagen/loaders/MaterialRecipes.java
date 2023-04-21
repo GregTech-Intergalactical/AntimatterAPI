@@ -102,7 +102,7 @@ public class MaterialRecipes {
                                 .put('M', AntimatterDefaultTools.MORTAR.getTag())
                                 .put('I', AntimatterMaterialTypes.ROCK.getMaterialTag(m))
                                 .build(),
-                        "II", "IIM");
+                        "II ", "IIM");
                 provider.shapeless(consumer, m.getId() + "_grind_rock_2", "antimatter_material", "has_mortar", provider.hasSafeItem(AntimatterDefaultTools.MORTAR.getTag()), AntimatterMaterialTypes.DUST_SMALL.get(m, 1),
                         AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.ROCK.getMaterialTag(m));
             }
@@ -143,7 +143,7 @@ public class MaterialRecipes {
         });*/
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
             if (m.has(MaterialTags.NEEDS_BLAST_FURNACE) || m.has(MaterialTags.HAS_CUSTOM_SMELTING)) return;
-            //if (!MaterialTags.DIRECT_SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT)) return;
+            if (!m.has(AntimatterMaterialTypes.INGOT)) return;
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST, AntimatterMaterialTypes.INGOT, 1, m);
         });
         /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
