@@ -44,15 +44,6 @@ public class Material implements ISharedAntimatterObject {
         this.id = id;
         this.rgb = rgb;
         this.set = set;
-        MaterialTags.ORE_MULTI.add(this, 1);
-        MaterialTags.SMELTING_MULTI.add(this, 1);
-        MaterialTags.BY_PRODUCT_MULTI.add(this, 1);
-        MaterialTags.SMELT_INTO.add(this, this);
-        MaterialTags.DIRECT_SMELT_INTO.add(this, this);
-        MaterialTags.ARC_SMELT_INTO.add(this, this);
-        MaterialTags.MACERATE_INTO.add(this, this);
-        MaterialTags.PROCESS_INTO.add(this, new ObjectArrayList<>());
-        MaterialTags.BYPRODUCTS.add(this, new ObjectArrayList<>());
         if (modIds != null && modIds.length > 0) {
             for (String modId : modIds) {
                 if (!AntimatterAPI.isModLoaded(modId)) {
@@ -62,6 +53,15 @@ public class Material implements ISharedAntimatterObject {
             }
         }
         enabled = true;
+        MaterialTags.ORE_MULTI.add(this, 1);
+        MaterialTags.SMELTING_MULTI.add(this, 1);
+        MaterialTags.BY_PRODUCT_MULTI.add(this, 1);
+        MaterialTags.SMELT_INTO.add(this, this);
+        MaterialTags.DIRECT_SMELT_INTO.add(this, this);
+        MaterialTags.ARC_SMELT_INTO.add(this, this);
+        MaterialTags.MACERATE_INTO.add(this, this);
+        MaterialTags.PROCESS_INTO.add(this, new ObjectArrayList<>());
+        MaterialTags.BYPRODUCTS.add(this, new ObjectArrayList<>());
     }
 
     public static void init(){}
