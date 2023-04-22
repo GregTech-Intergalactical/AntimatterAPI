@@ -114,7 +114,7 @@ public class MaterialEvent {
         asDust(tags);
         flags(AntimatterMaterialTypes.GEM, AntimatterMaterialTypes.BLOCK);
         if (transparent) {
-            flags(MaterialTags.TRANSPARENT, AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.LENS, AntimatterMaterialTypes.GEM_EXQUISITE);
+            flags(MaterialTags.TRANSPARENT, AntimatterMaterialTypes.PLATE, AntimatterMaterialTypes.LENS);
         }
         return this;
     }
