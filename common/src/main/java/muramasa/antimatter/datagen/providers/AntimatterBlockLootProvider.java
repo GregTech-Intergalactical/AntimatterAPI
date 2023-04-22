@@ -137,8 +137,8 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             }
             tables.put(block, b -> LootTable.lootTable().withPool(builder));
             return;
-        } else if ((block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE) || block.getMaterial().has(AntimatterMaterialTypes.GEM)) && block.getOreType() == AntimatterMaterialTypes.ORE) {
-            Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
+        } else if ((block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) && block.getOreType() == AntimatterMaterialTypes.ORE) {
+            Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
             tables.put(block, b -> createOreDrop(b, item));
             return;
         }
