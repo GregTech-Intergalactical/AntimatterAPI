@@ -122,11 +122,12 @@ public class MaterialRecipes {
                     .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
                     .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot_smelting")));
         });*/
-        AntimatterMaterialTypes.RAW_ORE.all().stream().filter(m -> !m.has(NEEDS_BLAST_FURNACE) && m.has(AntimatterMaterialTypes.INGOT) && !m.has(HAS_CUSTOM_SMELTING)).forEach(m -> {
+        AntimatterMaterialTypes.RAW_ORE.all().stream().filter(m -> !m.has(NEEDS_BLAST_FURNACE) && SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(HAS_CUSTOM_SMELTING)).forEach(m -> {
             if (m != AntimatterMaterials.Iron && m != AntimatterMaterials.Copper && m != AntimatterMaterials.Gold) {
-                addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.INGOT, 1, m);
+                addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.INGOT, 1, m, SMELT_INTO.getMapping(m));
             }
-            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.INGOT, 1, m);
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.INGOT, 1, m, SMELT_INTO.getMapping(m));
+            if (m != SMELT_INTO.getMapping(m) || !m.has(AntimatterMaterialTypes.NUGGET)) return;
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.NUGGET, 12, m);
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.NUGGET, 12, m);
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.NUGGET, 11, m);
