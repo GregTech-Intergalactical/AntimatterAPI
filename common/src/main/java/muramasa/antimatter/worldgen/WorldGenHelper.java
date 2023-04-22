@@ -76,12 +76,12 @@ public class WorldGenHelper {
   /**
    * Replaces the block at the given position with an ore block for the specified
    * material.
-   * Will only replace the block, if the existing state is a registered stone.
+   * Will only replace the block, if the existing state is a registered stone & the stone generates ores for that type.
    */
   public static boolean setOre(LevelAccessor world, BlockPos pos, BlockState existing, Material material,
       MaterialType<?> type) {
     StoneType stone = STONE_MAP.get(existing);
-    if (stone == null)
+    if (stone == null || !stone.generateOre)
       return false;
     BlockState oreState = type == AntimatterMaterialTypes.ORE ? AntimatterMaterialTypes.ORE.get().get(material, stone).asState()
         : AntimatterMaterialTypes.ORE_SMALL.get().get(material, stone).asState();
@@ -93,18 +93,11 @@ public class WorldGenHelper {
   /**
    * Replaces the block at the given position with an ore block for the specified
    * material.
-   * Will only replace the block, if the existing state is a registered stone.
+   * Will only replace the block, if the existing state is a registered stone & the stone generates ores for that type.
    */
   public static boolean setOre(LevelAccessor world, BlockPos pos, Material material, MaterialType<?> type) {
     final BlockState existing = world.getBlockState(pos);
-    StoneType stone = STONE_MAP.get(existing);
-    if (stone == null)
-      return false;
-    BlockState oreState = type == AntimatterMaterialTypes.ORE ? AntimatterMaterialTypes.ORE.get().get(material, stone).asState()
-        : AntimatterMaterialTypes.ORE_SMALL.get().get(material, stone).asState();
-    if (!ORE_PREDICATE.test(existing))
-      return false;
-    return setState(world, pos, oreState);
+    return setOre(world, pos, existing, material, type);
   }
 
   /**
@@ -115,7 +108,7 @@ public class WorldGenHelper {
    */
   public static boolean setRock(LevelAccessor world, BlockPos pos, Material material, @Nullable() BlockState fill) {
     StoneType stone = fill != null ? STONE_MAP.get(fill) : null;
-    BlockState rockState = AntimatterMaterialTypes.ROCK.get().get(material, stone != null ? stone : AntimatterStoneTypes.STONE).asState();
+    BlockState rockState = AntimatterMaterialTypes.ROCK.get().get(material, stone != null && stone.generateOre ? stone : AntimatterStoneTypes.STONE).asState();
 
     final BlockState existingBelow = world.getBlockState(pos.below());
     if (existingBelow.isAir() || !existingBelow.getMaterial().isSolid())

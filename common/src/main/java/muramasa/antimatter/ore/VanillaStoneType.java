@@ -20,7 +20,29 @@ public class VanillaStoneType extends CobbleStoneType{
 
     @Override
     public void onRegistryBuild(RegistryType registry) {
+
         if (registry == RegistryType.BLOCKS) {
+            if (this.getId().equals("basalt")){
+                for (int i = 0; i < SUFFIXES.length; i++) {
+                    Block stone;
+                    if (i == 7) {
+                        stone = this.getState().getBlock();
+                    } else if (i == 6){
+                        stone = AntimatterPlatformUtils.getBlockFromId("minecraft", "smooth_" + this.getId());
+                    }else {
+                        stone = new BlockStone(this, SUFFIXES[i]);
+                    }
+                    blocks.put(SUFFIXES[i], stone);
+                    if (i < 2){
+                        continue;
+                    }
+                    int i2 = i - 2;
+                    blocks.put(SLAB_SUFFIXES[i2], new BlockStoneSlab(this, SUFFIXES[i]));
+                    blocks.put(STAIR_SUFFIXES[i2], new BlockStoneStair(this, SUFFIXES[i], stone));
+                    blocks.put(WALL_SUFFIXES[i2], new BlockStoneWall(this, SUFFIXES[i]));
+                }
+                return;
+            }
             for (int i = 0; i < SUFFIXES.length; i++) {
                 int i2 = i - 2;
                 Block stone, stair = null, slab = null, wall = null;

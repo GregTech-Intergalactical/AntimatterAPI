@@ -24,7 +24,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     private final String domain, id;
     //private int harvestLevel;
     private boolean gravity, requiresTool;
-    public boolean generateBlock = false;
+    public boolean generateBlock, generateOre = true;
     private final Material material;
     private Texture[] textures;
     private final SoundType soundType;
@@ -81,6 +81,11 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
 
     public StoneType setFallingDustColor(int fallingDustColor) {
         this.fallingDustColor = fallingDustColor;
+        return this;
+    }
+
+    public StoneType setGenerateOre(boolean generateOre){
+        this.generateOre = generateOre;
         return this;
     }
 
@@ -147,6 +152,10 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
 
     public boolean doesGenerateBlock() {
         return generateBlock;
+    }
+
+    public boolean doesGenerateOre(){
+        return generateOre;
     }
 
     public boolean doesRequireTool() {

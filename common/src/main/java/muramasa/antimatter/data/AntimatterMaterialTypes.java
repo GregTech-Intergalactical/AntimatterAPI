@@ -30,7 +30,7 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> DUST_IMPURE = new MaterialTypeItem<>("dust_impure", 2, true, Ref.U);
     public static MaterialTypeItem<?> DUST_PURE = new MaterialTypeItem<>("dust_pure", 2, true, Ref.U);
     public static MaterialTypeItem<MaterialTypeBlock.IOreGetter> ROCK = new MaterialTypeItem<>("rock", 2, false, Ref.U9, (domain, type, mat) -> {
-        AntimatterAPI.all(StoneType.class, s -> AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, mat, s)));
+        AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).forEach(s -> AntimatterAPI.register(BlockSurfaceRock.class, new BlockSurfaceRock(domain, mat, s)));
         new MaterialItem(domain, type, mat);
     });
     public static MaterialTypeItem<?> CRUSHED = new MaterialTypeItem<>("crushed", 2, true, Ref.U);
@@ -69,8 +69,8 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> FISSILE_FUEL = new MaterialTypeItem<>("fissile_fuel", 2, true, Ref.U);
     public static MaterialTypeItem<?> DEPLETED_FISSILE_FUEL = new MaterialTypeItem<>("depleted_fissile_fuel", 2, true, Ref.U);
     //Block Types
-    public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE = new MaterialTypeBlock<>("ore", 1, true, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, mat, s, type)));
-    public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE_SMALL = new MaterialTypeBlock<>("ore_small", 1, false, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class, s -> new BlockOre(domain, mat, s, type)));
+    public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE = new MaterialTypeBlock<>("ore", 1, true, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).forEach(s -> new BlockOre(domain, mat, s, type)));
+    public static MaterialTypeBlock<MaterialTypeBlock.IOreGetter> ORE_SMALL = new MaterialTypeBlock<>("ore_small", 1, false, -1, (domain, type, mat) -> AntimatterAPI.all(StoneType.class).stream().filter(StoneType::doesGenerateOre).forEach(s -> new BlockOre(domain, mat, s, type)));
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> ORE_STONE = new MaterialTypeBlock<>("ore_stone", 1, true, -1,(domain, type, mat) -> new BlockOreStone(domain, mat));
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> BLOCK = new MaterialTypeBlock<>("block", 1, false, -1, BlockStorage::new);
     public static MaterialTypeBlock<MaterialTypeBlock.IBlockGetter> RAW_ORE_BLOCK = new MaterialTypeBlock<>("raw_ore_block", 2, false, -1, BlockStorage::new);
@@ -82,7 +82,7 @@ public class AntimatterMaterialTypes {
 
     static {
         AntimatterMaterialTypes.ROCK.set((m, s) -> {
-            if (m == null || s == null || !AntimatterMaterialTypes.ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.ROCK, m, s);
+            if (m == null || s == null || !s.doesGenerateOre() || !AntimatterMaterialTypes.ROCK.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.ROCK, m, s);
             BlockSurfaceRock rock = AntimatterAPI.get(BlockSurfaceRock.class, "surface_rock_" + m.getId() + "_" + s.getId());
             return new MaterialTypeBlock.Container(rock != null ? rock.defaultBlockState() : Blocks.AIR.defaultBlockState());
         });
@@ -93,8 +93,8 @@ public class AntimatterMaterialTypes {
                     return new MaterialTypeBlock.Container(((BlockItem) item).getBlock().defaultBlockState());
                 }
             }
-            if (m == null || s == null || !AntimatterMaterialTypes.ORE.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.ORE, m, s);
-            BlockOre block = AntimatterAPI.get(BlockOre.class, AntimatterMaterialTypes.ORE.getId() + "_" + m.getId() + "_" + Utils.getConventionalStoneType(s));
+            if (m == null || s == null || !s.doesGenerateOre() || !AntimatterMaterialTypes.ORE.allowGen(m)) return MaterialTypeBlock.getEmptyBlockAndLog(AntimatterMaterialTypes.ORE, m, s);
+            BlockOre block = AntimatterAPI.get(BlockOre.class, AntimatterMaterialTypes.ORE.getId() + "_" + m.getId() + "_" + s.getId());
             return new MaterialTypeBlock.Container(block != null ? block.defaultBlockState() : Blocks.AIR.defaultBlockState());
         }).blockType();
         AntimatterMaterialTypes.ORE_SMALL.set((m, s) -> {
