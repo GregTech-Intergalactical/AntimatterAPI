@@ -141,6 +141,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
     @Nullable
     @Override
     public Recipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+        Antimatter.LOGGER.info(recipeId.toString());
         int size = buffer.readInt();
         List<Ingredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {
@@ -181,7 +182,6 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         int special = buffer.readInt();
         int amps = buffer.readInt();
         String map = buffer.readUtf();
-        ResourceLocation id = buffer.readResourceLocation();
 
         Recipe r = new Recipe(
                 ings,
@@ -195,7 +195,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         );
         if (chances.length > 0)
             r.addChances(chances);
-        r.setIds(id, map);
+        r.setIds(recipeId, map);
         return r;
     }
 
@@ -205,9 +205,9 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         if (recipe.hasInputItems()) {
             recipe.getInputItems().forEach(t -> RecipeUtil.write(buffer, t));
         }
-        buffer.writeInt(!recipe.hasOutputItems() ? 0 : recipe.getOutputItems().length);
+        buffer.writeInt(!recipe.hasOutputItems() ? 0 : recipe.getOutputItems(false).length);
         if (recipe.hasOutputItems()) {
-            Arrays.stream(recipe.getOutputItems()).forEach(buffer::writeItem);
+            Arrays.stream(recipe.getOutputItems(false)).forEach(buffer::writeItem);
         }
         buffer.writeInt(!recipe.hasInputFluids() ? 0 : recipe.getInputFluids().size());
         if (recipe.hasInputFluids()) {
@@ -226,6 +226,5 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         buffer.writeInt(recipe.getSpecialValue());
         buffer.writeInt(recipe.getAmps());
         buffer.writeUtf(recipe.mapId);
-        buffer.writeResourceLocation(recipe.id);
     }
 }
