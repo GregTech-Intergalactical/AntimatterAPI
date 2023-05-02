@@ -107,21 +107,6 @@ public class MaterialRecipes {
                         AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.ROCK.getMaterialTag(m));
             }
         });
-
-        /*AntimatterAPI.all(BlockOre.class, o -> {
-            if (o.getOreType() != AntimatterMaterialTypes.ORE) return;
-            if (!MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).has(AntimatterMaterialTypes.INGOT)) return;
-            if (o.getMaterial().has(MaterialTags.NEEDS_BLAST_FURNACE)) return;
-            Item ingot = AntimatterMaterialTypes.INGOT.get(MaterialTags.SMELT_INTO.getMapping(o.getMaterial()));
-            TagKey<Item> oreTag = TagUtils.getForgelikeItemTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()));
-            TagKey<Item> ingotTag = TagUtils.getForgelikeItemTag("ingots/".concat(MaterialTags.SMELT_INTO.getMapping(o.getMaterial()).getId()));
-            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(oreTag, 1), new ItemStack(ingot, MaterialTags.SMELTING_MULTI.getInt(o.getMaterial())), 2.0F, 100)
-                    .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
-                    .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot")));
-            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(oreTag, 1), new ItemStack(ingot, MaterialTags.SMELTING_MULTI.getInt(o.getMaterial())), 2.0F, 200)
-                    .addCriterion("has_material_" + o.getMaterial().getId(), provider.hasSafeItem(ingotTag))
-                    .build(consumer, provider.fixLoc(Ref.ID, o.getId().concat("_to_ingot_smelting")));
-        });*/
         AntimatterMaterialTypes.RAW_ORE.all().stream().filter(m -> !m.has(NEEDS_BLAST_FURNACE) && SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(HAS_CUSTOM_SMELTING)).forEach(m -> {
             if (m != AntimatterMaterials.Iron && m != AntimatterMaterials.Copper && m != AntimatterMaterials.Gold) {
                 addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.INGOT, 1, m, SMELT_INTO.getMapping(m));
@@ -134,39 +119,11 @@ public class MaterialRecipes {
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.NUGGET, 11, m);
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.NUGGET, 10, m);
         });
-        /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(AntimatterMaterialTypes.RAW_ORE) && MaterialTags.SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(MaterialTags.NEEDS_BLAST_FURNACE)).forEach(m -> {
-            AntimatterCookingRecipeBuilder.blastingRecipe(RecipeIngredient.of(AntimatterMaterialTypes.RAW_ORE.getMaterialTag(m), 1), new ItemStack(AntimatterMaterialTypes.INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 100)
-                    .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(AntimatterMaterialTypes.INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
-                    .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot")));
-            AntimatterCookingRecipeBuilder.smeltingRecipe(RecipeIngredient.of(AntimatterMaterialTypes.RAW_ORE.getMaterialTag(m), 1), new ItemStack(AntimatterMaterialTypes.INGOT.get(MaterialTags.SMELT_INTO.getMapping(m)), MaterialTags.SMELTING_MULTI.getInt(m)), 2.0F, 200)
-                    .addCriterion("has_material_" + m.getId(), provider.hasSafeItem(AntimatterMaterialTypes.INGOT.getMaterialTag(MaterialTags.SMELT_INTO.getMapping(m))))
-                    .build(consumer, provider.fixLoc(Ref.ID, m.getId().concat("_raw_ore_to_ingot_smelting")));
-        });*/
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
             if (m.has(MaterialTags.NEEDS_BLAST_FURNACE) || m.has(MaterialTags.HAS_CUSTOM_SMELTING)) return;
             if (!DIRECT_SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT)) return;
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST, AntimatterMaterialTypes.INGOT, 1, m, DIRECT_SMELT_INTO.getMapping(m));
         });
-        /*AntimatterAPI.all(Material.class).stream().filter(m -> m.has(DUST)).forEach(mat -> {
-            Item dust = DUST.get(mat);
-            if (mat.has(ROCK)) {
-                ITag<Item> rockTag = nc(TagUtils.getForgeItemTag("rocks/".concat(mat.getId())));
-                Item rock = ROCK.get(mat);
-                Item smallDust = DUST_SMALL.get(mat);
-                ShapelessRecipeBuilder.shapelessRecipe(dust)
-                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(rockTag)
-                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(rockTag)
-                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(nc(MORTAR.getTag()))
-                        .addCriterion("has_rock_" + mat.getId(), provider.hasSafeItem(rockTag))
-                        .setGroup("rocks_grind_to_dust").build(consumer, provider.fixLoc(Ref.ID, rock.getRegistryName().getPath() + "_grind_to_" + dust.getRegistryName().getPath()));
-
-                ShapelessRecipeBuilder.shapelessRecipe(smallDust)
-                        .addIngredient(rockTag).addIngredient(rockTag)
-                        .addIngredient(rockTag).addIngredient(rockTag).addIngredient(nc(MORTAR.getTag()))
-                        .addCriterion("has_rock_" + mat.getId(), provider.hasSafeItem(getForgeItemTag("rocks/".concat(mat.getId()))))
-                        .setGroup("rocks_grind_to_small_dust").build(consumer, provider.fixLoc(Ref.ID, rock.getRegistryName().getPath() + "_grind_to_" + smallDust.getRegistryName().getPath()));
-            }
-        });*/
     }
 
     private static void addSmeltingRecipe(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider, MaterialType<?> input, MaterialTypeItem<?> output, int amount, Material in){
