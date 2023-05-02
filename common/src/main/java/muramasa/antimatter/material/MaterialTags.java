@@ -43,6 +43,7 @@ public class MaterialTags {
     public static final MaterialTag FLINT = new MaterialTag("flint");
     public static final MaterialTag DECAYABLE = new MaterialTag("decayable");
     public static final MaterialTag MOLTEN = new MaterialTag("molten");
+    public static final MaterialTag QUARTZ_LIKE_BLOCKS = new MaterialTag("quartz_like_blocks");
 
     public static final TypeMaterialTag<UniformInt> EXP_RANGE = new TypeMaterialTag<>("exp_range");
     /**

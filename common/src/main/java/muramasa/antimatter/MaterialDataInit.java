@@ -10,6 +10,8 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.enchantment.Enchantments;
 
 import static com.google.common.collect.ImmutableMap.of;
+import static muramasa.antimatter.material.MaterialTags.MOLTEN;
+import static muramasa.antimatter.material.MaterialTags.QUARTZ_LIKE_BLOCKS;
 import static net.minecraft.world.item.Tiers.GOLD;
 import static net.minecraft.world.item.Tiers.IRON;
 import static net.minecraft.world.item.Tiers.NETHERITE;
@@ -58,8 +60,8 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.EnderPearl).asGemBasic(false);
         event.setMaterial(AntimatterMaterials.EnderEye).asGemBasic(false);
         event.setMaterial(AntimatterMaterials.Lapis).asGemBasic(false).asOre(2, 5, true).harvestLevel(1);
-        event.setMaterial(AntimatterMaterials.Redstone).asDust().asOre(1, 5, true).harvestLevel(2);
-        event.setMaterial(AntimatterMaterials.Quartz).asDust().asOre(1, 5, true).harvestLevel(1);
+        event.setMaterial(AntimatterMaterials.Redstone).asOre(1, 5, true, MOLTEN).harvestLevel(2);
+        event.setMaterial(AntimatterMaterials.Quartz).asOre(1, 5, true, QUARTZ_LIKE_BLOCKS).harvestLevel(1);
         event.setMaterial(AntimatterMaterials.Netherite).asMetal(2246, 1300).addTools(3.0F, 10, 500, NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3)).addArmor(new int[]{0, 1, 1, 0}, 0.5F, 0.1F, 20);
         event.setMaterial(AntimatterMaterials.NetherizedDiamond).asGemBasic(false).addTools(4.0F, 12, NETHERITE.getUses(), NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3, Enchantments.SHARPNESS, 4)).addArmor(new int[]{1, 1, 2, 1}, 3.0F, 0.1F, 37, of(Enchantments.ALL_DAMAGE_PROTECTION, 4));
         event.setMaterial(AntimatterMaterials.NetheriteScrap).asDust(AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
