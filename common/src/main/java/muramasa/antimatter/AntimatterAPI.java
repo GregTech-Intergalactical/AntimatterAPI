@@ -500,6 +500,14 @@ public final class AntimatterAPI {
         return getReplacement(null, tag, namespaces);
     }
 
+    public static Item getReplacement(MaterialType<?> type, Material material, StoneType stone, String... namespaces) {
+        if (type.getId().contains("liquid"))
+            return null;
+        TagKey<Item> tag = TagUtils
+                .getForgelikeItemTag(String.join("", stone.getId(), "_", getConventionalMaterialType(type), "/", material.getId()));
+        return getReplacement(null, tag, namespaces);
+    }
+
     /**
      * This must run after DataGenerators have ran OR when the tag jsons are
      * acknowledged. Otherwise this is useless!
