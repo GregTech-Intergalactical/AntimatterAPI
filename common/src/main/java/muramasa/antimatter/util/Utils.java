@@ -1147,6 +1147,9 @@ public class Utils {
         if (type.getId().equals("raw_ore_block") || type.getId().equals("block")){
             return "storage_blocks";
         }
+        if (type.getId().equals("ore_stone")){
+            return "ore_stones";
+        }
         String id = type.getId();
         int index = id.indexOf("_");
         if (index != -1 && type.isSplitName()) {

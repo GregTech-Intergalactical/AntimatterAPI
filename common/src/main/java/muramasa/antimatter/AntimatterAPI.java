@@ -495,8 +495,7 @@ public final class AntimatterAPI {
     public static Item getReplacement(MaterialType<?> type, Material material, String... namespaces) {
         if (type.getId().contains("liquid"))
             return null;
-        TagKey<Item> tag = TagUtils
-                .getForgelikeItemTag(String.join("", getConventionalMaterialType(type), "/", material.getId()));
+        TagKey<Item> tag = type.getMaterialTag(material);
         return getReplacement(null, tag, namespaces);
     }
 
