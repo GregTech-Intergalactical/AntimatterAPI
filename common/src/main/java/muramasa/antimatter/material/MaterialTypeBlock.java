@@ -37,13 +37,17 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
         return RecipeIngredient.of(getMaterialTag(m), count);
     }
 
+    public boolean allowBlockGen(Material material) {
+        return !replacements.containsKey(material) && allowGen(material);
+    }
+
     @Override
     public void onRegistryBuild(RegistryType registry) {
         super.onRegistryBuild(registry);
         if (doRegister()) {
             for (Material material : this.materials) {
                 if (!material.enabled) continue;
-                supplier.createBlocks(material.materialDomain(), this, material);
+                if (allowBlockGen(material)) supplier.createBlocks(material.materialDomain(), this, material);
             }
         }
     }
