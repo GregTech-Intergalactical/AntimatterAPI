@@ -46,7 +46,7 @@ public class AntimatterConfig {
          * @see ClientConfig
          **/
 
-        public boolean BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS, ADD_REI_GROUPS;
+        public boolean BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS, ADD_REI_GROUPS, GROUP_ORES_ONLY, SHOW_ALL_ORES, SHOW_ROCKS;
 
     }
 
@@ -100,7 +100,7 @@ public class AntimatterConfig {
 
     public static class ClientConfig {
 
-        public final BooleanValue BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS, ADD_REI_GROUPS;
+        public final BooleanValue BASIC_MACHINE_MODELS, SHOW_ALL_MATERIAL_ITEMS, SHOW_ALL_FLUID_CELLS, ADD_REI_GROUPS, GROUP_ORES_ONLY, SHOW_ALL_ORES, SHOW_ROCKS;
 
         public ClientConfig(Builder builder) {
 
@@ -119,9 +119,21 @@ public class AntimatterConfig {
                     .translation(Ref.ID + ".config.show_all_fluid_cells")
                     .define("SHOW_ALL_FLUID_CELLS", false);
 
-            ADD_REI_GROUPS = builder.comment("Add collapsable groups for various antimatter material items to rei - Default: true")
+            ADD_REI_GROUPS = builder.comment("Add collapsable groups for various antimatter material items to rei - Default: false")
                     .translation(Ref.ID + ".config.add_rei_groups")
-                    .define("ADD_REI_GROUPS", true);
+                    .define("ADD_REI_GROUPS", false);
+
+            GROUP_ORES_ONLY = builder.comment("Only adds collapsable groups for ores and rocks, requires ADD_REI_GROUPS to be true - Default: true")
+                    .translation(Ref.ID + ".config.group_ores_only")
+                    .define("GROUP_ORES_ONLY", true);
+
+            SHOW_ALL_ORES = builder.comment("Show all ore variants in jei/rei, not just stone variants - Default: false")
+                    .translation(Ref.ID + ".config.show_all_ores")
+                    .define("SHOW_ALL_ORES", false);
+
+            SHOW_ROCKS = builder.comment("Show all block versions of rocks in jei/rei - Default: false")
+                    .translation(Ref.ID + ".config.show_rocks")
+                    .define("SHOW_ROCKS", false);
 
         }
 
@@ -402,6 +414,9 @@ public class AntimatterConfig {
         CLIENT.SHOW_ALL_MATERIAL_ITEMS = CLIENT_CONFIG.SHOW_ALL_MATERIAL_ITEMS.get();
         CLIENT.SHOW_ALL_FLUID_CELLS = CLIENT_CONFIG.SHOW_ALL_FLUID_CELLS.get();
         CLIENT.ADD_REI_GROUPS = CLIENT_CONFIG.ADD_REI_GROUPS.get();
+        CLIENT.GROUP_ORES_ONLY = CLIENT_CONFIG.GROUP_ORES_ONLY.get();
+        CLIENT.SHOW_ALL_ORES = CLIENT_CONFIG.SHOW_ALL_ORES.get();
+        CLIENT.SHOW_ROCKS = CLIENT_CONFIG.SHOW_ROCKS.get();
 
     }
 

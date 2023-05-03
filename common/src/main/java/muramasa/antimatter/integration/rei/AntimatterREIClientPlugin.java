@@ -1,6 +1,7 @@
 package muramasa.antimatter.integration.rei;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import me.shedaniel.rei.api.client.entry.filtering.base.BasicFilteringRule;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
@@ -15,6 +16,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.integration.jeirei.AntimatterJEIREIPlugin;
 import muramasa.antimatter.integration.rei.category.RecipeMapCategory;
 import muramasa.antimatter.integration.rei.category.RecipeMapDisplay;
@@ -24,6 +26,7 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
 import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.IRecipe;
@@ -32,7 +35,9 @@ import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 
 import java.util.Map;
 import java.util.Objects;
@@ -53,6 +58,8 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
         AntimatterAPI.all(MaterialType.class).stream().filter(t -> t instanceof MaterialTypeItem<?> || t instanceof MaterialTypeBlock<?>).forEach(t -> {
             if (t.get() instanceof MaterialTypeBlock.IOreGetter getter){
                 AntimatterAPI.all(StoneType.class, s -> {
+                    if (s != AntimatterStoneTypes.STONE && !AntimatterConfig.CLIENT.SHOW_ALL_ORES && t != AntimatterMaterialTypes.ROCK) return;
+                    if (t == AntimatterMaterialTypes.ROCK && !AntimatterConfig.CLIENT.SHOW_ROCKS) return;
                     List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, getter.get((Material) m, s).asStack())).toList();
                     registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId() + "_" + s.getId()), new TranslatableComponent(Ref.ID + ".rei.group." + t.getId() + "." + s.getId()), entries);
                 });
@@ -60,6 +67,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                     return;
                 }
             }
+            if (AntimatterConfig.CLIENT.GROUP_ORES_ONLY) return;
             Function<Material, ItemStack> func = null;
             if (t instanceof MaterialTypeItem<?> typeItem){
                 func = m -> typeItem.get(m, 1);
@@ -75,12 +83,42 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
             List<EntryStack<ItemStack>> entries = t.all().stream().map(m -> EntryStack.of(VanillaEntryTypes.ITEM, finalFunc.apply((Material) m))).toList();
             registry.group(new ResourceLocation(Ref.SHARED_ID, t.getId()), new TranslatableComponent(Ref.ID + ".rei.group." + t.getId()), entries);
         });
+        if (AntimatterConfig.CLIENT.GROUP_ORES_ONLY) return;
         AntimatterAPI.all(StoneType.class, s -> {
             if (s instanceof CobbleStoneType cobble){
                 List<EntryStack<ItemStack>> entries = cobble.getBlocks().values().stream().map(b -> EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(b.asItem()))).toList();
                 registry.group(new ResourceLocation(Ref.SHARED_ID, s.getId()), new TranslatableComponent(Ref.ID + ".rei.group." + s.getId()), entries);
             }
         });
+    }
+
+    @Override
+    public void registerBasicEntryFiltering(BasicFilteringRule<?> rule) {
+        if (!AntimatterConfig.CLIENT.SHOW_ALL_ORES){
+            AntimatterMaterialTypes.ORE.all().forEach(m -> {
+                AntimatterAPI.all(StoneType.class, s -> {
+                    if (s != AntimatterStoneTypes.STONE){
+                        Block ore = AntimatterMaterialTypes.ORE.get().get(m, s).asBlock();
+                        if (ore instanceof BlockOre){
+                            rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(ore)));
+                        }
+                        if (m.has(AntimatterMaterialTypes.ORE_SMALL)){
+                            ore = AntimatterMaterialTypes.ORE_SMALL.get().get(m, s).asBlock();
+                            if (ore instanceof BlockOre){
+                                rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(ore)));
+                            }
+                        }
+                    }
+                });
+            });
+        }
+        if (!AntimatterConfig.CLIENT.SHOW_ROCKS){
+            AntimatterMaterialTypes.ROCK.all().forEach(m -> {
+                AntimatterAPI.all(StoneType.class, s -> {
+                    rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, AntimatterMaterialTypes.ROCK.get().get(m, s).asStack()));
+                });
+            });
+        }
     }
 
     @Override
