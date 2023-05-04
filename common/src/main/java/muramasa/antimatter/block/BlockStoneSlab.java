@@ -1,6 +1,7 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder.VariantBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -48,12 +49,25 @@ public class BlockStoneSlab extends SlabBlock implements ISharedAntimatterObject
     }
 
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        AntimatterBlockModelBuilder top = prov.models().getBuilder(getId() + "_top").parent(prov.existing("minecraft", "block/slab_top")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
-        AntimatterBlockModelBuilder bottom = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/slab")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
+        Texture topTexture, bottomTexture, sideTexture;
+        topTexture = bottomTexture = sideTexture = getTextures()[0];
         ResourceLocation both = prov.existing(this.getDomain(), "block/" + this.getId().replace("_slab", ""));
+        if (type == AntimatterStoneTypes.BASALT && (suffix.isEmpty() || suffix.equals("smooth"))){
+            if (suffix.isEmpty()) {
+                both = prov.existing("minecraft", "block/basalt");
+                topTexture = bottomTexture = new Texture("block/basalt_top");
+                sideTexture = new Texture("block/basalt_side");
+            } else {
+                both = prov.existing("minecraft", "block/smooth_basalt");
+                topTexture = bottomTexture = sideTexture = new Texture("block/smooth_basalt");
+            }
+        }
+        AntimatterBlockModelBuilder top = prov.models().getBuilder(getId() + "_top").parent(prov.existing("minecraft", "block/slab_top")).texture("bottom", bottomTexture).texture("top", topTexture).texture("side", sideTexture);
+        AntimatterBlockModelBuilder bottom = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/slab")).texture("bottom", bottomTexture).texture("top", topTexture).texture("side", sideTexture);
+        ResourceLocation finalBoth = both;
         prov.getVariantBuilder(block).forAllStates(s -> {
             if (s.getValue(TYPE) == SlabType.DOUBLE) {
-                return new VariantBuilder().modelFile(both);
+                return new VariantBuilder().modelFile(finalBoth);
             }
             return new VariantBuilder().modelFile(s.getValue(TYPE) == SlabType.TOP ? top : bottom);
         });

@@ -1,6 +1,7 @@
 package muramasa.antimatter.block;
 
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder.VariantBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
@@ -54,9 +55,19 @@ public class BlockStoneStair extends StairBlock implements ISharedAntimatterObje
     }
 
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
-        AntimatterBlockModelBuilder outer = prov.models().getBuilder(getId() + "_outer").parent(prov.existing("minecraft", "block/outer_stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
-        AntimatterBlockModelBuilder inner = prov.models().getBuilder(getId() + "_inner").parent(prov.existing("minecraft", "block/inner_stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
-        AntimatterBlockModelBuilder regular = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/stairs")).texture("bottom", getTextures()[0]).texture("top", getTextures()[0]).texture("side", getTextures()[0]);
+        Texture bottom, top, side;
+        bottom = top = side = getTextures()[0];
+        if (type == AntimatterStoneTypes.BASALT && (suffix.isEmpty() || suffix.equals("smooth"))){
+            if (suffix.isEmpty()) {
+                top = bottom = new Texture("block/basalt_top");
+                side = new Texture("block/basalt_side");
+            } else {
+                top = bottom = side = new Texture("block/smooth_basalt");
+            }
+        }
+        AntimatterBlockModelBuilder outer = prov.models().getBuilder(getId() + "_outer").parent(prov.existing("minecraft", "block/outer_stairs")).texture("bottom", bottom).texture("top", top).texture("side", side);
+        AntimatterBlockModelBuilder inner = prov.models().getBuilder(getId() + "_inner").parent(prov.existing("minecraft", "block/inner_stairs")).texture("bottom", bottom).texture("top", top).texture("side", side);
+        AntimatterBlockModelBuilder regular = prov.models().getBuilder(getId()).parent(prov.existing("minecraft", "block/stairs")).texture("bottom", bottom).texture("top", top).texture("side", side);
         prov.getVariantBuilder(block).forAllStates(s -> {
             VariantBuilder builder = new VariantBuilder();
             AntimatterBlockModelBuilder b = regular;
