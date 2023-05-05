@@ -3,6 +3,7 @@ package muramasa.antimatter.capability.machine;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.EnergyHandler;
@@ -63,7 +64,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     protected boolean checkVoltage(GTTransaction.TransferData data) {
         if (data.getVoltage() > this.getInputVoltage()) {
-            Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.DESTROY);
+            if (AntimatterConfig.GAMEPLAY.MACHINES_EXPLODE) {
+                Utils.createExplosion(this.tile.getLevel(), tile.getBlockPos(), 4.0F, Explosion.BlockInteraction.DESTROY);
+            } else {
+                return false;
+            }
         }
         return true;
     }

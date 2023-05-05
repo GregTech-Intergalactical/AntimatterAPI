@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import muramasa.antimatter.Ref;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
@@ -70,7 +69,7 @@ public class AntimatterConfig {
 
         public int AXE_TIMBER_MAX;
 
-        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, LOSSY_PART_CRAFTING, EXPORT_DEFAULT_RECIPES;
+        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, LOSSY_PART_CRAFTING, MACHINES_EXPLODE, EXPORT_DEFAULT_RECIPES;
 
     }
 
@@ -148,7 +147,7 @@ public class AntimatterConfig {
                 SECONDARY_MATERIAL_WEIGHT, BETWEEN_MATERIAL_WEIGHT, SPORADIC_MATERIAL_WEIGHT;
 
         public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS,
-                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, LOSSY_PART_CRAFTING, AXE_TIMBER, SMARTER_TREE_DETECTION, EXPORT_DEFAULT_RECIPES, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
+                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, LOSSY_PART_CRAFTING, MACHINES_EXPLODE, AXE_TIMBER, SMARTER_TREE_DETECTION, EXPORT_DEFAULT_RECIPES, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
 
 
         public final DoubleValue THIN_ORE_CHANCE, THIN_SMALL_ORE_CHANCE, THIN_MARKER_ORE_CHANCE, THIN_SURFACE_STONE_CHANCE, NORMAL_ORE_CHANCE, NORMAL_SMALL_ORE_CHANCE, NORMAL_MARKER_ORE_CHANCE, NORMAL_SURFACE_STONE_CHANCE, DENSE_ORE_CHANCE, DENSE_SMALL_ORE_CHANCE, DENSE_MARKER_ORE_CHANCE, DENSE_SURFACE_STONE_CHANCE;
@@ -369,6 +368,10 @@ public class AntimatterConfig {
                     .translation(Ref.ID + ".config.lossy_part_crafting")
                     .define("LOSSY_PART_CRAFTING", true);
 
+            MACHINES_EXPLODE = builder.comment("Enable machines exploding on overvoltage - Default: true")
+                    .translation(Ref.ID + ".config.machines_explode")
+                    .define("MACHINES_EXPLODE", true);
+
             EXPORT_DEFAULT_RECIPES = builder.comment("Exports default crafting and machine recipes to exported in the root minecraft folder. - Default: false")
                     .translation(Ref.ID + ".config.export_default_recipes")
                     .define("EXPORT_DEFAULT_RECIPES", false);
@@ -464,6 +467,7 @@ public class AntimatterConfig {
         GAMEPLAY.AXE_TIMBER_MAX = COMMON_CONFIG.AXE_TIMBER_MAX.get();
         GAMEPLAY.LOSSY_PART_CRAFTING = COMMON_CONFIG.LOSSY_PART_CRAFTING.get();
         GAMEPLAY.PLAY_CRAFTING_SOUNDS = COMMON_CONFIG.PLAY_CRAFTING_SOUNDS.get();
+        GAMEPLAY.MACHINES_EXPLODE = COMMON_CONFIG.MACHINES_EXPLODE.get();
         GAMEPLAY.EXPORT_DEFAULT_RECIPES = COMMON_CONFIG.EXPORT_DEFAULT_RECIPES.get();
 
         MOD_COMPAT.ENABLE_ALL_REGISTRARS = COMMON_CONFIG.ENABLE_ALL_REGISTRARS.get();
