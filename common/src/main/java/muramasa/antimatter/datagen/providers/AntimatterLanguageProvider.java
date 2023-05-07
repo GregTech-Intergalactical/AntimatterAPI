@@ -212,6 +212,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(item, String.join("", "Pure ", getLocalizedType(item.getMaterial()), " Dust"));
                 else if (type == AntimatterMaterialTypes.RAW_ORE)
                     add(item, String.join("", "Raw ", getLocalizedType(item.getMaterial())));
+                else if (type == AntimatterMaterialTypes.GEM)
+                    add(item, getLocalizedType(item.getMaterial()));
                 else {
                     String[] split = getLocalizedMaterialType(type);
                     if (split.length > 1) {
