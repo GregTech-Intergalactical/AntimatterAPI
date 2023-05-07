@@ -140,6 +140,7 @@ public class AntimatterDynamics {
         Stream<IAntimatterProvider> sync = providers.stream().filter(t -> !t.async());
         Stream.concat(async, sync).forEach(IAntimatterProvider::run);
         providers.forEach(IAntimatterProvider::onCompletion);
+        AntimatterLanguageProvider.postCompletion();
         Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
         if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES) {
             DYNAMIC_RESOURCE_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));

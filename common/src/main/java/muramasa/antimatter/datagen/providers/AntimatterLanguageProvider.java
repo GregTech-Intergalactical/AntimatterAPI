@@ -50,6 +50,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static muramasa.antimatter.util.Utils.*;
@@ -59,6 +60,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     private final String providerDomain, providerName, locale;
     private final Object2ObjectMap<String, String> data = new Object2ObjectRBTreeMap<>();
 
+    private static final Object2ObjectMap<String, Object2ObjectMap<String, Object2ObjectMap<String, String>>> GLOBAL_DATA = new Object2ObjectRBTreeMap<>();
+
     public AntimatterLanguageProvider(String providerDomain, String providerName, String locale) {
         this.providerDomain = providerDomain;
         this.providerName = providerName;
@@ -66,15 +69,25 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     }
 
     @Override
-    public void run() {
+    public final void run() {
         addTranslations();
+        GLOBAL_DATA.computeIfAbsent(providerDomain, d -> new Object2ObjectRBTreeMap<>()).put(locale, data);
     }
 
     @Override
-    public void onCompletion() {
-        JLang lang = JLang.lang();
-        data.forEach(lang::entry);
-        AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addLang(new ResourceLocation(providerDomain, locale), lang);
+    public final void onCompletion() {
+        overrides();
+    }
+
+    public static void postCompletion(){
+        GLOBAL_DATA.forEach((domain, map) -> {
+            map.forEach((locale, data) -> {
+                JLang lang = JLang.lang();
+                data.forEach(lang::entry);
+                AntimatterDynamics.DYNAMIC_RESOURCE_PACK.addLang(new ResourceLocation(domain, locale), lang);
+            });
+        });
+
     }
 
     @Override
@@ -92,6 +105,10 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             return component;
         }
         return otherwise.get();
+    }
+
+    protected void overrides(){
+
     }
 
     protected void english(String domain, String locale) {
@@ -359,6 +376,16 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
 
     public void override(String key, String value) {
         data.put(key, value);
+    }
+
+    public void override(String domain, String key, String value) {
+        Map<String, Object2ObjectMap<String, String>> mapMap = GLOBAL_DATA.get(domain);
+        if (mapMap != null){
+            Map<String, String> map = mapMap.get(locale);
+            if (map != null){
+                map.put(key, value);
+            }
+        }
     }
 
 }
