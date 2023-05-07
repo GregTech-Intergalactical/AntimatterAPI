@@ -125,6 +125,10 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         return 0;
     }
 
+    default int getPriority(Class<?> clazz){
+        return 0;
+    }
+
     /**
      * Fires once per Side. Return defines whether or not to consume the
      * interaction.

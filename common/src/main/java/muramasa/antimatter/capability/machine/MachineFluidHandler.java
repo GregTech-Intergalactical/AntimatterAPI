@@ -23,6 +23,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
@@ -253,6 +254,10 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
         return super.canInput();
     }
 
+    @Override
+    public int getPriority(Direction direction) {
+        return tile.coverHandler.map(c -> c.get(direction).getPriority(IFluidHandler.class)).orElse(0);
+    }
 
     @Override
     public LazyOptional<? extends IFluidHandler> forNullSide() {

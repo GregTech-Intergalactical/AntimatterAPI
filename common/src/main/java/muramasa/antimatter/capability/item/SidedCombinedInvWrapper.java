@@ -39,7 +39,7 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItem
 
     @Override
     public int getPriority(Direction direction) {
-        return 0;
+        return coverHandler == null ? 0 : coverHandler.get(direction).getPriority(IItemHandler.class);
     }
 
     @Override
