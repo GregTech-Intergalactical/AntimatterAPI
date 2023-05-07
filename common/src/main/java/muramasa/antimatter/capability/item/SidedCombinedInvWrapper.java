@@ -7,10 +7,11 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import tesseract.api.item.IItemNode;
 
 import javax.annotation.Nonnull;
 
-public class SidedCombinedInvWrapper extends CombinedInvWrapper {
+public class SidedCombinedInvWrapper extends CombinedInvWrapper implements IItemNode {
     Direction side;
     CoverHandler<?> coverHandler;
 
@@ -34,5 +35,35 @@ public class SidedCombinedInvWrapper extends CombinedInvWrapper {
         if (coverHandler != null && coverHandler.get(side).blocksOutput(IItemHandler.class, side))
             return ItemStack.EMPTY;
         return super.extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    public int getPriority(Direction direction) {
+        return 0;
+    }
+
+    @Override
+    public boolean isEmpty(int slot) {
+        return super.getStackInSlot(slot).isEmpty();
+    }
+
+    @Override
+    public boolean canOutput() {
+        return coverHandler == null || !coverHandler.get(side).blocksOutput(IItemHandler.class, side);
+    }
+
+    @Override
+    public boolean canInput() {
+        return coverHandler == null || !coverHandler.get(side).blocksInput(IItemHandler.class, side);
+    }
+
+    @Override
+    public boolean canInput(Direction direction) {
+        return coverHandler == null || !coverHandler.get(direction).blocksInput(IItemHandler.class, direction);
+    }
+
+    @Override
+    public boolean canOutput(Direction direction) {
+        return coverHandler == null || !coverHandler.get(direction).blocksOutput(IItemHandler.class, direction);
     }
 }
