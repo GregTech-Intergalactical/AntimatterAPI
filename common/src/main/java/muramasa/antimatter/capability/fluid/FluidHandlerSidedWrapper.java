@@ -6,10 +6,11 @@ import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import tesseract.TesseractGraphWrappers;
+import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
 
-public class FluidHandlerSidedWrapper implements IFluidHandler {
+public class FluidHandlerSidedWrapper implements IFluidNode {
     protected FluidHandler<?> fluidHandler;
     protected Direction side;
     CoverHandler<?> coverHandler;
@@ -86,5 +87,35 @@ public class FluidHandlerSidedWrapper implements IFluidHandler {
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
         return drain((long) maxDrain * TesseractGraphWrappers.dropletMultiplier, action);
+    }
+
+    @Override
+    public int getPriority(Direction direction) {
+        return fluidHandler.getPriority(direction);
+    }
+
+    @Override
+    public boolean canOutput() {
+        return fluidHandler.canOutput();
+    }
+
+    @Override
+    public boolean canInput() {
+        return fluidHandler.canInput();
+    }
+
+    @Override
+    public boolean canInput(Direction direction) {
+        return fluidHandler.canInput(direction);
+    }
+
+    @Override
+    public boolean canOutput(Direction direction) {
+        return fluidHandler.canOutput(direction);
+    }
+
+    @Override
+    public boolean canInput(FluidStack fluid, Direction direction) {
+        return fluidHandler.canInput(fluid, direction);
     }
 }

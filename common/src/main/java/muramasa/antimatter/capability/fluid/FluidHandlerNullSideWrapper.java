@@ -1,11 +1,13 @@
 package muramasa.antimatter.capability.fluid;
 
+import net.minecraft.core.Direction;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import tesseract.api.fluid.IFluidNode;
 
 import javax.annotation.Nonnull;
 
-public class FluidHandlerNullSideWrapper implements IFluidHandler {
+public class FluidHandlerNullSideWrapper implements IFluidNode {
     IFluidHandler fluidHandler;
 
     public FluidHandlerNullSideWrapper(IFluidHandler fluidHandler) {
@@ -64,5 +66,35 @@ public class FluidHandlerNullSideWrapper implements IFluidHandler {
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
         return FluidStack.EMPTY;
+    }
+
+    @Override
+    public int getPriority(Direction direction) {
+        return fluidHandler instanceof IFluidNode node ? node.getPriority(direction) : 0;
+    }
+
+    @Override
+    public boolean canOutput() {
+        return !(fluidHandler instanceof IFluidNode node) || node.canOutput();
+    }
+
+    @Override
+    public boolean canInput() {
+        return !(fluidHandler instanceof IFluidNode node) || node.canInput();
+    }
+
+    @Override
+    public boolean canInput(Direction direction) {
+        return !(fluidHandler instanceof IFluidNode node) || node.canInput(direction);
+    }
+
+    @Override
+    public boolean canOutput(Direction direction) {
+        return !(fluidHandler instanceof IFluidNode node) || node.canOutput(direction);
+    }
+
+    @Override
+    public boolean canInput(FluidStack fluid, Direction direction) {
+        return !(fluidHandler instanceof IFluidNode node) || node.canInput(fluid, direction);
     }
 }
