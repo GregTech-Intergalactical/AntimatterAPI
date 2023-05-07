@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
+import dev.latvian.mods.kubejs.fluid.FluidStackJS;
 import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
@@ -11,6 +12,7 @@ import dev.latvian.mods.kubejs.recipe.RecipeJS;
 import dev.latvian.mods.kubejs.util.ListJS;
 import dev.latvian.mods.kubejs.util.MapJS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
@@ -34,6 +36,7 @@ public class KubeJSRecipe extends RecipeJS {
     private int special;
     private long power;
     private int amps;
+    private boolean hidden;
     private final List<Double> chances = new ObjectArrayList<>();
     private String map;
 
@@ -41,7 +44,11 @@ public class KubeJSRecipe extends RecipeJS {
     public void create(ListJS listJS) {
         this.map = (String) listJS.get(0);
         if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
-            this.inputItems.add(IngredientJS.of(inputItem));
+            if (inputItem instanceof MapJS map){
+                this.inputItems.add(RecipeIngredientJS.of(map.toJson()));
+            } else {
+                this.inputItems.add(IngredientJS.of(inputItem));
+            }
             /*if (inputItem instanceof ItemStackJS i) {
                 this.inputItems.add(IngredientStackJS.stackOf(i));
             } else if (inputItem instanceof MapJS map) {
@@ -56,16 +63,27 @@ public class KubeJSRecipe extends RecipeJS {
             this.outputItems.add(ItemStackJS.of(outputItem));
         }
         if (listJS.get(3) != null) for (Object inputFluid : ListJS.orSelf(listJS.get(3))) {
-            MapJS map = (MapJS) inputFluid;
-            this.fluidInput.add(AntimatterRecipeSerializer.getFluidIngredient(map.toJson()));
+            if (inputFluid instanceof FluidStackJS fluidStack){
+                this.fluidInput.add(FluidIngredient.of(REIUtils.fromREIFluidStack(fluidStack.getFluidStack())));
+            } else if (inputFluid instanceof MapJS map){
+                this.fluidInput.add(AntimatterRecipeSerializer.getFluidIngredient(map.toJson()));
+            } else {
+                throw new IllegalArgumentException("Invalid entry type in fluid output");
+            }
+
         }
         if (listJS.get(4) != null) for (Object outputFluid : ListJS.orSelf(listJS.get(4))) {
-            MapJS map = (MapJS) outputFluid;
-            this.fluidOutput.add(AntimatterRecipeSerializer.getStack(map.toJson()));
+            if (outputFluid instanceof FluidStackJS fluidStack){
+                this.fluidOutput.add(REIUtils.fromREIFluidStack(fluidStack.getFluidStack()));
+            } else if (outputFluid instanceof MapJS map){
+                this.fluidOutput.add(AntimatterRecipeSerializer.getStack(map.toJson()));
+            } else {
+                throw new IllegalArgumentException("Invalid entry type in fluid output");
+            }
         }
         duration = ((Number) listJS.get(5)).intValue();
         power = ((Number) listJS.get(6)).longValue();
-
+        hidden = false;
         if (listJS.size() > 7) {
             amps = ((Number) listJS.get(7)).intValue();
             special = ((Number) listJS.get(8)).intValue();
@@ -102,6 +120,7 @@ public class KubeJSRecipe extends RecipeJS {
         this.power = GsonHelper.getAsInt(json, "eu");
         this.amps = GsonHelper.getAsInt(json, "amps", 1);
         this.map = GsonHelper.getAsString(json, "map");
+        this.hidden = GsonHelper.getAsBoolean(json, "hidden");
 
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "chances", new JsonArray())) {
             this.chances.add(e.getAsDouble());
@@ -162,6 +181,7 @@ public class KubeJSRecipe extends RecipeJS {
         this.json.addProperty("duration", this.duration);
         this.json.addProperty("amps", this.amps);
         this.json.addProperty("special", this.special);
+        this.json.addProperty("hidden", this.hidden);
         this.json.addProperty("map", this.map);
     }
 }
