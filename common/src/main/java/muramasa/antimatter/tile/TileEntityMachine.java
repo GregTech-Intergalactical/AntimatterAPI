@@ -462,8 +462,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (this.machineState != newState) {
             MachineState old = this.machineState;
             this.machineState = newState;
-            setMachineStateBlockState(machineState);
             if (level != null) {
+                setMachineStateBlockState(machineState);
                 sidedSync(true);
                 if (!level.isClientSide) {
                     if (old == MachineState.ACTIVE) {
