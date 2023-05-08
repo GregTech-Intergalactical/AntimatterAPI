@@ -163,7 +163,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             };
         };
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
-        overlayModels = (a,d) -> {
+        overlayModels = (a,s,d) -> {
             return new ResourceLocation(Ref.ID, "block/machine/overlay/invalid/" + d.getName());
         };
         tiers = Arrays.asList(Tier.getStandard());
@@ -630,7 +630,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     @Override
     public ResourceLocation getModel(String type, Direction dir) {
-        return getOverlayModel(dir);
+        return getOverlayModel(MachineState.IDLE, dir);
     }
 
     public static final IOverlayTexturer TROLL_OVERLAY_HANDLER = (type, state, tier) -> new Texture[] {
