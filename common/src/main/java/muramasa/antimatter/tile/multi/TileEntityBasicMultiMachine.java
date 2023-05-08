@@ -9,6 +9,8 @@ import muramasa.antimatter.cover.CoverDynamo;
 import muramasa.antimatter.cover.CoverEnergy;
 import muramasa.antimatter.cover.CoverInput;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.machine.BlockMachine;
+import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
@@ -208,6 +210,15 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         super.setMachineState(newState);
         if (result != null)
             result.updateState(this, result);
+    }
+
+    @Override
+    protected void setMachineStateBlockState(MachineState newState){
+        BlockState state = getBlockState();
+        if (newState == MachineState.ACTIVE || newState == MachineState.IDLE || newState == MachineState.INVALID_STRUCTURE){
+            state = state.setValue(BlockMultiMachine.MACHINE_STATE, newState);
+            getLevel().setBlockAndUpdate(getBlockPos(), state);
+        }
     }
 
     @Override

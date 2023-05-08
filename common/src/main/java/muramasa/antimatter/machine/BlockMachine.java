@@ -72,7 +72,7 @@ import static muramasa.antimatter.machine.MachineFlag.BASIC;
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
 
     public static final DirectionProperty HORIZONTAL_FACING = DirectionProperty.create("horizontal_facing", Direction.Plane.HORIZONTAL);
-    public static final EnumProperty<MachineState> ACTIVE_IDLE = EnumProperty.create("machine_state", MachineState.class, MachineState.ACTIVE, MachineState.IDLE);
+    public static final EnumProperty<MachineState> MACHINE_STATE = EnumProperty.create("machine_state", MachineState.class, MachineState.IDLE, MachineState.ACTIVE);
 
     protected Machine<?> type;
     protected Tier tier;
@@ -104,9 +104,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         if (type == null) return; // means this is the first run
         if (type.allowVerticalFacing()) {
-            builder.add(BlockStateProperties.FACING).add(HORIZONTAL_FACING);
+            builder.add(BlockStateProperties.FACING).add(HORIZONTAL_FACING).add(MACHINE_STATE);
         } else {
-            builder.add(BlockStateProperties.HORIZONTAL_FACING);
+            builder.add(BlockStateProperties.HORIZONTAL_FACING).add(MACHINE_STATE);
         }
     }
 
@@ -126,21 +126,6 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
             return this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()));
         }
     }
-
-    //TODO 1.18
-/*
-    @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        TileEntityMachine machine = (TileEntityMachine) getType().getTileType().create();
-        machine.ofState(state);
-        return machine;
-    }
-
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }*/
 
     @Override
     public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
@@ -259,19 +244,6 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         }
         return InteractionResult.CONSUME;
     }
-
-    /* //This messes up cover logic.
-        @Override
-        public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-            if (placer != null) { //Y = 0 , reduce to xz plane
-                float y = (float) (type.allowVerticalFacing() ? placer.getLookVec().y : 0);
-                Direction dir = getFacingFromVector((float) placer.getLookVec().x, y, (float) placer.getLookVec().z).getOpposite();
-                BlockState state1 = state.with((type.allowVerticalFacing() ? BlockStateProperties.FACING : BlockStateProperties.HORIZONTAL_FACING), dir);
-                if (type.allowVerticalFacing()) state1 = state1.with(HORIZONTAL_FACING, placer.getHorizontalFacing().getOpposite());
-                world.setBlockState(pos, state1);
-            }
-        }
-    */
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {

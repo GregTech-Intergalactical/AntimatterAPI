@@ -462,6 +462,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (this.machineState != newState) {
             MachineState old = this.machineState;
             this.machineState = newState;
+            setMachineStateBlockState(machineState);
             if (level != null) {
                 sidedSync(true);
                 if (!level.isClientSide) {
@@ -485,6 +486,14 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
                     SoundHelper.clear(level, this.getBlockPos());
                 }
             }
+        }
+    }
+
+    protected void setMachineStateBlockState(MachineState newState){
+        BlockState state = getBlockState();
+        if (newState == MachineState.ACTIVE || newState == MachineState.IDLE){
+            state = state.setValue(BlockMachine.MACHINE_STATE, newState);
+            getLevel().setBlockAndUpdate(getBlockPos(), state);
         }
     }
 
