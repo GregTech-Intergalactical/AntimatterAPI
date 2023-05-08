@@ -2,10 +2,11 @@ package muramasa.antimatter.machine;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.registration.IAntimatterObject;
+import net.minecraft.util.StringRepresentable;
 
 import java.util.Locale;
 
-public enum MachineState implements IAntimatterObject {
+public enum MachineState implements IAntimatterObject, StringRepresentable {
 
     //OverlayID: 0(Idle), 1(Active), 2(Error)
 
@@ -70,5 +71,10 @@ public enum MachineState implements IAntimatterObject {
 
     public static void init() {
         
+    }
+
+    @Override
+    public String getSerializedName() {
+        return getId();
     }
 }

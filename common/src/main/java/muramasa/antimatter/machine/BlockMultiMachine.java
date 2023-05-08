@@ -5,8 +5,10 @@ import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.machine.types.Machine;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 public class BlockMultiMachine extends BlockMachine {
+    public static final EnumProperty<MachineState> ACTIVE_IDLE_INVALID = EnumProperty.create("machine_state", MachineState.class, MachineState.ACTIVE, MachineState.IDLE, MachineState.INVALID_STRUCTURE);
 
     public BlockMultiMachine(Machine<?> type, Tier tier) {
         super(type, tier);

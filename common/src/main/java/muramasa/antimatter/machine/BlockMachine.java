@@ -53,6 +53,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.fluids.FluidActionResult;
@@ -71,6 +72,7 @@ import static muramasa.antimatter.machine.MachineFlag.BASIC;
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
 
     public static final DirectionProperty HORIZONTAL_FACING = DirectionProperty.create("horizontal_facing", Direction.Plane.HORIZONTAL);
+    public static final EnumProperty<MachineState> ACTIVE_IDLE = EnumProperty.create("machine_state", MachineState.class, MachineState.ACTIVE, MachineState.IDLE);
 
     protected Machine<?> type;
     protected Tier tier;
