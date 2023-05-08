@@ -470,8 +470,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return getDatedOverlayHandler().getOverlays(this, state, this.getFirstTier());
     }
 
-    public ResourceLocation getOverlayModel(Direction side) {
-        return overlayModels.getOverlayModel(this, side);
+    public ResourceLocation getOverlayModel(MachineState state,Direction side) {
+        return overlayModels.getOverlayModel(this, state, side);
     }
 
     public IRecipeMap getRecipeMap() {
