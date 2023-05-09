@@ -15,6 +15,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 public class BlockStorage extends BlockMaterialType implements IItemBlockProvider, ISharedAntimatterObject {
 
@@ -59,6 +61,16 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
                     }
                 }
                 return ctx;
+            }
+
+            //Forge method
+            public int getBurnTime(@Nullable RecipeType<?> recipeType){
+                Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(material);
+                if (map != null){
+                    Integer burnTime = map.get(type);
+                    if (burnTime != null) return burnTime;
+                }
+                return -1;
             }
         };
 
