@@ -12,6 +12,8 @@ import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.SubTag;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
+import muramasa.antimatter.ore.CobbleStoneType;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.pipe.PipeSize;
 import muramasa.antimatter.pipe.types.Wire;
 import muramasa.antimatter.tool.IAntimatterTool;
@@ -99,6 +101,11 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
                     this.tag(ItemTags.STONE_BRICKS).add(s.asItem());
                 }
                 this.copy(getBlockTag(new ResourceLocation(Ref.ID, id)), getItemTag(new ResourceLocation(Ref.ID, id)));
+            });
+            AntimatterAPI.all(StoneType.class, s -> {
+                if (s instanceof CobbleStoneType c){
+                    this.tag(ItemTags.STONE_TOOL_MATERIALS).add(c.getBlock("cobble").asItem());
+                }
             });
             AntimatterAPI.all(BlockOreStone.class, domain, s -> {
              String id = "ore_stones/" + s.getMaterial().getId();
