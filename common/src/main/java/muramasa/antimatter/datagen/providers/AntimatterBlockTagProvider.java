@@ -12,6 +12,7 @@ import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.pipe.BlockItemPipe;
@@ -20,6 +21,7 @@ import muramasa.antimatter.util.TagUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 import static muramasa.antimatter.util.TagUtils.getBlockTag;
@@ -41,6 +43,12 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
                 this.tag(getForgelikeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 this.tag(getForgelikeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(o).replace(replace);
+                int oreMiningLevel = o.getMaterial().has(MaterialTags.MINING_LEVEL) ? MaterialTags.MINING_LEVEL.getInt(o.getMaterial()) : 0;
+                int stoneMiningLevel = o.getStoneType().getHarvestLevel();
+                int maxLevel = Math.max(oreMiningLevel, stoneMiningLevel);
+                if (maxLevel > 0){
+                    this.tag(fromMiningLevel(maxLevel)).add(o);
+                }
                 if (o.getOreType() == AntimatterMaterialTypes.ORE) this.tag(TagUtils.getForgelikeBlockTag("ores")).add(o);
             });
             AntimatterAPI.all(BlockStone.class, s -> {
@@ -52,6 +60,10 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
                     this.tag(BlockTags.STONE_BRICKS).add(s);
                 }
                 this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(s).replace(replace);
+                int stoneMiningLevel = s.getType().getHarvestLevel();
+                if (stoneMiningLevel > 0){
+                    this.tag(fromMiningLevel(stoneMiningLevel)).add(s);
+                }
                 this.tag(getBlockTag(new ResourceLocation("antimatter", "blocks/".concat(s.getId())))).add(s).replace(replace);
             });
             AntimatterAPI.all(BlockStoneWall.class, b -> {
@@ -95,5 +107,13 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
                 this.tag(AntimatterDefaultTools.WRENCH.getToolType()).add(pipe);
             });
         }
+    }
+
+    public TagKey<Block> fromMiningLevel(int miningLevels){
+        return switch (miningLevels){
+            case 2 -> BlockTags.NEEDS_IRON_TOOL;
+            case 3 -> BlockTags.NEEDS_DIAMOND_TOOL;
+            default -> BlockTags.NEEDS_STONE_TOOL;
+        };
     }
 }
