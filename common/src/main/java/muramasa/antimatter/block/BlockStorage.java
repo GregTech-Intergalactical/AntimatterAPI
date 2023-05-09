@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.BlockGetter;
@@ -64,7 +65,7 @@ public class BlockStorage extends BlockMaterialType implements IItemBlockProvide
             }
 
             //Forge method
-            public int getBurnTime(@Nullable RecipeType<?> recipeType){
+            public int getBurnTime(ItemStack stack,  @Nullable RecipeType<?> recipeType){
                 Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(material);
                 if (map != null){
                     Integer burnTime = map.get(type);

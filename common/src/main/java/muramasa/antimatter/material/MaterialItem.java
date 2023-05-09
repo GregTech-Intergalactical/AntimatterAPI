@@ -172,7 +172,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
     }
 
     //Forge method
-    public int getBurnTime(@org.jetbrains.annotations.Nullable RecipeType<?> recipeType){
+    public int getBurnTime(ItemStack stack, @Nullable RecipeType<?> recipeType){
         Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(material);
         if (map != null){
             Integer burnTime = map.get(type);
