@@ -17,9 +17,15 @@ public class MaterialTag implements IMaterialTag {
     private final Set<Material> materials = new ObjectLinkedOpenHashSet<>();
     private final Map<SubTag, Set<Material>> TAG_MAP = new Object2ObjectOpenHashMap<>();
 
-    public MaterialTag(String id) {
+    public MaterialTag(String id, boolean shared) {
         this.id = id + "_tag";
-        register(MaterialTag.class, id + "_tag");
+        if (!shared) {
+            register(MaterialTag.class, id + "_tag");
+        }
+    }
+
+    public MaterialTag(String id) {
+        this(id, false);
     }
 
     public MaterialTag subTag(SubTag tag, Material... mats) {
