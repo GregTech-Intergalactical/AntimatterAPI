@@ -40,7 +40,6 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
         setItemBlockClass(() -> BlockMultiMachine.class);
         addFlags(MULTI, COVERABLE);
         setClientTick();
-        custom();
         setGUI(Data.BASIC_MENU_HANDLER);
         covers((CoverFactory[]) null);
         this.baseTexture((type, tier) -> type.getTiers().size() > 1 ? new Texture[]{new Texture(domain, "block/machine/base/" + type.getId() + "_" + tier.getId())} : new Texture[]{new Texture(domain, "block/machine/base/" + type.getId())});

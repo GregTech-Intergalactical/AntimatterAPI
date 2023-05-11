@@ -15,7 +15,6 @@ public class GeneratorMachine extends Machine<GeneratorMachine> {
         setTile(TileEntityGenerator::new);
         setGUI(Data.BASIC_MENU_HANDLER);
         noCovers();
-        custom();
         setAllowVerticalFacing(true);
     }
 }
