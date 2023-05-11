@@ -43,7 +43,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Iron).asMetal(1811, 0).asOre(1, 5, true).asPlasma().addTools(IRON.getAttackDamageBonus(), IRON.getSpeed(), 256, IRON.getLevel(), of(Enchantments.SHARPNESS, 1));
         event.setMaterial(AntimatterMaterials.Gold).asMetal(1337, 0).asOre(1, 5, true).addTools(GOLD.getAttackDamageBonus(), GOLD.getSpeed(), GOLD.getUses(), GOLD.getLevel()).harvestLevel(2);
         //cause 1.18
-        event.setMaterial(AntimatterMaterials.Copper).asMetal(1357, 0).asOre(1, 5, true);
+        event.setMaterial(AntimatterMaterials.Copper).asMetal(1357, 0).asOre(1, 5, true).harvestLevel(1);
 
         event.setMaterial(AntimatterMaterials.Glowstone).asDust();
         event.setMaterial(AntimatterMaterials.Sugar).asDust();
