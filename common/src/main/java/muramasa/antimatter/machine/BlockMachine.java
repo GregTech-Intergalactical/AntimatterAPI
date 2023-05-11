@@ -11,6 +11,7 @@ import muramasa.antimatter.cover.IHaveCover;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.builder.AntimatterItemModelBuilder;
+import muramasa.antimatter.datagen.builder.VariantBlockStateBuilder;
 import muramasa.antimatter.datagen.json.JLoaderModel;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -68,6 +69,7 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WRENCH_MATERIAL;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
+import static net.minecraft.core.Direction.*;
 
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
 
@@ -292,28 +294,70 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         Texture[] base = type.getBaseTexture(tier);
         if (base.length >= 6) {
             for (int s = 0; s < 6; s++) {
-                b.texture("base" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName(), base[s]);
+                b.texture("base" + Utils.coverRotateFacing(Ref.DIRS[s], NORTH).getSerializedName(), base[s]);
             }
         }
         Texture[] overlays = type.getOverlayTextures(MachineState.ACTIVE, tier);
         for (int s = 0; s < 6; s++) {
-            b.texture("overlay" + Utils.coverRotateFacing(Ref.DIRS[s], Direction.NORTH).getSerializedName(), overlays[s]);
+            b.texture("overlay" + Utils.coverRotateFacing(Ref.DIRS[s], NORTH).getSerializedName(), overlays[s]);
         }
     }
 
     @Override
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         AntimatterBlockModelBuilder builder = prov.getBuilder(block);
+        AntimatterBlockModelBuilder builderActive = prov.models().getBuilder(this.getId() + "_active");
         buildModelsForState(builder, MachineState.IDLE);
-        buildModelsForState(builder, MachineState.ACTIVE);
-        builder.loader(AntimatterModelManager.LOADER_MACHINE);
-        builder.property("particle", getType().getBaseTexture(tier)[0].toString());
-        prov.state(block, builder);
+        buildModelsForState(builderActive, MachineState.ACTIVE);
+        //builder.loader(AntimatterModelManager.LOADER_MACHINE);
+        //prov.state(block, builder);
+        prov.getVariantBuilder(block).forAllStates(s -> {
+            var builderFinal = s.getValue(MACHINE_STATE) == MachineState.ACTIVE ? builderActive : builder;
+            Direction hf;
+            Integer x = null;
+            if (s.hasProperty(HORIZONTAL_FACING)){
+                hf = s.getValue(HORIZONTAL_FACING);
+                Direction vf = s.getValue(BlockStateProperties.FACING);
+                if (vf.getAxis() == Axis.Y){
+                    switch (hf){
+                        case NORTH -> {
+                            x = vf == UP ? 270 : 90;
+                        }
+                        case SOUTH -> {
+                            x = vf == UP ? 90 : 270;
+                        }
+                        case WEST -> {
+                            x = vf == UP ? 180 : null;
+                        }
+                        case EAST -> {
+                            x = vf == UP ? null : 180;
+                        }
+                    }
+                }
+            } else {
+                hf = s.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            }
+            Integer y = hf == NORTH ? null : hf == SOUTH ? 180 : hf == WEST ? 270 : 90;
+            VariantBlockStateBuilder.VariantBuilder vb = new VariantBlockStateBuilder.VariantBuilder();
+            vb.modelFile(builderFinal);
+            if (y != null){
+                vb.rotationY(y);
+            }
+            if (x != null){
+                vb.rotationX(x);
+            }
+            return vb;
+        });
     }
 
     void buildModelsForState(AntimatterBlockModelBuilder builder, MachineState state) {
         Texture[] overlays = type.getOverlayTextures(state, tier);
-        List<JLoaderModel> arr = new ArrayList<>();
+        builder.parent(type.getOverlayModel(state));
+        for (Direction dir : Ref.DIRS) {
+            builder.texture("base" + dir.getSerializedName(), type.getBaseTexture(tier, dir).toString()).texture("overlay" + dir.getSerializedName(), overlays[dir.get3DDataValue()].toString());
+        }
+        builder.texture("particle", type.getBaseTexture(tier)[0].toString());
+        /*List<JLoaderModel> arr = new ArrayList<>();
 
         for (Direction dir : Ref.DIRS) {
             JLoaderModel obj = builder.addModelObject(JLoaderModel.modelKeepElements(), this.getType().getOverlayModel(state, dir).toString(), of("base", getType().getBaseTexture(tier, dir).toString(), "overlay", overlays[dir.get3DDataValue()].toString()));
@@ -321,7 +365,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
             arr.add(obj);
         }
 
-        builder.property(state.toString().toLowerCase(), arr);
+        builder.property(state.toString().toLowerCase(), arr);*/
     }
 
     @Override

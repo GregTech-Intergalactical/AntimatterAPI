@@ -38,7 +38,7 @@ public class DynamicTexturers {
                     UnbakedModel m = null;
                     try {
                         //for some reason first load can cause circular exception
-                        m = ModelUtils.getModel(t.source.getModel(t.type, Direction.SOUTH));
+                        m = ModelUtils.getModel(t.source.getModel(t.type));
                     } catch (Exception ignored) {
 
                     }
@@ -55,7 +55,7 @@ public class DynamicTexturers {
                             (name, texture) -> ((BlockModelAccessor)model).getTextureMap().put(name, Either.left(ModelUtils.getBlockMaterial(texture))));
                     Transformation base = RenderHelper.faceRotation(t.source.side(), t.key.hFacing != null ? t.key.hFacing : (t.source.side().getAxis() == Axis.Y ? (t.state.hasProperty(BlockStateProperties.HORIZONTAL_FACING) ? t.state.getValue(BlockStateProperties.HORIZONTAL_FACING) : null) : null));
                     BakedModel b = model.bake(ModelUtils.getModelBakery(), model, ModelUtils.getDefaultTextureGetter(),
-                            new SimpleModelState(base), t.source.getModel(t.type, Direction.SOUTH), true);
+                            new SimpleModelState(base), t.source.getModel(t.type), true);
 
                     List<BakedQuad> ret = new ObjectArrayList<>();
                     for (Direction dir : Ref.DIRS) {
@@ -73,7 +73,7 @@ public class DynamicTexturers {
                 Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
                 vector4f.transform(RenderHelper.faceRotation(t.state).inverse().getMatrix());
                 Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
-                UnbakedModel model = ModelUtils.getModel(t.source.getModel(t.type, side));
+                UnbakedModel model = ModelUtils.getModel(t.source.getModel(t.type));
                 BlockModel m = (BlockModel) model;
                 ((BlockModelAccessor)m).getTextureMap().put("base", Either.left(
                     ModelUtils.getBlockMaterial(t.data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY).apply(side))));

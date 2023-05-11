@@ -249,7 +249,7 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
         }
 
         @Override
-        public ResourceLocation getModel(String type, Direction dir) {
+        public ResourceLocation getModel(String type) {
             return null;
         }
 

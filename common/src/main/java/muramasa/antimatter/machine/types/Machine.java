@@ -163,8 +163,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
             };
         };
         baseTexture = (m, tier) -> new Texture[]{tier.getBaseTexture(m.getDomain())};
-        overlayModels = (a,s,d) -> {
-            return new ResourceLocation(Ref.ID, "block/machine/overlay/invalid/" + d.getName());
+        overlayModels = (a,s) -> {
+            return new ResourceLocation(Ref.ID, "block/machine/overlay/invalid");
         };
         tiers = Arrays.asList(Tier.getStandard());
         AntimatterAPI.register(Machine.class, this);
@@ -470,8 +470,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return getDatedOverlayHandler().getOverlays(this, state, this.getFirstTier());
     }
 
-    public ResourceLocation getOverlayModel(MachineState state,Direction side) {
-        return overlayModels.getOverlayModel(this, state, side);
+    public ResourceLocation getOverlayModel(MachineState state) {
+        return overlayModels.getOverlayModel(this, state);
     }
 
     public IRecipeMap getRecipeMap() {
@@ -629,8 +629,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     @Override
-    public ResourceLocation getModel(String type, Direction dir) {
-        return getOverlayModel(MachineState.IDLE, dir);
+    public ResourceLocation getModel(String type) {
+        return getOverlayModel(MachineState.IDLE);
     }
 
     public static final IOverlayTexturer TROLL_OVERLAY_HANDLER = (type, state, tier) -> new Texture[] {

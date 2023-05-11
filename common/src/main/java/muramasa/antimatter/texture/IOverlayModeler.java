@@ -6,8 +6,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 
 public interface IOverlayModeler {
-    ResourceLocation getOverlayModel(Machine<?> type, MachineState state, Direction side);
+    ResourceLocation getOverlayModel(Machine<?> type, MachineState state);
 
-    IOverlayModeler defaultOverride = (a,s,d) -> new ResourceLocation(a.getDomain(), "block/machine/overlay/" + a.getId() + "/" + d.getSerializedName());
+    IOverlayModeler defaultOverride = (a,s) -> new ResourceLocation(a.getDomain(), "block/machine/overlay/" + a.getId());
 }
 

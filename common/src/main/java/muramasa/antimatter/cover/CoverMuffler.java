@@ -21,7 +21,7 @@ public class CoverMuffler extends BaseCover {
     }
 
     @Override
-    public ResourceLocation getModel(String type, Direction dir) {
+    public ResourceLocation getModel(String type) {
         if (type.equals("pipe"))
             return PIPE_COVER_MODEL;
         return getBasicModel();
