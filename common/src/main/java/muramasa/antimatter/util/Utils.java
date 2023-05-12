@@ -1085,6 +1085,15 @@ public class Utils {
         return StringUtils.join(newStrings, ' ');
     }
 
+    public static String lowerUnderscoreToUpperSpacedReversed(String string) {
+        String[] strings = StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string));
+        String[] newStrings = new String[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            newStrings[i] = strings[(strings.length - 1) - i];
+        }
+        return StringUtils.join(newStrings, ' ');
+    }
+
     public static String lowerUnderscoreToUpperSpaced(String string, int offset) {
         String[] strings = StringUtils.splitByCharacterTypeCamelCase(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, string));
         assert offset > strings.length;
