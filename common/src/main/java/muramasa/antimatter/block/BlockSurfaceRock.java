@@ -126,11 +126,6 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     }
 
     @Override
-    public float getShadeBrightness(BlockState state, BlockGetter world, BlockPos pos) {
-        return 0f;
-    }
-
-    @Override
     public ModelConfig getConfig(BlockState state, BlockGetter world, BlockPos.MutableBlockPos mut, BlockPos pos) {
         return config.set(pos, config.getConfig());
     }
