@@ -36,8 +36,8 @@ import java.util.function.Function;
 
 public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
-    private final ImmutableMap<MachineState, BakedModel[]> sides;
-    public MachineBakedModel(TextureAtlasSprite particle, ImmutableMap<MachineState, BakedModel[]> sides) {
+    private final BakedModel[] sides;
+    public MachineBakedModel(TextureAtlasSprite particle, BakedModel[] sides) {
         super(particle);
         this.sides = sides;
     }    
@@ -66,8 +66,8 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         AntimatterProperties.MachineProperties props = data.getData(AntimatterProperties.MACHINE_PROPERTY);
         if (props == null) return Collections.emptyList();
         List<BakedQuad> quads = new ObjectArrayList<>(20);
-        List<BakedQuad> coverQuads = getCoverQuads(state, side, rand, props, data);
-        if (!coverQuads.isEmpty()) return coverQuads;
+        /*List<BakedQuad> coverQuads = getCoverQuads(state, side, rand, props, data);
+        if (!coverQuads.isEmpty()) return coverQuads;*/
 
         if (data.hasProperty(AntimatterProperties.MULTI_TEXTURE_PROPERTY)) {
             Function<Direction, Texture> ft = data.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY);
@@ -80,22 +80,23 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
         }
         quads.addAll(model.getQuads(state, null, rand, data));
 
-        Matrix4f f = new Matrix4f();
+        return quads;
+        /*Matrix4f f = new Matrix4f();
         f.setIdentity();
         Transformation mat = new Transformation(f);
         mat = mat.blockCornerToCenter();
         mat = mat.compose(RenderHelper.faceRotation(state));
         mat = mat.blockCenterToCorner();
         DirectionalQuadTransformer transformer = new DirectionalQuadTransformer(mat);
-        return transformer.processMany(quads, side);
+        return transformer.processMany(quads, side);*/
     }
 
     public BakedModel getModel(BlockState state, Direction dir, MachineState m) {
-        Vec3i vector3i = dir.getNormal();
+        /*Vec3i vector3i = dir.getNormal();
         Vector4f vector4f = new Vector4f((float) vector3i.getX(), (float) vector3i.getY(), (float) vector3i.getZ(), 0.0F);
         vector4f.transform(RenderHelper.faceRotation(state).inverse().getMatrix());
-        Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());
-        return sides.get(m)[side.get3DDataValue()];
+        Direction side = Direction.getNearest(vector4f.x(), vector4f.y(), vector4f.z());*/
+        return sides[dir.get3DDataValue()];
     }
 /*
     public List<BakedQuad> attachMultiQuads(List<BakedQuad> quads, BlockState state, Direction side, @Nonnull Random rand, @Nonnull IModelData data) {

@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 
 public class MachineModel implements IAntimatterModel<MachineModel>{
 
-    final Map<MachineState, UnbakedModel[]> models;
+    final UnbakedModel[] models;
     final ResourceLocation particle;
-    public MachineModel(Map<MachineState, UnbakedModel[]> models, ResourceLocation particle) {
+    public MachineModel(UnbakedModel[] models, ResourceLocation particle) {
         this.models = models;
         this.particle = particle;
     }
@@ -35,23 +35,18 @@ public class MachineModel implements IAntimatterModel<MachineModel>{
     @Override
     public Collection<Material> getTextures(IModelConfiguration owner,
             Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
-            return models.values().stream().flatMap(t -> Arrays.stream(t).flatMap(i -> i.getMaterials(modelGetter, missingTextureErrors).stream())).collect(Collectors.toSet());
+            return Arrays.stream(models).flatMap(i -> i.getMaterials(modelGetter, missingTextureErrors).stream()).collect(Collectors.toSet());
     }
 
     @Override
     public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery,
             Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides,
             ResourceLocation loc) {
-                ImmutableMap.Builder<MachineState, BakedModel[]> builder = ImmutableMap.builder();
-
-                for (Map.Entry<MachineState, UnbakedModel[]> pair : this.models.entrySet()) {
-                    BakedModel[] mod = new BakedModel[6];
-                    for (int i = 0; i < 6; i++) {
-                        mod[i] = pair.getValue()[i].bake(bakery, getter, transform, loc);
-                    }
-                    builder.put(pair.getKey(),mod);
+                BakedModel[] mod = new BakedModel[6];
+                for (int i = 0; i < 6; i++) {
+                    mod[i] = this.models[i].bake(bakery, getter, transform, loc);
                 }
-                return new MachineBakedModel(getter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, particle)), builder.build());
+                return new MachineBakedModel(getter.apply(new Material(TextureAtlas.LOCATION_BLOCKS, particle)), mod);
             }
     }
 
