@@ -70,10 +70,6 @@ public class DynamicBakedModel extends AntimatterBakedModel<DynamicBakedModel> {
 
     @Override
     public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        BakedModel[] model = this.bakedConfigs.get(0);
-        if (model != null) {
-            return Arrays.stream(model).flatMap(t -> t.getQuads(null, side, rand, data).stream()).collect(Collectors.toList());
-        }
         return Collections.emptyList();
     }
 

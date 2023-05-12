@@ -5,6 +5,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
+import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.dynamic.BlockDynamic;
 import muramasa.antimatter.dynamic.ModelConfig;
 import muramasa.antimatter.dynamic.ModelConfigRandom;
@@ -22,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
@@ -137,6 +139,11 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         builder.model(Ref.ID + ":block/rock/surface_rock_0", stoneType.getTexture());
         IntStream.range(0, SURFACE_ROCK_MODEL_COUNT).forEach(i -> builder.config(i, Ref.ID + ":block/rock/surface_rock_" + i, c -> c.tex(stoneType.getTexture())));
         prov.state(block, builder);
+    }
+
+    @Override
+    public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
+        prov.getBuilder(item).parent(prov.existing("antimatter", "block/rock/surface_rock_0")).texture("all", stoneType.getTexture());
     }
 
     @Override
