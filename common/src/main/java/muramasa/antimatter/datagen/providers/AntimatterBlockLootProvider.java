@@ -150,8 +150,8 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             tables.put(block, b -> MaterialTags.CUSTOM_ORE_STONE_DROPS.getBuilderFunction(block.getMaterial()).apply(block));
             return;
         }
-        if ((block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE) || block.getMaterial().has(AntimatterMaterialTypes.GEM))) {
-            Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
+        if (block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) {
+            Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
             tables.put(block, b -> createOreDrop(b, item));
             return;
         }
