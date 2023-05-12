@@ -14,18 +14,14 @@ import dev.latvian.mods.kubejs.util.MapJS;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.integration.rei.REIUtils;
 import muramasa.antimatter.recipe.ingredient.FluidIngredient;
-import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
 import muramasa.antimatter.recipe.serializer.AntimatterRecipeSerializer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 import tesseract.FluidPlatformUtils;
 
 import java.util.List;
-
-import static muramasa.antimatter.recipe.ingredient.RecipeIngredient.valuesFromJson;
 
 public class KubeJSRecipe extends RecipeJS {
 
@@ -45,19 +41,10 @@ public class KubeJSRecipe extends RecipeJS {
         this.map = (String) listJS.get(0);
         if (listJS.get(1) != null) for (Object inputItem : ListJS.orSelf(listJS.get(1))) {
             if (inputItem instanceof MapJS map){
-                this.inputItems.add(RecipeIngredientJS.of(map.toJson()));
+                this.inputItems.add(RecipeIngredientJS.fromJson(map.toJson()));
             } else {
                 this.inputItems.add(IngredientJS.of(inputItem));
             }
-            /*if (inputItem instanceof ItemStackJS i) {
-                this.inputItems.add(IngredientStackJS.stackOf(i));
-            } else if (inputItem instanceof MapJS map) {
-                this.inputItems.add(IngredientJS.of(map));
-            } else if (inputItem instanceof JsonElement) {
-                this.inputItems.add(RecipeIngredientJS.of((JsonElement) inputItem));
-            } else if (inputItem instanceof IngredientJS) {
-                this.inputItems.add(RecipeIngredientJS.of((IngredientJS) inputItem));
-            }*/
         }
         if (listJS.get(2) != null) for (Object outputItem : ListJS.orSelf(listJS.get(2))) {
             this.outputItems.add(ItemStackJS.of(outputItem));
@@ -104,7 +91,7 @@ public class KubeJSRecipe extends RecipeJS {
     @Override
     public void deserialize() {
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_in", new JsonArray())) {
-            this.inputItems.add(AMIngredientStackJS.fromJson(e));
+            this.inputItems.add(RecipeIngredientJS.fromJson(e));
         }
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "item_out", new JsonArray())) {
             this.outputItems.add(ItemStackJS.of(e));

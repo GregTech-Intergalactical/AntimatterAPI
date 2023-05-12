@@ -1,67 +1,100 @@
 package muramasa.antimatter.integration.kubejs;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import dev.latvian.mods.kubejs.item.ItemStackJS;
 import dev.latvian.mods.kubejs.item.ingredient.IngredientJS;
+import dev.latvian.mods.kubejs.item.ingredient.IngredientStackJS;
+import dev.latvian.mods.kubejs.item.ingredient.TagIngredientJS;
 import muramasa.antimatter.recipe.ingredient.RecipeIngredient;
+import net.minecraft.world.item.crafting.Ingredient;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
-public class RecipeIngredientJS implements IngredientJS {
+import static muramasa.antimatter.recipe.ingredient.RecipeIngredient.valuesFromJson;
 
-    private int count;
-    private boolean nonConsume;
-    private boolean ignoreNbt;
+public class RecipeIngredientJS extends IngredientStackJS {
+    protected boolean nonConsume = false;
+    protected boolean ignoreNbt = false;
 
-    private RecipeIngredientJS(IngredientJS source) {
+    public RecipeIngredientJS(IngredientJS i, int c) {
+        super(i, c);
     }
 
-    public static RecipeIngredientJS of(IngredientJS json) {
-        RecipeIngredientJS js = new RecipeIngredientJS(json);
-        js.count = json.getCount();
-        return js;
+    public RecipeIngredientJS setNoConsume(boolean noConsume) {
+        this.nonConsume = noConsume;
+        return this;
     }
 
-    public static RecipeIngredientJS of(JsonElement json) {
-        if (!(json instanceof JsonObject)) {
-            throw new RuntimeException("invalid input to RecipeIngredientJS");
+    public boolean ignoreConsume() {
+        return nonConsume;
+    }
+
+    public RecipeIngredientJS setIgnoreNbt(boolean ignoreNbt) {
+        this.ignoreNbt = ignoreNbt;
+        return this;
+    }
+
+    public boolean ignoreNbt() {
+        return ignoreNbt;
+    }
+
+    private static IngredientJS fromValue(Ingredient.Value value){
+        if (value instanceof RecipeIngredient.RecipeValue v){
+            if (v.getTag() != null){
+                IngredientJS in = TagIngredientJS.createTag(v.getTag().location().toString());
+                if (v.getCount() > 1){
+                    in = new IngredientStackJS(in, v.getCount());
+                }
+                return in;
+            } else {
+                return IngredientJS.of(v.getItems());
+            }
+        } else if (value instanceof RecipeIngredient.MultiValue v){
+            List<IngredientJS> js = new ArrayList<>();
+            for (Ingredient.Value v2 : v.getValues()) {
+                js.add(fromValue(v2));
+            }
+            return IngredientJS.of(js);
         }
-        JsonObject obj = (JsonObject) json;
-        RecipeIngredientJS r;
-        if (obj.has("ingredient")) {
-            r = new RecipeIngredientJS(IngredientJS.of(obj.get("ingredient")));
-        } else {
-            r = new RecipeIngredientJS(IngredientJS.of(obj));
-        }
-        r.count = obj.has("count") ? obj.get("count").getAsInt() : 1;
-        r.ignoreNbt = obj.has("nbt") && !obj.get("nbt").getAsBoolean();
-        r.nonConsume = obj.has("consume") && !obj.get("consume").getAsBoolean();
-        return r;
-    }
-
-    public RecipeIngredient into() {
-    //    RecipeIngredient r = RecipeIngredient.of(count, sourceIngredient.createVanillaIngredient().getItems());
-     //   if (nonConsume) r.setNoConsume();
-    //    if (ignoreNbt) r.setIgnoreNbt();
         return null;
     }
 
-    @Override
-    public boolean test(ItemStackJS itemStackJS) {
-        return true;
+    public static RecipeIngredientJS fromJson(@Nullable JsonElement json) {
+        List<Ingredient.Value> values = valuesFromJson(json).toList();
+        List<IngredientJS> js = new ArrayList<>();
+        for (Ingredient.Value v2 : values) {
+            js.add(fromValue(v2));
+        }
+        int count = 1;
+        boolean ignoreNBt = false, noConsume = false;
+        if (json instanceof JsonObject object){
+            if (object.has("count")){
+                count = object.get("count").getAsInt();
+            }
+            if (object.has("nbt") && object.get("nbt").getAsBoolean()){
+                ignoreNBt = true;
+            }
+            if (object.has("noconsume") && object.get("noconsume").getAsBoolean()){
+                noConsume = true;
+            }
+        }
+        return new RecipeIngredientJS(IngredientJS.of(js.size() == 1 ? js.get(0) : js), count).setIgnoreNbt(ignoreNBt).setNoConsume(noConsume);
     }
 
     @Override
     public JsonElement toJson() {
-        JsonElement json = IngredientJS.super.toJson();
-        JsonObject obj = new JsonObject();
-        obj.add("ingredient", json);
-        obj.addProperty("count", count);
-        obj.addProperty("nbt", !ignoreNbt);
-        obj.addProperty("consume", !nonConsume);
-        return obj;
+        JsonObject object = new JsonObject();
+        JsonElement element = super.toJson();
+        if (element instanceof JsonObject o){
+            object = o;
+        } else if (element instanceof JsonArray){
+            object.add("values", element);
+        }
+        object.addProperty("nbt", ignoreNbt);
+        object.addProperty("noconsume", nonConsume);
+        return object;
     }
-
 }
-

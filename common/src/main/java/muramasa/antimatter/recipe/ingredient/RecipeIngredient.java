@@ -73,7 +73,7 @@ public class RecipeIngredient extends Ingredient {
         }
     }
 
-    public static Ingredient fromJson(@Nullable JsonElement json) {
+    public static RecipeIngredient fromJson(@Nullable JsonElement json) {
         RecipeIngredient ingredient = new RecipeIngredient(valuesFromJson(json));
         if (json instanceof JsonObject object){
             if (object.has("nbt") && object.get("nbt").getAsBoolean()){
