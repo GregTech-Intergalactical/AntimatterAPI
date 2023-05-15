@@ -40,9 +40,6 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
         }
     }
 
-    //The weak-reference backed hashmap.
-    protected Object2ObjectMap<String, WeakHashMap<U, List<BakedQuad>[]>> MODEL_CACHE = new Object2ObjectOpenHashMap<>();
-
     private final Function<BuilderData, List<BakedQuad>> builder;
 
     public DynamicTextureProvider(@Nonnull Function<BuilderData, List<BakedQuad>> builder) {
@@ -50,12 +47,7 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
     }
 
     public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, IModelData data) {
-      //  return MODEL_CACHE.compute(t.getId(), (k, v) -> {
-     //       if (v == null) v = new WeakHashMap<>();
-    //        v.computeIfAbsent(key, (k1) -> bakeQuads(type, state, t, key, data));
-    //        return v;
-     //  }).get(key);
-     return bakeQuads(type, state, t, key, data);
+        return bakeQuads(type, state, t, key, data);
     }
 
     private List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, IModelData data) {
