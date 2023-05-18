@@ -25,6 +25,8 @@ public class WorldGenVeinBuilder {
   @Nullable
   private Integer maxY;
   @Nullable
+  private Integer density;
+  @Nullable
   private Integer minSize;
   @Nullable
   private Integer maxSize;
@@ -54,6 +56,9 @@ public class WorldGenVeinBuilder {
     if (this.minY == null || this.maxY == null) {
       throw new RuntimeException("minY and maxY are required");
     }
+    if (this.density == null) {
+      throw new RuntimeException("density is required");
+    }
     if (this.minSize == null || this.maxSize == null) {
       throw new RuntimeException("minSize and maxSize are required");
     }
@@ -69,6 +74,7 @@ public class WorldGenVeinBuilder {
         this.maxY,
         this.minSize,
         this.maxSize,
+        this.density,
         this.heightScale != null ? this.heightScale : 1.0f,
         this.fill,
         this.variants,
@@ -84,6 +90,11 @@ public class WorldGenVeinBuilder {
     this.weight = weight;
     return this;
   }
+
+    public final WorldGenVeinBuilder withDensity(int density) {
+        this.density = weight;
+        return this;
+    }
 
   public final WorldGenVeinBuilder atHeight(int minY, int maxY) {
     this.minY = minY;
@@ -137,7 +148,7 @@ public class WorldGenVeinBuilder {
   @SafeVarargs
   public final WorldGenVeinBuilder asOreVein(int minY, int maxY, int weight, int density, int size, Material primary,
       Material secondary, Material between, Material sporadic, ResourceKey<Level>... dimensions) {
-    this.asVein(weight, minY, maxY, dimensions).withSize(size, size * 2, 0.75f)
+    this.asVein(weight, minY, maxY, density, dimensions).withSize(size, size * 2, 0.75f)
         .withVariant(AntimatterConfig.WORLD.NORMAL_VEIN_WEIGHT)
         .withNormalChance()
         .withMaterial(primary, AntimatterConfig.WORLD.PRIMARY_MATERIAL_WEIGHT)
@@ -188,7 +199,7 @@ public class WorldGenVeinBuilder {
   }
 
   @SafeVarargs
-  public final WorldGenVeinBuilder asVein(int weight, int minY, int maxY,
+  public final WorldGenVeinBuilder asVein(int weight, int minY, int maxY, int density,
       ResourceKey<Level>... dimensions) {
     for (ResourceKey<Level> dimension : dimensions) {
       this.inDimension(dimension);
@@ -196,6 +207,7 @@ public class WorldGenVeinBuilder {
     return this
         .onLayer(WorldGenVein.ORE_VEIN_LAYER)
         .withWeight(weight)
+        .withDensity(density)
         .atHeight(minY, maxY);
   }
 

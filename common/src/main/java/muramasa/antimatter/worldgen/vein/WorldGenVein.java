@@ -26,6 +26,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
     public final int weight;
     public final int minY;
     public final int maxY;
+    public final int density;
     public final int minSize;
     public final int maxSize;
     public final float heightScale;
@@ -33,12 +34,13 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
     public final BlockState fill;
     public final List<WorldGenVeinVariant> variants;
 
-    private WorldGenVein(String id, int layer, int weight, int minY, int maxY, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
+    private WorldGenVein(String id, int layer, int weight, int minY, int maxY, int density, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
         super(id, WorldGenVein.class, dimensions);
         this.layer = layer;
         this.weight = weight;
         this.minY = minY;
         this.maxY = maxY;
+        this.density = density;
         this.minSize = minSize;
         this.maxSize = maxSize;
         this.heightScale = heightScale;
@@ -50,7 +52,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
         }
     }
 
-    static List<WorldGenVein> getFlat(String id, int layer, int weight, int minY, int maxY, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
+    static List<WorldGenVein> getFlat(String id, int layer, int weight, int minY, int maxY, int density, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
         return IntStream.range(0, weight).mapToObj(i -> {
             List<WorldGenVeinVariant> flatVariants = new ArrayList<>();
             for (WorldGenVeinVariant variant : variants) {
@@ -64,6 +66,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
                     maxY,
                     minSize,
                     maxSize,
+                    density,
                     heightScale,
                     fill,
                     flatVariants,
