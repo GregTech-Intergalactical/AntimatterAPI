@@ -72,9 +72,9 @@ public class WorldGenVeinBuilder {
         this.weight,
         this.minY,
         this.maxY,
+        this.density,
         this.minSize,
         this.maxSize,
-        this.density,
         this.heightScale != null ? this.heightScale : 1.0f,
         this.fill,
         this.variants,
@@ -183,6 +183,7 @@ public class WorldGenVeinBuilder {
         .onLayer(WorldGenVein.STONE_VEIN_LAYER)
         .withWeight(weight)
         .atHeight(minY, maxY)
+        .withDensity(1)
         .withFill(stoneType);
   }
 
@@ -245,6 +246,7 @@ public class WorldGenVeinBuilder {
         .onLayer(WorldGenVein.STONE_ORE_VEIN_LAYER)
         .withWeight(weight)
         .atHeight(minY, maxY)
+        .withDensity(1)
         .withFill(material);
   }
 
