@@ -166,9 +166,9 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
             // set ores and small ores based ond chance and sub materials
             if (variant != null && variant.materials.size() > 0) {
               final float currentOreChance = random.nextFloat();
-              final boolean spawnOre = variant.oreChance != 0 && currentOreChance <= variant.oreChance;
+              final boolean spawnOre = variant.oreChance != 0 && currentOreChance <= variant.oreChance * (1 + (vein.density / 10f));
               final boolean spawnSmallOre = !spawnOre && variant.smallOreChance != 0
-                  && currentOreChance <= variant.oreChance + variant.smallOreChance;
+                  && currentOreChance <= (variant.oreChance + variant.smallOreChance) * (1 + (vein.density / 10f));
               if (spawnOre || spawnSmallOre) {
                 int currentY = y;
                 final List<WorldGenVeinVariantMaterial> validMaterials = variant.materials.stream()
