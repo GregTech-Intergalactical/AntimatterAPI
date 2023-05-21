@@ -27,10 +27,10 @@ public class WorldGenVeinVariantBuilder {
         if (this.weight == null) {
             throw new RuntimeException("weight is required");
         }
-        if (this.materials.size() == 0 && this.oreChance != null && this.smallOreChance != null) {
+        if (this.materials.size() > 0 && this.oreChance == null && this.smallOreChance == null) {
             throw new RuntimeException("oreChance and/or smallOreChance is required when materials are specified");
         }
-        if (this.materials.size() > 0 && this.oreChance == null && this.smallOreChance == null) {
+        if (this.materials.size() == 0 && this.oreChance != null && this.smallOreChance != null) {
             throw new RuntimeException("oreChance and smallOreChance is not allowed when no materials are specified");
         }
 
