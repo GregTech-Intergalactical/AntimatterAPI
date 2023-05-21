@@ -1,5 +1,6 @@
 package muramasa.antimatter.worldgen.vein;
 
+import com.google.gson.JsonObject;
 import muramasa.antimatter.material.Material;
 
 import java.util.List;
@@ -24,4 +25,12 @@ public class WorldGenVeinVariantMaterial {
         return IntStream.range(0, weight).mapToObj(i -> new WorldGenVeinVariantMaterial(1, material, minY, maxY)).collect(Collectors.toList());
     }
 
+    public JsonObject toJson(){
+        JsonObject json = new JsonObject();
+        json.addProperty("weight", weight);
+        json.addProperty("material", material.getId());
+        json.addProperty("minY", minY);
+        json.addProperty("maxY", maxY);
+        return json;
+    }
 }

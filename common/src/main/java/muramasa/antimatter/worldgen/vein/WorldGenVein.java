@@ -1,9 +1,15 @@
 package muramasa.antimatter.worldgen.vein;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.mojang.realmsclient.util.JsonUtils;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -99,6 +105,34 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
         } else {
             return 0.1;
         }
+    }
+
+    public JsonObject toJson(){
+        JsonObject json = new JsonObject();
+        json.addProperty("layer", layer);
+        json.addProperty("weight", weight);
+        json.addProperty("minY", minY);
+        json.addProperty("maxY", maxY);
+        json.addProperty("density", density);
+        json.addProperty("minSize", minSize);
+        json.addProperty("maxSize", maxSize);
+        json.addProperty("heightScale", heightScale);
+        if (fill != null){
+            json.addProperty("fill", AntimatterPlatformUtils.getIdFromBlock(fill.getBlock()).toString());
+        }
+        JsonArray array = new JsonArray();
+        variants.forEach(m -> {
+            array.add(m.toJson());
+        });
+        if (!array.isEmpty()) {
+            json.add("variants", array);
+        }
+        JsonArray array2 = new JsonArray();
+        getDims().forEach(r -> array2.add(r.toString()));
+        if (!array2.isEmpty()){
+            json.add("dims", array2);
+        }
+        return json;
     }
 
 }

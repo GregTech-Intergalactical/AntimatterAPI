@@ -1,5 +1,8 @@
 package muramasa.antimatter.worldgen.vein;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,4 +43,21 @@ public class WorldGenVeinVariant {
         }).collect(Collectors.toList());
     }
 
+
+    public JsonObject toJson(){
+        JsonObject json = new JsonObject();
+        json.addProperty("weight", weight);
+        json.addProperty("oreChance", oreChance);
+        json.addProperty("smallOreChance", smallOreChance);
+        json.addProperty("markerOreChance", markerOreChance);
+        json.addProperty("surfaceStoneChance", surfaceStoneChance);
+        JsonArray array = new JsonArray();
+        materials.forEach(m -> {
+            array.add(m.toJson());
+        });
+        if (!array.isEmpty()) {
+            json.add("materials", array);
+        }
+        return json;
+    }
 }
