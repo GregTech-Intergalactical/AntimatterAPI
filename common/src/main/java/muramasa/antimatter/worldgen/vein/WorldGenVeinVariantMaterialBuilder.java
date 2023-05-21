@@ -24,14 +24,12 @@ public class WorldGenVeinVariantMaterialBuilder {
         if (this.material == null) {
             throw new RuntimeException("material is required");
         }
-
-        List<WorldGenVeinVariantMaterial> veinMaterials = WorldGenVeinVariantMaterial.getFlat(
+        this.veinVariantBuilder.addVeinMaterial(new WorldGenVeinVariantMaterial(
                 this.weight,
                 this.material,
                 this.maxY != null ? this.maxY : Integer.MAX_VALUE,
                 this.minY != null ? this.minY : Integer.MIN_VALUE
-        );
-        veinMaterials.forEach(this.veinVariantBuilder::addVeinMaterial);
+        ));
         return this.veinVariantBuilder;
     }
 

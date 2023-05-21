@@ -14,7 +14,7 @@ public class WorldGenVeinVariantMaterial {
     public final Material material;
     public final int minY;
 
-    private WorldGenVeinVariantMaterial(int weight, Material material, int minY, int maxY) {
+    WorldGenVeinVariantMaterial(int weight, Material material, int minY, int maxY) {
         this.weight = weight;
         this.material = material;
         this.minY = minY;

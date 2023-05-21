@@ -17,7 +17,7 @@ public class WorldGenVeinVariant {
     public final float surfaceStoneChance;
     public final List<WorldGenVeinVariantMaterial> materials;
 
-    private WorldGenVeinVariant(int weight, float oreChance, float smallOreChance, float markerOreChance, float surfaceStoneChance, List<WorldGenVeinVariantMaterial> materials) {
+    WorldGenVeinVariant(int weight, float oreChance, float smallOreChance, float markerOreChance, float surfaceStoneChance, List<WorldGenVeinVariantMaterial> materials) {
         this.weight = weight;
         this.oreChance = oreChance;
         this.smallOreChance = smallOreChance;

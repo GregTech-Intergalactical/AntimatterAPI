@@ -34,15 +34,14 @@ public class WorldGenVeinVariantBuilder {
             throw new RuntimeException("oreChance and smallOreChance is not allowed when no materials are specified");
         }
 
-        List<WorldGenVeinVariant> veinVariants = WorldGenVeinVariant.getFlat(
+        this.veinBuilder.addVeinVariant(new WorldGenVeinVariant(
                 this.weight,
                 this.oreChance != null ? this.oreChance : 0.0f,
                 this.smallOreChance != null ? this.smallOreChance : 0.0f,
                 this.markerOreChance != null ? this.markerOreChance : 0.0f,
                 this.surfaceStoneChance != null ? this.surfaceStoneChance : 0.0f,
                 this.materials
-        );
-        veinVariants.forEach(this.veinBuilder::addVeinVariant);
+        ));
         return this.veinBuilder;
     }
 
