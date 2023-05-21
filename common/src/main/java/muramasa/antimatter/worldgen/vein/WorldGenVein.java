@@ -6,7 +6,9 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.realmsclient.util.JsonUtils;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -81,6 +83,10 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
         }).collect(Collectors.toList());
     }
 
+    static List<WorldGenVein> getFlat(WorldGenVein vein){
+        return getFlat(vein.getId(), vein.layer, vein.weight, vein.minY, vein.maxY, vein.density, vein.minSize, vein.maxSize, vein.heightScale, vein.fill, vein.variants, vein.getDims().stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
+    }
+
     public static Set<Integer> getAllLayers() {
         return MAX_SIZE_PER_LAYER.keySet();
     }
@@ -133,6 +139,42 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
             json.add("dims", array2);
         }
         return json;
+    }
+
+    public static WorldGenVein fromJson(String id, JsonObject json){
+        List<WorldGenVeinVariant> variants = new ArrayList<>();
+        List<ResourceKey<Level>> dims = new ArrayList<>();
+        if (json.has("variants")){
+            JsonArray array = json.getAsJsonArray("variants");
+            array.forEach(j -> {
+                if (j instanceof JsonObject object){
+                    variants.add(WorldGenVeinVariant.fromJson(object));
+                }
+            });
+        }
+        if (json.has("dims")){
+            JsonArray array = json.getAsJsonArray("dims");
+            array.forEach(j -> {
+                if (j instanceof JsonPrimitive object){
+                    dims.add(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(object.getAsString())));
+                }
+            });
+        }
+        BlockState fill = json.has("fill") ? AntimatterPlatformUtils.getBlockFromId(new ResourceLocation(json.get("fill").getAsString())).defaultBlockState() : null;
+        return new WorldGenVein(
+                id,
+                json.get("layer").getAsInt(),
+                json.get("weight").getAsInt(),
+                json.get("minY").getAsInt(),
+                json.get("maxY").getAsInt(),
+                json.get("density").getAsInt(),
+                json.get("minSize").getAsInt(),
+                json.get("maxSize").getAsInt(),
+                json.get("heightScale").getAsFloat(),
+                fill,
+                variants,
+                dims
+        );
     }
 
 }

@@ -33,4 +33,8 @@ public class WorldGenVeinVariantMaterial {
         json.addProperty("maxY", maxY);
         return json;
     }
+
+    public static WorldGenVeinVariantMaterial fromJson(JsonObject json){
+        return new WorldGenVeinVariantMaterial(json.get("weight").getAsInt(), Material.get(json.get("material").getAsString()), json.get("minY").getAsInt(), json.get("maxY").getAsInt());
+    }
 }

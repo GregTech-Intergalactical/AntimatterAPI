@@ -60,4 +60,17 @@ public class WorldGenVeinVariant {
         }
         return json;
     }
+
+    public static WorldGenVeinVariant fromJson(JsonObject json){
+        List<WorldGenVeinVariantMaterial> materials = new ArrayList<>();
+        if (json.has("materials")){
+            JsonArray array = json.getAsJsonArray("materials");
+            array.forEach(j -> {
+                if (j instanceof JsonObject object){
+                    materials.add(WorldGenVeinVariantMaterial.fromJson(object));
+                }
+            });
+        }
+        return new WorldGenVeinVariant(json.get("weight").getAsInt(), json.get("oreChance").getAsFloat(), json.get("smallOreChance").getAsFloat(), json.get("markerOreChance").getAsFloat(), json.get("surfaceStoneChance").getAsFloat(), materials);
+    }
 }
