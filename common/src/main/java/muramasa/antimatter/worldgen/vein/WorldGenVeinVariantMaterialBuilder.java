@@ -27,8 +27,8 @@ public class WorldGenVeinVariantMaterialBuilder {
         this.veinVariantBuilder.addVeinMaterial(new WorldGenVeinVariantMaterial(
                 this.weight,
                 this.material,
-                this.maxY != null ? this.maxY : Integer.MAX_VALUE,
-                this.minY != null ? this.minY : Integer.MIN_VALUE
+                this.minY != null ? this.minY : Integer.MIN_VALUE,
+                this.maxY != null ? this.maxY : Integer.MAX_VALUE
         ));
         return this.veinVariantBuilder;
     }
