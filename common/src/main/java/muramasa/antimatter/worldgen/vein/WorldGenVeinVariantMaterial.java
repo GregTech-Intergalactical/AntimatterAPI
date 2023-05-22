@@ -29,12 +29,20 @@ public class WorldGenVeinVariantMaterial {
         JsonObject json = new JsonObject();
         json.addProperty("weight", weight);
         json.addProperty("material", material.getId());
-        json.addProperty("minY", minY);
-        json.addProperty("maxY", maxY);
+        if (minY > Integer.MIN_VALUE) {
+            json.addProperty("minY", minY);
+        }
+        if (maxY < Integer.MAX_VALUE) {
+            json.addProperty("maxY", maxY);
+        }
         return json;
     }
 
     public static WorldGenVeinVariantMaterial fromJson(JsonObject json){
-        return new WorldGenVeinVariantMaterial(json.get("weight").getAsInt(), Material.get(json.get("material").getAsString()), json.get("minY").getAsInt(), json.get("maxY").getAsInt());
+        return new WorldGenVeinVariantMaterial(
+                json.get("weight").getAsInt(),
+                Material.get(json.get("material").getAsString()),
+                json.has("minY") ? json.get("minY").getAsInt() : Integer.MIN_VALUE,
+                json.has("maxY") ? json.get("maxY").getAsInt() : Integer.MAX_VALUE);
     }
 }

@@ -42,7 +42,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
     public final BlockState fill;
     public final List<WorldGenVeinVariant> variants;
 
-    private WorldGenVein(String id, int layer, int weight, int minY, int maxY, int density, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
+    WorldGenVein(String id, int layer, int weight, int minY, int maxY, int density, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
         super(id, WorldGenVein.class, dimensions);
         this.layer = layer;
         this.weight = weight;
@@ -117,8 +117,12 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
         JsonObject json = new JsonObject();
         json.addProperty("layer", layer);
         json.addProperty("weight", weight);
-        json.addProperty("minY", minY);
-        json.addProperty("maxY", maxY);
+        if (minY > Integer.MIN_VALUE) {
+            json.addProperty("minY", minY);
+        }
+        if (maxY < Integer.MAX_VALUE) {
+            json.addProperty("maxY", maxY);
+        }
         json.addProperty("density", density);
         json.addProperty("minSize", minSize);
         json.addProperty("maxSize", maxSize);
@@ -165,8 +169,8 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
                 id,
                 json.get("layer").getAsInt(),
                 json.get("weight").getAsInt(),
-                json.get("minY").getAsInt(),
-                json.get("maxY").getAsInt(),
+                json.has("minY") ? json.get("minY").getAsInt() : Integer.MIN_VALUE,
+                json.has("maxY") ? json.get("maxY").getAsInt() : Integer.MAX_VALUE,
                 json.get("density").getAsInt(),
                 json.get("minSize").getAsInt(),
                 json.get("maxSize").getAsInt(),
