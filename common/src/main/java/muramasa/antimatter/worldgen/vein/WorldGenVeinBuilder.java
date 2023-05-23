@@ -144,7 +144,7 @@ public class WorldGenVeinBuilder {
   }
 
     public final WorldGenVeinBuilder withDensity(int density) {
-        this.density = weight;
+        this.density = density;
         return this;
     }
 
