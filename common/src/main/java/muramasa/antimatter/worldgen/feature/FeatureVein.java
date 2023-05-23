@@ -1,5 +1,6 @@
 package muramasa.antimatter.worldgen.feature;
 
+import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
@@ -161,6 +162,8 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
               final BlockState existing = world.getBlockState(pos);
               WorldGenHelper.setStone(world, pos, existing, vein.fill);
               placed = true;
+            } else if (vein.layer == 2){
+                Antimatter.LOGGER.info("ore vein generating at " + pos.toShortString() + " with " + vein.getId());
             }
 
             // set ores and small ores based ond chance and sub materials
