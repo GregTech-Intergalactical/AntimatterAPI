@@ -111,11 +111,11 @@ public class WorldGenVeinVariantBuilder {
     }
 
     final public WorldGenVeinVariantBuilder withMaterial(Material material, int weight) {
-        return this.withMaterial(material, weight, Integer.MAX_VALUE, Integer.MIN_VALUE);
+        return this.withMaterial(material, weight, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     final public WorldGenVeinVariantBuilder withMaterial(Material material) {
-        return this.withMaterial(material, 1, Integer.MAX_VALUE, Integer.MIN_VALUE);
+        return this.withMaterial(material, 1, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     final public WorldGenVeinVariantBuilder withMaterial(Material material, int minY, int maxY) {
