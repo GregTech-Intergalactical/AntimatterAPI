@@ -93,6 +93,7 @@ public class MaterialEvent {
     public MaterialEvent asOre(boolean small, IMaterialTag... tags) {
         asDust(AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.ROCK, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.RAW_ORE_BLOCK);
         if (small) flags(AntimatterMaterialTypes.ORE_SMALL);
+        if (!has(EXP_RANGE)) EXP_RANGE.add(material, UniformInt.of(1, 5));
         flags(tags);
         return this;
     }
