@@ -15,7 +15,7 @@ public class WorldGenEvent {
         VEINS.addAll(veins);
     }
 
-    public void smallOre(List<WorldGenSmallOre> veins) {
-        SMALL_ORES.addAll(veins);
+    public void smallOre(WorldGenSmallOre veins) {
+        SMALL_ORES.add(veins);
     }
 }

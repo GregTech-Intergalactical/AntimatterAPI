@@ -24,7 +24,7 @@ public class WorldGenSmallOreBuilder {
     public WorldGenSmallOreBuilder() {
     }
 
-    final public List<WorldGenSmallOre> buildMaterial() {
+    final public WorldGenSmallOre buildMaterial() {
         if (this.amountPerChunk == null) {
             throw new RuntimeException("weight is required");
         }
@@ -44,7 +44,7 @@ public class WorldGenSmallOreBuilder {
                 this.biomes,
                 this.biomeBlacklist
         );
-        return List.of(smallOreMaterial);
+        return smallOreMaterial;
     }
 
     final public WorldGenSmallOreBuilder withMaterial(Material material) {
