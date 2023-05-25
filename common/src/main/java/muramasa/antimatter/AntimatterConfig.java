@@ -254,7 +254,7 @@ public class AntimatterConfig {
             THIN_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around thin veins - Default : 0.001(0.1%)")
                     .translation(Ref.ID + ".config.thin_marker_ore_chance")
                     .worldRestart()
-                    .defineInRange("MARKER_ORE_CHANCE", 0.001, 0.00, 1.0);
+                    .defineInRange("MARKER_ORE_CHANCE", 0.01, 0.00, 1.0);
 
             THIN_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above thin veins - Default : 0.01(1%)")
                     .translation(Ref.ID + ".config.thin_surface_stone_chance")
@@ -283,7 +283,7 @@ public class AntimatterConfig {
             NORMAL_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around normal veins - Default : 0.0025(0.25%)")
                     .translation(Ref.ID + ".config.normal_marker_ore_chance")
                     .worldRestart()
-                    .defineInRange("MARKER_ORE_CHANCE", 0.0025, 0.00, 1.0);
+                    .defineInRange("MARKER_ORE_CHANCE", 0.025, 0.00, 1.0);
 
             NORMAL_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above normal veins - Default : 0.05(5%)")
                     .translation(Ref.ID + ".config.normal_surface_stone_chance")
@@ -312,7 +312,7 @@ public class AntimatterConfig {
             DENSE_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around dense veins - Default : 0.005(0.5%)")
                     .translation(Ref.ID + ".config.dense_marker_ore_chance")
                     .worldRestart()
-                    .defineInRange("MARKER_ORE_CHANCE", 0.005, 0.00, 1.0);
+                    .defineInRange("MARKER_ORE_CHANCE", 0.05, 0.00, 1.0);
 
             DENSE_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above dense veins - Default : 0.1(10%)")
                     .translation(Ref.ID + ".config.dense_surface_stone_chance")
