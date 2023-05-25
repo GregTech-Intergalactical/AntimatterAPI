@@ -7,6 +7,10 @@ public class NumberMaterialTag extends TypeMaterialTag<Integer> {
         super(id);
     }
 
+    public NumberMaterialTag(String id, boolean shared) {
+        super(id, shared);
+    }
+
     public int getInt(Material mat){
         return get(mat);
     }

@@ -15,7 +15,6 @@ import java.util.List;
 public class MaterialTags {
 
     public static final MaterialTag RUBBERTOOLS = new MaterialTag("rubber_tools");
-    public static final MaterialTag NEEDS_BLAST_FURNACE = new MaterialTag("needs_blast_furnace");
     public static final MaterialTag HAS_CUSTOM_SMELTING = new MaterialTag("has_custom_smelting");
     public static final MaterialTag TRANSPARENT = new MaterialTag("transparent");
     public static final MaterialTag METAL = new MaterialTag("metal");
@@ -48,7 +47,6 @@ public class MaterialTags {
     public static final DoubleMaterialTag ARC_SMELT_INTO = new DoubleMaterialTag("arc_smelt_into");
     public static final DoubleMaterialTag MACERATE_INTO = new DoubleMaterialTag("macerate_into");
     public static final NumberMaterialTag MELTING_POINT = new NumberMaterialTag("melting_point");
-    public static final NumberMaterialTag BLAST_FURNACE_TEMP = new NumberMaterialTag("blast_furnace_temp");
     public static final NumberMaterialTag MINING_LEVEL = new NumberMaterialTag("mining_level");
     public static final NumberMaterialTag FUEL_POWER = new NumberMaterialTag("fuel_power");
     public static final NumberMaterialTag LIQUID_TEMPERATURE = new NumberMaterialTag("liquid_temperature");

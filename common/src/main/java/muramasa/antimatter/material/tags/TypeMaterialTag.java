@@ -13,6 +13,10 @@ public class TypeMaterialTag<T> extends MaterialTag {
         super(id);
     }
 
+    public TypeMaterialTag(String id, boolean shared) {
+        super(id, shared);
+    }
+
     public TypeMaterialTag <T> add(Material mat, T map) {
         if (!mat.enabled) return this;
         if (!mapping.containsKey(mat)){
