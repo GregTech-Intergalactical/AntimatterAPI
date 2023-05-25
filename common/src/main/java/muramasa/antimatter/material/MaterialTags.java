@@ -2,7 +2,6 @@ package muramasa.antimatter.material;
 
 import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.material.data.ArmorData;
-import muramasa.antimatter.material.data.FluidProduct;
 import muramasa.antimatter.material.data.HandleData;
 import muramasa.antimatter.material.data.ToolData;
 import muramasa.antimatter.material.tags.*;
@@ -58,9 +57,6 @@ public class MaterialTags {
     public static final ListMaterialTag<MaterialStack> PROCESS_INTO = new ListMaterialTag<>("process_into");
 
     public static final ListMaterialTag<Material> BYPRODUCTS = new ListMaterialTag<>("byproducts");
-
-    public static final ListMaterialTag<FluidProduct> DISTILL_INTO = new ListMaterialTag<>("distill_into");
-    public static final NumberMaterialTag DISTILLATION_FLUID_INPUT_AMOUNT = new NumberMaterialTag("distillation_fluid_input_amount");
 
 
     public static final BlockDropMaterialTag<BlockOre> CUSTOM_ORE_DROPS = new BlockDropMaterialTag<>("custom_ore_drops");
