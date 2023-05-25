@@ -21,12 +21,16 @@ public class MultiStructure extends Structure {
             StructureResult result = validStructure.evaluate(tile);
             if (result.evaluate()) return result;
         }
-        return null;
+        return new StructureResult(this);
     }
 
     @Override
     public LongList allPositions(TileEntityBasicMultiMachine<?> tile) {
-        return null;
+        for (Structure validStructure : validStructures) {
+            StructureResult result = validStructure.evaluate(tile);
+            if (result.evaluate()) return validStructure.allPositions(tile);
+        }
+        return validStructures.get(validStructures.size() - 1).allPositions(tile);
     }
 
     @Override
