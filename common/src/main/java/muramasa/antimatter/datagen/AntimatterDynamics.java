@@ -270,6 +270,7 @@ public class AntimatterDynamics {
         for (WorldGenVanillaOre vanillaOre : vanillaOres){
             AntimatterWorldGenerator.register(vanillaOre.toRegister, vanillaOre);
         }
+        if (AntimatterConfig.WORLD.REGENERATE_DEFAULT_WORLDGEN_JSONS) AntimatterConfig.COMMON_CONFIG.REGENERATE_DEFAULT_WORLDGEN_JSONS.set(false);
         loaders.values().forEach(IRecipeRegistrate.IRecipeLoader::init);
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
