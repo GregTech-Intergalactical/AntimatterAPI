@@ -63,10 +63,6 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         return (T) this;
     }
 
-    public T asSolid(int meltingPoint, int bl, IMaterialTag... tags){
-        return asSolid(meltingPoint, tags);
-    }
-
     public T asMetal(IMaterialTag... tags) {
         return asMetal(295, tags);
     }
