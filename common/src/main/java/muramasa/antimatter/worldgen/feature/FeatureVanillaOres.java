@@ -75,7 +75,7 @@ public class FeatureVanillaOres extends AntimatterFeature<NoneFeatureConfigurati
         List<WorldGenVanillaOre> vanillaOres = AntimatterWorldGenerator.all(WorldGenVanillaOre.class, world.getLevel().dimension());
         int spawned = 0;
         for (WorldGenVanillaOre vanillaOre : vanillaOres) {
-            if (!vanillaOre.primary.has(vanillaOre.materialType) || (vanillaOre.secondary != Material.NULL && !vanillaOre.secondary.has(vanillaOre.materialType))) continue;
+            if (!vanillaOre.primary.has(vanillaOre.materialType) || (vanillaOre.secondary != Material.NULL && !vanillaOre.secondary.has(vanillaOre.secondaryType))) continue;
             if (vanillaOre.rare && !(random.nextFloat() < 1.0F / (float)vanillaOre.weight)) continue;
             int minY = Math.max(worldMinY, vanillaOre.minY);
             int maxY = Math.min(worldMaxY, vanillaOre.maxY);
@@ -206,10 +206,12 @@ public class FeatureVanillaOres extends AntimatterFeature<NoneFeatureConfigurati
                                                         BlockState blockstate = levelchunksection.getBlockState(lx, ly, lz);
 
                                                         Material mat = config.primary;
+                                                        MaterialType<?> type = config.materialType;
                                                         if (config.secondary != Material.NULL && config.secondaryChance > 0 && config.secondaryChance < 1.0F && pRandom.nextFloat() < config.secondaryChance){
                                                             mat =  config.secondary;
+                                                            if (config.secondaryType != config.materialType) type = config.secondaryType;
                                                         }
-                                                        if (placeOre(lx, ly, lz, levelchunksection, bulksectionaccess::getBlockState, pRandom, config, mat, config.materialType, blockpos$mutableblockpos)) {
+                                                        if (placeOre(lx, ly, lz, levelchunksection, bulksectionaccess::getBlockState, pRandom, config, mat, type, blockpos$mutableblockpos)) {
                                                             ++i;
                                                         }
                                                     }
@@ -257,8 +259,13 @@ public class FeatureVanillaOres extends AntimatterFeature<NoneFeatureConfigurati
         Holder<Biome> biome = level.getBiome(pos);
         ResourceLocation biomeKey = biome.unwrapKey().get().location();
         if (vanillaOre.biomes.contains(biomeKey) == vanillaOre.biomeBlacklist) return false;
-        Material material = vanillaOre.secondaryChance > 0.0f && vanillaOre.secondary != Material.NULL && level.getRandom().nextFloat() < vanillaOre.secondaryChance ? vanillaOre.secondary : vanillaOre.primary;
-        return WorldGenHelper.setOre(level, pos, material, AntimatterMaterialTypes.ORE);
+        Material material = vanillaOre.primary;
+        MaterialType<?> type = vanillaOre.materialType;
+        if (vanillaOre.secondaryChance > 0.0f && vanillaOre.secondary != Material.NULL && level.getRandom().nextFloat() < vanillaOre.secondaryChance){
+            material = vanillaOre.secondary;
+            if (vanillaOre.secondaryType != vanillaOre.materialType) type = vanillaOre.secondaryType;
+        }
+        return WorldGenHelper.setOre(level, pos, material, type);
     }
 
     public static BlockState getOre(BlockState existing, Material material,

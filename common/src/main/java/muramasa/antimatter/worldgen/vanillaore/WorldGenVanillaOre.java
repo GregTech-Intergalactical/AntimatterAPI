@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 
 public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
     public final Material primary, secondary;
-    public final MaterialType<?> materialType;
+    public final MaterialType<?> materialType, secondaryType;
     public final int minY, maxY, weight, size, plateau;
     public final float secondaryChance, discardOnExposureChance;
     public final List<ResourceLocation> dimensions;
@@ -30,12 +30,13 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
 
     public final boolean biomeBlacklist, rare, triangle, spawnOnOceanFloor;
 
-    WorldGenVanillaOre(String id, Material primary, Material secondary, MaterialType<?> type, float secondaryChance, float discardOnExposureChance, int minY, int maxY, int weight, int size, boolean rare, boolean triangle, int plateau, boolean spawnOnOceanFlor, List<ResourceLocation> dimensions, List<String> biomes, boolean biomeBlacklist){
+    WorldGenVanillaOre(String id, Material primary, Material secondary, MaterialType<?> type, MaterialType<?> secondaryType, float secondaryChance, float discardOnExposureChance, int minY, int maxY, int weight, int size, boolean rare, boolean triangle, int plateau, boolean spawnOnOceanFlor, List<ResourceLocation> dimensions, List<String> biomes, boolean biomeBlacklist){
         super(id, WorldGenVanillaOre.class, dimensions.stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
 
         this.primary = primary;
         this.secondary = secondary;
         this.materialType = type;
+        this.secondaryType = secondaryType;
         this.secondaryChance = secondaryChance;
         this.discardOnExposureChance = discardOnExposureChance;
         this.minY = minY;
@@ -72,6 +73,7 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
         if (secondary != Material.NULL) {
             json.addProperty("secondary", secondary.getId());
             json.addProperty("secondaryChance", secondaryChance);
+            if (secondaryType != materialType) json.addProperty("secondaryType", secondaryType.getId());
         }
         json.addProperty("discardOnExposureChance", discardOnExposureChance);
         if (minY > Integer.MIN_VALUE) {
@@ -119,11 +121,13 @@ public class WorldGenVanillaOre extends WorldGenBase<WorldGenVanillaOre> {
                 }
             });
         }
+        MaterialType<?> materialType = json.has("materialType") ? AntimatterAPI.get(MaterialType.class, json.get("materialType").getAsString()) : AntimatterMaterialTypes.ORE;
         return new WorldGenVanillaOre(
                 id,
                 Material.get(json.get("primary").getAsString()),
                 json.has("secondary") ? Material.get(json.get("secondary").getAsString()) : Material.NULL,
-                json.has("materialType") ? AntimatterAPI.get(MaterialType.class, json.get("materialType").getAsString()) : AntimatterMaterialTypes.ORE,
+                materialType,
+                json.has("secondaryType") ? AntimatterAPI.get(MaterialType.class, json.get("secondaryType").getAsString()) : materialType,
                 json.has("secondaryChance") ? json.get("secondaryChance").getAsFloat() : 0.0f,
                 json.get("discardOnExposureChance").getAsFloat(),
                 json.has("minY") ? json.get("minY").getAsInt() : Integer.MIN_VALUE,

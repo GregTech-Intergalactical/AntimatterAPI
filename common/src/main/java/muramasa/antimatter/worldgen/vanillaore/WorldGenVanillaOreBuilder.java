@@ -21,6 +21,8 @@ public class WorldGenVanillaOreBuilder {
     @Nullable
     private MaterialTypeBlock<?> materialType;
     @Nullable
+    private MaterialTypeBlock<?> secondaryType;
+    @Nullable
     private Integer weight;
     @Nullable
     private Integer maxY;
@@ -55,11 +57,13 @@ public class WorldGenVanillaOreBuilder {
         if (this.dimensions.isEmpty()) {
             this.dimensions.add(new ResourceLocation("overworld"));
         }
+        MaterialTypeBlock<?> materialTypeBlock = this.materialType == null ? AntimatterMaterialTypes.ORE : materialType;
         WorldGenVanillaOre vanillaOre =  new WorldGenVanillaOre(
                 id != null ? id : material.getId(),
                 this.material,
                 this.secondary == null ? Material.NULL : this.secondary,
-                this.materialType == null ? AntimatterMaterialTypes.ORE : materialType,
+                materialTypeBlock,
+                this.secondaryType == null ? materialTypeBlock : this.secondaryType,
                 this.secondaryChance == null ? 0.0f : this.secondaryChance,
                 this.discardOnExposureChance == null ? 0.0f : this.discardOnExposureChance,
                 this.minY != null ? this.minY : Integer.MIN_VALUE,
@@ -86,6 +90,11 @@ public class WorldGenVanillaOreBuilder {
     final public WorldGenVanillaOreBuilder withSecondaryMaterial(Material secondary, float secondaryChance){
         this.secondary = secondary;
         this.secondaryChance = secondaryChance;
+        return this;
+    }
+
+    final public WorldGenVanillaOreBuilder withSecondaryType(MaterialTypeBlock<?> materialType){
+        this.secondaryType = materialType;
         return this;
     }
 
