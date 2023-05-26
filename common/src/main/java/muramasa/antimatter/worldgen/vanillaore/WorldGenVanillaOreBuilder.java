@@ -74,7 +74,7 @@ public class WorldGenVanillaOreBuilder {
                 this.biomes,
                 this.biomeBlacklist
         );
-        AntimatterWorldGenerator.writeJson(vanillaOre.toJson(), this.id, "vanilla_ore");
+        AntimatterWorldGenerator.writeJson(vanillaOre.toJson(), vanillaOre.getId(), "vanilla_ore");
         return AntimatterWorldGenerator.readJson(WorldGenVanillaOre.class, vanillaOre, WorldGenVanillaOre::fromJson, "vanilla_ore");
     }
 

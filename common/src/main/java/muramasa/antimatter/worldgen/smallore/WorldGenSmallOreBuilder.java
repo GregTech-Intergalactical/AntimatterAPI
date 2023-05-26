@@ -57,7 +57,7 @@ public class WorldGenSmallOreBuilder {
                 this.biomes,
                 this.biomeBlacklist
         );
-        AntimatterWorldGenerator.writeJson(smallOre.toJson(), this.id, "small_ore");
+        AntimatterWorldGenerator.writeJson(smallOre.toJson(), smallOre.getId(), "small_ore");
         return AntimatterWorldGenerator.readJson(WorldGenSmallOre.class, smallOre, WorldGenSmallOre::fromJson, "small_ore");
     }
 
