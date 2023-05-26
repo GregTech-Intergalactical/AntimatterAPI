@@ -68,7 +68,9 @@ public class FeatureSmallOres extends AntimatterFeature<NoneFeatureConfiguration
             int maxY = Math.min(worldMaxY, smallOre.maxY);
             int i = 0;
             for (int j = Math.max(1, smallOre.amountPerChunk / 2 + random.nextInt(smallOre.amountPerChunk) / 2); i < j; i++) {
-                boolean spawn = setOreBlock(world, chunkCornerX + random.nextInt(16), minY + random.nextInt(Math.max(1, maxY - minY)), chunkCornerZ + random.nextInt(16), smallOre);
+                BlockPos pos = new BlockPos(chunkCornerX + random.nextInt(16), minY + random.nextInt(Math.max(1, maxY - minY)), chunkCornerZ + random.nextInt(16));
+                if (!smallOre.getValidBiomes().test(world.getBiome(pos))) continue;
+                boolean spawn = setOreBlock(world, pos, smallOre);
                 if (spawn) spawned++;
             }
         }
@@ -77,8 +79,7 @@ public class FeatureSmallOres extends AntimatterFeature<NoneFeatureConfiguration
         return spawned > 0;
     }
 
-    private boolean setOreBlock(WorldGenLevel level, int x, int y, int z, WorldGenSmallOre smallOre){
-        BlockPos pos = new BlockPos(x, y, z);
+    private boolean setOreBlock(WorldGenLevel level, BlockPos pos, WorldGenSmallOre smallOre){
         Holder<Biome> biome = level.getBiome(pos);
         ResourceLocation biomeKey = biome.unwrapKey().get().location();
         if (smallOre.biomes.contains(biomeKey) == smallOre.biomeBlacklist) return false;

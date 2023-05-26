@@ -2,6 +2,7 @@ package muramasa.antimatter.worldgen.object;
 
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -66,7 +67,7 @@ public class WorldGenBase<T extends WorldGenBase<?>> {
         return this;
     }
 
-    public Predicate<Biome> getValidBiomes() {
+    public Predicate<Holder<Biome>> getValidBiomes() {
         return b -> true;
     }
 

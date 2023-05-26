@@ -18,7 +18,8 @@ public class WorldGenSmallOreBuilder {
     @Nullable
     private Integer minY;
     @Nullable String id;
-    List<ResourceLocation> dimensions = new ArrayList<>(), biomes = new ArrayList<>();
+    List<ResourceLocation> dimensions = new ArrayList<>();
+    List<String> biomes = new ArrayList<>();
     boolean dimensionBlacklist = false, biomeBlacklist = true;
 
     public WorldGenSmallOreBuilder() {
@@ -34,7 +35,7 @@ public class WorldGenSmallOreBuilder {
         if (this.dimensions.isEmpty()) {
             this.dimensions.add(new ResourceLocation("overworld"));
         }
-        WorldGenSmallOre smallOreMaterial = new WorldGenSmallOre(
+        return new WorldGenSmallOre(
                 id != null ? id : material.getId(),
                 this.material,
                 this.minY != null ? this.minY : -64,
@@ -44,7 +45,6 @@ public class WorldGenSmallOreBuilder {
                 this.biomes,
                 this.biomeBlacklist
         );
-        return smallOreMaterial;
     }
 
     final public WorldGenSmallOreBuilder withMaterial(Material material) {
@@ -68,7 +68,7 @@ public class WorldGenSmallOreBuilder {
         return this;
     }
 
-    final public WorldGenSmallOreBuilder withBiomes(ResourceLocation... biomes) {
+    final public WorldGenSmallOreBuilder withBiomes(String... biomes) {
         Collections.addAll(this.biomes, biomes);
         return this;
     }

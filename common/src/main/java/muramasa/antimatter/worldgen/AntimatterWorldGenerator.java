@@ -8,10 +8,7 @@ import muramasa.antimatter.mixin.BiomeGenerationBuilderAccessor;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
-import muramasa.antimatter.worldgen.feature.AntimatterFeature;
-import muramasa.antimatter.worldgen.feature.FeatureSmallOres;
-import muramasa.antimatter.worldgen.feature.FeatureVein;
-import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
+import muramasa.antimatter.worldgen.feature.*;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -40,6 +37,8 @@ public class AntimatterWorldGenerator {
 
     static final AntimatterFeature<NoneFeatureConfiguration> VEIN = new FeatureVein();
     static final AntimatterFeature<NoneFeatureConfiguration> SMALL_ORE = new FeatureSmallOres();
+
+    static final AntimatterFeature<NoneFeatureConfiguration> VANILLA_ORE = new FeatureVanillaOres();
 
     protected record GenHandler(BiomeLoadEvent consumer,
                                 Predicate<Biome.BiomeCategory> validator) {
