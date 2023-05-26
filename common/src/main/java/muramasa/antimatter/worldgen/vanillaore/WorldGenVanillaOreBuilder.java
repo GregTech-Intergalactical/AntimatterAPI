@@ -4,6 +4,8 @@ import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.material.MaterialTypeBlock;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -53,7 +55,7 @@ public class WorldGenVanillaOreBuilder {
         if (this.dimensions.isEmpty()) {
             this.dimensions.add(new ResourceLocation("overworld"));
         }
-        return new WorldGenVanillaOre(
+        WorldGenVanillaOre vanillaOre =  new WorldGenVanillaOre(
                 id != null ? id : material.getId(),
                 this.material,
                 this.secondary == null ? Material.NULL : this.secondary,
@@ -72,6 +74,8 @@ public class WorldGenVanillaOreBuilder {
                 this.biomes,
                 this.biomeBlacklist
         );
+        AntimatterWorldGenerator.writeJson(vanillaOre.toJson(), this.id, "vanilla_ore");
+        return AntimatterWorldGenerator.readJson(WorldGenVanillaOre.class, vanillaOre, WorldGenVanillaOre::fromJson, "vanilla_ore");
     }
 
     final public WorldGenVanillaOreBuilder withMaterial(Material material) {

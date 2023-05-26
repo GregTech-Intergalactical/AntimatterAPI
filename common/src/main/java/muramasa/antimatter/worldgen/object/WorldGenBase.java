@@ -2,6 +2,7 @@ package muramasa.antimatter.worldgen.object;
 
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.registration.IAntimatterObject;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class WorldGenBase<T extends WorldGenBase<?>> {
+public class WorldGenBase<T extends WorldGenBase<?>> implements IAntimatterObject {
 
     private final String id;
     private boolean enabled = true;

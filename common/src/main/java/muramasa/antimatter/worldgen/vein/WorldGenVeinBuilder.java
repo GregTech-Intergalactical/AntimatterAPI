@@ -1,14 +1,14 @@
 package muramasa.antimatter.worldgen.vein;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,7 +21,6 @@ import java.util.List;
 
 public class WorldGenVeinBuilder {
 
-  private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
   @Nullable
   private final String id;
   @Nullable
@@ -91,48 +90,9 @@ public class WorldGenVeinBuilder {
               this.fill,
               this.variants,
               this.dimensions);
-      writeJson(vein.toJson(), this.id);
-      return readJson(vein);
+      AntimatterWorldGenerator.writeJson(vein.toJson(), this.id, "veins");
+      return AntimatterWorldGenerator.readJson(WorldGenVein.class, vein, WorldGenVein::fromJson, "veins");
   }
-
-    private void writeJson(JsonObject json, String id) {
-        File dir = new File(AntimatterPlatformUtils.getConfigDir().toFile(), "antimatter/veins/default");
-        File target = new File(dir, id + ".json");
-        File readme = new File(dir, "README.txt");
-
-        try {
-            dir.mkdirs();
-            if (!readme.exists()){
-                BufferedWriter writer = Files.newBufferedWriter(readme.toPath());
-                writer.write("This directory is used for default veins, to override a vein copy the json to the overrides folder and modify it there.");
-                writer.close();
-            }
-            BufferedWriter writer = Files.newBufferedWriter(target.toPath());
-            writer.write(GSON.toJson(json));
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private WorldGenVein readJson(WorldGenVein original){
-        File dir = new File(AntimatterPlatformUtils.getConfigDir().toFile(), "antimatter/veins/overrides");
-        File target = new File(dir, id + ".json");
-
-
-        if(target.exists()) {
-            try {
-                Reader reader = Files.newBufferedReader(target.toPath());
-                JsonObject parsed = JsonParser.parseReader(reader).getAsJsonObject();
-                WorldGenVein read = WorldGenVein.fromJson(this.id, parsed);
-                reader.close();
-                return read;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return original;
-    }
   public final WorldGenVeinBuilder onLayer(int layer) {
     this.layer = layer;
     return this;

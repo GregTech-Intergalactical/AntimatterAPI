@@ -1,12 +1,24 @@
 package muramasa.antimatter.worldgen.smallore;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static muramasa.antimatter.Ref.GSON;
 
 public class WorldGenSmallOreBuilder {
     @Nullable
@@ -35,16 +47,39 @@ public class WorldGenSmallOreBuilder {
         if (this.dimensions.isEmpty()) {
             this.dimensions.add(new ResourceLocation("overworld"));
         }
-        return new WorldGenSmallOre(
+        WorldGenSmallOre smallOre =  new WorldGenSmallOre(
                 id != null ? id : material.getId(),
                 this.material,
-                this.minY != null ? this.minY : -64,
-                this.maxY != null ? this.maxY : 320,
+                this.minY != null ? this.minY : Integer.MIN_VALUE,
+                this.maxY != null ? this.maxY : Integer.MAX_VALUE,
                 amountPerChunk,
                 this.dimensions,
                 this.biomes,
                 this.biomeBlacklist
         );
+        AntimatterWorldGenerator.writeJson(smallOre.toJson(), this.id, "small_ore");
+        return AntimatterWorldGenerator.readJson(WorldGenSmallOre.class, smallOre, WorldGenSmallOre::fromJson, "small_ore");
+    }
+
+
+
+    private WorldGenVein readJson(WorldGenVein original){
+        File dir = new File(AntimatterPlatformUtils.getConfigDir().toFile(), "antimatter/small_ore/overrides");
+        File target = new File(dir, id + ".json");
+
+
+        if(target.exists()) {
+            try {
+                Reader reader = Files.newBufferedReader(target.toPath());
+                JsonObject parsed = JsonParser.parseReader(reader).getAsJsonObject();
+                WorldGenVein read = WorldGenVein.fromJson(this.id, parsed);
+                reader.close();
+                return read;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return original;
     }
 
     final public WorldGenSmallOreBuilder withMaterial(Material material) {
