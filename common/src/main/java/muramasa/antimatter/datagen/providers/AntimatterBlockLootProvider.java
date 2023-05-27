@@ -122,7 +122,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
 
     public static Function<Block, LootTable.Builder> addToFortuneWithoutCustomDrops(BlockOre block) {
         if (block.getOreType() == AntimatterMaterialTypes.ORE_SMALL) {
-            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE))) return;
+            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE))) return BlockLoot::createSingleItemTable;
             Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : null;
             LootPool.Builder builder;
             if (item != null) {
@@ -143,14 +143,14 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             return b -> LootTable.lootTable().withPool(builder);
         } else if (block.getOreType() == AntimatterMaterialTypes.ORE) {
             if (block.getStoneType() == AntimatterStoneTypes.GRAVEL || block.getStoneType() == AntimatterStoneTypes.SAND || block.getStoneType() == AntimatterStoneTypes.SAND_RED){
-                return this::build;
+                return BlockLoot::createSingleItemTable;
             }
             if (block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) {
                 Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
                 return b -> createOreDrop(b, item);
             }
         }
-        return this::build;
+        return BlockLoot::createSingleItemTable;
     }
 
     protected void addToStone(BlockOreStone block) {
