@@ -163,10 +163,10 @@ public class AntimatterConfig {
 
             builder.push("World");
 
-            VANILLA_ORE_GEN = builder.comment("Disable Vanilla ore generation (Iron Ore, Diamond Ore etc) - Default: true")
+            VANILLA_ORE_GEN = builder.comment("Disable Vanilla ore generation (Iron Ore, Diamond Ore etc) - Default: false")
                     .translation(Ref.ID + ".config.vanilla_ore_gen")
                     .worldRestart()
-                    .define("DISABLE_VANILLA_ORE_GEN", true);
+                    .define("DISABLE_VANILLA_ORE_GEN", false);
 
             VANILLA_STONE_GEN = builder.comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: true")
                     .translation(Ref.ID + ".config.vanilla_stone_gen")
