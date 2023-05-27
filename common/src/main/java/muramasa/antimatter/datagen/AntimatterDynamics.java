@@ -26,6 +26,7 @@ import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.loader.IRecipeRegistrate;
 import muramasa.antimatter.recipe.map.IRecipeMap;
+import muramasa.antimatter.recipe.map.RecipeBuilder;
 import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.registration.IAntimatterRegistrar;
 import muramasa.antimatter.registration.ModRegistrar;
@@ -271,7 +272,11 @@ public class AntimatterDynamics {
             AntimatterWorldGenerator.register(vanillaOre.toRegister, vanillaOre);
         }
         if (AntimatterConfig.WORLD.REGENERATE_DEFAULT_WORLDGEN_JSONS) AntimatterConfig.COMMON_CONFIG.REGENERATE_DEFAULT_WORLDGEN_JSONS.set(false);
-        loaders.values().forEach(IRecipeRegistrate.IRecipeLoader::init);
+        loaders.forEach((r, l) -> {
+            RecipeBuilder.setCurrentModId(r.getNamespace());
+            l.init();
+            RecipeBuilder.setCurrentModId(Ref.SHARED_ID);
+        });
         AntimatterAPI.all(ModRegistrar.class, t -> {
             for (String mod : t.modIds()) {
                 if (!AntimatterAPI.isModLoaded(mod))

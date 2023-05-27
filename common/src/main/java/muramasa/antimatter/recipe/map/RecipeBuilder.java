@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.builder.AntimatterCookingRecipeBuilder;
 import muramasa.antimatter.recipe.IRecipe;
@@ -39,6 +40,8 @@ public class RecipeBuilder {
 
     private static final Map<String, IRecipe> ID_MAP = new Object2ObjectArrayMap<>();
 
+    private static String CURRENT_MOD_ID = Ref.SHARED_ID;
+
     private RecipeMap<? extends RecipeBuilder> recipeMap;
     protected List<ItemStack> itemsOutput = new ObjectArrayList<>();
     protected List<Ingredient> ingredientInput = new ObjectArrayList<>();
@@ -71,6 +74,10 @@ public class RecipeBuilder {
 
     public static Map<String, IRecipe> getIdMap() {
         return ID_MAP;
+    }
+
+    public static void setCurrentModId(String id){
+        CURRENT_MOD_ID = id;
     }
 
     protected void addToMap(IRecipe r) {
@@ -181,7 +188,7 @@ public class RecipeBuilder {
     }
 
     public IRecipe add(String id, long duration, long power, long special, int amps) {
-        return add(recipeMap.getDomain(), id, duration, power, special, amps);
+        return add(CURRENT_MOD_ID, id, duration, power, special, amps);
     }
 
     public IRecipe add(String id, long duration, long power) {
