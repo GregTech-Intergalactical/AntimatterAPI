@@ -10,6 +10,7 @@ import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.machine.BlockMachine;
@@ -116,6 +117,10 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             tables.put(block, b -> MaterialTags.CUSTOM_ORE_DROPS.getBuilderFunction(block.getMaterial()).apply(block));
             return;
         }
+        tables.put(block, addToFortuneWithoutCustomDrops(block));
+    }
+
+    public static Function<Block, LootTable.Builder> addToFortuneWithoutCustomDrops(BlockOre block) {
         if (block.getOreType() == AntimatterMaterialTypes.ORE_SMALL) {
             if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE))) return;
             Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : null;
@@ -135,14 +140,17 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
                 //builder.addLootPool(withSurvivesExplosion(dirty, LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(dirty))));
                 builder.add(applyExplosionDecay(dirty, LootItem.lootTableItem(dirty).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f, 2.0f)))).setWeight(60));
             }
-            tables.put(block, b -> LootTable.lootTable().withPool(builder));
-            return;
-        } else if ((block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) && block.getOreType() == AntimatterMaterialTypes.ORE) {
-            Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
-            tables.put(block, b -> createOreDrop(b, item));
-            return;
+            return b -> LootTable.lootTable().withPool(builder);
+        } else if (block.getOreType() == AntimatterMaterialTypes.ORE) {
+            if (block.getStoneType() == AntimatterStoneTypes.GRAVEL || block.getStoneType() == AntimatterStoneTypes.SAND || block.getStoneType() == AntimatterStoneTypes.SAND_RED){
+                return this::build;
+            }
+            if (block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) {
+                Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
+                return b -> createOreDrop(b, item);
+            }
         }
-        add(block);
+        return this::build;
     }
 
     protected void addToStone(BlockOreStone block) {
