@@ -33,7 +33,7 @@ public class KubeJSRecipe extends RecipeJS {
     private long power;
     private int amps;
     private boolean hidden;
-    private final List<Double> chances = new ObjectArrayList<>();
+    private final List<Integer> chances = new ObjectArrayList<>();
     private String map;
 
     @Override
@@ -76,7 +76,7 @@ public class KubeJSRecipe extends RecipeJS {
             special = ((Number) listJS.get(8)).intValue();
             if (listJS.size() > 9) {
                 for (Object chance : ListJS.orSelf(listJS.get(9))) {
-                    this.chances.add(((Number) chance).doubleValue());
+                    this.chances.add(((Number) chance).intValue());
                 }
             }
         } else {
@@ -110,7 +110,7 @@ public class KubeJSRecipe extends RecipeJS {
         this.hidden = GsonHelper.getAsBoolean(json, "hidden");
 
         for (JsonElement e : GsonHelper.getAsJsonArray(json, "chances", new JsonArray())) {
-            this.chances.add(e.getAsDouble());
+            this.chances.add(e.getAsInt());
         }
     }
 

@@ -21,7 +21,7 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
 
     int getAmps();
 
-    void addChances(double[] chances);
+    void addChances(int[] chances);
 
     void setHidden(boolean hidden);
 
@@ -72,7 +72,7 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
     long getPower();
 
     @Nullable
-    double[] getChances();
+    int[] getChances();
 
     default long getTotalPower(){
         return getDuration() * getPower();
@@ -83,7 +83,7 @@ public interface IRecipe extends net.minecraft.world.item.crafting.Recipe<Contai
 
     Set<RecipeTag> getTags();
 
-    Map<ItemStack, Double> getChancesWithStacks();
+    Map<ItemStack, Integer> getChancesWithStacks();
 
     String getMapId();
 

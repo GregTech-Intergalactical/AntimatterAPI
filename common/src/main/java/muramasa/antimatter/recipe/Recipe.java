@@ -37,10 +37,10 @@ public class Recipe implements IRecipe {
     private final int special;
     private final long power;
     private final int amps;
-    private double[] chances;
+    private int[] chances;
     private boolean hidden;
     private Set<RecipeTag> tags = new ObjectOpenHashSet<>();
-    private Map<ItemStack, Double> itemsWithChances = null;
+    private Map<ItemStack, Integer> itemsWithChances = null;
     public ResourceLocation id;
     public String mapId;
     //Used for recipe validators, e.g. cleanroom.
@@ -80,7 +80,7 @@ public class Recipe implements IRecipe {
         return amps;
     }
 
-    public void addChances(double[] chances) {
+    public void addChances(int[] chances) {
         this.chances = chances;
     }
 
@@ -160,7 +160,7 @@ public class Recipe implements IRecipe {
             if (chances != null) {
                 List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
-                    if (!chance || Ref.RNG.nextDouble() < chances[i]) {
+                    if (!chance || Ref.RNG.nextInt(10000) < chances[i]) {
                         evaluated.add(outputs[i].copy());
                     }
                 }
@@ -182,7 +182,7 @@ public class Recipe implements IRecipe {
             if (chances != null) {
                 List<ItemStack> evaluated = new ObjectArrayList<>();
                 for (int i = 0; i < outputs.length; i++) {
-                    if (chances[i] < 1.0) continue;
+                    if (chances[i] < 10000) continue;
                     evaluated.add(outputs[i]);
                 }
                 outputs = evaluated.toArray(new ItemStack[0]);
@@ -221,7 +221,7 @@ public class Recipe implements IRecipe {
     }
 
     @Nullable
-    public double[] getChances() {
+    public int[] getChances() {
         return chances;
     }
 
@@ -238,17 +238,17 @@ public class Recipe implements IRecipe {
     }
 
     //todo fix tis
-    public Map<ItemStack, Double> getChancesWithStacks(){
+    public Map<ItemStack, Integer> getChancesWithStacks(){
         if (itemsWithChances == null) {
             if (itemsOutput != null){
-                ImmutableMap.Builder<ItemStack, Double> map = ImmutableMap.builder();
+                ImmutableMap.Builder<ItemStack, Integer> map = ImmutableMap.builder();
                 if (hasChances()){
                     for (int i = 0; i < itemsOutput.length; i++) {
                         map.put(itemsOutput[i], chances[i]);
                     }
                 } else {
                     for (ItemStack itemStack : itemsOutput) {
-                        map.put(itemStack, 1.0);
+                        map.put(itemStack, 10000);
                     }
                 }
                 itemsWithChances = map.build();
@@ -299,7 +299,7 @@ public class Recipe implements IRecipe {
         if (chances != null) {
             builder.append("Chances: { ");
             for (int i = 0; i < chances.length; i++) {
-                builder.append(chances[i] * 100).append("%");
+                builder.append((float) chances[i] / 100).append("%");
                 if (i != chances.length - 1) builder.append(", ");
             }
             builder.append(" }\n");

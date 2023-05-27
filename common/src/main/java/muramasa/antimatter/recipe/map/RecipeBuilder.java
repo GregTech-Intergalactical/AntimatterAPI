@@ -47,7 +47,7 @@ public class RecipeBuilder {
     protected List<Ingredient> ingredientInput = new ObjectArrayList<>();
     protected List<FluidIngredient> fluidsInput = new ObjectArrayList<>();
     protected List<FluidStack> fluidsOutput = new ObjectArrayList<>();
-    protected double[] chances;
+    protected int[] chances;
     protected int duration, special;
     protected long power;
     protected int amps;
@@ -267,6 +267,15 @@ public class RecipeBuilder {
      * 10 = 10%, 75 = 75% etc
      **/
     public RecipeBuilder chances(double... values) {
+        int[] newChances = new int[values.length];
+        for (int i = 0; i < values.length; i++){
+            double chance = values[i];
+            newChances[i] = (int) (chance * 10000);
+        }
+        return chances(newChances);
+    }
+
+    public RecipeBuilder chances(int... values){
         chances = values;
         return this;
     }
@@ -359,7 +368,7 @@ public class RecipeBuilder {
             json.addProperty("amps", amps);
             json.addProperty("special", special);
             if (chances != null) {
-                for (double d : chances){
+                for (int d : chances){
                     array.add(d);
                 }
             }
