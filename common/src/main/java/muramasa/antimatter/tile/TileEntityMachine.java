@@ -581,7 +581,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (tag.contains(Ref.KEY_MACHINE_ITEMS))
             itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         if (tag.contains(Ref.KEY_MACHINE_ENERGY))
-            energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+            energyHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         if (tag.contains(Ref.KEY_MACHINE_COVER))
             coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) {
@@ -603,7 +603,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         if (disabledState != null)
             tag.putInt(Ref.KEY_MACHINE_STATE_D, disabledState.ordinal());
         itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serializeNBT()));
-        energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serializeNBT()));
+        energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serialize(new CompoundTag())));
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER , e.serializeNBT()));
         fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
         recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serializeNBT()));

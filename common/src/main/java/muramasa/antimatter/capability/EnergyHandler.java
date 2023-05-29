@@ -145,8 +145,7 @@ public class EnergyHandler implements IEnergyHandler {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag tag = new CompoundTag();
+    public CompoundTag serialize(CompoundTag tag) {
         tag.putLong(Ref.TAG_MACHINE_ENERGY, this.energy);
         tag.putLong(Ref.TAG_MACHINE_VOLTAGE_IN, this.voltageIn);
         tag.putLong(Ref.TAG_MACHINE_VOLTAGE_OUT, this.voltageOut);
@@ -156,7 +155,7 @@ public class EnergyHandler implements IEnergyHandler {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt) {
         this.energy = nbt.getLong(Ref.TAG_MACHINE_ENERGY);
         this.voltageIn = nbt.getLong(Ref.TAG_MACHINE_VOLTAGE_IN);
         this.voltageOut = nbt.getLong(Ref.TAG_MACHINE_VOLTAGE_OUT);

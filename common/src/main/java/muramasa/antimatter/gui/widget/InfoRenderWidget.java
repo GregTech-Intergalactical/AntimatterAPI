@@ -92,13 +92,13 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
             TileEntityPipe<?> pipe = (TileEntityPipe<?>) gui.handler;
             final long pos = pipe.getBlockPos().asLong();
             gui.syncLong(() -> {
-                ITickingController controller = Tesseract.getGT_ENERGY().getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = TesseractGraphWrappers.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.getTotalVoltage();
             }, a -> this.voltAverage = a, SERVER_TO_CLIENT);
             gui.syncLong(() -> {
-                ITickingController controller = Tesseract.getGT_ENERGY().getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = TesseractGraphWrappers.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.totalAmps();
@@ -110,7 +110,7 @@ public class InfoRenderWidget<T extends InfoRenderWidget<T>> extends Widget {
                 return gt.cableFrameAverage(pos);
             }, a -> this.cableAverage = a, SERVER_TO_CLIENT);*/
             gui.syncLong(() -> {
-                ITickingController controller = Tesseract.getGT_ENERGY().getController(pipe.getLevel(), pipe.getBlockPos().asLong());
+                ITickingController controller = TesseractGraphWrappers.GT_ENERGY.getController(pipe.getLevel(), pipe.getBlockPos().asLong());
                 if (controller == null) return 0L;
                 GTController gt = (GTController) controller;
                 return gt.totalLoss();

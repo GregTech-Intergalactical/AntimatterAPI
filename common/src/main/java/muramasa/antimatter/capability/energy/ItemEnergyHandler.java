@@ -97,8 +97,7 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag nbt = new CompoundTag();
+    public CompoundTag serialize(CompoundTag nbt) {
         nbt.putLong(Ref.KEY_ITEM_ENERGY, this.energy);
         nbt.putLong(Ref.KEY_ITEM_MAX_ENERGY, this.maxEnergy);
         nbt.putBoolean(Ref.KEY_ITEM_DISCHARGE_MODE, this.discharge);
@@ -107,7 +106,7 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
+    public void deserialize(CompoundTag nbt) {
         this.energy = nbt.contains(Ref.KEY_ITEM_ENERGY_OLD) ? nbt.getLong(Ref.KEY_ITEM_ENERGY_OLD) : nbt.getLong(Ref.KEY_ITEM_ENERGY);
         this.maxEnergy = nbt.getLong(Ref.KEY_ITEM_MAX_ENERGY);
         this.discharge = nbt.getBoolean(Ref.KEY_ITEM_DISCHARGE_MODE);
