@@ -12,6 +12,7 @@ import muramasa.antimatter.ore.StoneType;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SingleItemRecipeBuilder;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -22,6 +23,7 @@ import static com.google.common.collect.ImmutableMap.of;
 
 public class StoneRecipes {
     public static void loadRecipes(Consumer<FinishedRecipe> output, AntimatterRecipeProvider provider){
+        provider.addItemRecipe(output, "minecraft", "", "furnaces","has_cobble", provider.hasSafeItem(ItemTags.STONE_TOOL_MATERIALS), Items.FURNACE, ImmutableMap.of('C', ItemTags.STONE_TOOL_MATERIALS), "CCC", "C C", "CCC");
         AntimatterAPI.all(StoneType.class).forEach(s -> {
             Material m = s.getMaterial();
             if (m.has(AntimatterMaterialTypes.ROD)){
