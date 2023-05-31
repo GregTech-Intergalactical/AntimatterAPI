@@ -33,7 +33,7 @@ public class SlotType<T extends Slot> implements IAntimatterObject {
     public static SlotType<SlotCell> CELL_OUT = new SlotType<>("cell_out", (type, gui, inv, i, d) -> new SlotCell(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> TesseractCapUtils.getFluidHandlerItem(i).isPresent(), ContentEvent.ITEM_CELL_CHANGED, false, true);
     public static SlotType<SlotEnergy> ENERGY = new SlotType<>("energy", (type, gui, inv, i, d) -> new SlotEnergy(type, gui, inv.getOrDefault(type, new EmptyHandler()), i, d.getX(), d.getY()), (t, i) -> {
         if (t instanceof BlockEntity tile) {
-            return TesseractCapUtils.getEnergyHandler(tile, null) .map(eh -> TesseractCapUtils.getEnergyHandlerItem(i).map(inner -> ((inner.getInputVoltage() | inner.getOutputVoltage()) == (eh.getInputVoltage() | eh.getOutputVoltage()))).orElse(false)).orElse(EnergyHooks.isEnergyItem(i));
+            return TesseractCapUtils.getEnergyHandler(tile, null).map(eh -> TesseractCapUtils.getEnergyHandlerItem(i).map(inner -> ((inner.getInputVoltage() | inner.getOutputVoltage()) == (eh.getInputVoltage() | eh.getOutputVoltage()))).orElse(EnergyHooks.isEnergyItem(i))).orElse(false);
         }
         return true;
     }, ContentEvent.ENERGY_SLOT_CHANGED, true, false);
