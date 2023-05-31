@@ -28,6 +28,7 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
@@ -183,7 +184,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
         }
         if (block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) {
             Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
-            tables.put(block, b -> createOreDrop(b, item));
+            tables.put(block, b -> createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(UniformGenerator.between(3.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
             return;
         }
         add(block);
