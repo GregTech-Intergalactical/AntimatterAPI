@@ -2,22 +2,28 @@ package muramasa.antimatter.capability.machine;
 
 import com.google.common.collect.ImmutableList;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
+import earth.terrarium.botarium.common.energy.base.PlatformEnergyManager;
 import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
+import earth.terrarium.botarium.common.energy.util.EnergyHooks;
 import earth.terrarium.botarium.common.item.ItemStackHolder;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.Dispatch;
 import muramasa.antimatter.capability.IMachineHandler;
 import muramasa.antimatter.capability.rf.RFHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
-import muramasa.antimatter.tile.TileEntityRFMachine;
+import muramasa.antimatter.tile.rf.TileEntityRFMachine;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MachineRFHandler<T extends TileEntityRFMachine<T>> extends RFHandler implements IMachineHandler, Dispatch.Sided<EnergyContainer> {
     protected final T tile;
@@ -28,6 +34,26 @@ public class MachineRFHandler<T extends TileEntityRFMachine<T>> extends RFHandle
     public MachineRFHandler(T tile, long energy, long capacity, int maxIn, int maxOut) {
         super(energy, capacity, maxIn, maxOut);
         this.tile = tile;
+    }
+
+    public MachineRFHandler(T tile, long capacity, boolean isGenerator) {
+        this(tile, 0, capacity, isGenerator ? 0 : tile.getMachineTier().getVoltage(), isGenerator ? tile.getMachineTier().getVoltage() : 0);
+    }
+
+    @Override
+    public void update(BlockEntity object) {
+        for (Direction dir : Ref.DIRS) {
+            if (canOutput(dir)) {
+                BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
+                if (tile == null) continue;
+                Optional<PlatformEnergyManager> handle = EnergyHooks.safeGetBlockEnergyManager(tile, dir.getOpposite());
+                handle.ifPresent(eh -> Utils.transferEnergy(this, eh));
+            }
+        }
+    }
+
+    public void update(){
+        this.update(tile);
     }
 
     @Override
@@ -130,5 +156,8 @@ public class MachineRFHandler<T extends TileEntityRFMachine<T>> extends RFHandle
     @Override
     public LazyOptional<? extends EnergyContainer> forNullSide() {
         return LazyOptional.of(() -> this);
+    }
+
+    public void onRemove() {
     }
 }
