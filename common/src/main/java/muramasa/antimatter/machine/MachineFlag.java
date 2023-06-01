@@ -25,6 +25,7 @@ public enum MachineFlag {
     FLUID_OUTPUT,
     FLUID,
     ENERGY, //Needs power
+    RF, //Uses RF instead of EU
     HEAT,
     RECIPE, //Has a recipe map
     GUI,

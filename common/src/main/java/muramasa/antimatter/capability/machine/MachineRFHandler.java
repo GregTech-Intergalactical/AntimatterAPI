@@ -15,7 +15,7 @@ import muramasa.antimatter.capability.rf.RFHandler;
 import muramasa.antimatter.machine.event.ContentEvent;
 import muramasa.antimatter.machine.event.IMachineEvent;
 import muramasa.antimatter.machine.event.MachineEvent;
-import muramasa.antimatter.tile.rf.TileEntityRFMachine;
+import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +25,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import java.util.List;
 import java.util.Optional;
 
-public class MachineRFHandler<T extends TileEntityRFMachine<T>> extends RFHandler implements IMachineHandler, Dispatch.Sided<EnergyContainer> {
+public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler implements IMachineHandler, Dispatch.Sided<EnergyContainer> {
     protected final T tile;
     protected List<Pair<ItemStack, PlatformItemEnergyManager>> cachedItems = new ObjectArrayList<>();
 
