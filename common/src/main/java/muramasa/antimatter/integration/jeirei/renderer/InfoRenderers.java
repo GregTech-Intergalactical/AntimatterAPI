@@ -65,18 +65,15 @@ public class InfoRenderers {
             if (recipe.getDuration() == 0 && recipe.getPower() == 0) return;
             String power = "Duration: " + recipe.getDuration() + " ticks";
             String euT = "RF/t: " + recipe.getPower();
-            String total = "Total: " + recipe.getPower() * recipe.getDuration() + " EU";
-            Tier tier = Tier.getTier((int) (recipe.getPower() / recipe.getAmps()));
-            String formattedText = " (" + tier.getId().toUpperCase() + ")";
+            String total = "Total: " + recipe.getPower() * recipe.getDuration() + " RF";
             renderString(stack, power, fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
             renderString(stack, euT, fontRenderer, 5, 10, guiOffsetX, guiOffsetY);
-            renderString(stack, formattedText, fontRenderer, 5 + stringWidth(euT, fontRenderer), 10, Tier.EV.getRarityFormatting().getColor(), guiOffsetX, guiOffsetY);
-            renderString(stack, total, fontRenderer, 5, 30, guiOffsetX, guiOffsetY);
+            renderString(stack, total, fontRenderer, 5, 20, guiOffsetX, guiOffsetY);
         }
 
         @Override
         public int getRows() {
-            return 4;
+            return 3;
         }
     };
 
