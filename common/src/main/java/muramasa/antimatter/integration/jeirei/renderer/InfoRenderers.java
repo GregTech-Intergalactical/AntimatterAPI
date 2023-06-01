@@ -31,7 +31,7 @@ public class InfoRenderers {
 
         @Override
         public int getRows() {
-            return 5;
+            return 4;
         }
     };
     public static final IRecipeInfoRenderer EMPTY_RENDERER = (stack, recipe, fontRenderer, guiOffsetX, guiOffsetY) -> {
@@ -56,7 +56,7 @@ public class InfoRenderers {
 
         @Override
         public int getRows() {
-            return 5;
+            return 4;
         }
     };
 
@@ -65,8 +65,8 @@ public class InfoRenderers {
         public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
             String fuelPerMb = "Fuel content(mb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids()).get(0).getAmount());
             String fuelPerB = "Fuel content(bb): " + ((double) recipe.getPower() / (double) Objects.requireNonNull(recipe.getInputFluids()).get(0).getAmount()) * 1000;
-            renderString(stack, fuelPerMb, fontRenderer, 5, 5, guiOffsetX, guiOffsetY);
-            renderString(stack, fuelPerB, fontRenderer, 5, 15, guiOffsetX, guiOffsetY);
+            renderString(stack, fuelPerMb, fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
+            renderString(stack, fuelPerB, fontRenderer, 5, 10, guiOffsetX, guiOffsetY);
         }
 
         @Override
@@ -81,9 +81,9 @@ public class InfoRenderers {
             String power = "Duration: " + recipe.getDuration() + " ticks";
             String euT = "Steam: ";
             String total = "Total steam: " + recipe.getDuration() * recipe.getPower() + " mb";
-            renderString(stack, power, fontRenderer, 5, 5, guiOffsetX, guiOffsetY);
-            renderString(stack, euT + recipe.getPower() + "mb/t", fontRenderer, 5, 15, guiOffsetX, guiOffsetY);
-            renderString(stack, total, fontRenderer, 5, 25, guiOffsetX, guiOffsetY);
+            renderString(stack, power, fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
+            renderString(stack, euT + recipe.getPower() + "mb/t", fontRenderer, 5, 10, guiOffsetX, guiOffsetY);
+            renderString(stack, total, fontRenderer, 5, 20, guiOffsetX, guiOffsetY);
         }
 
         @Override
