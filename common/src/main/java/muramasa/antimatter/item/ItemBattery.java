@@ -129,24 +129,6 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         super.appendHoverText(stack, worldIn, tooltip, flag);
     }
 
-    @Nullable
-    public CompoundTag getShareTag(ItemStack stack) {
-        CompoundTag nbt = stack.getOrCreateTag();
-        CompoundTag inner = getCastedHandler(stack).map(i -> i.serialize(new CompoundTag())).orElse(null);
-        if (inner != null) {
-            if (nbt == null) nbt = new CompoundTag();
-            nbt.put("E", inner);
-        }
-        return nbt;
-    }
-
-    public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
-        stack.setTag(nbt);
-        if (nbt != null) {
-            getCastedHandler(stack).ifPresent(t -> t.deserialize(nbt.getCompound("E")));
-        }
-    }
-
     @Override
     public IEnergyHandlerItem createEnergyHandler(TesseractItemContext context) {
         return new ItemEnergyHandler(context, cap, isReusable() ? tier.getVoltage() : 0, tier.getVoltage(), reusable ? 2 : 0, 1);

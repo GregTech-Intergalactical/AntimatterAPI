@@ -359,26 +359,4 @@ public class MaterialTool extends DiggerItem implements IAntimatterTool, IContai
     private Optional<ItemEnergyHandler> getCastedHandler(ItemStack stack) {
         return TesseractCapUtils.getEnergyHandlerItem(stack).map(e -> (ItemEnergyHandler) e);
     }
-
-    @Nullable
-    public CompoundTag getShareTag(ItemStack stack) {
-        CompoundTag nbt = stack.getTag();
-        CompoundTag inner = getCastedHandler(stack).map(i -> i.serialize(new CompoundTag())).orElse(null);
-        if (inner != null) {
-            if (nbt == null) nbt = new CompoundTag();
-            if (nbt.contains(Ref.TAG_ITEM_ENERGY_DATA)) {
-                nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA).merge(inner);
-            } else {
-                nbt.put(Ref.TAG_ITEM_ENERGY_DATA, inner);
-            }
-        }
-        return nbt;
-    }
-
-    public void readShareTag(ItemStack stack, @Nullable CompoundTag nbt) {
-        stack.setTag(nbt);
-        if (nbt != null) {
-            getCastedHandler(stack).ifPresent(t -> t.deserialize(nbt.getCompound(Ref.TAG_ITEM_ENERGY_DATA)));
-        }
-    }
 }
