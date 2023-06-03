@@ -25,7 +25,7 @@ public class AntimatterAPIImpl {
         FluidStorage.SIDED.registerForBlockEntity((be, direction) -> be.fluidHandler.side(direction).map(f -> f).orElse(null), type);
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(i -> i).orElse(null), type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
-        TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.side(direction).map(i -> i).orElse(null), type);
+        TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.side(direction).map(i -> i).orElse(null), (be, direction) -> null, type);
         if (AntimatterAPI.isModLoaded("modern_industrialization")) {
             TesseractImpl.registerMITile((be, direction) -> be.energyHandler.side(direction).map(i -> i).orElse(null), type);
         }
@@ -48,7 +48,7 @@ public class AntimatterAPIImpl {
         TesseractImpl.registerTRETile((be, direction) -> {
             if (!(be instanceof TileEntityCable<?> cable)) return null;
             return (IEnergyHandler) cable.getPipeCapHolder().side(direction).map(f -> f).orElse(null);
-        }, type);
+        }, (be, direction) -> null, type);
         if (AntimatterAPI.isModLoaded("modern_industrialization")) {
             TesseractImpl.registerMITile((be, direction) -> {
                 if (!(be instanceof TileEntityCable<?> cable)) return null;
