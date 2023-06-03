@@ -49,6 +49,10 @@ public class BlockStoneStair extends StairBlock implements ISharedAntimatterObje
         return id;
     }
 
+    public String getSuffix() {
+        return suffix;
+    }
+
     @Override
     public Texture[] getTextures() {
         return new Texture[]{new Texture(type.getDomain(), type.getBeginningPath() + type.getId() + "/" + (suffix.isEmpty() ? "stone" : suffix))};

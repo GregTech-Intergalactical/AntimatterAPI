@@ -28,6 +28,7 @@ public class Tier implements ISharedAntimatterObject {
     //TODO make these Tier 0 and 1?
     public static Tier BRONZE = new Tier(Ref.ID, "bronze", 0, ChatFormatting.WHITE);
     public static Tier STEEL = new Tier(Ref.ID, "steel", 0, ChatFormatting.WHITE);
+    public static Tier NONE = new Tier(Ref.ID, "none", 0, ChatFormatting.WHITE);
 
     private final String domain, id;
     private final int voltage;

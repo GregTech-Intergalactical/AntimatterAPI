@@ -39,6 +39,10 @@ public class BlockStoneWall extends WallBlock implements ISharedAntimatterObject
         return props;
     }
 
+    public String getSuffix() {
+        return suffix;
+    }
+
     @Override
     public String getId() {
         return id;

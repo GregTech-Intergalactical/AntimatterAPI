@@ -304,7 +304,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public BlockMachine getBlockState(Tier tier) {
         if (tileType == null) return null;
-        return AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), this.getDomain());
+        return AntimatterAPI.get(BlockMachine.class, this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), this.getDomain());
     }
 
     /**
@@ -314,7 +314,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getId() + "_" + tier.getId(), getDomain()));
+        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), getDomain()));
     }
 
     /**
@@ -492,6 +492,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T setTiers(Tier... tiers) {
+        boolean none = false;
+        for (Tier t : tiers){
+            if (t == Tier.NONE) none = true;
+        }
+        if (none) this.setTierSpecificLang();
         this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
         return (T) this;
     }
