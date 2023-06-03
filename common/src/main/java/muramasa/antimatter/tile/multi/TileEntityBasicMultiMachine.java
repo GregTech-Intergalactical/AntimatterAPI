@@ -181,7 +181,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         else if (cap == IEnergyHandler.class && energyHandler.isPresent()
                 && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
             return energyHandler.side(side).cast();
-        else if (cap == IRFNode.class && energyHandler.isPresent()
+        else if (cap == IRFNode.class && rfHandler.isPresent()
                 && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
             return rfHandler.side(side).cast();
         return LazyOptional.empty();
