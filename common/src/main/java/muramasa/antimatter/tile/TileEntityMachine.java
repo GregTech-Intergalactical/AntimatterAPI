@@ -1,6 +1,5 @@
 package muramasa.antimatter.tile;
 
-import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterProperties;
@@ -70,6 +69,7 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.rf.IRFNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -115,7 +115,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>(IFluidHandler.class, dispatch);
     public Holder<ICoverHandler<?>, MachineCoverHandler<T>> coverHandler = new Holder<>(ICoverHandler.class, dispatch, null);
     public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(IEnergyHandler.class, dispatch);
-    public Holder<EnergyContainer, MachineRFHandler<T>> rfHandler = new Holder<>(EnergyContainer.class, dispatch);
+    public Holder<IRFNode, MachineRFHandler<T>> rfHandler = new Holder<>(IRFNode.class, dispatch);
     public Holder<MachineRecipeHandler<?>, MachineRecipeHandler<T>> recipeHandler = new Holder<>(MachineRecipeHandler.class, dispatch, null);
 
     /**
@@ -241,7 +241,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public void serverTick(Level level, BlockPos pos, BlockState state) {
         itemHandler.ifPresent(MachineItemHandler::onUpdate);
         energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
-        rfHandler.ifPresent(MachineRFHandler::update);
+        rfHandler.ifPresent(MachineRFHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
         this.recipeHandler.ifPresent(MachineRecipeHandler::onServerUpdate);

@@ -1,5 +1,6 @@
 package muramasa.antimatter.common.event.forge;
 
+import earth.terrarium.botarium.forge.energy.ForgeEnergyContainer;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
@@ -30,11 +31,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.TagsUpdatedEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -48,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.api.forge.Provider;
 import tesseract.api.forge.TesseractCaps;
+import tesseract.api.rf.IRFNode;
 
 import static muramasa.antimatter.material.Material.NULL;
 import static net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY;
@@ -203,8 +201,13 @@ public class ForgeCommonEvents {
                     }
                     for (TileEntityBasicMultiMachine<?> controller : fakeBlock.controllers) {
                         LazyOptional<T> opt = controller.getCapabilityFromFake((Class<T>) AntimatterCaps.CAP_MAP.inverse().get(capability), fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
-                        if (opt.isPresent())
+                        if (opt.isPresent()) {
+                            if (capability == CapabilityEnergy.ENERGY && opt.map(e -> e instanceof IRFNode).orElse(false)){
+                                LazyOptional<T> finalOpt = opt;
+                                opt = LazyOptional.of(() -> finalOpt.map(e -> new ForgeEnergyContainer<>(((IRFNode)e), fakeBlock)).get()).cast();
+                            }
                             return opt;
+                        }
                     }
                     return LazyOptional.empty();
                 }
@@ -232,8 +235,13 @@ public class ForgeCommonEvents {
                     if (cap == AntimatterCaps.RECIPE_HANDLER_CAPABILITY && machine.recipeHandler.isPresent()) return machine.recipeHandler.side(side).cast();
 
                     else if (cap == FLUID_HANDLER_CAPABILITY && machine.fluidHandler.isPresent()) return machine.fluidHandler.side(side).cast();
-                    else if ((cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) && machine.energyHandler.isPresent())
-                        return machine.energyHandler.side(side).cast();
+                    else if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) {
+                        if (machine.energyHandler.isPresent()) {
+                            return machine.energyHandler.side(side).cast();
+                        } else if (cap == CapabilityEnergy.ENERGY && machine.rfHandler.isPresent()){
+                            return LazyOptional.of(() -> new ForgeEnergyContainer<>(machine.rfHandler.side(side).map(i -> i).orElseThrow(), machine)).cast();
+                        }
+                    }
                     return LazyOptional.empty();
                 }
             });
@@ -246,17 +254,25 @@ public class ForgeCommonEvents {
                     if (side == null) return LazyOptional.empty();
                     if (capability == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && pipe.coverHandler.isPresent()) return pipe.coverHandler.cast();
                     if (!pipe.connects(side)) return LazyOptional.empty();
+                    if (capability == CapabilityEnergy.ENERGY) {
+                        if (pipe instanceof TileEntityCable<?>) {
+                            return pipe.getPipeCapHolder().side(side).cast();
+                        }
+                    }
                     try {
                         if (capability == AntimatterCaps.CAP_MAP.get(pipe.getCapClass())){
-                            return pipe.getPipeCapHolder().side(side).cast();
+                            LazyOptional<T> cap = pipe.getPipeCapHolder().side(side).cast();
+                            if (capability == CapabilityEnergy.ENERGY && cap.map(e -> e instanceof IRFNode).orElse(false)){
+                                LazyOptional<T> finalOpt = cap;
+                                cap = LazyOptional.of(() -> finalOpt.map(e -> new ForgeEnergyContainer<>(((IRFNode)e), pipe)).get()).cast();
+                            }
+                            return cap;
                         }
                     } catch (Exception e){
                         e.printStackTrace();
                         return LazyOptional.empty();
                     }
-                    if (capability == CapabilityEnergy.ENERGY && pipe instanceof TileEntityCable<?>){
-                        return pipe.getPipeCapHolder().side(side).cast();
-                    }
+
                     return LazyOptional.empty();
                 }
             });

@@ -12,7 +12,7 @@ import tesseract.api.gt.GTTransaction;
 import tesseract.api.rf.IRFNode;
 
 
-public class RFHandler implements IRFNode, Updatable<BlockEntity> {
+public class RFHandler implements IRFNode {
 
     protected final long capacity;
 
@@ -119,10 +119,5 @@ public class RFHandler implements IRFNode, Updatable<BlockEntity> {
     @Override
     public void clearContent() {
         this.energy = 0;
-    }
-
-    @Override
-    public void update(BlockEntity object) {
-
     }
 }

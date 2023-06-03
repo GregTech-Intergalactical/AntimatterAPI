@@ -1,7 +1,6 @@
 package muramasa.antimatter.capability.machine;
 
 import com.google.common.collect.ImmutableList;
-import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.PlatformEnergyManager;
 import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
 import earth.terrarium.botarium.common.energy.util.EnergyHooks;
@@ -21,11 +20,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.LazyOptional;
+import tesseract.api.rf.IRFNode;
 
 import java.util.List;
 import java.util.Optional;
 
-public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler implements IMachineHandler, Dispatch.Sided<EnergyContainer> {
+public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler implements IMachineHandler, Dispatch.Sided<IRFNode> {
     protected final T tile;
     protected List<Pair<ItemStack, PlatformItemEnergyManager>> cachedItems = new ObjectArrayList<>();
 
@@ -40,8 +40,7 @@ public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler 
         this(tile, 0, capacity, isGenerator ? 0 : tile.getMachineTier().getVoltage(), isGenerator ? tile.getMachineTier().getVoltage() : 0);
     }
 
-    @Override
-    public void update(BlockEntity object) {
+    public void onUpdate(){
         for (Direction dir : Ref.DIRS) {
             if (canOutput(dir)) {
                 BlockEntity tile = this.tile.getLevel().getBlockEntity(this.tile.getBlockPos().relative(dir));
@@ -50,10 +49,6 @@ public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler 
                 handle.ifPresent(eh -> Utils.transferEnergy(this, eh));
             }
         }
-    }
-
-    public void update(){
-        this.update(tile);
     }
 
     @Override
@@ -149,12 +144,12 @@ public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler 
     }
 
     @Override
-    public LazyOptional<? extends EnergyContainer> forSide(Direction side) {
+    public LazyOptional<? extends IRFNode> forSide(Direction side) {
         return LazyOptional.of(() -> this);
     }
 
     @Override
-    public LazyOptional<? extends EnergyContainer> forNullSide() {
+    public LazyOptional<? extends IRFNode> forNullSide() {
         return LazyOptional.of(() -> this);
     }
 

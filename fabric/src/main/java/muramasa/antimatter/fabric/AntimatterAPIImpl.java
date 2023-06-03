@@ -26,6 +26,7 @@ public class AntimatterAPIImpl {
         ItemStorage.SIDED.registerForBlockEntity((be, direction) -> be.itemHandler.side(direction).map(i -> i).orElse(null), type);
         TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> be.energyHandler.map(i -> i).orElse(null), type);
         TesseractImpl.registerTRETile((be, direction) -> be.energyHandler.side(direction).map(i -> i).orElse(null), type);
+        TesseractImpl.registerRFTRETile((be, direction) -> be.rfHandler.side(direction).resolve().orElse(null), type);
         if (AntimatterAPI.isModLoaded("modern_industrialization")) {
             TesseractImpl.registerMITile((be, direction) -> be.energyHandler.side(direction).map(i -> i).orElse(null), type);
         }
