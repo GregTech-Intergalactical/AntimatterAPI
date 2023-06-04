@@ -266,6 +266,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             recipeHandler.ifPresent(MachineRecipeHandler::onRemove);
 
             dispatch.invalidate();
+        } else {
+            if (level != null) SoundHelper.clear(level, worldPosition);
         }
     }
 
@@ -456,6 +458,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     protected void disableMachine() {
         disabledState = getMachineState();
         if (!has(GENERATOR)) recipeHandler.ifPresent(MachineRecipeHandler::resetProgress);
+        if (level != null && level.isClientSide) SoundHelper.clear(level, this.getBlockPos());
         setMachineState(MachineState.DISABLED);
     }
 
