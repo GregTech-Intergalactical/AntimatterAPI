@@ -35,6 +35,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -55,6 +56,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.fluids.FluidActionResult;
 import net.minecraftforge.fluids.FluidUtil;
@@ -143,13 +145,13 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         InteractionResult ty; //= onBlockActivatedBoth(state, world, pos, player, hand, hit);
-        if (!world.isClientSide) {
-            TileEntityMachine<?> tile = (TileEntityMachine<?>) world.getBlockEntity(pos);
-            if (tile != null) {
-                ItemStack stack = player.getItemInHand(hand);
-                AntimatterToolType type = Utils.getToolType(player);
-                ty = tile.onInteract(state, world, pos, player, hand, hit, type);
-                if (ty.consumesAction()) return ty;
+        TileEntityMachine<?> tile = (TileEntityMachine<?>) world.getBlockEntity(pos);
+        if (tile != null) {
+            ItemStack stack = player.getItemInHand(hand);
+            AntimatterToolType type = Utils.getToolType(player);
+            ty = tile.onInteractBoth(state, world, pos, player, hand, hit, type);
+            if (ty.consumesAction()) return ty;
+            if (!world.isClientSide) {
                 if (hand == InteractionHand.MAIN_HAND) {
                     if (player.getItemInHand(hand).getItem() instanceof IHaveCover) {
                         CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
@@ -247,19 +249,29 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     @Override
     public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
-        return super.getDrops(state, builder);
+        List<ItemStack> list = super.getDrops(state, builder);
+        BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (tileentity instanceof TileEntityMachine<?> machine){
+            machine.onDrop(state, builder, list);
+            machine.itemHandler.ifPresent(t -> list.addAll(t.getAllItems()));
+            machine.coverHandler.ifPresent(t -> list.addAll(t.getDrops()));
+        }
+        return list;
+    }
+
+    @Override
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(world, pos, state, placer, stack);
+        BlockEntity tileEntity = world.getBlockEntity(pos);
+        if (tileEntity instanceof TileEntityMachine<?> machine){
+            machine.onPlacedBy(world, pos, state, placer, stack);
+        }
     }
 
     @Override
     public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock())) {
-            if (!worldIn.isClientSide) {
-                BlockEntity tile = worldIn.getBlockEntity(pos);
-                if (tile == null) return;
-                TileEntityMachine<?> machine = (TileEntityMachine<?>) tile;
-                machine.itemHandler.ifPresent(t -> t.getAllItems().forEach(stack -> Containers.dropItemStack(worldIn, machine.getBlockPos().getX(), machine.getBlockPos().getY(), machine.getBlockPos().getZ(), stack)));
-                machine.coverHandler.ifPresent(t -> t.getDrops().forEach(stack -> Containers.dropItemStack(worldIn, machine.getBlockPos().getX(), machine.getBlockPos().getY(), machine.getBlockPos().getZ(), stack)));
-            } else {
+            if (worldIn.isClientSide) {
                 SoundHelper.clear(worldIn, pos);
             }
         }
@@ -284,6 +296,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
                 tooltip.add(new TranslatableComponent("machine.power.capacity").append(": ").append(new TextComponent("" + (getTier().getVoltage() * 64))).withStyle(ChatFormatting.BLUE));
             }
         }
+        this.type.getTooltipFunction().getTooltips(stack, world, tooltip, flag);
     }
 
     @Override

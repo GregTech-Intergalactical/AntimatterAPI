@@ -19,10 +19,7 @@ import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
-import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.*;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
@@ -81,6 +78,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
+    protected ITooltipInfo tooltipFunction = (s,w,t,f) -> {};
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
@@ -317,6 +315,10 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
         return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), getDomain()));
     }
 
+    public ITooltipInfo getTooltipFunction() {
+        return tooltipFunction;
+    }
+
     /**
      * Registers the recipemap into JEI. This can be overriden in RecipeMap::setGuiData.
      */
@@ -398,6 +400,19 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setItemBlockClass(Supplier<Class<? extends BlockMachine>> function){
         this.itemClassSupplier = function;
+        return (T) this;
+    }
+
+    public T setTooltipInfo(String translationKey){
+        return setTooltipInfo((s,w,t,f) -> t.add(new TranslatableComponent(translationKey)));
+    }
+
+    public T setTooltipInfo(Component tooltip){
+        return setTooltipInfo((s,w,t,f) -> t.add(tooltip));
+    }
+
+    public T setTooltipInfo(ITooltipInfo info){
+        this.tooltipFunction = info;
         return (T) this;
     }
 
