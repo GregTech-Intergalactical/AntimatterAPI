@@ -102,6 +102,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     protected long lastSoundTime;
 
+    protected boolean muffled = false;
+
     @Environment(EnvType.CLIENT)
     public SoundInstance playingSound;
 
@@ -312,6 +314,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getMachineTier();
     }
 
+    public boolean isMuffled() {
+        return muffled;
+    }
+
     public boolean has(MachineFlag flag) {
         return getMachineType().has(flag);
     }
@@ -403,6 +409,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getDomain();
     }
 
+    public void setMuffled(boolean muffled) {
+        this.muffled = muffled;
+        sidedSync(true);
+        if (this.muffled && level != null && level.isClientSide) SoundHelper.clear(level, this.getBlockPos());
+    }
+
     // TODO: Fix
     public Direction getOutputFacing() {
         if (type.getOutputCover() != null && !(type.getOutputCover() == ICover.emptyFactory) && coverHandler.isPresent()) {
@@ -485,7 +497,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             setChanged();
             if (this.level != null && this.level.isClientSide && this.getMachineType().machineNoise != null) {
                 if (newState == MachineState.ACTIVE) {
-                    SoundHelper.startLoop(this.type, level, this.getBlockPos());
+                    if (!muffled) SoundHelper.startLoop(this.type, level, this.getBlockPos());
                 } else if (old == MachineState.ACTIVE) {
                     SoundHelper.clear(level, this.getBlockPos());
                 }
@@ -579,6 +591,9 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
 
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
+        if (tag.contains(Ref.KEY_MACHINE_MUFFLED)) {
+            setMuffled(tag.getBoolean(Ref.KEY_MACHINE_MUFFLED));
+        }
         if (tag.contains(Ref.KEY_MACHINE_STATE_D)) {
             disabledState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE_D)];
         }
@@ -604,6 +619,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         super.saveAdditional(tag);
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
+        tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         if (disabledState != null)
             tag.putInt(Ref.KEY_MACHINE_STATE_D, disabledState.ordinal());
         itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serializeNBT()));

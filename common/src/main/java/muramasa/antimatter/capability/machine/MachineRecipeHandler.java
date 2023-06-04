@@ -298,7 +298,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
             }
             if (!generator){
                 tickTimer += WAIT_TIME_POWER_LOSS;
-                if (tile.getMachineState() == ACTIVE) tile.getLevel().playSound(null, tile.getBlockPos(), Ref.INTERRUPT, SoundSource.BLOCKS, 1.0f, 1.0f);
+                if (tile.getMachineState() == ACTIVE && !tile.isMuffled()) tile.getLevel().playSound(null, tile.getBlockPos(), Ref.INTERRUPT, SoundSource.BLOCKS, 1.0f, 1.0f);
                 return POWER_LOSS;
             } else {
                 tickTimer += 10;
