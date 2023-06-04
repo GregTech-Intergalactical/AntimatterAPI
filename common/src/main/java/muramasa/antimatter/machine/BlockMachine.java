@@ -70,6 +70,7 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WRENCH_MATERIAL;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
+import static muramasa.antimatter.machine.MachineFlag.RF;
 
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
 
@@ -290,7 +291,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
-        if (getType().has(BASIC)) {
+        if (getType().has(BASIC) && !getType().has(RF)) {
             if (getTier().getVoltage() > 0) {
                 tooltip.add(new TranslatableComponent("machine.voltage.in").append(": ").append(new TextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
                 tooltip.add(new TranslatableComponent("machine.power.capacity").append(": ").append(new TextComponent("" + (getTier().getVoltage() * 64))).withStyle(ChatFormatting.BLUE));

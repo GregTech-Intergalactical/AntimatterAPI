@@ -216,7 +216,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     protected void calculateDurations() {
         maxProgress = activeRecipe.getDuration();
-        if (!generator) {
+        if (!generator && !tile.has(MachineFlag.RF)) {
             overclock = getOverclock();
             this.maxProgress = Math.max(1, maxProgress >> overclock);
         }
