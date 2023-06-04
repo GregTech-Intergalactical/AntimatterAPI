@@ -104,6 +104,10 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         checkRecipe();
     }
 
+    public void resetProgress(){
+        this.currentProgress = 0;
+    }
+
     public void onServerUpdate() {
         //First, a few timer related tasks that ensure the machine can recover from certain situations.
         if (tickingRecipe) return;

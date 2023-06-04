@@ -455,6 +455,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     protected void disableMachine() {
         disabledState = getMachineState();
+        if (!has(GENERATOR)) recipeHandler.ifPresent(MachineRecipeHandler::resetProgress);
         setMachineState(MachineState.DISABLED);
     }
 
