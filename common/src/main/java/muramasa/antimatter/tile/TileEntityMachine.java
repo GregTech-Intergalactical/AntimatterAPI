@@ -538,8 +538,16 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return builder.build();
     }
 
-    public InteractionResult onInteract(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
+    public InteractionResult onInteractBoth(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
         //DEFAULT
+        return isServerSide() ? onInteractServer(state, world, pos, player, hand, hit, type) : onInteractClient(state, world, pos, player, hand, hit, type);
+    }
+
+    public InteractionResult onInteractServer(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type){
+        return InteractionResult.PASS;
+    }
+
+    public InteractionResult onInteractClient(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type){
         return InteractionResult.PASS;
     }
 

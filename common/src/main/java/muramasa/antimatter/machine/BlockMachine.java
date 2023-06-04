@@ -143,13 +143,13 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     @Override
     public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         InteractionResult ty; //= onBlockActivatedBoth(state, world, pos, player, hand, hit);
-        if (!world.isClientSide) {
-            TileEntityMachine<?> tile = (TileEntityMachine<?>) world.getBlockEntity(pos);
-            if (tile != null) {
-                ItemStack stack = player.getItemInHand(hand);
-                AntimatterToolType type = Utils.getToolType(player);
-                ty = tile.onInteract(state, world, pos, player, hand, hit, type);
-                if (ty.consumesAction()) return ty;
+        TileEntityMachine<?> tile = (TileEntityMachine<?>) world.getBlockEntity(pos);
+        if (tile != null) {
+            ItemStack stack = player.getItemInHand(hand);
+            AntimatterToolType type = Utils.getToolType(player);
+            ty = tile.onInteractBoth(state, world, pos, player, hand, hit, type);
+            if (ty.consumesAction()) return ty;
+            if (!world.isClientSide) {
                 if (hand == InteractionHand.MAIN_HAND) {
                     if (player.getItemInHand(hand).getItem() instanceof IHaveCover) {
                         CoverFactory factory = ((IHaveCover) stack.getItem()).getCover();
