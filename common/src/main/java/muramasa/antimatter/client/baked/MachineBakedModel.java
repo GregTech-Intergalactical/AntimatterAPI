@@ -51,11 +51,12 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
                 ? extra.getData(AntimatterProperties.MULTI_TEXTURE_PROPERTY).apply(side)
                 : data.machTexture.apply(side);
         List<BakedQuad> list = new ObjectArrayList<>();
-        for (Direction s : Ref.DIRS) {
-            list = data.coverTexturer.apply(side).getQuads("cover", list, state, cover,
-            new ICover.DynamicKey(state, tex, cover.getId()), s.get3DDataValue(),
-            extra);
-        }
+        list = data.coverTexturer.apply(side).getQuads("cover", list, state, cover,
+                new ICover.DynamicKey(state, tex, cover.getId()), side.get3DDataValue(),
+                extra);
+        /*for (Direction s : Ref.DIRS) {
+
+        }*/
         return list;
     }
     @Override
