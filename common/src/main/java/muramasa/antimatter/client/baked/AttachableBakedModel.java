@@ -7,7 +7,9 @@ import muramasa.antimatter.dynamic.DynamicBakedModel;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 
@@ -30,17 +32,18 @@ public class AttachableBakedModel extends DynamicBakedModel {
 
     @Nonnull
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos) {
         try {
             if (onlyGeneralQuads && side != null) return Collections.emptyList();
             if (state == null) {
-                return getItemQuads(side, rand, data);
+                return Collections.emptyList();
+                //return getItemQuads(side, rand, data); //TODO item quads
             }
             if (side != null) return Collections.emptyList();
             List<BakedQuad> quads = new ObjectArrayList<>();
-            quads.addAll(getBlockQuads(state, null, rand, data));
+            quads.addAll(getBlockQuads(state, null, rand, level, pos));
             for (Direction dir : Ref.DIRS) {
-                quads.addAll(getBlockQuads(state, dir, rand, data));
+                quads.addAll(getBlockQuads(state, dir, rand, level, pos));
             }
             return quads;
         } catch (Exception e) {
@@ -50,17 +53,17 @@ public class AttachableBakedModel extends DynamicBakedModel {
     }
 
     @Override
-    public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public final List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos) {
         //if (side != null) return super.getBlockQuads(state, side, rand, data);
         // if (side == null) return super.getBlockQuads(state, null,rand,data);
         //if (side == null) return super.getBlockQuads(state,null,rand,data);
         if (side == null) return Collections.emptyList();
-        List<BakedQuad> sideQuads = attachQuadsForSide(state, side, rand, data);
-        if (sideQuads.size() == 0) return super.getBlockQuads(state, side, rand, data);
+        List<BakedQuad> sideQuads = attachQuadsForSide(state, side, rand, level, pos);
+        if (sideQuads.size() == 0) return super.getBlockQuads(state, side, rand, level, pos);
         return sideQuads;
     }
 
-    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    protected List<BakedQuad> attachQuadsForSide(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos) {
         return Collections.emptyList();
     }
 }

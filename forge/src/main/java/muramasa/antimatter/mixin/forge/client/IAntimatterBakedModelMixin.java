@@ -25,19 +25,13 @@ public interface IAntimatterBakedModelMixin extends IDynamicBakedModel {
     boolean hasOnlyGeneralQuads();
 
     @Shadow
-    List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos);
+    List<BakedQuad> getQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos);
 
     @NotNull
     @Override
     default List<BakedQuad> getQuads(@javax.annotation.Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data){
-        try {
-            if (this.hasOnlyGeneralQuads() && side != null) return Collections.emptyList();
-            if (!data.hasProperty(AntimatterModelProperties.WORLD) || !data.hasProperty(AntimatterModelProperties.POS)) return Collections.emptyList();
-            return state != null ? getBlockQuads(state, side, rand, data.getData(AntimatterModelProperties.WORLD), data.getData(AntimatterModelProperties.POS)) : Collections.emptyList(); //todo figure out item quads if necessary
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
+        if (!data.hasProperty(AntimatterModelProperties.WORLD) || !data.hasProperty(AntimatterModelProperties.POS)) return Collections.emptyList();
+        return getQuads(state, side, rand, data.getData(AntimatterModelProperties.WORLD), data.getData(AntimatterModelProperties.POS));
     }
 
     @NotNull

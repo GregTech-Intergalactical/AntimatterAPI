@@ -13,8 +13,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -41,17 +39,11 @@ public interface IAntimatterBakedModelMixin extends FabricBakedModel, BakedModel
 
     @Override
     default void emitBlockQuads(BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context){
-        BakedModel ref = this;
+        IAntimatterBakedModel ref = (IAntimatterBakedModel) this;
         context.bakedModelConsumer().accept(new BakedModel() {
             @Override
             public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) {
-                try {
-                    if (hasOnlyGeneralQuads() && side != null) return Collections.emptyList();
-                    return state != null ? getBlockQuads(state, side, rand, blockView, pos) : Collections.emptyList(); //todo figure out item quads if necessary
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return Collections.emptyList();
-                }
+                return ref.getQuads(state, side, rand, blockView, pos);
             }
 
             @Override
@@ -88,11 +80,11 @@ public interface IAntimatterBakedModelMixin extends FabricBakedModel, BakedModel
             public ItemOverrides getOverrides() {
                 return ref.getOverrides();
             }
-        });
+        }, state);
     }
 
     @Override
     default void emitItemQuads(ItemStack stack, Supplier<Random> randomSupplier, RenderContext context){
-        context.fallbackConsumer().accept((BakedModel) this);
+        context.bakedModelConsumer().accept(this);
     }
 }

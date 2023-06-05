@@ -18,6 +18,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 import org.jetbrains.annotations.NotNull;
@@ -43,12 +44,10 @@ public class PipeBakedModel extends DynamicBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data) {
-        if (!data.hasProperty(AntimatterProperties.TILE_PROPERTY))
-            return super.getBlockQuads(state, side, rand, data);
+    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data, BlockAndTintGetter level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!(blockEntity instanceof TileEntityPipe<?> pipe)) return super.getBlockQuads(state, side, rand, level, pos);
         List<BakedQuad> quads = super.getBlockQuads(state, side, rand, data);
-        TileEntityBase<?> base = data.getData(AntimatterProperties.TILE_PROPERTY);
-        if (!(base instanceof TileEntityPipe<?> pipe)) return quads;
         PipeCoverHandler<?> covers = pipe.coverHandler.orElse(null);
         List<BakedQuad> coverQuads = new LinkedList<>();
         if (covers == null)

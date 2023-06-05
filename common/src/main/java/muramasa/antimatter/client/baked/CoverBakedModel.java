@@ -7,7 +7,10 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 
@@ -26,13 +29,14 @@ public class CoverBakedModel extends GroupedBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos) {
+        BlockEntity entity = level.getBlockEntity(pos);
         EnumMap<Direction, Byte> bitmap = data.getData(AntimatterProperties.COVER_REMOVAL);
         if (bitmap == null) return super.getBlockQuads(state, side, rand, data);
         Byte f = bitmap.get(side);
         if (f == null) return Collections.emptyList();
         byte filter = f;
-        return this.models.entrySet().stream().filter(t -> {
+        return this.models.entrySet().stream().filter(t -> {new EnumMap<>(Direction.class);
             String key = t.getKey();
             if (key.isEmpty()) return true;
             Direction dir = Direction.byName(key);
@@ -43,12 +47,9 @@ public class CoverBakedModel extends GroupedBakedModel {
     }
 
     @Nonnull
-    public static IModelData addCoverModelData(Direction side, ICoverHandler<?> handler, @Nonnull IModelData tileData) {
-        if (handler == null) return tileData;
-        EnumMap<Direction, Byte> map = tileData.getData(AntimatterProperties.COVER_REMOVAL);
-        if (map == null) {
-            map = new EnumMap<>(Direction.class);
-        }
+    public static EnumMap<Direction, Byte> addCoverModelData(Direction side, ICoverHandler<?> handler, @Nonnull IModelData tileData) {;
+        EnumMap<Direction, Byte> map = new EnumMap<>(Direction.class);
+        if (handler == null) return map;
         byte value = (byte) 0;
         for (Direction dir : new Direction[]{Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN}) {
             Direction rotated = Utils.rotate(side, dir);
@@ -58,8 +59,6 @@ public class CoverBakedModel extends GroupedBakedModel {
             }
         }
         map.put(side, value);
-
-        tileData.setData(AntimatterProperties.COVER_REMOVAL, map);
-        return tileData;
+        return map;
     }
 }

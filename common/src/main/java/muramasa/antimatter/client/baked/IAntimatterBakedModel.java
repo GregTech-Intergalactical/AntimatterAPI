@@ -17,6 +17,16 @@ import java.util.Random;
 public interface IAntimatterBakedModel extends BakedModel {
     List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos);
 
+     default List<BakedQuad> getQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos){
+         try {
+             if (hasOnlyGeneralQuads() && side != null) return Collections.emptyList();
+             return state != null ? getBlockQuads(state, side, rand, level, pos) : Collections.emptyList(); //todo figure out item quads if necessary
+         } catch (Exception e) {
+             e.printStackTrace();
+             return Collections.emptyList();
+         }
+     }
+
     boolean hasOnlyGeneralQuads();
     @Override
     default List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState state, @org.jetbrains.annotations.Nullable Direction side, Random rand) {

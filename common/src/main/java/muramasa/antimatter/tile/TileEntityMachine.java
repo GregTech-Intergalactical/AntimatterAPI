@@ -81,6 +81,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import static muramasa.antimatter.gui.event.GuiEvents.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvents.ITEM_EJECT;
@@ -547,6 +548,18 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
 
         return builder.build();
+    }
+
+    public Function<Direction, Texture> getMultiTexture(){
+        TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
+        if (mTile != null) {
+            return a -> {
+                Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
+                if (tex.length == 1) return tex[0];
+                return tex[a.get3DDataValue()];
+            };
+        }
+        return null;
     }
 
     public InteractionResult onInteractBoth(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {

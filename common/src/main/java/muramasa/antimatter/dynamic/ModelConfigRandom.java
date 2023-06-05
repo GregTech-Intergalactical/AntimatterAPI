@@ -1,10 +1,12 @@
 package muramasa.antimatter.dynamic;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.antimatter.client.ModelUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.IModelData;
 
@@ -23,12 +25,12 @@ public class ModelConfigRandom extends ModelConfig {
     }
 
     @Override
-    public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<BakedModel[]> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getQuads(List<BakedQuad> quads, Int2ObjectOpenHashMap<BakedModel[]> bakedConfigs, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos) {
         //setModelIndex(config[rand.nextInt(config.length)]);
         BakedModel[] baked = bakedConfigs.get(getModelIndex());
         if (baked != null) {
             for (int i = 0; i < baked.length; i++) {
-                quads.addAll(baked[i].getQuads(state, side, rand, data));
+                quads.addAll(ModelUtils.getQuadsFromBaked(baked[i], state, side, rand, level, pos));
             }
         }
         return quads;
