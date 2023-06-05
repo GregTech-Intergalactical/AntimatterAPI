@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.Tesseract;
 import tesseract.TesseractCapUtils;
+import tesseract.TesseractGraphWrappers;
 import tesseract.api.capability.TesseractGTCapability;
 import tesseract.api.gt.GTHolder;
 import tesseract.api.gt.IEnergyHandler;
@@ -46,12 +47,12 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
 
     @Override
     protected void register() {
-        Tesseract.getGT_ENERGY().registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
+        TesseractGraphWrappers.GT_ENERGY.registerConnector(getLevel(), getBlockPos().asLong(), this, isConnector());
     }
 
     @Override
     protected boolean deregister() {
-        return Tesseract.getGT_ENERGY().remove(getLevel(), getBlockPos().asLong());
+        return TesseractGraphWrappers.GT_ENERGY.remove(getLevel(), getBlockPos().asLong());
     }
 
     @Override
@@ -62,7 +63,7 @@ public class TileEntityCable<T extends PipeType<T>> extends TileEntityPipe<T> im
     @Override
     public void onBlockUpdate(BlockPos neighbour) {
         super.onBlockUpdate(neighbour);
-        Tesseract.getGT_ENERGY().blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
+        TesseractGraphWrappers.GT_ENERGY.blockUpdate(getLevel(), getBlockPos().asLong(), neighbour.asLong());
     }
 
     @Override

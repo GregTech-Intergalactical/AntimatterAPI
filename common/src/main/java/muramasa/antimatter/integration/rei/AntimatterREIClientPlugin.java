@@ -97,7 +97,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
         if (!AntimatterConfig.CLIENT.SHOW_ALL_ORES){
             AntimatterMaterialTypes.ORE.all().forEach(m -> {
                 AntimatterAPI.all(StoneType.class, s -> {
-                    if (s != AntimatterStoneTypes.STONE && s.generateOre){
+                    if (s != AntimatterStoneTypes.STONE && s != AntimatterStoneTypes.SAND && s.generateOre){
                         Block ore = AntimatterMaterialTypes.ORE.get().get(m, s).asBlock();
                         if (ore instanceof BlockOre){
                             rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, new ItemStack(ore)));

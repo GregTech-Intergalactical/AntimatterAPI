@@ -38,6 +38,10 @@ public class BlockStoneSlab extends SlabBlock implements ISharedAntimatterObject
         return props;
     }
 
+    public String getSuffix() {
+        return suffix;
+    }
+
     @Override
     public String getId() {
         return id;

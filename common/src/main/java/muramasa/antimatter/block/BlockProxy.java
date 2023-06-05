@@ -32,7 +32,7 @@ import java.util.Set;
 
 public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, EntityBlock {
 
-    public BlockEntityType<?> TYPE;
+    public BlockEntityType<TileEntityFakeBlock> TYPE;
 
     public BlockProxy(String domain, String id, Properties properties) {
         super(domain, id, properties);

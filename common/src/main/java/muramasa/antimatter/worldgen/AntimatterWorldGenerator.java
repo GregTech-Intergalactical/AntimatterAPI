@@ -1,18 +1,20 @@
 package muramasa.antimatter.worldgen;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.mixin.BiomeGenerationBuilderAccessor;
+import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
-import muramasa.antimatter.worldgen.feature.AntimatterFeature;
-import muramasa.antimatter.worldgen.feature.FeatureSmallOres;
-import muramasa.antimatter.worldgen.feature.FeatureVein;
-import muramasa.antimatter.worldgen.feature.IAntimatterFeature;
+import muramasa.antimatter.worldgen.feature.*;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
+import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -29,17 +31,26 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 
 import javax.annotation.Nonnull;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class AntimatterWorldGenerator {
+import static muramasa.antimatter.Ref.GSON;
 
+public class AntimatterWorldGenerator {
     static final AntimatterFeature<NoneFeatureConfiguration> VEIN = new FeatureVein();
     static final AntimatterFeature<NoneFeatureConfiguration> SMALL_ORE = new FeatureSmallOres();
+
+    static final AntimatterFeature<NoneFeatureConfiguration> VANILLA_ORE = new FeatureVanillaOres();
 
     protected record GenHandler(BiomeLoadEvent consumer,
                                 Predicate<Biome.BiomeCategory> validator) {
@@ -109,6 +120,7 @@ public class AntimatterWorldGenerator {
     private static void removeOreFeatures(BiomeGenerationSettings.Builder builder) {
         removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.COAL_ORE.defaultBlockState(), Blocks.IRON_ORE.defaultBlockState(), Blocks.GOLD_ORE.defaultBlockState(), Blocks.COPPER_ORE.defaultBlockState(), Blocks.EMERALD_ORE.defaultBlockState(), Blocks.REDSTONE_ORE.defaultBlockState(), Blocks.LAPIS_ORE.defaultBlockState(), Blocks.DIAMOND_ORE.defaultBlockState());
         removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.ORE, Blocks.DEEPSLATE_COAL_ORE.defaultBlockState(), Blocks.DEEPSLATE_IRON_ORE.defaultBlockState(), Blocks.DEEPSLATE_GOLD_ORE.defaultBlockState(), Blocks.DEEPSLATE_COPPER_ORE.defaultBlockState(), Blocks.DEEPSLATE_EMERALD_ORE.defaultBlockState(), Blocks.DEEPSLATE_REDSTONE_ORE.defaultBlockState(), Blocks.DEEPSLATE_LAPIS_ORE.defaultBlockState(), Blocks.DEEPSLATE_DIAMOND_ORE.defaultBlockState());
+        removeDecoratedFeatureFromAllBiomes(builder, GenerationStep.Decoration.UNDERGROUND_ORES, Feature.SCATTERED_ORE, Blocks.IRON_ORE.defaultBlockState(), Blocks.COPPER_ORE.defaultBlockState(), Blocks.DEEPSLATE_IRON_ORE.defaultBlockState(), Blocks.DEEPSLATE_COPPER_ORE.defaultBlockState());
     }
 
     /**
@@ -201,5 +213,44 @@ public class AntimatterWorldGenerator {
         if (AntimatterConfig.WORLD.VANILLA_STONE_GEN) {
             removeStoneFeatures(gen);
         }
+    }
+
+    public static void writeJson(JsonObject json, String id, String path) {
+        File dir = new File(AntimatterPlatformUtils.getConfigDir().toFile(), "antimatter/" + path + "/default");
+        File target = new File(dir, id + ".json");
+        File readme = new File(dir, "README.txt");
+
+        try {
+            dir.mkdirs();
+            if (!readme.exists()){
+                BufferedWriter writer = Files.newBufferedWriter(readme.toPath());
+                writer.write("This directory is used for default " + path + "worldgen, to override an entry copy the json to the overrides folder and modify it there.");
+                writer.close();
+            }
+            BufferedWriter writer = Files.newBufferedWriter(target.toPath());
+            writer.write(GSON.toJson(json));
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static  <T extends IAntimatterObject> T readJson(Class<T> clazz, T original, BiFunction<String, JsonObject, T> function, String path){
+        File dir = new File(AntimatterPlatformUtils.getConfigDir().toFile(), "antimatter/" + path + "/overrides");
+        File target = new File(dir, original.getId() + ".json");
+
+
+        if(target.exists()) {
+            try {
+                Reader reader = Files.newBufferedReader(target.toPath());
+                JsonObject parsed = JsonParser.parseReader(reader).getAsJsonObject();
+                T read = function.apply(original.getId(), parsed);
+                reader.close();
+                return read;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return original;
     }
 }

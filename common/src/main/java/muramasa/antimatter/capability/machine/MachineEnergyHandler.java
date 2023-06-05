@@ -30,6 +30,7 @@ import java.util.Optional;
 public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends EnergyHandler implements IMachineHandler, Dispatch.Sided<IEnergyHandler> {
 
     protected final T tile;
+    protected long capacty;
 
     protected List<Pair<ItemStack, IEnergyHandlerItem>> cachedItems = new ObjectArrayList<>();
     protected int offsetInsert = 0;
@@ -37,6 +38,7 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
 
     public MachineEnergyHandler(T tile, long energy, long capacity, int voltageIn, int voltageOut, int amperageIn, int amperageOut) {
         super(energy, capacity, voltageIn, voltageOut, amperageIn, amperageOut);
+        this.capacty = capacity;
         this.tile = tile;
     }
 
@@ -51,6 +53,10 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public void init() {
         this.cachedItems = tile.itemHandler.map(MachineItemHandler::getChargeableItems).map(ImmutableList::copyOf).orElse(ImmutableList.of());
+    }
+
+    public void setCapacty(long capacty) {
+        this.capacty = capacty;
     }
 
     public List<Pair<ItemStack, IEnergyHandlerItem>> getCachedEnergyItems() {
@@ -76,9 +82,9 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     @Override
     public long getCapacity() {
         if (canChargeItem()) {
-            return super.getCapacity() + (cachedItems != null ? cachedItems.stream().map(Pair::right).mapToLong(IEnergyHandler::getCapacity).sum() : 0);
+            return capacity + (cachedItems != null ? cachedItems.stream().map(Pair::right).mapToLong(IEnergyHandler::getCapacity).sum() : 0);
         }
-        return super.getCapacity();
+        return capacity;
     }
 
     @Override

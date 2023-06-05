@@ -1,5 +1,8 @@
 package muramasa.antimatter.worldgen.vein;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +17,7 @@ public class WorldGenVeinVariant {
     public final float surfaceStoneChance;
     public final List<WorldGenVeinVariantMaterial> materials;
 
-    private WorldGenVeinVariant(int weight, float oreChance, float smallOreChance, float markerOreChance, float surfaceStoneChance, List<WorldGenVeinVariantMaterial> materials) {
+    WorldGenVeinVariant(int weight, float oreChance, float smallOreChance, float markerOreChance, float surfaceStoneChance, List<WorldGenVeinVariantMaterial> materials) {
         this.weight = weight;
         this.oreChance = oreChance;
         this.smallOreChance = smallOreChance;
@@ -40,4 +43,34 @@ public class WorldGenVeinVariant {
         }).collect(Collectors.toList());
     }
 
+
+    public JsonObject toJson(){
+        JsonObject json = new JsonObject();
+        json.addProperty("weight", weight);
+        json.addProperty("oreChance", oreChance);
+        json.addProperty("smallOreChance", smallOreChance);
+        json.addProperty("markerOreChance", markerOreChance);
+        json.addProperty("surfaceStoneChance", surfaceStoneChance);
+        JsonArray array = new JsonArray();
+        materials.forEach(m -> {
+            array.add(m.toJson());
+        });
+        if (!array.isEmpty()) {
+            json.add("materials", array);
+        }
+        return json;
+    }
+
+    public static WorldGenVeinVariant fromJson(JsonObject json){
+        List<WorldGenVeinVariantMaterial> materials = new ArrayList<>();
+        if (json.has("materials")){
+            JsonArray array = json.getAsJsonArray("materials");
+            array.forEach(j -> {
+                if (j instanceof JsonObject object){
+                    materials.add(WorldGenVeinVariantMaterial.fromJson(object));
+                }
+            });
+        }
+        return new WorldGenVeinVariant(json.get("weight").getAsInt(), json.get("oreChance").getAsFloat(), json.get("smallOreChance").getAsFloat(), json.get("markerOreChance").getAsFloat(), json.get("surfaceStoneChance").getAsFloat(), materials);
+    }
 }

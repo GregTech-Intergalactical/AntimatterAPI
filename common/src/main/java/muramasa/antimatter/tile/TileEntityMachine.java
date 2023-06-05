@@ -59,14 +59,17 @@ import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -101,6 +104,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     protected MachineState disabledState;
 
     protected long lastSoundTime;
+
+    protected boolean muffled = false;
 
     @Environment(EnvType.CLIENT)
     public SoundInstance playingSound;
@@ -266,7 +271,17 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             recipeHandler.ifPresent(MachineRecipeHandler::onRemove);
 
             dispatch.invalidate();
+        } else {
+            if (level != null) SoundHelper.clear(level, worldPosition);
         }
+    }
+
+    public void onDrop(BlockState state, LootContext.Builder builder, List<ItemStack> drops){
+
+    }
+
+    public void onPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
+
     }
 
     protected void markDirty() {
@@ -308,6 +323,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     //Returns the tier level for recipe overclocking.
     public Tier getPowerLevel() {
         return getMachineTier();
+    }
+
+    public boolean isMuffled() {
+        return muffled;
     }
 
     public boolean has(MachineFlag flag) {
@@ -401,6 +420,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return getDomain();
     }
 
+    public void setMuffled(boolean muffled) {
+        this.muffled = muffled;
+        sidedSync(true);
+        if (this.muffled && level != null && level.isClientSide) SoundHelper.clear(level, this.getBlockPos());
+    }
+
     // TODO: Fix
     public Direction getOutputFacing() {
         if (type.getOutputCover() != null && !(type.getOutputCover() == ICover.emptyFactory) && coverHandler.isPresent()) {
@@ -455,6 +480,8 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     protected void disableMachine() {
         disabledState = getMachineState();
+        if (!has(GENERATOR)) recipeHandler.ifPresent(MachineRecipeHandler::resetProgress);
+        if (level != null && level.isClientSide) SoundHelper.clear(level, this.getBlockPos());
         setMachineState(MachineState.DISABLED);
     }
 
@@ -481,7 +508,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             setChanged();
             if (this.level != null && this.level.isClientSide && this.getMachineType().machineNoise != null) {
                 if (newState == MachineState.ACTIVE) {
-                    SoundHelper.startLoop(this.type, level, this.getBlockPos());
+                    if (!muffled) SoundHelper.startLoop(this.type, level, this.getBlockPos());
                 } else if (old == MachineState.ACTIVE) {
                     SoundHelper.clear(level, this.getBlockPos());
                 }
@@ -522,8 +549,16 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return builder.build();
     }
 
-    public InteractionResult onInteract(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
+    public InteractionResult onInteractBoth(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
         //DEFAULT
+        return isServerSide() ? onInteractServer(state, world, pos, player, hand, hit, type) : onInteractClient(state, world, pos, player, hand, hit, type);
+    }
+
+    public InteractionResult onInteractServer(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type){
+        return InteractionResult.PASS;
+    }
+
+    public InteractionResult onInteractClient(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type){
         return InteractionResult.PASS;
     }
 
@@ -575,13 +610,16 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         this.tier = AntimatterAPI.get(Tier.class, tag.getString(Ref.KEY_MACHINE_TIER));
 
         setMachineState(MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE)]);
+        if (tag.contains(Ref.KEY_MACHINE_MUFFLED)) {
+            setMuffled(tag.getBoolean(Ref.KEY_MACHINE_MUFFLED));
+        }
         if (tag.contains(Ref.KEY_MACHINE_STATE_D)) {
             disabledState = MachineState.VALUES[tag.getInt(Ref.KEY_MACHINE_STATE_D)];
         }
         if (tag.contains(Ref.KEY_MACHINE_ITEMS))
             itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
         if (tag.contains(Ref.KEY_MACHINE_ENERGY))
-            energyHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+            energyHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
         if (tag.contains(Ref.KEY_MACHINE_COVER))
             coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) {
@@ -600,10 +638,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         super.saveAdditional(tag);
         tag.putString(Ref.KEY_MACHINE_TIER, getMachineTier().getId());
         tag.putInt(Ref.KEY_MACHINE_STATE, machineState.ordinal());
+        tag.putBoolean(Ref.KEY_MACHINE_MUFFLED, muffled);
         if (disabledState != null)
             tag.putInt(Ref.KEY_MACHINE_STATE_D, disabledState.ordinal());
         itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serializeNBT()));
-        energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serializeNBT()));
+        energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serialize(new CompoundTag())));
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER , e.serializeNBT()));
         fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
         recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serializeNBT()));

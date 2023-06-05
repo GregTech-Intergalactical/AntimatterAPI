@@ -1,14 +1,21 @@
 package muramasa.antimatter.worldgen.vein;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import muramasa.antimatter.AntimatterConfig;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +31,8 @@ public class WorldGenVeinBuilder {
   private Integer minY;
   @Nullable
   private Integer maxY;
+  @Nullable
+  private Integer density;
   @Nullable
   private Integer minSize;
   @Nullable
@@ -54,6 +63,9 @@ public class WorldGenVeinBuilder {
     if (this.minY == null || this.maxY == null) {
       throw new RuntimeException("minY and maxY are required");
     }
+    if (this.density == null) {
+      throw new RuntimeException("density is required");
+    }
     if (this.minSize == null || this.maxSize == null) {
       throw new RuntimeException("minSize and maxSize are required");
     }
@@ -61,20 +73,26 @@ public class WorldGenVeinBuilder {
       throw new RuntimeException("at least 1 dimension is required");
     }
 
-    return WorldGenVein.getFlat(
-        this.id,
-        this.layer,
-        this.weight,
-        this.minY,
-        this.maxY,
-        this.minSize,
-        this.maxSize,
-        this.heightScale != null ? this.heightScale : 1.0f,
-        this.fill,
-        this.variants,
-        this.dimensions);
+    return WorldGenVein.getFlat(this.buildVeinFromJson());
   }
 
+  private WorldGenVein buildVeinFromJson(){
+      WorldGenVein vein = new WorldGenVein(
+              this.id,
+              this.layer,
+              this.weight,
+              this.minY,
+              this.maxY,
+              this.density,
+              this.minSize,
+              this.maxSize,
+              this.heightScale != null ? this.heightScale : 1.0f,
+              this.fill,
+              this.variants,
+              this.dimensions);
+      AntimatterWorldGenerator.writeJson(vein.toJson(), this.id, "veins");
+      return AntimatterWorldGenerator.readJson(WorldGenVein.class, vein, WorldGenVein::fromJson, "veins");
+  }
   public final WorldGenVeinBuilder onLayer(int layer) {
     this.layer = layer;
     return this;
@@ -84,6 +102,11 @@ public class WorldGenVeinBuilder {
     this.weight = weight;
     return this;
   }
+
+    public final WorldGenVeinBuilder withDensity(int density) {
+        this.density = density;
+        return this;
+    }
 
   public final WorldGenVeinBuilder atHeight(int minY, int maxY) {
     this.minY = minY;
@@ -137,7 +160,7 @@ public class WorldGenVeinBuilder {
   @SafeVarargs
   public final WorldGenVeinBuilder asOreVein(int minY, int maxY, int weight, int density, int size, Material primary,
       Material secondary, Material between, Material sporadic, ResourceKey<Level>... dimensions) {
-    this.asVein(weight, minY, maxY, dimensions).withSize(size, size * 2, 0.75f)
+    this.asVein(weight, minY, maxY, density, dimensions).withSize(size, size * 2, 0.75f)
         .withVariant(AntimatterConfig.WORLD.NORMAL_VEIN_WEIGHT)
         .withNormalChance()
         .withMaterial(primary, AntimatterConfig.WORLD.PRIMARY_MATERIAL_WEIGHT)
@@ -172,6 +195,7 @@ public class WorldGenVeinBuilder {
         .onLayer(WorldGenVein.STONE_VEIN_LAYER)
         .withWeight(weight)
         .atHeight(minY, maxY)
+        .withDensity(1)
         .withFill(stoneType);
   }
 
@@ -188,7 +212,7 @@ public class WorldGenVeinBuilder {
   }
 
   @SafeVarargs
-  public final WorldGenVeinBuilder asVein(int weight, int minY, int maxY,
+  public final WorldGenVeinBuilder asVein(int weight, int minY, int maxY, int density,
       ResourceKey<Level>... dimensions) {
     for (ResourceKey<Level> dimension : dimensions) {
       this.inDimension(dimension);
@@ -196,6 +220,7 @@ public class WorldGenVeinBuilder {
     return this
         .onLayer(WorldGenVein.ORE_VEIN_LAYER)
         .withWeight(weight)
+        .withDensity(density)
         .atHeight(minY, maxY);
   }
 
@@ -233,6 +258,7 @@ public class WorldGenVeinBuilder {
         .onLayer(WorldGenVein.STONE_ORE_VEIN_LAYER)
         .withWeight(weight)
         .atHeight(minY, maxY)
+        .withDensity(1)
         .withFill(material);
   }
 

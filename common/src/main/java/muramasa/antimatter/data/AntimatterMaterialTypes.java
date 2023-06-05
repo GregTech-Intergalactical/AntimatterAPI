@@ -252,6 +252,6 @@ public class AntimatterMaterialTypes {
         AntimatterMaterialTypes.LIQUID.all().stream().filter(l -> !l.getId().equals("water") && !l.getId().equals("lava")).forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.LIQUID)));
         AntimatterMaterialTypes.GAS.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.GAS)));
         AntimatterMaterialTypes.PLASMA.all().forEach(m -> AntimatterAPI.register(AntimatterFluid.class, new AntimatterMaterialFluid(Ref.SHARED_ID, m, AntimatterMaterialTypes.PLASMA)));
-        if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) AntimatterMaterialTypes.ORE.all().forEach(m -> m.flags(AntimatterMaterialTypes.ORE_SMALL));
+        //if (AntimatterConfig.WORLD.ORE_VEIN_SMALL_ORE_MARKERS) AntimatterMaterialTypes.ORE.all().forEach(m -> m.flags(AntimatterMaterialTypes.ORE_SMALL));
     }
 }

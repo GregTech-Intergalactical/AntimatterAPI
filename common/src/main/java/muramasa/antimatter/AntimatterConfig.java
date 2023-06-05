@@ -79,7 +79,7 @@ public class AntimatterConfig {
          * @see CommonConfig
          **/
 
-        public boolean VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS, ORE_VEIN_SPECTATOR_DEBUG;
+        public boolean VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS, ORE_VEIN_SPECTATOR_DEBUG, REGENERATE_DEFAULT_WORLDGEN_JSONS;
 
         public int ORE_VEIN_MAX_SIZE, ORE_VEIN_CHANCE, ORE_VEIN_FIND_ATTEMPTS, ORE_VEIN_PLACE_ATTEMPTS, ORE_VEIN_SMALL_ORE_MARKERS_MULTI, THIN_VEIN_WEIGHT, NORMAL_VEIN_WEIGHT, DENSE_VEIN_WEIGHT, PRIMARY_MATERIAL_WEIGHT,
                 SECONDARY_MATERIAL_WEIGHT, BETWEEN_MATERIAL_WEIGHT, SPORADIC_MATERIAL_WEIGHT;
@@ -146,7 +146,7 @@ public class AntimatterConfig {
                 ORE_VEIN_SMALL_ORE_MARKERS_MULTI, THIN_VEIN_WEIGHT, NORMAL_VEIN_WEIGHT, DENSE_VEIN_WEIGHT, PRIMARY_MATERIAL_WEIGHT,
                 SECONDARY_MATERIAL_WEIGHT, BETWEEN_MATERIAL_WEIGHT, SPORADIC_MATERIAL_WEIGHT;
 
-        public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS,
+        public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS, REGENERATE_DEFAULT_WORLDGEN_JSONS,
                 ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, LOSSY_PART_CRAFTING, MACHINES_EXPLODE, AXE_TIMBER, SMARTER_TREE_DETECTION, EXPORT_DEFAULT_RECIPES, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
 
 
@@ -163,10 +163,10 @@ public class AntimatterConfig {
 
             builder.push("World");
 
-            VANILLA_ORE_GEN = builder.comment("Disable Vanilla ore generation (Iron Ore, Diamond Ore etc) - Default: true")
+            VANILLA_ORE_GEN = builder.comment("Disable Vanilla ore generation (Iron Ore, Diamond Ore etc) - Default: false")
                     .translation(Ref.ID + ".config.vanilla_ore_gen")
                     .worldRestart()
-                    .define("DISABLE_VANILLA_ORE_GEN", true);
+                    .define("DISABLE_VANILLA_ORE_GEN", false);
 
             VANILLA_STONE_GEN = builder.comment("Disable vanilla stone generation (Granite, Diorite etc) - Default: true")
                     .translation(Ref.ID + ".config.vanilla_stone_gen")
@@ -180,6 +180,10 @@ public class AntimatterConfig {
             SURFACE_ROCKS = builder.comment("Enable surface rocks - Default: true")
                     .translation(Ref.ID + ".config.surface_rocks")
                     .define("SURFACE_ROCKS", true);
+
+            REGENERATE_DEFAULT_WORLDGEN_JSONS = builder.comment("Regenerates the default jsons for antimatter's ore generation systems. will self reset after generating configs - Default: false")
+                    .translation(Ref.ID + ".config.regenerate_default_worldgen_jsons")
+                    .define("REGENERATE_DEFAULT_WORLDGEN_JSONS", false);
 
             builder.push("Ore_Veins");
 
@@ -254,7 +258,7 @@ public class AntimatterConfig {
             THIN_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around thin veins - Default : 0.001(0.1%)")
                     .translation(Ref.ID + ".config.thin_marker_ore_chance")
                     .worldRestart()
-                    .defineInRange("MARKER_ORE_CHANCE", 0.001, 0.00, 1.0);
+                    .defineInRange("MARKER_ORE_CHANCE", 0.01, 0.00, 1.0);
 
             THIN_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above thin veins - Default : 0.01(1%)")
                     .translation(Ref.ID + ".config.thin_surface_stone_chance")
@@ -283,7 +287,7 @@ public class AntimatterConfig {
             NORMAL_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around normal veins - Default : 0.0025(0.25%)")
                     .translation(Ref.ID + ".config.normal_marker_ore_chance")
                     .worldRestart()
-                    .defineInRange("MARKER_ORE_CHANCE", 0.0025, 0.00, 1.0);
+                    .defineInRange("MARKER_ORE_CHANCE", 0.025, 0.00, 1.0);
 
             NORMAL_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above normal veins - Default : 0.05(5%)")
                     .translation(Ref.ID + ".config.normal_surface_stone_chance")
@@ -312,7 +316,7 @@ public class AntimatterConfig {
             DENSE_MARKER_ORE_CHANCE = builder.comment("Chance for marker ores around dense veins - Default : 0.005(0.5%)")
                     .translation(Ref.ID + ".config.dense_marker_ore_chance")
                     .worldRestart()
-                    .defineInRange("MARKER_ORE_CHANCE", 0.005, 0.00, 1.0);
+                    .defineInRange("MARKER_ORE_CHANCE", 0.05, 0.00, 1.0);
 
             DENSE_SURFACE_STONE_CHANCE = builder.comment("Chance for surface stones above dense veins - Default : 0.1(10%)")
                     .translation(Ref.ID + ".config.dense_surface_stone_chance")
@@ -429,6 +433,7 @@ public class AntimatterConfig {
         WORLD.VANILLA_STONE_GEN = COMMON_CONFIG.VANILLA_STONE_GEN.get();
         WORLD.SMALL_ORES = COMMON_CONFIG.SMALL_ORES.get();
         WORLD.SURFACE_ROCKS = COMMON_CONFIG.SURFACE_ROCKS.get();
+        WORLD.REGENERATE_DEFAULT_WORLDGEN_JSONS = COMMON_CONFIG.REGENERATE_DEFAULT_WORLDGEN_JSONS.get();
         WORLD.ORE_VEINS = COMMON_CONFIG.ORE_VEINS.get();
         WORLD.ORE_VEIN_MAX_SIZE = COMMON_CONFIG.ORE_VEIN_MAX_SIZE.get();
         WORLD.ORE_VEIN_CHANCE = COMMON_CONFIG.ORE_VEIN_CHANCE.get();

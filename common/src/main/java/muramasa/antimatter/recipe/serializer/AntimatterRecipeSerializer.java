@@ -74,11 +74,11 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             int special = json.has("special") ? json.get("special").getAsInt() : 0;
             Recipe r = new Recipe(list, outputs, fluidInputs, fluidOutputs, duration, eut, special, amps);
             if (json.has("chances")) {
-                List<Double> chances = new ObjectArrayList<>();
+                List<Integer> chances = new ObjectArrayList<>();
                 for (JsonElement el : json.getAsJsonArray("chances")) {
-                    chances.add(el.getAsDouble());
+                    chances.add(el.getAsInt());
                 }
-                r.addChances(chances.stream().mapToDouble(i -> i).toArray());
+                r.addChances(chances.stream().mapToInt(i -> i).toArray());
             }
             r.setHidden(json.get("hidden").getAsBoolean());
             if (json.has("tags")){
@@ -171,10 +171,10 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
             }
         }
         size = buffer.readInt();
-        double[] chances = new double[size];
+        int[] chances = new int[size];
         if (size > 0) {
             for (int i = 0; i < size; i++) {
-                chances[i] = buffer.readDouble();
+                chances[i] = buffer.readInt();
             }
         }
         long power = buffer.readLong();
@@ -219,7 +219,7 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
         }
         buffer.writeInt(recipe.hasChances() ? recipe.getChances().length : 0);
         if (recipe.hasChances()) {
-            Arrays.stream(recipe.getChances()).forEach(buffer::writeDouble);
+            Arrays.stream(recipe.getChances()).forEach(buffer::writeInt);
         }
         buffer.writeLong(recipe.getPower());
         buffer.writeInt(recipe.getDuration());

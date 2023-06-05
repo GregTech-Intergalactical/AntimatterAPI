@@ -112,8 +112,12 @@ public class MaterialRecipes {
                 provider.shapeless(consumer, m.getId() + "_grind_rock_2", "antimatter_material", "has_mortar", provider.hasSafeItem(AntimatterDefaultTools.MORTAR.getTag()), AntimatterMaterialTypes.DUST_SMALL.get(m, 1),
                         AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.ROCK.getMaterialTag(m));
             }
+            if (m.has(AntimatterMaterialTypes.CRUSHED)){
+                provider.shapeless(consumer, m.getId() + "_grind_crushed", "antimatter_material", "has_mortar", provider.hasSafeItem(AntimatterDefaultTools.MORTAR.getTag()), AntimatterMaterialTypes.DUST_IMPURE.get(m, 1),
+                        AntimatterDefaultTools.MORTAR.getTag(), AntimatterMaterialTypes.CRUSHED.getMaterialTag(m));
+            }
         });
-        AntimatterMaterialTypes.RAW_ORE.all().stream().filter(m -> !m.has(NEEDS_BLAST_FURNACE) && SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(HAS_CUSTOM_SMELTING)).forEach(m -> {
+        AntimatterMaterialTypes.RAW_ORE.all().stream().filter(m -> !m.has(HAS_CUSTOM_SMELTING) && SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT) && !m.has(HAS_CUSTOM_SMELTING)).forEach(m -> {
             if (m != AntimatterMaterials.Iron && m != AntimatterMaterials.Copper && m != AntimatterMaterials.Gold) {
                 addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.INGOT, 1, m, SMELT_INTO.getMapping(m));
             }
@@ -126,7 +130,7 @@ public class MaterialRecipes {
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.NUGGET, 10, m);
         });
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
-            if (m.has(MaterialTags.NEEDS_BLAST_FURNACE) || m.has(MaterialTags.HAS_CUSTOM_SMELTING)) return;
+            if (m.has(MaterialTags.HAS_CUSTOM_SMELTING)) return;
             if (!DIRECT_SMELT_INTO.getMapping(m).has(AntimatterMaterialTypes.INGOT)) return;
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST, AntimatterMaterialTypes.INGOT, 1, m, DIRECT_SMELT_INTO.getMapping(m));
         });

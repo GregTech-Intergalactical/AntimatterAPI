@@ -1,11 +1,11 @@
 package muramasa.antimatter.fabric;
 
+import earth.terrarium.botarium.fabric.energy.FabricBlockEnergyContainer;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockPlaceCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.ItemCraftedCallback;
-import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Ref;
+import muramasa.antimatter.*;
+import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.capability.fabric.AntimatterLookups;
 import muramasa.antimatter.common.event.CommonEvents;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.event.ProvidersEvent;
@@ -21,6 +21,8 @@ import muramasa.antimatter.registration.IAntimatterRegistrarInitializer;
 import muramasa.antimatter.registration.RegistrationEvent;
 import muramasa.antimatter.registration.fabric.AntimatterRegistration;
 import muramasa.antimatter.structure.StructureCache;
+import muramasa.antimatter.tile.TileEntityFakeBlock;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.worldgen.fabric.AntimatterFabricWorldgen;
 import net.devtech.arrp.api.RRPCallback;
 import net.devtech.arrp.api.SidedRRPCallback;
@@ -29,16 +31,27 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.api.ModLoadingContext;
 import net.minecraftforge.api.fml.event.config.ModConfigEvent;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.items.IItemHandler;
+import team.reborn.energy.api.EnergyStorage;
+import tesseract.api.fabric.TesseractLookups;
+import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.rf.IRFNode;
+import tesseract.fabric.TesseractImpl;
 
 import java.util.Map;
 
@@ -62,6 +75,20 @@ public class AntimatterImpl implements ModInitializer {
             CommonHandler.setup();
             AntimatterFabricWorldgen.init();
             RecipeConditions.init();
+            FluidStorage.SIDED.registerForBlockEntity((be, direction) -> getCap(IFluidHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
+            ItemStorage.SIDED.registerForBlockEntity((be, direction) -> getCap(IItemHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
+            TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> getCap(IEnergyHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
+            EnergyStorage.SIDED.registerForBlockEntity((be, direction) -> {
+                IEnergyHandler handler = getCap(IEnergyHandler.class, be, direction);
+                if (handler != null) return (EnergyStorage) handler;
+                IRFNode node = getCap(IRFNode.class, be, direction);
+                if (node != null) return node instanceof EnergyStorage storage ? storage : new FabricBlockEnergyContainer(node, node, be);
+                return null;
+            }, Data.PROXY_INSTANCE.TYPE);
+            if (AntimatterAPI.isModLoaded("modern_industrialization")) {
+                TesseractImpl.registerMITile((be, direction) -> getCap(IEnergyHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
+            }
+            AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> getCap(ICoverHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
             AntimatterAPI.all(Material.class).forEach(m -> {
                 Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
                 if (map != null){
@@ -99,6 +126,20 @@ public class AntimatterImpl implements ModInitializer {
                 FluidVariantAttributes.register(flowing, new FluidAttributesVariantWrapper(f.getAttributes()));
             });
         }
+    }
+
+    private <T> T getCap(Class<T> clazz, TileEntityFakeBlock fakeBlock, Direction side){
+        if (fakeBlock.controllerPos != null) {
+            fakeBlock.controllerPos.forEach(t -> fakeBlock.controllers.add((TileEntityBasicMultiMachine<?>) fakeBlock.getLevel().getBlockEntity(t)));
+            fakeBlock.controllerPos = null;
+        }
+        for (TileEntityBasicMultiMachine<?> controller : fakeBlock.controllers) {
+            LazyOptional<T> opt = controller.getCapabilityFromFake(clazz, fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
+            if (opt.isPresent()) {
+                return opt.orElse(null);
+            }
+        }
+        return null;
     }
 
     private void providers(ProvidersEvent ev) {

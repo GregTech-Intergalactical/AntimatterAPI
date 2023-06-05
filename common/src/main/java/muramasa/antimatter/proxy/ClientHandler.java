@@ -120,8 +120,8 @@ public class ClientHandler implements IProxyHandler {
 
     public static void onBlockColorHandler(BlockColors colors) {
         for (Block block : AntimatterAPI.all(Block.class)) {
-            if (block instanceof IColorHandler)
-                colors.register(((IColorHandler) block)::getBlockColor, block);
+            if (block instanceof IColorHandler h && h.registerColorHandlers())
+                colors.register(h::getBlockColor, block);
         }
     }
 

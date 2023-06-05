@@ -27,22 +27,21 @@ public class WorldGenVeinVariantBuilder {
         if (this.weight == null) {
             throw new RuntimeException("weight is required");
         }
-        if (this.materials.size() == 0 && this.oreChance != null && this.smallOreChance != null) {
+        if (this.materials.size() > 0 && this.oreChance == null && this.smallOreChance == null) {
             throw new RuntimeException("oreChance and/or smallOreChance is required when materials are specified");
         }
-        if (this.materials.size() > 0 && this.oreChance == null && this.smallOreChance == null) {
+        if (this.materials.size() == 0 && this.oreChance != null && this.smallOreChance != null) {
             throw new RuntimeException("oreChance and smallOreChance is not allowed when no materials are specified");
         }
 
-        List<WorldGenVeinVariant> veinVariants = WorldGenVeinVariant.getFlat(
+        this.veinBuilder.addVeinVariant(new WorldGenVeinVariant(
                 this.weight,
                 this.oreChance != null ? this.oreChance : 0.0f,
                 this.smallOreChance != null ? this.smallOreChance : 0.0f,
                 this.markerOreChance != null ? this.markerOreChance : 0.0f,
                 this.surfaceStoneChance != null ? this.surfaceStoneChance : 0.0f,
                 this.materials
-        );
-        veinVariants.forEach(this.veinBuilder::addVeinVariant);
+        ));
         return this.veinBuilder;
     }
 
@@ -112,11 +111,11 @@ public class WorldGenVeinVariantBuilder {
     }
 
     final public WorldGenVeinVariantBuilder withMaterial(Material material, int weight) {
-        return this.withMaterial(material, weight, Integer.MAX_VALUE, Integer.MIN_VALUE);
+        return this.withMaterial(material, weight, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     final public WorldGenVeinVariantBuilder withMaterial(Material material) {
-        return this.withMaterial(material, 1, Integer.MAX_VALUE, Integer.MIN_VALUE);
+        return this.withMaterial(material, 1, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     final public WorldGenVeinVariantBuilder withMaterial(Material material, int minY, int maxY) {

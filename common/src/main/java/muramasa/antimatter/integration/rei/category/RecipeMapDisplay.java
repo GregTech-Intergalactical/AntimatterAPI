@@ -64,7 +64,7 @@ public class RecipeMapDisplay implements Display {
     public static List<EntryIngredient> createOutputEntries(List<ItemStack> input, IRecipe recipe) {
         AtomicInteger atomicInteger = new AtomicInteger(0);
         return input.stream().map(i -> {
-            double chance = recipe.hasChances() ? Objects.requireNonNull(recipe.getChances())[atomicInteger.getAndIncrement()] : 1.0;
+            int chance = recipe.hasChances() ? Objects.requireNonNull(recipe.getChances())[atomicInteger.getAndIncrement()] : 10000;
             return EntryStacks.of(i).setting(EntryStack.Settings.TOOLTIP_APPEND_EXTRA, getProbabilitySetting(chance));
         }).map(EntryIngredient::of).toList();
     }
@@ -115,17 +115,17 @@ public class RecipeMapDisplay implements Display {
         }).map(EntryIngredient::of).toList();
     }
 
-    public static Component getProbabilityTooltip(double probability) {
-        if (probability == 1.0) {
+    public static Component getProbabilityTooltip(int probability) {
+        if (probability == 10000) {
             return null;
         } else {
-            MutableComponent text = new TextComponent("Chance: " + (probability * 100) + "%");
+            MutableComponent text = new TextComponent("Chance: " + ((float)probability / 100) + "%");
             text.withStyle(ChatFormatting.WHITE);
             return text;
         }
     }
 
-    public static Function<EntryStack<?>, List<Component>> getProbabilitySetting(double probability) {
+    public static Function<EntryStack<?>, List<Component>> getProbabilitySetting(int probability) {
         @Nullable
         Component tooltip = getProbabilityTooltip(probability);
         return es -> tooltip == null ? List.of() : List.of(tooltip);

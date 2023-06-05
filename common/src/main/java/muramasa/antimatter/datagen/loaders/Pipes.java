@@ -2,6 +2,7 @@ package muramasa.antimatter.datagen.loaders;
 
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.data.AntimatterMaterials;
 import muramasa.antimatter.datagen.providers.AntimatterRecipeProvider;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.pipe.PipeSize;
@@ -23,7 +24,7 @@ public class Pipes {
         final CriterionTriggerInstance in = provider.hasSafeItem(WRENCH.getTag());
         AntimatterAPI.all(ItemPipe.class, i -> {
             Material m = i.getMaterial();
-            if (!m.has(PLATE)) return;
+            if (!m.has(PLATE) || m == AntimatterMaterials.Wood) return;
             if (i.getSizes().contains(PipeSize.TINY)){
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_pipe_item_tiny", "antimatter_pipes", "has_wrench", in, new ItemStack(i.getBlock(PipeSize.TINY), 12), of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PLATE.getMaterialTag(m)), "PPP", "H W", "PPP");
             }
@@ -39,7 +40,7 @@ public class Pipes {
         });
         AntimatterAPI.all(FluidPipe.class, f -> {
             Material m = f.getMaterial();
-            if (!m.has(PLATE)) return;
+            if (!m.has(PLATE) || m == AntimatterMaterials.Wood) return;
             if (f.getSizes().contains(PipeSize.TINY)){
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_pipe_fluid_tiny", "antimatter_pipes", "has_wrench", in, new ItemStack(f.getBlock(PipeSize.TINY), 12), of('H', HAMMER.getTag(), 'W', WRENCH.getTag(), 'P', PLATE.getMaterialTag(m)), "PPP", "H W", "PPP");
             }

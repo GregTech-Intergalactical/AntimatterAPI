@@ -10,6 +10,7 @@ import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterMaterials;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.material.MaterialTags;
@@ -42,7 +43,11 @@ public class AntimatterBlockTagProvider extends AntimatterTagProvider<Block> {
             AntimatterAPI.all(BlockOre.class, o -> {
                 this.tag(getForgelikeBlockTag(String.join("", getConventionalStoneType(o.getStoneType()), "_", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
                 this.tag(getForgelikeBlockTag(String.join("", getConventionalMaterialType(o.getOreType()), "/", o.getMaterial().getId()))).add(o).replace(replace);
-                this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(o).replace(replace);
+
+                if (o.getStoneType() == AntimatterStoneTypes.SAND || o.getStoneType() == AntimatterStoneTypes.SAND_RED || o.getStoneType() == AntimatterStoneTypes.GRAVEL)
+                    this.tag(BlockTags.MINEABLE_WITH_SHOVEL).add(o).replace(replace);
+                else
+                    this.tag(BlockTags.MINEABLE_WITH_PICKAXE).add(o).replace(replace);
                 int oreMiningLevel = o.getMaterial().has(MaterialTags.MINING_LEVEL) ? MaterialTags.MINING_LEVEL.getInt(o.getMaterial()) : 0;
                 int stoneMiningLevel = o.getStoneType().getHarvestLevel();
                 int maxLevel = Math.max(oreMiningLevel, stoneMiningLevel);

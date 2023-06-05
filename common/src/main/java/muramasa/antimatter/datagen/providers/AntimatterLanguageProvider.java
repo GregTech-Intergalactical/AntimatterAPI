@@ -124,7 +124,7 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                 return;
             }
             Collection<Tier> tiers = i.getTiers();
-            tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), i.getLang(locale).concat(" (%s)")));
+            tiers.forEach(t -> add("machine." + i.getId() + "." + t.getId(), i.getLang(locale).concat(t == Tier.NONE ? "" : " (%s)")));
         });
 
         AntimatterAPI.all(IAntimatterTool.class, domain, t -> {
@@ -158,11 +158,39 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
             AntimatterAPI.all(BlockOreStone.class, o -> {
                 add(o, getLocalizedType(o.getMaterial()));
             });
-            AntimatterAPI.all(BlockStone.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
-            AntimatterAPI.all(BlockStoneSlab.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
-            AntimatterAPI.all(BlockStoneStair.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
-            AntimatterAPI.all(BlockStoneWall.class).forEach(s -> add(s, getLocalizedType(s).replaceAll("Stone ", "")));
-            AntimatterAPI.all(AntimatterFluid.class).forEach(s -> {
+            AntimatterAPI.all(BlockStone.class).forEach(s -> {
+                String localized = getLocalizedType(s);
+                if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
+                if (s.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
+                if (s.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
+                if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                add(s, localized);
+            });
+            AntimatterAPI.all(BlockStoneSlab.class).forEach(s -> {
+                String localized = getLocalizedType(s);
+                if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
+                if (s.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
+                if (s.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
+                if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                add(s, localized);
+            });
+            AntimatterAPI.all(BlockStoneStair.class).forEach(s -> {
+                String localized = getLocalizedType(s);
+                if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
+                if (s.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
+                if (s.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
+                if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                add(s, localized);
+            });
+            AntimatterAPI.all(BlockStoneWall.class).forEach(s -> {
+                String localized = getLocalizedType(s);
+                if (s.getSuffix().contains("mossy")) localized = "Mossy " + localized.replace(" Mossy", "");
+                if (s.getSuffix().contains("chiseled")) localized = "Chiseled " + localized.replace(" Chiseled", "");
+                if (s.getSuffix().contains("cracked")) localized = "Cracked " + localized.replace(" Cracked", "");
+                if (s.getSuffix().contains("smooth")) localized = "Smooth " + localized.replace(" Smooth", "");
+                add(s, localized);
+            });
+            AntimatterAPI.all(AntimatterFluid.class).forEach((AntimatterFluid s) -> {
                 add(s.getAttributes().getTranslationKey(), tryComponent(locale, s, () -> lowerUnderscoreToUpperSpaced(s.getId())));
                 Item bucket = AntimatterAPI.get(Item.class, s.getId() + "_bucket", Ref.SHARED_ID);
                 if (bucket != null) add(bucket, tryComponent(locale, s, () -> lowerUnderscoreToUpperSpaced(s.getId())) + " Bucket");

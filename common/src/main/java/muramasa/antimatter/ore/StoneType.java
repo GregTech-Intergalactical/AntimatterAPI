@@ -34,6 +34,7 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
     private float hardness, resistence;
     private TagKey<Block> toolType;
     private net.minecraft.world.level.material.Material blockMaterial;
+    private boolean sandLike = false;
 
     public StoneType(String domain, String id, Material material, Texture texture, SoundType soundType, boolean generateBlock) {
         this.domain = domain;
@@ -81,6 +82,11 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
 
     public StoneType setFallingDustColor(int fallingDustColor) {
         this.fallingDustColor = fallingDustColor;
+        return this;
+    }
+
+    public StoneType setSandLike(boolean sandLike) {
+        this.sandLike = sandLike;
         return this;
     }
 
@@ -160,6 +166,10 @@ public class StoneType implements ISharedAntimatterObject, IRegistryEntryProvide
 
     public boolean doesRequireTool() {
         return requiresTool;
+    }
+
+    public boolean isSandLike() {
+        return sandLike;
     }
 
     public StoneType setState(Block block) {

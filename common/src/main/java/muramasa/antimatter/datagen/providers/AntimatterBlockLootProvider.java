@@ -10,6 +10,7 @@ import muramasa.antimatter.block.BlockStoneWall;
 import muramasa.antimatter.block.BlockStorage;
 import muramasa.antimatter.data.AntimatterDefaultTools;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
+import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.datagen.IAntimatterProvider;
 import muramasa.antimatter.machine.BlockMachine;
@@ -27,12 +28,16 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.loot.BlockLoot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -48,8 +53,9 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
     protected final String providerDomain, providerName;
     protected final Map<Block, Function<Block, LootTable.Builder>> tables = new Object2ObjectOpenHashMap<>();
 
-    public static final LootItemCondition.Builder BRANCH_CUTTER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.BRANCH_CUTTER.getToolStack(Material.NULL, Material.NULL).getItem()));
-    public static final LootItemCondition.Builder SAW = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.SAW.getToolStack(Material.NULL, Material.NULL).getItem()).hasEnchantment(new EnchantmentPredicate() {
+    public static final LootItemCondition.Builder BRANCH_CUTTER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.BRANCH_CUTTER.getTag()));
+    public static final LootItemCondition.Builder HAMMER = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.HAMMER.getTag()));
+    public static final LootItemCondition.Builder SAW = MatchTool.toolMatches(ItemPredicate.Builder.item().of(AntimatterDefaultTools.SAW.getTag()).hasEnchantment(new EnchantmentPredicate() {
         @Override
         public boolean containedIn(Map<Enchantment, Integer> enchantmentsIn) {
             return !enchantmentsIn.containsKey(Enchantments.SILK_TOUCH);
@@ -116,33 +122,59 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             tables.put(block, b -> MaterialTags.CUSTOM_ORE_DROPS.getBuilderFunction(block.getMaterial()).apply(block));
             return;
         }
+        tables.put(block, addToFortuneWithoutCustomDrops(block));
+    }
+
+    public static Function<Block, LootTable.Builder> addToFortuneWithoutCustomDrops(BlockOre block) {
         if (block.getOreType() == AntimatterMaterialTypes.ORE_SMALL) {
-            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE))) return;
+            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE))) return BlockLoot::createSingleItemTable;
             Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : null;
+            int multiplier = MaterialTags.ORE_MULTI.getInt(block.getMaterial());
             LootPool.Builder builder;
             if (item != null) {
-                builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(applyExplosionDecay(item, LootItem.lootTableItem(item)).setWeight(30));
+                builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(applyExplosionDecay(item, LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(ConstantValue.exactly(multiplier)))).setWeight(30));
             } else {
                 builder = LootPool.lootPool();
             }
             if (block.getMaterial().has(AntimatterMaterialTypes.CRUSHED)) {
                 Item crushed = AntimatterMaterialTypes.CRUSHED.get(block.getMaterial());
                 //builder.addLootPool(withSurvivesExplosion(crushed, LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(crushed))));
-                builder.add(applyExplosionDecay(crushed, LootItem.lootTableItem(crushed).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f, 2.0f))).setWeight(40)));
+                builder.add(applyExplosionDecay(crushed, LootItem.lootTableItem(crushed).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f * multiplier, 2.0f * multiplier))).setWeight(40)));
             }
             if (block.getMaterial().has(AntimatterMaterialTypes.DUST_IMPURE)) {
                 Item dirty = AntimatterMaterialTypes.DUST_IMPURE.get(block.getMaterial());
                 //builder.addLootPool(withSurvivesExplosion(dirty, LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(dirty))));
-                builder.add(applyExplosionDecay(dirty, LootItem.lootTableItem(dirty).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f, 2.0f)))).setWeight(60));
+                builder.add(applyExplosionDecay(dirty, LootItem.lootTableItem(dirty).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f * multiplier, 2.0f * multiplier)))).setWeight(60));
             }
-            tables.put(block, b -> LootTable.lootTable().withPool(builder));
-            return;
-        } else if ((block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) && block.getOreType() == AntimatterMaterialTypes.ORE) {
-            Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
-            tables.put(block, b -> createOreDrop(b, item));
-            return;
+            return b -> LootTable.lootTable().withPool(builder);
+        } else if (block.getOreType() == AntimatterMaterialTypes.ORE) {
+            Item drop;
+            if (block.getMaterial().has(AntimatterMaterialTypes.CRUSHED) || block.getMaterial().has(AntimatterMaterialTypes.DUST)){
+                drop = block.getMaterial().has(AntimatterMaterialTypes.CRUSHED) ? AntimatterMaterialTypes.CRUSHED.get(block.getMaterial()) : AntimatterMaterialTypes.DUST.get(block.getMaterial());
+            } else {
+                drop = null;
+            }
+            Item item = block.getStoneType().isSandLike() ? block.asItem() : AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
+            return b -> createOreDropWithHammer(b, item, drop);
         }
-        add(block);
+        return BlockLoot::createSingleItemTable;
+    }
+
+    public static LootTable.Builder createOreDropWithHammer(Block block, Item primaryDrop, Item hammerDrop){
+        LootTable.Builder builder = LootTable.lootTable();
+        if (block.asItem() == primaryDrop){
+            LootPool.Builder loot = LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(primaryDrop));
+            if (hammerDrop != null) loot.when(HAMMER.invert());
+            builder.withPool(applyExplosionCondition(block, loot));
+        } else {
+            LootPoolSingletonContainer.Builder<?> pool = LootItem.lootTableItem(primaryDrop).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE));
+            if (hammerDrop != null) pool.when(HAMMER.invert());
+            builder = createSilkTouchDispatchTable(block, applyExplosionDecay(block, pool));
+        }
+        if (hammerDrop != null){
+            builder.withPool(applyExplosionCondition(hammerDrop, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).when(HAMMER).add(LootItem.lootTableItem(hammerDrop))));
+        }
+        return builder;
     }
 
     protected void addToStone(BlockOreStone block) {
@@ -150,9 +182,9 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
             tables.put(block, b -> MaterialTags.CUSTOM_ORE_STONE_DROPS.getBuilderFunction(block.getMaterial()).apply(block));
             return;
         }
-        if ((block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE) || block.getMaterial().has(AntimatterMaterialTypes.GEM))) {
-            Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
-            tables.put(block, b -> createOreDrop(b, item));
+        if (block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) {
+            Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
+            tables.put(block, b -> createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(UniformGenerator.between(3.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
             return;
         }
         add(block);

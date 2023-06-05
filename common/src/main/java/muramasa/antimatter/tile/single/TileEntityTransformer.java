@@ -71,7 +71,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
     }
 
     @Override
-    public InteractionResult onInteract(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, AntimatterToolType type) {
+    public InteractionResult onInteractServer(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, AntimatterToolType type) {
         if (type == SOFT_HAMMER && hand == InteractionHand.MAIN_HAND) {
             toggleMachine();
             energyHandler.ifPresent(h -> {
@@ -86,7 +86,7 @@ public class TileEntityTransformer<T extends TileEntityTransformer<T>> extends T
             });
             return InteractionResult.SUCCESS;
         }
-        return super.onInteract(state, world, pos, player, hand, hit, type);
+        return super.onInteractServer(state, world, pos, player, hand, hit, type);
     }
 
     @Override

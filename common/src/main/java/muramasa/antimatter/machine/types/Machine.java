@@ -19,16 +19,14 @@ import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.gui.widget.BackgroundWidget;
-import muramasa.antimatter.machine.BlockMachine;
-import muramasa.antimatter.machine.MachineFlag;
-import muramasa.antimatter.machine.MachineState;
-import muramasa.antimatter.machine.Tier;
+import muramasa.antimatter.machine.*;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureBuilder;
+import muramasa.antimatter.structure.impl.MultiStructure;
 import muramasa.antimatter.texture.IOverlayModeler;
 import muramasa.antimatter.texture.IOverlayTexturer;
 import muramasa.antimatter.texture.ITextureHandler;
@@ -80,6 +78,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
+    protected ITooltipInfo tooltipFunction = (s,w,t,f) -> {};
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
@@ -303,7 +302,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public BlockMachine getBlockState(Tier tier) {
         if (tileType == null) return null;
-        return AntimatterAPI.get(BlockMachine.class, this.getId() + "_" + tier.getId(), this.getDomain());
+        return AntimatterAPI.get(BlockMachine.class, this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), this.getDomain());
     }
 
     /**
@@ -313,7 +312,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      * @return this as an item.
      */
     public Item getItem(Tier tier) {
-        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getId() + "_" + tier.getId(), getDomain()));
+        return BlockItem.BY_BLOCK.get(AntimatterAPI.get(itemClassSupplier.get(), this.getId() + (tier == Tier.NONE ? "" : "_" + tier.getId()), getDomain()));
+    }
+
+    public ITooltipInfo getTooltipFunction() {
+        return tooltipFunction;
     }
 
     /**
@@ -397,6 +400,19 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
 
     public T setItemBlockClass(Supplier<Class<? extends BlockMachine>> function){
         this.itemClassSupplier = function;
+        return (T) this;
+    }
+
+    public T setTooltipInfo(String translationKey){
+        return setTooltipInfo((s,w,t,f) -> t.add(new TranslatableComponent(translationKey)));
+    }
+
+    public T setTooltipInfo(Component tooltip){
+        return setTooltipInfo((s,w,t,f) -> t.add(tooltip));
+    }
+
+    public T setTooltipInfo(ITooltipInfo info){
+        this.tooltipFunction = info;
         return (T) this;
     }
 
@@ -491,6 +507,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T setTiers(Tier... tiers) {
+        boolean none = false;
+        for (Tier t : tiers){
+            if (t == Tier.NONE) none = true;
+        }
+        if (none) this.setTierSpecificLang();
         this.tiers = new ObjectArrayList<>(Arrays.asList(tiers));
         return (T) this;
     }
@@ -535,6 +556,26 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     public void setStructure(Tier tier, Function<StructureBuilder, Structure> func) {
         structures.put(tier, func.apply(new StructureBuilder()));
+    }
+
+    /**
+     * Set the multiblock structure for this machine, for all tiers.
+     * Useless if the tile is not a multiblock.
+     *
+     * @param func the function to build a structure.
+     */
+    public void setStructures(List<Structure> func) {
+        getTiers().forEach(t -> setStructures(t, func));
+    }
+
+    /**
+     * Set the multiblock structure for this machine, for one tier.
+     * Useless if the tile is not a multiblock.
+     *
+     * @param func the function to build a structure.
+     */
+    public void setStructures(Tier tier, List<Structure> func) {
+        structures.put(tier, new MultiStructure(func));
     }
 
     @Environment(EnvType.CLIENT)

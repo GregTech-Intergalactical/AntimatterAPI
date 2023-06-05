@@ -179,8 +179,8 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
                     final int ss = s;
                     slot.addTooltipCallback((ing, list) -> {
                         if (recipe.hasChances()) {
-                            if (recipe.getChances()[ss] < 1.0) {
-                                list.add(new TextComponent("Chance: " + (recipe.getChances()[ss] * 100) + "%").withStyle(ChatFormatting.WHITE));
+                            if (recipe.getChances()[ss] < 10000) {
+                                list.add(new TextComponent("Chance: " + ((float)recipe.getChances()[ss] / 100) + "%").withStyle(ChatFormatting.WHITE));
                             }
                         }
                     });

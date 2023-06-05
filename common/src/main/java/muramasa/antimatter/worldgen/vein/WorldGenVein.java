@@ -1,9 +1,17 @@
 package muramasa.antimatter.worldgen.vein;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import com.mojang.realmsclient.util.JsonUtils;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -26,6 +34,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
     public final int weight;
     public final int minY;
     public final int maxY;
+    public final int density;
     public final int minSize;
     public final int maxSize;
     public final float heightScale;
@@ -33,12 +42,13 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
     public final BlockState fill;
     public final List<WorldGenVeinVariant> variants;
 
-    private WorldGenVein(String id, int layer, int weight, int minY, int maxY, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
+    WorldGenVein(String id, int layer, int weight, int minY, int maxY, int density, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
         super(id, WorldGenVein.class, dimensions);
         this.layer = layer;
         this.weight = weight;
         this.minY = minY;
         this.maxY = maxY;
+        this.density = density;
         this.minSize = minSize;
         this.maxSize = maxSize;
         this.heightScale = heightScale;
@@ -50,7 +60,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
         }
     }
 
-    static List<WorldGenVein> getFlat(String id, int layer, int weight, int minY, int maxY, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
+    static List<WorldGenVein> getFlat(String id, int layer, int weight, int minY, int maxY, int density, int minSize, int maxSize, float heightScale, @Nullable BlockState fill, List<WorldGenVeinVariant> variants, List<ResourceKey<Level>> dimensions) {
         return IntStream.range(0, weight).mapToObj(i -> {
             List<WorldGenVeinVariant> flatVariants = new ArrayList<>();
             for (WorldGenVeinVariant variant : variants) {
@@ -62,6 +72,7 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
                     1,
                     minY,
                     maxY,
+                    density,
                     minSize,
                     maxSize,
                     heightScale,
@@ -70,6 +81,10 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
                     dimensions
             );
         }).collect(Collectors.toList());
+    }
+
+    static List<WorldGenVein> getFlat(WorldGenVein vein){
+        return getFlat(vein.getId(), vein.layer, vein.weight, vein.minY, vein.maxY, vein.density, vein.minSize, vein.maxSize, vein.heightScale, vein.fill, vein.variants, vein.getDims().stream().map(r -> ResourceKey.create(Registry.DIMENSION_REGISTRY, r)).toList());
     }
 
     public static Set<Integer> getAllLayers() {
@@ -96,6 +111,74 @@ public class WorldGenVein extends WorldGenBase<WorldGenVein> {
         } else {
             return 0.1;
         }
+    }
+
+    public JsonObject toJson(){
+        JsonObject json = new JsonObject();
+        json.addProperty("layer", layer);
+        json.addProperty("weight", weight);
+        if (minY > Integer.MIN_VALUE) {
+            json.addProperty("minY", minY);
+        }
+        if (maxY < Integer.MAX_VALUE) {
+            json.addProperty("maxY", maxY);
+        }
+        json.addProperty("density", density);
+        json.addProperty("minSize", minSize);
+        json.addProperty("maxSize", maxSize);
+        json.addProperty("heightScale", heightScale);
+        if (fill != null){
+            json.addProperty("fill", AntimatterPlatformUtils.getIdFromBlock(fill.getBlock()).toString());
+        }
+        JsonArray array = new JsonArray();
+        variants.forEach(m -> {
+            array.add(m.toJson());
+        });
+        if (!array.isEmpty()) {
+            json.add("variants", array);
+        }
+        JsonArray array2 = new JsonArray();
+        getDims().forEach(r -> array2.add(r.toString()));
+        if (!array2.isEmpty()){
+            json.add("dims", array2);
+        }
+        return json;
+    }
+
+    public static WorldGenVein fromJson(String id, JsonObject json){
+        List<WorldGenVeinVariant> variants = new ArrayList<>();
+        List<ResourceKey<Level>> dims = new ArrayList<>();
+        if (json.has("variants")){
+            JsonArray array = json.getAsJsonArray("variants");
+            array.forEach(j -> {
+                if (j instanceof JsonObject object){
+                    variants.add(WorldGenVeinVariant.fromJson(object));
+                }
+            });
+        }
+        if (json.has("dims")){
+            JsonArray array = json.getAsJsonArray("dims");
+            array.forEach(j -> {
+                if (j instanceof JsonPrimitive object){
+                    dims.add(ResourceKey.create(Registry.DIMENSION_REGISTRY, new ResourceLocation(object.getAsString())));
+                }
+            });
+        }
+        BlockState fill = json.has("fill") ? AntimatterPlatformUtils.getBlockFromId(new ResourceLocation(json.get("fill").getAsString())).defaultBlockState() : null;
+        return new WorldGenVein(
+                id,
+                json.get("layer").getAsInt(),
+                json.get("weight").getAsInt(),
+                json.has("minY") ? json.get("minY").getAsInt() : Integer.MIN_VALUE,
+                json.has("maxY") ? json.get("maxY").getAsInt() : Integer.MAX_VALUE,
+                json.get("density").getAsInt(),
+                json.get("minSize").getAsInt(),
+                json.get("maxSize").getAsInt(),
+                json.get("heightScale").getAsFloat(),
+                fill,
+                variants,
+                dims
+        );
     }
 
 }
