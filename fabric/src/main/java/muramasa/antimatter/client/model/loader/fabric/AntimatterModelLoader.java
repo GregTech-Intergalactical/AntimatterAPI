@@ -1,9 +1,13 @@
 package muramasa.antimatter.client.model.loader.fabric;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import io.github.fabricators_of_create.porting_lib.model.IModelConfiguration;
+import io.github.fabricators_of_create.porting_lib.model.IModelGeometry;
+import io.github.fabricators_of_create.porting_lib.model.IModelLoader;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -21,24 +25,20 @@ import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> implements IModelLoader<T>, IAntimatterObject {
+public abstract class AntimatterModelLoader<T extends IAntimatterModel> implements IModelLoader, IAntimatterObject {
 
     private final ResourceLocation loc;
 
@@ -62,7 +62,22 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
     }
 
     @Override
-    public abstract T read(JsonDeserializationContext context, JsonObject json);
+    public IModelGeometry read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+        UnbakedModel model = readModel(deserializationContext, modelContents);
+        return new IModelGeometry() {
+            @Override
+            public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation) {
+                return model.bake(bakery, spriteGetter, modelTransform, loc);
+            }
+
+            @Override
+            public Collection<Material> getTextures(IModelConfiguration owner, Function modelGetter, Set missingTextureErrors) {
+                return model.getMaterials(modelGetter, missingTextureErrors);
+            }
+        };
+    }
+
+    public abstract T readModel(JsonDeserializationContext context, JsonObject json);
 
     public int[] buildRotations(JsonObject e) {
         int[] rotations = new int[3];
@@ -84,7 +99,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
         }
 
         @Override
-        public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
+        public AntimatterGroupedModel readModel(JsonDeserializationContext context, JsonObject json) {
             try {
                 ResourceLocation particle = json.has("particle") ? new ResourceLocation(json.get("particle").getAsString()) : MissingTextureAtlasSprite.getLocation();
                 Map<Integer, String> offsets = new Object2ObjectOpenHashMap<>();
@@ -109,7 +124,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
                         map.computeIfAbsent(name == null ? "" : name, a -> new ObjectArrayList<>()).add(context.deserialize(jsonelement, BlockElement.class));
                     }
                 } 
-                return new AntimatterGroupedModel(particle, map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, k -> new VanillaProxy(k.getValue()))));
+                return new AntimatterGroupedModel(particle, /*map.entrySet().stream().collect(Collectors.toMap(t -> t.getKey(), k -> new VanillaProxy(k.getValue())))*/ImmutableMap.of());
             } catch (Exception e) {
                 throw new RuntimeException("Caught error deserializing model : " + e);
             }
@@ -123,9 +138,9 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
         }
 
         @Override
-        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
+        public DynamicModel readModel(JsonDeserializationContext context, JsonObject json) {
             try {
-                Int2ObjectOpenHashMap<IModelGeometry<?>[]> configs = new Int2ObjectOpenHashMap<>();
+                Int2ObjectOpenHashMap<UnbakedModel[]> configs = new Int2ObjectOpenHashMap<>();
                 for (JsonElement e : json.getAsJsonArray("config")) {
                     if (!e.isJsonObject() || !e.getAsJsonObject().has("id") || !e.getAsJsonObject().has("models"))
                         continue;
@@ -142,8 +157,8 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
             }
         }
 
-        public IModelGeometry<?>[] buildModels(JsonDeserializationContext context, JsonArray array) {
-            IModelGeometry<?>[] models = new IModelGeometry<?>[array.size()];
+        public UnbakedModel[] buildModels(JsonDeserializationContext context, JsonArray array) {
+            UnbakedModel[] models = new UnbakedModel[array.size()];
             for (int i = 0; i < array.size(); i++) {
                 if (!array.get(i).isJsonObject()) continue;
                 models[i] = new AntimatterModel(context.deserialize(array.get(i).getAsJsonObject(), BlockModel.class), buildRotations(array.get(i).getAsJsonObject()));
@@ -159,7 +174,7 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
         }
 
         @Override
-        public ProxyModel read(JsonDeserializationContext context, JsonObject json) {
+        public ProxyModel readModel(JsonDeserializationContext context, JsonObject json) {
             return new ProxyModel();
         }
     }
@@ -171,11 +186,11 @@ public abstract class AntimatterModelLoader<T extends IAntimatterModel<T>> imple
 
         @Override
 
-        public DynamicModel read(JsonDeserializationContext context, JsonObject json) {
-            return new DynamicModel(super.read(context, json)) {
+        public DynamicModel readModel(JsonDeserializationContext context, JsonObject json) {
+            return new DynamicModel(super.readModel(context, json)) {
                 @Override
-                public BakedModel bakeModel(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
-                    return new PipeBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, particle)), getBakedConfigs(owner, bakery, getter, transform, overrides, loc));
+                public BakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
+                    return new PipeBakedModel(getter.apply(new Material(InventoryMenu.BLOCK_ATLAS, particle)), getBakedConfigs(bakery, getter, transform, loc));
                 }
             };
         }

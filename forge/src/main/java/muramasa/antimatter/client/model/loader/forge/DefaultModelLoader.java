@@ -19,7 +19,7 @@ public class DefaultModelLoader extends AntimatterModelLoader<AntimatterModel> {
     @SuppressWarnings("unchecked")
     @Nonnull
     @Override
-    public AntimatterModel read(JsonDeserializationContext context, JsonObject json) {
+    public AntimatterModel readModel(JsonDeserializationContext context, JsonObject json) {
         try {
             UnbakedModel baseModel = (json.has("model") && json.get("model").isJsonObject()) ? context.deserialize(json.get("model"), BlockModel.class) : ModelUtils.getMissingModel();
             return new AntimatterModel(baseModel, buildRotations(json));
