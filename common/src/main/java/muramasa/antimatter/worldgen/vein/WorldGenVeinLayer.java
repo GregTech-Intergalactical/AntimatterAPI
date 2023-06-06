@@ -335,25 +335,25 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
         for (int nSmallOresCount = 0; nSmallOresCount < nSmallOres; nSmallOresCount++) {
             int tX = rand.nextInt(16) + posX;
             int tZ = rand.nextInt(16) + posZ;
-            int tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
+            int tY = rand.nextInt(224) - 54; // Y height can vary from -54 to 170 for small ores.
             pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[0], AntimatterMaterialTypes.ORE_SMALL);
 
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
-            tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
+            tY = rand.nextInt(224) - 54; // Y height can vary from -54 to 170 for small ores.
             pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[1], AntimatterMaterialTypes.ORE_SMALL);
 
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
-            tY = rand.nextInt(160) + 10; // Y height can vary from 10 to 170 for small ores.
+            tY = rand.nextInt(224) - 54; // Y height can vary from -54 to 170 for small ores.
             pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[2], AntimatterMaterialTypes.ORE_SMALL);
 
             tX = rand.nextInt(16) + posX;
             tZ = rand.nextInt(16) + posZ;
-            tY = rand.nextInt(190) + 10; // Y height can vary from 10 to 200 for small ores.
+            tY = rand.nextInt(254) - 54; // Y height can vary from -54 to 200 for small ores.
             pos.set(tX, tY, tZ);
             WorldGenHelper.setOre(world, pos, world.getBlockState(pos), materials[3], AntimatterMaterialTypes.ORE_SMALL);
         }
