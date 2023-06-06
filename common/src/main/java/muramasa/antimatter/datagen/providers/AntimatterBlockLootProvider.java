@@ -184,7 +184,7 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
         }
         if (block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE)) {
             Item item = AntimatterMaterialTypes.RAW_ORE.get(block.getMaterial());
-            tables.put(block, b -> createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(UniformGenerator.between(3.0F, 4.0F))).apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
+            tables.put(block, b -> createSilkTouchDispatchTable(block, applyExplosionDecay(block, LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0F, 2.0F))).apply(ApplyBonusCount.addUniformBonusCount(Enchantments.BLOCK_FORTUNE)))));
             return;
         }
         add(block);
