@@ -108,7 +108,7 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && lastMaterial != null) {
                         BlockState below = world.getBlockState(offset.offset(0, -1, 0));
                         if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
-                            WorldGenHelper.setRock(world, offset, lastMaterial, layers[3].getStoneState(), AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
+                            WorldGenHelper.setRock(world, offset, lastMaterial, existing, AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
                         }
                     }
 
