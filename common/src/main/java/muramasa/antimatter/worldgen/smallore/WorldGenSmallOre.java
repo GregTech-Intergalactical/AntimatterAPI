@@ -6,13 +6,10 @@ import com.google.gson.JsonPrimitive;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
-import muramasa.antimatter.worldgen.vein.WorldGenVeinVariant;
-import muramasa.antimatter.worldgen.vein.WorldGenVeinVariantMaterial;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 
 import java.util.ArrayList;

@@ -56,10 +56,10 @@ public class Ref {
     public static boolean DATA_EXCEPTIONS = false; //TODO re-enable + config option
 
     //TODO maybe use these later
-    public static boolean debugWorldGen = false;
-    public static boolean debugOreVein = false;
+    public static boolean debugWorldGen = true;
+    public static boolean debugOreVein = true;
     public static boolean debugSmallOres = false;
-    public static boolean debugStones = false;
+    public static boolean debugStones = true;
     /**
      * Texture related keys.
      **/

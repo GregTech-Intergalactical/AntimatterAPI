@@ -2,22 +2,33 @@ package muramasa.antimatter.event;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
-import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import muramasa.antimatter.worldgen.vanillaore.WorldGenVanillaOre;
-import muramasa.antimatter.worldgen.vein.WorldGenVein;
+import muramasa.antimatter.worldgen.vein.WorldGenVeinLayer;
+import muramasa.antimatter.worldgen.vein.WorldGenVeinLayerBuilder;
+import muramasa.antimatter.worldgen.vein.old.WorldGenVein;
 
 import java.util.List;
 
 public class WorldGenEvent {
-    public final List<WorldGenVein> VEINS = new ObjectArrayList<>();
+    public final List<WorldGenVeinLayer> VEINS = new ObjectArrayList<>();
+    public final List<WorldGenStoneLayer> STONE_LAYERS = new ObjectArrayList<>();
 
     public final List<WorldGenSmallOre> SMALL_ORES = new ObjectArrayList<>();
 
     public final List<WorldGenVanillaOre> VANILLA_ORES = new ObjectArrayList<>();
 
-    public void vein(List<WorldGenVein> veins) {
-        VEINS.addAll(veins);
+    public void vein(WorldGenVeinLayer veins) {
+        if (VEINS.stream().anyMatch(s -> s.getId().equals(veins.getId()))){
+            Antimatter.LOGGER.warn("Duplicate vein layer spawn, aborting. Id: " + veins.getId());
+            return;
+        }
+        VEINS.add(veins);
+    }
+
+    public void stoneLayer(List<WorldGenStoneLayer> veins) {
+        STONE_LAYERS.addAll(veins);
     }
 
     public void smallOre(WorldGenSmallOre veins) {

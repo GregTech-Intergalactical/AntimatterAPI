@@ -1,11 +1,10 @@
-package muramasa.antimatter.worldgen.vein;
+package muramasa.antimatter.worldgen.vein.old;
 
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.material.Material;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.List;
 
 public class WorldGenVeinVariantBuilder {
 
@@ -87,15 +86,15 @@ public class WorldGenVeinVariantBuilder {
     }
 
     final public WorldGenVeinVariantBuilder withThinChance() {
-        return this.withChance((float) AntimatterConfig.WORLD.THIN_ORE_CHANCE, (float) AntimatterConfig.WORLD.THIN_SMALL_ORE_CHANCE, (float) AntimatterConfig.WORLD.THIN_MARKER_ORE_CHANCE, (float) AntimatterConfig.WORLD.THIN_SURFACE_STONE_CHANCE);
+        return this.withChance(0.05f, 0.1f, 0.01f, 0.01f);
     }
 
     final public WorldGenVeinVariantBuilder withNormalChance() {
-        return this.withChance((float) AntimatterConfig.WORLD.NORMAL_ORE_CHANCE, (float) AntimatterConfig.WORLD.NORMAL_SMALL_ORE_CHANCE, (float) AntimatterConfig.WORLD.NORMAL_MARKER_ORE_CHANCE, (float) AntimatterConfig.WORLD.NORMAL_SURFACE_STONE_CHANCE);
+        return this.withChance(0.1f, 0.05f, 0.025f, 0.05f);
     }
 
     final public WorldGenVeinVariantBuilder withDenseChance() {
-        return this.withChance((float) AntimatterConfig.WORLD.DENSE_ORE_CHANCE, (float) AntimatterConfig.WORLD.DENSE_SMALL_ORE_CHANCE, (float) AntimatterConfig.WORLD.DENSE_MARKER_ORE_CHANCE, (float) AntimatterConfig.WORLD.DENSE_SURFACE_STONE_CHANCE);
+        return this.withChance(0.25f, 0.0f, 0.05f, 0.1f);
     }
 
     final public WorldGenVeinVariantMaterialBuilder withMaterial() {

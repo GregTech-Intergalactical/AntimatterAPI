@@ -1,6 +1,7 @@
 package muramasa.antimatter.worldgen;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
@@ -9,11 +10,14 @@ import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.worldgen.feature.FeatureOre;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.Heightmap;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
@@ -100,14 +104,25 @@ public class WorldGenHelper {
     return setOre(world, pos, existing, material, type);
   }
 
+    public static boolean addOre(LevelAccessor world, BlockPos pos, Material material, boolean normalOre) {
+        FeatureOre.ORES.computeIfAbsent(world.getChunk(pos).getPos(), k -> new ObjectArrayList<>()).add(new ImmutableTriple<>(pos, material, normalOre));
+        return true;
+    }
+
+    public static boolean addRock(LevelAccessor world, BlockPos pos, Material material, int chance) {
+        int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
+        return setRock(world, new BlockPos(pos.getX(), y, pos.getZ()), material, null, chance);
+    }
+
   /**
    * Replaces the block at the given position with a surface rock block for the
    * specified material.
    * Will only replace the block, if the existing state can be replaced by a
    * surface rock.
    */
-  public static boolean setRock(LevelAccessor world, BlockPos pos, Material material, @Nullable() BlockState fill) {
-    StoneType stone = fill != null ? STONE_MAP.get(fill) : null;
+  public static boolean setRock(LevelAccessor world, BlockPos pos, Material material, @Nullable() BlockState fill, int chance) {
+      if (world.getRandom().nextInt(chance) != 0) return false;
+      StoneType stone = fill != null ? STONE_MAP.get(fill) : null;
     BlockState rockState = AntimatterMaterialTypes.ROCK.get().get(material, stone != null && stone.generateOre ? stone : AntimatterStoneTypes.STONE).asState();
 
     final BlockState existingBelow = world.getBlockState(pos.below());

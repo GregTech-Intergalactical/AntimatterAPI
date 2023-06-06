@@ -1,7 +1,5 @@
 package muramasa.antimatter.worldgen;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import muramasa.antimatter.Antimatter;
@@ -14,7 +12,6 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
 import muramasa.antimatter.worldgen.feature.*;
 import muramasa.antimatter.worldgen.object.WorldGenBase;
-import muramasa.antimatter.worldgen.vein.WorldGenVein;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -51,6 +48,11 @@ public class AntimatterWorldGenerator {
     static final AntimatterFeature<NoneFeatureConfiguration> SMALL_ORE = new FeatureSmallOres();
 
     static final AntimatterFeature<NoneFeatureConfiguration> VANILLA_ORE = new FeatureVanillaOres();
+
+    static final AntimatterFeature<NoneFeatureConfiguration> VEIN_LAYER = new FeatureVeinLayer();
+    static final AntimatterFeature<NoneFeatureConfiguration> ORE = new FeatureOre();
+    static final AntimatterFeature<NoneFeatureConfiguration> STONE_LAYER = new FeatureStoneLayer();
+
 
     protected record GenHandler(BiomeLoadEvent consumer,
                                 Predicate<Biome.BiomeCategory> validator) {
