@@ -73,14 +73,16 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                 layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, 4, tZ) + 1) / 2) * stonesSize)));
 
                 maxHeight = world.getHeightmapPos(Heightmap.Types.OCEAN_FLOOR_WG, pos.offset(i, 0, j)).getY() + 1; //+1 for placing rocks on top of the max height
-                for (int tY = 1; tY < maxHeight; tY++) {
+                for (int tY = -63; tY < maxHeight; tY++) {
+                    int offsetY = tY + 64;
                     lastMaterial = null;
-                    existing = world.getBlockState(pos.offset(i, tY, j));
+                    BlockPos offset = pos.offset(i, offsetY, j);
+                    existing = world.getBlockState(offset);
                     isAir = existing.isAir();
 
                     //If we haven't placed an ore, and not trying to set the same state as existing, also doesn't work if the veins is either stone or deepslate, lets it fall back to vanilla for those
                     if (!isAir && /*lastMaterial == null &&*/ existing != layers[3].getStoneState() && layers[3].getStoneState().getBlock() != Blocks.STONE && layers[3].getStoneState().getBlock() != Blocks.DEEPSLATE) {
-                        if (WorldGenHelper.setStone(world, pos.offset(i, tY, j), existing, layers[3].getStoneState())) {
+                        if (WorldGenHelper.setStone(world, offset, existing, layers[3].getStoneState())) {
                             lastMaterial = layers[3].getStoneType() != null ? layers[3].getStoneType().getMaterial() : null;
                         }
                     }
@@ -88,14 +90,14 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     if (!isAir && AntimatterConfig.WORLD.STONE_LAYER_ORES) {
                         if (layers[1] == layers[5]) {
                             for (StoneLayerOre ore : layers[3].getOres()) {
-                                if (ore.canPlace(pos.offset(i, tY, j), rand) && WorldGenHelper.addOre(world, pos.offset(i, tY, j), ore.getMaterial(), layers[0] == layers[6])) {
+                                if (ore.canPlace(offset, rand) && WorldGenHelper.addOre(world, offset, ore.getMaterial(), layers[0] == layers[6])) {
                                     lastMaterial = ore.getMaterial();
                                     break;
                                 }
                             }
                         } else {
                             for (StoneLayerOre ore : WorldGenStoneLayer.getCollision(layers[3].getStoneType(), layers[5].getStoneState(), layers[1].getStoneState())) {
-                                if (ore.canPlace(pos.offset(i, tY, j), rand) && WorldGenHelper.addOre(world, pos.offset(i, tY, j), ore.getMaterial(), true)) {
+                                if (ore.canPlace(offset, rand) && WorldGenHelper.addOre(world, offset, ore.getMaterial(), true)) {
                                     lastMaterial = ore.getMaterial();
                                     break;
                                 }
@@ -104,15 +106,15 @@ public class FeatureStoneLayer extends AntimatterFeature<NoneFeatureConfiguratio
                     }
 
                     if ((isAir || WorldGenHelper.ROCK_SET.contains(existing)) && lastMaterial != null) {
-                        BlockState below = world.getBlockState(pos.offset(i, tY - 1, j));
+                        BlockState below = world.getBlockState(offset.offset(0, -1, 0));
                         if (!below.isAir() && below != WorldGenHelper.WATER_STATE) {
-                            WorldGenHelper.setRock(world, pos.offset(i, tY, j), lastMaterial, layers[3].getStoneState(), AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
+                            WorldGenHelper.setRock(world, offset, lastMaterial, layers[3].getStoneState(), AntimatterConfig.WORLD.STONE_LAYER_ROCK_CHANCE);
                         }
                     }
 
                     // And scan for next Block on the Stone Layer Type.
                     System.arraycopy(layers, 1, layers, 0, layers.length - 1);
-                    layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, tY + 4, tZ) + 1) / 2) * stonesSize)));
+                    layers[6] = stones.get(Math.min(stonesMax, (int) (((noise.get(tX, offsetY + 4, tZ) + 1) / 2) * stonesSize)));
                 }
             }
         }
