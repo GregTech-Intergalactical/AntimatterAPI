@@ -13,7 +13,6 @@ import muramasa.antimatter.client.baked.BakedMachineSide;
 import muramasa.antimatter.client.baked.ListBakedModel;
 import muramasa.antimatter.client.baked.MachineBakedModel;
 import muramasa.antimatter.tile.TileEntityMachine;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -21,12 +20,13 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import tesseract.FluidPlatformUtils;
@@ -70,8 +70,8 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
 
     }
 
-    private static BakedModel renderInner(BlockState state, Random rand, int light, BakedModel inner, Fluid fluid) {
-        List<BakedQuad> quads = inner.getQuads(state, null, rand, EmptyModelData.INSTANCE);
+    private static BakedModel renderInner(BlockState state, Random rand, int light, BakedModel inner, Fluid fluid, BlockAndTintGetter level, BlockPos pos) {
+        List<BakedQuad> quads = ModelUtils.getQuadsFromBaked(inner, state, null, rand, level, pos);
         List<BakedQuad> out = VertexTransformer.processMany(quads, FluidPlatformUtils.getFluidColor(fluid), Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(FluidPlatformUtils.getStillTexture(fluid)));
         boolean hot = FluidPlatformUtils.getFluidTemperature(fluid) >= FluidPlatformUtils.getFluidTemperature(Fluids.LAVA);
         for (BakedQuad bakedQuad : out) {
@@ -113,7 +113,7 @@ public class MachineTESR implements BlockEntityRenderer<TileEntityMachine<?>> {
                         FluidTank tank = fh.getOutputTanks().getTank(off);
                         return tank == null ? FluidStack.EMPTY : tank.getFluid();
                     }).orElse(FluidStack.EMPTY);
-                    BakedModel baked = renderInner(tile.getBlockState(), tile.getLevel().getRandom(), 16, customPart.getValue(), fluid.getFluid());
+                    BakedModel baked = renderInner(tile.getBlockState(), tile.getLevel().getRandom(), 16, customPart.getValue(), fluid.getFluid(), tile.getLevel(), tile.getBlockPos());
 
                     float fill = tile.fluidHandler.map(fh -> {
                         if (in) {

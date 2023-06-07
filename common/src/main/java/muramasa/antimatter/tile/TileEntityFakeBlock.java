@@ -25,8 +25,6 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -139,13 +137,6 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
             this.controllerPos = new ObjectArrayList<>(list.size());
             list.forEach(n -> controllerPos.add(BlockPos.of(((LongTag) n).getAsLong())));
         }
-    }
-
-    @Nonnull
-    @Override
-    public IModelData getModelData() {
-        return new ModelDataMap.Builder().withInitial(AntimatterProperties.STATE_MODEL_PROPERTY, getState())
-                .withInitial(AntimatterProperties.TILE_PROPERTY, this).build();
     }
 
     @Nonnull

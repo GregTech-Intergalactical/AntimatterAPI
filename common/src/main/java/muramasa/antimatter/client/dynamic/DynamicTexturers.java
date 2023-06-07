@@ -3,7 +3,6 @@ package muramasa.antimatter.client.dynamic;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector4f;
-import dev.architectury.platform.Mod;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;

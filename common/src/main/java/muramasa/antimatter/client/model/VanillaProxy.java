@@ -1,3 +1,4 @@
+/*
 package muramasa.antimatter.client.model;
 
 import com.google.common.collect.Lists;
@@ -109,3 +110,4 @@ public class VanillaProxy implements ISimpleModelGeometry<VanillaProxy>
         }
     }
 }
+*/

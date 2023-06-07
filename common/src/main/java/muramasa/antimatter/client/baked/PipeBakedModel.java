@@ -1,7 +1,6 @@
 package muramasa.antimatter.client.baked;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.pipe.PipeCoverHandler;
 import muramasa.antimatter.client.RenderHelper;
@@ -19,8 +18,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,13 +30,6 @@ public class PipeBakedModel extends DynamicBakedModel {
     public PipeBakedModel(TextureAtlasSprite particle, Int2ObjectOpenHashMap<BakedModel[]> map) {
         super(particle, map);
         onlyGeneralQuads();
-    }
-
-    @Override
-    public @NotNull IModelData getModelData(BlockAndTintGetter world, BlockPos pos, BlockState state, @NotNull IModelData data) {
-        data = super.getModelData(world, pos, state, data);
-        data.setData(AntimatterProperties.TILE_PROPERTY, ((TileEntityPipe) world.getBlockEntity(pos)));
-        return data;
     }
 
     @Override

@@ -71,8 +71,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.api.gt.IEnergyHandler;
@@ -531,23 +529,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
 
     public ICover getCover(Direction side) {
         return coverHandler.map(h -> h.get(side)).orElse(ICover.empty);
-    }
-
-    @Nonnull
-    @Override
-    public IModelData getModelData() {
-        ModelDataMap.Builder builder = new ModelDataMap.Builder();
-        if (this.getMachineType() instanceof BasicMultiMachine) return builder.build();
-        TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
-        if (mTile != null) {
-            builder.withInitial(AntimatterProperties.MULTI_TEXTURE_PROPERTY, a -> {
-                Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
-                if (tex.length == 1) return tex[0];
-                return tex[a.get3DDataValue()];
-            });
-        }
-
-        return builder.build();
     }
 
     public Function<Direction, Texture> getMultiTexture(){
