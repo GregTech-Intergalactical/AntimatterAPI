@@ -3,6 +3,7 @@ package muramasa.antimatter.mixin.forge.client;
 import muramasa.antimatter.client.baked.IAntimatterBakedModel;
 import muramasa.antimatter.client.forge.AntimatterModelProperties;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -27,11 +28,16 @@ public interface IAntimatterBakedModelMixin extends IDynamicBakedModel {
     @Shadow
     List<BakedQuad> getQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos);
 
+    @Shadow
+    TextureAtlasSprite getParticleIcon(@Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos);
+
     @NotNull
     @Override
     default List<BakedQuad> getQuads(@javax.annotation.Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data){
-        if (!data.hasProperty(AntimatterModelProperties.WORLD) || !data.hasProperty(AntimatterModelProperties.POS)) return Collections.emptyList();
-        return getQuads(state, side, rand, data.getData(AntimatterModelProperties.WORLD), data.getData(AntimatterModelProperties.POS));
+        BlockAndTintGetter world = data.getData(AntimatterModelProperties.WORLD);
+        BlockPos pos = data.getData(AntimatterModelProperties.POS);
+        if (world == null || pos == null) return Collections.emptyList();
+        return getQuads(state, side, rand, world, pos);
     }
 
     @NotNull
@@ -41,5 +47,13 @@ public interface IAntimatterBakedModelMixin extends IDynamicBakedModel {
         d.setData(AntimatterModelProperties.WORLD, level);
         d.setData(AntimatterModelProperties.POS, pos);
         return d;
+    }
+
+    @Override
+    default TextureAtlasSprite getParticleIcon(@NotNull IModelData data) {
+        BlockAndTintGetter world = data.getData(AntimatterModelProperties.WORLD);
+        BlockPos pos = data.getData(AntimatterModelProperties.POS);
+        if (world == null || pos == null) return IDynamicBakedModel.super.getParticleIcon(data);
+        return getParticleIcon(world, pos);
     }
 }

@@ -1,6 +1,7 @@
 package muramasa.antimatter.client.baked;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,4 +33,6 @@ public interface IAntimatterBakedModel extends BakedModel {
     default List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState state, @org.jetbrains.annotations.Nullable Direction side, Random rand) {
         return Collections.emptyList();
     }
+
+    TextureAtlasSprite getParticleIcon(BlockAndTintGetter level, BlockPos pos);
 }

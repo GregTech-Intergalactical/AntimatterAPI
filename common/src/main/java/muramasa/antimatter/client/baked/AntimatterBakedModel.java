@@ -39,16 +39,16 @@ public abstract class AntimatterBakedModel<T> implements IAntimatterBakedModel {
 
     @Override
     public TextureAtlasSprite getParticleIcon() {
-        return getParticleIcon(EmptyModelData.INSTANCE);
+        return particle;
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleIcon(BlockAndTintGetter level, BlockPos pos) {
+        return getParticleIcon();
     }
 
     @Override
     public ItemTransforms getTransforms() {
         return ItemTransforms.NO_TRANSFORMS;
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleIcon(@Nonnull IModelData data) {
-        return particle;
     }
 }

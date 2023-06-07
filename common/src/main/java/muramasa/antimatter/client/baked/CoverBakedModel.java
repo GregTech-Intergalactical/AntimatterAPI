@@ -3,6 +3,7 @@ package muramasa.antimatter.client.baked;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.cover.ICover;
+import muramasa.antimatter.util.AntimatterCapUtils;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -31,8 +32,10 @@ public class CoverBakedModel extends GroupedBakedModel {
     @Override
     public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos) {
         BlockEntity entity = level.getBlockEntity(pos);
-        EnumMap<Direction, Byte> bitmap = data.getData(AntimatterProperties.COVER_REMOVAL);
-        if (bitmap == null) return super.getBlockQuads(state, side, rand, data);
+        if (entity == null) return super.getBlockQuads(state, side, rand, level, pos);
+        ICoverHandler<?> coverHandler = AntimatterCapUtils.getCoverHandler(entity, side).orElse(null);
+        EnumMap<Direction, Byte> bitmap = addCoverModelData(side, coverHandler);
+        if (bitmap == null) return super.getBlockQuads(state, side, rand, level, pos);
         Byte f = bitmap.get(side);
         if (f == null) return Collections.emptyList();
         byte filter = f;
@@ -47,7 +50,7 @@ public class CoverBakedModel extends GroupedBakedModel {
     }
 
     @Nonnull
-    public static EnumMap<Direction, Byte> addCoverModelData(Direction side, ICoverHandler<?> handler, @Nonnull IModelData tileData) {;
+    public static EnumMap<Direction, Byte> addCoverModelData(Direction side, ICoverHandler<?> handler) {;
         EnumMap<Direction, Byte> map = new EnumMap<>(Direction.class);
         if (handler == null) return map;
         byte value = (byte) 0;

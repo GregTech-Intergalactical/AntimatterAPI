@@ -68,7 +68,7 @@ public interface IAntimatterBakedModelMixin extends FabricBakedModel, BakedModel
 
             @Override
             public TextureAtlasSprite getParticleIcon() {
-                return ref.getParticleIcon();
+                return ref.getParticleIcon(blockView, pos);
             }
 
             @Override

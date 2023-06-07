@@ -44,10 +44,10 @@ public class PipeBakedModel extends DynamicBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, IModelData data, BlockAndTintGetter level, BlockPos pos) {
+    public List<BakedQuad> getBlockQuads(BlockState state, Direction side, Random rand, BlockAndTintGetter level, BlockPos pos) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!(blockEntity instanceof TileEntityPipe<?> pipe)) return super.getBlockQuads(state, side, rand, level, pos);
-        List<BakedQuad> quads = super.getBlockQuads(state, side, rand, data);
+        List<BakedQuad> quads = super.getBlockQuads(state, side, rand, level, pos);
         PipeCoverHandler<?> covers = pipe.coverHandler.orElse(null);
         List<BakedQuad> coverQuads = new LinkedList<>();
         if (covers == null)
@@ -66,7 +66,7 @@ public class PipeBakedModel extends DynamicBakedModel {
                     }
                 }
                 coverQuads = covers.getTexturer(dir).getQuads("pipe", coverQuads, state, c,
-                        new BaseCover.DynamicKey(dir, null, tex, c.getId()), dir.get3DDataValue(), CoverBakedModel.addCoverModelData(dir, covers, data));
+                        new BaseCover.DynamicKey(dir, null, tex, c.getId()), dir.get3DDataValue(), CoverBakedModel.addCoverModelData(dir, covers));
             }
         }
         quads.addAll(coverQuads);
