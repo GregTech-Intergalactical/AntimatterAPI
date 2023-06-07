@@ -721,12 +721,14 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         public final Texture tex;
         public Direction facing;
         public final MachineState state;
+        public AntimatterProperties.MachineProperties properties;
 
-        public DynamicKey(ResourceLocation model, Texture tex, Direction dir, MachineState state) {
+        public DynamicKey(ResourceLocation model, Texture tex, Direction dir, MachineState state, AntimatterProperties.MachineProperties properties) {
             this.model = model;
             this.tex = tex;
             this.facing = dir;
             this.state = state;
+            this.properties = properties;
         }
 
         public void setDir(Direction dir) {

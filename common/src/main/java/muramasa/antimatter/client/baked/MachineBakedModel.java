@@ -75,7 +75,7 @@ public class MachineBakedModel extends AntimatterBakedModel<MachineBakedModel> {
 
         if (machine.getMultiTexture() != null) {
             Function<Direction, Texture> ft = machine.getMultiTexture();
-            return props.machineTexturer.getQuads("machine", new ObjectArrayList<>(), state, props.type, new TileEntityMachine.DynamicKey(new ResourceLocation(props.type.getId()), ft.apply(side), side, props.state), side.get3DDataValue(), level, pos);
+            return props.machineTexturer.getQuads("machine", new ObjectArrayList<>(), state, props.type, new TileEntityMachine.DynamicKey(new ResourceLocation(props.type.getId()), ft.apply(side), side, props.state, props), side.get3DDataValue(), level, pos);
         }
 
         BakedModel model = getModel(state, side, props.state);
