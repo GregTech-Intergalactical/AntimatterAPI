@@ -60,7 +60,7 @@ public class ModelUtilsImpl {
         if (model instanceof IAntimatterBakedModel antimatterBaked){
             return antimatterBaked.getQuads(state, side, rand, level, pos);
         } else {
-            IModelData data = model.getModelData(level, pos, state, new ModelDataMap.Builder().build());
+            IModelData data = model.getModelData(level, pos, state, EmptyModelData.INSTANCE);
             return model.getQuads(state, side, rand, data);
         }
     }

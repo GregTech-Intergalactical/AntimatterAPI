@@ -8,8 +8,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,6 +46,7 @@ public interface IAntimatterBakedModelMixin extends IDynamicBakedModel {
     @Override
     default IModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull IModelData modelData) {
         IModelData d = IDynamicBakedModel.super.getModelData(level, pos, state, modelData);
+        if (d == EmptyModelData.INSTANCE) d = new ModelDataMap.Builder().build();
         d.setData(AntimatterModelProperties.WORLD, level);
         d.setData(AntimatterModelProperties.POS, pos);
         return d;
