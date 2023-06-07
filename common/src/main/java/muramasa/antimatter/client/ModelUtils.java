@@ -93,6 +93,7 @@ public class ModelUtils {
     }
 
 
+    @ExpectPlatform
     public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos){
         throw new AssertionError();
     }
