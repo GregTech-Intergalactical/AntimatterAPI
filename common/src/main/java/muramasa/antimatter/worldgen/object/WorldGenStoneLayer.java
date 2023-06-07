@@ -72,8 +72,8 @@ public class WorldGenStoneLayer extends WorldGenBase<WorldGenStoneLayer> {
         return ores;
     }
 
-    public static void addCollision(BlockState top, BlockState bottom, StoneLayerOre... oresToAdd) {
-        COLLISION_MAP.computeIfAbsent(Objects.hash(top, bottom), k -> new ObjectArrayList<>()).addAll(Arrays.asList(oresToAdd));
+    public static void setCollisionMap(Int2ObjectOpenHashMap<List<StoneLayerOre>> collisionMap) {
+        COLLISION_MAP = collisionMap;
     }
 
     public static List<StoneLayerOre> getCollision(StoneType middle, BlockState top, BlockState bottom) {

@@ -1,15 +1,20 @@
 package muramasa.antimatter.event;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
+import muramasa.antimatter.worldgen.StoneLayerOre;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import muramasa.antimatter.worldgen.vanillaore.WorldGenVanillaOre;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinLayer;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinLayerBuilder;
 import muramasa.antimatter.worldgen.vein.old.WorldGenVein;
+import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class WorldGenEvent {
     public final List<WorldGenVeinLayer> VEINS = new ObjectArrayList<>();
@@ -18,6 +23,7 @@ public class WorldGenEvent {
     public final List<WorldGenSmallOre> SMALL_ORES = new ObjectArrayList<>();
 
     public final List<WorldGenVanillaOre> VANILLA_ORES = new ObjectArrayList<>();
+    public final Int2ObjectOpenHashMap<List<StoneLayerOre>> COLLISION_MAP = new Int2ObjectOpenHashMap<>();
 
     public void vein(WorldGenVeinLayer veins) {
         if (VEINS.stream().anyMatch(s -> s.getId().equals(veins.getId()))){
@@ -45,5 +51,9 @@ public class WorldGenEvent {
             return;
         }
         VANILLA_ORES.add(veins);
+    }
+
+    public void addCollision(BlockState top, BlockState bottom, StoneLayerOre... oresToAdd) {
+        COLLISION_MAP.computeIfAbsent(Objects.hash(top, bottom), k -> new ObjectArrayList<>()).addAll(Arrays.asList(oresToAdd));
     }
 }

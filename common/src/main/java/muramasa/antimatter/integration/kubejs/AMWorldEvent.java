@@ -1,10 +1,12 @@
 package muramasa.antimatter.integration.kubejs;
 
 import dev.latvian.mods.kubejs.event.EventJS;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
+import muramasa.antimatter.worldgen.StoneLayerOre;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayerBuilder;
 import muramasa.antimatter.worldgen.vein.WorldGenVeinLayer;
@@ -15,6 +17,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +27,8 @@ public class AMWorldEvent extends EventJS {
 
     public final List<WorldGenVeinLayer> VEINS = new ObjectArrayList<>();
     public final List<WorldGenStoneLayer> STONE_LAYERS = new ObjectArrayList<>();
+
+    public final Int2ObjectOpenHashMap<List<StoneLayerOre>> COLLISION_MAP = new Int2ObjectOpenHashMap<>();
     public boolean disableBuiltin = false;
 
     public final void vein(String id, int minY, int maxY, int weight, int density, int size, Material primary,
@@ -64,5 +69,9 @@ public class AMWorldEvent extends EventJS {
 
     public final void disableBuiltin() {
         this.disableBuiltin = true;
+    }
+
+    public void addCollision(BlockState top, BlockState bottom, StoneLayerOre... oresToAdd) {
+        COLLISION_MAP.computeIfAbsent(Objects.hash(top, bottom), k -> new ObjectArrayList<>()).addAll(Arrays.asList(oresToAdd));
     }
 }
