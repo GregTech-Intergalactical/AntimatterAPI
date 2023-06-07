@@ -25,6 +25,7 @@ import net.minecraftforge.client.model.QuadTransformer;
 import net.minecraftforge.client.model.SimpleModelState;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.common.model.TransformationHelper;
 
@@ -59,7 +60,7 @@ public class ModelUtilsImpl {
         if (model instanceof IAntimatterBakedModel antimatterBaked){
             return antimatterBaked.getQuads(state, side, rand, level, pos);
         } else {
-            IModelData data = model.getModelData(level, pos, state, EmptyModelData.INSTANCE);
+            IModelData data = model.getModelData(level, pos, state, new ModelDataMap.Builder().build());
             return model.getQuads(state, side, rand, data);
         }
     }

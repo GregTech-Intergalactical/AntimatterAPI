@@ -31,7 +31,7 @@ public record ModelLoaderWrapper(IAntimatterModelLoader<?> loader) implements IM
 
     }
 
-    private static record ModelGeometryWrapper(IAntimatterModel model) implements IModelGeometry<ModelGeometryWrapper> {
+    private record ModelGeometryWrapper(IAntimatterModel model) implements IModelGeometry<ModelGeometryWrapper> {
 
         @Override
         public BakedModel bake(IModelConfiguration iModelConfiguration, ModelBakery modelBakery, Function function, ModelState modelState, ItemOverrides itemOverrides, ResourceLocation resourceLocation) {
