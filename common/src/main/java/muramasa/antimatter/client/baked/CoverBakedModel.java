@@ -33,7 +33,7 @@ public class CoverBakedModel extends GroupedBakedModel {
         Byte f = bitmap.get(side);
         if (f == null) return Collections.emptyList();
         byte filter = f;
-        return this.models.entrySet().stream().filter(t -> {new EnumMap<>(Direction.class);
+        return this.models.entrySet().stream().filter(t -> {
             String key = t.getKey();
             if (key.isEmpty()) return true;
             Direction dir = Direction.byName(key);
