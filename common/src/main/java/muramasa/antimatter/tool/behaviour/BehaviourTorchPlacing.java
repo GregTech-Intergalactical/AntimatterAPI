@@ -116,10 +116,10 @@ public class BehaviourTorchPlacing implements IItemUse<IAntimatterTool> {
         return blockstate;
     }
 
-    private static <T extends Comparable<T>> BlockState updateState(BlockState p_219988_0_, Property<T> p_219988_1_, String p_219988_2_) {
-        return p_219988_1_.getValue(p_219988_2_).map((p_219986_2_) -> {
-            return p_219988_0_.setValue(p_219988_1_, p_219986_2_);
-        }).orElse(p_219988_0_);
+    private static <T extends Comparable<T>> BlockState updateState(BlockState state, Property<T> property, String value) {
+        return property.getValue(value).map((p_219986_2_) -> {
+            return state.setValue(property, p_219986_2_);
+        }).orElse(state);
     }
 
     protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
