@@ -1,6 +1,7 @@
 package muramasa.antimatter.datagen.builder;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.devtech.arrp.json.loot.JCondition;
 import net.devtech.arrp.json.models.JOverride;
@@ -61,6 +62,11 @@ public class AntimatterItemModelBuilder extends AntimatterModelBuilder<Antimatte
     public AntimatterItemModelBuilder tex(Consumer<Map<String, String>> texer) {
         Map<String, String> textureMap = new Object2ObjectArrayMap<>();
         texer.accept(textureMap);
+        textureMap.forEach(this::texture);
+        return this;
+    }
+
+    public AntimatterItemModelBuilder tex(Map<String, Texture> textureMap) {
         textureMap.forEach(this::texture);
         return this;
     }
