@@ -10,7 +10,6 @@ import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.dynamic.DynamicBakedModel;
 import muramasa.antimatter.pipe.BlockPipe;
 import muramasa.antimatter.texture.Texture;
-import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.pipe.TileEntityPipe;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -66,7 +65,7 @@ public class PipeBakedModel extends DynamicBakedModel {
                     }
                 }
                 coverQuads = covers.getTexturer(dir).getQuads("pipe", coverQuads, state, c,
-                        new BaseCover.DynamicKey(dir, null, tex, c.getId()), dir.get3DDataValue(), CoverBakedModel.addCoverModelData(dir, covers));
+                        new BaseCover.DynamicKey(dir, null, tex, c.getId()), dir.get3DDataValue(), level, pos);//CoverBakedModel.addCoverModelData(dir, covers));
             }
         }
         quads.addAll(coverQuads);

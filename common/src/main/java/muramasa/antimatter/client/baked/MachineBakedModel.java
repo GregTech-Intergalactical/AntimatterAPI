@@ -3,10 +3,8 @@ package muramasa.antimatter.client.baked;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.AntimatterProperties.MachineProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.CoverHandler;
@@ -30,7 +28,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
