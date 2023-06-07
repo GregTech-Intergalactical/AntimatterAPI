@@ -551,6 +551,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     }
 
     public Function<Direction, Texture> getMultiTexture(){
+        if (this.getMachineType() instanceof BasicMultiMachine<?>) return null;
         TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
         if (mTile != null) {
             return a -> {
