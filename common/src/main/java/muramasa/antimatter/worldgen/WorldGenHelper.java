@@ -111,7 +111,8 @@ public class WorldGenHelper {
 
     public static boolean addRock(LevelAccessor world, BlockPos pos, Material material, int chance) {
         int y = Math.min(world.getHeight(Heightmap.Types.OCEAN_FLOOR, pos.getX(), pos.getZ()), world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()));
-        return setRock(world, new BlockPos(pos.getX(), y, pos.getZ()), material, null, chance);
+        BlockState state = world.getBlockState(new BlockPos(pos.getX(), y - 1, pos.getZ()));
+        return setRock(world, new BlockPos(pos.getX(), y, pos.getZ()), material, state, chance);
     }
 
   /**

@@ -4,6 +4,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.data.AntimatterStoneTypes;
 import muramasa.antimatter.item.ItemBasic;
+import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.IModelProvider;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
@@ -12,6 +13,7 @@ import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
+import muramasa.antimatter.worldgen.WorldGenHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.gui.screens.Screen;
@@ -109,7 +111,9 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
         if (!context.canPlace()) {
             return InteractionResult.FAIL;
         } else {
-            BlockState blockstate = AntimatterMaterialTypes.ROCK.get().get(material, AntimatterStoneTypes.STONE).asState();
+            BlockState existing = context.getLevel().getBlockState(context.getClickedPos().below());
+            StoneType type = WorldGenHelper.STONE_MAP.get(existing) != null ? WorldGenHelper.STONE_MAP.get(existing) : AntimatterStoneTypes.STONE;
+            BlockState blockstate = AntimatterMaterialTypes.ROCK.get().get(material, type).asState();
             if (blockstate == null) {
                 return InteractionResult.FAIL;
             } else if (!context.getLevel().setBlock(context.getClickedPos(), blockstate, 11)) {

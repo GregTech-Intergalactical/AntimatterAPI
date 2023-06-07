@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonSerializer;
 import dev.latvian.mods.kubejs.script.ScriptType;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
@@ -33,6 +34,7 @@ import muramasa.antimatter.registration.ModRegistrar;
 import muramasa.antimatter.registration.Side;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
+import muramasa.antimatter.worldgen.StoneLayerOre;
 import muramasa.antimatter.worldgen.object.WorldGenStoneLayer;
 import muramasa.antimatter.worldgen.smallore.WorldGenSmallOre;
 import muramasa.antimatter.worldgen.vanillaore.WorldGenVanillaOre;
@@ -251,6 +253,7 @@ public class AntimatterDynamics {
         List<WorldGenStoneLayer> stoneLayers = new ObjectArrayList<>();
         List<WorldGenSmallOre> smallOres = new ObjectArrayList<>();
         List<WorldGenVanillaOre> vanillaOres = new ObjectArrayList<>();
+        Int2ObjectOpenHashMap<List<StoneLayerOre>> collisionMap = new Int2ObjectOpenHashMap<>();
         boolean runRegular = true;
         WorldGenVeinLayer.resetTotalWeight();
         if (AntimatterAPI.isModLoaded(Ref.MOD_KJS) && serverEvent) {
@@ -258,6 +261,7 @@ public class AntimatterDynamics {
             ev.post(ScriptType.SERVER, "antimatter.worldgen");
             veins.addAll(ev.VEINS);
             stoneLayers.addAll(ev.STONE_LAYERS);
+            collisionMap.putAll(ev.COLLISION_MAP);
             runRegular = !ev.disableBuiltin;
         }
         if (runRegular) {
@@ -266,6 +270,9 @@ public class AntimatterDynamics {
             smallOres.addAll(ev.SMALL_ORES);
             stoneLayers.addAll(ev.STONE_LAYERS);
             vanillaOres.addAll(ev.VANILLA_ORES);
+            ev.COLLISION_MAP.forEach((i, l) -> {
+                collisionMap.computeIfAbsent(i, i2 -> new ArrayList<>()).addAll(l);
+            });
         }
         AntimatterWorldGenerator.clear();
         for (WorldGenVeinLayer vein : veins) {
@@ -274,6 +281,7 @@ public class AntimatterDynamics {
         for (WorldGenStoneLayer stoneLayer : stoneLayers) {
             AntimatterWorldGenerator.register(stoneLayer.toRegister, stoneLayer);
         }
+        WorldGenStoneLayer.setCollisionMap(collisionMap);
         for (WorldGenSmallOre smallOre : smallOres){
             AntimatterWorldGenerator.register(smallOre.toRegister, smallOre);
         }
