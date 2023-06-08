@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CoverBakedModel extends GroupedBakedModel {
@@ -33,14 +34,24 @@ public class CoverBakedModel extends GroupedBakedModel {
         Byte f = bitmap.get(side);
         if (f == null) return Collections.emptyList();
         byte filter = f;
-        return this.models.entrySet().stream().filter(t -> {
+        Predicate<Map.Entry<String, BakedModel>> predicate = t -> {
             String key = t.getKey();
             if (key.isEmpty()) return true;
             Direction dir = Direction.byName(key);
             if (dir == null) throw new NullPointerException("Dir null in getBlockQuads");
             boolean ok = (filter & (1 << dir.get3DDataValue())) > 0;
             return ok;
-        }).flatMap(t -> t.getValue().getQuads(state, null, rand).stream()).collect(Collectors.toList());
+        };
+        List<BakedQuad> quads = new ArrayList<>();
+        for (Map.Entry<String, BakedModel> t : this.models.entrySet()) {
+            if (predicate.test(t)){
+                quads.addAll(t.getValue().getQuads(state, null, rand));
+            }
+        }
+        return quads;
+        /*return this.models.entrySet().stream().filter(t -> {
+
+        }).flatMap(t -> t.getValue().getQuads(state, null, rand).stream()).collect(Collectors.toList());*/
     }
 
     @Nonnull
