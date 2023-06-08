@@ -50,13 +50,16 @@ public class BlockBenchLoader extends AntimatterModelLoader<AntimatterGroupedMod
                     for (JsonElement jsonelement : GsonHelper.getAsJsonArray(json, "elements")) {
                         String name = offsets.get(index++);
                         JsonObject object = modelMap.computeIfAbsent(name == null ? "" : name, a -> new JsonObject());
-                        JsonArray array = GsonHelper.getAsJsonArray(json, "elements", new JsonArray());
+                        JsonArray array = GsonHelper.getAsJsonArray(object, "elements", new JsonArray());
                         array.add(jsonelement);
+                        if (!object.has("elements")){
+                            object.add("elements", array);
+                        }
                         //map.computeIfAbsent(name == null ? "" : name, a -> new ObjectArrayList<>()).add(context.deserialize(jsonelement, BlockElement.class));
                     }
                 }
                 /*map.entrySet().stream().collect(Collectors.toMap(t -> t.getKey(), k -> new VanillaProxy(k.getValue())))*/
-                return new AntimatterGroupedModel(particle, modelMap.entrySet().stream().collect(Collectors.toMap(t -> t.getKey(), k -> context.deserialize(k.getValue(), BlockModel.class))));
+                return new AntimatterGroupedModel(particle, modelMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, k -> context.deserialize(k.getValue(), BlockModel.class))));
             } catch (Exception e) {
                 throw new RuntimeException("Caught error deserializing model : " + e);
             }
