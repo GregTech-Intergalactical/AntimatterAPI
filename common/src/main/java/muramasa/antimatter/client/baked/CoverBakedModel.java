@@ -12,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,23 +26,12 @@ public class CoverBakedModel extends GroupedBakedModel {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos) {
-        BlockEntity entity = level.getBlockEntity(pos);
-        if (entity == null) return super.getBlockQuads(state, side, rand, level, pos);
-        ICoverHandler<?> coverHandler = AntimatterCapUtils.getCoverHandler(entity, side).orElse(null);
-        EnumMap<Direction, Byte> bitmap = addCoverModelData(side, coverHandler);
-        if (bitmap == null) return super.getBlockQuads(state, side, rand, level, pos);
-        Byte f = bitmap.get(side);
-        if (f == null) return Collections.emptyList();
-        byte filter = f;
-        Predicate<Map.Entry<String, BakedModel>> predicate = t -> {
-            String key = t.getKey();
-            if (key.isEmpty()) return true;
-            Direction dir = Direction.byName(key);
-            if (dir == null) throw new NullPointerException("Dir null in getBlockQuads");
-            boolean ok = (filter & (1 << dir.get3DDataValue())) > 0;
-            return ok;
-        };
+    public List<BakedQuad> getBlockQuads(BlockState state, @org.jetbrains.annotations.Nullable Direction side, @NotNull Random rand, @NotNull BlockAndTintGetter level, BlockPos pos) {
+        return getBlockQuads(state, side, rand, level, pos, null);
+    }
+
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos, Predicate<Map.Entry<String, BakedModel>> predicate) {
+        if (predicate == null) return Collections.emptyList();
         List<BakedQuad> quads = new ArrayList<>();
         for (Map.Entry<String, BakedModel> t : this.models.entrySet()) {
             if (predicate.test(t)){
@@ -63,7 +53,8 @@ public class CoverBakedModel extends GroupedBakedModel {
             Direction rotated = Utils.rotate(side, dir);
             ICover cover = handler.get(rotated);
             if (cover.isEmpty()) {
-                value |= (1 << dir.get3DDataValue());
+                byte coverByte = (byte) (1 << dir.get3DDataValue());
+                value |= coverByte;
             }
         }
         map.put(side, value);

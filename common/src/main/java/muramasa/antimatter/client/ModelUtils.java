@@ -4,6 +4,8 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.client.baked.CoverBakedModel;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -25,9 +27,12 @@ import net.minecraft.world.level.material.Fluid;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class ModelUtils {
 
@@ -85,6 +90,13 @@ public class ModelUtils {
     @ExpectPlatform
     public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos){
         throw new AssertionError();
+    }
+
+    public static List<BakedQuad> getQuadsFromBakedCover(BakedModel model, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos, Predicate<Map.Entry<String, BakedModel>> coverPredicate){
+        if (model instanceof CoverBakedModel coverBakedModel){
+            return coverBakedModel.getBlockQuads(state, side, rand, level, pos, coverPredicate);
+        }
+        return getQuadsFromBaked(model, state, side, rand, level, pos);
     }
     public static BakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads, Function<Material, TextureAtlasSprite> getter) {
         SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrides.EMPTY, true).particle(getter.apply(model.getMaterial("particle")));

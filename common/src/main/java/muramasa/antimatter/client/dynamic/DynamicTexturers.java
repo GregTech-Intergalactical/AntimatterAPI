@@ -6,13 +6,17 @@ import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.client.SimpleModelState;
+import muramasa.antimatter.client.baked.CoverBakedModel;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.mixin.client.BlockModelAccessor;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.util.AntimatterCapUtils;
+import muramasa.antimatter.util.Utils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.resources.model.BakedModel;
@@ -25,7 +29,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 public class DynamicTexturers {
 
@@ -54,11 +61,25 @@ public class DynamicTexturers {
                     BakedModel b = model.bake(ModelUtils.getModelBakery(), model, ModelUtils.getDefaultTextureGetter(),
                             new SimpleModelState(base), t.source.getModel(t.type, Direction.SOUTH), true);
 
+                    ICoverHandler<?> coverHandler = AntimatterCapUtils.getCoverHandler(t.getBlockEntity(), t.currentDir).orElse(null);
+                    Predicate<Map.Entry<String, BakedModel>> predicate = null;
+
+                    if (coverHandler != null){
+                        predicate = e -> {
+                            String key = e.getKey();
+                            if (key.isEmpty()) return true;
+                            Direction dir = Utils.rotate(t.currentDir, Direction.byName(key));
+                            if (dir == null) throw new NullPointerException("Dir null in getBlockQuads");
+                            boolean ok =  coverHandler.get(dir).isEmpty();//(filter & (1 << dir.get3DDataValue())) > 0;
+                            return ok;
+                        };
+                    }
+
                     List<BakedQuad> ret = new ObjectArrayList<>();
                     for (Direction dir : Ref.DIRS) {
-                        ret.addAll(ModelUtils.getQuadsFromBaked(b, t.state, dir, t.rand, t.level, t.pos));
+                        ret.addAll(ModelUtils.getQuadsFromBakedCover(b, t.state, dir, t.rand, t.level, t.pos, predicate));
                     }
-                    ret.addAll(ModelUtils.getQuadsFromBaked(b, t.state, null, t.rand, t.level, t.pos));
+                    ret.addAll(ModelUtils.getQuadsFromBakedCover(b, t.state, null, t.rand, t.level, t.pos, predicate));
                     return t.source.transformQuads(t.state, ret);
                 }
                 return Collections.emptyList();

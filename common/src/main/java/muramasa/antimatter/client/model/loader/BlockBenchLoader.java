@@ -31,7 +31,6 @@ public class BlockBenchLoader extends AntimatterModelLoader<AntimatterGroupedMod
                 ResourceLocation particle = json.has("particle") ? new ResourceLocation(json.get("particle").getAsString()) : MissingTextureAtlasSprite.getLocation();
                 Map<Integer, String> offsets = new Object2ObjectOpenHashMap<>();
                 if (json.has("groups")) {
-                    int index = 0;
                     for (JsonElement jsonelement : GsonHelper.getAsJsonArray(json, "groups")) {
                         if (jsonelement.isJsonObject()) {
                             JsonObject obj = jsonelement.getAsJsonObject();
