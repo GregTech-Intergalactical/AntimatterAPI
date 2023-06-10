@@ -40,13 +40,13 @@ public class AntimatterNetworkImpl extends AntimatterNetwork {
     }
 
     public void register() {
-        handler.registerMessage(currMessageId++, TileGuiEventPacket.class, TileGuiEventPacket::encodeStatic, TileGuiEventPacket::decode, (msg, ctx) -> {
+        handler.registerMessage(currMessageId++, TileGuiEventPacket.class, TileGuiEventPacket::encode, TileGuiEventPacket::decode, (msg, ctx) -> {
             ctx.get().enqueueWork(() -> {
                 msg.handleClient(ctx.get().getSender());
             });
             ctx.get().setPacketHandled(true);
         });
-        handler.registerMessage(currMessageId++, CoverGuiEventPacket.class, CoverGuiEventPacket::encodeStatic, CoverGuiEventPacket::decode, (msg, ctx) -> {
+        handler.registerMessage(currMessageId++, CoverGuiEventPacket.class, CoverGuiEventPacket::encode, CoverGuiEventPacket::decode, (msg, ctx) -> {
             ctx.get().enqueueWork(() -> {
                 msg.handleClient(ctx.get().getSender());
             });
