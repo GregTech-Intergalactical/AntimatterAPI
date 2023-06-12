@@ -4,6 +4,7 @@ import earth.terrarium.botarium.fabric.energy.FabricBlockEnergyContainer;
 import io.github.fabricators_of_create.porting_lib.event.common.BlockPlaceCallback;
 import io.github.fabricators_of_create.porting_lib.event.common.ItemCraftedCallback;
 import muramasa.antimatter.*;
+import muramasa.antimatter.block.BlockFakeTile;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.fabric.AntimatterLookups;
 import muramasa.antimatter.common.event.CommonEvents;
@@ -75,20 +76,20 @@ public class AntimatterImpl implements ModInitializer {
             CommonHandler.setup();
             AntimatterFabricWorldgen.init();
             RecipeConditions.init();
-            FluidStorage.SIDED.registerForBlockEntity((be, direction) -> getCap(IFluidHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
-            ItemStorage.SIDED.registerForBlockEntity((be, direction) -> getCap(IItemHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
-            TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> getCap(IEnergyHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
+            FluidStorage.SIDED.registerForBlockEntity((be, direction) -> getCap(IFluidHandler.class, be, direction), BlockFakeTile.TYPE);
+            ItemStorage.SIDED.registerForBlockEntity((be, direction) -> getCap(IItemHandler.class, be, direction), BlockFakeTile.TYPE);
+            TesseractLookups.ENERGY_HANDLER_SIDED.registerForBlockEntity((be, direction) -> getCap(IEnergyHandler.class, be, direction), BlockFakeTile.TYPE);
             EnergyStorage.SIDED.registerForBlockEntity((be, direction) -> {
                 IEnergyHandler handler = getCap(IEnergyHandler.class, be, direction);
                 if (handler != null) return (EnergyStorage) handler;
                 IRFNode node = getCap(IRFNode.class, be, direction);
                 if (node != null) return node instanceof EnergyStorage storage ? storage : new FabricBlockEnergyContainer(node, node, be);
                 return null;
-            }, Data.PROXY_INSTANCE.TYPE);
+            }, BlockFakeTile.TYPE);
             if (AntimatterAPI.isModLoaded("modern_industrialization")) {
-                TesseractImpl.registerMITile((be, direction) -> getCap(IEnergyHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
+                TesseractImpl.registerMITile((be, direction) -> getCap(IEnergyHandler.class, be, direction), BlockFakeTile.TYPE);
             }
-            AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> getCap(ICoverHandler.class, be, direction), Data.PROXY_INSTANCE.TYPE);
+            AntimatterLookups.COVER_HANDLER_SIDED.registerForBlockEntity((be, direction) -> getCap(ICoverHandler.class, be, direction), BlockFakeTile.TYPE);
             AntimatterAPI.all(Material.class).forEach(m -> {
                 Map<MaterialType<?>, Integer> map = MaterialTags.FURNACE_FUELS.getMap(m);
                 if (map != null){

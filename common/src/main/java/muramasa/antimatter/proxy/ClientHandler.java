@@ -3,6 +3,7 @@ package muramasa.antimatter.proxy;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.block.BlockFakeTile;
 import muramasa.antimatter.block.BlockSurfaceRock;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.Data;
@@ -88,8 +89,8 @@ public class ClientHandler implements IProxyHandler {
         });
         /* Set up render types. */
         AntimatterAPI.runLaterClient(() -> {
-            ModelUtils.setRenderLayer(Data.PROXY_INSTANCE, RenderType.cutout());
             AntimatterAPI.all(BlockMachine.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
+            AntimatterAPI.all(BlockFakeTile.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockMultiMachine.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockOre.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));
             AntimatterAPI.all(BlockPipe.class, b -> ModelUtils.setRenderLayer(b, RenderType.cutout()));

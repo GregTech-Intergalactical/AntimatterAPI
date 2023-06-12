@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Set;
 
-public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, EntityBlock {
+public class BlockProxy extends BlockBasic {
 
     public BlockEntityType<TileEntityFakeBlock> TYPE;
 
@@ -57,44 +57,5 @@ public class BlockProxy extends BlockBasic implements IRegistryEntryProvider, En
         AntimatterBlockModelBuilder builder = prov.getBuilder(block);
         builder.loader(AntimatterModelManager.LOADER_PROXY);
         prov.state(block, builder);
-    }
-
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
-        TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getBlockEntity(pos);
-        return tile != null && tile.getState() != null ? tile.getState().getBlock().asItem().getDefaultInstance() : ItemStack.EMPTY;
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public void onRegistryBuild(RegistryType registry) {
-        if (registry == RegistryType.BLOCK_ENTITIES) {
-            TYPE = new BlockEntityType<>((a,b) -> new TileEntityFakeBlock(this,a,b), Set.of(this), null);
-            //((IForgeRegistry<BlockEntityType<?>>)registry).register(TYPE);
-            AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), TYPE);
-        }
-    }
-
-    @Override
-    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-        super.onRemove(state, worldIn, pos, newState, isMoving);
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
-        BlockEntity tileentity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
-        if (tileentity instanceof TileEntityFakeBlock) {
-            TileEntityFakeBlock fake = (TileEntityFakeBlock) tileentity;
-            AntimatterPlatformUtils.getAllItems().parallelStream().filter(t -> t.isCorrectToolForDrops(fake.getState())).findFirst().ifPresent(item -> {
-                builder.withParameter(LootContextParams.TOOL, new ItemStack(item));
-            });
-            return fake.getState().getDrops(builder);
-        }
-        return super.getDrops(state, builder);
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new TileEntityFakeBlock(this, pos, state);
     }
 }

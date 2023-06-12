@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class FakeTileElement extends StructureElement {
 
-    private final IBlockStatePredicate[] preds;
+    private IBlockStatePredicate[] preds;
     private final EnumMap<Direction, CoverFactory> covers = new EnumMap<>(Direction.class);
 
     public FakeTileElement(IBlockStatePredicate... pred) {
@@ -36,17 +36,9 @@ public class FakeTileElement extends StructureElement {
     }
 
     public FakeTileElement(Block... pred) {
-        this.preds = Arrays
-                .stream(pred).map(t -> (IBlockStatePredicate) (reader, pos,
-                                                               state) -> state.getBlock() == Data.PROXY_INSTANCE || state.is(t))
-                .toArray(IBlockStatePredicate[]::new);
     }
 
     public FakeTileElement(BlockState... pred) {
-        this.preds = Arrays
-                .stream(pred).map(t -> (IBlockStatePredicate) (reader, pos,
-                        state) -> state.getBlock() == Data.PROXY_INSTANCE || state.equals(t))
-                .toArray(IBlockStatePredicate[]::new);
     }
 
     public FakeTileElement() {

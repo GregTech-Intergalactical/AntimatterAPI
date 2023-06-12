@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockFakeTile;
 import muramasa.antimatter.block.BlockProxy;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
@@ -37,8 +38,6 @@ import java.util.Set;
 
 public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock> {
 
-    private BlockState state = Blocks.AIR.defaultBlockState();
-
     public final Set<TileEntityBasicMultiMachine<?>> controllers = new ObjectOpenHashSet<>();
     public Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
     public Direction facing;
@@ -47,8 +46,8 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
 
     public List<BlockPos> controllerPos;
 
-    public TileEntityFakeBlock(BlockProxy proxy, BlockPos pos, BlockState state) {
-        super(proxy.TYPE, pos, state);
+    public TileEntityFakeBlock(BlockPos pos, BlockState state) {
+        super(BlockFakeTile.TYPE, pos, state);
         coverTexturer = new Object2ObjectOpenHashMap<>();
     }
 
@@ -118,7 +117,6 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
-        this.state = NbtUtils.readBlockState(nbt.getCompound("B"));
         if (nbt.contains("F")) {
             this.facing = Direction.from3DDataValue(nbt.getInt("F"));
         } else {
@@ -162,7 +160,6 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     }
 
     private void writeTag(CompoundTag compound, boolean send) {
-        compound.put("B", NbtUtils.writeBlockState(state));
         if (facing != null) {
             compound.putInt("F", facing.ordinal());
         }
@@ -179,12 +176,7 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
     }
 
     public BlockState getState() {
-        return state;
-    }
-
-    public TileEntityFakeBlock setState(BlockState state) {
-        this.state = state;
-        return this;
+        return Blocks.AIR.defaultBlockState();
     }
 
     @Override
