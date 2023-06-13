@@ -57,8 +57,10 @@ public class MaterialRecipes {
                 }
             }
             if (m.has(AntimatterMaterialTypes.RING)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_ring", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                        AntimatterMaterialTypes.RING.get(m, craftingMultiplier), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(), 'W', AntimatterMaterialTypes.ROD.getMaterialTag(m)), "H ", " W");
+                if (!m.has(RUBBERTOOLS)){
+                    provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_ring", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
+                            AntimatterMaterialTypes.RING.get(m, craftingMultiplier), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(), 'W', AntimatterMaterialTypes.ROD.getMaterialTag(m)), "H ", " W");
+                }
             }
         });
         AntimatterMaterialTypes.ROTOR.all().forEach(m -> {
@@ -90,6 +92,12 @@ public class MaterialRecipes {
                                 .put('R', AntimatterMaterialTypes.ROD.getMaterialTag(m))
                                 .build(),
                         "RPR", "PWP", "RPR");
+            }
+            if (m.has(AntimatterMaterialTypes.RING)) {
+                if (m.has(RUBBERTOOLS)){
+                    provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_ring", "antimatter_material", "has_wire_cutter", provider.hasSafeItem(AntimatterDefaultTools.WIRE_CUTTER.getTag()),
+                            AntimatterMaterialTypes.RING.get(m, craftingMultiplier), ImmutableMap.of('H', AntimatterDefaultTools.WIRE_CUTTER.getTag(), 'W', AntimatterMaterialTypes.PLATE.getMaterialTag(m)), "H ", " W");
+                }
             }
         });
 
