@@ -1,5 +1,6 @@
 package muramasa.antimatter.block;
 
+import com.google.common.collect.ImmutableMap;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
@@ -13,9 +14,11 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.registration.IColorHandler;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -51,6 +54,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
 
     protected Material material;
     protected StoneType stoneType;
+    protected final ImmutableMap<String, Texture> textureMap;
 
     public BlockSurfaceRock(String domain, Material material, StoneType stoneType) {
         super(domain, "surface_rock_" + material.getId() + "_" + stoneType.getId(), Properties.of(net.minecraft.world.level.material.Material.DECORATION).strength(1.0f, 1.0f).sound(SoundType.STONE).noCollission().noOcclusion());
@@ -67,6 +71,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
         shapes.put(4, Block.box(6.0D, 0.0D, 2.0D, 11.0D, 3.0D, 9.0D));
         shapes.put(5, Block.box(9.0D, 0.0D, 4.0D, 12.0D, 1.0D, 8.0D));
         shapes.put(6, Block.box(5.0D, 0.0D, 4.0D, 12.0D, 2.0D, 8.0D));
+        textureMap = ImmutableMap.of("all", stoneType.getTexture(), "overlay", new Texture(Ref.ID, "material/rock_overlay"));
     }
 
     @Override
@@ -96,7 +101,7 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
 
     @Override
     public int getBlockColor(BlockState state, @Nullable BlockGetter world, @Nullable BlockPos pos, int i) {
-        return material.getRGB();
+        return i == 1 ? material.getRGB() : -1;
     }
 
     //    @Override
@@ -136,14 +141,14 @@ public class BlockSurfaceRock extends BlockDynamic implements SimpleWaterloggedB
     public void onBlockModelBuild(Block block, AntimatterBlockStateProvider prov) {
         AntimatterBlockModelBuilder builder = prov.getBuilder(block);
         //builder.model("simple", stoneType.getTexture());
-        builder.model(Ref.ID + ":block/rock/surface_rock_0", stoneType.getTexture());
-        IntStream.range(0, SURFACE_ROCK_MODEL_COUNT).forEach(i -> builder.config(i, Ref.ID + ":block/rock/surface_rock_" + i, c -> c.tex(stoneType.getTexture())));
+        builder.model(Ref.ID + ":block/rock/surface_rock_0", textureMap);
+        IntStream.range(0, SURFACE_ROCK_MODEL_COUNT).forEach(i -> builder.config(i, Ref.ID + ":block/rock/surface_rock_" + i, c -> c.tex(textureMap)));
         prov.state(block, builder);
     }
 
     @Override
     public void onItemModelBuild(ItemLike item, AntimatterItemModelProvider prov) {
-        prov.getBuilder(item).parent(prov.existing("antimatter", "block/rock/surface_rock_0")).texture("all", stoneType.getTexture());
+        prov.getBuilder(item).parent(prov.existing("antimatter", "block/rock/surface_rock_0")).tex(textureMap);
     }
 
     @Override

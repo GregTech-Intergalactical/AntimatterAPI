@@ -1,21 +1,14 @@
-package muramasa.antimatter.worldgen.vein;
+package muramasa.antimatter.worldgen.vein.old;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.Ref;
 import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.ore.StoneType;
-import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
-import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,26 +154,26 @@ public class WorldGenVeinBuilder {
   public final WorldGenVeinBuilder asOreVein(int minY, int maxY, int weight, int density, int size, Material primary,
       Material secondary, Material between, Material sporadic, ResourceKey<Level>... dimensions) {
     this.asVein(weight, minY, maxY, density, dimensions).withSize(size, size * 2, 0.75f)
-        .withVariant(AntimatterConfig.WORLD.NORMAL_VEIN_WEIGHT)
+        .withVariant(10)
         .withNormalChance()
-        .withMaterial(primary, AntimatterConfig.WORLD.PRIMARY_MATERIAL_WEIGHT)
-        .withMaterial(secondary, AntimatterConfig.WORLD.SECONDARY_MATERIAL_WEIGHT)
-        .withMaterial(between, AntimatterConfig.WORLD.BETWEEN_MATERIAL_WEIGHT)
-        .withMaterial(sporadic, AntimatterConfig.WORLD.SPORADIC_MATERIAL_WEIGHT)
+        .withMaterial(primary, 5)
+        .withMaterial(secondary, 3)
+        .withMaterial(between, 2)
+        .withMaterial(sporadic, 1)
         .buildVariant()
-        .withVariant(AntimatterConfig.WORLD.THIN_VEIN_WEIGHT)
+        .withVariant(5)
         .withThinChance()
-        .withMaterial(primary, AntimatterConfig.WORLD.PRIMARY_MATERIAL_WEIGHT)
-        .withMaterial(secondary, AntimatterConfig.WORLD.SECONDARY_MATERIAL_WEIGHT)
-        .withMaterial(between, AntimatterConfig.WORLD.BETWEEN_MATERIAL_WEIGHT)
-        .withMaterial(sporadic, AntimatterConfig.WORLD.SPORADIC_MATERIAL_WEIGHT)
+        .withMaterial(primary, 5)
+        .withMaterial(secondary, 3)
+        .withMaterial(between, 2)
+        .withMaterial(sporadic, 1)
         .buildVariant()
-        .withVariant(AntimatterConfig.WORLD.DENSE_VEIN_WEIGHT)
+        .withVariant(2)
         .withDenseChance()
-        .withMaterial(primary, AntimatterConfig.WORLD.PRIMARY_MATERIAL_WEIGHT)
-        .withMaterial(secondary, AntimatterConfig.WORLD.SECONDARY_MATERIAL_WEIGHT)
-        .withMaterial(between, AntimatterConfig.WORLD.BETWEEN_MATERIAL_WEIGHT)
-        .withMaterial(sporadic, AntimatterConfig.WORLD.SPORADIC_MATERIAL_WEIGHT)
+        .withMaterial(primary, 5)
+        .withMaterial(secondary, 3)
+        .withMaterial(between, 2)
+        .withMaterial(sporadic, 1)
         .buildVariant();
     return this;
   }

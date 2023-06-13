@@ -15,7 +15,7 @@ description='''Well-rounded API for Minecraft, primarily made for GregTech.'''
 [[dependencies.antimatter]]
     modId="forge"
     mandatory=true
-    versionRange="[40.1.73,)"
+    versionRange="[40.2.3,)"
     ordering="AFTER"
     side="BOTH"
 [[dependencies.antimatter]]

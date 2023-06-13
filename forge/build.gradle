@@ -12,7 +12,7 @@ loom{
         convertAccessWideners = true
         extraAccessWideners.add("antimatter.accesswidener")
         mixinConfigs = [
-                "antimatter.mixins.json", "antimatter-forge.mixins.json", "antimatter.rei.mixins.json","arrp.mixins.json"
+                "antimatter.mixins.json", "antimatter-forge.mixins.json", "antimatter.rei.mixins.json"
         ]
         dataGen {
             mod project.modid

@@ -69,7 +69,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         super.onRemove();
         // Remove handlers from the structure cache.
         allHandlers.forEach(StructureHandle::deregister);
-        invalidateStructure();
+        //invalidateStructure();
         StructureCache.remove(level, worldPosition);
     }
 
@@ -245,8 +245,6 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     protected void invalidateStructure() {
-        if (remove)
-            return;
         if (this.getLevel() instanceof TrackedDummyWorld)
             return;
         if (result == null) {

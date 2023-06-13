@@ -1,4 +1,4 @@
-package muramasa.antimatter.worldgen.vein;
+package muramasa.antimatter.worldgen.vein.old;
 
 import com.google.gson.JsonObject;
 import muramasa.antimatter.material.Material;

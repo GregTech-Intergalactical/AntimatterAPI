@@ -5,20 +5,16 @@ import com.google.gson.JsonParser;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.vein.WorldGenVein;
+import muramasa.antimatter.worldgen.vein.old.WorldGenVein;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static muramasa.antimatter.Ref.GSON;
 
 public class WorldGenSmallOreBuilder {
     @Nullable

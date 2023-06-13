@@ -1,34 +1,19 @@
 package muramasa.antimatter.worldgen.feature;
 
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterConfig;
-import muramasa.antimatter.data.AntimatterMaterialTypes;
 import muramasa.antimatter.worldgen.AntimatterConfiguredFeatures;
-import muramasa.antimatter.worldgen.AntimatterWorldGenerator;
-import muramasa.antimatter.worldgen.WorldGenHelper;
-import muramasa.antimatter.worldgen.vein.WorldGenVein;
-import muramasa.antimatter.worldgen.vein.WorldGenVeinVariant;
-import muramasa.antimatter.worldgen.vein.WorldGenVeinVariantMaterial;
-import net.minecraft.core.BlockPos;
+import muramasa.antimatter.worldgen.vein.old.WorldGenVein;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
 
@@ -58,7 +43,11 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
   }
 
   @Override
-  public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> placer) {
+  public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> placer){
+      return false;
+  }
+
+  /*public boolean placeOld(FeaturePlaceContext<NoneFeatureConfiguration> placer) {
     //long start = new Date().getTime();
 
     final WorldGenLevel world = placer.level();
@@ -268,6 +257,6 @@ public class FeatureVein extends AntimatterFeature<NoneFeatureConfiguration> {
       heightCache.put(pos, height);
       return height;
     }
-  }
+  }*/
 
 }
