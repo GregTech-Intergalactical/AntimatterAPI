@@ -71,7 +71,7 @@ public class BlockFluidPipe<T extends FluidPipe<T>> extends BlockPipe<T> {
             max = Math.max(max, FluidPlatformUtils.getFluidTemperature(fluid.fluid));
         }
         if (max >= (295 + 100)) {
-            entityIn.hurt(DamageSource.GENERIC, Mth.clamp(((max + 200) - (295 + 100)) / 100, 2, 20));
+            entityIn.hurt(DamageSource.HOT_FLOOR, Mth.clamp(((max + 200) - (295 + 100)) / 100, 2, 20));
         }
     }
 
