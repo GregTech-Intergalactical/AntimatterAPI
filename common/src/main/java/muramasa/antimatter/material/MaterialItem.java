@@ -194,7 +194,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                             player.drop(DUST.get(material, 1), false);
                         }
                         LayeredCauldronBlock.lowerFillLevel(state, world, pos);
-                        world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                         return InteractionResult.SUCCESS;
                     }
                 } else if (type == AntimatterMaterialTypes.CRUSHED) {
@@ -210,7 +210,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
                             }
                         }
                         LayeredCauldronBlock.lowerFillLevel(state, world, pos);
-                        world.playSound(player, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        world.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                         return InteractionResult.SUCCESS;
                     }
                 }
