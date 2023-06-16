@@ -9,11 +9,7 @@ import muramasa.antimatter.capability.Holder;
 import muramasa.antimatter.capability.ICoverHandler;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.capability.IMachineHandler;
-import muramasa.antimatter.capability.machine.MachineCoverHandler;
-import muramasa.antimatter.capability.machine.MachineEnergyHandler;
-import muramasa.antimatter.capability.machine.MachineFluidHandler;
-import muramasa.antimatter.capability.machine.MachineItemHandler;
-import muramasa.antimatter.capability.machine.MachineRecipeHandler;
+import muramasa.antimatter.capability.machine.*;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.client.dynamic.DynamicTexturers;
@@ -76,6 +72,7 @@ import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.rf.IRFNode;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -123,6 +120,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public Holder<IFluidHandler, MachineFluidHandler<T>> fluidHandler = new Holder<>(IFluidHandler.class, dispatch);
     public Holder<ICoverHandler<?>, MachineCoverHandler<T>> coverHandler = new Holder<>(ICoverHandler.class, dispatch, null);
     public Holder<IEnergyHandler, MachineEnergyHandler<T>> energyHandler = new Holder<>(IEnergyHandler.class, dispatch);
+    public Holder<IRFNode, MachineRFHandler<T>> rfHandler = new Holder<>(IRFNode.class, dispatch);
     public Holder<MachineRecipeHandler<?>, MachineRecipeHandler<T>> recipeHandler = new Holder<>(MachineRecipeHandler.class, dispatch, null);
 
     /**
@@ -143,7 +141,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             fluidHandler.set(() -> new MachineFluidHandler<>((T) this));
         }
         if (type.has(ENERGY)) {
-            energyHandler.set(() -> new MachineEnergyHandler<>((T) this, type.amps(), type.has(GENERATOR)));
+            if (type.has(RF)){
+                rfHandler.set(() -> new MachineRFHandler<>((T)this, this.getMachineTier().getVoltage() * 100, type.has(MachineFlag.GENERATOR)));
+            } else {
+                energyHandler.set(() -> new MachineEnergyHandler<>((T) this, type.amps(), type.has(GENERATOR)));
+            }
         }
         if (type.has(RECIPE)) {
             recipeHandler.set(() -> new MachineRecipeHandler<>((T) this));
@@ -168,6 +170,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             this.itemHandler.ifPresent(MachineItemHandler::init);
             this.fluidHandler.ifPresent(MachineFluidHandler::init);
             this.energyHandler.ifPresent(MachineEnergyHandler::init);
+            this.rfHandler.ifPresent(MachineRFHandler::init);
             this.recipeHandler.ifPresent(MachineRecipeHandler::init);
         }
     }
@@ -243,6 +246,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     public void serverTick(Level level, BlockPos pos, BlockState state) {
         itemHandler.ifPresent(MachineItemHandler::onUpdate);
         energyHandler.ifPresent(MachineEnergyHandler::onUpdate);
+        rfHandler.ifPresent(MachineRFHandler::onUpdate);
         fluidHandler.ifPresent(MachineFluidHandler::onUpdate);
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
         this.recipeHandler.ifPresent(MachineRecipeHandler::onServerUpdate);
@@ -268,6 +272,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             fluidHandler.ifPresent(MachineFluidHandler::onRemove);
             itemHandler.ifPresent(MachineItemHandler::onRemove);
             energyHandler.ifPresent(MachineEnergyHandler::onRemove);
+            rfHandler.ifPresent(MachineRFHandler::onRemove);
             recipeHandler.ifPresent(MachineRecipeHandler::onRemove);
 
             dispatch.invalidate();
@@ -294,6 +299,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             coverHandler.ifPresent(c -> c.onMachineEvent(event, data));
             itemHandler.ifPresent(i -> i.onMachineEvent(event, data));
             energyHandler.ifPresent(e -> e.onMachineEvent(event, data));
+            rfHandler.ifPresent(e -> e.onMachineEvent(event, data));
             fluidHandler.ifPresent(f -> f.onMachineEvent(event, data));
             recipeHandler.ifPresent(r -> r.onMachineEvent(event, data));
             if (event instanceof ContentEvent && openContainers.size() > 0) {
@@ -618,8 +624,12 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         }
         if (tag.contains(Ref.KEY_MACHINE_ITEMS))
             itemHandler.ifPresent(i -> i.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_ITEMS)));
-        if (tag.contains(Ref.KEY_MACHINE_ENERGY))
-            energyHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+        if (tag.contains(Ref.KEY_MACHINE_ENERGY)) {
+            if (type.has(RF))
+                rfHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+            else
+                energyHandler.ifPresent(e -> e.deserialize(tag.getCompound(Ref.KEY_MACHINE_ENERGY)));
+        }
         if (tag.contains(Ref.KEY_MACHINE_COVER))
             coverHandler.ifPresent(e -> e.deserializeNBT(tag.getCompound(Ref.KEY_MACHINE_COVER)));
         if (tag.contains(Ref.KEY_MACHINE_FLUIDS)) {
@@ -643,6 +653,7 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             tag.putInt(Ref.KEY_MACHINE_STATE_D, disabledState.ordinal());
         itemHandler.ifPresent(i -> tag.put(Ref.KEY_MACHINE_ITEMS, i.serializeNBT()));
         energyHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serialize(new CompoundTag())));
+        rfHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_ENERGY, e.serialize(new CompoundTag())));
         coverHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_COVER , e.serializeNBT()));
         fluidHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_FLUIDS, e.serializeNBT()));
         recipeHandler.ifPresent(e -> tag.put(Ref.KEY_MACHINE_RECIPE, e.serializeNBT()));
@@ -681,7 +692,10 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             if (outputs > 0) slots += (" FL_OUT: " + outputs + ",");
         }
         if (slots.length() > 0) info.add("Slots:" + slots);
-        energyHandler.ifPresent(h -> info.add("Energy: " + h.getEnergy() + " / " + h.getCapacity()));
+        if (type.has(RF))
+            rfHandler.ifPresent(h -> info.add("RF: " + h.getStoredEnergy() + " / " + h.getMaxCapacity()));
+        else
+            energyHandler.ifPresent(h -> info.add("EU: " + h.getEnergy() + " / " + h.getCapacity()));
         coverHandler.ifPresent(h -> {
             StringBuilder builder = new StringBuilder("Covers: ");
             for (Direction side : Ref.DIRS) {

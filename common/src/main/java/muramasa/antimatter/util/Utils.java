@@ -6,6 +6,9 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import earth.terrarium.botarium.common.energy.base.EnergyContainer;
+import earth.terrarium.botarium.common.energy.base.PlatformEnergyManager;
+import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -395,6 +398,42 @@ public class Utils {
         if (extracted.isValid()) {
             if (to.insert(extracted)) {
                 extracted.commit();
+            }
+        }
+        return false;
+    }
+
+    public static boolean transferEnergy(PlatformEnergyManager from, PlatformEnergyManager to) {
+        long extracted = from.extract(Long.MAX_VALUE, true);
+        if (extracted > 0) {
+            long inserted = to.insert(extracted, false);
+            if (inserted > 0) {
+                from.extract(inserted, false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean transferEnergy(PlatformEnergyManager from, EnergyContainer to) {
+        long extracted = from.extract(Long.MAX_VALUE, true);
+        if (extracted > 0) {
+            long inserted = to.insertEnergy(extracted, false);
+            if (inserted > 0) {
+                from.extract(inserted, false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean transferEnergy(EnergyContainer from, PlatformEnergyManager to) {
+        long extracted = from.extractEnergy(Long.MAX_VALUE, true);
+        if (extracted > 0) {
+            long inserted = to.insert(extracted, false);
+            if (inserted > 0) {
+                from.extractEnergy(inserted, false);
+                return true;
             }
         }
         return false;

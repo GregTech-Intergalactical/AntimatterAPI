@@ -60,6 +60,23 @@ public class InfoRenderers {
         }
     };
 
+    public static final IRecipeInfoRenderer RF_RENDERER = new IRecipeInfoRenderer() {
+        public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
+            if (recipe.getDuration() == 0 && recipe.getPower() == 0) return;
+            String power = "Duration: " + recipe.getDuration() + " ticks";
+            String euT = "RF/t: " + recipe.getPower();
+            String total = "Total: " + recipe.getPower() * recipe.getDuration() + " RF";
+            renderString(stack, power, fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
+            renderString(stack, euT, fontRenderer, 5, 10, guiOffsetX, guiOffsetY);
+            renderString(stack, total, fontRenderer, 5, 20, guiOffsetX, guiOffsetY);
+        }
+
+        @Override
+        public int getRows() {
+            return 3;
+        }
+    };
+
     public static final IRecipeInfoRenderer FUEL_RENDERER = new IRecipeInfoRenderer() {
         @Override
         public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
