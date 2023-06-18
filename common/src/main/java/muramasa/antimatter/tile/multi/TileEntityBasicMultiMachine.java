@@ -7,6 +7,7 @@ import com.gtnewhorizon.structurelib.alignment.IAlignmentProvider;
 import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
 import com.gtnewhorizon.structurelib.alignment.enumerable.Flip;
 import com.gtnewhorizon.structurelib.alignment.enumerable.Rotation;
+import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.IComponentHandler;
@@ -92,6 +93,20 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public ExtendedFacing getExtendedFacing() {
         return extendedFacing;
+    }
+
+    @Override
+    public void setExtendedFacing(ExtendedFacing extendedFacing) {
+        if (this.extendedFacing != extendedFacing && extendedFacing.getDirection() == this.getFacing()){
+            this.extendedFacing = extendedFacing;
+            invalidateCaps();
+            if (isServerSide()) {
+                StructureLibAPI.sendAlignment(
+                        this,
+                        new AABB(getBlockPos()), (ServerLevel) level);
+            }
+        }
+
     }
 
     @Override
