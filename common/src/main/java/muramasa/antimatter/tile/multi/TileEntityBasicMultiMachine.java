@@ -9,16 +9,11 @@ import muramasa.antimatter.cover.CoverDynamo;
 import muramasa.antimatter.cover.CoverEnergy;
 import muramasa.antimatter.cover.CoverInput;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.machine.BlockMultiMachine;
 import muramasa.antimatter.machine.MachineState;
 import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.structure.IComponent;
-import muramasa.antimatter.structure.Structure;
-import muramasa.antimatter.structure.StructureCache;
-import muramasa.antimatter.structure.StructureHandle;
-import muramasa.antimatter.structure.StructureResult;
+import muramasa.antimatter.structure.*;
 import muramasa.antimatter.tile.TileEntityMachine;
 import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
@@ -26,13 +21,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.rf.IRFNode;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -188,6 +182,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         else if (cap == IEnergyHandler.class && energyHandler.isPresent()
                 && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
             return energyHandler.side(side).cast();
+        else if (cap == IRFNode.class && rfHandler.isPresent()
+                && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))
+            return rfHandler.side(side).cast();
         return LazyOptional.empty();
     }
 

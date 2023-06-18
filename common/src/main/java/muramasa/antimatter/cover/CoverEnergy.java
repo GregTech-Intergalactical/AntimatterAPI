@@ -5,6 +5,7 @@ import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.core.Direction;
 import tesseract.api.gt.IEnergyHandler;
+import tesseract.api.rf.IRFNode;
 
 import javax.annotation.Nullable;
 
@@ -28,5 +29,6 @@ public class CoverEnergy extends BaseCover {
     public void onPlace() {
         super.onPlace();
         ((TileEntityMachine<?>) handler.getTile()).invalidateCap(IEnergyHandler.class);
+        ((TileEntityMachine<?>) handler.getTile()).invalidateCap(IRFNode.class);
     }
 }
