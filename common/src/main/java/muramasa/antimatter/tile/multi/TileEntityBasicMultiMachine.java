@@ -1,5 +1,12 @@
 package muramasa.antimatter.tile.multi;
 
+import com.gtnewhorizon.structurelib.StructureLibAPI;
+import com.gtnewhorizon.structurelib.alignment.IAlignment;
+import com.gtnewhorizon.structurelib.alignment.IAlignmentLimits;
+import com.gtnewhorizon.structurelib.alignment.IAlignmentProvider;
+import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
+import com.gtnewhorizon.structurelib.alignment.enumerable.Flip;
+import com.gtnewhorizon.structurelib.alignment.enumerable.Rotation;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.IComponentHandler;
@@ -19,8 +26,10 @@ import muramasa.antimatter.util.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -36,14 +45,16 @@ import java.util.Set;
  * Allows a MultiMachine to handle GUI recipes, instead of using Hatches
  **/
 public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T>> extends TileEntityMachine<T>
-        implements IComponent {
+        implements IComponent, IAlignment {
 
     private final Set<StructureHandle<?>> allHandlers = new ObjectOpenHashSet<>();
     protected StructureResult result = null;
 
+    private ExtendedFacing extendedFacing = ExtendedFacing.DEFAULT;
+    private IAlignmentLimits limits = getInitialAlignmentLimits();
     /**
      * To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded
-     * from disk.
+     * from disk.https://discord.com/channels/817576132726620200/833939581798711306/1117494873659019374
      **/
     protected boolean shouldCheckFirstTick = true;
     // Number of calls into checkStructure, invalidateStructure. if > 0 ignore
@@ -73,9 +84,37 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         StructureCache.remove(level, worldPosition);
     }
 
+    @Override
+    public IAlignmentLimits getAlignmentLimits() {
+        return limits;
+    }
+
+    @Override
+    public ExtendedFacing getExtendedFacing() {
+        return extendedFacing;
+    }
+
+    @Override
+    public boolean setFacing(Direction side) {
+        boolean facingSet = super.setFacing(side);
+        if (facingSet){
+            extendedFacing = ExtendedFacing.of(side, extendedFacing.getRotation(), extendedFacing.getFlip());
+            if (isServerSide()) {
+                StructureLibAPI.sendAlignment(
+                        this,
+                        new AABB(getBlockPos()), (ServerLevel) level);
+            }
+        }
+        return facingSet;
+    }
+
     @Nullable
     public StructureResult getResult() {
         return result;
+    }
+
+    protected IAlignmentLimits getInitialAlignmentLimits() {
+        return (d, r, f) -> !f.isVerticallyFliped();
     }
 
     /**
@@ -89,6 +128,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     @Override
     public void onFirstTick() {
+        if (isClientSide()){
+            StructureLibAPI.queryAlignment(this);
+        }
         // Register handlers to the structure cache.
         allHandlers.forEach(StructureHandle::register);
         // if INVALID_STRUCTURE was stored to disk don't bother rechecking on first
@@ -336,11 +378,20 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     @Override
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.putByte("rotation", (byte) extendedFacing.getRotation().getIndex());
+        tag.putByte("flip", (byte) extendedFacing.getFlip().getIndex());
+    }
+
+
+    @Override
     public void load(CompoundTag tag) {
         super.load(tag);
         if (getMachineState() == MachineState.INVALID_STRUCTURE) {
             shouldCheckFirstTick = false;
         }
+        this.extendedFacing = ExtendedFacing.of(this.getFacing(), Rotation.byIndex(tag.getByte("rotation")), Flip.byIndex(tag.getByte("flip")));
     }
 
     public void addStructureHandle(StructureHandle<?> handle) {

@@ -39,6 +39,7 @@ dependencies{
     compileOnly("com.electronwill.night-config:toml:${rootProject.nightconfig_version}")
     compileOnly("com.electronwill.night-config:core:${rootProject.nightconfig_version}")
     modCompileOnly("com.github.Trinsdar:ARRP:0.6.7-hotfix")
+    modImplementation("com.github.GregTech-Intergalactical.StructureLib:common:bed5fd46b7")
     modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
