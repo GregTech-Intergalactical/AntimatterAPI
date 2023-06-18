@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.block.BlockFakeTile;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.impl.SimpleStructure;
 import muramasa.antimatter.util.int3;
@@ -43,6 +44,10 @@ public class StructureBuilder {
     }
 
     public StructureBuilder at(String key, IAntimatterObject... objects) {
+        if (objects.length == 1 && objects[0] instanceof BlockFakeTile blockFakeTile){
+            elementLookup.put(key, new FakeTileElement(blockFakeTile));
+            return this;
+        }
         elementLookup.put(key, new ComponentElement(objects));
         return this;
     }

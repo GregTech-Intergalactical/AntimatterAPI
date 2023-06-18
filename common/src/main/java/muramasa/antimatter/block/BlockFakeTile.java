@@ -29,7 +29,7 @@ public class BlockFakeTile extends BlockBasic implements IRegistryEntryProvider,
             TILE_SET.add(this);
         } else if (registry == RegistryType.BLOCK_ENTITIES) {
             if (TYPE == null){
-                TYPE = new BlockEntityType<>((a,b) -> new TileEntityFakeBlock(this,a,b), TILE_SET, null);
+                TYPE = new BlockEntityType<>(TileEntityFakeBlock::new, TILE_SET, null);
                 //((IForgeRegistry<BlockEntityType<?>>)registry).register(TYPE);
                 AntimatterAPI.register(BlockEntityType.class, getId(), getDomain(), TYPE);
             }

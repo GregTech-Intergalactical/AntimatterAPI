@@ -28,64 +28,35 @@ import java.util.List;
  */
 public class FakeTileElement extends StructureElement {
 
-    private IBlockStatePredicate[] preds;
+    private IBlockStatePredicate pred;
     private final EnumMap<Direction, CoverFactory> covers = new EnumMap<>(Direction.class);
 
-    public FakeTileElement(IBlockStatePredicate... pred) {
-        this.preds = pred;
+    public FakeTileElement(IBlockStatePredicate pred) {
+        this.pred = pred;
     }
 
     public FakeTileElement(Block... pred) {
+        this.pred = (reader, pos, state) -> Arrays.stream(pred).anyMatch(state::is);
     }
 
     public FakeTileElement(BlockState... pred) {
-    }
-
-    public FakeTileElement() {
-        this.preds = new IBlockStatePredicate[0];
+        this.pred = (reader, pos, state) -> Arrays.asList(pred).contains(state);
     }
 
     @Override
     public boolean evaluate(TileEntityBasicMultiMachine<?> machine, int3 pos, StructureResult result) {
         BlockState state = machine.getLevel().getBlockState(pos);
-        if (state.is(Data.PROXY_INSTANCE)) {
+        if (pred.evaluate(machine.getLevel(), pos, state)) {
             BlockEntity tile = machine.getLevel().getBlockEntity(pos);
             if (tile instanceof TileEntityFakeBlock) {
-                BlockState st = ((TileEntityFakeBlock) tile).getState();
-                if (st == null) {
-                    //result.withError("Missing state in fake tile.");
-                    return true;
-                }
-                for (IBlockStatePredicate pred : preds) {
-                    if (pred.evaluate(machine.getLevel(), pos, st)) {
-                        result.addState("fake", pos, st);
-                        return true;
-                    }
-                }
-                if (preds.length == 0) {
-                    result.addState("fake", pos, st);
-                    return true;
-                }
+                result.addState("fake", pos, state);
+                return true;
             }
-            result.withError("Invalid BlockProxy state.");
+            result.withError("Invalid FakeTile state.");
             return false;
         } else if (StructureCache.refCount(machine.getLevel(), pos) > 0) {
             result.withError("FakeTile sharing a block that is not of proxy type.");
             return false;
-        }
-        if (state.hasBlockEntity()) {
-            result.withError("BlockProxy replacement should not have Tile.");
-            return false;
-        }
-        if (preds.length == 0) {
-            result.addState("fake", pos, state);
-            return true;
-        }
-        for (IBlockStatePredicate pred : preds) {
-            if (pred.evaluate(machine.getLevel(), pos, state)) {
-                result.addState("fake", pos, state);
-                return true;
-            }
         }
         result.withError("No matching blocks for FakeTile");
         return false;
@@ -101,13 +72,12 @@ public class FakeTileElement extends StructureElement {
         Level world = machine.getLevel();
         BlockState oldState = world.getBlockState(pos);
         // Already set.
-        if (count > 1 || oldState.is(Data.PROXY_INSTANCE)) {
+        if (count > 1) {
             ((TileEntityFakeBlock) world.getBlockEntity(pos)).addController(machine);
             return;
         }
-        world.setBlock(pos, Data.PROXY_INSTANCE.defaultBlockState(), 2 | 8);
         TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getBlockEntity(pos);
-        tile.setState(oldState).setFacing(machine.getFacing()).setCovers(covers);
+        tile.setFacing(machine.getFacing()).setCovers(covers);
         tile.addController(machine);
         super.onBuild(machine, pos, result, count);
     }
@@ -125,8 +95,6 @@ public class FakeTileElement extends StructureElement {
         if (!(tile instanceof TileEntityFakeBlock))
             return;
         if (count == 0) {
-            BlockState state = ((TileEntityFakeBlock) tile).getState();
-            world.setBlock(pos, state, 1 | 2 | 8);
             return;
         } else {
             ((TileEntityFakeBlock) tile).removeController(machine);
