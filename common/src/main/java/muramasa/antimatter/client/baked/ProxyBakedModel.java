@@ -96,7 +96,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         if (cover.isEmpty())
             return Minecraft.getInstance().getBlockRenderer().getBlockModel(props.state).getQuads(props.state, side, rand, data);
         DynamicTexturer<ICover, ICover.DynamicKey> texturer = props.texturer.apply(side);
-        return texturer.getQuads("fake", new LinkedList<>(), props.controllerState, cover, new ICover.DynamicKey(cover.side(), null, props.texture, cover.getId()), side.get3DDataValue(), data);
+        return texturer.getQuads("fake", new LinkedList<>(), props.controllerState, cover, new ICover.DynamicKey(cover.side(), props.texture, cover.getId()), side.get3DDataValue(), data);
     }
 
     @Override

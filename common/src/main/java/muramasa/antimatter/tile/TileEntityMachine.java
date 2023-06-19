@@ -373,9 +373,6 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
             BlockState state = getBlockState();
             if (getMachineType().allowVerticalFacing()) {
                 state = state.setValue(BlockStateProperties.FACING, side);
-                if (side.getAxis() != Direction.Axis.Y) {
-                    state = state.setValue(BlockMachine.HORIZONTAL_FACING, side);
-                }
             } else {
                 state = state.setValue(BlockStateProperties.HORIZONTAL_FACING, side);
             }

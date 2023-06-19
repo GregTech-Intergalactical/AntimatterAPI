@@ -45,13 +45,8 @@ public class SimpleStructure extends Structure {
 
     @Override
     public List<BlockPos> allShared(StructureElement element, TileEntityBasicMultiMachine<?> tile) {
-        Direction h = null;
         List<BlockPos> ret = new ObjectArrayList<>();
-        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Direction.Axis.Y) {
-            h = tile.getBlockState().getValue(BlockMachine.HORIZONTAL_FACING);
-        }
-        Direction finalH = h;
-        Iterable<Point> iter = () -> this.forAllElements(tile.getBlockPos(), tile.getFacing(), finalH);
+        Iterable<Point> iter = () -> this.forAllElements(tile.getBlockPos(), tile.getFacing());
         for (Point point : iter) {
             if (point.el.equals(element)) ret.add(point.pos.immutable());
         }
@@ -61,15 +56,11 @@ public class SimpleStructure extends Structure {
     @Override
     public StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile) {
         StructureResult result = new StructureResult(this);
-        Direction h = null;
         if (!allowedFacings.contains(tile.getFacing())) {
             result.withError("Invalid facing in machine");
             return result;
         }
-        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Direction.Axis.Y) {
-            h = tile.getBlockState().getValue(BlockMachine.HORIZONTAL_FACING);
-        }
-        for (Iterator<Point> it = forAllElements(tile.getBlockPos(), tile.getFacing(), h); it.hasNext(); ) {
+        for (Iterator<Point> it = forAllElements(tile.getBlockPos(), tile.getFacing()); it.hasNext(); ) {
             Point point = it.next();
             if (!point.el.evaluate(tile, point.pos, result)) {
                 return result;
@@ -83,11 +74,7 @@ public class SimpleStructure extends Structure {
     @Override
     public LongList allPositions(TileEntityBasicMultiMachine<?> tile) {
         LongList l = new LongArrayList();
-        Direction h = null;
-        if (tile.getMachineType().allowVerticalFacing() && tile.getFacing().getAxis() == Direction.Axis.Y) {
-            h = tile.getBlockState().getValue(BlockMachine.HORIZONTAL_FACING);
-        }
-        for (Iterator<Point> it = forAllElements(tile.getBlockPos(), tile.getFacing(), h); it.hasNext(); ) {
+        for (Iterator<Point> it = forAllElements(tile.getBlockPos(), tile.getFacing()); it.hasNext(); ) {
             l.add(it.next().pos.asLong());
         }
         return l;
@@ -103,10 +90,10 @@ public class SimpleStructure extends Structure {
         return offset;
     }
 
-    public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing, @Nullable Direction hFacing) {
+    public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing) {
         return new Iterator<>() {
-            final int3 corner = hFacing == null ? new int3(source, facing).left(size().getX() / 2).back(offset().x).above(offset().y) : new int3(source, facing, hFacing).left(size().getX() / 2).back(offset().x).above(offset().y);
-            final int3 working = new int3(facing, hFacing);
+            final int3 corner = new int3(source, facing).left(size().getX() / 2).back(offset().x).above(offset().y);
+            final int3 working = new int3(facing);
             final Point point = new Point();
             final Iterator<Map.Entry<int3, StructureElement>> it = elements.entrySet().iterator();
 

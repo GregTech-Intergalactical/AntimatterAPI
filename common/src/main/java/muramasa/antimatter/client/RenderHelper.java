@@ -391,13 +391,13 @@ public class RenderHelper {
     }
 
     public static Transformation faceRotation(BlockState state) {
-        if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
-            return faceRotation(state.getValue(BlockStateProperties.FACING), state.getValue(BlockMachine.HORIZONTAL_FACING));
+        if (state.hasProperty(BlockStateProperties.FACING)) {
+            return faceRotation(state.getValue(BlockStateProperties.FACING));
         } 
         return faceRotation(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
     }
 
-    public static Transformation faceRotation(Direction facing, @Nullable Direction horiz) {
+    /*public static Transformation faceRotation(Direction facing, @Nullable Direction horiz) {
         if (horiz == null) {
             Quaternion quat = facing.getAxis() != Axis.Y ? Vector3f.YP.rotationDegrees(-facing.toYRot()) : Vector3f.XP.rotationDegrees(-facing.getNormal().getY()*90f);
             return new Transformation(null, quat, null, null);
@@ -412,10 +412,12 @@ public class RenderHelper {
             Transformation mat = new Transformation(null, rot, null, null);
             return mat.compose(new Transformation(null, quat, null, null));
         }
-    }
+    }*/
 
     public static Transformation faceRotation(Direction side) {
-        return faceRotation(side, null);  
+        Quaternion quat = side.getAxis() != Axis.Y ? Vector3f.YP.rotationDegrees(-side.toYRot()) : Vector3f.XP.rotationDegrees(-side.getNormal().getY()*90f);
+        return new Transformation(null, quat, null, null);
+        //return faceRotation(side, null);
     }
 
 

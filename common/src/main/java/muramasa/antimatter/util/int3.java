@@ -13,7 +13,6 @@ import javax.annotation.Nonnull;
 public class int3 extends BlockPos.MutableBlockPos {
 
     public Direction side = Direction.NORTH; //Used for moving in a direction
-    public Direction horizSide = null;
 
     public int3() {
     }
@@ -29,19 +28,8 @@ public class int3 extends BlockPos.MutableBlockPos {
         this.side = side;
     }
 
-    public int3(int x, int y, int z, Direction side, Direction hSide) {
-        this(x, y, z);
-        this.side = side;
-        this.horizSide = hSide;
-    }
-
     public int3(Direction side) {
         this.side = side;
-    }
-
-    public int3(Direction side, Direction hSide) {
-        this.side = side;
-        this.horizSide = hSide;
     }
 
     public int3(BlockPos pos, Direction side) {
@@ -49,11 +37,6 @@ public class int3 extends BlockPos.MutableBlockPos {
         setY(pos.getY());
         setZ(pos.getZ());
         this.side = side;
-    }
-
-    public int3(BlockPos pos, Direction side, Direction hSide) {
-        this(pos, side);
-        this.horizSide = hSide;
     }
 
     public int3 set(BlockPos pos) {
@@ -69,12 +52,12 @@ public class int3 extends BlockPos.MutableBlockPos {
 
     public int3 right(int n) {
         if (side.getAxis() != Axis.Y) return offset(n, side.getClockWise());
-        return offset(n, horizSide.getClockWise());
+        return offset(n, Direction.NORTH.getClockWise());
     }
 
     public int3 left(int n) {
         if (side.getAxis() != Axis.Y) return offset(n, side.getCounterClockWise());
-        return offset(n, horizSide.getCounterClockWise());
+        return offset(n, Direction.NORTH.getCounterClockWise());
     }
 
     public int3 forward(int n) {
@@ -88,13 +71,13 @@ public class int3 extends BlockPos.MutableBlockPos {
     @Nonnull
     public int3 above(int n) {
         if (side.getAxis() != Axis.Y) return offset(n, Direction.UP);
-        return offset(n, horizSide.getOpposite());
+        return offset(n, Direction.NORTH.getOpposite());
     }
 
     @Nonnull
     public int3 below(int n) {
         if (side.getAxis() != Axis.Y) return offset(n, Direction.DOWN);
-        return offset(n, horizSide);
+        return offset(n, Direction.NORTH);
     }
 
     @Nonnull
@@ -121,8 +104,8 @@ public class int3 extends BlockPos.MutableBlockPos {
                 offset(n.x, directions[0].getRotatedFacing(side));
                 offset(n.y, directions[1].getRotatedFacing(side));
             } else {
-                offset(n.x, directions[0].getRotatedFacing(side, horizSide));
-                offset(n.y, directions[1].getRotatedFacing(side, horizSide));
+                offset(n.x, directions[0].getRotatedFacing(side, Direction.NORTH));
+                offset(n.y, directions[1].getRotatedFacing(side, Direction.NORTH));
             }
         }
         return this;
@@ -135,9 +118,9 @@ public class int3 extends BlockPos.MutableBlockPos {
                 offset(n.getY(), directions[1].getRotatedFacing(side));
                 offset(n.getZ(), directions[2].getRotatedFacing(side));
             } else {
-                offset(n.getX(), directions[0].getRotatedFacing(side, horizSide));
-                offset(n.getY(), directions[1].getRotatedFacing(side, horizSide));
-                offset(n.getZ(), directions[2].getRotatedFacing(side, horizSide));
+                offset(n.getX(), directions[0].getRotatedFacing(side, Direction.NORTH));
+                offset(n.getY(), directions[1].getRotatedFacing(side, Direction.NORTH));
+                offset(n.getZ(), directions[2].getRotatedFacing(side, Direction.NORTH));
             }
         }
         return this;
