@@ -30,11 +30,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.DigDurabilityEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -52,10 +48,7 @@ import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.gt.IEnergyItem;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static muramasa.antimatter.material.Material.NULL;
 
@@ -69,6 +62,15 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default Material getSecondaryMaterial(ItemStack stack) {
         return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
+    }
+
+    default DyeColor getDyeColor(ItemStack stack){
+        CompoundTag data = getDataTag(stack);
+        if (data.contains(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR)){
+            Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getMaterialColor().col == data.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR)).findFirst();
+            return color.orElse(DyeColor.WHITE);
+        }
+        return null;
     }
 
     default Material[] getMaterials(ItemStack stack) {
@@ -85,7 +87,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default int getSubColour(ItemStack stack) {
-        return getDataTag(stack).getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
+        return getDyeColor(stack) == null ? 0 : getDyeColor(stack).getMaterialColor().col;
     }
 
     default long getCurrentEnergy(ItemStack stack) {
@@ -177,14 +179,17 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         } else list.add(asItemStack(NULL, NULL));
     }
 
-    @SuppressWarnings("NoTranslation")
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
         //TODO change this to object %s system for other lang compat
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary").append(": ").append(primary.getDisplayName().getString()));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary", primary.getDisplayName().getString()));
         if (secondary != NULL)
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary").append(": ").append(secondary.getDisplayName().getString()));
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary", secondary.getDisplayName().getString()));
+        DyeColor color = getDyeColor(stack);
+        if (color != null){
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.dye_color", color.getName()));
+        }
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(new TranslatableComponent("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
