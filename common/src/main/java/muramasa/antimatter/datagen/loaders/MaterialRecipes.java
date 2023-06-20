@@ -84,6 +84,10 @@ public class MaterialRecipes {
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_gear_small", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
                         AntimatterMaterialTypes.GEAR_SMALL.get(m, 1), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(),'P', AntimatterMaterialTypes.PLATE.getMaterialTag(m)), "P ", " H");
             }
+            if (m.has(AntimatterMaterialTypes.ITEM_CASING)) {
+                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_item_casing", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
+                        AntimatterMaterialTypes.ITEM_CASING.get(m, 1), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(),'P', AntimatterMaterialTypes.PLATE.getMaterialTag(m)), "H P");
+            }
             if (m.has(AntimatterMaterialTypes.GEAR)){
                 provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_gear", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
                         AntimatterMaterialTypes.GEAR.get(m, 1), ImmutableMap.<Character, Object>builder()
