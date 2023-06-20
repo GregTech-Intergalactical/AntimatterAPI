@@ -12,11 +12,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.material.IMaterialTag;
-import muramasa.antimatter.material.Material;
-import muramasa.antimatter.material.MaterialTag;
-import muramasa.antimatter.material.MaterialTags;
-import muramasa.antimatter.material.MaterialTypeItem;
+import muramasa.antimatter.material.*;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.TagUtils;
@@ -58,7 +54,7 @@ public class PropertyIngredient extends Ingredient {
     private final boolean inverse;
 
     protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type, Set<TagKey<Item>> itemTags, Set<ItemLike> items, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
-        Stream<Value> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new MultiItemValue(TagUtils.nc(t).getValues().stream().map(ItemStack::new).collect(Collectors.toList()))), type.stream().map(i -> new MultiItemValue((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
+        Stream<Value> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new TagValue(t)), type.stream().map(i -> new MultiItemValue((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
             boolean ok = t.has(tags);
             boolean types = true;
             if (tools.size() > 0)
@@ -179,10 +175,10 @@ public class PropertyIngredient extends Ingredient {
         return obj;
     }
 
-    /*@Override
+    @Override
     public boolean test(@Nullable ItemStack test) {
         if (test == null || test.isEmpty()) return false;
-        if (type.size() > 0) {
+        /*if (type.size() > 0) {
             if (test.getItem() instanceof MaterialItem) {
                 MaterialItem item = ((MaterialItem) test.getItem());
                 if (item.getType() instanceof MaterialTypeItem) {
@@ -195,14 +191,15 @@ public class PropertyIngredient extends Ingredient {
                 }
             }
         } else {
-            for (TagKey<Item> itemTag : this.itemTags) {
-                if (test.is(itemTag)) {
-                    return true;
-                }
+
+        }*/
+        for (TagKey<Item> itemTag : this.itemTags) {
+            if (test.is(itemTag)) {
+                return true;
             }
         }
-        return false;
-    }*/
+        return super.test(test);
+    }
 
     public static Builder builder(String id) {
         return new Builder(id);

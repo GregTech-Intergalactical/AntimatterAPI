@@ -122,10 +122,10 @@ public class TagUtils {
      * @param tag
      * @return
      */
-    public static Tag<Item> nc(TagKey<Item> tag) {
+    public static List<Item> nc(TagKey<Item> tag) {
         List<Item> list = new ObjectArrayList<>();
          Registry.ITEM.getTagOrEmpty(tag).iterator().forEachRemaining(t ->list.add(t.value()));
-         return new Tag<Item>(list);
+         return list;
     }
 
     /**
