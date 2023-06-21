@@ -287,6 +287,7 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         if (context instanceof EntityCollisionContext cont) {
+            if (!(cont.getEntity() instanceof Player)) return Shapes.block();
             Player player = (Player) cont.getEntity();
             if (player != null && Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(), AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.SCREWDRIVER)) {
                 return Shapes.block();
