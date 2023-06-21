@@ -286,20 +286,18 @@ public abstract class BlockPipe<T extends PipeType<T>> extends BlockDynamic impl
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-        if (context instanceof EntityCollisionContext cont) {
-            if (!(cont.getEntity() instanceof Player)) return Shapes.block();
-            Player player = (Player) cont.getEntity();
-            if (player != null && Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(), AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.SCREWDRIVER)) {
+        if (context instanceof EntityCollisionContext cont && cont.getEntity() instanceof Player player) {
+            if (Utils.isPlayerHolding(player, InteractionHand.MAIN_HAND, getToolType(), AntimatterDefaultTools.CROWBAR, AntimatterDefaultTools.SCREWDRIVER)) {
                 return Shapes.block();
             }
-            if (player != null && !player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
+            if (!player.getMainHandItem().isEmpty() && player.getMainHandItem().getItem() instanceof IHaveCover) {
                 return Shapes.block();
             }
             BlockPipe<?> pipe = null;
-            if (player != null && player.getMainHandItem().getItem() instanceof PipeItemBlock) {
+            if (player.getMainHandItem().getItem() instanceof PipeItemBlock) {
                 pipe = ((PipeItemBlock) player.getMainHandItem().getItem()).getPipe();
             }
-            if (player != null && player.getOffhandItem().getItem() instanceof PipeItemBlock) {
+            if (player.getOffhandItem().getItem() instanceof PipeItemBlock) {
                 pipe = ((PipeItemBlock) player.getOffhandItem().getItem()).getPipe();
             }
             if (getClass().isInstance(pipe)) {
