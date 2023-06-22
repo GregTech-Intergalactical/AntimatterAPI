@@ -101,7 +101,7 @@ public class MaterialRecipes {
                 }
                 if (m.has(FOIL)){
                     provider.addStackRecipe(consumer, Ref.ID, "", "antimatter_materials", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
-                            FOIL.get(m, 2), of('H', HAMMER.getTag(), 'P', PLATE.getMaterialTag(m)));
+                            FOIL.get(m, 2), of('H', HAMMER.getTag(), 'P', PLATE.getMaterialTag(m)), "HP");
                     if (m.has(WIRE_FINE)){
                         provider.addItemRecipe(consumer, Ref.ID, "", "antimatter_materials", "has_wire_cutters", provider.hasSafeItem(WIRE_CUTTER.getTag()),
                                 WIRE_FINE.get(m), of('F', FOIL.getMaterialTag(m), 'W', WIRE_CUTTER.getTag()), "FW");
