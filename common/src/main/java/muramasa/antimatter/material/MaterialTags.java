@@ -64,6 +64,7 @@ public class MaterialTags {
     public static final BlockDropMaterialTag<BlockOreStone> CUSTOM_ORE_STONE_DROPS = new BlockDropMaterialTag<>("custom_ore_stone_drops");
 
     public static final MapMaterialTag<MaterialType<?>, Integer> FURNACE_FUELS = new MapMaterialTag<>("furnace_fuels");
+    public static final MaterialTag NOSMASH = new MaterialTag("no_smash"); //Material is not able to be smashed
 
     //Dummy Types
     public static TypeMaterialTag<ToolData> TOOLS = new TypeMaterialTag<>("tools"){
