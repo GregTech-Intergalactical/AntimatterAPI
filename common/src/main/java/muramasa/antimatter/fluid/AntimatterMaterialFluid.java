@@ -72,7 +72,7 @@ public class AntimatterMaterialFluid extends AntimatterFluid {
                 String gas = getType() == AntimatterMaterialTypes.PLASMA ? " Plasma" : " Gas";
                 return Utils.lowerUnderscoreToUpperSpaced(material.getId()) + gas;
             }
-            String liquid = material.has(MaterialTags.MOLTEN) ? "Molten " : "Liquid ";
+            String liquid = material.has(MaterialTags.MOLTEN) ? "Molten " : "";
             return liquid + Utils.lowerUnderscoreToUpperSpaced(material.getId());
         }
         return super.getLang(lang);
