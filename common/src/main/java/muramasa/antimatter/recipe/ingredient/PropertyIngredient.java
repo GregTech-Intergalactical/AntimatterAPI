@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,7 +55,7 @@ public class PropertyIngredient extends Ingredient {
     private final boolean inverse;
 
     protected static PropertyIngredient build(Set<MaterialTypeItem<?>> type, Set<TagKey<Item>> itemTags, Set<ItemLike> items, String id, IMaterialTag[] tags, Set<Material> fixedMats, boolean inverse, Object2BooleanMap<AntimatterToolType> tools) {
-        Stream<Value> stream = Stream.concat(Stream.concat(itemTags.stream().map(t -> new TagValue(t)), type.stream().map(i -> new MultiItemValue((fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream()).filter(t -> {
+        Predicate<Material> filter = t -> {
             boolean ok = t.has(tags);
             boolean types = true;
             if (tools.size() > 0)
@@ -70,7 +71,15 @@ public class PropertyIngredient extends Ingredient {
                 return !ok && types;
             }
             return ok && types;
-        }).map(mat -> i.get(mat, 1)).collect(Collectors.toList())))), Stream.of((Value)new MultiItemValue(items.stream().map(ItemStack::new).collect(Collectors.toList()))));
+        };
+        Stream<Value> stream = Stream.concat(
+                Stream.concat(
+                        itemTags.stream().map(TagValue::new),
+                        type.stream().map(i -> {
+                            Stream<Material> materialStream = fixedMats.size() == 0 ? i.all().stream() : fixedMats.stream();
+                            return materialStream.filter(filter).map(i::getMaterialTag).collect(Collectors.toList());
+                        }).flatMap(t -> t.stream().map(TagValue::new))),
+                Stream.of((Value)new MultiItemValue(items.stream().map(ItemStack::new).collect(Collectors.toList()))));
         return new PropertyIngredient(stream, type, itemTags, items, id, tags, fixedMats, inverse, tools);
     }
 
