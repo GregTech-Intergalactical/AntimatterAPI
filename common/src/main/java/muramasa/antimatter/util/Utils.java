@@ -8,7 +8,6 @@ import com.mojang.math.Vector4f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import earth.terrarium.botarium.common.energy.base.EnergyContainer;
 import earth.terrarium.botarium.common.energy.base.PlatformEnergyManager;
-import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -17,6 +16,7 @@ import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.Ref;
+import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.recipe.IRecipe;
@@ -1232,6 +1232,9 @@ public class Utils {
 
     public static String getLocalizedType(IAntimatterObject type) {
         String id = type.getId();
+        if (type instanceof Material material && material.getDisplayNameString() != null && !material.getDisplayNameString().isEmpty()){
+            return material.getDisplayNameString();
+        }
         int index = id.indexOf("_");
         if (index != -1) {
             if (type instanceof MaterialType<?> matType) {
