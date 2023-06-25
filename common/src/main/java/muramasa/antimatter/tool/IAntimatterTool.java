@@ -3,10 +3,7 @@ package muramasa.antimatter.tool;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.behaviour.IBehaviour;
-import muramasa.antimatter.behaviour.IBlockDestroyed;
-import muramasa.antimatter.behaviour.IItemHighlight;
-import muramasa.antimatter.behaviour.IItemUse;
+import muramasa.antimatter.behaviour.*;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
@@ -27,7 +24,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
@@ -179,6 +178,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         } else list.add(asItemStack(NULL, NULL));
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
         //TODO change this to object %s system for other lang compat
         Material primary = getPrimaryMaterial(stack);
@@ -193,6 +193,11 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(new TranslatableComponent("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IAddInformation addInformation)) continue;
+            addInformation.onAddInformation(this, stack, tooltip, flag);
+        }
     }
 
     default boolean onGenericHitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker, float volume, float pitch) {
@@ -227,11 +232,22 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         InteractionResult result = InteractionResult.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IItemUse)) continue;
-            InteractionResult r = ((IItemUse) b).onItemUse(this, ctx);
+            if (!(b instanceof IItemUse itemUse)) continue;
+            InteractionResult r = itemUse.onItemUse(this, ctx);
             if (result != InteractionResult.SUCCESS) result = r;
         }
         return result;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    default InteractionResultHolder<ItemStack> onGenericRightclick(Level level, Player player, InteractionHand usedHand){
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IItemRightClick rightClick)) continue;
+            InteractionResultHolder<ItemStack> r = rightClick.onRightClick(this, level, player, usedHand);
+            if (r.getResult().shouldAwardStats()) return r;
+        }
+        return InteractionResultHolder.pass(player.getItemInHand(usedHand));
     }
 
     @SuppressWarnings("rawtypes")

@@ -26,6 +26,7 @@ import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tool.AntimatterToolType;
 import muramasa.antimatter.tool.IAntimatterTool;
+import muramasa.antimatter.tool.ToolUtils;
 import net.minecraft.advancements.critereon.EnterBlockTrigger;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
@@ -958,8 +959,10 @@ public class Utils {
      * @param state BlockState that is being checked against
      * @return true if tool is effective by checking blocks or materials list of its AntimatterToolType
      */
-    public static boolean isToolEffective(IAntimatterTool tool, BlockState state) {
-        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) || tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial());
+    public static boolean isToolEffective(IAntimatterTool tool, ItemStack stack, BlockState state) {
+        return tool.getAntimatterToolType().getEffectiveBlocks().contains(state.getBlock()) ||
+                tool.getAntimatterToolType().getEffectiveMaterials().contains(state.getMaterial()) ||
+                state.is(tool.getAntimatterToolType().getToolType()) && ToolUtils.isCorrectTierForDrops(tool.getTier(stack), state);
     }
 
     /**

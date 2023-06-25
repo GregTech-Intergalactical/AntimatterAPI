@@ -318,6 +318,10 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.heat_capacity_total", "Heat capacity (total)");
         add("antimatter.tooltip.material_modid", "Added by: %s");
         add("antimatter.tooltip.occurrence", "Indicates occurrence of %s");
+        add("antimatter.tooltip.behaviour.aoe_enabled", "%s Enabled");
+        add("antimatter.tooltip.behaviour.aoe_disabled", "%s Disabled");
+        add("antimatter.tooltip.behaviour.aoe_right_click", "Sneak right click to Enable/Disable %s");
+        add("antimatter.behaviour.3x3", "3x3 Mining");
     }
 
     private final void pipeTranslations() {
