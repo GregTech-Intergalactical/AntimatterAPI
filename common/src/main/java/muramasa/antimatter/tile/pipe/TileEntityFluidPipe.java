@@ -127,9 +127,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     @Override
     public boolean validate(Direction dir) {
         if (!super.validate(dir)) return false;
-        BlockEntity tile = level.getBlockEntity(getBlockPos().relative(dir));
-        if (tile == null) return false;
-        return TesseractCapUtils.getFluidHandler(tile, dir.getOpposite()).isPresent();
+        return TesseractCapUtils.getFluidHandler(level, getBlockPos().relative(dir), dir.getOpposite()).isPresent();
     }
 
     @Override
