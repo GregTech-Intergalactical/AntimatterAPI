@@ -12,37 +12,19 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.AABB;
+import trinsdar.networkapi.api.INetwork;
+import trinsdar.networkapi.api.PacketRegistration;
 
 public abstract class AntimatterNetwork {
-
-    protected static final String MAIN_CHANNEL = "main_channel";
 
     public static final ResourceLocation TILE_GUI_PACKET_ID = new ResourceLocation(Ref.ID, "tile_gui_packet");
     public static final ResourceLocation COVER_GUI_PACKET_ID = new ResourceLocation(Ref.ID, "cover_gui_packet");
     public static final ResourceLocation GUI_SYNC_PACKET_ID = new ResourceLocation(Ref.ID, "gui_sync_packet");
 
-    protected static final String PROTOCOL_VERSION = Integer.toString(1);
-
-    @ExpectPlatform
-    public static AntimatterNetwork createAntimatterNetwork(){
-        throw new AssertionError();
-    }
-
-    public abstract void sendToServer(ResourceLocation id, IAntimatterPacket msg);
-
-    public abstract void sendToClient(ResourceLocation id, IAntimatterPacket msg, ServerPlayer player);
-
-    public void sendToAll(ResourceLocation id, IAntimatterPacket msg) {
-        for (ServerPlayer player : getCurrentServer().getPlayerList().getPlayers()) {
-            sendToClient(id, msg, player);
-        }
-    }
-
-    public abstract MinecraftServer getCurrentServer();
-
-    public void sendToAllAround(ResourceLocation id, IAntimatterPacket msg, ServerLevel world, AABB alignedBB) {
-        for (ServerPlayer player : world.getEntitiesOfClass(ServerPlayer.class, alignedBB)) {
-            sendToClient(id, msg, player);
-        }
+    public static void register(){
+        PacketRegistration.registerPacket(TileGuiEventPacket.class, TILE_GUI_PACKET_ID, TileGuiEventPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_SERVER);
+        PacketRegistration.registerPacket(CoverGuiEventPacket.class, COVER_GUI_PACKET_ID, CoverGuiEventPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_SERVER);
+        PacketRegistration.registerPacket(GuiSyncPacket.class, GUI_SYNC_PACKET_ID, GuiSyncPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_SERVER);
+        PacketRegistration.registerPacket(GuiSyncPacket.class, GUI_SYNC_PACKET_ID, GuiSyncPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_CLIENT);
     }
 }

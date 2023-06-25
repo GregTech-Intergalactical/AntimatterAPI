@@ -20,6 +20,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import trinsdar.networkapi.api.INetwork;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -215,7 +216,7 @@ public class GuiInstance implements ICanSyncData {
     }
 
     public void sendPacket(AbstractGuiEventPacket pkt) {
-        Antimatter.NETWORK.sendToServer(pkt.getChannelId(), pkt);
+        INetwork.getInstance().sendToServer(pkt.getChannelId(), pkt);
     }
 
     /**
@@ -259,13 +260,13 @@ public class GuiInstance implements ICanSyncData {
     private void write(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new GuiSyncPacket(data);
         for (ServerPlayer listener : ((IAntimatterContainer)container).listeners()) {
-            Antimatter.NETWORK.sendToClient(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt, listener);
+            INetwork.getInstance().sendToClient(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt, listener);
         }
     }
 
     private void writeToServer(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new GuiSyncPacket(data);
-        Antimatter.NETWORK.sendToServer(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt);
+        INetwork.getInstance().sendToServer(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt);
     }
 
     @Override

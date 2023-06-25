@@ -9,10 +9,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import trinsdar.networkapi.api.IPacket;
 
 import java.util.List;
 
-public class GuiSyncPacket implements IAntimatterPacket {
+public class GuiSyncPacket implements IPacket {
     private GuiInstance.SyncHolder[] data;
     public ByteBuf clientData;
 
@@ -23,14 +24,6 @@ public class GuiSyncPacket implements IAntimatterPacket {
     public GuiSyncPacket(final ByteBuf data) {
         this.clientData = data;
 
-    }
-
-    public static void encodeStatic(GuiSyncPacket msg, FriendlyByteBuf buf) {
-        buf.writeVarInt(msg.data.length);
-        for (GuiInstance.SyncHolder data : msg.data) {
-            buf.writeVarInt(data.index);
-            data.writer.accept(buf, data.current);
-        }
     }
 
     public static GuiSyncPacket decode(FriendlyByteBuf buf) {
@@ -47,7 +40,11 @@ public class GuiSyncPacket implements IAntimatterPacket {
 
     @Override
     public void encode(FriendlyByteBuf buf) {
-        encodeStatic(this, buf);
+        buf.writeVarInt(data.length);
+        for (GuiInstance.SyncHolder data : data) {
+            buf.writeVarInt(data.index);
+            data.writer.accept(buf, data.current);
+        }
     }
 
 

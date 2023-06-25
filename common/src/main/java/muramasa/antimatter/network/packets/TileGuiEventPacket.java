@@ -17,35 +17,32 @@ public class TileGuiEventPacket extends AbstractGuiEventPacket {
         super(event, pos, AntimatterNetwork.TILE_GUI_PACKET_ID);
     }
 
-    public static void encodeStatic(TileGuiEventPacket msg, FriendlyByteBuf buf) {
-        msg.event.getFactory().write(msg.event, buf);
-        buf.writeBlockPos(msg.pos);
-    }
-
     public static TileGuiEventPacket decode(FriendlyByteBuf buf) {
         return new TileGuiEventPacket(IGuiEvent.IGuiEventFactory.read(buf), buf.readBlockPos());
     }
 
     @Override
     public void encode(FriendlyByteBuf buf) {
-        encodeStatic(this, buf);
+        event.getFactory().write(event, buf);
+        buf.writeBlockPos(pos);
     }
 
     @Override
     public void handleClient(ServerPlayer sender) {
-        handle(this, sender);
-    }
-
-    public static void handle(final TileGuiEventPacket msg, ServerPlayer sender){
         if (sender != null) {
-            BlockEntity tile = Utils.getTile(sender.getLevel(), msg.pos);
+            BlockEntity tile = Utils.getTile(sender.getLevel(), pos);
             if (tile instanceof IGuiHandler) {
-                if (msg.event.forward()) {
-                    ((IGuiHandler) tile).onGuiEvent(msg.event, sender);
+                if (event.forward()) {
+                    ((IGuiHandler) tile).onGuiEvent(event, sender);
                 } else {
-                    msg.event.handle(sender, ((IAntimatterContainer) sender.containerMenu).source());
+                    event.handle(sender, ((IAntimatterContainer) sender.containerMenu).source());
                 }
             }
         }
+    }
+
+    @Override
+    public void handleServer() {
+
     }
 }
