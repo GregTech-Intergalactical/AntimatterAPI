@@ -226,6 +226,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Refined Ores"));
                 else if (t == AntimatterMaterialTypes.RAW_ORE_BLOCK)
                     add(Ref.ID + ".rei.group." + t.getId(), "Raw Ore Blocks");
+                else if (t == AntimatterMaterialTypes.ITEM_CASING)
+                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Item Casings"));
                 else if (split.length > 1) {
                     if (t.isSplitName())
                         add(Ref.ID + ".rei.group." + t.getId(), String.join("", split[0], " ", split[1], "s"));
@@ -257,6 +259,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(item, String.join("", "Pure ", getLocalizedType(item.getMaterial()), " Dust"));
                 else if (type == AntimatterMaterialTypes.RAW_ORE)
                     add(item, String.join("", "Raw ", getLocalizedType(item.getMaterial())));
+                else if (type == AntimatterMaterialTypes.ITEM_CASING)
+                    add(item, String.join("", getLocalizedType(item.getMaterial()), " Item Casings"));
                 else if (type == AntimatterMaterialTypes.GEM)
                     add(item, getLocalizedType(item.getMaterial()));
                 else {
