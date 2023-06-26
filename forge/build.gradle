@@ -48,6 +48,7 @@ dependencies {
     modRuntimeOnly("io.github.feltmc:fluidhandler-extras:1.0.1")
     modImplementation("com.github.Trinsdar.Botarium:botarium-forge-1.18.2:${project.botarium_version}")
     modImplementation("io.github.trinsdar:networkapi-forge:0.1")
+    include("io.github.trinsdar:networkapi-forge:0.1")
     modImplementation("dev.latvian.mods:kubejs-forge:${rootProject.kubejs_version}")
     modImplementation("curse.maven:the-one-probe-245211:${rootProject.top_forge_file}")
 }
