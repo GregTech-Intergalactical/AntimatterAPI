@@ -192,6 +192,11 @@ public class GuiInstance implements ICanSyncData {
         return this;
     }
 
+    public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body, String tooltipKey) {
+        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey).setSize(x, y, w, h));
+        return this;
+    }
+
     public Iterable<Widget> unsortedWidgets() {
         return widgets;
     }

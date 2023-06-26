@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 
@@ -41,6 +42,8 @@ public class ButtonWidget extends Widget {
     protected final ButtonOverlay overlayOff;
     @Nullable
     protected String message;
+    @Nullable
+    protected String tooltipKey;
     protected Function<ButtonWidget, Boolean> activeHandler;
     protected Consumer<ButtonWidget> onPress;
     protected boolean pressed = false;
@@ -62,6 +65,11 @@ public class ButtonWidget extends Widget {
 
     public ButtonWidget setStateHandler(Function<ButtonWidget, Boolean> func) {
         this.activeHandler = func;
+        return this;
+    }
+
+    public ButtonWidget setTooltipKey(@Nullable String tooltipKey) {
+        this.tooltipKey = tooltipKey;
         return this;
     }
 
@@ -87,6 +95,14 @@ public class ButtonWidget extends Widget {
     @Environment(EnvType.CLIENT)
     protected void clientClick() {
         Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+    }
+
+    @Override
+    public void mouseOver(PoseStack stack, double mouseX, double mouseY, float partialTicks) {
+        super.mouseOver(stack, mouseX, mouseY, partialTicks);
+        if (tooltipKey != null){
+            renderTooltip(stack,new TranslatableComponent(tooltipKey), mouseX, mouseY);
+        }
     }
 
     @Override
@@ -164,4 +180,7 @@ public class ButtonWidget extends Widget {
         return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))))).clientSide();
     }
 
+    public static WidgetSupplier build(String res, ButtonBody body, ButtonOverlay overlay, IGuiEvent.IGuiEventFactory ev, int id, String tooltipKey) {
+        return builder(((a, b) -> new ButtonWidget(a, b, new ResourceLocation(a.handler.handlerDomain(), res), body, overlay, null, but -> but.gui.sendPacket(but.gui.handler.createGuiPacket(new GuiEvents.GuiEvent(ev, Screen.hasShiftDown() ? 1 : 0, id)))).setTooltipKey(tooltipKey))).clientSide();
+    }
 }
