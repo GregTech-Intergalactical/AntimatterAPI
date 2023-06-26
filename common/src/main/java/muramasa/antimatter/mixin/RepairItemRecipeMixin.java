@@ -49,15 +49,8 @@ public abstract class RepairItemRecipeMixin extends CustomRecipe {
         if (list.size() == 2) {
             ItemStack a = list.get(0);
             ItemStack b = list.get(1);
-            if (a.getItem() == b.getItem() && a.getCount() == 1 && b.getCount() == 1 && AntimatterPlatformUtils.isRepairable(a) && (a.getItem() instanceof IAntimatterTool || a.getItem() instanceof IAntimatterArmor)) {
-                boolean match = true;
-                if (a.getItem() instanceof IAntimatterTool) {
-                    IAntimatterTool tool = (IAntimatterTool) a.getItem();
-                    match = tool.getPrimaryMaterial(a) == tool.getPrimaryMaterial(b) && tool.getSecondaryMaterial(a) == tool.getSecondaryMaterial(b);
-                } else if (a.getItem() instanceof IAntimatterArmor) {
-                    IAntimatterArmor armor = (IAntimatterArmor) a.getItem();
-                    match = armor.getMaterial(a) == armor.getMaterial(b);
-                }
+            if (a.getItem() == b.getItem() && a.getCount() == 1 && b.getCount() == 1 && AntimatterPlatformUtils.isRepairable(a) && a.getItem() instanceof IAntimatterTool tool) {
+                boolean match = tool.getPrimaryMaterial(a) == tool.getPrimaryMaterial(b) && tool.getSecondaryMaterial(a) == tool.getSecondaryMaterial(b);
                 if (!match) {
                     ci.setReturnValue(ItemStack.EMPTY);
                     return;
@@ -71,7 +64,7 @@ public abstract class RepairItemRecipeMixin extends CustomRecipe {
                     i1 = 0;
                 }
 
-                ItemStack output = item instanceof IAntimatterTool ? ((IAntimatterTool) item).asItemStack(((IAntimatterTool) item).getPrimaryMaterial(a), ((IAntimatterTool) item).getSecondaryMaterial(a)) : ((IAntimatterArmor) item).asItemStack(((IAntimatterArmor) item).getMaterial(a));
+                ItemStack output = tool.asItemStack(tool.getPrimaryMaterial(a), tool.getSecondaryMaterial(a));
                 output.setDamageValue(i1);
 
                 Map<Enchantment, Integer> map = Maps.newHashMap();
@@ -113,12 +106,8 @@ public abstract class RepairItemRecipeMixin extends CustomRecipe {
             ItemStack a = list.get(0);
             ItemStack b = list.get(1);
             boolean match = true;
-            if (a.getItem() instanceof IAntimatterTool) {
-                IAntimatterTool tool = (IAntimatterTool) a.getItem();
+            if (a.getItem() instanceof IAntimatterTool tool) {
                 match = tool.getPrimaryMaterial(a) == tool.getPrimaryMaterial(b) && tool.getSecondaryMaterial(a) == tool.getSecondaryMaterial(b);
-            } else if (a.getItem() instanceof IAntimatterArmor) {
-                IAntimatterArmor armor = (IAntimatterArmor) a.getItem();
-                match = armor.getMaterial(a) == armor.getMaterial(b);
             }
             if (!match) ci.setReturnValue(false);
         }

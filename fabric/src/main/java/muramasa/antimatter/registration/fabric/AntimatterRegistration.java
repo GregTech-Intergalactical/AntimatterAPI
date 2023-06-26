@@ -128,8 +128,11 @@ public class AntimatterRegistration {
             }
         });
         AntimatterAPI.all(AntimatterArmorType.class, domain, t -> {
-            IAntimatterArmor i = t.instantiateTools(domain);
-            Registry.register(Registry.ITEM, new ResourceLocation(domain, i.getId()), i.getItem());
+            List<IAntimatterArmor> i = t.instantiateTools(domain);
+            i.forEach(a -> {
+                Registry.register(Registry.ITEM, new ResourceLocation(Ref.SHARED_ID, a.getId()), a.getItem());
+            });
+
         });
     }
 }

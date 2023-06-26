@@ -65,9 +65,6 @@ public abstract class GrindstoneContainerMixin extends AbstractContainerMenu {
                     ci.cancel();
                     return;
                 }
-            } else if (a.getItem() instanceof IAntimatterArmor) {
-                IAntimatterArmor tool = (IAntimatterArmor) a.getItem();
-                match = tool.getMaterial(a) == tool.getMaterial(b);
             }
 
         }

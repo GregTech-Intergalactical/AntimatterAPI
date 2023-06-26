@@ -133,7 +133,7 @@ public class AntimatterDynamics {
         providers.forEach(IAntimatterProvider::onCompletion);
         AntimatterTagProvider.afterCompletion();
         Antimatter.LOGGER.info("Time to run data providers: " + (System.currentTimeMillis() - time) + " ms.");
-        if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES) {
+        if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES || !AntimatterPlatformUtils.isProduction()) {
             RUNTIME_DATA_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));
         }
     }
@@ -148,7 +148,7 @@ public class AntimatterDynamics {
         providers.forEach(IAntimatterProvider::onCompletion);
         AntimatterLanguageProvider.postCompletion();
         Antimatter.LOGGER.info("Time to run asset providers: " + (System.currentTimeMillis() - time) + " ms.");
-        if (AntimatterConfig.GAMEPLAY.EXPORT_DEFAULT_RECIPES) {
+        if (!AntimatterPlatformUtils.isProduction()) {
             DYNAMIC_RESOURCE_PACK.dump(AntimatterPlatformUtils.getConfigDir().getParent().resolve("dumped"));
         }
     }
