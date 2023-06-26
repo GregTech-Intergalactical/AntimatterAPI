@@ -3,10 +3,7 @@ package muramasa.antimatter.tool;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.behaviour.IBehaviour;
-import muramasa.antimatter.behaviour.IBlockDestroyed;
-import muramasa.antimatter.behaviour.IItemHighlight;
-import muramasa.antimatter.behaviour.IItemUse;
+import muramasa.antimatter.behaviour.*;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
 import muramasa.antimatter.material.Material;
@@ -27,14 +24,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.DigDurabilityEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -52,10 +47,7 @@ import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.api.gt.IEnergyItem;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static muramasa.antimatter.material.Material.NULL;
 
@@ -69,6 +61,15 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
 
     default Material getSecondaryMaterial(ItemStack stack) {
         return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_SECONDARY_MATERIAL));
+    }
+
+    default DyeColor getDyeColor(ItemStack stack){
+        CompoundTag data = getDataTag(stack);
+        if (data.contains(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR)){
+            Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getMaterialColor().col == data.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR)).findFirst();
+            return color.orElse(DyeColor.WHITE);
+        }
+        return null;
     }
 
     default Material[] getMaterials(ItemStack stack) {
@@ -85,7 +86,7 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
     }
 
     default int getSubColour(ItemStack stack) {
-        return getDataTag(stack).getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
+        return getDyeColor(stack) == null ? 0 : getDyeColor(stack).getMaterialColor().col;
     }
 
     default long getCurrentEnergy(ItemStack stack) {
@@ -177,17 +178,26 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         } else list.add(asItemStack(NULL, NULL));
     }
 
-    @SuppressWarnings("NoTranslation")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
         //TODO change this to object %s system for other lang compat
         Material primary = getPrimaryMaterial(stack);
         Material secondary = getSecondaryMaterial(stack);
-        tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary").append(": ").append(primary.getDisplayName().getString()));
+        tooltip.add(new TranslatableComponent("antimatter.tooltip.material_primary", primary.getDisplayName().getString()));
         if (secondary != NULL)
-            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary").append(": ").append(secondary.getDisplayName().getString()));
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.material_secondary", secondary.getDisplayName().getString()));
+        DyeColor color = getDyeColor(stack);
+        if (color != null){
+            tooltip.add(new TranslatableComponent("antimatter.tooltip.dye_color", color.getName()));
+        }
         if (flag.isAdvanced() && getAntimatterToolType().isPowered())
             tooltip.add(new TranslatableComponent("antimatter.tooltip.energy").append(": " + getCurrentEnergy(stack) + " / " + getMaxEnergy(stack)));
         if (getAntimatterToolType().getTooltip().size() != 0) tooltip.addAll(getAntimatterToolType().getTooltip());
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IAddInformation addInformation)) continue;
+            addInformation.onAddInformation(this, stack, tooltip, flag);
+        }
     }
 
     default boolean onGenericHitEntity(ItemStack stack, LivingEntity target, LivingEntity attacker, float volume, float pitch) {
@@ -222,11 +232,22 @@ public interface IAntimatterTool extends IAntimatterObject, IColorHandler, IText
         InteractionResult result = InteractionResult.PASS;
         for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
             IBehaviour<?> b = e.getValue();
-            if (!(b instanceof IItemUse)) continue;
-            InteractionResult r = ((IItemUse) b).onItemUse(this, ctx);
+            if (!(b instanceof IItemUse itemUse)) continue;
+            InteractionResult r = itemUse.onItemUse(this, ctx);
             if (result != InteractionResult.SUCCESS) result = r;
         }
         return result;
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    default InteractionResultHolder<ItemStack> onGenericRightclick(Level level, Player player, InteractionHand usedHand){
+        for (Map.Entry<String, IBehaviour<IAntimatterTool>> e : getAntimatterToolType().getBehaviours().entrySet()) {
+            IBehaviour<?> b = e.getValue();
+            if (!(b instanceof IItemRightClick rightClick)) continue;
+            InteractionResultHolder<ItemStack> r = rightClick.onRightClick(this, level, player, usedHand);
+            if (r.getResult().shouldAwardStats()) return r;
+        }
+        return InteractionResultHolder.pass(player.getItemInHand(usedHand));
     }
 
     @SuppressWarnings("rawtypes")

@@ -1,5 +1,7 @@
 package muramasa.antimatter.capability.machine;
 
+import earth.terrarium.botarium.common.energy.base.PlatformItemEnergyManager;
+import earth.terrarium.botarium.common.energy.util.EnergyHooks;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -203,7 +205,21 @@ public class MachineItemHandler<T extends TileEntityMachine<T>> implements IMach
             for (int i = 0; i < chargeables.getSlots(); i++) {
                 ItemStack item = chargeables.getStackInSlot(i);
                 if (!item.isEmpty()) {
-                    TesseractCapUtils.getEnergyHandlerItem(item).ifPresent(e -> list.add(new ObjectObjectImmutablePair<>(item, e)));
+                    TesseractCapUtils.getWrappedEnergyHandlerItem(item).ifPresent(e -> list.add(new ObjectObjectImmutablePair<>(item, e)));
+                }
+            }
+        }
+        return list;
+    }
+
+    public List<Pair<ItemStack, PlatformItemEnergyManager>> getRFChargeableItems() {
+        List<Pair<ItemStack, PlatformItemEnergyManager>> list = new ObjectArrayList<>();
+        if (tile.isServerSide()) {
+            IItemHandlerModifiable chargeables = getChargeHandler();
+            for (int i = 0; i < chargeables.getSlots(); i++) {
+                ItemStack item = chargeables.getStackInSlot(i);
+                if (!item.isEmpty() && EnergyHooks.isEnergyItem(item)) {
+                    list.add(new ObjectObjectImmutablePair<>(item, EnergyHooks.getItemEnergyManager(item)));
                 }
             }
         }

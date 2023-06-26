@@ -323,7 +323,7 @@ public class RecipeIngredient extends Ingredient {
         @Override
         public Collection<ItemStack> getItems() {
             if (tag != null) {
-                return TagUtils.nc(tag).getValues().stream().map(t -> new ItemStack(t, count)).toList();
+                return TagUtils.nc(tag).stream().map(t -> new ItemStack(t, count)).toList();
             }
             return Collections.singletonList(stack);
         }

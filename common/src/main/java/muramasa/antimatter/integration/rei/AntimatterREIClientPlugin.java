@@ -121,6 +121,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                 });
             });
         }
+        AntimatterJEIREIPlugin.getItemsToHide().forEach(i -> rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, i.asItem().getDefaultInstance())));
     }
 
     @Override

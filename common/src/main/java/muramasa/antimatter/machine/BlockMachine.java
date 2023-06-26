@@ -70,10 +70,9 @@ import java.util.List;
 import static com.google.common.collect.ImmutableMap.of;
 import static muramasa.antimatter.Data.WRENCH_MATERIAL;
 import static muramasa.antimatter.machine.MachineFlag.BASIC;
+import static muramasa.antimatter.machine.MachineFlag.RF;
 
 public class BlockMachine extends BlockBasic implements IItemBlockProvider, EntityBlock {
-
-    public static final DirectionProperty HORIZONTAL_FACING = DirectionProperty.create("horizontal_facing", Direction.Plane.HORIZONTAL);
     public static final EnumProperty<MachineState> MACHINE_STATE = EnumProperty.create("machine_state", MachineState.class, MachineState.IDLE, MachineState.ACTIVE);
 
     protected Machine<?> type;
@@ -106,7 +105,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         if (type == null) return; // means this is the first run
         if (type.allowVerticalFacing()) {
-            builder.add(BlockStateProperties.FACING).add(HORIZONTAL_FACING).add(MACHINE_STATE);
+            builder.add(BlockStateProperties.FACING).add(MACHINE_STATE);
         } else {
             builder.add(BlockStateProperties.HORIZONTAL_FACING).add(MACHINE_STATE);
         }
@@ -123,9 +122,9 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         if (type.allowVerticalFacing()) {
             Direction dir = context.getNearestLookingDirection().getOpposite();
             dir = dir.getAxis() == Axis.Y ? dir.getOpposite() : dir;
-            return this.defaultBlockState().setValue(HORIZONTAL_FACING, type.handlePlacementFacing(context, BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite())).setValue(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));
+            return this.defaultBlockState().setValue(BlockStateProperties.FACING, type.handlePlacementFacing(context, BlockStateProperties.FACING, dir));
         } else {
-            return this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()));
+            return this.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, type.handlePlacementFacing(context, BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection().getOpposite()));
         }
     }
 
@@ -290,7 +289,7 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag) {
-        if (getType().has(BASIC)) {
+        if (getType().has(BASIC) && !getType().has(RF)) {
             if (getTier().getVoltage() > 0) {
                 tooltip.add(new TranslatableComponent("machine.voltage.in").append(": ").append(new TextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
                 tooltip.add(new TranslatableComponent("machine.power.capacity").append(": ").append(new TextComponent("" + (getTier().getVoltage() * 64))).withStyle(ChatFormatting.BLUE));

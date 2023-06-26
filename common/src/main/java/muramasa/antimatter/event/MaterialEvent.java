@@ -113,7 +113,7 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
 
     public T asGem(boolean transparent, IMaterialTag... tags) {
         asGemBasic(transparent, tags);
-        if (!transparent) flags(AntimatterMaterialTypes.GEM_EXQUISITE);
+        flags(AntimatterMaterialTypes.GEM_EXQUISITE);
         return (T) this;
     }
 

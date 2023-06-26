@@ -34,7 +34,9 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
 
     @Override
     public void encode(FriendlyByteBuf buf) {
-        encodeStatic(this, buf);
+        event.getFactory().write(event, buf);
+        buf.writeBlockPos(pos);
+        buf.writeEnum(facing);
     }
 
     @Override
@@ -49,5 +51,10 @@ public class CoverGuiEventPacket extends AbstractGuiEventPacket {
                 this.event.handle(sender, ((IAntimatterContainer) sender.containerMenu).source());
             }
         }
+    }
+
+    @Override
+    public void handleServer() {
+
     }
 }

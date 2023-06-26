@@ -27,11 +27,6 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
     @Override
     protected void renderLabels(PoseStack stack, int mouseX, int mouseY) {
         drawTitle(stack, mouseX, mouseY);
-        if (container.getCover() instanceof ICoverModeHandler) {
-            ICoverModeHandler coverModeHandler = (ICoverModeHandler) container.getCover();
-            ICoverMode mode = coverModeHandler.getCoverMode();
-            Minecraft.getInstance().font.draw(stack, "Mode: " + mode.getName(), getCenteredStringX("Mode: " + mode.getName()), 13, 0x404040);
-        }
     }
 
     protected void drawTitle(PoseStack stack, int mouseX, int mouseY) {
@@ -46,11 +41,5 @@ public class ScreenCover<T extends ContainerCover> extends AntimatterContainerSc
             if (widget.depth() >= this.depth()) return;
             widget.render(stack, mouseX, mouseY, Minecraft.getInstance().getFrameTime());
         }
-        if (container.getCover() instanceof ICoverModeHandler) {
-            ICoverModeHandler coverModeHandler = (ICoverModeHandler) container.getCover();
-            ICoverMode mode = coverModeHandler.getCoverMode();
-            drawTexture(stack, gui, leftPos + mode.getX(), topPos + mode.getY(), coverModeHandler.getOverlayX(), coverModeHandler.getOverlayY(), 18, 18);
-        }
-
     }
 }

@@ -77,7 +77,7 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
         if (cover.isEmpty())
             return ModelUtils.getQuadsFromBaked(model, fake.getState(), side, rand, level, pos);
         DynamicTexturer<ICover, ICover.DynamicKey> texturer = fake.getTexturer(side);
-        return texturer.getQuads("fake", new LinkedList<>(), cState, cover, new ICover.DynamicKey(cover.side(), null, new Texture(first.texture().toString()), cover.getId()), side.get3DDataValue(), level, pos);
+        return texturer.getQuads("fake", new LinkedList<>(), cState, cover, new ICover.DynamicKey(cover.side(), new Texture(first.texture().toString()), cover.getId()), side.get3DDataValue(), level, pos);
     }
 
     @Override

@@ -51,7 +51,6 @@ import org.apache.logging.log4j.Logger;
 public class Antimatter extends AntimatterMod {
 
     public static Antimatter INSTANCE;
-    public static final AntimatterNetwork NETWORK = AntimatterNetwork.createAntimatterNetwork();
     public static final Logger LOGGER = LogManager.getLogger(Ref.ID);
     public static IProxyHandler PROXY;
 
@@ -86,6 +85,7 @@ public class Antimatter extends AntimatterMod {
         AntimatterDynamics.clientProvider(Ref.SHARED_ID,
                 () -> new AntimatterLanguageProvider(Ref.SHARED_ID, Ref.NAME.concat(" en_us Localization (Shared)"), "en_us"));
         AntimatterAPI.init();
+        AntimatterNetwork.register();
     }
 
     public void addCraftingLoaders(CraftingEvent ev) {

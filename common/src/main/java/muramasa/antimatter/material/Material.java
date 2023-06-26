@@ -28,6 +28,7 @@ public class Material implements ISharedAntimatterObject {
     private final String domain;
     private final String id;
     private Component displayName;
+    private String displayNameString;
     private final int rgb;
     private final TextureSet set;
 
@@ -95,6 +96,15 @@ public class Material implements ISharedAntimatterObject {
             if (!t.all().contains(this)) return false;
         }
         return true;
+    }
+
+    public Material setDisplayName(String displayNameString) {
+        this.displayNameString = displayNameString;
+        return this;
+    }
+
+    public String getDisplayNameString() {
+        return displayNameString;
     }
 
     public Material flags(IMaterialTag... tags) {

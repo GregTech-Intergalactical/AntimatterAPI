@@ -40,6 +40,7 @@ dependencies{
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
     modImplementation("com.github.Trinsdar.Botarium:botarium-common-1.18.2:${project.botarium_version}")
+    modImplementation("io.github.trinsdar:networkapi-common:0.1")
 }
 
 architectury {

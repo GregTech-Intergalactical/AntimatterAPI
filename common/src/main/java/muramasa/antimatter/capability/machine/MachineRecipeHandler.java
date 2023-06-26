@@ -207,7 +207,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     public long getPower() {
         if (activeRecipe == null) return 0;
-        if (overclock == 0) return activeRecipe.getPower();
+        if (overclock == 0 || tile.has(MachineFlag.RF)) return activeRecipe.getPower();
         //half the duration => overclock ^ 2.
         //so if overclock is 2 tiers, we have 1/4 the duration(200 -> 50) but for e.g. 8eu/t this would be
         //8*4*4 = 128eu/t.
@@ -216,7 +216,7 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
 
     protected void calculateDurations() {
         maxProgress = activeRecipe.getDuration();
-        if (!generator) {
+        if (!generator && !tile.has(MachineFlag.RF)) {
             overclock = getOverclock();
             this.maxProgress = Math.max(1, maxProgress >> overclock);
         }
@@ -345,6 +345,20 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
                 } else {
                     return consumeGeneratorResources(simulate);
                 }
+            } else if (tile.rfHandler.isPresent()){
+                if (!generator) {
+                    long power = getPower();
+                    long availableEnergy = tile.rfHandler.map(eh -> eh.getStoredEnergy()).orElse(0L);
+                    if (availableEnergy > 0 && availableEnergy >= power){
+                        if (!simulate){
+                            tile.rfHandler.ifPresent(eh -> eh.setEnergy(availableEnergy - power));
+                        }
+                        return true;
+                    }
+                    return false;
+                } else {
+                    return consumeRFGeneratorResources(simulate);
+                }
             } else {
                 return false;
             }
@@ -447,6 +461,33 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         return canOutput() && (!activeRecipe.hasInputItems() || tile.itemHandler.map(i -> i.consumeInputs(this.activeRecipe, true).size() > 0).orElse(false)) && (!activeRecipe.hasInputFluids() || tile.fluidHandler.map(t -> t.consumeAndReturnInputs(activeRecipe.getInputFluids(), true).size() > 0).orElse(false));
     }
 
+    protected boolean consumeRFGeneratorResources(boolean simulate){
+        if (!activeRecipe.hasInputFluids()) {
+            throw new RuntimeException("Missing fuel in active generator recipe!");
+        }
+        long toConsume = calculateGeneratorConsumption(activeRecipe);
+        long actualConsume = toConsume;
+        if (actualConsume == 0 || tile.fluidHandler.map(h -> {
+            FluidIngredient in = activeRecipe.getInputFluids().get(0);
+            long amount = in.drainedAmount((int) actualConsume, h, true, true); //h.getInputTanks().drain(new FluidStack(activeRecipe.getInputFluids().get(0).getStacks()[0], (int) actualConsume), IFluidHandler.FluidAction.SIMULATE).getAmount();
+            if (amount == actualConsume) {
+                if (!simulate)
+                    in.drain(amount, h, true, false);
+                return true;
+            }
+            return false;
+        }).orElse(false)) {
+            //insert power!
+            if (!simulate) {
+                tile.rfHandler.ifPresent(r -> {
+                    r.setEnergy(r.getStoredEnergy() + activeRecipe.getPower());
+                });
+            }
+            return true;
+        }
+        return false;
+    }
+
     /*
       Helper to consume resources for a generator.
      */
@@ -511,6 +552,14 @@ public class MachineRecipeHandler<T extends TileEntityMachine<T>> implements IMa
         if (r.getDuration() > 1)
             offset /= r.getDuration();
         return Math.max(1, (long) (Math.ceil(offset)));
+    }
+
+    protected long calculateGeneratorConsumption(IRecipe r) {
+        long amount = r.getInputFluids().get(0).getAmount();
+        if (currentProgress > 0) {
+            return 0;
+        }
+        return amount;
     }
 
     public void resetRecipe() {
