@@ -49,7 +49,7 @@ public class Ref {
     public static final String[] VN = new String[]{"ULV", "LV", "MV", "HV", "EV", "IV", "LuV", "ZPM", "UV", "MAX", "", "", "", "", "", ""}; //TODO: Schedule to change? ZPM rename? Tier decisions?
     public static final Direction[] DIRS = Direction.values();
     /**
-     * Fluid per Material Unit (Prime Factors: Forge: 3 * 3 * 2 * 2 * 2 * 2 Fabric: 5 * 5 * 3 * 3 * 2 * 2 * 2)
+     * Fluid per Material Unit (Prime Factors: Forge: 3 * 3 * 2 * 2 * 2 * 2 Fabric: 5 * 5 * 5 * 3 * 3 * 2 * 2 * 2)
      */
     public static final long L = AntimatterPlatformUtils.isForge() ? 144L : 9000L;
 
