@@ -66,10 +66,10 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
         AntimatterAPI.register(AntimatterArmorType.class, this);
     }
 
-    public List<IAntimatterArmor> instantiateTools(String domain) {
+    public List<IAntimatterArmor> instantiateTools() {
         List<IAntimatterArmor> armors = new ArrayList<>();
         MaterialTags.ARMOR.all().forEach(m -> {
-            armors.add(new MaterialArmor(domain, this, m, slot, prepareInstantiation(domain)));
+            armors.add(new MaterialArmor(Ref.SHARED_ID, this, m, slot, prepareInstantiation(Ref.SHARED_ID)));
         });
         return armors;
     }
