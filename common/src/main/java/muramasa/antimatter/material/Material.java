@@ -152,7 +152,7 @@ public class Material implements ISharedAntimatterObject {
 
     public long getProtons() {
         if (element != null) return element.getProtons();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getProtons();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getProtons();
         long tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s * stack.m.getProtons();
@@ -162,7 +162,7 @@ public class Material implements ISharedAntimatterObject {
 
     public long getNeutrons() {
         if (element != null) return element.getNeutrons();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getNeutrons();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getNeutrons();
         long tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s * stack.m.getNeutrons();
@@ -172,17 +172,18 @@ public class Material implements ISharedAntimatterObject {
 
     public long getMass() {
         if (element != null) return element.getMass();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getMass();
-        long tAmount = 0;
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getMass();
+        long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
-            tAmount += stack.s * stack.m.getMass();
+            tAmount += stack.s;
+            rAmount += stack.s * stack.m.getMass();
         }
-        return tAmount;
+        return rAmount / tAmount;
     }
 
     public long getDensity() {
         if (element != null) return element.getDensity();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getDensity();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getDensity();
         long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s;
@@ -193,7 +194,7 @@ public class Material implements ISharedAntimatterObject {
 
     public long getHardness() {
         if (element != null) return element.getHardness();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getHardness();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getHardness();
         long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s;
