@@ -94,6 +94,7 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
 
     @Override
     public boolean addEnergy(GTTransaction.TransferData data) {
+        if (!this.canInput()) return false;
         if (data.transaction.mode == GTTransaction.Mode.TRANSMIT) {
             boolean ok = checkVoltage(data);
             if (!ok) {
