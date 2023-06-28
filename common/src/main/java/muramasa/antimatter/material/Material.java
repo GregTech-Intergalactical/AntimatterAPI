@@ -213,7 +213,7 @@ public class Material implements ISharedAntimatterObject {
         return (getMultiplier() * rAmount) / (tAmount * U);
     }
 
-    private int getMultiplier() {
+    private long getMultiplier() {
         return (U * massMultiplier) / massDivider;
     }
 
