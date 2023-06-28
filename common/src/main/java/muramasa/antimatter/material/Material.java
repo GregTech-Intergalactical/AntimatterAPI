@@ -17,6 +17,7 @@ import tesseract.TesseractGraphWrappers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static muramasa.antimatter.Ref.U;
 import static muramasa.antimatter.material.TextureSet.NONE;
 
 public class Material implements ISharedAntimatterObject {
@@ -37,6 +38,7 @@ public class Material implements ISharedAntimatterObject {
      **/
     private Element element;
     private String chemicalFormula = null;
+    private int massMultiplier = 1, massDivider = 1;
 
     public final boolean enabled;
 
@@ -103,6 +105,12 @@ public class Material implements ISharedAntimatterObject {
         return this;
     }
 
+    public Material setMassMultiplierAndDivider(int massMultiplier, int massDivider){
+        this.massMultiplier = massMultiplier;
+        this.massDivider = massDivider;
+        return this;
+    }
+
     public String getDisplayNameString() {
         return displayNameString;
     }
@@ -152,54 +160,61 @@ public class Material implements ISharedAntimatterObject {
 
     public long getProtons() {
         if (element != null) return element.getProtons();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getProtons();
-        long tAmount = 0;
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getProtons();
+        long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
-            tAmount += stack.s * stack.m.getProtons();
+            tAmount += stack.s;
+            rAmount += stack.s * stack.m.getProtons();
         }
-        return tAmount;
+        return (getMultiplier() * rAmount) / (tAmount * U);
     }
 
     public long getNeutrons() {
         if (element != null) return element.getNeutrons();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getNeutrons();
-        long tAmount = 0;
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getNeutrons();
+        long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
-            tAmount += stack.s * stack.m.getNeutrons();
+            tAmount += stack.s;
+            rAmount += stack.s * stack.m.getNeutrons();
         }
-        return tAmount;
+        return (getMultiplier() * rAmount) / (tAmount * U);
     }
 
     public long getMass() {
         if (element != null) return element.getMass();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getMass();
-        long tAmount = 0;
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getMass();
+        long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
-            tAmount += stack.s * stack.m.getMass();
+            tAmount += stack.s;
+            rAmount += stack.s * stack.m.getMass();
         }
-        return tAmount;
+        return (getMultiplier() * rAmount) / (tAmount * U);
     }
 
     public long getDensity() {
         if (element != null) return element.getDensity();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getDensity();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getDensity();
         long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getDensity();
         }
-        return rAmount/tAmount;
+        return (getMultiplier() * rAmount) / (tAmount * U);
     }
 
     public long getHardness() {
         if (element != null) return element.getHardness();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Fe.getHardness();
+        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getHardness();
         long rAmount = 0, tAmount = 0;
         for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getHardness();
         }
-        return rAmount/tAmount;
+        return (getMultiplier() * rAmount) / (tAmount * U);
+    }
+
+    private int getMultiplier() {
+        return (U * massMultiplier) / massDivider;
     }
 
     /**

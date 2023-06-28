@@ -24,7 +24,6 @@ public abstract class AntimatterNetwork {
     public static void register(){
         PacketRegistration.registerPacket(TileGuiEventPacket.class, TILE_GUI_PACKET_ID, TileGuiEventPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_SERVER);
         PacketRegistration.registerPacket(CoverGuiEventPacket.class, COVER_GUI_PACKET_ID, CoverGuiEventPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_SERVER);
-        PacketRegistration.registerPacket(GuiSyncPacket.class, GUI_SYNC_PACKET_ID, GuiSyncPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_SERVER);
-        PacketRegistration.registerPacket(GuiSyncPacket.class, GUI_SYNC_PACKET_ID, GuiSyncPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_CLIENT);
+        PacketRegistration.registerPacket(GuiSyncPacket.class, GUI_SYNC_PACKET_ID, GuiSyncPacket::decode);
     }
 }

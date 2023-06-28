@@ -273,8 +273,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     } else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[0]));
                 }
             });
-            AntimatterAPI.all(IAntimatterArmor.class, domain, t -> {
-                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+            AntimatterAPI.all(IAntimatterArmor.class, t -> {
+                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
             });
             customTranslations();
             pipeTranslations();
