@@ -43,7 +43,7 @@ public class AntimatterGroupedModel implements IAntimatterModel {
     }
 
     @Override
-    public Collection<Material> getMaterials(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
+    public Collection<Material> getMaterials(IModelConfiguration configuration, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors) {
         return models.values().stream().flatMap(t -> t.getMaterials(modelGetter, missingTextureErrors).stream()).collect(Collectors.toList());
     }
 

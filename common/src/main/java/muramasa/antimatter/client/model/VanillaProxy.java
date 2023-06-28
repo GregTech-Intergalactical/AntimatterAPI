@@ -1,4 +1,3 @@
-/*
 package muramasa.antimatter.client.model;
 
 import com.google.common.collect.Lists;
@@ -7,6 +6,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
+import muramasa.antimatter.client.model.loader.IAntimatterModelLoader;
 import muramasa.antimatter.mixin.client.BlockModelAccessor;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
@@ -18,12 +18,7 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraftforge.client.model.IModelBuilder;
-import net.minecraftforge.client.model.IModelConfiguration;
-import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-public class VanillaProxy implements ISimpleModelGeometry<VanillaProxy>
+public class VanillaProxy implements ISimpleModel
 {
     private final List<BlockElement> elements;
 
@@ -59,7 +54,7 @@ public class VanillaProxy implements ISimpleModelGeometry<VanillaProxy>
     }
 
     @Override
-    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<Material> getMaterials(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<Material> textures = Sets.newHashSet();
 
@@ -77,7 +72,7 @@ public class VanillaProxy implements ISimpleModelGeometry<VanillaProxy>
         return textures;
     }
 
-    public static class Loader implements IModelLoader<VanillaProxy>
+    public static class Loader implements IAntimatterModelLoader<VanillaProxy>
     {
         public static final VanillaProxy.Loader INSTANCE = new VanillaProxy.Loader();
 
@@ -86,13 +81,7 @@ public class VanillaProxy implements ISimpleModelGeometry<VanillaProxy>
         }
 
         @Override
-        public void onResourceManagerReload(ResourceManager resourceManager)
-        {
-
-        }
-
-        @Override
-        public VanillaProxy read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
+        public VanillaProxy readModel(JsonDeserializationContext deserializationContext, JsonObject modelContents)
         {
             List<BlockElement> list = this.getModelElements(deserializationContext, modelContents);
             return new VanillaProxy(list);
@@ -108,6 +97,10 @@ public class VanillaProxy implements ISimpleModelGeometry<VanillaProxy>
 
             return list;
         }
+
+        @Override
+        public String getId() {
+            return null;
+        }
     }
 }
-*/

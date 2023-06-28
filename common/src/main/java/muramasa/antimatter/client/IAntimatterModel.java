@@ -1,16 +1,20 @@
 package muramasa.antimatter.client;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
+import muramasa.antimatter.client.model.IModelConfiguration;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.function.Function;
 
-public interface IAntimatterModel extends UnbakedModel {
+public interface IAntimatterModel {
 
     default ModelState getModelTransform(ModelState base, int[] rots) {
         if (rots == null || rots.length != 3 || (rots[0] == 0 && rots[1] == 0 && rots[2] == 0)) return base;
@@ -19,19 +23,19 @@ public interface IAntimatterModel extends UnbakedModel {
 
     BakedModel bakeModel(ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc);
 
-    @Override
-    default BakedModel bake(ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ResourceLocation loc) {
+    Collection<Material> getMaterials(IModelConfiguration configuration, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors);
+
+    default BakedModel bakeModel(IModelConfiguration configuration, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc){
+        return bakeModel(bakery, getter, transform, loc);
+    }
+
+    default BakedModel bake(IModelConfiguration configuration, ModelBakery bakery, Function<Material, TextureAtlasSprite> getter, ModelState transform, ItemOverrides overrides, ResourceLocation loc) {
         try {
-            return bakeModel(bakery, getter, transform, loc);
+            return bakeModel(configuration, bakery, getter, transform, overrides, loc);
         } catch (Exception e) {
             //Antimatter.LOGGER.error("ModelBaking Exception for " + owner.getModelName());
             e.printStackTrace();
             return ModelUtils.getMissingModel().bake(bakery, getter, transform, loc);
         }
-    }
-
-    @Override
-    default Collection<ResourceLocation> getDependencies() {
-        return Collections.emptyList();
     }
 }
