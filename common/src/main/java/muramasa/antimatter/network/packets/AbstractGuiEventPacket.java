@@ -1,11 +1,11 @@
 package muramasa.antimatter.network.packets;
 
+import com.teamresourceful.resourcefullib.common.networking.base.Packet;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import trinsdar.networkapi.api.IPacket;
 
-public abstract class AbstractGuiEventPacket implements IPacket {
+public abstract class AbstractGuiEventPacket<T extends AbstractGuiEventPacket<T>> implements Packet<T> {
     protected final IGuiEvent event;
     protected final BlockPos pos;
     protected final ResourceLocation channelId;
@@ -16,7 +16,7 @@ public abstract class AbstractGuiEventPacket implements IPacket {
         this.channelId = channelId;
     }
 
-    public ResourceLocation getChannelId() {
+    public ResourceLocation getID() {
         return channelId;
     }
 }

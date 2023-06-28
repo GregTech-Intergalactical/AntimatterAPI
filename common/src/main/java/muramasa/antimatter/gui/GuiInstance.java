@@ -3,7 +3,6 @@ package muramasa.antimatter.gui;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.core.RTree;
@@ -13,7 +12,9 @@ import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.network.packets.ClientboundGuiSyncPacket;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
+import muramasa.antimatter.network.packets.ServerboundGuiSyncPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
@@ -221,7 +222,7 @@ public class GuiInstance implements ICanSyncData {
     }
 
     public void sendPacket(AbstractGuiEventPacket pkt) {
-        INetwork.getInstance().sendToServer(pkt.getChannelId(), pkt);
+        AntimatterNetwork.NETWORK.sendToServer(pkt);
     }
 
     /**
@@ -237,7 +238,7 @@ public class GuiInstance implements ICanSyncData {
             }
         }
         if (toSync.size() > 0)
-            write(toSync);
+            writeToClient(toSync);
     }
 
     public ItemStack getHeldItem() {
@@ -262,15 +263,15 @@ public class GuiInstance implements ICanSyncData {
         }
     }
 
-    private void write(final List<SyncHolder> data) {
-        GuiSyncPacket pkt = new GuiSyncPacket(data);
+    private void writeToClient(final List<SyncHolder> data) {
+        GuiSyncPacket pkt = new ClientboundGuiSyncPacket(data);
         for (ServerPlayer listener : ((IAntimatterContainer)container).listeners()) {
             INetwork.getInstance().sendToClient(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt, listener);
         }
     }
 
     private void writeToServer(final List<SyncHolder> data) {
-        GuiSyncPacket pkt = new GuiSyncPacket(data);
+        GuiSyncPacket pkt = new ServerboundGuiSyncPacket(data);
         INetwork.getInstance().sendToServer(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt);
     }
 

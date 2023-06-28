@@ -1,5 +1,6 @@
 package muramasa.antimatter.network;
 
+import com.teamresourceful.resourcefullib.common.networking.NetworkChannel;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.network.packets.CoverGuiEventPacket;
@@ -17,9 +18,13 @@ import trinsdar.networkapi.api.PacketRegistration;
 
 public abstract class AntimatterNetwork {
 
-    public static final ResourceLocation TILE_GUI_PACKET_ID = new ResourceLocation(Ref.ID, "tile_gui_packet");
-    public static final ResourceLocation COVER_GUI_PACKET_ID = new ResourceLocation(Ref.ID, "cover_gui_packet");
-    public static final ResourceLocation GUI_SYNC_PACKET_ID = new ResourceLocation(Ref.ID, "gui_sync_packet");
+    public static final NetworkChannel NETWORK = new NetworkChannel(Ref.ID, 0, "main");
+
+    public static final ResourceLocation TILE_GUI_PACKET_ID = new ResourceLocation(Ref.ID, "tile_gui");
+    public static final ResourceLocation COVER_GUI_PACKET_ID = new ResourceLocation(Ref.ID, "cover_gui");
+    public static final ResourceLocation GUI_SYNC_PACKET_ID = new ResourceLocation(Ref.ID, "gui_sync_clientbound");
+
+    public static final ResourceLocation GUI_SYNC_PACKET_ID_SERVERBOUND = new ResourceLocation(Ref.ID, "gui_sync_serverbound");
 
     public static void register(){
         PacketRegistration.registerPacket(TileGuiEventPacket.class, TILE_GUI_PACKET_ID, TileGuiEventPacket::decode, PacketRegistration.NetworkDirection.PLAY_TO_SERVER);
