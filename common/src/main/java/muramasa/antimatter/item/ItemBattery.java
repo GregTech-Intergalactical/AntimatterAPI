@@ -58,18 +58,14 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         if (this.allowdedIn(group)) {
             ItemStack stack = new ItemStack(this);
             items.add(stack.copy());
-            getCastedHandler(stack).ifPresent(e -> {
-                e.setEnergy(e.getCapacity());
-                items.add(e.getContainer().getItemStack());
-            });
+            items.add(getFilledBattery(this));
         }
     }
 
     public static ItemStack getFilledBattery(ItemBasic<?> item) {
         ItemStack stack = item.getDefaultInstance();
-        getCastedHandler(stack).ifPresent(t -> {
-            t.setEnergy(t.getCapacity());
-        });
+        if (!(item instanceof ItemBattery battery)) return stack;
+        stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA).putLong(Ref.KEY_ITEM_ENERGY, battery.cap);
         return stack;
     }
 
