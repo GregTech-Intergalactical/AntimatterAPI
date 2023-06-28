@@ -5,6 +5,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import muramasa.antimatter.client.IAntimatterModel;
 import muramasa.antimatter.client.model.AntimatterModel;
 import muramasa.antimatter.dynamic.DynamicModel;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -21,7 +22,7 @@ public class DynamicModelLoader extends AntimatterModelLoader<DynamicModel> {
         @Override
         public DynamicModel readModel(JsonDeserializationContext context, JsonObject json) {
             try {
-                Int2ObjectOpenHashMap<UnbakedModel[]> configs = new Int2ObjectOpenHashMap<>();
+                Int2ObjectOpenHashMap<IAntimatterModel[]> configs = new Int2ObjectOpenHashMap<>();
                 for (JsonElement e : json.getAsJsonArray("config")) {
                     if (!e.isJsonObject() || !e.getAsJsonObject().has("id") || !e.getAsJsonObject().has("models"))
                         continue;
@@ -38,8 +39,8 @@ public class DynamicModelLoader extends AntimatterModelLoader<DynamicModel> {
             }
         }
 
-        public UnbakedModel[] buildModels(JsonDeserializationContext context, JsonArray array) {
-            UnbakedModel[] models = new UnbakedModel[array.size()];
+        public IAntimatterModel[] buildModels(JsonDeserializationContext context, JsonArray array) {
+            IAntimatterModel[] models = new IAntimatterModel[array.size()];
             for (int i = 0; i < array.size(); i++) {
                 if (!array.get(i).isJsonObject()) continue;
                 models[i] = new AntimatterModel(context.deserialize(array.get(i).getAsJsonObject(), BlockModel.class), buildRotations(array.get(i).getAsJsonObject()));

@@ -100,7 +100,7 @@ public class VanillaProxy implements ISimpleModel
 
         @Override
         public String getId() {
-            return null;
+            return "vanilla_proxy";
         }
     }
 }
