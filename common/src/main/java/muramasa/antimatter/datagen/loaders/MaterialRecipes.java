@@ -117,12 +117,12 @@ public class MaterialRecipes {
                                 .build(),
                         "RPR", "PWP", "RPR");
             }
-            /*if (m.has(AntimatterMaterialTypes.RING)) {
+            if (m.has(AntimatterMaterialTypes.RING)) {
                 if (m.has(RUBBERTOOLS)){
                     provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_ring", "antimatter_material", "has_wire_cutter", provider.hasSafeItem(AntimatterDefaultTools.WIRE_CUTTER.getTag()),
                             AntimatterMaterialTypes.RING.get(m, craftingMultiplier), ImmutableMap.of('H', AntimatterDefaultTools.WIRE_CUTTER.getTag(), 'W', AntimatterMaterialTypes.PLATE.getMaterialTag(m)), "H ", " W");
                 }
-            }*/
+            }
         });
 
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
