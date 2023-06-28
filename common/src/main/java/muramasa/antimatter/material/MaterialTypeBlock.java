@@ -31,7 +31,7 @@ public class MaterialTypeBlock<T> extends MaterialType<T> {
 
     private final BlockSupplier supplier;
 
-    public MaterialTypeBlock(String id, int layers, boolean visible, int unitValue, BlockSupplier supplier) {
+    public MaterialTypeBlock(String id, int layers, boolean visible, long unitValue, BlockSupplier supplier) {
         super(id, layers, visible, unitValue);
         AntimatterAPI.register(MaterialTypeBlock.class, this);
         this.supplier = supplier;

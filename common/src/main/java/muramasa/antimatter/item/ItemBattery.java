@@ -1,5 +1,6 @@
 package muramasa.antimatter.item;
 
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.energy.ItemEnergyHandler;
 import muramasa.antimatter.machine.Tier;
 import net.minecraft.ChatFormatting;
@@ -57,24 +58,23 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
         if (this.allowdedIn(group)) {
             ItemStack stack = new ItemStack(this);
             items.add(stack.copy());
-            getCastedHandler(stack).ifPresent(e -> {
-                e.setEnergy(e.getCapacity());
-                items.add(e.getContainer().getItemStack());
-            });
+            items.add(getFilledBattery(this));
         }
     }
 
     public static ItemStack getFilledBattery(ItemBasic<?> item) {
         ItemStack stack = item.getDefaultInstance();
-        getCastedHandler(stack).ifPresent(t -> {
-            t.setEnergy(t.getCapacity());
-        });
+        if (!(item instanceof ItemBattery battery)) return stack;
+        stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA).putLong(Ref.KEY_ITEM_ENERGY, battery.cap);
         return stack;
     }
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return TesseractCapUtils.getEnergyHandlerItem(stack).map(IEnergyHandler::getEnergy).filter(l -> l <= 0).map(l -> super.getBarColor(stack)).orElse(0x00BFFF);
+        long energy = stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA).getLong(Ref.KEY_ITEM_ENERGY);
+        if (energy <= 0) return super.getBarColor(stack);
+        return 0x00BFFF;
+        //return TesseractCapUtils.getEnergyHandlerItem(stack).map(IEnergyHandler::getEnergy).filter(l -> l <= 0).map(l -> super.getBarColor(stack)).orElse(0x00BFFF);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class ItemBattery extends ItemBasic<ItemBattery> implements IEnergyItem {
 
     @Override
     public int getBarWidth(ItemStack stack) {
-        return (int)(13.0f* (TesseractCapUtils.getEnergyHandlerItem(stack).map(IEnergyHandler::getEnergy).orElse(0L) / (double) cap));
+        return (int)(13.0f* (stack.getOrCreateTagElement(Ref.TAG_ITEM_ENERGY_DATA).getLong(Ref.KEY_ITEM_ENERGY) / (double) cap));
     }
 
     @Nonnull
