@@ -156,9 +156,9 @@ public class MaterialRecipes {
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.ORE, AntimatterMaterialTypes.INGOT, 1, m, SMELT_INTO.getMapping(m));
             if (m != SMELT_INTO.getMapping(m) || !m.has(AntimatterMaterialTypes.NUGGET)) return;
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.NUGGET, 12, m);
-            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.NUGGET, 12, m);
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST_IMPURE, INGOT, 1, m);
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.NUGGET, 11, m);
-            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST_PURE, AntimatterMaterialTypes.NUGGET, 11, m);
+            addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.DUST_PURE, INGOT, 1, m);
             addSmeltingRecipe(consumer, provider, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.NUGGET, 10, m);
         });
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
