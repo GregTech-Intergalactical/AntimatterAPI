@@ -57,7 +57,7 @@ public class ClientboundGuiSyncPacket extends GuiSyncPacket<ClientboundGuiSyncPa
             return (sender, level) -> {
                 AbstractContainerMenu c = Minecraft.getInstance().player.containerMenu;
                 if (c instanceof IAntimatterContainer) {
-                    ((AntimatterContainer) c).handler.receivePacket(msg, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
+                    ((AntimatterContainer) c).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
                 }
             };
         }

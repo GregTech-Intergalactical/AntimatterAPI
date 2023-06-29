@@ -54,7 +54,7 @@ public class ServerboundGuiSyncPacket extends GuiSyncPacket<ServerboundGuiSyncPa
         @Override
         public PacketContext handle(ServerboundGuiSyncPacket msg) {
             return (sender, level) -> {
-                ((AntimatterContainer) sender.containerMenu).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
+                ((AntimatterContainer) sender.containerMenu).handler.receivePacket(msg, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
             };
         }
     }
