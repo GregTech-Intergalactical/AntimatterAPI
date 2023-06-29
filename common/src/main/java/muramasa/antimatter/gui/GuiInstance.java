@@ -21,7 +21,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import trinsdar.networkapi.api.INetwork;
 
 import javax.annotation.Nullable;
 import java.util.Comparator;
@@ -266,13 +265,13 @@ public class GuiInstance implements ICanSyncData {
     private void writeToClient(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new ClientboundGuiSyncPacket(data);
         for (ServerPlayer listener : ((IAntimatterContainer)container).listeners()) {
-            INetwork.getInstance().sendToClient(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt, listener);
+            AntimatterNetwork.NETWORK.sendToPlayer(pkt, listener);
         }
     }
 
     private void writeToServer(final List<SyncHolder> data) {
         GuiSyncPacket pkt = new ServerboundGuiSyncPacket(data);
-        INetwork.getInstance().sendToServer(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt);
+        AntimatterNetwork.NETWORK.sendToServer(pkt);
     }
 
     @Override

@@ -6,13 +6,16 @@ import io.netty.buffer.ByteBuf;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.ICanSyncData;
 import muramasa.antimatter.gui.container.AntimatterContainer;
+import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.network.AntimatterNetwork;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import java.util.List;
 
-public class ClientboundGuiSyncPacket extends GuiSyncPacket{
+public class ClientboundGuiSyncPacket extends GuiSyncPacket<ClientboundGuiSyncPacket>{
 
     public static final ClientHandler HANDLER = new ClientHandler();
     public ClientboundGuiSyncPacket(List<GuiInstance.SyncHolder> data) {
@@ -29,21 +32,33 @@ public class ClientboundGuiSyncPacket extends GuiSyncPacket{
     }
 
     @Override
-    public PacketHandler<GuiSyncPacket> getHandler() {
+    public PacketHandler<ClientboundGuiSyncPacket> getHandler() {
         return HANDLER;
     }
 
-    private static class ClientHandler extends Handler {
+    private static class ClientHandler implements PacketHandler<ClientboundGuiSyncPacket> {
+        @Override
+        public void encode(ClientboundGuiSyncPacket msg, FriendlyByteBuf buf) {
+            buf.writeVarInt(msg.data.length);
+            for (GuiInstance.SyncHolder data : msg.data) {
+                buf.writeVarInt(data.index);
+                data.writer.accept(buf, data.current);
+            }
+        }
+
 
         @Override
-        public GuiSyncPacket decode(FriendlyByteBuf buf) {
+        public ClientboundGuiSyncPacket decode(FriendlyByteBuf buf) {
             return new ClientboundGuiSyncPacket(buf.copy());
         }
 
         @Override
-        public PacketContext handle(GuiSyncPacket msg) {
+        public PacketContext handle(ClientboundGuiSyncPacket msg) {
             return (sender, level) -> {
-                ((AntimatterContainer) sender.containerMenu).handler.receivePacket(msg, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
+                AbstractContainerMenu c = Minecraft.getInstance().player.containerMenu;
+                if (c instanceof IAntimatterContainer) {
+                    ((AntimatterContainer) c).handler.receivePacket(msg, ICanSyncData.SyncDirection.CLIENT_TO_SERVER);
+                }
             };
         }
     }
