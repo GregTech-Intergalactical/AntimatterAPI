@@ -88,7 +88,6 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
 
     @SuppressWarnings("NoTranslation")
     public static void addTooltipsForMaterialItems(ItemStack stack, Material mat, MaterialType<?> type, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(new TextComponent("Added by " + AntimatterPlatformUtils.getModName(mat.materialDomain())));
         if (!mat.getChemicalFormula().isEmpty()) {
             if (Screen.hasShiftDown()) {
                 tooltip.add(new TranslatableComponent("antimatter.tooltip.chemical_formula").append(": ").append(new TextComponent(mat.getChemicalFormula()).withStyle(ChatFormatting.DARK_AQUA)));

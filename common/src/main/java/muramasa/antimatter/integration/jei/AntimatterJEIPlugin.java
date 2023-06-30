@@ -8,10 +8,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.ITypedIngredient;
-import mezz.jei.api.registration.IRecipeCatalystRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
-import mezz.jei.api.registration.IRecipeRegistration;
-import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
+import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
@@ -123,6 +120,13 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         registration.getCraftingCategory().addCategoryExtension(MaterialRecipe.class, JEIMaterialRecipeExtension::new);
+    }
+
+    @Override
+    public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+        AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
+            registration.addRecipeTransferHandler(new MachineTransferHandler(tuple.map.getLoc()));
+        });
     }
 
     @ExpectPlatform

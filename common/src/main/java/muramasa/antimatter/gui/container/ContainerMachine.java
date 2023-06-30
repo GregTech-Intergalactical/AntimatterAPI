@@ -2,19 +2,26 @@ package muramasa.antimatter.gui.container;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.MenuHandlerMachine;
 import muramasa.antimatter.gui.SlotData;
 import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.slot.AbstractSlot;
 import muramasa.antimatter.tile.TileEntityMachine;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends AntimatterContainer {
 
     protected final T tile;
+    public final Map<SlotType<?>, List<Slot>> slotMap = new Object2ObjectOpenHashMap<>();
 
     public ContainerMachine(T tile, Inventory playerInv, MenuHandlerMachine<T, ContainerMachine<T>> menuHandler, int windowId) {
         super(tile, menuHandler.getContainerType(), windowId, playerInv, tile.getMachineType().getSlots(tile.getMachineTier()).size());
@@ -54,6 +61,14 @@ public abstract class ContainerMachine<T extends TileEntityMachine<T>> extends A
                 return b + 1;
             });
         }
+    }
+
+    @Override
+    protected Slot addSlot(Slot slot) {
+        if (slot instanceof AbstractSlot<?> abstractSlot){
+            this.slotMap.computeIfAbsent(abstractSlot.type, t -> new ArrayList<>()).add(abstractSlot);
+        }
+        return super.addSlot(slot);
     }
 
     @Override
