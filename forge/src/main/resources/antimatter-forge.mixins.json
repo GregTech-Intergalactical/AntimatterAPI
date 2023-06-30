@@ -12,5 +12,9 @@
     "ContainerShapelessSerializerMixin",
     "CapabilityManagerMixin"
   ],
+  "client" : [
+    "client.IAntimatterBakedModelMixin",
+    "client.SimpleBakedModel$BuilderAccessor"
+  ],
   "minVersion": "0.8"
 }

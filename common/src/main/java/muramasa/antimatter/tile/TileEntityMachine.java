@@ -67,8 +67,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 import tesseract.api.gt.IEnergyHandler;
@@ -78,6 +76,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import static muramasa.antimatter.gui.event.GuiEvents.FLUID_EJECT;
 import static muramasa.antimatter.gui.event.GuiEvents.ITEM_EJECT;
@@ -535,21 +534,17 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         return coverHandler.map(h -> h.get(side)).orElse(ICover.empty);
     }
 
-    @Nonnull
-    @Override
-    public IModelData getModelData() {
-        ModelDataMap.Builder builder = new ModelDataMap.Builder();
-        if (this.getMachineType() instanceof BasicMultiMachine) return builder.build();
+    public Function<Direction, Texture> getMultiTexture(){
+        if (this.getMachineType() instanceof BasicMultiMachine<?>) return null;
         TileEntityBasicMultiMachine mTile = StructureCache.getAnyMulti(this.getLevel(), worldPosition, TileEntityBasicMultiMachine.class);
         if (mTile != null) {
-            builder.withInitial(AntimatterProperties.MULTI_TEXTURE_PROPERTY, a -> {
+            return a -> {
                 Texture[] tex = mTile.getMachineType().getBaseTexture(mTile.getMachineTier());
                 if (tex.length == 1) return tex[0];
                 return tex[a.get3DDataValue()];
-            });
+            };
         }
-
-        return builder.build();
+        return null;
     }
 
     public InteractionResult onInteractBoth(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, @Nullable AntimatterToolType type) {
@@ -719,12 +714,14 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         public final Texture tex;
         public Direction facing;
         public final MachineState state;
+        public AntimatterProperties.MachineProperties properties;
 
-        public DynamicKey(ResourceLocation model, Texture tex, Direction dir, MachineState state) {
+        public DynamicKey(ResourceLocation model, Texture tex, Direction dir, MachineState state, AntimatterProperties.MachineProperties properties) {
             this.model = model;
             this.tex = tex;
             this.facing = dir;
             this.state = state;
+            this.properties = properties;
         }
 
         public void setDir(Direction dir) {

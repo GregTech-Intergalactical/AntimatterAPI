@@ -16,6 +16,7 @@
   "minVersion": "0.8",
   "client": [
     "ModelBakeryMixin",
-    "client.MinecraftAccessor"
+    "client.MinecraftAccessor",
+    "client.IAntimatterBakedModelMixin"
   ]
 }

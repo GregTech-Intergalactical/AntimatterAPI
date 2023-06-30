@@ -1,12 +1,14 @@
 package muramasa.antimatter.client.baked;
 
+import muramasa.antimatter.client.ModelUtils;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,11 +29,11 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos) {
         int offset = side == null ? 6 : side.get3DDataValue();
         BakedQuad[] arr = CACHE[offset];
         if (arr == null) {
-            CACHE[offset] = models.values().stream().flatMap(t -> t.getQuads(state, side, rand, data).stream()).toArray(BakedQuad[]::new);
+            CACHE[offset] = models.values().stream().flatMap(t -> ModelUtils.getQuadsFromBaked(t, state, side, rand, level, pos).stream()).toArray(BakedQuad[]::new);
             arr = CACHE[offset];
         }
         return Arrays.asList(arr);
@@ -45,7 +47,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
         return () -> this.models.entrySet().stream().filter(t -> !t.getKey().equals("")).iterator();
     }
 
-    @Override
+    /*@Override
     public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
         int offset = side == null ? 6 : side.get3DDataValue();
         BakedQuad[] arr = CACHE_ITEM[offset];
@@ -54,7 +56,7 @@ public class GroupedBakedModel extends AntimatterBakedModel<GroupedBakedModel> {
             arr = CACHE_ITEM[offset];
         }
         return Arrays.asList(arr);
-    }
+    }*/
 
     @Override
     public boolean useAmbientOcclusion() {

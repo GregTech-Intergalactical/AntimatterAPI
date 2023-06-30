@@ -2,6 +2,7 @@ package muramasa.antimatter.util.fabric;
 
 import com.mojang.math.Matrix4f;
 import io.github.fabricators_of_create.porting_lib.util.LevelUtil;
+import io.github.fabricators_of_create.porting_lib.util.Matrix4fHelper;
 import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.CraftingEvent;
@@ -180,7 +181,7 @@ public class AntimatterPlatformUtilsImpl {
     }
 
     public static Matrix4f createMatrix4f(float[] values){
-        return new com.mojang.math.Matrix4f().setMValues(values);
+        return Matrix4fHelper.fromFloatArray(values);
     }
 
     //TODO
