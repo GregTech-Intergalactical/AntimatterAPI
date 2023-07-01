@@ -1,5 +1,6 @@
 package muramasa.antimatter.event;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Antimatter;
@@ -19,6 +20,7 @@ import muramasa.antimatter.tool.AntimatterToolType;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 import java.util.List;
@@ -285,8 +287,14 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
     }
 
     public T mats(ImmutableMap<Material, Integer> stacks) {
+        return mats(stacks, -1);
+    }
+
+    public T mats(ImmutableMap<Material, Integer> stacks, int inputAmount) {
         if (!this.material.enabled) return (T) this;
-        stacks.forEach((k, v) -> MaterialTags.PROCESS_INTO.add(this.material, new MaterialStack(k, v)));
+        ImmutableList.Builder<MaterialStack> builder = new ImmutableList.Builder<>();
+        stacks.forEach((k, v) -> builder.add(new MaterialStack(k, v)));
+        PROCESS_INTO.add(material, Pair.of(builder.build(), inputAmount));
         return (T) this;
     }
 

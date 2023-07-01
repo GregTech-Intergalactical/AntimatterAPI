@@ -12,6 +12,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import org.apache.commons.lang3.tuple.Pair;
 import tesseract.TesseractGraphWrappers;
 
 import java.util.List;
@@ -63,7 +64,7 @@ public class Material implements ISharedAntimatterObject {
         MaterialTags.DIRECT_SMELT_INTO.add(this, this);
         MaterialTags.ARC_SMELT_INTO.add(this, this);
         MaterialTags.MACERATE_INTO.add(this, this);
-        MaterialTags.PROCESS_INTO.add(this, new ObjectArrayList<>());
+        MaterialTags.PROCESS_INTO.add(this, Pair.of(new ObjectArrayList<>(), -1));
         MaterialTags.BYPRODUCTS.add(this, new ObjectArrayList<>());
     }
 
@@ -137,9 +138,9 @@ public class Material implements ISharedAntimatterObject {
         if (!enabled) return;
         if (chemicalFormula != null && element != null) return;
         if (element != null) chemicalFormula = element.getElement();
-        else if (!MaterialTags.PROCESS_INTO.getList(this).isEmpty()) {
-            MaterialTags.PROCESS_INTO.getList(this).forEach(t -> t.m.setChemicalFormula());
-            chemicalFormula = String.join("", MaterialTags.PROCESS_INTO.getList(this).stream().map(MaterialStack::toString).collect(Collectors.joining()));
+        else if (!MaterialTags.PROCESS_INTO.get(this).getLeft().isEmpty()) {
+            MaterialTags.PROCESS_INTO.get(this).getLeft().forEach(t -> t.m.setChemicalFormula());
+            chemicalFormula = String.join("", MaterialTags.PROCESS_INTO.get(this).getLeft().stream().map(MaterialStack::toString).collect(Collectors.joining()));
         }
     }
 
@@ -160,9 +161,9 @@ public class Material implements ISharedAntimatterObject {
 
     public long getProtons() {
         if (element != null) return element.getProtons();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getProtons();
+        if (MaterialTags.PROCESS_INTO.get(this).getLeft().size() <= 0) return Element.Tc.getProtons();
         long rAmount = 0, tAmount = 0;
-        for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
+        for (MaterialStack stack : MaterialTags.PROCESS_INTO.get(this).getLeft()) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getProtons();
         }
@@ -171,9 +172,9 @@ public class Material implements ISharedAntimatterObject {
 
     public long getNeutrons() {
         if (element != null) return element.getNeutrons();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getNeutrons();
+        if (MaterialTags.PROCESS_INTO.get(this).getLeft().size() <= 0) return Element.Tc.getNeutrons();
         long rAmount = 0, tAmount = 0;
-        for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
+        for (MaterialStack stack : MaterialTags.PROCESS_INTO.get(this).getLeft()) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getNeutrons();
         }
@@ -182,9 +183,9 @@ public class Material implements ISharedAntimatterObject {
 
     public long getMass() {
         if (element != null) return element.getMass();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getMass();
+        if (MaterialTags.PROCESS_INTO.get(this).getLeft().size() <= 0) return Element.Tc.getMass();
         long rAmount = 0, tAmount = 0;
-        for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
+        for (MaterialStack stack : MaterialTags.PROCESS_INTO.get(this).getLeft()) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getMass();
         }
@@ -193,9 +194,9 @@ public class Material implements ISharedAntimatterObject {
 
     public long getDensity() {
         if (element != null) return element.getDensity();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getDensity();
+        if (MaterialTags.PROCESS_INTO.get(this).getLeft().size() <= 0) return Element.Tc.getDensity();
         long rAmount = 0, tAmount = 0;
-        for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
+        for (MaterialStack stack : MaterialTags.PROCESS_INTO.get(this).getLeft()) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getDensity();
         }
@@ -204,9 +205,9 @@ public class Material implements ISharedAntimatterObject {
 
     public long getHardness() {
         if (element != null) return element.getHardness();
-        if (MaterialTags.PROCESS_INTO.getList(this).size() <= 0) return Element.Tc.getHardness();
+        if (MaterialTags.PROCESS_INTO.get(this).getLeft().size() <= 0) return Element.Tc.getHardness();
         long rAmount = 0, tAmount = 0;
-        for (MaterialStack stack : MaterialTags.PROCESS_INTO.getList(this)) {
+        for (MaterialStack stack : MaterialTags.PROCESS_INTO.get(this).getLeft()) {
             tAmount += stack.s;
             rAmount += stack.s * stack.m.getHardness();
         }
@@ -281,7 +282,7 @@ public class Material implements ISharedAntimatterObject {
      **/
 
     public List<MaterialStack> getProcessInto() {
-        return MaterialTags.PROCESS_INTO.getList(this);
+        return MaterialTags.PROCESS_INTO.get(this).getLeft();
     }
 
     public List<Material> getByProducts() {
