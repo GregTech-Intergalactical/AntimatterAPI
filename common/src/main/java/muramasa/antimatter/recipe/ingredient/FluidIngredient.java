@@ -103,8 +103,15 @@ public class FluidIngredient {
             stacks[i] = AntimatterPlatformUtils.readFluidStack(buf);
         }
         FluidIngredient ing = new FluidIngredient();
+        long amount = 0;
+        for (FluidStack stack : stacks) {
+            if (stack.getRealAmount() > amount){
+                amount = stack.getRealAmount();
+            }
+        }
         ing.stacks = stacks;
         ing.evaluated = true;
+        ing.amount = amount;
         return ing;
     }
 
