@@ -67,7 +67,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getString();
         int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.dir.getUV();
-        background = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
+        background = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), area.x, area.y, area.z, area.w).addPadding(0, 7 + (10 *map.getInfoRenderer().getRows()), padding.x, padding.w).build();
         progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, fromDir(gui.dir), !gui.barFill);
         Object icon = map.getIcon();
         if (icon != null) {
