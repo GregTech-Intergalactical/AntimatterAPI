@@ -27,13 +27,21 @@ import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.IRecipe;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
@@ -103,9 +111,29 @@ public class AntimatterJEIPlugin implements IModPlugin {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         if (helpers == null) helpers = registration.getJeiHelpers();
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
-            registration.addRecipes(tuple.map.getRecipes(true), id);
+            registration.addRecipes(RECIPE_TYPES.get(id.toString()), getRecipes(id.getPath()));
         });
         MultiMachineInfoCategory.registerRecipes(registration);
+    }
+
+    private List<IRecipe> getRecipes(String recipeMap){
+        RecipeManager manager = getRecipeManager();
+        if (manager == null) return Collections.emptyList();
+        return manager.getAllRecipesFor(Recipe.RECIPE_TYPE).stream().filter(r -> r.getMapId().equals(recipeMap) && !r.isHidden()).toList();
+    }
+
+    private RecipeManager getRecipeManager(){
+        if (AntimatterAPI.getSIDE().isServer()){
+            return AntimatterPlatformUtils.getCurrentServer().getRecipeManager();
+        } else {
+            if (getWorld() == null) return null;
+            return getWorld().getRecipeManager();
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    ClientLevel getWorld(){
+        return Minecraft.getInstance().level;
     }
 
     public static void showCategory(Machine<?>... types) {

@@ -4,6 +4,7 @@ import com.mojang.math.Matrix4f;
 import io.github.fabricators_of_create.porting_lib.util.LevelUtil;
 import io.github.fabricators_of_create.porting_lib.util.Matrix4fHelper;
 import io.github.fabricators_of_create.porting_lib.util.NetworkUtil;
+import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.event.CraftingEvent;
 import muramasa.antimatter.event.ProvidersEvent;
@@ -25,6 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -76,6 +78,10 @@ public class AntimatterPlatformUtilsImpl {
 
     public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
         NetworkUtil.openGui(player, containerSupplier, extraDataWriter);
+    }
+
+    public static MinecraftServer getCurrentServer(){
+        return ServerLifecycleHooks.getCurrentServer();
     }
     public static boolean isFabric(){
         return true;

@@ -14,6 +14,7 @@ import muramasa.antimatter.structure.Pattern;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -69,6 +70,11 @@ public class AntimatterPlatformUtils {
 
     @ExpectPlatform
     public static void openGui(ServerPlayer player, MenuProvider containerSupplier, Consumer<FriendlyByteBuf> extraDataWriter){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static MinecraftServer getCurrentServer(){
         throw new AssertionError();
     }
 
