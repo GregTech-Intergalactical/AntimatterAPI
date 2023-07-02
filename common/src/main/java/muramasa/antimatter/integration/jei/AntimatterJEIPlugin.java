@@ -1,6 +1,7 @@
 package muramasa.antimatter.integration.jei;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -8,6 +9,7 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.ITypedIngredient;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
@@ -24,6 +26,7 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import net.minecraft.network.chat.Component;
@@ -34,10 +37,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
@@ -45,6 +45,7 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 @SuppressWarnings("removal")
 @JeiPlugin
 public class AntimatterJEIPlugin implements IModPlugin {
+    public static final Map<String, RecipeType<IRecipe>> RECIPE_TYPES = new Object2ObjectOpenHashMap<>();
     private static IJeiRuntime runtime;
     private static IJeiHelpers helpers;
 
@@ -86,7 +87,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
             if (!registeredMachineCats.contains(tuple.map.getLoc())) {
-                registry.addRecipeCategories(new RecipeMapCategory(tuple.map, tuple.gui, tuple.tier, tuple.model));
+                RecipeType<IRecipe> type = new RecipeType<>(tuple.map.getLoc(), IRecipe.class);
+                RECIPE_TYPES.put(type.getUid().toString(), type);
+                registry.addRecipeCategories(new RecipeMapCategory(tuple.map, type, tuple.gui, tuple.tier, tuple.model));
                 registeredMachineCats.add(tuple.map.getLoc());
             }
         });

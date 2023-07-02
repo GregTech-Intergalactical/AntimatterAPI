@@ -56,14 +56,16 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     protected String title;
     protected final ResourceLocation loc;
+    protected final RecipeType<IRecipe> type;
     protected IDrawable background, icon;
     protected IDrawableAnimated progressBar;
     protected GuiData gui;
     protected Tier guiTier;
     private final IRecipeInfoRenderer infoRenderer;
 
-    public RecipeMapCategory(IRecipeMap map, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
+    public RecipeMapCategory(IRecipeMap map, RecipeType<IRecipe> type, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
         loc = map.getLoc();
+        this.type = type;
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getString();
         int4 area = gui.getArea(), progress = gui.dir.getUV();
@@ -99,7 +101,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     @Override
     public RecipeType<IRecipe> getRecipeType() {
-        return new RecipeType<>(loc, IRecipe.class);
+        return type;
     }
 
     @Override
