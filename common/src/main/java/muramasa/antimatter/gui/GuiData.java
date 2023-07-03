@@ -1,9 +1,11 @@
 package muramasa.antimatter.gui;
 
 import com.google.common.collect.ImmutableMap;
+import muramasa.antimatter.Ref;
 import muramasa.antimatter.gui.slot.ISlotProvider;
 import muramasa.antimatter.machine.Tier;
 import muramasa.antimatter.registration.IAntimatterObject;
+import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int4;
 import net.minecraft.resources.ResourceLocation;
 
@@ -20,6 +22,8 @@ public class GuiData {
     protected int4 area = new int4(3, 3, 170, 80);
     public BarDir dir = BarDir.LEFT;
     public boolean barFill = true;
+    protected int2 progressSize = new int2(20, 18);
+    protected ResourceLocation progressTexture = new ResourceLocation(Ref.ID, "textures/gui/progress_bars/default.png");
 
     private final int buttons = 0;
     private ISlotProvider<?> slots;
@@ -74,6 +78,14 @@ public class GuiData {
         return area;
     }
 
+    public int2 getProgressSize() {
+        return progressSize;
+    }
+
+    public ResourceLocation getProgressTexture() {
+        return progressTexture;
+    }
+
     /*public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
         this.widgets.forEach(t -> screen.addWidget(t.apply(screen, handler)));
         List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> wid = this.objectWidgets.get(lookup);
@@ -90,6 +102,16 @@ public class GuiData {
 
     public GuiData setArea(int x, int y, int z, int w) {
         area.set(x, y, z, w);
+        return this;
+    }
+
+    public GuiData setProgressLocation(String name){
+        this.progressTexture = new ResourceLocation(loc.getNamespace(), "textures/gui/progress_bars/" + name + ".png");
+        return this;
+    }
+
+    public GuiData setProgressSize(int length, int width){
+        this.progressSize = new int2(length, width);
         return this;
     }
 
