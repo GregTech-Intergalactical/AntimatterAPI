@@ -72,8 +72,8 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
         loc = CategoryIdentifier.of(map.getLoc());
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName();
-        int4 progress = gui.dir.getUV();
-        progressBar = new Parameters(gui.getTexture(guiTier, "machine"), gui.dir.getPos().x + 6, gui.dir.getPos().y + 6, progress.z, progress.w, progress.x, progress.y, gui.dir, gui.barFill);
+        int4 progress = new int4(gui.getProgressSize().x, 0, gui.getProgressSize().x, gui.getProgressSize().y);
+        progressBar = new Parameters(gui.getProgressTexture(), gui.getProgressPos().x + 6, gui.getProgressPos().y + 6, progress.z, progress.w, progress.x, progress.y, gui.dir, gui.barFill);
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack stack) {
@@ -276,7 +276,7 @@ public class RecipeMapCategory implements DisplayCategory<RecipeMapDisplay> {
                 length = progressTime;
             }
         }
-        drawTexture(matrices, params.texture, realX,  realY, params.x(), params.y(), params.length, params.width);
+        drawTexture(matrices, params.texture, realX,  realY, 0, 0, params.length, params.width);
         if (percent > 0) {
             drawTexture(matrices, params.texture, realX,  realY, xLocation, yLocation, length, width);
         }

@@ -17,10 +17,7 @@ import muramasa.antimatter.client.tesr.Caches;
 import muramasa.antimatter.client.tesr.MachineTESR;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.cover.ICover;
-import muramasa.antimatter.gui.GuiInstance;
-import muramasa.antimatter.gui.IGuiElement;
-import muramasa.antimatter.gui.SlotData;
-import muramasa.antimatter.gui.SlotType;
+import muramasa.antimatter.gui.*;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.IGuiEvent;
 import muramasa.antimatter.gui.event.SlotClickEvent;
@@ -209,6 +206,11 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
     @Override
     public ResourceLocation getGuiTexture() {
         return getMachineType().getGui().getTexture(this.getMachineTier(), "machine");
+    }
+
+    @Override
+    public GuiData getGui() {
+        return getMachineType().getGui();
     }
 
     /**

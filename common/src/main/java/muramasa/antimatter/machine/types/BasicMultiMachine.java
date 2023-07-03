@@ -48,7 +48,7 @@ public class BasicMultiMachine<T extends BasicMultiMachine<T>> extends Machine<T
     @Override
     protected void setupGui() {
         super.setupGui();
-        if (!(this instanceof MultiMachine)) addGuiCallback(t -> t.addWidget(ProgressWidget.build(BarDir.LEFT, true)));
+        if (!(this instanceof MultiMachine)) addGuiCallback(t -> t.addWidget(ProgressWidget.build()));
     }
 
     @Override

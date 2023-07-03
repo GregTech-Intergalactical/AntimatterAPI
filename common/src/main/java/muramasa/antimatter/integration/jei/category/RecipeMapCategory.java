@@ -68,9 +68,9 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         this.type = type;
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getString();
-        int4 area = gui.getArea(), progress = gui.dir.getUV();
+        int4 area = gui.getArea(), progress = new int4(gui.getProgressSize().x, 0, gui.getProgressSize().x, gui.getProgressSize().y);
         background = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), area.x, area.y, area.z, area.w).addPadding(0, (map.getInfoRenderer().getRows() <= 0 ? 0 : 7 + (10 *map.getInfoRenderer().getRows())), 0, 0).build();
-        progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, fromDir(gui.dir), !gui.barFill);
+        progressBar = guiHelper.drawableBuilder(gui.getProgressTexture(), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, fromDir(gui.dir), !gui.barFill);
         Object icon = map.getIcon();
         if (icon != null) {
             if (icon instanceof ItemStack) {
