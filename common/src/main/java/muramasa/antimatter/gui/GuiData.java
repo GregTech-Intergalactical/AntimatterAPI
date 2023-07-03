@@ -22,7 +22,7 @@ public class GuiData {
     protected int4 area = new int4(3, 3, 170, 80);
     public BarDir dir = BarDir.LEFT;
     public boolean barFill = true;
-    protected int2 progressSize = new int2(20, 18), progressPos = new int2(72, 18);
+    protected int2 progressSize = new int2(20, 18), progressPos = new int2(72, 18), ioPos = new int2(7, 62);
     protected ResourceLocation progressTexture = new ResourceLocation(Ref.ID, "textures/gui/progress_bars/default.png");
 
     private final int buttons = 0;
@@ -90,6 +90,10 @@ public class GuiData {
         return progressPos;
     }
 
+    public int2 getIoPos() {
+        return ioPos;
+    }
+
     /*public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
         this.widgets.forEach(t -> screen.addWidget(t.apply(screen, handler)));
         List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> wid = this.objectWidgets.get(lookup);
@@ -121,6 +125,11 @@ public class GuiData {
 
     public GuiData setProgressPos(int x, int y){
         this.progressPos = new int2(x, y);
+        return this;
+    }
+
+    public GuiData setIoPos(int x, int y){
+        this.ioPos = new int2(x, y);
         return this;
     }
 
