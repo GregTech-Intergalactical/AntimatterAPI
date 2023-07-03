@@ -1,14 +1,16 @@
 package muramasa.antimatter.machine.types;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import muramasa.antimatter.Data;
+import muramasa.antimatter.capability.machine.MachineItemHandler;
 import muramasa.antimatter.gui.BarDir;
+import muramasa.antimatter.gui.SlotData;
+import muramasa.antimatter.gui.SlotType;
 import muramasa.antimatter.gui.screen.AntimatterContainerScreen;
-import muramasa.antimatter.gui.widget.IOWidget;
-import muramasa.antimatter.gui.widget.MachineStateWidget;
-import muramasa.antimatter.gui.widget.ProgressWidget;
-import muramasa.antimatter.gui.widget.TextWidget;
-import muramasa.antimatter.gui.widget.WidgetSupplier;
+import muramasa.antimatter.gui.widget.*;
 import muramasa.antimatter.tile.TileEntityMachine;
+import net.minecraft.world.inventory.Slot;
 
 import static muramasa.antimatter.machine.MachineFlag.*;
 
