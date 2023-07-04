@@ -29,6 +29,7 @@ import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.recipe.IRecipe;
 import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import muramasa.antimatter.util.Utils;
@@ -111,15 +112,20 @@ public class AntimatterJEIPlugin implements IModPlugin {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         if (helpers == null) helpers = registration.getJeiHelpers();
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
-            registration.addRecipes(RECIPE_TYPES.get(id.toString()), getRecipes(id.getPath()));
+            registration.addRecipes(RECIPE_TYPES.get(id.toString()), getRecipes(tuple.map));
         });
         MultiMachineInfoCategory.registerRecipes(registration);
     }
 
-    private List<IRecipe> getRecipes(String recipeMap){
+    private List<IRecipe> getRecipes(IRecipeMap recipeMap){
         RecipeManager manager = getRecipeManager();
         if (manager == null) return Collections.emptyList();
-        return manager.getAllRecipesFor(Recipe.RECIPE_TYPE).stream().filter(r -> r.getMapId().equals(recipeMap) && !r.isHidden()).toList();
+        List<IRecipe> recipes = new ArrayList<>(manager.getAllRecipesFor(Recipe.RECIPE_TYPE).stream().filter(r -> r.getMapId().equals(recipeMap.getId()) && !r.isHidden()).toList());
+        if (recipeMap.getProxy() != null && recipeMap instanceof RecipeMap<?> map) {
+            List<net.minecraft.world.item.crafting.Recipe<?>> proxyRecipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) manager.getAllRecipesFor(recipeMap.getProxy().loc());
+            proxyRecipes.forEach(recipe -> recipes.add(recipeMap.getProxy().handler().apply(recipe, map.RB())));
+        }
+        return recipes;
     }
 
     private RecipeManager getRecipeManager(){
