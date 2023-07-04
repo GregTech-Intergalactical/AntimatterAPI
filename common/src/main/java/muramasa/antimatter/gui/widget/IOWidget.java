@@ -10,6 +10,8 @@ import muramasa.antimatter.gui.Widget;
 import muramasa.antimatter.gui.container.ContainerMachine;
 import muramasa.antimatter.gui.event.GuiEvents;
 import muramasa.antimatter.util.int4;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -19,11 +21,6 @@ import static muramasa.antimatter.machine.MachineFlag.FLUID;
 import static muramasa.antimatter.machine.MachineFlag.ITEM;
 
 public class IOWidget extends Widget {
-    @Nullable
-    protected ButtonWidget item;
-    @Nullable
-    protected ButtonWidget fluid;
-    private static final int4 fluidLoc = new int4(176, 18, 18, 18), itemLoc = new int4(176, 36, 18, 18);
 
     private boolean hasItem = false;
     private boolean hasFluid = false;
@@ -39,17 +36,9 @@ public class IOWidget extends Widget {
         ContainerMachine<?> m = (ContainerMachine<?>) instance.container;
         if (m.getTile().getMachineType().has(ITEM)) {
             hasItem = true;
-            this.item = (ButtonWidget) ButtonWidget.build(new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), itemLoc, null, GuiEvents.ITEM_EJECT, 0).setSize(26, 0, w, h).buildAndAdd(instance, this);
-            item.setEnabled(false);
-            item.setStateHandler(wid -> itemState);
-            item.setDepth(depth() + 1);
         }
         if (m.getTile().getMachineType().has(FLUID)) {
             hasFluid = true;
-            this.fluid = (ButtonWidget) ButtonWidget.build(new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), fluidLoc, null, GuiEvents.FLUID_EJECT, 0).setSize(44, 0, w, h).buildAndAdd(instance, this);
-            fluid.setStateHandler(wid -> fluidState);
-            fluid.setEnabled(false);
-            fluid.setDepth(depth() + 1);
         }
     }
 
@@ -61,6 +50,27 @@ public class IOWidget extends Widget {
         if (hasFluid){
             drawTexture(matrixStack, new ResourceLocation(Ref.ID, "textures/gui/button/io.png"), realX(), realY(), fluidState ? 18 : 0, 0, 18, 18);
         }
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.isEnabled() && isInside(mouseX, mouseY)) {
+            boolean clicked = false;
+            if (hasItem && isInside(18, 0, 18, 18, mouseX, mouseY)){
+                gui.handler.createGuiPacket(new GuiEvents.GuiEvent(GuiEvents.ITEM_EJECT, Screen.hasShiftDown() ? 1 : 0, id));
+                clicked = true;
+            }
+            if (hasFluid && isInside(0, 0, 18, 18, mouseX, mouseY)){
+                gui.handler.createGuiPacket(new GuiEvents.GuiEvent(GuiEvents.FLUID_EJECT, Screen.hasShiftDown() ? 1 : 0, id));
+                clicked = true;
+            }
+            if (clicked){
+                this.clickSound(Minecraft.getInstance().getSoundManager());
+                this.onClick(mouseX, mouseY, button);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

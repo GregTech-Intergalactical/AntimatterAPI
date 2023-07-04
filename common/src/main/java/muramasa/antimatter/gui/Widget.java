@@ -122,6 +122,12 @@ public abstract class Widget implements IGuiElement {
         return ((mouseX >= realX && mouseX <= realX + getW()) && (mouseY >= realY && mouseY <= realY + getH()));
     }
 
+    public boolean isInside(int x, int y, int w, int h, double mouseX, double mouseY) {
+        int realX = realX() + x;
+        int realY = realY() + y;
+        return ((mouseX >= realX && mouseX <= realX + w) && (mouseY >= realY && mouseY <= realY + h));
+    }
+
     @Environment(EnvType.CLIENT)
     protected void renderTooltip(PoseStack matrixStack, Component text, double mouseX, double mouseY) {
         this.gui.screen.renderComponentTooltip(matrixStack, Collections.singletonList(text), (int)mouseX,(int) mouseY);
