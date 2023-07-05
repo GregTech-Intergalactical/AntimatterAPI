@@ -103,7 +103,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             if (isServerSide()) {
                 StructureLibAPI.sendAlignment(
                         this,
-                        new AABB(getBlockPos()), (ServerLevel) level);
+                        getBlockPos(), 1.0, (ServerLevel) level);
             }
         }
 
@@ -117,7 +117,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             if (isServerSide()) {
                 StructureLibAPI.sendAlignment(
                         this,
-                        new AABB(getBlockPos()), (ServerLevel) level);
+                        getBlockPos(), 1.0, (ServerLevel) level);
             }
         }
         return facingSet;
