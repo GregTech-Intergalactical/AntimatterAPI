@@ -5,6 +5,7 @@ import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.tool.IAntimatterArmor;
 import muramasa.antimatter.tool.ToolUtils;
@@ -19,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -64,12 +66,20 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
         AntimatterAPI.register(AntimatterArmorType.class, this);
     }
 
-    public IAntimatterArmor instantiateTools(String domain) {
-        return new MaterialArmor(domain, this, new MatArmorMaterial(this), slot, prepareInstantiation(domain));
+    public List<IAntimatterArmor> instantiateTools() {
+        List<IAntimatterArmor> armors = new ArrayList<>();
+        MaterialTags.ARMOR.all().forEach(m -> {
+            armors.add(new MaterialArmor(Ref.SHARED_ID, this, m, slot, prepareInstantiation(Ref.SHARED_ID)));
+        });
+        return armors;
     }
 
-    public IAntimatterArmor instantiateTools(String domain, Supplier<Item.Properties> properties) {
-        return new MaterialArmor(domain, this, new MatArmorMaterial(this), slot, properties.get());
+    public List<IAntimatterArmor> instantiateTools(String domain, Supplier<Item.Properties> properties) {
+        List<IAntimatterArmor> armors = new ArrayList<>();
+        MaterialTags.ARMOR.all().forEach(m -> {
+            armors.add(new MaterialArmor(domain, this, m, slot, properties.get()));
+        });
+        return armors;
     }
 
     private Item.Properties prepareInstantiation(String domain) {
@@ -105,7 +115,7 @@ public class AntimatterArmorType implements ISharedAntimatterObject {
     }
 
     public ItemStack getToolStack(Material primary) {
-        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterArmor.class, id)).asItemStack(primary);
+        return Objects.requireNonNull(AntimatterAPI.get(IAntimatterArmor.class, primary.getId() + "_" + id)).asItemStack();
     }
 
     public List<Component> getTooltip() {

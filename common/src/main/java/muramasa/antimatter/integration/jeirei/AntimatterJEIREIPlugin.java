@@ -13,11 +13,15 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.recipe.map.IRecipeMap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AntimatterJEIREIPlugin{
+    private static final List<ItemLike> ITEMS_TO_HIDE = new ArrayList<>();
     public static class RegistryValue {
         public IRecipeMap map;
         public GuiData gui;
@@ -82,5 +86,13 @@ public class AntimatterJEIREIPlugin{
         } else if (AntimatterAPI.isModLoaded(Ref.MOD_REI)){
             REIUtils.addModDescriptor(tooltip, t);
         }
+    }
+
+    public static void addItemsToHide(ItemLike... itens){
+        ITEMS_TO_HIDE.addAll(Arrays.asList(itens));
+    }
+
+    public static List<ItemLike> getItemsToHide() {
+        return ITEMS_TO_HIDE;
     }
 }

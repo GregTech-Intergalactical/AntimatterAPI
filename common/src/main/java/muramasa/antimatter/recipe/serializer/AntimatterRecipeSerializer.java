@@ -141,7 +141,6 @@ public class AntimatterRecipeSerializer implements RecipeSerializer<Recipe> {
     @Nullable
     @Override
     public Recipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
-        Antimatter.LOGGER.info(recipeId.toString());
         int size = buffer.readInt();
         List<Ingredient> ings = new ObjectArrayList<>(size);
         if (size > 0) {

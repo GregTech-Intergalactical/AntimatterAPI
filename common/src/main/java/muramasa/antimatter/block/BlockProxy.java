@@ -49,7 +49,6 @@ public class BlockProxy extends BlockBasic {
     protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(BlockStateProperties.FACING);
-        pBuilder.add(BlockMachine.HORIZONTAL_FACING);
     }
 
     @Override

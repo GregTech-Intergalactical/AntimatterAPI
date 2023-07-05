@@ -15,6 +15,7 @@ import muramasa.antimatter.ore.BlockOreStone;
 import muramasa.antimatter.ore.CobbleStoneType;
 import muramasa.antimatter.ore.StoneType;
 import muramasa.antimatter.pipe.PipeSize;
+import muramasa.antimatter.pipe.types.Cable;
 import muramasa.antimatter.pipe.types.Wire;
 import muramasa.antimatter.tool.IAntimatterTool;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
@@ -156,7 +157,7 @@ public class AntimatterItemTagProvider extends AntimatterTagProvider<Item> imple
             mats = CABLE.allSub(SubTag.COPPER_CABLE);
             if (mats.size() > 0) {
                 this.tag(TagUtils.getItemTag(new ResourceLocation(Ref.ID, SubTag.COPPER_CABLE.getId() + "_" + value.getId()))).add(mats.stream().map(t ->
-                        AntimatterAPI.get(Wire.class, "cable_" + t.getId())).filter(Objects::nonNull).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
+                        AntimatterAPI.get(Cable.class, "cable_" + t.getId())).filter(Objects::nonNull).map(t -> t.getBlockItem(value)).toArray(Item[]::new));
             }
         }
     }

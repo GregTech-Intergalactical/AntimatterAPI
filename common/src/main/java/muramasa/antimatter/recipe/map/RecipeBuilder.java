@@ -195,7 +195,7 @@ public class RecipeBuilder {
         return add(id, duration, power, this.special);
     }
 
-    public IRecipe add(String id, int duration) {
+    public IRecipe add(String id, long duration) {
         return add(id, duration, 0, this.special);
     }
 

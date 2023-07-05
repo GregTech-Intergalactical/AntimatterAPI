@@ -154,7 +154,7 @@ public class MaterialSword extends SwordItem implements IAntimatterTool, IContai
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
         if (state.getBlock() == Blocks.COBWEB) return 15.0F;
-        return Utils.isToolEffective(this, state) ? getTier(stack).getSpeed() : 1.0F;
+        return Utils.isToolEffective(this, stack, state) ? getTier(stack).getSpeed() : 1.0F;
     }
 
     @Override

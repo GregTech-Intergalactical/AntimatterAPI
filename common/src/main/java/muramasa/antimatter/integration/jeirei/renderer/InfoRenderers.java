@@ -34,6 +34,18 @@ public class InfoRenderers {
             return 4;
         }
     };
+
+    public static final IRecipeInfoRenderer BASIC_RENDERER = new IRecipeInfoRenderer() {
+        @Override
+        public void render(PoseStack stack, IRecipe recipe, Font fontRenderer, int guiOffsetX, int guiOffsetY) {
+            renderString(stack, "Duration: " + recipe.getDuration() + " ticks", fontRenderer, 5, 0, guiOffsetX, guiOffsetY);
+        }
+
+        @Override
+        public int getRows() {
+            return 1;
+        }
+    };
     public static final IRecipeInfoRenderer EMPTY_RENDERER = (stack, recipe, fontRenderer, guiOffsetX, guiOffsetY) -> {
 
     };

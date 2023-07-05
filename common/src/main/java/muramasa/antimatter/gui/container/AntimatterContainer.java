@@ -11,6 +11,7 @@ import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,6 +24,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public abstract class AntimatterContainer extends AbstractContainerMenu implements IAntimatterContainer {
@@ -31,6 +34,8 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
     protected int invSize;
     public final GuiInstance handler;
     public final Set<ServerPlayer> listeners = new ObjectOpenHashSet<>();
+
+    public final NonNullList<Slot> playerSlots = NonNullList.create();
     private final MenuType<?> containerType;
 
     public AntimatterContainer(IGuiHandler handler, MenuType<?> containerType, int windowId, Inventory playerInv, int invSize) {
@@ -54,11 +59,15 @@ public abstract class AntimatterContainer extends AbstractContainerMenu implemen
         if (playerInv == null) return;
         for (int i = 0; i < 3; ++i) { //Inventory Slots
             for (int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                Slot slot = new Slot(playerInv, j + i * 9 + 9, 8 + j * 18, 84 + i * 18);
+                this.addSlot(slot);
+                playerSlots.add(slot);
             }
         }
         for (int k = 0; k < 9; ++k) { //HotBar Slots
-            this.addSlot(new Slot(playerInv, k, 8 + k * 18, 142));
+            Slot slot = new Slot(playerInv, k, 8 + k * 18, 142);
+            this.addSlot(slot);
+            playerSlots.add(slot);
         }
     }
 

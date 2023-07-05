@@ -4,24 +4,15 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.Ref;
+import muramasa.antimatter.capability.ICoverHandler;
+import muramasa.antimatter.client.baked.CoverBakedModel;
 import muramasa.antimatter.util.AntimatterPlatformUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockModelShaper;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.SimpleBakedModel;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -32,10 +23,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 
-import java.util.Arrays;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class ModelUtils {
 
@@ -70,6 +65,11 @@ public class ModelUtils {
 
 
     @ExpectPlatform
+    public static SimpleBakedModel.Builder createSimpleModelBuilder(boolean smoothLighting, boolean sideLit, boolean isShadedInGui, ItemTransforms transforms, ItemOverrides overrides){
+        throw new AssertionError();
+    }
+
+    @ExpectPlatform
     public static Function<ResourceLocation, UnbakedModel> getDefaultModelGetter(){
         throw new AssertionError();
     }
@@ -89,6 +89,18 @@ public class ModelUtils {
         throw new AssertionError();
     }
 
+
+    @ExpectPlatform
+    public static List<BakedQuad> getQuadsFromBaked(BakedModel model, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos){
+        throw new AssertionError();
+    }
+
+    public static List<BakedQuad> getQuadsFromBakedCover(BakedModel model, BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos, Predicate<Map.Entry<String, BakedModel>> coverPredicate){
+        if (model instanceof CoverBakedModel coverBakedModel){
+            return coverBakedModel.getBlockQuads(state, side, rand, level, pos, coverPredicate);
+        }
+        return getQuadsFromBaked(model, state, side, rand, level, pos);
+    }
     public static BakedModel getBakedFromQuads(BlockModel model, List<BakedQuad> quads, Function<Material, TextureAtlasSprite> getter) {
         SimpleBakedModel.Builder builder = new SimpleBakedModel.Builder(model, ItemOverrides.EMPTY, true).particle(getter.apply(model.getMaterial("particle")));
         quads.forEach(builder::addUnculledFace);

@@ -56,18 +56,20 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     protected String title;
     protected final ResourceLocation loc;
+    protected final RecipeType<IRecipe> type;
     protected IDrawable background, icon;
     protected IDrawableAnimated progressBar;
     protected GuiData gui;
     protected Tier guiTier;
     private final IRecipeInfoRenderer infoRenderer;
 
-    public RecipeMapCategory(IRecipeMap map, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
+    public RecipeMapCategory(IRecipeMap map, RecipeType<IRecipe> type, GuiData gui, Tier defaultTier, ResourceLocation blockItemModel) {
         loc = map.getLoc();
+        this.type = type;
         this.guiTier = map.getGuiTier() == null ? defaultTier : map.getGuiTier();
         title = map.getDisplayName().getString();
-        int4 padding = gui.getPadding(), area = gui.getArea(), progress = gui.dir.getUV();
-        background = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), area.x, area.y, area.z, area.w).addPadding(padding.x, padding.y, padding.z, padding.w).build();
+        int4 area = gui.getArea(), progress = gui.dir.getUV();
+        background = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), area.x, area.y, area.z, area.w).addPadding(0, (map.getInfoRenderer().getRows() <= 0 ? 0 : 7 + (10 *map.getInfoRenderer().getRows())), 0, 0).build();
         progressBar = guiHelper.drawableBuilder(gui.getTexture(guiTier, "machine"), progress.x, progress.y, progress.z, progress.w).buildAnimated(50, fromDir(gui.dir), !gui.barFill);
         Object icon = map.getIcon();
         if (icon != null) {
@@ -99,7 +101,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
 
     @Override
     public RecipeType<IRecipe> getRecipeType() {
-        return new RecipeType<>(loc, IRecipe.class);
+        return type;
     }
 
     @Override
@@ -126,7 +128,7 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, IRecipe recipe, IFocusGroup focuses) {
         List<List<ItemStack>> inputs = recipe.hasInputItems() ? recipe.getInputItems().stream().map(t -> Arrays.asList(t.getItems())).toList() : Collections.emptyList();
-        List<ItemStack> outputs = recipe.hasOutputItems() ? Arrays.stream(recipe.getOutputItems()).toList() : Collections.emptyList();
+        List<ItemStack> outputs = recipe.hasOutputItems() ? Arrays.stream(recipe.getOutputItems(false)).toList() : Collections.emptyList();
         List<SlotData<?>> slots;
         int groupIndex = 0, slotCount;
         int offsetX = gui.getArea().x + JEI_OFFSET_X, offsetY = gui.getArea().y + JEI_OFFSET_Y;

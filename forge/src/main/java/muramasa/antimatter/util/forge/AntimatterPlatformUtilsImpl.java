@@ -21,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.MenuProvider;
@@ -55,6 +56,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
 import java.nio.file.Path;
@@ -79,6 +81,10 @@ public class AntimatterPlatformUtilsImpl {
 
     public static boolean isServer(){
         return FMLEnvironment.dist.isDedicatedServer() || EffectiveSide.get().isServer();
+    }
+
+    public static MinecraftServer getCurrentServer(){
+        return ServerLifecycleHooks.getCurrentServer();
     }
 
     public static boolean isClient(){

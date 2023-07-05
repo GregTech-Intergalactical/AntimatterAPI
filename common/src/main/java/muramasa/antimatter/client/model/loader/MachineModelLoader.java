@@ -1,4 +1,4 @@
-package muramasa.antimatter.client.model.loader.fabric;
+package muramasa.antimatter.client.model.loader;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -22,7 +22,7 @@ public class MachineModelLoader extends AntimatterModelLoader<MachineModel> {
     }
 
     @Override
-    public MachineModel read(JsonDeserializationContext context, JsonObject json) {
+    public MachineModel readModel(JsonDeserializationContext context, JsonObject json) {
         ResourceLocation particle = json.has("particle") ? new ResourceLocation(json.get("particle").getAsString()) : MissingTextureAtlasSprite.getLocation();
         Map<MachineState, UnbakedModel[]> m = new HashMap<>();
         AntimatterAPI.all(MachineState.class, t -> {
@@ -44,8 +44,8 @@ public class MachineModelLoader extends AntimatterModelLoader<MachineModel> {
         }
 
         @Override
-        public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
-            AntimatterGroupedModel model = super.read(context, json);
+        public AntimatterGroupedModel readModel(JsonDeserializationContext context, JsonObject json) {
+            AntimatterGroupedModel model = super.readModel(context, json);
             return new AntimatterGroupedModel.MachineSideModel(model);
         }
     }
@@ -56,8 +56,8 @@ public class MachineModelLoader extends AntimatterModelLoader<MachineModel> {
         }
 
         @Override
-        public AntimatterGroupedModel read(JsonDeserializationContext context, JsonObject json) {
-            AntimatterGroupedModel model = super.read(context, json);
+        public AntimatterGroupedModel readModel(JsonDeserializationContext context, JsonObject json) {
+            AntimatterGroupedModel model = super.readModel(context, json);
             return new AntimatterGroupedModel.CoverModel(model);
         }
     }

@@ -18,7 +18,6 @@ public class GuiData {
 
     protected boolean enablePlayerSlots = true;
     protected int4 area = new int4(3, 3, 170, 80);
-    protected int4 padding = new int4(0, 55, 0, 0);
     public BarDir dir = BarDir.LEFT;
     public boolean barFill = true;
 
@@ -75,10 +74,6 @@ public class GuiData {
         return area;
     }
 
-    public int4 getPadding() {
-        return padding;
-    }
-
     /*public void screenCreationCallBack(AntimatterContainerScreen<? extends T> screen, IGuiHandler handler, @Nullable Object lookup) {
         this.widgets.forEach(t -> screen.addWidget(t.apply(screen, handler)));
         List<BiFunction<AntimatterContainerScreen<? extends T>, IGuiHandler, Widget>> wid = this.objectWidgets.get(lookup);
@@ -95,11 +90,6 @@ public class GuiData {
 
     public GuiData setArea(int x, int y, int z, int w) {
         area.set(x, y, z, w);
-        return this;
-    }
-
-    public GuiData setPadding(int x, int y, int z, int w) {
-        padding.set(x, y, z, w);
         return this;
     }
 

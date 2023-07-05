@@ -8,6 +8,7 @@ import muramasa.antimatter.material.tags.*;
 import muramasa.antimatter.ore.BlockOre;
 import muramasa.antimatter.ore.BlockOreStone;
 import net.minecraft.util.valueproviders.UniformInt;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -54,7 +55,8 @@ public class MaterialTags {
     public static final NumberMaterialTag SMELTING_MULTI = new NumberMaterialTag("smelting_multi");
     public static final NumberMaterialTag BY_PRODUCT_MULTI = new NumberMaterialTag("by_product_multi");
 
-    public static final ListMaterialTag<MaterialStack> PROCESS_INTO = new ListMaterialTag<>("process_into");
+
+    public static final TypeMaterialTag<Pair<List<MaterialStack>, Integer>> PROCESS_INTO = new TypeMaterialTag<>("process_into");
 
     public static final ListMaterialTag<Material> BYPRODUCTS = new ListMaterialTag<>("byproducts");
 
@@ -64,6 +66,7 @@ public class MaterialTags {
     public static final BlockDropMaterialTag<BlockOreStone> CUSTOM_ORE_STONE_DROPS = new BlockDropMaterialTag<>("custom_ore_stone_drops");
 
     public static final MapMaterialTag<MaterialType<?>, Integer> FURNACE_FUELS = new MapMaterialTag<>("furnace_fuels");
+    public static final MaterialTag NOSMASH = new MaterialTag("no_smash"); //Material is not able to be smashed
 
     //Dummy Types
     public static TypeMaterialTag<ToolData> TOOLS = new TypeMaterialTag<>("tools"){

@@ -124,7 +124,7 @@ public class MachineRFHandler<T extends TileEntityMachine<T>> extends RFHandler 
 
     @Override
     public boolean canInput(Direction direction) {
-        return super.canInput(direction) && tile.getFacing() != direction;
+        return super.canInput(direction) && (tile.getFacing() != direction || tile.getMachineType().allowsFrontIO());
     }
 
     public boolean canChargeItem() {

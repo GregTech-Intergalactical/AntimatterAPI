@@ -8,6 +8,7 @@ import muramasa.antimatter.client.RenderHelper;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTags;
 import muramasa.antimatter.tool.IAntimatterArmor;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
@@ -16,11 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterial;
-import net.minecraft.world.item.DyeableLeatherItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
@@ -35,11 +32,12 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
     private static final UUID[] ARMOR_MODIFIERS = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
     protected String domain;
     protected AntimatterArmorType type;
-    private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
+    protected Material material;
 
-    public MaterialArmor(String domain, AntimatterArmorType type, ArmorMaterial materialIn, EquipmentSlot slot, Properties builderIn) {
-        super(materialIn, slot, builderIn);
+    public MaterialArmor(String domain, AntimatterArmorType type, Material materialIn, EquipmentSlot slot, Properties builderIn) {
+        super(new MatArmorMaterial(type, materialIn), slot, builderIn);
         this.domain = domain;
+        this.material = materialIn;
         this.type = type;
         AntimatterAPI.register(IAntimatterArmor.class, this);
         if (type.getSlot() == EquipmentSlot.HEAD && AntimatterAPI.getSIDE().isClient()) {
@@ -49,7 +47,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
 
     @Override
     public String getId() {
-        return type.getId();
+        return material.getId() + "_" + type.getId();
     }
 
     @Override
@@ -58,13 +56,13 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
     }
 
     @Override
-    public ItemStack asItemStack(Material primary) {
-        return resolveStack(primary);
+    public Material getMat() {
+        return material;
     }
 
     @Override
-    public boolean isValidRepairItem(ItemStack toRepair, ItemStack repair) {
-        return getRepairMaterial(toRepair).test(repair);
+    public ItemStack asItemStack() {
+        return resolveStack();
     }
 
     @Override
@@ -74,8 +72,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
 
     @Override
     public int getMaxDamage(ItemStack stack) {
-        if (getMaterial(stack) == null || !getMaterial(stack).has(MaterialTags.ARMOR)) return stack.getItem().getMaxDamage();
-        return MAX_DAMAGE_ARRAY[slot.getIndex()] * MaterialTags.ARMOR.get(getMaterial(stack)).armorDurabilityFactor();
+        return getMaxDamage();
     }
 
     @Override
@@ -83,26 +80,16 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
         return enchantment.category.canEnchant(stack.getItem());
     }
 
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slotType, ItemStack stack) {
-        Material mat = getMaterial(stack);
-        if (mat == null || mat == NULL || !mat.has(MaterialTags.ARMOR) || slotType != this.slot) return super.getDefaultAttributeModifiers(slotType);
-        Multimap<Attribute, AttributeModifier> modifiers = HashMultimap.create();
-        UUID uuid = ARMOR_MODIFIERS[slot.getIndex()];
-        modifiers.put(Attributes.ARMOR, new AttributeModifier(uuid, "Armor modifier", MaterialTags.ARMOR.get(mat).armor()[slot.getIndex()] + material.getDefenseForSlot(slot), AttributeModifier.Operation.ADDITION));
-        modifiers.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(uuid, "Armor toughness", material.getToughness() + MaterialTags.ARMOR.get(mat).toughness(), AttributeModifier.Operation.ADDITION));
-        modifiers.put(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(uuid, "Armor knockback resistance", MaterialTags.ARMOR.get(mat).knockbackResistance(), AttributeModifier.Operation.ADDITION));
-        return modifiers;
-    }
-
-    //fabric method
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot slotType) {
-        return this.getAttributeModifiers(slotType, stack);
-    }
-
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
         onGenericAddInformation(stack, tooltip, flag);
         super.appendHoverText(stack, world, tooltip, flag);
+    }
+
+    @Override
+    public void fillItemCategory(CreativeModeTab category, NonNullList<ItemStack> items) {
+        if (category != Ref.TAB_TOOLS) return;
+        items.add(asItemStack());
     }
 
     @Nullable
@@ -122,8 +109,7 @@ public class MaterialArmor extends ArmorItem implements IAntimatterArmor, Dyeabl
 
     @Override
     public boolean hasCustomColor(ItemStack stack) {
-        Material mat = getMaterial(stack);
-        return mat != null;
+        return material != NULL;
     }
 
     @Override

@@ -15,6 +15,7 @@ import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
@@ -31,7 +32,8 @@ import java.util.function.Supplier;
 public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, IRegistryEntryProvider {
 
     protected final String id;
-    protected int unitValue, layers;
+    protected int layers;
+    protected long unitValue;
     protected boolean generating = true, blockType, visible, splitName;
     protected final Set<Material> materials = new ObjectLinkedOpenHashSet<>(); //Linked to preserve insertion order for JEI
     protected final Map<MaterialType<?>, TagKey<?>> tagMap = new Object2ObjectOpenHashMap<>();
@@ -43,7 +45,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
     protected boolean hasRegistered;
     protected boolean ignoreTextureSets = false;
 
-    public MaterialType(String id, int layers, boolean visible, int unitValue) {
+    public MaterialType(String id, int layers, boolean visible, long unitValue) {
         this.id = id;
         this.visible = visible;
         this.unitValue = unitValue;
@@ -87,6 +89,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
             if (item.getType() == this) return item.getMaterial();
             return null;
         }
+
         //TODO better fix
         //return replacements.inverse().get(stack.getItem());
         for (Map.Entry<Material, Supplier<Item>> entry : replacements.entrySet()) {
@@ -95,6 +98,19 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
                 return entry.getKey();
             }
         }
+        // gets material from other mod items using the tags
+        for (TagKey<Item> tagKey : stack.getItem().builtInRegistryHolder().tags().toList()){
+            String prefix = this.getTag().location().getPath() + "/";
+            if (tagKey.location().getNamespace().equals(this.getTag().location().getNamespace()) && tagKey.location().getPath().contains(prefix)){
+                Material material = Material.get(tagKey.location().getPath().replace(prefix, ""));
+                if (material != Material.NULL){
+                    return material;
+                }
+            }
+        }
+        stack.getItem().builtInRegistryHolder().tags().forEach(t -> {
+
+        });
         return null;
     }
 
@@ -142,7 +158,7 @@ public class MaterialType<T> implements IMaterialTag, ISharedAntimatterObject, I
         return id;
     }
 
-    public int getUnitValue() {
+    public long getUnitValue() {
         return unitValue;
     }
 

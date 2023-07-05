@@ -15,13 +15,13 @@ public class MaterialTypeItem<T> extends MaterialType<T> {
 
     private final ItemSupplier itemSupplier;
 
-    public MaterialTypeItem(String id, int layers, boolean visible, int unitValue) {
+    public MaterialTypeItem(String id, int layers, boolean visible, long unitValue) {
         super(id, layers, visible, unitValue);
         AntimatterAPI.register(MaterialTypeItem.class, this);
         this.itemSupplier = MaterialItem::new;
     }
 
-    public MaterialTypeItem(String id, int layers, boolean visible, int unitValue, ItemSupplier itemSupplier) {
+    public MaterialTypeItem(String id, int layers, boolean visible, long unitValue, ItemSupplier itemSupplier) {
         super(id, layers, visible, unitValue);
         AntimatterAPI.register(MaterialTypeItem.class, this);
         this.itemSupplier = itemSupplier;

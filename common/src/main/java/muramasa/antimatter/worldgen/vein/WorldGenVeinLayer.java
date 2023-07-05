@@ -316,8 +316,8 @@ public class WorldGenVeinLayer extends WorldGenBase<WorldGenVeinLayer> {
 
         if (Ref.debugOreVein)
             Antimatter.LOGGER.info("Trying Orevein:" + getId() + " Dimension=" + world.getLevel().dimension() + " posX=" + posX / 16 + " posZ=" + posZ / 16 + " oreseedX=" + seedX / 16 + " oreseedZ=" + seedZ / 16 + " cY=" + tMinY);
-        //if (!generateSquare(world, rand, posX, posZ, seedX, seedZ, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
-        if (!generateByFunction(world, rand, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
+        if (!generateSquare(world, rand, posX, posZ, seedX, seedZ, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
+        //if (!generateByFunction(world, rand, tMinY, wXVein, eXVein, nZVein, sZVein, wX, eX, nZ, sZ))
             return NO_ORE_IN_BOTTOM_LAYER;  // Exit early, didn't place anything in the bottom layer
 
         //Place small ores for the vein

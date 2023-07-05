@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 public class MaterialTypeFluid<T> extends MaterialType<T> {
 
-    public MaterialTypeFluid(String id, int layers, boolean visible, int unitValue) {
+    public MaterialTypeFluid(String id, int layers, boolean visible, long unitValue) {
         super(id, layers, visible, unitValue);
         AntimatterAPI.register(MaterialTypeFluid.class, this);
     }

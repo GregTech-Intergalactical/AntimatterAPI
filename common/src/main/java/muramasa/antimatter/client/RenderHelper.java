@@ -1,17 +1,9 @@
 package muramasa.antimatter.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
+import com.mojang.math.*;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.item.ItemBattery;
@@ -52,7 +44,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.fluids.FluidStack;
 import tesseract.FluidPlatformUtils;
 import tesseract.TesseractCapUtils;
-import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.gt.IEnergyHandlerItem;
 import tesseract.graph.Connectivity;
 
@@ -391,13 +382,13 @@ public class RenderHelper {
     }
 
     public static Transformation faceRotation(BlockState state) {
-        if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
-            return faceRotation(state.getValue(BlockStateProperties.FACING), state.getValue(BlockMachine.HORIZONTAL_FACING));
+        if (state.hasProperty(BlockStateProperties.FACING)) {
+            return faceRotation(state.getValue(BlockStateProperties.FACING));
         } 
         return faceRotation(state.getValue(BlockStateProperties.HORIZONTAL_FACING));
     }
 
-    public static Transformation faceRotation(Direction facing, @Nullable Direction horiz) {
+    /*public static Transformation faceRotation(Direction facing, @Nullable Direction horiz) {
         if (horiz == null) {
             Quaternion quat = facing.getAxis() != Axis.Y ? Vector3f.YP.rotationDegrees(-facing.toYRot()) : Vector3f.XP.rotationDegrees(-facing.getNormal().getY()*90f);
             return new Transformation(null, quat, null, null);
@@ -412,10 +403,12 @@ public class RenderHelper {
             Transformation mat = new Transformation(null, rot, null, null);
             return mat.compose(new Transformation(null, quat, null, null));
         }
-    }
+    }*/
 
     public static Transformation faceRotation(Direction side) {
-        return faceRotation(side, null);  
+        Quaternion quat = side.getAxis() != Axis.Y ? Vector3f.YP.rotationDegrees(-side.toYRot()) : Vector3f.XP.rotationDegrees(-side.getNormal().getY()*90f);
+        return new Transformation(null, quat, null, null);
+        //return faceRotation(side, null);
     }
 
 

@@ -26,9 +26,6 @@ dependencies{
     }
     modCompileOnly("net.fabricmc.fabric-api:fabric-transfer-api-v1:${rootProject.fabric_transfer_api_version}")
     modCompileOnly("io.github.fabricators_of_create:Porting-Lib:1.1.310-beta+1.18.2-dev.${rootProject.port_lib_hash}"){ transitive(false) }
-    modImplementation("io.github.feltmc:fabricated-forge-modeldata:${rootProject.fabricated_forge_hash}"){
-        transitive = false
-    }
     modImplementation("com.github.Trins-mods:CT-Fabric-Fluid-Support:${project.ct_fabric_fluid_support_hash}"){
         transitive = false
     }
@@ -42,7 +39,9 @@ dependencies{
     modImplementation("net.minecraftforge:forgeconfigapiport-fabric:3.2.4")
     modCompileOnly("curse.maven:the-one-probe-fabric-581847:${project.top_fabric_file}")
     modCompileOnly "lol.bai.megane:megane-reborn-energy:${project.megane_version}"
-    modImplementation("com.github.Trinsdar.Botarium:botarium-common-1.18.2:${project.botarium_version}")
+    modImplementation("earth.terrarium:botarium-common-1.18.2:${project.botarium_version}")
+    modImplementation "com.teamresourceful.resourcefullib:resourcefullib-common-1.18.2:${project.resourcefullib_version}"
+
 }
 
 architectury {
