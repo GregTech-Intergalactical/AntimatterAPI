@@ -1,13 +1,12 @@
 package muramasa.antimatter.client.baked;
 
 import com.google.common.collect.Sets;
-import muramasa.antimatter.AntimatterProperties;
-import muramasa.antimatter.AntimatterProperties.ProxyProperties;
 import muramasa.antimatter.client.ModelUtils;
 import muramasa.antimatter.client.dynamic.DynamicTexturer;
 import muramasa.antimatter.cover.ICover;
 import muramasa.antimatter.mixin.client.ChunkReaderAccessor;
 import muramasa.antimatter.structure.StructureCache;
+import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import net.minecraft.client.Minecraft;
@@ -24,49 +23,17 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
     public ProxyBakedModel(TextureAtlasSprite particle) {
         super(particle);
-    }
-
-    @Nonnull
-    @Override
-    public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData) {
-        if (tileData instanceof EmptyModelData) {
-            tileData = new ModelDataMap.Builder().build();
-        }
-        TileEntityFakeBlock fake = (TileEntityFakeBlock) world.getBlockEntity(pos);
-        if (fake == null || fake.getState() == null) {
-            return tileData;
-        }
-        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fake.getState());
-        UnbakedModel m = ModelUtils.getModel(BlockModelShaper.stateToModelLocation(fake.getState()));
-
-        Collection<Material> mats = m.getMaterials(ModelUtils.getDefaultModelGetter(), Sets.newLinkedHashSet());
-        Material first = mats.iterator().next();
-        tileData = model.getModelData(world, pos, state, tileData);
-        BlockState cState = Blocks.AIR.defaultBlockState();
-        TileEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(getWorld(world), fake.getBlockPos(), TileEntityBasicMultiMachine.class);
-        if (machine != null) {
-            cState = machine.getBlockState();
-        }
-        ProxyProperties prop = new ProxyProperties(fake.getState(), cState, first.texture(), fake::getTexturer, fake.covers(), fake.facing);
-        tileData.setData(AntimatterProperties.FAKE_MODEL_PROPERTY, prop);
-        return tileData;
     }
 
     protected Level getWorld(BlockAndTintGetter reader) {
@@ -81,27 +48,36 @@ public class ProxyBakedModel extends AntimatterBakedModel<ProxyBakedModel> {
 
 
     @Override
-    public TextureAtlasSprite getParticleIcon(@Nonnull IModelData data) {
-        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(data.getData(AntimatterProperties.STATE_MODEL_PROPERTY));
-        return model != null ? model.getParticleIcon(data) : getParticleIcon();
+    public TextureAtlasSprite getParticleIcon(BlockAndTintGetter getter, BlockPos pos) {
+        if (!(getter.getBlockEntity(pos) instanceof TileEntityFakeBlock fakeBlock)) return getParticleIcon();
+        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fakeBlock.getState());
+        return model.getParticleIcon();
     }
 
     @Override
-    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        ProxyProperties props = data.getData(AntimatterProperties.FAKE_MODEL_PROPERTY);
-        if (props == null || props.state == null) return Collections.emptyList();
+    public List<BakedQuad> getBlockQuads(BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull BlockAndTintGetter level, BlockPos pos)
+    {
+        BlockEntity tile = level.getBlockEntity(pos);
+        if (!(tile instanceof TileEntityFakeBlock fake) || fake.getState() == null) {
+            return Collections.emptyList();
+        }
+        BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(fake.getState());
+        UnbakedModel m = ModelUtils.getModel(BlockModelShaper.stateToModelLocation(fake.getState()));
+
+        Collection<Material> mats = m.getMaterials(ModelUtils.getDefaultModelGetter(), Sets.newLinkedHashSet());
+        Material first = mats.iterator().next();
+        BlockState cState = Blocks.AIR.defaultBlockState();
+        TileEntityBasicMultiMachine<?> machine = StructureCache.getAnyMulti(getWorld(level), fake.getBlockPos(), TileEntityBasicMultiMachine.class);
+        if (machine != null) {
+            cState = machine.getBlockState();
+        }
         if (side == null)
-            return Minecraft.getInstance().getBlockRenderer().getBlockModel(props.state).getQuads(props.state, side, rand, data);
-        ICover cover = props.covers[side.get3DDataValue()];
+            return ModelUtils.getQuadsFromBaked(model, fake.getState(), side, rand, level, pos);
+        ICover cover = fake.covers()[side.get3DDataValue()];
         if (cover.isEmpty())
-            return Minecraft.getInstance().getBlockRenderer().getBlockModel(props.state).getQuads(props.state, side, rand, data);
-        DynamicTexturer<ICover, ICover.DynamicKey> texturer = props.texturer.apply(side);
-        return texturer.getQuads("fake", new LinkedList<>(), props.controllerState, cover, new ICover.DynamicKey(cover.side(), null, props.texture, cover.getId()), side.get3DDataValue(), data);
-    }
-
-    @Override
-    public List<BakedQuad> getItemQuads(@Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData data) {
-        return Collections.emptyList();
+            return ModelUtils.getQuadsFromBaked(model, fake.getState(), side, rand, level, pos);
+        DynamicTexturer<ICover, ICover.DynamicKey> texturer = fake.getTexturer(side);
+        return texturer.getQuads("fake", new LinkedList<>(), cState, cover, new ICover.DynamicKey(cover.side(), new Texture(first.texture().toString()), cover.getId()), side.get3DDataValue(), level, pos);
     }
 
     @Override

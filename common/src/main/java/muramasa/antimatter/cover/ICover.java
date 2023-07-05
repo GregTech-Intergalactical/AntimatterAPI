@@ -281,24 +281,19 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
      */
     class DynamicKey {
         public final Direction facing;
-        @Nullable
-        public final Direction hFacing;
         public final Texture machineTexture;
         public final String coverId;
 
-        public DynamicKey(Direction facing, Direction hFacing, Texture tex, String cover) {
+        public DynamicKey(Direction facing, Texture tex, String cover) {
             this.facing = facing;
-            this.hFacing = hFacing;
             this.machineTexture = tex;
             this.coverId = cover;
         }
 
         public DynamicKey(BlockState state, Texture tex, String cover) {
-            if (state.hasProperty(BlockMachine.HORIZONTAL_FACING)) {
-                this.hFacing = state.getValue(BlockMachine.HORIZONTAL_FACING);
+            if (state.hasProperty(BlockStateProperties.FACING)) {
                 this.facing = state.getValue(BlockStateProperties.FACING);
             } else {
-                this.hFacing = null;
                 this.facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
             }
             this.machineTexture = tex;
@@ -307,14 +302,14 @@ public interface ICover extends ITextureProvider, IDynamicModelProvider, MenuPro
 
         @Override
         public int hashCode() {
-            return Objects.hash(this.facing, this.hFacing, machineTexture, coverId);
+            return Objects.hash(this.facing, machineTexture, coverId);
         }
 
         @Override
         public boolean equals(Object o) {
             if (o instanceof DynamicKey) {
                 DynamicKey k = (DynamicKey) o;
-                return k.hFacing == this.hFacing && k.facing == this.facing && k.machineTexture.equals(this.machineTexture) && coverId.equals(k.coverId);
+                return k.facing == this.facing && k.machineTexture.equals(this.machineTexture) && coverId.equals(k.coverId);
             } else {
                 return false;
             }

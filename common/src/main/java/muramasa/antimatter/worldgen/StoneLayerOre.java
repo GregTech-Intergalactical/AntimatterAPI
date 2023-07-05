@@ -23,7 +23,7 @@ public class StoneLayerOre {
 
     public StoneLayerOre(Material material, int chance, int minY, int maxY) {
         this.material = material;
-        this.chance = bind(1, Ref.U, chance);
+        this.chance = bind(1, Ref.O, chance);
         this.minY = minY;
         this.maxY = maxY;
     }
@@ -64,7 +64,7 @@ public class StoneLayerOre {
     }
 
     public boolean canPlace(BlockPos pos, Random rand) {
-        return pos.getY() >= minY && pos.getY() <= maxY && rand.nextInt(Ref.U) < chance;
+        return pos.getY() >= minY && pos.getY() <= maxY && rand.nextInt(Ref.O) < chance;
     }
 
     public static int bind(int min, int max, int boundValue) {

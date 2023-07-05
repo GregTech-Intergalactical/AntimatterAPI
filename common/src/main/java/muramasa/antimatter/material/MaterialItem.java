@@ -187,7 +187,7 @@ public class MaterialItem extends ItemBasic<MaterialItem> implements ISharedAnti
             int level = state.getValue(LayeredCauldronBlock.LEVEL);
             if (level > 0){
                 Material material = ((MaterialItem) stack.getItem()).getMaterial();
-                if (type == AntimatterMaterialTypes.DUST_IMPURE) {
+                if (type == AntimatterMaterialTypes.DUST_IMPURE || type == AntimatterMaterialTypes.DUST_PURE) {
                     if (material.has(DUST)) {
                         stack.shrink(1);
                         if (!player.addItem(DUST.get(material, 1))) {

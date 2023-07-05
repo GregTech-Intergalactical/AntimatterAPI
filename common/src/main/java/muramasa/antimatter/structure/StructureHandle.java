@@ -46,8 +46,7 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
         BlockState state = source.getBlockState();
         boolean vertical = source.getMachineType().allowVerticalFacing();
         Direction facing = vertical ? state.getValue(BlockStateProperties.FACING) : state.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        Direction hFacing = vertical ? state.getValue(BlockMachine.HORIZONTAL_FACING) : null;
-        int3 newOff = new int3(facing, hFacing);
+        int3 newOff = new int3(facing);
         for (int3 offset : offsets) {
             newOff.set(source.getBlockPos()).offset(offset, Dir.RIGHT, Dir.UP, Dir.FORWARD);
             StructureCache.addListener(this, source.getLevel(), newOff);
@@ -58,8 +57,7 @@ public class StructureHandle<T extends TileEntityBasicMultiMachine<T>> {
         BlockState state = source.getBlockState();
         boolean vertical = source.getMachineType().allowVerticalFacing();
         Direction facing = vertical ? state.getValue(BlockStateProperties.FACING) : state.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        Direction hFacing = vertical ? state.getValue(BlockMachine.HORIZONTAL_FACING) : null;
-        int3 newOff = new int3(facing, hFacing);
+        int3 newOff = new int3(facing);
         for (int3 offset : offsets) {
             newOff.set(source.getBlockPos()).offset(offset, Dir.RIGHT, Dir.UP, Dir.FORWARD);
             StructureCache.removeListener(this, source.getLevel(), newOff);

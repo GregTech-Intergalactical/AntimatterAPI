@@ -276,9 +276,9 @@ public class AntimatterConfig {
 
             builder.push("Treefelling");
 
-            SMARTER_TREE_DETECTION = builder.comment("Smart tree detection, instead of just going up in a column, it searches surrounding connected blocks too. Default: true")
+            SMARTER_TREE_DETECTION = builder.comment("Smart tree detection, instead of just going up in a column, it searches surrounding connected blocks too. Default: false")
                     .translation(Ref.ID + ".config.tree_detection")
-                    .define("SMARTER_TREE_DETECTION", true);
+                    .define("SMARTER_TREE_DETECTION", false);
 
             AXE_TIMBER = builder.comment("Allow Antimatter Axe types to fell trees - Default: true")
                     .translation(Ref.ID + ".config.axe_timber")

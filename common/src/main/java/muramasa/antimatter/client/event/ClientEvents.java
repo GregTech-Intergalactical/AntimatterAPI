@@ -84,17 +84,16 @@ public class ClientEvents {
             return false;
         }
         IBehaviour<IAntimatterTool> behaviour = type.getBehaviour("aoe_break");
-        if (!(behaviour instanceof BehaviourAOEBreak)) return false;
-        BehaviourAOEBreak aoeBreakBehaviour = (BehaviourAOEBreak) behaviour;
+        if (!(behaviour instanceof BehaviourAOEBreak aoeBreak)) return false;
 
         BlockPos currentPos = target.getBlockPos();
         BlockState state = world.getBlockState(currentPos);
-        if (state.isAir() || !Utils.isToolEffective(item, state)) return false;
+        if (state.isAir() || !Utils.isToolEffective(item, stack, state) || !item.getDataTag(stack).getBoolean(Ref.KEY_TOOL_BEHAVIOUR_AOE_BREAK)) return false;
         Vec3 viewPosition = camera.getPosition();
         Entity entity = camera.getEntity();
         VertexConsumer builderLines = bufferSource.getBuffer(RenderType.LINES);
         double viewX = viewPosition.x, viewY = viewPosition.y, viewZ = viewPosition.z;
-        ImmutableSet<BlockPos> positions = Utils.getHarvestableBlocksToBreak(world, player, item, aoeBreakBehaviour.getColumn(), aoeBreakBehaviour.getRow(), aoeBreakBehaviour.getDepth());
+        ImmutableSet<BlockPos> positions = Utils.getHarvestableBlocksToBreak(world, player, item, stack, aoeBreak.getColumn(), aoeBreak.getRow(), aoeBreak.getDepth());
         for (BlockPos nextPos : positions) {
             double modX = nextPos.getX() - viewX, modY = nextPos.getY() - viewY, modZ = nextPos.getZ() - viewZ;
             VoxelShape shape = world.getBlockState(nextPos).getShape(world, nextPos, CollisionContext.of(entity));

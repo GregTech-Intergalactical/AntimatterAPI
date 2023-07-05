@@ -204,7 +204,7 @@ public class RecipeBuilders {
             Material primary = AntimatterAPI.get(Material.class, nbt.getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
             int secondary = nbt.getInt(Ref.KEY_TOOL_DATA_SECONDARY_COLOUR);
             Optional<DyeColor> color = Arrays.stream(DyeColor.values()).filter(t -> t.getMaterialColor().col == secondary).findFirst();
-            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", color.orElse(DyeColor.WHITE));
+            return ImmutableMap.of("primary", primary != null ? primary : NULL, "secondary", color.isEmpty() ? NULL : color.get());
         }
     });
 

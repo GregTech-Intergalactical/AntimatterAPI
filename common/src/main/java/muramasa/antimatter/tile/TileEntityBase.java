@@ -10,8 +10,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -96,11 +94,6 @@ public abstract class TileEntityBase<T extends TileEntityBase<T>> extends BlockE
 
     public interface BlockEntitySupplier<T extends BlockEntity,U> {
         T create(U obj, BlockPos pos, BlockState state);
-    }
-
-    @Nonnull
-    public IModelData getModelData(){
-        return EmptyModelData.INSTANCE;
     }
 
     //TODO: implications of this.

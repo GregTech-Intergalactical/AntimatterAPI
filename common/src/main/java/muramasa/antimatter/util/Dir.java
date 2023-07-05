@@ -38,7 +38,6 @@ public enum Dir {
             case RIGHT -> hSide.getClockWise();
             case FORWARD -> side;
             case BACK -> side.getOpposite();
-            default -> side;
         };
     }
     /*

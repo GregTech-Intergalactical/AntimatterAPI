@@ -237,7 +237,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public boolean canOutput(Direction direction) {
-        if (tile.getFacing().get3DDataValue() == direction.get3DDataValue() && !tile.getMachineType().allowsFrontCovers())
+        if (tile.getFacing().get3DDataValue() == direction.get3DDataValue() && !tile.getMachineType().allowsFrontIO())
             return false;
         return super.canOutput();
     }
@@ -249,7 +249,7 @@ public class MachineFluidHandler<T extends TileEntityMachine<T>> extends FluidHa
 
     @Override
     public boolean canInput(Direction direction) {
-        if (tile.getFacing().get3DDataValue() == direction.get3DDataValue() && !tile.getMachineType().allowsFrontCovers())
+        if (tile.getFacing().get3DDataValue() == direction.get3DDataValue() && !tile.getMachineType().allowsFrontIO())
             return false;
         return super.canInput();
     }

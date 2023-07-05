@@ -1,6 +1,7 @@
 package muramasa.antimatter.integration.jei;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -8,10 +9,8 @@ import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.ITypedIngredient;
-import mezz.jei.api.registration.IRecipeCatalystRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
-import mezz.jei.api.registration.IRecipeRegistration;
-import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
+import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IJeiRuntime;
 import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.AntimatterAPI;
@@ -27,20 +26,27 @@ import muramasa.antimatter.machine.types.Machine;
 import muramasa.antimatter.material.Material;
 import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.ore.BlockOre;
+import muramasa.antimatter.recipe.IRecipe;
+import muramasa.antimatter.recipe.Recipe;
 import muramasa.antimatter.recipe.map.IRecipeMap;
+import muramasa.antimatter.recipe.map.RecipeMap;
 import muramasa.antimatter.recipe.material.MaterialRecipe;
+import muramasa.antimatter.util.AntimatterPlatformUtils;
+import muramasa.antimatter.util.Utils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
@@ -48,6 +54,7 @@ import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 @SuppressWarnings("removal")
 @JeiPlugin
 public class AntimatterJEIPlugin implements IModPlugin {
+    public static final Map<String, RecipeType<IRecipe>> RECIPE_TYPES = new Object2ObjectOpenHashMap<>();
     private static IJeiRuntime runtime;
     private static IJeiHelpers helpers;
 
@@ -73,6 +80,7 @@ public class AntimatterJEIPlugin implements IModPlugin {
             if (stacks.isEmpty()) return;
             runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, stacks);
         });
+        runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterJEIREIPlugin.getItemsToHide().stream().map(i -> i.asItem().getDefaultInstance()).toList());
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockSurfaceRock.class).stream().map(b -> new ItemStack(b, 1)).filter(t -> !t.isEmpty()).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, AntimatterAPI.all(BlockOre.class).stream().filter(b -> b.getStoneType() != Data.STONE).map(b -> new ItemStack(b, 1)).collect(Collectors.toList()));
         //runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM, Data.MACHINE_INVALID.getTiers().stream().map(t -> Data.MACHINE_INVALID.getItem(t).getDefaultInstance()).collect(Collectors.toList()));
@@ -88,7 +96,9 @@ public class AntimatterJEIPlugin implements IModPlugin {
 
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
             if (!registeredMachineCats.contains(tuple.map.getLoc())) {
-                registry.addRecipeCategories(new RecipeMapCategory(tuple.map, tuple.gui, tuple.tier, tuple.model));
+                RecipeType<IRecipe> type = new RecipeType<>(tuple.map.getLoc(), IRecipe.class);
+                RECIPE_TYPES.put(type.getUid().toString(), type);
+                registry.addRecipeCategories(new RecipeMapCategory(tuple.map, type, tuple.gui, tuple.tier, tuple.model));
                 registeredMachineCats.add(tuple.map.getLoc());
             }
         });
@@ -102,9 +112,34 @@ public class AntimatterJEIPlugin implements IModPlugin {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         if (helpers == null) helpers = registration.getJeiHelpers();
         AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
-            registration.addRecipes(tuple.map.getRecipes(true), id);
+            registration.addRecipes(RECIPE_TYPES.get(id.toString()), getRecipes(tuple.map));
         });
         MultiMachineInfoCategory.registerRecipes(registration);
+    }
+
+    private List<IRecipe> getRecipes(IRecipeMap recipeMap){
+        RecipeManager manager = getRecipeManager();
+        if (manager == null) return Collections.emptyList();
+        List<IRecipe> recipes = new ArrayList<>(manager.getAllRecipesFor(Recipe.RECIPE_TYPE).stream().filter(r -> r.getMapId().equals(recipeMap.getId()) && !r.isHidden()).toList());
+        if (recipeMap.getProxy() != null && recipeMap instanceof RecipeMap<?> map) {
+            List<net.minecraft.world.item.crafting.Recipe<?>> proxyRecipes = (List<net.minecraft.world.item.crafting.Recipe<?>>) manager.getAllRecipesFor(recipeMap.getProxy().loc());
+            proxyRecipes.forEach(recipe -> recipes.add(recipeMap.getProxy().handler().apply(recipe, map.RB())));
+        }
+        return recipes;
+    }
+
+    private RecipeManager getRecipeManager(){
+        if (AntimatterAPI.getSIDE().isServer()){
+            return AntimatterPlatformUtils.getCurrentServer().getRecipeManager();
+        } else {
+            if (getWorld() == null) return null;
+            return getWorld().getRecipeManager();
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    ClientLevel getWorld(){
+        return Minecraft.getInstance().level;
     }
 
     public static void showCategory(Machine<?>... types) {
@@ -122,6 +157,13 @@ public class AntimatterJEIPlugin implements IModPlugin {
     public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
         if (AntimatterAPI.isModLoaded(Ref.MOD_REI)) return;
         registration.getCraftingCategory().addCategoryExtension(MaterialRecipe.class, JEIMaterialRecipeExtension::new);
+    }
+
+    @Override
+    public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+        AntimatterJEIREIPlugin.getREGISTRY().forEach((id, tuple) -> {
+            registration.addRecipeTransferHandler(new MachineTransferHandler(tuple.map.getLoc()));
+        });
     }
 
     @ExpectPlatform

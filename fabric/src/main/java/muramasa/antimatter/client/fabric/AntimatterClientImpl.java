@@ -7,18 +7,17 @@ import io.github.fabricators_of_create.porting_lib.event.client.TextureStitchCal
 import io.github.fabricators_of_create.porting_lib.event.common.RecipesUpdatedCallback;
 import io.github.fabricators_of_create.porting_lib.model.ModelLoaderRegistry;
 import muramasa.antimatter.AntimatterAPI;
-import muramasa.antimatter.client.model.loader.fabric.AntimatterModelLoader;
-import muramasa.antimatter.common.event.CommonEvents;
-import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.client.AntimatterTextureStitcher;
 import muramasa.antimatter.client.SoundHelper;
 import muramasa.antimatter.client.event.ClientEvents;
+import muramasa.antimatter.client.model.loader.IAntimatterModelLoader;
+import muramasa.antimatter.client.model.loader.fabric.ModelLoaderWrapper;
+import muramasa.antimatter.common.event.CommonEvents;
+import muramasa.antimatter.datagen.AntimatterDynamics;
 import muramasa.antimatter.fluid.AntimatterFluid;
-import muramasa.antimatter.fluid.fabric.FluidAttributesVariantWrapper;
 import muramasa.antimatter.material.MaterialType;
 import muramasa.antimatter.mixin.fabric.client.MinecraftAccessor;
 import muramasa.antimatter.proxy.ClientHandler;
-import muramasa.antimatter.proxy.fabric.ClientHandlerImpl;
 import muramasa.antimatter.registration.RegistrationEvent;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -28,7 +27,6 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.SimpleFluidRenderHandler;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
@@ -56,7 +54,7 @@ public class AntimatterClientImpl implements ClientModInitializer {
         AntimatterAPI.onRegistration(RegistrationEvent.CLIENT_DATA_INIT);
         AntimatterDynamics.runAssetProvidersDynamically();
         ModelLoadCallback.EVENT.register(((manager, colors, profiler, mipLevel) -> {
-            AntimatterAPI.all(AntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), l));
+            AntimatterAPI.all(IAntimatterModelLoader.class).forEach(l -> ModelLoaderRegistry.registerLoader(l.getLoc(), new ModelLoaderWrapper(l)));
         }));
 
         ItemTooltipCallback.EVENT.register(((stack, context, lines) -> {

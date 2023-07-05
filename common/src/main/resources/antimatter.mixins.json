@@ -22,6 +22,7 @@
     "BlockLootTablesAccessor",
     "BucketItemAccessor",
     "GrindstoneContainerMixin",
+    "HopperBlockMixin",
     "IceBlockMixin",
     "IngredientAccessor",
     "ItemStackMixin",

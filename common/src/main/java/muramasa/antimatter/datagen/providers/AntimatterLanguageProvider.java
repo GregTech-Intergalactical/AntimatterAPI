@@ -226,6 +226,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Refined Ores"));
                 else if (t == AntimatterMaterialTypes.RAW_ORE_BLOCK)
                     add(Ref.ID + ".rei.group." + t.getId(), "Raw Ore Blocks");
+                else if (t == AntimatterMaterialTypes.ITEM_CASING)
+                    add(Ref.ID + ".rei.group." + t.getId(), String.join("", "Item Casings"));
                 else if (split.length > 1) {
                     if (t.isSplitName())
                         add(Ref.ID + ".rei.group." + t.getId(), String.join("", split[0], " ", split[1], "s"));
@@ -257,6 +259,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     add(item, String.join("", "Pure ", getLocalizedType(item.getMaterial()), " Dust"));
                 else if (type == AntimatterMaterialTypes.RAW_ORE)
                     add(item, String.join("", "Raw ", getLocalizedType(item.getMaterial())));
+                else if (type == AntimatterMaterialTypes.ITEM_CASING)
+                    add(item, String.join("", getLocalizedType(item.getMaterial()), " Item Casings"));
                 else if (type == AntimatterMaterialTypes.GEM)
                     add(item, getLocalizedType(item.getMaterial()));
                 else {
@@ -269,8 +273,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
                     } else add(item, String.join("", getLocalizedType(item.getMaterial()), " ", split[0]));
                 }
             });
-            AntimatterAPI.all(IAntimatterArmor.class, domain, t -> {
-                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpacedRotated(t.getId()));
+            AntimatterAPI.all(IAntimatterArmor.class, t -> {
+                add(t.getItem().getDescriptionId(), Utils.lowerUnderscoreToUpperSpaced(t.getId()));
             });
             customTranslations();
             pipeTranslations();
@@ -302,8 +306,9 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("message.discharge.off", "Discharge disabled");
         add("item.charge", "Energy");
         add("item.reusable", "Reusable");
-        add("antimatter.tooltip.material_primary", "Primary Material");
-        add("antimatter.tooltip.material_secondary", "Secondary Material");
+        add("antimatter.tooltip.material_primary", "Primary Material: %s");
+        add("antimatter.tooltip.material_secondary", "Secondary Material: %s");
+        add("antimatter.tooltip.dye_color", "Handle Color: %s");
         add("antimatter.gui.show_recipes", "Show Recipes");
         add("antimatter.tooltip.pressure", "Pressure");
         add("antimatter.tooltip.capacity", "Capacity");
@@ -313,6 +318,10 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
         add("antimatter.tooltip.heat_capacity_total", "Heat capacity (total)");
         add("antimatter.tooltip.material_modid", "Added by: %s");
         add("antimatter.tooltip.occurrence", "Indicates occurrence of %s");
+        add("antimatter.tooltip.behaviour.aoe_enabled", "%s Enabled");
+        add("antimatter.tooltip.behaviour.aoe_disabled", "%s Disabled");
+        add("antimatter.tooltip.behaviour.aoe_right_click", "Sneak right click to Enable/Disable %s");
+        add("antimatter.behaviour.3x3", "3x3 Mining");
     }
 
     private final void pipeTranslations() {

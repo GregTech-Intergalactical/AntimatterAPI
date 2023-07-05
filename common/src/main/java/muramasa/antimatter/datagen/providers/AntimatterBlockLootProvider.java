@@ -127,24 +127,24 @@ public class AntimatterBlockLootProvider extends BlockLoot implements DataProvid
 
     public static Function<Block, LootTable.Builder> addToFortuneWithoutCustomDrops(BlockOre block) {
         if (block.getOreType() == AntimatterMaterialTypes.ORE_SMALL) {
-            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.RAW_ORE))) return BlockLoot::createSingleItemTable;
+            if (!block.getMaterial().has(AntimatterMaterialTypes.GEM) && !(block.getMaterial().has(AntimatterMaterialTypes.CRUSHED))) return BlockLoot::createSingleItemTable;
             Item item = block.getMaterial().has(AntimatterMaterialTypes.GEM) ? AntimatterMaterialTypes.GEM.get(block.getMaterial()) : null;
             int multiplier = MaterialTags.ORE_MULTI.getInt(block.getMaterial());
             LootPool.Builder builder;
             if (item != null) {
-                builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(applyExplosionDecay(item, LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(ConstantValue.exactly(multiplier)))).setWeight(30));
+                builder = LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(applyExplosionDecay(item, LootItem.lootTableItem(item).apply(SetItemCountFunction.setCount(ConstantValue.exactly(multiplier))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))).setWeight(30));
             } else {
                 builder = LootPool.lootPool();
             }
             if (block.getMaterial().has(AntimatterMaterialTypes.CRUSHED)) {
                 Item crushed = AntimatterMaterialTypes.CRUSHED.get(block.getMaterial());
                 //builder.addLootPool(withSurvivesExplosion(crushed, LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(crushed))));
-                builder.add(applyExplosionDecay(crushed, LootItem.lootTableItem(crushed).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f * multiplier, 2.0f * multiplier))).setWeight(40)));
+                builder.add(applyExplosionDecay(crushed, LootItem.lootTableItem(crushed).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f * multiplier, 2.0f * multiplier))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE)).setWeight(40)));
             }
             if (block.getMaterial().has(AntimatterMaterialTypes.DUST_IMPURE)) {
                 Item dirty = AntimatterMaterialTypes.DUST_IMPURE.get(block.getMaterial());
                 //builder.addLootPool(withSurvivesExplosion(dirty, LootPool.builder().rolls(ConstantRange.of(1)).addEntry(ItemLootEntry.builder(dirty))));
-                builder.add(applyExplosionDecay(dirty, LootItem.lootTableItem(dirty).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f * multiplier, 2.0f * multiplier)))).setWeight(60));
+                builder.add(applyExplosionDecay(dirty, LootItem.lootTableItem(dirty).apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f * multiplier, 2.0f * multiplier))).apply(ApplyBonusCount.addOreBonusCount(Enchantments.BLOCK_FORTUNE))).setWeight(60));
             }
             return b -> LootTable.lootTable().withPool(builder);
         } else if (block.getOreType() == AntimatterMaterialTypes.ORE) {

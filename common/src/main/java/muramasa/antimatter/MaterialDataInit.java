@@ -41,7 +41,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.DarkPrismarine).asDust();
 
         event.setMaterial(AntimatterMaterials.Iron).asMetal(1811).asOre(1, 5, true).asPlasma().addTools(IRON.getAttackDamageBonus(), IRON.getSpeed(), 256, IRON.getLevel(), of(Enchantments.SHARPNESS, 1));
-        event.setMaterial(AntimatterMaterials.Gold).asMetal(1337).asOre(1, 5, true).addTools(GOLD.getAttackDamageBonus(), GOLD.getSpeed(), GOLD.getUses(), GOLD.getLevel()).harvestLevel(2);
+        event.setMaterial(AntimatterMaterials.Gold).asMetal(1337).asOre(1, 5, true).addTools(GOLD.getAttackDamageBonus(), GOLD.getSpeed(), GOLD.getUses(), GOLD.getLevel(), of(Enchantments.SMITE, 3)).harvestLevel(2);
         //cause 1.18
         event.setMaterial(AntimatterMaterials.Copper).asMetal(1357).asOre(1, 5, true).harvestLevel(1);
 
@@ -64,7 +64,7 @@ public class MaterialDataInit {
         event.setMaterial(AntimatterMaterials.Quartz).asOre(1, 5, true, QUARTZ_LIKE_BLOCKS).harvestLevel(1);
         event.setMaterial(AntimatterMaterials.Netherite).asMetal(2246).addTools(3.0F, 10, 500, NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3)).addArmor(new int[]{0, 1, 1, 0}, 0.5F, 0.1F, 20);
         event.setMaterial(AntimatterMaterials.NetherizedDiamond).asGemBasic(false).addTools(4.0F, 12, NETHERITE.getUses(), NETHERITE.getLevel(), of(Enchantments.FIRE_ASPECT, 3, Enchantments.SHARPNESS, 4)).addArmor(new int[]{1, 1, 2, 1}, 3.0F, 0.1F, 37, of(Enchantments.ALL_DAMAGE_PROTECTION, 4));
-        event.setMaterial(AntimatterMaterials.NetheriteScrap).asDust(AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.CRUSHED_PURIFIED, AntimatterMaterialTypes.CRUSHED_REFINED, AntimatterMaterialTypes.RAW_ORE, AntimatterMaterialTypes.DUST_IMPURE, AntimatterMaterialTypes.DUST_PURE);
+        event.setMaterial(AntimatterMaterials.NetheriteScrap).asDust(AntimatterMaterialTypes.CRUSHED, AntimatterMaterialTypes.RAW_ORE);
 
         event.setMaterial(AntimatterMaterials.Lava).asFluid(0, 1300);
         event.setMaterial(AntimatterMaterials.Water).asFluid();

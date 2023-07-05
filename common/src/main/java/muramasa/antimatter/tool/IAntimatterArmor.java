@@ -14,13 +14,10 @@ import muramasa.antimatter.registration.ITextureProvider;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tool.armor.AntimatterArmorType;
 import muramasa.antimatter.util.TagUtils;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -36,27 +33,18 @@ import java.util.Map;
 public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler, ITextureProvider, IModelProvider, IAbstractToolMethods {
     AntimatterArmorType getAntimatterArmorType();
 
-    default Material getMaterial(ItemStack stack) {
-        return Material.get(getDataTag(stack).getString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL));
-    }
+    Material getMat();
 
-    ItemStack asItemStack(Material primary);
-
-    default CompoundTag getDataTag(ItemStack stack) {
-        CompoundTag dataTag = stack.getTagElement(Ref.TAG_TOOL_DATA);
-        return dataTag != null ? dataTag : validateTag(stack, Material.NULL);
-    }
+    ItemStack asItemStack();
 
     default Item getItem() {
         return (Item) this;
     }
 
-    default ItemStack resolveStack(Material primary) {
+    default ItemStack resolveStack() {
         Item item = (Item) this;
         ItemStack stack = new ItemStack(item);
-        validateTag(stack, primary);
-        if (!primary.has(MaterialTags.ARMOR)) return stack;
-        Map<Enchantment, Integer> mainEnchants = MaterialTags.ARMOR.get(primary).toolEnchantment();
+        Map<Enchantment, Integer> mainEnchants = MaterialTags.ARMOR.get(getMat()).toolEnchantment();
         if (!mainEnchants.isEmpty()) {
             mainEnchants.entrySet().stream().filter(e -> e.getKey().canEnchant(stack)).forEach(e -> stack.enchant(e.getKey(), e.getValue()));
             return stack;
@@ -64,54 +52,25 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
         return stack;
     }
 
-    default CompoundTag validateTag(ItemStack stack, Material primary) {
-        CompoundTag dataTag = stack.getOrCreateTagElement(Ref.TAG_TOOL_DATA);
-        dataTag.putString(Ref.KEY_TOOL_DATA_PRIMARY_MATERIAL, primary.getId());
-        return dataTag;
-    }
-
-    default void onGenericFillItemGroup(CreativeModeTab group, NonNullList<ItemStack> list) {
-        if (group != Ref.TAB_TOOLS) return;
-        list.add(asItemStack(Material.NULL));
-    }
-
     default void onGenericAddInformation(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(new TextComponent("Material: " + getMaterial(stack).getDisplayName().getString()));
         if (getAntimatterArmorType().getTooltip().size() != 0) tooltip.addAll(getAntimatterArmorType().getTooltip());
-    }
-
-    default Ingredient getRepairMaterial(ItemStack stack) {
-        Material primary = getMaterial(stack);
-        if (primary == null) {
-            return Ingredient.EMPTY;
-        }
-        if (primary.has(AntimatterMaterialTypes.GEM)) {
-            return Ingredient.of(TagUtils.getForgelikeItemTag("gems/".concat(primary.getId())));
-        } else if (primary.has(AntimatterMaterialTypes.INGOT)) {
-            return Ingredient.of(TagUtils.getForgelikeItemTag("ingots/".concat(primary.getId())));
-        } else if (primary.has(AntimatterMaterialTypes.DUST)) {
-            return Ingredient.of(TagUtils.getForgelikeItemTag("dusts/".concat(primary.getId())));
-        } //else if (ItemTags.getAllTags().getTag(new ResourceLocation("forge", "blocks/".concat(primary.getId()))) != null) {
-         //   return Ingredient.of(TagUtils.getForgeItemTag("blocks/".concat(primary.getId())));
-      //  }
-        return Ingredient.EMPTY;
     }
 
     @Override
     default int getItemColor(ItemStack stack, @Nullable Block block, int i) {
-        return i == 0 && getMaterial(stack) != null ? getMaterial(stack).getRGB() : -1;
+        return i == 0 && getMat() != null ? getMat().getRGB() : -1;
     }
 
     @Override
     default Texture[] getTextures() {
         List<Texture> textures = new ObjectArrayList<>();
         int layers = getAntimatterArmorType().getOverlayLayers();
-        textures.add(new Texture(getDomain(), "item/tool/".concat(getAntimatterArmorType().getId())));
+        textures.add(new Texture(Ref.ID, "item/tool/".concat(getAntimatterArmorType().getId())));
         if (layers == 1)
-            textures.add(new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterArmorType().getId())));
+            textures.add(new Texture(Ref.ID, "item/tool/overlay/".concat(getAntimatterArmorType().getId())));
         if (layers > 1) {
             for (int i = 1; i <= layers; i++) {
-                textures.add(new Texture(getDomain(), String.join("", "item/tool/overlay/", getAntimatterArmorType().getId(), "_", Integer.toString(i))));
+                textures.add(new Texture(Ref.ID, String.join("", "item/tool/overlay/", getAntimatterArmorType().getId(), "_", Integer.toString(i))));
             }
         }
         return textures.toArray(new Texture[textures.size()]);
@@ -126,19 +85,14 @@ public interface IAntimatterArmor extends ISharedAntimatterObject, IColorHandler
             Texture[] textures = getTextures();
             for (int i = 0; i < textures.length + 1; i++) {
                 if (i == textures.length) {
-                    builder.texture("layer" + i, new Texture(getDomain(), "item/tool/overlay/".concat(getAntimatterArmorType().getId()).concat("_probe")));
+                    builder.texture("layer" + i, new Texture(Ref.ID, "item/tool/overlay/".concat(getAntimatterArmorType().getId()).concat("_probe")));
                     continue;
                 }
                 builder.texture("layer" + i, textures[i]);
             }
-            prov.tex(item, "minecraft:item/handheld", getTextures()).override().predicate(new ResourceLocation(Ref.ID, "probe"), 1).model(new ResourceLocation(Ref.ID, "item/" + id + "_probe"));
+            prov.tex(item, "minecraft:item/handheld", getTextures()).override().predicate(new ResourceLocation(Ref.ID, "probe"), 1).model(new ResourceLocation(Ref.SHARED_ID, "item/" + id + "_probe")).end();
             return;
         }
         prov.tex(item, "minecraft:item/handheld", getTextures());
-    }
-
-    @Override
-    default String getDomain() {
-        return Ref.ID;
     }
 }

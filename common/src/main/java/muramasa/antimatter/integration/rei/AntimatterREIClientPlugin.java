@@ -8,6 +8,7 @@ import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.client.registry.entry.CollapsibleEntryRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryStack;
+import me.shedaniel.rei.api.common.entry.settings.EntrySettingsAdapterRegistry;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
 import me.shedaniel.rei.api.common.plugins.PluginManager;
 import me.shedaniel.rei.api.common.registry.ReloadStage;
@@ -121,6 +122,7 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
                 });
             });
         }
+        AntimatterJEIREIPlugin.getItemsToHide().forEach(i -> rule.hide(EntryStack.of(VanillaEntryTypes.ITEM, i.asItem().getDefaultInstance())));
     }
 
     @Override
@@ -173,4 +175,8 @@ public class AntimatterREIClientPlugin implements REIClientPlugin {
         CategoryRegistry.getInstance().get(BuiltinPlugin.CRAFTING).registerExtension(new REIMaterialRecipeExtension());
     }
 
+    @Override
+    public void registerEntrySettingsAdapters(EntrySettingsAdapterRegistry registry) {
+        REIClientPlugin.super.registerEntrySettingsAdapters(registry);
+    }
 }

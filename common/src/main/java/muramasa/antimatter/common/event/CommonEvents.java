@@ -54,12 +54,6 @@ public class CommonEvents {
                 if (leftTool.getPrimaryMaterial(left) != rightTool.getPrimaryMaterial(right) || leftTool.getSecondaryMaterial(left) != rightTool.getSecondaryMaterial(right)) {
                     return true;
                 }
-            } else if (left.getItem() instanceof IAntimatterArmor && right.getItem() instanceof IAntimatterArmor) {
-                IAntimatterArmor leftTool = (IAntimatterArmor) left.getItem();
-                IAntimatterArmor rightTool = (IAntimatterArmor) right.getItem();
-                if (leftTool.getMaterial(left) != rightTool.getMaterial(right)) {
-                    return true;
-                }
             }
         }
         return false;

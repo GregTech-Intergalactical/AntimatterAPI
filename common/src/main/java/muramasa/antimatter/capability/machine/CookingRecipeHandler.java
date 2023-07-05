@@ -16,9 +16,11 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
 
     protected int burnDuration = 0;
     protected static final Supplier<List<Ingredient>> BURNABLE = () -> Collections.singletonList(Ingredients.BURNABLES);
+    private final float burnMultiplier;
 
-    public CookingRecipeHandler(T tile) {
+    public CookingRecipeHandler(T tile, float burnMultiplier) {
         super(tile);
+        this.burnMultiplier = burnMultiplier;
     }
 
     private boolean consume(boolean simulate) {
@@ -28,7 +30,7 @@ public class CookingRecipeHandler<T extends TileEntityMachine<T>> extends Machin
             return !stack.isEmpty();
         }
         if (!(stack = tile.itemHandler.map(t -> t.consumeInputs(BURNABLE.get(), false)).orElse(Collections.emptyList())).isEmpty()) {
-            burnDuration += AntimatterPlatformUtils.getBurnTime(stack.get(0), null)/ 10;
+            burnDuration += AntimatterPlatformUtils.getBurnTime(stack.get(0), null) * burnMultiplier;
             return true;
         }
         return false;

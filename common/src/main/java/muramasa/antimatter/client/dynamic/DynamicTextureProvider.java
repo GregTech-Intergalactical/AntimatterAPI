@@ -1,18 +1,17 @@
 package muramasa.antimatter.client.dynamic;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
-import java.util.WeakHashMap;
 import java.util.function.Function;
 
 public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
@@ -23,20 +22,27 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
         public Random rand;
         @Nullable
         public BlockState state;
-        public IModelData data;
+        public BlockAndTintGetter level;
+
+        public BlockPos pos;
         public T source;
         public U key;
         public Direction currentDir;
         public String type;
 
-        public BuilderData(String type, Random r, BlockState s, IModelData d, T t, U u, Direction dir) {
+        public BuilderData(String type, Random r, BlockState s, BlockAndTintGetter l, BlockPos p, T t, U u, Direction dir) {
             rand = r;
             state = s;
-            data = d;
+            level = l;
+            pos = p;
             source = t;
             this.key = u;
             this.currentDir = dir;
             this.type = type;
+        }
+
+        BlockEntity getBlockEntity(){
+            return level.getBlockEntity(pos);
         }
     }
 
@@ -46,14 +52,14 @@ public class DynamicTextureProvider<T extends IDynamicModelProvider, U> {
         this.builder = builder;
     }
 
-    public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, IModelData data) {
-        return bakeQuads(type, state, t, key, data);
+    public List<BakedQuad>[] getQuads(String type, BlockState state, T t, U key, BlockAndTintGetter level, BlockPos pos) {
+        return bakeQuads(type, state, t, key, level, pos);
     }
 
-    private List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, IModelData data) {
+    private List<BakedQuad>[] bakeQuads(String type, BlockState state, T c, U key, BlockAndTintGetter level, BlockPos pos) {
         List<BakedQuad>[] bakedArray = new List[Ref.DIRS.length];
         for (Direction dir : Ref.DIRS) {
-            bakedArray[dir.get3DDataValue()] = builder.apply(new BuilderData(type, Ref.RNG, state, data, c, key, dir));
+            bakedArray[dir.get3DDataValue()] = builder.apply(new BuilderData(type, Ref.RNG, state, level, pos, c, key, dir));
         }
         return bakedArray;
     }

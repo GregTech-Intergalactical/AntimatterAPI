@@ -49,7 +49,7 @@ public class PatternBuilder {
         BlockMachine block = machine.getBlockState(tier);
         BlockState state;
         if (block.getType().allowVerticalFacing()) {
-            state = block.defaultBlockState().setValue(BlockMachine.HORIZONTAL_FACING, Direction.EAST).setValue(BlockStateProperties.FACING, frontSide.getAxis() == Direction.Axis.Y ? frontSide : frontSide.getOpposite());
+            state = block.defaultBlockState().setValue(BlockStateProperties.FACING, frontSide.getAxis() == Direction.Axis.Y ? frontSide : frontSide.getOpposite());
         } else {
             state = block.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, frontSide);
         }

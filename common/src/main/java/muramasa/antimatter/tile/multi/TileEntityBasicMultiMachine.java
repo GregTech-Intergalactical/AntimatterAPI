@@ -231,9 +231,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public <T> LazyOptional<T> getCapabilityFromFake(Class<T> cap, BlockPos pos, Direction side,
                                                      ICover coverPresent) {
-        if (cap == IItemHandler.class && itemHandler.isPresent() && (coverPresent instanceof CoverInput))
+        if (cap == IItemHandler.class && itemHandler.isPresent())
             return itemHandler.side(side).cast();
-        else if (cap == IFluidHandler.class && fluidHandler.isPresent() && (coverPresent instanceof CoverInput))
+        else if (cap == IFluidHandler.class && fluidHandler.isPresent())
             return fluidHandler.side(side).cast();
         else if (cap == IEnergyHandler.class && energyHandler.isPresent()
                 && (coverPresent instanceof CoverDynamo || coverPresent instanceof CoverEnergy))

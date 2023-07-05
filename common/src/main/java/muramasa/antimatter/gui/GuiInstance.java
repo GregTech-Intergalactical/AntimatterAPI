@@ -3,7 +3,6 @@ package muramasa.antimatter.gui;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import muramasa.antimatter.Antimatter;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.gui.container.IAntimatterContainer;
 import muramasa.antimatter.gui.core.RTree;
@@ -13,7 +12,9 @@ import muramasa.antimatter.gui.widget.ButtonWidget;
 import muramasa.antimatter.gui.widget.WidgetSupplier;
 import muramasa.antimatter.network.AntimatterNetwork;
 import muramasa.antimatter.network.packets.AbstractGuiEventPacket;
+import muramasa.antimatter.network.packets.ClientboundGuiSyncPacket;
 import muramasa.antimatter.network.packets.GuiSyncPacket;
+import muramasa.antimatter.network.packets.ServerboundGuiSyncPacket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
@@ -191,6 +192,11 @@ public class GuiInstance implements ICanSyncData {
         return this;
     }
 
+    public GuiInstance addButton(int x, int y, int w, int h, ButtonBody body, String tooltipKey) {
+        addWidget(ButtonWidget.build("textures/gui/button/gui_buttons.png", body, null, GuiEvents.EXTRA_BUTTON, buttonCounter++, tooltipKey).setSize(x, y, w, h));
+        return this;
+    }
+
     public Iterable<Widget> unsortedWidgets() {
         return widgets;
     }
@@ -215,7 +221,7 @@ public class GuiInstance implements ICanSyncData {
     }
 
     public void sendPacket(AbstractGuiEventPacket pkt) {
-        Antimatter.NETWORK.sendToServer(pkt.getChannelId(), pkt);
+        AntimatterNetwork.NETWORK.sendToServer(pkt);
     }
 
     /**
@@ -231,7 +237,7 @@ public class GuiInstance implements ICanSyncData {
             }
         }
         if (toSync.size() > 0)
-            write(toSync);
+            writeToClient(toSync);
     }
 
     public ItemStack getHeldItem() {
@@ -256,16 +262,16 @@ public class GuiInstance implements ICanSyncData {
         }
     }
 
-    private void write(final List<SyncHolder> data) {
-        GuiSyncPacket pkt = new GuiSyncPacket(data);
+    private void writeToClient(final List<SyncHolder> data) {
+        GuiSyncPacket pkt = new ClientboundGuiSyncPacket(data);
         for (ServerPlayer listener : ((IAntimatterContainer)container).listeners()) {
-            Antimatter.NETWORK.sendToClient(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt, listener);
+            AntimatterNetwork.NETWORK.sendToPlayer(pkt, listener);
         }
     }
 
     private void writeToServer(final List<SyncHolder> data) {
-        GuiSyncPacket pkt = new GuiSyncPacket(data);
-        Antimatter.NETWORK.sendToServer(AntimatterNetwork.GUI_SYNC_PACKET_ID, pkt);
+        GuiSyncPacket pkt = new ServerboundGuiSyncPacket(data);
+        AntimatterNetwork.NETWORK.sendToServer(pkt);
     }
 
     @Override

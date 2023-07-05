@@ -1,10 +1,10 @@
 package muramasa.antimatter.client;
 
-import dev.architectury.injectables.annotations.ExpectPlatform;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.client.baked.PipeBakedModel;
+import muramasa.antimatter.client.model.loader.*;
 import muramasa.antimatter.datagen.builder.AntimatterBlockModelBuilder;
 import muramasa.antimatter.datagen.providers.AntimatterBlockStateProvider;
 import muramasa.antimatter.datagen.providers.AntimatterItemModelProvider;
@@ -38,12 +38,14 @@ public class AntimatterModelManager {
 
     public static void init() {
         AntimatterModelManager.registerStaticConfigMap("pipe", () -> PipeBakedModel.CONFIGS);
-        initPlatform();
-    }
 
-    @ExpectPlatform
-    public static void initPlatform(){
-        throw new AssertionError();
+        new DefaultModelLoader(LOADER_MAIN);
+        new MachineModelLoader.CoverModelLoader(LOADER_COVER);
+        new MachineModelLoader.SideModelLoader(LOADER_MACHINE_SIDE);
+        new DynamicModelLoader(LOADER_DYNAMIC);
+        new MachineModelLoader(LOADER_MACHINE);
+        new PipeModelLoader(LOADER_PIPE);
+        new ProxyModelLoader(LOADER_PROXY);
     }
 
     public static void registerStaticConfigMap(String staticMapId, Supplier<Int2ObjectOpenHashMap<BakedModel[]>> configMapSupplier) {
