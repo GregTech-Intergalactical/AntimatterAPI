@@ -26,7 +26,6 @@ import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.worldgen.fabric.AntimatterFabricWorldgen;
 import net.devtech.arrp.api.RRPCallback;
-import net.devtech.arrp.api.SidedRRPCallback;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -38,7 +37,6 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 import net.fabricmc.loader.impl.entrypoint.EntrypointUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.packs.PackType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -131,14 +129,17 @@ public class AntimatterImpl implements ModInitializer {
 
     private <T> T getCap(Class<T> clazz, TileEntityFakeBlock fakeBlock, Direction side){
         if (fakeBlock.controllerPos != null) {
-            fakeBlock.controllerPos.forEach(t -> fakeBlock.controllers.add((TileEntityBasicMultiMachine<?>) fakeBlock.getLevel().getBlockEntity(t)));
+            if (fakeBlock.getLevel().getBlockEntity(fakeBlock.controllerPos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
+                fakeBlock.setController(basicMultiMachine);
+            }
             fakeBlock.controllerPos = null;
         }
-        for (TileEntityBasicMultiMachine<?> controller : fakeBlock.controllers) {
-            LazyOptional<T> opt = controller.getCapabilityFromFake(clazz, fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
-            if (opt.isPresent()) {
-                return opt.orElse(null);
-            }
+        if (fakeBlock.controller == null){
+            return null;
+        }
+        LazyOptional<T> opt = fakeBlock.controller.getCapabilityFromFake(clazz, fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
+        if (opt.isPresent()) {
+            return opt.orElse(null);
         }
         return null;
     }

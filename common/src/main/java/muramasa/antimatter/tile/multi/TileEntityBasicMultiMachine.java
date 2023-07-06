@@ -188,7 +188,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         return LazyOptional.empty();
     }
 
-    protected boolean allowsFakeTiles(){
+    public boolean allowsFakeTiles(){
         return false;
     }
 

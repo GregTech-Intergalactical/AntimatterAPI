@@ -1,6 +1,5 @@
 package muramasa.antimatter.structure;
 
-import muramasa.antimatter.Data;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -48,7 +47,11 @@ public class FakeTileElement extends StructureElement {
         BlockState state = machine.getLevel().getBlockState(pos);
         if (pred.evaluate(machine.getLevel(), pos, state)) {
             BlockEntity tile = machine.getLevel().getBlockEntity(pos);
-            if (tile instanceof TileEntityFakeBlock) {
+            if (tile instanceof TileEntityFakeBlock fake) {
+                if (fake.controller != null && !fake.controller.getBlockPos().equals(machine.getBlockPos())){
+                    result.withError("Fake Tile already has controller");
+                    return false;
+                }
                 result.addState("fake", pos, state);
                 return true;
             }
@@ -73,12 +76,11 @@ public class FakeTileElement extends StructureElement {
         BlockState oldState = world.getBlockState(pos);
         // Already set.
         if (count > 1) {
-            ((TileEntityFakeBlock) world.getBlockEntity(pos)).addController(machine);
             return;
         }
         TileEntityFakeBlock tile = (TileEntityFakeBlock) world.getBlockEntity(pos);
         tile.setFacing(machine.getFacing()).setCovers(covers);
-        tile.addController(machine);
+        tile.setController(machine);
         super.onBuild(machine, pos, result, count);
     }
 
