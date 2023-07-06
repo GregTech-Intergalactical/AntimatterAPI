@@ -1,6 +1,5 @@
 package muramasa.antimatter;
 
-import muramasa.antimatter.block.BlockProxy;
 import muramasa.antimatter.capability.IGuiHandler;
 import muramasa.antimatter.cover.CoverDebug;
 import muramasa.antimatter.cover.CoverDynamo;
