@@ -100,7 +100,7 @@ public class ItemEnergyHandler extends EnergyHandler implements IEnergyHandlerIt
             if (!ok) {
                 return false;
             }
-            long amps = Math.min(data.getAmps(true), this.availableAmpsInput());
+            long amps = Math.min(data.getAmps(true), this.availableAmpsInput(data.getVoltage()));
             amps = Math.min(amps, (this.getCapacity() - this.getEnergy()) / this.getInputVoltage());
             long energy = data.getEnergy(amps, true);
             this.setEnergy(getEnergy() + energy);

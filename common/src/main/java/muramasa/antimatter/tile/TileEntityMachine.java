@@ -2,6 +2,7 @@ package muramasa.antimatter.tile;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterAPI;
+import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.AntimatterProperties;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.EnergyHandler;
@@ -250,13 +251,17 @@ public class TileEntityMachine<T extends TileEntityMachine<T>> extends TileEntit
         coverHandler.ifPresent(MachineCoverHandler::onUpdate);
         this.recipeHandler.ifPresent(MachineRecipeHandler::onServerUpdate);
 
-        if (false) {
+        if (allowExplosionsInRain()) {
             double d = Ref.RNG.nextDouble();
             if (d > 0.97D && this.level.isRainingAt(new BlockPos(this.worldPosition.getX(), this.worldPosition.getY() + 1, this.worldPosition.getZ()))) {
                 if (this.energyHandler.map(t -> t.getEnergy() > 0).orElse(false))
                     Utils.createExplosion(this.level, worldPosition, 6.0F, Explosion.BlockInteraction.DESTROY);
             }
         }
+    }
+
+    protected boolean allowExplosionsInRain(){
+        return AntimatterConfig.GAMEPLAY.RAIN_EXPLODES_MACHINES;
     }
 
     @Override

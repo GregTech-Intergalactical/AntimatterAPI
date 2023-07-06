@@ -151,8 +151,8 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     @Override
-    public long availableAmpsInput() {
-        return super.availableAmpsInput() + this.cachedItems.stream().map(Pair::right).mapToLong(IGTNode::availableAmpsInput).sum();
+    public long availableAmpsInput(long voltage) {
+        return super.availableAmpsInput(voltage) + this.cachedItems.stream().map(Pair::right).mapToLong(node -> node.availableAmpsInput(voltage)).sum();
     }
 
     @Override
