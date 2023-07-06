@@ -81,7 +81,7 @@ public class EnergyHandler implements IEnergyHandler {
             if (!ok) {
                 return false;
             }
-            long amps = Math.min(data.getAmps(true), this.availableAmpsInput());
+            long amps = Math.min(data.getAmps(true), this.availableAmpsInput(data.getVoltage()));
             amps = Math.min(amps, (this.capacity - this.energy) / this.getInputVoltage());
             this.energy += data.getEnergy(amps, true);
             data.useAmps(true, amps);

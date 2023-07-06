@@ -56,7 +56,7 @@ public abstract class TileEntityStorage<T extends TileEntityStorage<T>> extends 
     public List<String> getInfo() {
         List<String> info = super.getInfo();
         energyHandler.ifPresent(h -> {
-            info.add("Amperage In: " + h.availableAmpsInput());
+            info.add("Amperage In: " + h.availableAmpsInput(this.getMaxInputVoltage()));
             info.add("Amperage Out: " + h.availableAmpsOutput());
         });
         return info;
