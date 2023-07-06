@@ -195,19 +195,22 @@ public class ForgeCommonEvents {
                 @NotNull
                 @Override
                 public <T> LazyOptional<T> getCapability(@NotNull Capability<T> capability, @Nullable Direction side) {
-                    if (fakeBlock.controllerPos != null) {
-                        fakeBlock.controllerPos.forEach(t -> fakeBlock.controllers.add((TileEntityBasicMultiMachine<?>) fakeBlock.getLevel().getBlockEntity(t)));
+                    if (fakeBlock.controllerPos != null){
+                        if (fakeBlock.getLevel().getBlockEntity(fakeBlock.controllerPos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
+                            fakeBlock.setController(basicMultiMachine);
+                        }
                         fakeBlock.controllerPos = null;
                     }
-                    for (TileEntityBasicMultiMachine<?> controller : fakeBlock.controllers) {
-                        LazyOptional<T> opt = controller.getCapabilityFromFake((Class<T>) AntimatterCaps.CAP_MAP.inverse().get(capability), fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
-                        if (opt.isPresent()) {
-                            if (capability == CapabilityEnergy.ENERGY && opt.map(e -> e instanceof IRFNode).orElse(false)){
-                                LazyOptional<T> finalOpt = opt;
-                                opt = LazyOptional.of(() -> finalOpt.map(e -> new ForgeEnergyContainer<>(((IRFNode)e), fakeBlock)).get()).cast();
-                            }
-                            return opt;
+                    if (fakeBlock.controller == null){
+                        return LazyOptional.empty();
+                    }
+                    LazyOptional<T> opt = fakeBlock.controller.getCapabilityFromFake((Class<T>) AntimatterCaps.CAP_MAP.inverse().get(capability), fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
+                    if (opt.isPresent()) {
+                        if (capability == CapabilityEnergy.ENERGY && opt.map(e -> e instanceof IRFNode).orElse(false)){
+                            LazyOptional<T> finalOpt = opt;
+                            opt = LazyOptional.of(() -> finalOpt.map(e -> new ForgeEnergyContainer<>(((IRFNode)e), fakeBlock)).get()).cast();
                         }
+                        return opt;
                     }
                     return LazyOptional.empty();
                 }
