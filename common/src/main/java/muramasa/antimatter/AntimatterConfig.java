@@ -69,7 +69,7 @@ public class AntimatterConfig {
 
         public int AXE_TIMBER_MAX;
 
-        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, LOSSY_PART_CRAFTING, MACHINES_EXPLODE, EXPORT_DEFAULT_RECIPES;
+        public boolean HARDCORE_CABLES, HARDCORE_PIPES, AXE_TIMBER, SMARTER_TREE_DETECTION, PLAY_CRAFTING_SOUNDS, LOSSY_PART_CRAFTING, MACHINES_EXPLODE, EXPORT_DEFAULT_RECIPES, RAIN_EXPLODES_MACHINES;
 
     }
 
@@ -143,7 +143,7 @@ public class AntimatterConfig {
                 ORE_VEIN_SMALL_ORE_MARKERS_MULTI;
 
         public final BooleanValue ALL_MATERIAL_ITEMS, VANILLA_ORE_GEN, VANILLA_STONE_GEN, SMALL_ORES, SURFACE_ROCKS, ORE_VEINS, STONE_LAYERS, STONE_LAYER_ORES, ORE_VEIN_SMALL_ORE_MARKERS, REGENERATE_DEFAULT_WORLDGEN_JSONS,
-                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, LOSSY_PART_CRAFTING, MACHINES_EXPLODE, AXE_TIMBER, SMARTER_TREE_DETECTION, EXPORT_DEFAULT_RECIPES, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS;
+                ORE_VEIN_SPECTATOR_DEBUG, HARDCORE_CABLES, INPUT_RESET_MULTIBLOCK, HARDCORE_PIPES, LOSSY_PART_CRAFTING, MACHINES_EXPLODE, AXE_TIMBER, SMARTER_TREE_DETECTION, EXPORT_DEFAULT_RECIPES, PLAY_CRAFTING_SOUNDS, ENABLE_ALL_REGISTRARS, RAIN_EXPLODES_MACHINES;
         public CommonConfig(Builder builder) {
 
             builder.push("Data");
@@ -274,6 +274,10 @@ public class AntimatterConfig {
                     .translation(Ref.ID + ".config.export_default_recipes")
                     .define("EXPORT_DEFAULT_RECIPES", false);
 
+            RAIN_EXPLODES_MACHINES = builder.comment("Enable machines exploding when it's raining - Default: true")
+                    .translation(Ref.ID + ".config.rain_explodes_machines")
+                    .define("RAIN_EXPLODES_MACHINES", true);
+
             builder.push("Treefelling");
 
             SMARTER_TREE_DETECTION = builder.comment("Smart tree detection, instead of just going up in a column, it searches surrounding connected blocks too. Default: false")
@@ -351,6 +355,7 @@ public class AntimatterConfig {
         GAMEPLAY.PLAY_CRAFTING_SOUNDS = COMMON_CONFIG.PLAY_CRAFTING_SOUNDS.get();
         GAMEPLAY.MACHINES_EXPLODE = COMMON_CONFIG.MACHINES_EXPLODE.get();
         GAMEPLAY.EXPORT_DEFAULT_RECIPES = COMMON_CONFIG.EXPORT_DEFAULT_RECIPES.get();
+        GAMEPLAY.RAIN_EXPLODES_MACHINES = COMMON_CONFIG.RAIN_EXPLODES_MACHINES.get();
 
         MOD_COMPAT.ENABLE_ALL_REGISTRARS = COMMON_CONFIG.ENABLE_ALL_REGISTRARS.get();
 
