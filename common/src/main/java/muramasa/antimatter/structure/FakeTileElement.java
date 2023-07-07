@@ -1,5 +1,6 @@
 package muramasa.antimatter.structure;
 
+import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import muramasa.antimatter.cover.CoverFactory;
 import muramasa.antimatter.tile.TileEntityFakeBlock;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -8,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -22,24 +24,24 @@ import java.util.List;
  * appearance of another block
  * as well as rendering possible covers on it. It also forwards capability calls
  * to the master controller.
- * (In the case of multiple controllers, it returns the first one that is
- * non-empty).
  */
-public class FakeTileElement extends StructureElement {
+public class FakeTileElement implements IStructureElement<TileEntityBasicMultiMachine<?>> {
 
     private IBlockStatePredicate pred;
+    private BlockState state;
     private final EnumMap<Direction, CoverFactory> covers = new EnumMap<>(Direction.class);
 
     public FakeTileElement(IBlockStatePredicate pred) {
         this.pred = pred;
     }
 
-    public FakeTileElement(Block... pred) {
-        this.pred = (reader, pos, state) -> Arrays.stream(pred).anyMatch(state::is);
+    public FakeTileElement(Block pred) {
+        this(pred.defaultBlockState());
     }
 
-    public FakeTileElement(BlockState... pred) {
-        this.pred = (reader, pos, state) -> Arrays.asList(pred).contains(state);
+    public FakeTileElement(BlockState pred) {
+        this.state = pred;
+        this.pred = (reader, pos, state) -> state == this.state;
     }
 
     @Override
@@ -84,9 +86,8 @@ public class FakeTileElement extends StructureElement {
         super.onBuild(machine, pos, result, count);
     }
 
-    @Override
     public void onInfoTooltip(List<Component> text, long count, TileEntityBasicMultiMachine<?> machine) {
-        super.onInfoTooltip(text, count, machine);
+        //super.onInfoTooltip(text, count, machine);
         text.add(new TextComponent("Element replaced with a TileEntity to allow input/output."));
     }
 
@@ -102,5 +103,35 @@ public class FakeTileElement extends StructureElement {
             ((TileEntityFakeBlock) tile).removeController(machine);
         }
         super.onRemove(machine, pos, result, count);
+    }
+
+    @Override
+    public boolean check(TileEntityBasicMultiMachine<?> machine, Level world, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
+        BlockState state = world.getBlockState(pos);
+        if (pred.evaluate(machine.getLevel(), pos, state)) {
+            BlockEntity tile = world.getBlockEntity(pos);
+            if (tile instanceof TileEntityFakeBlock fake) {
+                return fake.controller == null || fake.controller.getBlockPos().equals(machine.getBlockPos());
+            }
+            return false;
+        } else if (StructureCache.refCount(world, pos) > 0) {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean spawnHint(TileEntityBasicMultiMachine<?> basicMultiMachine, Level world, int x, int y, int z, ItemStack trigger) {
+        return false;
+    }
+
+    @Override
+    public boolean placeBlock(TileEntityBasicMultiMachine<?> basicMultiMachine, Level world, int x, int y, int z, ItemStack trigger) {
+        if (state != null){
+            world.setBlock(new BlockPos(x, y, z), state, 3);
+            return true;
+        }
+        return false;
     }
 }

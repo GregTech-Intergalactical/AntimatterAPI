@@ -33,6 +33,7 @@ import muramasa.antimatter.texture.ITextureHandler;
 import muramasa.antimatter.texture.Texture;
 import muramasa.antimatter.tile.TileEntityBase;
 import muramasa.antimatter.tile.TileEntityMachine;
+import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.Utils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -544,8 +545,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public void setStructure(Function<StructureBuilder, Structure> func) {
-        getTiers().forEach(t -> setStructure(t, func));
+    public <T extends TileEntityBasicMultiMachine<T>> void setStructure(Class<T> clazz, Function<StructureBuilder<T>, Structure> func) {
+        getTiers().forEach(t -> setStructure(clazz, t, func));
     }
 
     /**
@@ -554,8 +555,8 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public void setStructure(Tier tier, Function<StructureBuilder, Structure> func) {
-        structures.put(tier, func.apply(new StructureBuilder()));
+    public <T extends TileEntityBasicMultiMachine<T>> void setStructure(Class<T> clazz, Tier tier, Function<StructureBuilder<T>, Structure> func) {
+        structures.put(tier, func.apply(new StructureBuilder<>()));
     }
 
     /**
