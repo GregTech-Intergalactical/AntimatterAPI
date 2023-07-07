@@ -4,6 +4,7 @@ import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import muramasa.antimatter.capability.IComponentHandler;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.tile.multi.TileEntityMultiMachine;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -75,18 +76,17 @@ public class ComponentElement extends StructureElement implements IStructureElem
     @Override
     public boolean check(TileEntityBasicMultiMachine<?> basicMultiMachine, Level world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-
-        rBlockEntity tile = machine.getLevel().getBlockEntity(pos);
-        if (tile instanceof IComponent) {
-            if (((IComponent) tile).getComponentHandler().isPresent()) {
-                IComponentHandler component = ((IComponent) tile).getComponentHandler().orElse(null);
+        if (!(basicMultiMachine instanceof TileEntityMultiMachine<?> multiMachine)) return false;
+        BlockEntity tile = world.getBlockEntity(pos);
+        if (tile instanceof IComponent component) {
+            if (component.getComponentHandler().isPresent()) {
+                IComponentHandler componentHandler = ((IComponent) tile).getComponentHandler().orElse(null);
                 for (int i = 0; i < objects.length; i++) {
-                    if (objects[i].getId().equals(component.getId())) {
-                        result.addComponent(elementId, component);
+                    if (objects[i].getId().equals(componentHandler.getId())) {
+                        multiMachine.addComponent(elementId, componentHandler);
                         return true;
                     }
                 }
-                result.withError("Expected: '" + elementId + "' Found: '" + component.getId() + "' @" + pos);
                 return false;
             }
         }

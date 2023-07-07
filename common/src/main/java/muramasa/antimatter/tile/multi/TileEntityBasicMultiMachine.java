@@ -55,7 +55,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     private IAlignmentLimits limits = getInitialAlignmentLimits();
     /**
      * To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded
-     * from disk.https://discord.com/channels/817576132726620200/833939581798711306/1117494873659019374
+     * from disk.<a href="https://discord.com/channels/817576132726620200/833939581798711306/1117494873659019374">...</a>
      **/
     protected boolean shouldCheckFirstTick = true;
     // Number of calls into checkStructure, invalidateStructure. if > 0 ignore

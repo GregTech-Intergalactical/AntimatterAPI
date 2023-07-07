@@ -3,6 +3,7 @@ package muramasa.antimatter.tile.multi;
 import com.mojang.blaze3d.vertex.PoseStack;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.IComponentHandler;
+import muramasa.antimatter.capability.machine.ControllerComponentHandler;
 import muramasa.antimatter.capability.machine.MultiMachineEnergyHandler;
 import muramasa.antimatter.capability.machine.MultiMachineFluidHandler;
 import muramasa.antimatter.capability.machine.MultiMachineItemHandler;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import tesseract.api.heat.IHeatHandler;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +35,8 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 
     protected long EUt;
     protected List<IHeatHandler> heatHandlers = Collections.emptyList();
+
+    protected List<IComponentHandler> componentHandlers = new ArrayList<>();
 
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
@@ -225,6 +229,15 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 //        }
 //        return matchCount >= fluids.length;
 //    }
+
+
+    public List<IComponentHandler> getComponentHandlers() {
+        return componentHandlers;
+    }
+
+    public void addComponent(IComponentHandler handler){
+        componentHandlers.add(handler);
+    }
 
     @Override
     public long getMaxInputVoltage() {
