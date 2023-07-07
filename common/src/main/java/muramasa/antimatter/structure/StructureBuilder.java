@@ -25,11 +25,6 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
     public StructureDefinition.Builder<TileEntityBasicMultiMachine<T>> STRUCTURE_BUILDER = StructureDefinition.builder();
 
     private Map<String, StructurePartBuilder> parts = new Object2ObjectOpenHashMap<>();
-    public static void addGlobalElement(String key, StructureElement element) {
-        globalElementLookup.put(key, element);
-    }
-
-    private static final Object2ObjectMap<String, StructureElement> globalElementLookup = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<String, IStructureElement<?>> elementLookup = new Object2ObjectOpenHashMap<>();
     private Set<Direction> allowedFacings = Set.of(Ref.DIRS);
 
@@ -55,22 +50,11 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         return this;
     }
 
-    public StructureBuilder at(String key, String name, IAntimatterObject... objects) {
-        elementLookup.put(key, new ComponentElement(name, objects));
-        return this;
+    public StructureBuilder<T> at(String key, Collection<? extends IAntimatterObject> objects) {
+        return at(key, objects.toArray(new IAntimatterObject[0]));
     }
 
-    public StructureBuilder at(String key, Collection<? extends IAntimatterObject> objects) {
-        elementLookup.put(key, new ComponentElement(objects.toArray(new IAntimatterObject[0])));
-        return this;
-    }
-
-    public StructureBuilder at(String key, String name, Collection<? extends IAntimatterObject> objects) {
-        elementLookup.put(key, new ComponentElement(name, objects.toArray(new IAntimatterObject[0])));
-        return this;
-    }
-
-    public StructureBuilder facings(Direction... faces) {
+    public StructureBuilder<T> facings(Direction... faces) {
         allowedFacings = Set.of(faces);
         return this;
     }

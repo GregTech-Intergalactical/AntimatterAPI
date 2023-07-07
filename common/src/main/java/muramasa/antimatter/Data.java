@@ -50,11 +50,6 @@ public class Data {
 
     public static final Material WRENCH_MATERIAL = new Material(MaterialColor.METAL, false, true, true, true, false, false, PushReaction.NORMAL);
 
-    static {
-        StructureBuilder.addGlobalElement("A", BlockStateElement.AIR);
-        StructureBuilder.addGlobalElement(" ", StructureElement.IGNORE);
-    }
-
     public static DebugScannerItem DEBUG_SCANNER = new DebugScannerItem(Ref.ID, "debug_scanner").tip(ChatFormatting.AQUA + "" + ChatFormatting.ITALIC + "Development Item");
 
     //public static Machine<?> MACHINE_INVALID = new Machine<>(Ref.ID, "invalid");
