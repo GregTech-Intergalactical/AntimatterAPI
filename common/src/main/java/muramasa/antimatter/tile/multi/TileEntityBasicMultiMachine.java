@@ -1,5 +1,6 @@
 package muramasa.antimatter.tile.multi;
 
+import com.google.common.collect.Lists;
 import com.gtnewhorizon.structurelib.StructureLibAPI;
 import com.gtnewhorizon.structurelib.alignment.IAlignment;
 import com.gtnewhorizon.structurelib.alignment.IAlignmentLimits;
@@ -8,6 +9,8 @@ import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
 import com.gtnewhorizon.structurelib.alignment.enumerable.Flip;
 import com.gtnewhorizon.structurelib.alignment.enumerable.Rotation;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import muramasa.antimatter.AntimatterConfig;
 import muramasa.antimatter.capability.IComponentHandler;
@@ -55,7 +58,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     private IAlignmentLimits limits = getInitialAlignmentLimits();
     /**
      * To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded
-     * from disk.<a href="https://discord.com/channels/817576132726620200/833939581798711306/1117494873659019374">...</a>
+     * from disk.
      **/
     protected boolean shouldCheckFirstTick = true;
     // Number of calls into checkStructure, invalidateStructure. if > 0 ignore
@@ -71,6 +74,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public final LazyOptional<ControllerComponentHandler> componentHandler = LazyOptional
             .of(() -> new ControllerComponentHandler(this));
+
+
+    public Object2ObjectMap<String, List<IComponentHandler>> components = new Object2ObjectOpenHashMap<>();
 
     public TileEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -341,19 +347,19 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     public List<IComponentHandler> getComponents(String id) {
-        if (result != null) {
-            List<IComponentHandler> list = result.components.get(id);
-            return list != null ? list : Collections.emptyList();
-        }
-        return Collections.emptyList();
+        List<IComponentHandler> list = components.get(id);
+        return list != null ? list : Collections.emptyList();
     }
 
-    public List<BlockState> getStates(String id) {
-        if (result != null) {
-            List<BlockState> list = result.states.get(id);
-            return list != null ? list : Collections.emptyList();
+    public void addComponent(String elementId, IComponentHandler component) {
+        List<IComponentHandler> existing = components.get(component.getId());
+        if (existing == null) components.put(component.getId(), Lists.newArrayList(component));
+        else existing.add(component);
+        if (!elementId.isEmpty() && !elementId.equals(component.getId())) {
+            existing = components.get(elementId);
+            if (existing == null) components.put(elementId, Lists.newArrayList(component));
+            else existing.add(component);
         }
-        return Collections.emptyList();
     }
 
     public boolean isStructureValid() {

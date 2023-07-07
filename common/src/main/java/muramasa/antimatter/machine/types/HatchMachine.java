@@ -13,9 +13,11 @@ import static muramasa.antimatter.machine.MachineFlag.COVERABLE;
 import static muramasa.antimatter.machine.MachineFlag.HATCH;
 
 public class HatchMachine extends Machine<HatchMachine> {
+    String componentId;
 
     public HatchMachine(String domain, String id, CoverFactory cover) {
         super(domain, id);
+        componentId = id;
         setTile(TileEntityHatch::new);
         setTiers(Tier.getAllElectric());
         addFlags(HATCH, COVERABLE);
@@ -25,6 +27,15 @@ public class HatchMachine extends Machine<HatchMachine> {
         setOutputCover(cover);
         frontCovers();
         allowFrontIO();
+    }
+
+    public HatchMachine setComponentId(String componentId) {
+        this.componentId = componentId;
+        return this;
+    }
+
+    public String getComponentId() {
+        return componentId;
     }
 
     @Override

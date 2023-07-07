@@ -8,8 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
-import muramasa.antimatter.block.BlockFakeTile;
-import muramasa.antimatter.machine.types.Machine;
+import muramasa.antimatter.machine.types.HatchMachine;
 import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.structure.impl.SimpleStructure;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
@@ -40,8 +39,8 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
     public StructureBuilder<T> at(String key, IAntimatterObject... objects) {
         List<IStructureElement<T>> elements = new ArrayList<>();
         for (IAntimatterObject object : objects) {
-            if (object instanceof Machine<?> machine){
-                elements.add(new MachineElement<>(machine));
+            if (object instanceof HatchMachine machine){
+                elements.add(new HatchElement<>(machine));
             } else if (object instanceof Block block){
                 elements.add(StructureUtility.ofBlock(block));
             }

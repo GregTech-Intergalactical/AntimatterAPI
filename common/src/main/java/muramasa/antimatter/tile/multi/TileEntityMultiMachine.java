@@ -36,8 +36,6 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
     protected long EUt;
     protected List<IHeatHandler> heatHandlers = Collections.emptyList();
 
-    protected List<IComponentHandler> componentHandlers = new ArrayList<>();
-
     //TODO: Sync multiblock state(if it is formed), otherwise the textures might bug out. Not a big deal.
     public TileEntityMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -229,15 +227,6 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 //        }
 //        return matchCount >= fluids.length;
 //    }
-
-
-    public List<IComponentHandler> getComponentHandlers() {
-        return componentHandlers;
-    }
-
-    public void addComponent(IComponentHandler handler){
-        componentHandlers.add(handler);
-    }
 
     @Override
     public long getMaxInputVoltage() {

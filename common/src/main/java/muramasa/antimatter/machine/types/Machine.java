@@ -59,7 +59,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static muramasa.antimatter.Data.COVEROUTPUT;
-import static muramasa.antimatter.machine.MachineFlag.BASIC;
 import static muramasa.antimatter.machine.MachineFlag.RECIPE;
 
 /**
@@ -545,7 +544,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public <T extends TileEntityBasicMultiMachine<T>> void setStructure(Class<T> clazz, Function<StructureBuilder<T>, Structure> func) {
+    public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Function<StructureBuilder<U>, Structure> func) {
         getTiers().forEach(t -> setStructure(clazz, t, func));
     }
 
@@ -555,7 +554,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      *
      * @param func the function to build a structure.
      */
-    public <T extends TileEntityBasicMultiMachine<T>> void setStructure(Class<T> clazz, Tier tier, Function<StructureBuilder<T>, Structure> func) {
+    public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Tier tier, Function<StructureBuilder<U>, Structure> func) {
         structures.put(tier, func.apply(new StructureBuilder<>()));
     }
 
