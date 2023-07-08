@@ -26,7 +26,6 @@ import muramasa.antimatter.registration.IRegistryEntryProvider;
 import muramasa.antimatter.registration.RegistryType;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureBuilder;
-import muramasa.antimatter.structure.impl.MultiStructure;
 import muramasa.antimatter.texture.IOverlayModeler;
 import muramasa.antimatter.texture.IOverlayTexturer;
 import muramasa.antimatter.texture.ITextureHandler;
@@ -556,26 +555,6 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
      */
     public <U extends TileEntityBasicMultiMachine<U>> void setStructure(Class<U> clazz, Tier tier, Function<StructureBuilder<U>, Structure> func) {
         structures.put(tier, func.apply(new StructureBuilder<>()));
-    }
-
-    /**
-     * Set the multiblock structure for this machine, for all tiers.
-     * Useless if the tile is not a multiblock.
-     *
-     * @param func the function to build a structure.
-     */
-    public void setStructures(List<Structure> func) {
-        getTiers().forEach(t -> setStructures(t, func));
-    }
-
-    /**
-     * Set the multiblock structure for this machine, for one tier.
-     * Useless if the tile is not a multiblock.
-     *
-     * @param func the function to build a structure.
-     */
-    public void setStructures(Tier tier, List<Structure> func) {
-        structures.put(tier, new MultiStructure(func));
     }
 
     @Environment(EnvType.CLIENT)

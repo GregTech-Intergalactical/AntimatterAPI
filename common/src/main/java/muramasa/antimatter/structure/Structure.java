@@ -1,74 +1,59 @@
 package muramasa.antimatter.structure;
 
+import com.google.common.collect.ImmutableMap;
+import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.longs.LongList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import muramasa.antimatter.capability.IComponentHandler;
-import muramasa.antimatter.registration.IAntimatterObject;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.Direction;
+import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Structure {
+public class Structure<T extends TileEntityBasicMultiMachine<T>> {
+    private final IStructureDefinition<T> structureDefinition;
+
+
+    private final Map<String, Pair<Integer, Integer>> minMaxMap;
+
+    private final Map<String, Triple<Integer, Integer, Direction.Axis>> partRequirements;
 
     private final Map<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
 
-    public abstract StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile);
-
-    public abstract LongList allPositions(TileEntityBasicMultiMachine<?> tile);
-
-    public abstract int3 size();
-
-    public abstract int2 offset();
-
-    public Structure exact(int i, IAntimatterObject... objects) {
-        Arrays.stream(objects).forEach(o -> addReq(o.getId(), r -> (r.components.containsKey(o.getId()) && r.components.get(o.getId()).size() == i) || (r.states.containsKey(o.getId()) && r.states.get(o.getId()).size() == i)));
-        return this;
+    protected Structure(IStructureDefinition<T> structureDefinition, ImmutableMap<String, Triple<Integer, Integer, Direction.Axis>> partRequirements, ImmutableMap<String, Pair<Integer, Integer>> minMaxMap) {
+        this.structureDefinition = structureDefinition;
+        this.partRequirements = partRequirements;
+        this.minMaxMap = minMaxMap;
     }
 
-    /**
-     * Requires at least i of all of the objects.
-     * @param i amount
-     * @param objects the array of objects to add as requirement.
-     * @return this
-     */
-    public Structure min(int i, IAntimatterObject... objects) {
-        Arrays.stream(objects).forEach(o -> addReq(o.getId(), r -> (r.components.containsKey(o.getId()) && r.components.get(o.getId()).size() >= i) || (r.states.containsKey(o.getId()) && r.states.get(o.getId()).size() >= i)));
-        return this;
+    public IStructureDefinition<T> getStructureDefinition() {
+        return structureDefinition;
     }
 
-    /**
-     * Adds a requirement that the objects are together at least i in count.
-     * @param id requirement id.
-     * @param i how many components to have
-     * @param objects the list of valid components.
-     * @return this
-     */
-    public Structure combined(String id, int i, IAntimatterObject... objects) {
-        addReq(id, r -> {
-            int amount = 0;
-            for (IAntimatterObject object : objects) {
-                List<IComponentHandler> list = r.components.get(object.getId());
-                List<BlockState> states = r.states.get(object.getId());
-                amount += list != null ? list.size() : 0;
-                amount += states != null ? states.size() : 0;
-            }
-            return amount >= i;
-        });
-        return this;
+    public Map<String, Pair<Integer, Integer>> getMinMaxMap() {
+        return minMaxMap;
     }
 
-    public Structure addReq(String id, IRequirement req) {
-        requirements.put(id, req);
-        return this;
+    public Map<String, Triple<Integer, Integer, Direction.Axis>> getPartRequirements() {
+        return partRequirements;
     }
+
+    public boolean check(T tile){
+
+        return false;
+    }
+
+    /*public abstract StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile);
+
+    public abstract LongList allPositions(TileEntityBasicMultiMachine<?> tile);*/
 
     public List<BlockPos> allShared(StructureElement element, TileEntityBasicMultiMachine<?> tile) {
         return Collections.emptyList();

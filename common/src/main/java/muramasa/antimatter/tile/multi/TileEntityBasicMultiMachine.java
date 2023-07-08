@@ -41,6 +41,7 @@ import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.rf.IRFNode;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +54,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     private final Set<StructureHandle<?>> allHandlers = new ObjectOpenHashSet<>();
     protected StructureResult result = null;
+    protected boolean validStructure = false;
+
+    protected List<BlockPos> structurePositions = new ArrayList<>();
 
     private ExtendedFacing extendedFacing = ExtendedFacing.DEFAULT;
     private IAlignmentLimits limits = getInitialAlignmentLimits();
@@ -180,7 +184,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (structure == null)
             return false;
         checkingStructure++;
-        StructureResult result = structure.evaluate(this);
+        /*StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             if (level instanceof TrackedDummyWorld) {
                 this.result = result;
@@ -224,7 +228,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             // Antimatter.LOGGER.info("[Structure Debug] Error " + result.getError());
         }
         // if we reached here something went wrong.
-        invalidateStructure();
+        invalidateStructure();*/
         checkingStructure--;
         return false;
     }
@@ -299,7 +303,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             StructureCache.remove(level, getBlockPos());
             oldState = old;
             this.facingOverride = Utils.dirFromState(oldState);
-            StructureCache.add(level, getBlockPos(), this.getMachineType().getStructure(getMachineTier()).allPositions(this));
+            //StructureCache.add(level, getBlockPos(), this.getMachineType().getStructure(getMachineTier()).allPositions(this));
             checkStructure();
             oldState = null;
             facingOverride = null;
@@ -315,7 +319,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     protected void invalidateStructure() {
         if (this.getLevel() instanceof TrackedDummyWorld)
             return;
-        if (result == null) {
+        /*if (result == null) {
             if (isServerSide() && getMachineState() != getDefaultMachineState()) {
                 resetMachine();
             }
@@ -335,7 +339,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 Utils.markTileForRenderUpdate(c.getTile());
             }));
             result = null;
-        }
+        }*/
         checkingStructure--;
     }
 
@@ -371,7 +375,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         super.onLoad();
         Structure struc = getMachineType().getStructure(getMachineTier());
         if (struc != null) {
-            StructureCache.add(level, worldPosition, struc.allPositions(this));
+            //StructureCache.add(level, worldPosition, struc.allPositions(this));
         }
     }
 

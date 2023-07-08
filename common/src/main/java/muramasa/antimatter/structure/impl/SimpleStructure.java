@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import muramasa.antimatter.machine.BlockMachine;
 import muramasa.antimatter.structure.Structure;
 import muramasa.antimatter.structure.StructureElement;
 import muramasa.antimatter.structure.StructureResult;
@@ -15,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +23,7 @@ import static muramasa.antimatter.util.Dir.FORWARD;
 import static muramasa.antimatter.util.Dir.RIGHT;
 import static muramasa.antimatter.util.Dir.UP;
 
-public class SimpleStructure extends Structure {
+public class SimpleStructure {
 
     private final int3 size;
     private final int2 offset = new int2();
@@ -43,7 +41,7 @@ public class SimpleStructure extends Structure {
         return this;
     }
 
-    @Override
+    /*@Override
     public List<BlockPos> allShared(StructureElement element, TileEntityBasicMultiMachine<?> tile) {
         List<BlockPos> ret = new ObjectArrayList<>();
         Iterable<Point> iter = () -> this.forAllElements(tile.getBlockPos(), tile.getFacing());
@@ -74,9 +72,6 @@ public class SimpleStructure extends Structure {
     @Override
     public LongList allPositions(TileEntityBasicMultiMachine<?> tile) {
         LongList l = new LongArrayList();
-        for (Iterator<Point> it = forAllElements(tile.getBlockPos(), tile.getFacing()); it.hasNext(); ) {
-            l.add(it.next().pos.asLong());
-        }
         return l;
     }
 
@@ -111,5 +106,5 @@ public class SimpleStructure extends Structure {
                 return point;
             }
         };
-    }
+    }*/
 }

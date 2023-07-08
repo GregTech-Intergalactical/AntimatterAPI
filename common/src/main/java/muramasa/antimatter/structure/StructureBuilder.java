@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -15,16 +16,21 @@ import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
 
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
 
 public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
-    public StructureDefinition.Builder<TileEntityBasicMultiMachine<T>> STRUCTURE_BUILDER = StructureDefinition.builder();
+    public StructureDefinition.Builder<T> STRUCTURE_BUILDER = StructureDefinition.builder();
 
     private Map<String, StructurePartBuilder> parts = new Object2ObjectOpenHashMap<>();
     private final Object2ObjectMap<String, IStructureElement<?>> elementLookup = new Object2ObjectOpenHashMap<>();
+
+    private final Object2ObjectMap<String, Pair<Integer, Integer>> minMaxMap = new Object2ObjectOpenHashMap<>();
+
+    private int3 offset = new int3(0, 0, 0);
     private Set<Direction> allowedFacings = Set.of(Ref.DIRS);
 
     public StructurePartBuilder part(String name){
@@ -58,8 +64,48 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         return this;
     }
 
-    public SimpleStructure build() {
-        return new SimpleStructure(new int3(), ImmutableMap.of(), allowedFacings);
+    public StructureBuilder<T> min(int min, HatchMachine... machines){
+        for (HatchMachine machine : machines) {
+            minMaxMap.put(machine.getComponentId(), Pair.of(min, Integer.MAX_VALUE));
+        }
+        return this;
+    }
+
+    public StructureBuilder<T> exact(int exact, HatchMachine... machines){
+        for (HatchMachine machine : machines) {
+            minMaxMap.put(machine.getComponentId(), Pair.of(exact, exact));
+        }
+        return this;
+    }
+
+    public StructureBuilder<T> minMax(int min, int max, HatchMachine... machines){
+        for (HatchMachine machine : machines) {
+            minMaxMap.put(machine.getComponentId(), Pair.of(min, max));
+        }
+        return this;
+    }
+
+    public StructureBuilder<T> max(int max, HatchMachine... machines){
+        for (HatchMachine machine : machines) {
+            minMaxMap.put(machine.getComponentId(), Pair.of(0, max));
+        }
+        return this;
+    }
+
+    public StructureBuilder<T> offset(int x, int y, int z){
+        this.offset = new int3(x, y, z);
+        return this;
+    }
+
+
+    public Structure<T> build() {
+        ImmutableMap.Builder<String, Pair<Integer, Integer>> minMaxMap = ImmutableMap.builder();
+        minMaxMap.putAll(this.minMaxMap);
+        ImmutableMap.Builder<String, Triple<Integer, Integer, Direction.Axis>> structureParts = ImmutableMap.builder();
+        this.parts.forEach((k, v) -> {
+            structureParts.put(k, Triple.of(v.min, v.max, v.offset));
+        });
+        return new Structure<>(STRUCTURE_BUILDER.build(), structureParts.build(), minMaxMap.build());
         /*ImmutableMap.Builder<int3, StructureElement> elements = ImmutableMap.builder();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
