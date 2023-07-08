@@ -26,7 +26,7 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
     public StructureDefinition.Builder<T> STRUCTURE_BUILDER = StructureDefinition.builder();
 
     private Map<String, StructurePartBuilder> parts = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectMap<String, IStructureElement<?>> elementLookup = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<Character, IStructureElement<?>> elementLookup = new Object2ObjectOpenHashMap<>();
 
     private final Object2ObjectMap<String, Pair<Integer, Integer>> minMaxMap = new Object2ObjectOpenHashMap<>();
 
@@ -37,12 +37,12 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         return new StructurePartBuilder(name);
     }
 
-    public StructureBuilder<T> at(String key, IStructureElement<?> element) {
+    public StructureBuilder<T> at(char key, IStructureElement<?> element) {
         elementLookup.put(key, element);
         return this;
     }
 
-    public StructureBuilder<T> at(String key, IAntimatterObject... objects) {
+    public StructureBuilder<T> at(char key, IAntimatterObject... objects) {
         List<IStructureElement<T>> elements = new ArrayList<>();
         for (IAntimatterObject object : objects) {
             if (object instanceof HatchMachine machine){
@@ -55,7 +55,7 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         return this;
     }
 
-    public StructureBuilder<T> at(String key, Collection<? extends IAntimatterObject> objects) {
+    public StructureBuilder<T> at(char key, Collection<? extends IAntimatterObject> objects) {
         return at(key, objects.toArray(new IAntimatterObject[0]));
     }
 

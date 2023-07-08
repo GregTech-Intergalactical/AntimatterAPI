@@ -9,6 +9,7 @@ import com.gtnewhorizon.structurelib.alignment.enumerable.ExtendedFacing;
 import com.gtnewhorizon.structurelib.alignment.enumerable.Flip;
 import com.gtnewhorizon.structurelib.alignment.enumerable.Rotation;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
+import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -37,6 +38,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
+import org.apache.commons.lang3.tuple.Pair;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.rf.IRFNode;
 
@@ -56,7 +58,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     protected StructureResult result = null;
     protected boolean validStructure = false;
 
-    protected List<BlockPos> structurePositions = new ArrayList<>();
+    public List<Pair<BlockPos, IStructureElement<T>>> structurePositions = new ArrayList<>();
 
     private ExtendedFacing extendedFacing = ExtendedFacing.DEFAULT;
     private IAlignmentLimits limits = getInitialAlignmentLimits();
