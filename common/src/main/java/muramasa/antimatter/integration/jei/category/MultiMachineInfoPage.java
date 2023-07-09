@@ -230,7 +230,7 @@ public class MultiMachineInfoPage {
         if (res != null) {
             StructureElement el = res.get(pos);
             if (el != null && el.renderShared()) {
-                this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(pos) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.defaultBlockState()).forEach(b -> this.doOverlay(b, 0.5f, 1, 0.5f, 0.4f));
+                //this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(pos) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.defaultBlockState()).forEach(b -> this.doOverlay(b, 0.5f, 1, 0.5f, 0.4f));
             }
         }
     }
@@ -280,7 +280,7 @@ public class MultiMachineInfoPage {
                     if (res != null) {
                         StructureElement el = res.get(rayTraceResult.getBlockPos());
                         if (el != null) {
-                            long count = this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(rayTraceResult.getBlockPos()) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.defaultBlockState()).count();
+                            long count = 0;//this.machine.getStructure(this.machine.getFirstTier()).allShared(el, this.controllers[currentRendererPage]).stream().filter(t -> !t.equals(rayTraceResult.getBlockPos()) && this.getCurrentRenderer().world.getBlockState(t) != Blocks.AIR.defaultBlockState()).count();
                             el.onInfoTooltip(list, count, this.controllers[currentRendererPage]);
                         }
                     }

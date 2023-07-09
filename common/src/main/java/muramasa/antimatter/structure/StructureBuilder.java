@@ -5,28 +5,31 @@ import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import com.gtnewhorizon.structurelib.structure.StructureDefinition;
 import com.gtnewhorizon.structurelib.structure.StructureUtility;
 import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.machine.types.HatchMachine;
-import muramasa.antimatter.registration.IAntimatterObject;
-import muramasa.antimatter.structure.impl.SimpleStructure;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
+import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
+import java.util.function.BiFunction;
 
 import static com.gtnewhorizon.structurelib.structure.StructureUtility.transpose;
 
 public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
     public StructureDefinition.Builder<T> STRUCTURE_BUILDER = StructureDefinition.builder();
 
-    private Map<String, StructurePartBuilder> parts = new Object2ObjectOpenHashMap<>();
-    private final Object2ObjectMap<Character, IStructureElement<?>> elementLookup = new Object2ObjectOpenHashMap<>();
+    private Map<String, StructurePartBuilder> parts = new Object2ObjectLinkedOpenHashMap<>();
+    private final Object2ObjectMap<Character, IStructureElement<T>> elementLookup = new Object2ObjectOpenHashMap<>();
 
     private final Object2ObjectMap<String, Pair<Integer, Integer>> minMaxMap = new Object2ObjectOpenHashMap<>();
 
@@ -37,26 +40,30 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         return new StructurePartBuilder(name);
     }
 
-    public StructureBuilder<T> at(char key, IStructureElement<?> element) {
+    public StructureBuilder<T> atElement(char key, IStructureElement<T> element){
         elementLookup.put(key, element);
         return this;
     }
 
-    public StructureBuilder<T> at(char key, IAntimatterObject... objects) {
+    public StructureBuilder<T> at(char key, Object... objects) {
         List<IStructureElement<T>> elements = new ArrayList<>();
-        for (IAntimatterObject object : objects) {
+        for (Object object : objects) {
             if (object instanceof HatchMachine machine){
                 elements.add(new HatchElement<>(machine));
             } else if (object instanceof Block block){
                 elements.add(StructureUtility.ofBlock(block));
+            } else if (object instanceof TagKey<?> tag && tag.isFor(Registry.BLOCK_REGISTRY)){
+                elements.add(StructureUtility.ofBlock(tag.cast(Registry.BLOCK_REGISTRY).get()));
+            } else if (object instanceof IStructureElement element){
+                elements.add(element);
             }
         }
         elementLookup.put(key, StructureUtility.ofChain(elements));
         return this;
     }
 
-    public StructureBuilder<T> at(char key, Collection<? extends IAntimatterObject> objects) {
-        return at(key, objects.toArray(new IAntimatterObject[0]));
+    public StructureBuilder<T> at(char key, Collection<?> objects) {
+        return at(key, objects.toArray(new Object[0]));
     }
 
     public StructureBuilder<T> facings(Direction... faces) {
@@ -101,11 +108,16 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
     public Structure<T> build() {
         ImmutableMap.Builder<String, Pair<Integer, Integer>> minMaxMap = ImmutableMap.builder();
         minMaxMap.putAll(this.minMaxMap);
-        ImmutableMap.Builder<String, Triple<Integer, Integer, Direction.Axis>> structureParts = ImmutableMap.builder();
+        ImmutableMap.Builder<String, Pair<int2, BiFunction<Integer, int3, int3>>> structureParts = ImmutableMap.builder();
         this.parts.forEach((k, v) -> {
-            structureParts.put(k, Triple.of(v.min, v.max, v.offset));
+            structureParts.put(k, Pair.of(new int2(v.min, v.max), v.offset));
         });
-        return new Structure<>(STRUCTURE_BUILDER.build(), structureParts.build(), minMaxMap.build());
+        elementLookup.forEach((c, e) -> {
+            STRUCTURE_BUILDER.addElement(c, StructureUtility.onElementPass((el, t, w, x, y, z) -> {
+                t.structurePositions.add(Pair.of(new BlockPos(x, y, z), el));
+            }, e));
+        });
+        return new Structure<>(STRUCTURE_BUILDER.build(), structureParts.build(), minMaxMap.build(), offset);
         /*ImmutableMap.Builder<int3, StructureElement> elements = ImmutableMap.builder();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
@@ -140,7 +152,9 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         private final List<String[]> slices = new ObjectArrayList<>();
         private int min = 1;
         private int max = 1;
-        Direction.Axis offset = Direction.Axis.Y;
+
+        private String partToCheckOnFail;
+        BiFunction<Integer, int3, int3> offset = (i, p) -> p;
 
         public StructurePartBuilder(String name) {
             this.name = name;
@@ -157,17 +171,24 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         }
 
         public StructurePartBuilder min(int i){
+            if (i <= 0) throw new IllegalArgumentException("i must be > 0!");
             min = i;
             return this;
         }
 
         public StructurePartBuilder max(int i){
+            if (i <= 0) throw new IllegalArgumentException("i must be > 0!");
             max = i;
             return this;
         }
 
-        public StructurePartBuilder offsetAxis(Direction.Axis axis){
-            this.offset = axis;
+        public StructurePartBuilder offsetFunction(BiFunction<Integer, int3, int3> function){
+            this.offset = function;
+            return this;
+        }
+
+        public StructurePartBuilder checkOnFail(String partName){
+            partToCheckOnFail = partName;
             return this;
         }
 

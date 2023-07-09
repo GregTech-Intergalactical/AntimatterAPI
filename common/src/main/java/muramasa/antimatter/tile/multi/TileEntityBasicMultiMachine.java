@@ -10,6 +10,7 @@ import com.gtnewhorizon.structurelib.alignment.enumerable.Flip;
 import com.gtnewhorizon.structurelib.alignment.enumerable.Rotation;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
+import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -38,7 +39,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
-import org.apache.commons.lang3.tuple.Pair;
 import tesseract.api.gt.IEnergyHandler;
 import tesseract.api.rf.IRFNode;
 
@@ -165,12 +165,12 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         // This is not only behavioural but if INVALID_STRUCTURE are checked then
         // maxShares
         // might misbehave.
-        Structure s = getMachineType().getStructure(getMachineTier());
+        Structure<?> s = getMachineType().getStructure(getMachineTier());
         if (s == null) {
             super.onFirstTick();
             return;
         }
-        if (!isStructureValid() && shouldCheckFirstTick) {
+        if (!validStructure && shouldCheckFirstTick) {
             checkStructure();
         }
         super.onFirstTick();
@@ -182,10 +182,13 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     public boolean checkStructure() {
-        Structure structure = getMachineType().getStructure(getMachineTier());
+        Structure<T> structure = getMachineType().getStructure(getMachineTier());
         if (structure == null)
             return false;
         checkingStructure++;
+        structurePositions.clear();
+        components.clear();
+        validStructure = structure.check((T)this);
         /*StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             if (level instanceof TrackedDummyWorld) {
@@ -232,7 +235,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         // if we reached here something went wrong.
         invalidateStructure();*/
         checkingStructure--;
-        return false;
+        return validStructure;
     }
 
     public void serverTick(Level level, BlockPos pos, BlockState state) {

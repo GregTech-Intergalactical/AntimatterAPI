@@ -46,6 +46,10 @@ public class int3 extends BlockPos.MutableBlockPos {
         return this;
     }
 
+    public int3 copy(){
+        return new int3(this.getX(), this.getY(), this.getZ(), side);
+    }
+
     public void set(Direction side) {
         this.side = side;
     }

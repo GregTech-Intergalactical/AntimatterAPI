@@ -3,20 +3,17 @@ package muramasa.antimatter.structure;
 import com.google.common.collect.ImmutableMap;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.longs.LongList;
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import muramasa.antimatter.tile.multi.TileEntityBasicMultiMachine;
 import muramasa.antimatter.util.int2;
 import muramasa.antimatter.util.int3;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import org.apache.commons.lang3.tuple.Triple;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 public class Structure<T extends TileEntityBasicMultiMachine<T>> {
     private final IStructureDefinition<T> structureDefinition;
@@ -24,14 +21,16 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
 
     private final Map<String, Pair<Integer, Integer>> minMaxMap;
 
-    private final Map<String, Triple<Integer, Integer, Direction.Axis>> partRequirements;
+    private final Map<String, Pair<int2, BiFunction<Integer, int3, int3>>> partRequirements;
 
     private final Map<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
+    private final int3 offset;
 
-    protected Structure(IStructureDefinition<T> structureDefinition, ImmutableMap<String, Triple<Integer, Integer, Direction.Axis>> partRequirements, ImmutableMap<String, Pair<Integer, Integer>> minMaxMap) {
+    protected Structure(IStructureDefinition<T> structureDefinition, ImmutableMap<String, Pair<int2, BiFunction<Integer, int3, int3>>> partRequirements, ImmutableMap<String, Pair<Integer, Integer>> minMaxMap, int3 offset) {
         this.structureDefinition = structureDefinition;
         this.partRequirements = partRequirements;
         this.minMaxMap = minMaxMap;
+        this.offset = offset;
     }
 
     public IStructureDefinition<T> getStructureDefinition() {
@@ -42,13 +41,29 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
         return minMaxMap;
     }
 
-    public Map<String, Triple<Integer, Integer, Direction.Axis>> getPartRequirements() {
-        return partRequirements;
-    }
-
     public boolean check(T tile){
-
-        return false;
+        int i = 0;
+        int successful = 0;
+        for (Map.Entry<String, Pair<int2, BiFunction<Integer, int3, int3>>> entry : partRequirements.entrySet()) {
+            String s = entry.getKey();
+            Pair<int2, BiFunction<Integer, int3, int3>> v = entry.getValue();
+            for (int j = 0; j < v.left().y; j++) {
+                int3 newOffset = v.right().apply(i, offset.copy());
+                boolean success = structureDefinition.check(tile, s, tile.getLevel(), tile.getExtendedFacing(), tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ(),
+                        newOffset.getX(), newOffset.getY(), newOffset.getZ(), true);
+                if (j < v.left().x){
+                    if (success){
+                        successful++;
+                    }
+                } else {
+                    if (!success){
+                        break;
+                    }
+                }
+                i++;
+            }
+        }
+        return i == successful;
     }
 
     /*public abstract StructureResult evaluate(@Nonnull TileEntityBasicMultiMachine<?> tile);
