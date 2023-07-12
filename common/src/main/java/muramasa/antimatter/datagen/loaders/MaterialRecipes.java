@@ -35,7 +35,6 @@ import static muramasa.antimatter.util.Utils.getConventionalStoneType;
 public class MaterialRecipes {
     public static void init(Consumer<FinishedRecipe> consumer, AntimatterRecipeProvider provider) {
         final CriterionTriggerInstance in = provider.hasSafeItem(AntimatterDefaultTools.WRENCH.getTag());
-        int craftingMultiplier = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? 1 : 2;
         AntimatterMaterialTypes.DUST.all().forEach(m -> {
             provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_small", "antimatter_dusts", "has_wrench", in, AntimatterMaterialTypes.DUST.get(m, 1), of('D', AntimatterMaterialTypes.DUST_SMALL.getMaterialTag(m)), "DD", "DD");
             provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_dust_tiny", "antimatter_dusts", "has_wrench", in, AntimatterMaterialTypes.DUST.get(m, 1), of('D', AntimatterMaterialTypes.DUST_TINY.getMaterialTag(m)), "DDD", "DDD", "DDD");
@@ -44,84 +43,6 @@ public class MaterialRecipes {
             if (m.has(AntimatterMaterialTypes.NUGGET) && m != AntimatterMaterials.Iron && m != AntimatterMaterials.Gold){
                 provider.addItemRecipe(consumer, Ref.ID, m.getId() + "_ingot", "ingots", "has_nugget", provider.hasSafeItem(AntimatterMaterialTypes.NUGGET.getMaterialTag(m)), AntimatterMaterialTypes.INGOT.get(m), ImmutableMap.of('I', AntimatterMaterialTypes.NUGGET.getMaterialTag(m)), "III", "III", "III");
                 provider.shapeless(consumer,"nugget_" + m.getId() + "_from_ingot", "ingots", "has_ingot", provider.hasSafeItem(AntimatterMaterialTypes.INGOT.getMaterialTag(m)), AntimatterMaterialTypes.NUGGET.get(m, 9), AntimatterMaterialTypes.INGOT.getMaterialTag(m));
-            }
-        });
-        AntimatterMaterialTypes.ROD.all().forEach(m -> {
-            if (m.has(AntimatterMaterialTypes.INGOT)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_rod", "antimatter_material", "has_wrench", in, AntimatterMaterialTypes.ROD.get(m, craftingMultiplier), of('F', AntimatterDefaultTools.FILE.getTag(), 'I', AntimatterMaterialTypes.INGOT.getMaterialTag(m)), "F", "I");
-            }
-            if (m.has(AntimatterMaterialTypes.BOLT)) {
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_bolt", "antimatter_material", "has_wrench", in, AntimatterMaterialTypes.BOLT.get(m, 2 * craftingMultiplier), of('F', AntimatterDefaultTools.SAW.getTag(), 'I', AntimatterMaterialTypes.ROD.getMaterialTag(m)), "F ", " I");
-                if (m.has(AntimatterMaterialTypes.SCREW)) {
-                    String[] pattern = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? new String[]{"FI", "I "} : new String[]{"F", "I"};
-                    provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_screw", "antimatter_material",
-                            "has_wrench", in, AntimatterMaterialTypes.SCREW.get(m, 1), of('F', AntimatterDefaultTools.FILE.getTag(), 'I', AntimatterMaterialTypes.BOLT.getMaterialTag(m)), pattern);
-                }
-            }
-            if (m.has(AntimatterMaterialTypes.RING)) {
-                if (!m.has(NOSMASH)){
-                    provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_ring", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                            AntimatterMaterialTypes.RING.get(m, craftingMultiplier), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(), 'W', AntimatterMaterialTypes.ROD.getMaterialTag(m)), "H ", " W");
-                }
-            }
-            if (m.has(ROD_LONG)){
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_rod_from_long_rod", "rods", "has_saw", provider.hasSafeItem(SAW.getTag()), ROD.get(m, 2),
-                        ImmutableMap.of('S', SAW.getTag(), 'R', ROD_LONG.getMaterialTag(m)), "SR");
-                if (!m.has(NOSMASH)){
-                    provider.addStackRecipe(consumer, Ref.ID, "", "rods", "has_hammer", provider.hasSafeItem(HAMMER.getTag()), ROD_LONG.get(m, 1),
-                            ImmutableMap.of('S', HAMMER.getTag(), 'R', ROD.getMaterialTag(m)), "RSR");
-                }
-            }
-        });
-        AntimatterMaterialTypes.ROTOR.all().forEach(m -> {
-            provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_rotors", "antimatter_material", "has_screwdriver", provider.hasSafeItem(AntimatterDefaultTools.SCREWDRIVER.getTag()),
-                    AntimatterMaterialTypes.ROTOR.get(m, 1), ImmutableMap.<Character, Object>builder()
-                            .put('S', AntimatterDefaultTools.SCREWDRIVER.getTag())
-                            .put('F', AntimatterDefaultTools.FILE.getTag())
-                            .put('H', AntimatterDefaultTools.HAMMER.getTag())
-                            .put('P', AntimatterMaterialTypes.PLATE.getMaterialTag(m))
-                            .put('W', AntimatterMaterialTypes.SCREW.getMaterialTag(m))
-                            .put('R', AntimatterMaterialTypes.RING.getMaterialTag(m))
-                            .build(),
-                    "PHP", "WRF", "PSP");
-        });
-        AntimatterMaterialTypes.PLATE.all().forEach(m -> {
-            if (!m.has(NOSMASH)){
-                if (m.has(AntimatterMaterialTypes.INGOT)){
-                    Object[] array = AntimatterConfig.GAMEPLAY.LOSSY_PART_CRAFTING ? new Object[]{AntimatterDefaultTools.HAMMER.getTag(), AntimatterMaterialTypes.INGOT.getMaterialTag(m), AntimatterMaterialTypes.INGOT.getMaterialTag(m)} : new Object[]{AntimatterDefaultTools.HAMMER.getTag(), AntimatterMaterialTypes.INGOT.getMaterialTag(m)};
-                    provider.shapeless(consumer, "", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()), AntimatterMaterialTypes.PLATE.get(m, 1), array);
-                }
-                if (m.has(AntimatterMaterialTypes.GEAR_SMALL)) {
-                    provider.addStackRecipe(consumer, Ref.ID, "", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                            AntimatterMaterialTypes.GEAR_SMALL.get(m, 1), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(),'P', AntimatterMaterialTypes.PLATE.getMaterialTag(m)), "P ", " H");
-                }
-                if (m.has(AntimatterMaterialTypes.ITEM_CASING)) {
-                    provider.addStackRecipe(consumer, Ref.ID, "", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                            AntimatterMaterialTypes.ITEM_CASING.get(m, 1), ImmutableMap.of('H', AntimatterDefaultTools.HAMMER.getTag(),'P', AntimatterMaterialTypes.PLATE.getMaterialTag(m)), "H P");
-                }
-                if (m.has(FOIL)){
-                    provider.addStackRecipe(consumer, Ref.ID, "", "antimatter_materials", "has_hammer", provider.hasSafeItem(HAMMER.getTag()),
-                            FOIL.get(m, 2), of('H', HAMMER.getTag(), 'P', PLATE.getMaterialTag(m)), "HP");
-                    if (m.has(WIRE_FINE)){
-                        provider.addItemRecipe(consumer, Ref.ID, "", "antimatter_materials", "has_wire_cutters", provider.hasSafeItem(WIRE_CUTTER.getTag()),
-                                WIRE_FINE.get(m), of('F', FOIL.getMaterialTag(m), 'W', WIRE_CUTTER.getTag()), "FW");
-                    }
-                }
-            }
-            if (m.has(AntimatterMaterialTypes.GEAR)){
-                provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_gear", "antimatter_material", "has_hammer", provider.hasSafeItem(AntimatterDefaultTools.HAMMER.getTag()),
-                        AntimatterMaterialTypes.GEAR.get(m, 1), ImmutableMap.<Character, Object>builder()
-                                .put('W', AntimatterDefaultTools.WRENCH.getTag())
-                                .put('P', AntimatterMaterialTypes.PLATE.getMaterialTag(m))
-                                .put('R', AntimatterMaterialTypes.ROD.getMaterialTag(m))
-                                .build(),
-                        "RPR", "PWP", "RPR");
-            }
-            if (m.has(AntimatterMaterialTypes.RING)) {
-                if (m.has(RUBBERTOOLS)){
-                    provider.addStackRecipe(consumer, Ref.ID, m.getId() + "_ring", "antimatter_material", "has_wire_cutter", provider.hasSafeItem(AntimatterDefaultTools.WIRE_CUTTER.getTag()),
-                            AntimatterMaterialTypes.RING.get(m, craftingMultiplier), ImmutableMap.of('H', AntimatterDefaultTools.WIRE_CUTTER.getTag(), 'W', AntimatterMaterialTypes.PLATE.getMaterialTag(m)), "H ", " W");
-                }
             }
         });
 
