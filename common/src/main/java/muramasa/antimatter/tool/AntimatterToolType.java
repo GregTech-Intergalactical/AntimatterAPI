@@ -10,6 +10,7 @@ import muramasa.antimatter.Ref;
 import muramasa.antimatter.behaviour.IBehaviour;
 import muramasa.antimatter.material.IMaterialTag;
 import muramasa.antimatter.material.Material;
+import muramasa.antimatter.material.MaterialTypeItem;
 import muramasa.antimatter.registration.ISharedAntimatterObject;
 import muramasa.antimatter.util.TagUtils;
 import muramasa.antimatter.util.Utils;
@@ -58,6 +59,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
     private SoundEvent useSound;
     @Nullable
     private IMaterialTag primaryMaterialRequirement, secondaryMaterialRequirement;
+    @Nullable
+    private MaterialTypeItem<?> materialTypeItem;
 
     /**
      * Instantiates a AntimatterToolType with its basic values
@@ -186,6 +189,11 @@ public class AntimatterToolType implements ISharedAntimatterObject {
 
     public AntimatterToolType setBrokenItems(ImmutableMap<String, Function<ItemStack, ItemStack>> map) {
         this.brokenItems = map;
+        return this;
+    }
+
+    public AntimatterToolType setMaterialType(MaterialTypeItem<?> materialTypeItem){
+        this.materialTypeItem = materialTypeItem;
         return this;
     }
 
@@ -441,4 +449,8 @@ public class AntimatterToolType implements ISharedAntimatterObject {
         return behaviours;
     }
 
+    @Nullable
+    public MaterialTypeItem<?> getMaterialTypeItem() {
+        return materialTypeItem;
+    }
 }
