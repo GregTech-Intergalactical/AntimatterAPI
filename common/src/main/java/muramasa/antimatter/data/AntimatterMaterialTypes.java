@@ -242,10 +242,10 @@ public class AntimatterMaterialTypes {
 
         AntimatterMaterialTypes.DUST_TINY.setHidden();
         AntimatterMaterialTypes.DUST_SMALL.setHidden();
-        AntimatterMaterialTypes.DRILLBIT.setHidden().unSplitName().setIgnoreTextureSets();
-        AntimatterMaterialTypes.CHAINSAWBIT.setHidden().unSplitName().setIgnoreTextureSets();
-        AntimatterMaterialTypes.WRENCHBIT.setHidden().unSplitName().setIgnoreTextureSets();
-        AntimatterMaterialTypes.BUZZSAW_BLADE.setHidden().unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.DRILLBIT.unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.CHAINSAWBIT.unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.WRENCHBIT.unSplitName().setIgnoreTextureSets();
+        AntimatterMaterialTypes.BUZZSAW_BLADE.unSplitName().setIgnoreTextureSets();
         FISSILE_FUEL.setIgnoreTextureSets().unSplitName();
         DEPLETED_FISSILE_FUEL.setIgnoreTextureSets().unSplitName();
         AntimatterMaterialTypes.RAW_ORE.unSplitName();
