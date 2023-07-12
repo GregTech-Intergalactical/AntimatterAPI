@@ -142,6 +142,7 @@ public class Element implements IAntimatterObject {
     public static Element Bi213 = new Element(83, 130, 0, 225,9780,"bismuth_213", "Bi213",165600,"thallium_209",null, "polonium_213",  true);
     public static Element Bi214 = new Element(83, 131, 0, 225,9780,"bismuth_214", "Bi214",1200,"thallium_210",null, "polonium_214",  true);
     public static Element Bi215 = new Element(83, 132, 0, 225,9780,"bismuth_215", "Bi215",1200,null,null, "polonium_215",  true);
+    public static Element Co60 = new Element(27, 33, 0, 500,8900,"cobalt_60", "Co60",166346024,null,null, null,  true);
     public static Element Po211 = new Element(84, 127, 0, 1,9196,"polonium_211", "Po211",1,"lead",null, null,  true);
     public static Element Po213 = new Element(84, 129, 0, 1,9196,"polonium_213", "Po213",1,"lead",null, null,  true);
     public static Element Po214 = new Element(84, 130, 0, 1,9196,"polonium_214", "Po214",1,"lead",null, null,  true);
