@@ -190,6 +190,14 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         if (toolTypesList.contains(AntimatterDefaultTools.BUZZSAW)) flags(AntimatterMaterialTypes.BUZZSAW_BLADE);
         if (toolTypesList.contains(AntimatterDefaultTools.DRILL)) flags(AntimatterMaterialTypes.DRILLBIT);
         if (toolTypesList.contains(AntimatterDefaultTools.CHAINSAW)) flags(AntimatterMaterialTypes.CHAINSAWBIT);
+        if (toolTypesList.contains(AntimatterDefaultTools.PICKAXE)) flags(AntimatterMaterialTypes.PICKAXE_HEAD);
+        if (toolTypesList.contains(AntimatterDefaultTools.SHOVEL)) flags(AntimatterMaterialTypes.SHOVEL_HEAD);
+        if (toolTypesList.contains(AntimatterDefaultTools.SWORD)) flags(AntimatterMaterialTypes.SWORD_HEAD);
+        if (toolTypesList.contains(AntimatterDefaultTools.AXE)) flags(AntimatterMaterialTypes.AXE_HEAD);
+        if (toolTypesList.contains(AntimatterDefaultTools.HOE)) flags(AntimatterMaterialTypes.HOE_HEAD);
+        if (toolTypesList.contains(AntimatterDefaultTools.HAMMER)) flags(AntimatterMaterialTypes.HAMMER_HEAD);
+        if (toolTypesList.contains(AntimatterDefaultTools.FILE)) flags(AntimatterMaterialTypes.FILE_HEAD);
+        if (toolTypesList.contains(AntimatterDefaultTools.SAW)) flags(AntimatterMaterialTypes.SAW_HEAD);
         return (T) this;
     }
 
