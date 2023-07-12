@@ -48,7 +48,7 @@ public class FakeTileElement extends StructureElement {
         if (pred.evaluate(machine.getLevel(), pos, state)) {
             BlockEntity tile = machine.getLevel().getBlockEntity(pos);
             if (tile instanceof TileEntityFakeBlock fake) {
-                if (fake.controller != null && !fake.controller.getBlockPos().equals(machine.getBlockPos())){
+                if (fake.getController() != null && !fake.getController().getBlockPos().equals(machine.getBlockPos())){
                     result.withError("Fake Tile already has controller");
                     return false;
                 }

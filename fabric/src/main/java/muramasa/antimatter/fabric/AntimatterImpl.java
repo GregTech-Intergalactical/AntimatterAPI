@@ -128,16 +128,10 @@ public class AntimatterImpl implements ModInitializer {
     }
 
     private <T> T getCap(Class<T> clazz, TileEntityFakeBlock fakeBlock, Direction side){
-        if (fakeBlock.controllerPos != null) {
-            if (fakeBlock.getLevel().getBlockEntity(fakeBlock.controllerPos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
-                fakeBlock.setController(basicMultiMachine);
-            }
-            fakeBlock.controllerPos = null;
-        }
-        if (fakeBlock.controller == null){
+        if (fakeBlock.getController() == null){
             return null;
         }
-        LazyOptional<T> opt = fakeBlock.controller.getCapabilityFromFake(clazz, fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
+        LazyOptional<T> opt = fakeBlock.getController().getCapabilityFromFake(clazz, fakeBlock.getBlockPos(), side, fakeBlock.covers.get(side));
         if (opt.isPresent()) {
             return opt.orElse(null);
         }
