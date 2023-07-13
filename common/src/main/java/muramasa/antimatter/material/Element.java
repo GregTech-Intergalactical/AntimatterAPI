@@ -98,7 +98,7 @@ public class Element implements IAntimatterObject {
     public static Element Ac = new Element(89, 138, 0, 1,1,"actinium", "Ac",-1,null,null,null,  false);
     public static Element Th = new Element(90, 142, 0, 230,11724,"thorium", "Th",-1,null,null, null,  false);
     public static Element Pa = new Element(91, 140, 0, 1,15370,"protactinium", "Pa",-1,null,null, null,  false);
-    public static Element U = new Element(92, 146, 0, 275,19160,"uranium", "U",-1,null,null, null,  false);
+    public static Element U = new Element(92, 146, 0,275,19160,"uranium", "U",126144000000000000L, "thorium_234",null,"plutonium_238",false);
     public static Element Np = new Element(93, 144, 0, 1,20450,"neptunium", "Np",-1,null,null, null,  false);
     public static Element Pu = new Element(94, 150, 0, 1,19816,"plutonium", "Pu",-1,null,null, null,  false);
     public static Element Am = new Element(95, 148, 0, 1,13670,"americium", "Am",-1,null,null, null,  false);
