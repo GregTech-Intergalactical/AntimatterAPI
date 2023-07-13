@@ -187,7 +187,6 @@ public class Element implements IAntimatterObject {
     public static Element U235 = new Element(92, 143, 0,275,19160,"uranium_235", "U235",22075200000000000L, "thorium_231",null,null,true);
     public static Element U236 = new Element(92, 144, 0,275,19160,"uranium_236", "U236",725328000000000L, "thorium_232",null,null,true);
     public static Element U237 = new Element(92, 145, 0,275,19160,"uranium_237", "U237",604800, null,null,"neptunium_237",true);
-    public static Element U238 = new Element(92, 146, 0,275,19160,"uranium_238", "U238",126144000000000000L, "thorium_234",null,"plutonium_238",true);
     public static Element U239 = new Element(92, 147, 0,275,19160,"uranium_239", "U239",1380,null,null,"neptunium_239",true);
     public static Element U240 = new Element(92, 148, 0,275,19160,"uranium_240", "U240",50400,null,null,"neptunium_240",true);
     public static Element Np236 = new Element(93, 143, 0,1,20450,"neptunium_236", "Np236",6307200000000L, "protactinium_232","uranium_236","plutonium_236",true);
