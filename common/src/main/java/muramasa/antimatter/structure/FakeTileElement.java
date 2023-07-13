@@ -54,7 +54,7 @@ public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implement
         BlockPos pos = new BlockPos(x, y, z);
         BlockEntity be = world.getBlockEntity(pos);
         if (be instanceof TileEntityFakeBlock fakeBlock){
-            if (fakeBlock.controller == null || !fakeBlock.controller.getBlockPos().equals(machine.getBlockPos())){
+            if (fakeBlock.getController() == null || !fakeBlock.getController().getBlockPos().equals(machine.getBlockPos())){
                 fakeBlock.setFacing(machine.getFacing()).setCovers(covers);
                 fakeBlock.setController(machine);
             }
