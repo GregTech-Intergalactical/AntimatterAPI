@@ -98,7 +98,7 @@ public class Element implements IAntimatterObject {
     public static Element Ac = new Element(89, 138, 0, 1,1,"actinium", "Ac",-1,null,null,null,  false);
     public static Element Th = new Element(90, 142, 0, 230,11724,"thorium", "Th",-1,null,null, null,  false);
     public static Element Pa = new Element(91, 140, 0, 1,15370,"protactinium", "Pa",-1,null,null, null,  false);
-    public static Element U = new Element(92, 146, 0, 275,19160,"uranium", "U",-1,null,null, null,  false);
+    public static Element U = new Element(92, 146, 0,275,19160,"uranium", "U",126144000000000000L, "thorium_234",null,"plutonium_238",false);
     public static Element Np = new Element(93, 144, 0, 1,20450,"neptunium", "Np",-1,null,null, null,  false);
     public static Element Pu = new Element(94, 150, 0, 1,19816,"plutonium", "Pu",-1,null,null, null,  false);
     public static Element Am = new Element(95, 148, 0, 1,13670,"americium", "Am",-1,null,null, null,  false);
@@ -142,6 +142,7 @@ public class Element implements IAntimatterObject {
     public static Element Bi213 = new Element(83, 130, 0, 225,9780,"bismuth_213", "Bi213",165600,"thallium_209",null, "polonium_213",  true);
     public static Element Bi214 = new Element(83, 131, 0, 225,9780,"bismuth_214", "Bi214",1200,"thallium_210",null, "polonium_214",  true);
     public static Element Bi215 = new Element(83, 132, 0, 225,9780,"bismuth_215", "Bi215",1200,null,null, "polonium_215",  true);
+    public static Element Co60 = new Element(27, 33, 0, 500,8900,"cobalt_60", "Co60",166346024,null,null, null,  true);
     public static Element Po211 = new Element(84, 127, 0, 1,9196,"polonium_211", "Po211",1,"lead",null, null,  true);
     public static Element Po213 = new Element(84, 129, 0, 1,9196,"polonium_213", "Po213",1,"lead",null, null,  true);
     public static Element Po214 = new Element(84, 130, 0, 1,9196,"polonium_214", "Po214",1,"lead",null, null,  true);
@@ -186,7 +187,6 @@ public class Element implements IAntimatterObject {
     public static Element U235 = new Element(92, 143, 0,275,19160,"uranium_235", "U235",22075200000000000L, "thorium_231",null,null,true);
     public static Element U236 = new Element(92, 144, 0,275,19160,"uranium_236", "U236",725328000000000L, "thorium_232",null,null,true);
     public static Element U237 = new Element(92, 145, 0,275,19160,"uranium_237", "U237",604800, null,null,"neptunium_237",true);
-    public static Element U238 = new Element(92, 146, 0,275,19160,"uranium_238", "U238",126144000000000000L, "thorium_234",null,"plutonium_238",true);
     public static Element U239 = new Element(92, 147, 0,275,19160,"uranium_239", "U239",1380,null,null,"neptunium_239",true);
     public static Element U240 = new Element(92, 148, 0,275,19160,"uranium_240", "U240",50400,null,null,"neptunium_240",true);
     public static Element Np236 = new Element(93, 143, 0,1,20450,"neptunium_236", "Np236",6307200000000L, "protactinium_232","uranium_236","plutonium_236",true);

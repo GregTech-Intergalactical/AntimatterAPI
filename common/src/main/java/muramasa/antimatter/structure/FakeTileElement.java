@@ -82,7 +82,7 @@ public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implement
         if (pred.evaluate(machine.getLevel(), pos, state)) {
             BlockEntity tile = world.getBlockEntity(pos);
             if (tile instanceof TileEntityFakeBlock fake) {
-                return fake.controller == null || fake.controller.getBlockPos().equals(machine.getBlockPos());
+                return fake.getController() == null || fake.getController().getBlockPos().equals(machine.getBlockPos());
             }
             return false;
         } else if (StructureCache.refCount(world, pos) > 0) {

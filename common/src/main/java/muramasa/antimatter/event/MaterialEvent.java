@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static muramasa.antimatter.data.AntimatterMaterials.Flint;
+import static muramasa.antimatter.data.AntimatterMaterials.Wood;
+import static muramasa.antimatter.material.Material.NULL;
 import static muramasa.antimatter.material.MaterialTags.*;
 
 public class MaterialEvent<T extends MaterialEvent<T>> {
@@ -186,10 +189,11 @@ public class MaterialEvent<T extends MaterialEvent<T>> {
         List<AntimatterToolType> toolTypesList = toolTypes.length > 0 ? Arrays.asList(toolTypes) : AntimatterAPI.all(AntimatterToolType.class);
         MaterialTags.TOOLS.add(this.material, new ToolData(toolDamage, toolSpeed, toolDurability, toolQuality, toolEnchantment, toolTypesList));
         MaterialTags.MINING_LEVEL.add(this.material, toolQuality - 1);
-        if (toolTypesList.contains(AntimatterDefaultTools.ELECTRIC_WRENCH)) flags(AntimatterMaterialTypes.WRENCHBIT);
-        if (toolTypesList.contains(AntimatterDefaultTools.BUZZSAW)) flags(AntimatterMaterialTypes.BUZZSAW_BLADE);
-        if (toolTypesList.contains(AntimatterDefaultTools.DRILL)) flags(AntimatterMaterialTypes.DRILLBIT);
-        if (toolTypesList.contains(AntimatterDefaultTools.CHAINSAW)) flags(AntimatterMaterialTypes.CHAINSAWBIT);
+        for (AntimatterToolType type : toolTypes){
+            if (type.getMaterialTypeItem() != null && material != Flint && material != NULL && !material.has(RUBBERTOOLS) && material != Wood){
+                flags(type.getMaterialTypeItem());
+            }
+        }
         return (T) this;
     }
 

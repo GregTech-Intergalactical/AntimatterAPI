@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock> {
 
-    public TileEntityBasicMultiMachine<?> controller = null;
+    private TileEntityBasicMultiMachine<?> controller = null;
     public Map<Direction, ICover> covers = new EnumMap<>(Direction.class);
     public Direction facing;
 
@@ -45,6 +45,18 @@ public class TileEntityFakeBlock extends TileEntityTickable<TileEntityFakeBlock>
         if (level != null)
             level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         this.controller = controller;
+    }
+
+    public TileEntityBasicMultiMachine<?> getController() {
+        if (controller != null) return controller;
+        if (controllerPos != null){
+            if (getLevel().getBlockEntity(controllerPos) instanceof TileEntityBasicMultiMachine<?> basicMultiMachine && basicMultiMachine.allowsFakeTiles()){
+                setController(basicMultiMachine);
+            }
+            controllerPos = null;
+            return controller;
+        }
+        return null;
     }
 
     @Override

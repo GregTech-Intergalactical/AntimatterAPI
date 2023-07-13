@@ -268,13 +268,13 @@ public class RecipeMapCategory implements IRecipeCategory<IRecipe> {
         if (recipe.hasChances()) {
             List<IRecipeSlotView> views = recipeSlotsView.getSlotViews(RecipeIngredientRole.OUTPUT);
             List<SlotData<?>> slots = gui.getSlots().getSlots(SlotType.IT_OUT, guiTier);
-            for (int i = 0; i < views.size(); i++) {
-                if (recipe.getChances()[i] < 1.0) {
+            for (int i = 0; i < recipe.getChances().length; i++) {
+                if (recipe.getChances()[i] < 10000) {
                     RenderSystem.disableBlend();
                     RenderSystem.disableDepthTest();
                     stack.pushPose();
                     stack.scale(0.5f, 0.5f, 1);
-                    String ch = (recipe.getChances()[i] * 100) + "%";
+                    String ch = (recipe.getChances()[i] / 100) + "%";
                     Minecraft.getInstance().font.drawShadow(stack, ch, 2*((float)slots.get(i).getX() - (offsetX - 1)), 2*((float) slots.get(i).getY() - (offsetY - 1)), 0xFFFF00);
 
                     stack.popPose();
