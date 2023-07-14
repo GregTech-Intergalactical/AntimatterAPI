@@ -60,7 +60,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public List<Pair<BlockPos, IStructureElement<T>>> structurePositions = new ArrayList<>();
 
-    private ExtendedFacing extendedFacing = ExtendedFacing.DEFAULT;
+    private ExtendedFacing extendedFacing;
     private IAlignmentLimits limits = getInitialAlignmentLimits();
     /**
      * To ensure proper load from disk, do not check if INVALID_STRUCTURE is loaded
@@ -86,15 +86,16 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public TileEntityBasicMultiMachine(Machine<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+        extendedFacing = ExtendedFacing.of(getFacing(), Rotation.NORMAL, Flip.NONE);
     }
 
     @Override
     public void onRemove() {
         super.onRemove();
         // Remove handlers from the structure cache.
-        allHandlers.forEach(StructureHandle::deregister);
-        //invalidateStructure();
-        StructureCache.remove(level, worldPosition);
+        //allHandlers.forEach(StructureHandle::deregister);
+        invalidateStructure();
+        //StructureCache.remove(level, worldPosition);
     }
 
     @Override
@@ -159,7 +160,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             StructureLibAPI.queryAlignment(this);
         }
         // Register handlers to the structure cache.
-        allHandlers.forEach(StructureHandle::register);
+        //allHandlers.forEach(StructureHandle::register);
         // if INVALID_STRUCTURE was stored to disk don't bother rechecking on first
         // tick.
         // This is not only behavioural but if INVALID_STRUCTURE are checked then
@@ -186,9 +187,20 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (structure == null)
             return false;
         checkingStructure++;
+        List<Pair<BlockPos, IStructureElement<T>>> oldPositions = new ArrayList<>(structurePositions);
         structurePositions.clear();
         components.clear();
+        boolean oldValidStructure = validStructure;
         validStructure = structure.check((T)this);
+        if (validStructure){
+            if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
+                setMachineState(MachineState.IDLE);
+            }
+            onStructureFormed();
+        }
+        if (!validStructure && !oldPositions.isEmpty()){
+            invalidateStructure(oldPositions);
+        }
         /*StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
             if (level instanceof TrackedDummyWorld) {
@@ -305,7 +317,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             if (result != null) {
                 StructureCache.invalidate(this.getLevel(), getBlockPos(), result.positions);
             }
-            StructureCache.remove(level, getBlockPos());
+            invalidateStructure();
+            //StructureCache.remove(level, getBlockPos());
             oldState = old;
             this.facingOverride = Utils.dirFromState(oldState);
             //StructureCache.add(level, getBlockPos(), this.getMachineType().getStructure(getMachineTier()).allPositions(this));
@@ -321,9 +334,19 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     }
 
-    protected void invalidateStructure() {
+    protected void invalidateStructure(){
+        invalidateStructure(structurePositions);
+    }
+
+    protected void invalidateStructure(List<Pair<BlockPos, IStructureElement<T>>> list) {
         if (this.getLevel() instanceof TrackedDummyWorld)
             return;
+        if (!validStructure) return;
+        checkingStructure++;
+        list.forEach(p ->{
+            p.right().onStructureFail((T) this, this.getLevel(), p.left().getX(), p.left().getY(), p.left().getZ());
+        });
+        if (isServerSide()) onStructureInvalidated();
         /*if (result == null) {
             if (isServerSide() && getMachineState() != getDefaultMachineState()) {
                 resetMachine();
@@ -372,7 +395,8 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     }
 
     public boolean isStructureValid() {
-        return StructureCache.has(level, worldPosition);
+        return validStructure;
+        //return StructureCache.has(level, worldPosition);
     }
 
     @Override
@@ -402,7 +426,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     @Override
     public MachineState getDefaultMachineState() {
         // Has to be nullchecked because it can be called in a constructor.
-        if (result == null)
+        if (!validStructure)
             return MachineState.INVALID_STRUCTURE;
         return MachineState.IDLE;
     }

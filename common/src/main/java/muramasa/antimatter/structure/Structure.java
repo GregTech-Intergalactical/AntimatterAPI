@@ -49,8 +49,7 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
             Pair<int2, BiFunction<Integer, int3, int3>> v = entry.getValue();
             for (int j = 0; j < v.left().y; j++) {
                 int3 newOffset = v.right().apply(i, offset.copy());
-                boolean success = structureDefinition.check(tile, s, tile.getLevel(), tile.getExtendedFacing(), tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ(),
-                        newOffset.getX(), newOffset.getY(), newOffset.getZ(), true);
+                boolean success = structureDefinition.check(tile, s, tile.getLevel(), tile.getExtendedFacing(), tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ(), newOffset.getX(), newOffset.getY(), newOffset.getZ(), !tile.isStructureValid());
                 if (j < v.left().x){
                     if (success){
                         successful++;
