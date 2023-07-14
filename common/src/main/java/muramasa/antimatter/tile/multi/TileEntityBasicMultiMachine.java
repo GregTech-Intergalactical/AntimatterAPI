@@ -205,6 +205,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
                 fail[0] = true;
             }
         });
+        if (fail[0]) validStructure = false;
         if (validStructure){
             if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
                 setMachineState(MachineState.IDLE);
