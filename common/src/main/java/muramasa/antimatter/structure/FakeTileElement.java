@@ -64,9 +64,11 @@ public class FakeTileElement<T extends TileEntityBasicMultiMachine<T>> implement
     @Override
     public void onStructureFail(T basicMultiMachine, Level world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        BlockEntity be = world.getBlockEntity(pos);
-        if (be instanceof TileEntityFakeBlock fakeBlock){
-            fakeBlock.setController(null);
+        if (world.isLoaded(pos)){
+            BlockEntity be = world.getBlockEntity(pos);
+            if (be instanceof TileEntityFakeBlock fakeBlock){
+                fakeBlock.setController(null);
+            }
         }
     }
 
