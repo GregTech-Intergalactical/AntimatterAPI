@@ -44,13 +44,21 @@ public class MultiMachineItemHandler<T extends TileEntityMultiMachine<T>> extend
     }
 
     private ITrackedHandler calculateInputs() {
-        List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_input").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getInputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
+        List<IItemHandlerModifiable> handlers = tile.getComponents(inputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getInputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
         handlers.add(super.getInputHandler());
         return new MultiTrackedItemHandler(handlers.toArray(new IItemHandlerModifiable[0]));
     }
 
+    protected String inputComponentString(){
+        return "hatch_item_input";
+    }
+
+    protected String outputComponentString(){
+        return "hatch_item_output";
+    }
+
     private ITrackedHandler calculateOutputs() {
-        List<IItemHandlerModifiable> handlers = tile.getComponents("hatch_item_output").stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getOutputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
+        List<IItemHandlerModifiable> handlers = tile.getComponents(outputComponentString()).stream().filter(t -> t.getItemHandler().isPresent()).map(t -> t.getItemHandler().get().getOutputHandler()).collect(Collectors.toList());//this::allocateExtraSize);
         handlers.add(super.getOutputHandler());
         return new MultiTrackedItemHandler(handlers.toArray(new IItemHandlerModifiable[0]));
     }
