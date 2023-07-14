@@ -192,6 +192,19 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         components.clear();
         boolean oldValidStructure = validStructure;
         validStructure = structure.check((T)this);
+        boolean[] fail = new boolean[1];
+        fail[0] = false;
+        components.forEach((s, l) -> {
+            if (!structure.getMinMaxMap().containsKey(s)){
+                fail[0] = true;
+                return;
+            }
+            int min = structure.getMinMaxMap().get(s).left();
+            int max = structure.getMinMaxMap().get(s).right();
+            if (l.size() < min || l.size() > max){
+                fail[0] = true;
+            }
+        });
         if (validStructure){
             if (machineState != MachineState.ACTIVE && machineState != MachineState.DISABLED) {
                 setMachineState(MachineState.IDLE);
@@ -199,7 +212,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             onStructureFormed();
         }
         if (!validStructure && !oldPositions.isEmpty()){
-            invalidateStructure(oldPositions);
+            oldPositions.forEach(p ->{
+                p.right().onStructureFail((T) this, this.getLevel(), p.left().getX(), p.left().getY(), p.left().getZ());
+            });
         }
         /*StructureResult result = structure.evaluate(this);
         if (result.evaluate()) {
@@ -252,6 +267,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     public void serverTick(Level level, BlockPos pos, BlockState state) {
         super.serverTick(level, pos, state);
+        if (level.getGameTime() % 100 == 0 && !validStructure){
+            checkStructure();
+        }
         if (result != null)
             result.tick(this);
     }
@@ -334,18 +352,16 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
 
     }
 
-    protected void invalidateStructure(){
-        invalidateStructure(structurePositions);
-    }
-
-    protected void invalidateStructure(List<Pair<BlockPos, IStructureElement<T>>> list) {
+    protected void invalidateStructure() {
         if (this.getLevel() instanceof TrackedDummyWorld)
             return;
         if (!validStructure) return;
         checkingStructure++;
-        list.forEach(p ->{
+        structurePositions.forEach(p ->{
             p.right().onStructureFail((T) this, this.getLevel(), p.left().getX(), p.left().getY(), p.left().getZ());
         });
+        structurePositions.clear();
+        validStructure = false;
         if (isServerSide()) onStructureInvalidated();
         /*if (result == null) {
             if (isServerSide() && getMachineState() != getDefaultMachineState()) {
