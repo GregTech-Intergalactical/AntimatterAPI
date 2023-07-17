@@ -25,12 +25,14 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
 
     private final Map<String, IRequirement> requirements = new Object2ObjectOpenHashMap<>();
     private final int3 offset;
+    StructurePartCheckCallback<T> callback;
 
-    protected Structure(IStructureDefinition<T> structureDefinition, ImmutableMap<String, Pair<int2, BiFunction<Integer, int3, int3>>> partRequirements, ImmutableMap<String, Pair<Integer, Integer>> minMaxMap, int3 offset) {
+    protected Structure(IStructureDefinition<T> structureDefinition, ImmutableMap<String, Pair<int2, BiFunction<Integer, int3, int3>>> partRequirements, ImmutableMap<String, Pair<Integer, Integer>> minMaxMap, int3 offset, StructurePartCheckCallback<T> callback) {
         this.structureDefinition = structureDefinition;
         this.partRequirements = partRequirements;
         this.minMaxMap = minMaxMap;
         this.offset = offset;
+        this.callback = callback;
     }
 
     public IStructureDefinition<T> getStructureDefinition() {
@@ -49,15 +51,12 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
             Pair<int2, BiFunction<Integer, int3, int3>> v = entry.getValue();
             for (int j = 0; j < v.left().y; j++) {
                 int3 newOffset = v.right().apply(i, offset.copy());
-                boolean success = structureDefinition.check(tile, s, tile.getLevel(), tile.getExtendedFacing(), tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ(), newOffset.getX(), newOffset.getY(), newOffset.getZ(), !tile.isStructureValid());
-                if (j < v.left().x){
-                    if (success){
-                        successful++;
-                    }
-                } else {
-                    if (!success){
-                        break;
-                    }
+                boolean success = callback.check(structureDefinition, tile, s, i, newOffset);
+                if (success){
+                    successful++;
+                }
+                if (j >= v.left().x && !success) {
+                    break;
                 }
                 i++;
             }
@@ -88,6 +87,10 @@ public class Structure<T extends TileEntityBasicMultiMachine<T>> {
     public static class Point {
         public int3 pos = new int3();
         public StructureElement el;
+    }
+
+    public interface StructurePartCheckCallback<T extends TileEntityBasicMultiMachine<T>> {
+        boolean check(IStructureDefinition<T> structureDefinition, T tile, String part, int i, int3 newOffset);
     }
 
     /*public Iterator<Point> forAllElements(@Nonnull BlockPos source, @Nonnull Direction facing, @Nullable Direction hFacing) {

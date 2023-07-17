@@ -61,7 +61,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 
     @Override
     public void afterStructureFormed() {
-        this.result.components.forEach((k, v) -> v.forEach(c -> {
+        this.components.forEach((k, v) -> v.forEach(c -> {
             c.onStructureFormed(this);
         }));
         //Handlers.
@@ -74,7 +74,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
         this.fluidHandler.ifPresent(handle -> {
             ((MultiMachineFluidHandler<T>) handle).onStructureBuild();
         });
-        var heats = this.result.components.get("components");
+        var heats = this.components.get("components");
         if (heats != null) {
             this.heatHandlers = heats.stream().map(IComponentHandler::getHeatHandler).filter(Optional::isPresent).map(Optional::get).toList();
         } else {
@@ -84,7 +84,7 @@ public class TileEntityMultiMachine<T extends TileEntityMultiMachine<T>> extends
 
     @Override
     public void onStructureInvalidated() {
-        this.result.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this)));
+        this.components.forEach((k, v) -> v.forEach(c -> c.onStructureInvalidated(this)));
         this.itemHandler.ifPresent(handle -> ((MultiMachineItemHandler<T>) handle).invalidate());
         this.energyHandler.ifPresent(handle -> ((MultiMachineEnergyHandler<T>) handle).invalidate());
         this.fluidHandler.ifPresent(handle -> ((MultiMachineFluidHandler<T>) handle).invalidate());

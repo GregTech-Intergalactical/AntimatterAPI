@@ -36,6 +36,8 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
 
     private final Object2ObjectMap<String, Pair<Integer, Integer>> minMaxMap = new Object2ObjectOpenHashMap<>();
 
+    private Structure.StructurePartCheckCallback<T> callback = (structureDefinition, tile, part, i, newOffset) -> structureDefinition.check(tile, part, tile.getLevel(), tile.getExtendedFacing(), tile.getBlockPos().getX(), tile.getBlockPos().getY(), tile.getBlockPos().getZ(), newOffset.getX(), newOffset.getY(), newOffset.getZ(), !tile.isStructureValid());
+
     private int3 offset = new int3(0, 0, 0);
     private Set<Direction> allowedFacings = Set.of(Ref.DIRS);
 
@@ -52,7 +54,7 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         List<IStructureElement<T>> elements = new ArrayList<>();
         for (Object object : objects) {
             if (object instanceof HatchMachine machine){
-                elements.add(new HatchElement<>(machine));
+                elements.add(AntimatterStructureUtility.ofHatch(machine));
             } else if (object instanceof Block block){
                 elements.add(StructureUtility.ofBlock(block));
             } else if (object instanceof TagKey<?> tag && tag.isFor(Registry.BLOCK_REGISTRY)){
@@ -107,6 +109,11 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         return this;
     }
 
+    public StructureBuilder<T> setStructurePartCheckCallback(Structure.StructurePartCheckCallback<T> callback){
+        this.callback = callback;
+        return this;
+    }
+
 
     public Structure<T> build() {
         ImmutableMap.Builder<String, Pair<Integer, Integer>> minMaxMap = ImmutableMap.builder();
@@ -120,7 +127,7 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
                 t.structurePositions.add(Pair.of(new BlockPos(x, y, z), el));
             }, e));
         });
-        return new Structure<>(STRUCTURE_BUILDER.build(), structureParts.build(), minMaxMap.build(), offset);
+        return new Structure<>(STRUCTURE_BUILDER.build(), structureParts.build(), minMaxMap.build(), offset, callback);
         /*ImmutableMap.Builder<int3, StructureElement> elements = ImmutableMap.builder();
         int3 size = new int3(slices.get(0).length, slices.size(), slices.get(0)[0].length());
         StructureElement e;
