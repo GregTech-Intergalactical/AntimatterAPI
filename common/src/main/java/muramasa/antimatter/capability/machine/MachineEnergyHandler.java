@@ -156,6 +156,11 @@ public class MachineEnergyHandler<T extends TileEntityMachine<T>> extends Energy
     }
 
     @Override
+    public long availableAmpsInput() {
+        return super.availableAmpsInput() + this.cachedItems.stream().map(Pair::right).mapToLong(node -> node.availableAmpsInput()).sum();
+    }
+
+    @Override
     public boolean canInput(Direction direction) {
         return super.canInput(direction) && (tile.getFacing() != direction || tile.getMachineType().allowsFrontIO());
     }
