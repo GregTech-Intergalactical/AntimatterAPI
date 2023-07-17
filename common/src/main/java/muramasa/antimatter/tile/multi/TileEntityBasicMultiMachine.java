@@ -11,6 +11,7 @@ import com.gtnewhorizon.structurelib.alignment.enumerable.Rotation;
 import com.gtnewhorizon.structurelib.structure.IStructureDefinition;
 import com.gtnewhorizon.structurelib.structure.IStructureElement;
 import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -58,7 +59,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
     protected StructureResult result = null;
     protected boolean validStructure = false;
 
-    public List<Pair<BlockPos, IStructureElement<T>>> structurePositions = new ArrayList<>();
+    public Long2ObjectOpenHashMap<IStructureElement<T>> structurePositions = new Long2ObjectOpenHashMap<>();
 
     private ExtendedFacing extendedFacing;
     private IAlignmentLimits limits = getInitialAlignmentLimits();
@@ -187,7 +188,7 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
         if (structure == null)
             return false;
         checkingStructure++;
-        List<Pair<BlockPos, IStructureElement<T>>> oldPositions = new ArrayList<>(structurePositions);
+        List<Pair<BlockPos, IStructureElement<T>>> oldPositions = structurePositions.long2ObjectEntrySet().stream().map(e -> Pair.of(BlockPos.of(e.getLongKey()), e.getValue())).toList();
         structurePositions.clear();
         components.clear();
         boolean oldValidStructure = validStructure;
@@ -358,8 +359,9 @@ public class TileEntityBasicMultiMachine<T extends TileEntityBasicMultiMachine<T
             return;
         if (!validStructure) return;
         checkingStructure++;
-        structurePositions.forEach(p ->{
-            p.right().onStructureFail((T) this, this.getLevel(), p.left().getX(), p.left().getY(), p.left().getZ());
+        structurePositions.forEach((l,e) ->{
+            BlockPos pos = BlockPos.of(l);
+            e.onStructureFail((T) this, this.getLevel(), pos.getX(), pos.getY(), pos.getZ());
         });
         structurePositions.clear();
         validStructure = false;

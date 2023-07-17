@@ -124,7 +124,7 @@ public class StructureBuilder<T extends TileEntityBasicMultiMachine<T>> {
         });
         elementLookup.forEach((c, e) -> {
             STRUCTURE_BUILDER.addElement(c, StructureUtility.onElementPass((el, t, w, x, y, z) -> {
-                t.structurePositions.add(Pair.of(new BlockPos(x, y, z), el));
+                t.structurePositions.put(new BlockPos(x, y, z).asLong(), e);
             }, e));
         });
         return new Structure<>(STRUCTURE_BUILDER.build(), structureParts.build(), minMaxMap.build(), offset, callback);
