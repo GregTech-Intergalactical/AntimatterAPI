@@ -57,14 +57,14 @@ public class AntimatterMaterialTypes {
     public static MaterialTypeItem<?> ROD = new MaterialTypeItem<>("rod", 2, true, U2);
     public static MaterialTypeItem<?> ROD_LONG = new MaterialTypeItem<>("rod_long", 2, true, U);
     public static MaterialTypeItem<?> RING = new MaterialTypeItem<>("ring", 2, true, Ref.U4);
-    public static MaterialTypeItem<?> FOIL = new MaterialTypeItem<>("foil", 2, true, U);
+    public static MaterialTypeItem<?> FOIL = new MaterialTypeItem<>("foil", 2, true, U4);
     public static MaterialTypeItem<?> BOLT = new MaterialTypeItem<>("bolt", 2, true, U8);
-    public static MaterialTypeItem<?> SCREW = new MaterialTypeItem<>("screw", 2, true, Ref.U9);
+    public static MaterialTypeItem<?> SCREW = new MaterialTypeItem<>("screw", 2, true, Ref.U8);
     public static MaterialTypeItem<?> GEAR = new MaterialTypeItem<>("gear", 2, true, U * 4);
     public static MaterialTypeItem<?> GEAR_SMALL = new MaterialTypeItem<>("gear_small", 2, true, U);
     public static MaterialTypeItem<?> WIRE_FINE = new MaterialTypeItem<>("wire_fine", 2, true, U8);
     public static MaterialTypeItem<?> SPRING = new MaterialTypeItem<>("spring", 2, true, U);
-    public static MaterialTypeItem<?> ROTOR = new MaterialTypeItem<>("rotor", 2, true, U * 4 + Ref.U4);
+    public static MaterialTypeItem<?> ROTOR = new MaterialTypeItem<>("rotor", 2, true, (U * 4) + Ref.U4);
     public static MaterialTypeItem<?> DRILLBIT = new MaterialTypeItem<>("drill_bit", 2, true, U * 4);
     public static MaterialTypeItem<?> CHAINSAWBIT = new MaterialTypeItem<>("chainsaw_bit", 2, true, U * 2);
     public static MaterialTypeItem<?> WRENCHBIT = new MaterialTypeItem<>("wrench_bit", 2, true, U * 4);
