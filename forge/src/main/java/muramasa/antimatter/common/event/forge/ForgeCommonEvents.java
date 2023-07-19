@@ -1,6 +1,8 @@
 package muramasa.antimatter.common.event.forge;
 
 import earth.terrarium.botarium.forge.energy.ForgeEnergyContainer;
+import earth.terrarium.botarium.forge.fluid.ForgeFluidContainer;
+import earth.terrarium.botarium.forge.fluid.ForgeFluidHandler;
 import muramasa.antimatter.AntimatterAPI;
 import muramasa.antimatter.Ref;
 import muramasa.antimatter.capability.forge.AntimatterCaps;
@@ -41,6 +43,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import tesseract.api.forge.Provider;
@@ -225,14 +228,21 @@ public class ForgeCommonEvents {
                             return hatch.componentHandler.cast();
                         }
                     }
-                    if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && machine.coverHandler.isPresent()) return machine.coverHandler.side(side).cast();
+                    if (cap == AntimatterCaps.COVERABLE_HANDLER_CAPABILITY && machine.coverHandler.isPresent()) {
+                        return machine.coverHandler.side(side).cast();
+                    }
                     if (side == machine.getFacing() && !machine.allowsFrontIO()) return LazyOptional.empty();
                     if (machine.blocksCapability(AntimatterCaps.CAP_MAP.inverse().get(cap), side)) return LazyOptional.empty();
-                    if (cap == ITEM_HANDLER_CAPABILITY && machine.itemHandler.isPresent()) return machine.itemHandler.side(side).cast();
-                    if (cap == AntimatterCaps.RECIPE_HANDLER_CAPABILITY && machine.recipeHandler.isPresent()) return machine.recipeHandler.side(side).cast();
-
-                    else if (cap == FLUID_HANDLER_CAPABILITY && machine.fluidHandler.isPresent()) return machine.fluidHandler.side(side).cast();
-                    else if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) {
+                    if (cap == ITEM_HANDLER_CAPABILITY && machine.itemHandler.isPresent()) {
+                        //return LazyOptional.of(() -> new InvWrapper(machine.itemHandler.side(side).resolve().get())).cast();
+                        return machine.itemHandler.side(side).cast();
+                    }
+                    if (cap == AntimatterCaps.RECIPE_HANDLER_CAPABILITY && machine.recipeHandler.isPresent()) {
+                        return machine.recipeHandler.side(side).cast();
+                    } else if (cap == FLUID_HANDLER_CAPABILITY && machine.fluidHandler.isPresent()) {
+                        //return LazyOptional.of(() -> new ForgeFluidContainer(machine.fluidHandler.side(side).resolve().get())).cast()
+                        return machine.fluidHandler.side(side).cast();
+                    } else if (cap == TesseractCaps.ENERGY_HANDLER_CAPABILITY || cap == CapabilityEnergy.ENERGY) {
                         if (machine.energyHandler.isPresent()) {
                             return machine.energyHandler.side(side).cast();
                         } else if (cap == CapabilityEnergy.ENERGY && machine.rfHandler.isPresent()){
