@@ -15,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -25,7 +24,7 @@ import tesseract.TesseractCapUtils;
 import tesseract.TesseractGraphWrappers;
 import tesseract.api.capability.TesseractFluidCapability;
 import tesseract.api.fluid.FluidController;
-import tesseract.api.fluid.FluidHolder;
+import tesseract.api.fluid.PipeFluidHolder;
 import tesseract.api.fluid.IFluidPipe;
 
 import java.util.List;
@@ -33,7 +32,7 @@ import java.util.List;
 public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<T> implements IFluidPipe, Dispatch.Sided<IFluidHandler>, IInfoRenderer<InfoRenderWidget.TesseractFluidWidget> {
 
     protected LazyOptional<PipeFluidHandler> fluidHandler;
-    private FluidHolder holder;
+    private PipeFluidHolder holder;
 
     public TileEntityFluidPipe(T type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -45,7 +44,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
 
     @Override
     public void onLoad() {
-        holder = new FluidHolder(this);
+        holder = new PipeFluidHolder(this);
         super.onLoad();
     }
 
@@ -100,7 +99,7 @@ public class TileEntityFluidPipe<T extends FluidPipe<T>> extends TileEntityPipe<
     }
 
     @Override
-    public FluidHolder getHolder() {
+    public PipeFluidHolder getHolder() {
         return holder;
     }
 

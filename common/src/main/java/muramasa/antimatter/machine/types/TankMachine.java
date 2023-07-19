@@ -1,5 +1,7 @@
 package muramasa.antimatter.machine.types;
 
+import earth.terrarium.botarium.common.fluid.base.FluidHolder;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
 import muramasa.antimatter.Data;
 import muramasa.antimatter.gui.GuiInstance;
 import muramasa.antimatter.gui.ICanSyncData;
@@ -33,7 +35,7 @@ public class TankMachine extends Machine<TankMachine> {
 
     public static class TankRenderWidget extends InfoRenderWidget<TankRenderWidget> {
 
-        public FluidStack stack = FluidStack.EMPTY;
+        public FluidHolder stack = FluidHooks.emptyFluid();
 
         protected TankRenderWidget(GuiInstance gui, IGuiElement parent, IInfoRenderer<TankRenderWidget> renderer) {
             super(gui, parent, renderer);
@@ -43,7 +45,7 @@ public class TankMachine extends Machine<TankMachine> {
         public void init() {
             super.init();
             TileEntityTank<?> tank = (TileEntityTank<?>) gui.handler;
-            gui.syncFluidStack(() -> tank.fluidHandler.map(t -> t.getFluidInTank(0)).orElse(FluidStack.EMPTY), f -> this.stack = f, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
+            gui.syncFluidStack(() -> tank.fluidHandler.map(t -> t.getFluidInTank(0)).orElse(FluidHooks.emptyFluid()), f -> this.stack = f, ICanSyncData.SyncDirection.SERVER_TO_CLIENT);
         }
 
         public static WidgetSupplier build() {
