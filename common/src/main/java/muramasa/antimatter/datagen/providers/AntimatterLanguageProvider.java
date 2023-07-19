@@ -290,7 +290,8 @@ public class AntimatterLanguageProvider implements DataProvider, IAntimatterProv
     }
 
     protected void customTranslations() {
-        add("machine.voltage.in", "Voltage in");
+        add("machine.voltage.in", "Voltage IN");
+        add("machine.voltage.out", "Voltage OUT");
         add("machine.power.capacity", "Capacity");
         add("generic.amp", "Amperage");
         add("antimatter.tooltip.formula", "Hold Shift to show formula.");
