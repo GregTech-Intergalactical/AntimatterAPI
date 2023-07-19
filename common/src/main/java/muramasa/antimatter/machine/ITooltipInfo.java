@@ -10,5 +10,5 @@ import java.util.List;
 
 @FunctionalInterface
 public interface ITooltipInfo {
-    void getTooltips(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag);
+    void getTooltips(BlockMachine machine, ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag flag);
 }

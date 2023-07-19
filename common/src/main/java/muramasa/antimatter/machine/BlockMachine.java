@@ -292,10 +292,10 @@ public class BlockMachine extends BlockBasic implements IItemBlockProvider, Enti
         if (getType().has(BASIC) && !getType().has(RF)) {
             if (getTier().getVoltage() > 0) {
                 tooltip.add(new TranslatableComponent("machine.voltage.in").append(": ").append(new TextComponent(getTier().getVoltage() + " (" + getTier().getId().toUpperCase() + ")")).withStyle(ChatFormatting.GREEN));
-                tooltip.add(new TranslatableComponent("machine.power.capacity").append(": ").append(new TextComponent("" + (getTier().getVoltage() * 64))).withStyle(ChatFormatting.BLUE));
+                tooltip.add(new TranslatableComponent("machine.power.capacity").append(": ").append(new TextComponent("" + (getTier().getVoltage() * 64L))).withStyle(ChatFormatting.BLUE));
             }
         }
-        this.type.getTooltipFunction().getTooltips(stack, world, tooltip, flag);
+        this.type.getTooltipFunction().getTooltips(this, stack, world, tooltip, flag);
     }
 
     @Override

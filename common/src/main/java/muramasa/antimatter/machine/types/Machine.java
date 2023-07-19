@@ -78,7 +78,7 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     protected BiFunction<Machine<T>, Tier, BlockMachine> blockFunc = BlockMachine::new;
 
     protected Supplier<Class<? extends BlockMachine>> itemClassSupplier = () -> BlockMachine.class;
-    protected ITooltipInfo tooltipFunction = (s,w,t,f) -> {};
+    protected ITooltipInfo tooltipFunction = (m, s,w,t,f) -> {};
     protected String domain, id;
     protected List<Tier> tiers = new ObjectArrayList<>();
     //Assuming facing = north.
@@ -404,11 +404,11 @@ public class Machine<T extends Machine<T>> implements IAntimatterObject, IRegist
     }
 
     public T setTooltipInfo(String translationKey){
-        return setTooltipInfo((s,w,t,f) -> t.add(new TranslatableComponent(translationKey)));
+        return setTooltipInfo((m, s,w,t,f) -> t.add(new TranslatableComponent(translationKey)));
     }
 
     public T setTooltipInfo(Component tooltip){
-        return setTooltipInfo((s,w,t,f) -> t.add(tooltip));
+        return setTooltipInfo((m, s,w,t,f) -> t.add(tooltip));
     }
 
     public T setTooltipInfo(ITooltipInfo info){
